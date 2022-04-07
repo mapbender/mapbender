@@ -25,7 +25,6 @@
      */
 
     var fpCounter = 0;
-    var currentZindex = 10000;
     var currentModal_ = null;
 
     function PopupCommon(options) {
@@ -55,7 +54,9 @@
         },
         focus: function () {
             if (this.$element) {
-                this.$element.css("z-index", ++currentZindex);
+                var $others = $('.popup').not(this.$element);
+                $others.css('z-index', 100); // Same as .ui-front
+                this.$element.css("z-index", 101);  // One more than .ui-front
             }
         },
         /**

@@ -93,7 +93,7 @@
     width: $popupModalWidth;
     padding-bottom:$space;
   }
-  z-index:9999;
+  z-index: 100; // Same as .ui-front
   background-color:#f4f4f4;
   border: {
       top: solid 1px $secondColor;

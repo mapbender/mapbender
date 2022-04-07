@@ -406,7 +406,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   background-color: #fff;
   border: solid 1px lighten($thirdColor, 15%);   // same as .input
   position: absolute; // do not expand DOM size when showing items
-  z-index: 20000; // ~replacement for .ui-front
 
   line-height: 1.5;
   li {
