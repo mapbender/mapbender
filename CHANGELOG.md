@@ -1,4 +1,4 @@
-## dev-release/3.2 @ e65f202eb
+## dev-release/3.2 @ 5c7bada1a
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
@@ -25,6 +25,7 @@
 * Further reduce floating elements interfering with map mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
 * Extract new sass variables for easier (separate) customization of button / accordion / sidepane button colors and text sizes (see [_variables.scss](https://github.com/mapbender/mapbender/blob/e65f202eb1f75ae2988deec545b0aae5f83c8dc8/src/Mapbender/CoreBundle/Resources/public/sass/libs/_variables.scss#L53) for full list)
 * Update default style of header buttons in "buttons"-type sidepane
+* Update default style of queued print job list (decouple from Digitizer table CSS)
 
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
