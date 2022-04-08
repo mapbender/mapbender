@@ -43,7 +43,9 @@ class IconClassType extends AbstractType
             'iconGpsTarget'     => 'Gps Target (FontAwesome)',
             'iconPoi'           => 'POI (FontAwesome)',
             'iconImageExport'   => 'Image Export (FontAwesome)',
-            'iconSketch'        => 'Sketch (FontAwesome)');
+            'iconSketch'        => 'Sketch (FontAwesome)',
+            'iconCopyright'     => 'Copyright (FontAwesome)',
+        );
 
         asort($icons);
 
