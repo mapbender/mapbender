@@ -33,9 +33,6 @@
   color: $middleFontColor;
 }
 
-.linkButton, .button, .buttonCore {
-  font-size: 0.85rem;
-}
 .linkButton {
   &:hover, &:active{color:$ciColor;};
 }
@@ -312,7 +309,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 
 .collapse-toggle {
   background: $buttonFirstColor;
-  color: $lightFontColor;
+  color: $buttonTextColor;
 }
 
 // Filter Element visibility by "screenType"

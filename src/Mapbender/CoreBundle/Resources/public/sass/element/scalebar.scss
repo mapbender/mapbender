@@ -1,5 +1,8 @@
-
 .mb-element-scaleline {
+  .anchored-element-wrap & {
+    // Avoid eating mouse interactions on map
+    pointer-events: none;
+  }
   .control-wrapper {
     text-align: center;
     display: inline-block;

@@ -1,7 +1,9 @@
 /** Frontend only */
-.buttonCore{
+.buttonCore, .linkButton {
   user-select: none;
-
+  font-size: $buttonFontSize;
+}
+.buttonCore {
   // Workaround for vintage Firefox <=29 (circa 2014) line-height mishandling on form buttons
   // and misc other form elements.
   // see https://bugzilla.mozilla.org/show_bug.cgi?id=697451
@@ -33,20 +35,20 @@
   }
 }
 .button, .buttonColors {
-  color:$lightFontColor;
+  color: $buttonTextColor;
   background-color:$buttonFirstColor;
-  border-color: darken($buttonSecondColor, 5%);
+  border-color: $buttonBorderColor;
   &:hover{
-    background-color:darken($buttonFirstColor, 5%);
+    background-color: $buttonHoverColor;
   }
 }
 
 .button.critical, .buttonColorsCritical {
-  color:$lightFontColor;
+  color: $buttonCriticalTextColor;
   background-color:$buttonCriticalFirstColor;
-  border-color: darken($buttonCriticalSecondColor, 5%);
+  border-color: $buttonCriticalBorderColor;
   &:hover{
-    background-color:darken($buttonCriticalFirstColor, 5%);
+    background-color: $buttonCriticalHoverColor;
   }
 }
 

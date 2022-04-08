@@ -159,26 +159,7 @@ body {
     clear: both;
   }
   background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
-  color: #222;
-}
-
-html .accordionContainer .accordion {
-  background-color: #777;
-  color: #ddd;
-  font-size: 1.6rem;
-  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
-  &.active {
-    color: #fff;
-    &:hover {
-      background-color: #888;
-    }
-  }
-  &:hover {
-    background-color: #888;
-  }
-  &.active, &:hover, &.active:hover {
-    background-color: #888;
-  }
+  color: $toolBarFontColor;
 }
 
 .mb-element-layertree, .mb-element-basesourceswitcher {

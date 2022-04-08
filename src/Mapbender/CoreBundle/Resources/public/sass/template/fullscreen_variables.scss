@@ -1,1 +1,15 @@
 $sliderHandleBackgroundColor: #777;
+$accordionFontSize: 1.6rem;
+$accordionBackgroundColor: #777;
+$accordionTextColor: #ddd;
+$accordionActiveBackgroundColor: #888;
+$accordionActiveTextColor: #fff;
+$accordionHoverBackgroundColor: #888;
+
+$sidepaneButtonFontSize: 1rem;
+$sidepaneButtonBackgroundColor: $contentColor;  // Same as .sidePane
+$sidepaneButtonTextColor: $toolBarFontColor;    // Same as .sidePane
+$sidepaneButtonActiveTextColor: $toolBarFontColor;
+$sidepaneButtonActiveBackgroundColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 92%);
+$sidepaneButtonHoverColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 96%);
+$sidepaneButtonBorderColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 50%);
