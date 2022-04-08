@@ -14,6 +14,12 @@
     .ol-viewport, .olMapViewport {
       border: 1px solid $thirdColor;
     }
+    .olMapViewport {
+      > div {
+        // Overrule inline style z-index to prevent overview punching through sidepane
+        z-index: 0 !important;
+      }
+    }
   }
   .ol-overviewmap {
     button {
