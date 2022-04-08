@@ -87,7 +87,6 @@
 }
 
 .tabContainerAlt{
-  position: relative;
   > .tabs {
     list-style: none;
     border-bottom: dashed 1px $thirdColor;
@@ -95,14 +94,25 @@
     margin-bottom: $space;
   }
   .tab {
+    @extend .buttonCore;
     display: inline-block;
-    @extend .button;
+    padding: 0.25em 10px;
     margin: 0 0.25em 0.25em 0;
+    line-height: 1.5;
+    color: $sidepaneButtonTextColor;
+    background-color: $sidepaneButtonBackgroundColor;
+    border: 1px solid $sidepaneButtonBorderColor;
 
     &.active{
       cursor:default;
-      background-color:darken($buttonFirstColor, 10%);
-      color:$lightFontColor;
+      color: $sidepaneButtonActiveTextColor;
+      background-color: $sidepaneButtonActiveBackgroundColor;
+    }
+    &:hover {
+      background-color: $sidepaneButtonHoverColor;
+      &.active {
+        background-color: mix($sidepaneButtonHoverColor, $sidepaneButtonActiveBackgroundColor, 50%);
+      }
     }
   }
   .container {

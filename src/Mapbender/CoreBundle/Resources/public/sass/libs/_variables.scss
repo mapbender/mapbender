@@ -53,7 +53,7 @@ $buttonSecondColor: #5fa229;
 $buttonTextColor: $lightFontColor;
 $buttonBorderColor: #538e24;
 $buttonHoverColor: #63a130;
-$buttonFirstActiveColor: #47791f;
+$buttonFirstActiveColor: #578e2a;
 $buttonCriticalTextColor: $lightFontColor;
 $buttonCriticalBorderColor: #9f3434;
 $buttonCriticalHoverColor: #cd5151;
@@ -77,3 +77,11 @@ $accordionTextColor: $lightFontColor;
 $accordionActiveBackgroundColor: darken($buttonFirstColor, 10%);
 $accordionActiveTextColor: $accordionTextColor;
 $accordionHoverBackgroundColor: darken($buttonFirstColor, 5%);
+
+// Header buttons in type "buttons" sidepane
+$sidepaneButtonTextColor: $buttonTextColor;
+$sidepaneButtonBackgroundColor: $buttonFirstColor;
+$sidepaneButtonBorderColor: $buttonBorderColor;
+$sidepaneButtonHoverColor: $buttonHoverColor;
+$sidepaneButtonActiveTextColor: $buttonTextColor;
+$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor;
