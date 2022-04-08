@@ -121,11 +121,18 @@
   .accordion{
     user-select: none;
     cursor: pointer;
-    @extend .buttonColors;
     padding-left: 0.5em;
-    &.active{
-      background-color:darken($buttonFirstColor, 10%);
-      color:$lightFontColor;
+    color: $accordionTextColor;
+    background-color: $accordionBackgroundColor;
+    &.active {
+      color: $accordionActiveTextColor;
+      background-color: $accordionActiveBackgroundColor;
+    }
+    &:hover {
+      background-color: $accordionHoverBackgroundColor;
+      &.active {
+        background-color: mix($accordionHoverBackgroundColor, $accordionActiveBackgroundColor, 50%);
+      }
     }
   }
   .container-accordion {
