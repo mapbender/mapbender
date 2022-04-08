@@ -203,19 +203,16 @@
                     content: self.container,
                     width: 300,
                     height: 300,
-                    buttons: {
-                        'ok': {
+                    buttons: [
+                        {
                             label: Mapbender.trans("mb.actions.close"),
-                            cssClass: 'button right',
-                            callback: function(){
-                                self.deactivate();
-                            }
+                            cssClass: 'button popupClose'
                         }
-                    }
+                    ]
                 });
                 this.popup.$element.on('close', $.proxy(this.deactivate, this));
             }else{
-                this.popup.open("");
+                this.popup.open();
             }
         },
         deactivate: function(){

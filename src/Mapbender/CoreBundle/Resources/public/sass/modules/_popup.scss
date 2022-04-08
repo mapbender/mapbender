@@ -8,6 +8,7 @@
   padding: $space 0 $space/2 0;
 }
 .popup .popupButtons {
+  text-align: right;
   .button, .btn {
     margin-left: 0.5em;
   }
@@ -17,11 +18,6 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-  }
-}
-.mapbender-popup {
-  .popupButtons {
-    text-align: right;
   }
 }
 .mapbender-popup {
@@ -93,7 +89,7 @@
     width: $popupModalWidth;
     padding-bottom:$space;
   }
-  z-index:9999;
+  z-index: 100; // Same as .ui-front
   background-color:#f4f4f4;
   border: {
       top: solid 1px $secondColor;

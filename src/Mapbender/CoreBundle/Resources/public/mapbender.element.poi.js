@@ -117,18 +117,15 @@
                 content: $('.input', this.element).first().html(),
                 buttons: [
                     {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
+                        label: Mapbender.trans('mb.actions.accept'),
                         cssClass: 'button',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function () {
-                            this.close();
-                        }
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'popupClose button critical'
                     }
                 ]
             };

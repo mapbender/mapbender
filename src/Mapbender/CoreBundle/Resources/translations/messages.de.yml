@@ -76,11 +76,6 @@ mb:
       admin:
         sourceSrs: Quell-SRS
     searchrouter:
-      popup:
-        btn:
-          ok: Suchen
-          cancel: Schließen
-          reset: Zurücksetzen
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
       class:
@@ -95,8 +90,6 @@ mb:
         snippet: 'Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.'
       popup:
         btn:
-          ok: Ok
-          cancel: Abbrechen
           position: Positionierung
       class:
         title: 'MeetingPoint (POI)'
@@ -112,9 +105,6 @@ mb:
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
     legend:
-      popup:
-        btn:
-          ok: Schließen
       class:
         title: Legende
         description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
@@ -151,8 +141,6 @@ mb:
     metadata:
       popup:
         title: Metadaten
-        btn:
-          ok: Schließen
     gpsposition:
       error:
         notsupported: Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.
@@ -166,9 +154,6 @@ mb:
         position: Position
         button: Button
     layertree:
-      popup:
-        btn:
-          ok: Schließen
       const:
         outofscale: 'Ebene außerhalb des Maßstabs'
         outofbounds: 'Ebene außerhalb der BoundingBox'
@@ -421,6 +406,12 @@ mb:
         open_in_new_tab: In neuem Tab öffnen
   template:
     toolbar_menu_tooltip: Menü öffnen
+    region:
+      toolbar: Obere Werkzeugleiste
+      footer: Fußzeile
+      sidepane: Sidepane
+      content: Kartenbereich
+
 
 # Login exceptions
 "Bad credentials.": Authentifizierung fehlgeschlagen.

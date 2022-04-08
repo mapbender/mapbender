@@ -42,9 +42,6 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
             ),
-            'trans' => array(
-                'mb.core.legend.popup.*',   // @todo: use standard close action label for popup
-            ),
         );
     }
 
