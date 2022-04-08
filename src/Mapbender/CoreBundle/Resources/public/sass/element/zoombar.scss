@@ -1,4 +1,16 @@
 .mb-element-zoombar {
+  .anchored-element-wrap & {
+    // Avoid eating mouse interactions on map
+    // ZoomBar has multiple sub-blocks with different widths that
+    // need mouse events, but the outer box is quite a bit larger
+    // and contains transparent gaps where we want mouse events
+    // to fall through to the map canvas.
+    pointer-events: none;
+    .move-icon-wrap, .toolPane, .rotation {
+      pointer-events: initial;
+    }
+  }
+
   text-align: center; // support automatic centering of children
   .component + .component {
     margin-top: 0.7rem;
