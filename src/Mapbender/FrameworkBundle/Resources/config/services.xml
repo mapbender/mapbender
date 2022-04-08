@@ -3,6 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services
         https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mapbender.force_engine">null</parameter>
+    </parameters>
     <services>
         <service id="mapbender.renderer.element_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer">
             <argument type="service" id="templating" />
@@ -30,5 +33,13 @@
         </service>
         <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
         <service id="mapbender.element_shim_factory.container" alias="service_container" />
+        <service id="mapbender.application_engine_listener"
+                 class="Mapbender\FrameworkBundle\Listener\ApplicationEngineListener">
+            <tag name="doctrine.orm.entity_listener"
+                 entity="Mapbender\CoreBundle\Entity\Application"
+                 event="postLoad" method="postLoad"
+                 lazy="true" />
+            <argument>%mapbender.force_engine%</argument>
+        </service>
     </services>
 </container>

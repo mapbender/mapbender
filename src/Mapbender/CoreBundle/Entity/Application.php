@@ -691,25 +691,4 @@ class Application
     {
         $this->setUpdated(new \DateTime('now'));
     }
-
-    /**
-     * Static amenity method for Yaml applications which cannot execute ORM PostLoad handlers
-     *
-     * @param Application $application
-     */
-    public static function postLoadStatic(Application $application)
-    {
-        // Rewrite legacy explicit 'ol4' identifier to 'current'
-        if ('ol4' === $application->getMapEngineCode()) {
-            $application->setMapEngineCode(Application::MAP_ENGINE_CURRENT);
-        }
-    }
-
-    /**
-     * @ORM\PostLoad
-     */
-    public function postLoad()
-    {
-        $this->postLoadStatic($this);
-    }
 }
