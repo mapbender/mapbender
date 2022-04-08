@@ -161,7 +161,7 @@ body {
     clear: both;
   }
   background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
-  color: #222;
+  color: $toolBarFontColor;
 }
 
 .mb-element-layertree, .mb-element-basesourceswitcher {
