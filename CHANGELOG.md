@@ -1,6 +1,7 @@
-## dev-master @ bb8c9ba14
+## dev-master @ 091f59115
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
+* Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
 * Fix broken resizable popup styling for projects using jqueryui css
 * Fix window starting to scroll when dragging popups over screen edges
