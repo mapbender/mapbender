@@ -44,7 +44,8 @@ class IconClassType extends AbstractType
             'iconPoi'           => 'POI (FontAwesome)',
             'iconImageExport'   => 'Image Export (FontAwesome)',
             'iconSketch'        => 'Sketch (FontAwesome)',
-            'iconCopyright'     => 'Copyright (FontAwesome)');
+            'iconCopyright'     => 'Copyright (FontAwesome)',
+        );
 
         asort($icons);
 
