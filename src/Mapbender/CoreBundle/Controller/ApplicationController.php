@@ -73,7 +73,7 @@ class ApplicationController extends ApplicationControllerBase
         );
 
         if (!$this->isDebug) {
-            $cacheFile = $this->getCachePath($request, $slug);
+            $cacheFile = $this->getCachePath($request, $appEntity);
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
                 $content = $this->renderApplication($appEntity);
@@ -160,10 +160,10 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * @param Request $request
-     * @param string $slug
+     * @param Application $application
      * @return string
      */
-    protected function getCachePath(Request $request, $slug)
+    protected function getCachePath(Request $request, Application $application)
     {
         // Output depends on locale and base url => bake into cache key
         // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
@@ -180,7 +180,7 @@ class ApplicationController extends ApplicationControllerBase
             $userMarker = $request->getSession()->getId();
         }
 
-        $name = "{$slug}-{$userMarker}.min.{$baseUrlHash}.{$locale}.html";
+        $name = "{$application->getSlug()}.{$locale}.{$userMarker}.{$baseUrlHash}.{$application->getMapEngineCode()}.html";
         return $this->fileCacheDirectory . "/{$name}";
     }
 

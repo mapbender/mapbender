@@ -58,8 +58,12 @@ class AssetsController extends YamlApplicationAwareController
             $appModificationTs =$this->containerTimestamp;
         } else {
             $source = $this->getApplicationEntity($slug);
+            if ($type === 'css' || $type === 'js') {
+                $cacheFile .= ".{$source->getMapEngineCode()}";
+            }
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
+        $cacheFile .= ".{$type}";
         $headers = array(
             'Content-Type' => $this->getMimeType($type),
             'Cache-Control' => 'max-age=0, must-revalidate, private',
@@ -95,19 +99,18 @@ class AssetsController extends YamlApplicationAwareController
      */
     protected function getCachePath(Request $request, $slug, $type)
     {
+        $path = "{$this->cacheDir}/{$slug}";
         if ($type === 'trans') {
             // Output depends on locale => bake into cache key
-            $extension = $this->translator->getLocale() . ".{$type}";
-        } else {
-            $extension = $type;
+            $path .= '.' . $this->translator->getLocale();
         }
         if ($type === 'css') {
             // Output depends on base url of incoming request => bake into cache key
             // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
             $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-            $extension = "{$baseUrlHash}.{$extension}";
+            $path .=  '.' . $baseUrlHash;
         }
-        return $this->cacheDir . "/{$slug}.min.{$extension}";
+        return $path;
     }
 
     /**

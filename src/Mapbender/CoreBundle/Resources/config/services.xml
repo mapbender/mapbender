@@ -58,6 +58,7 @@
             <argument>%applications%</argument>
             <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="mapbender.application_engine_listener" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
         <service id="mapbender.twig.application" class="Mapbender\CoreBundle\Extension\ApplicationExtension">

@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
+use Mapbender\FrameworkBundle\Listener\ApplicationEngineListener;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -29,6 +30,8 @@ class ApplicationYAMLMapper
     protected $sourceTypeDirectory;
     /** @var ElementEntityFactory */
     protected $elementFactory;
+    /** @var ApplicationEngineListener */
+    protected $onLoadListener;
     /** @var array[] */
     protected $definitions;
 
@@ -36,15 +39,18 @@ class ApplicationYAMLMapper
      * @param array[] $definitions
      * @param ElementEntityFactory $elementFactory
      * @param SourceInstanceFactory $sourceInstanceFactory
+     * @param ApplicationEngineListener $onLoadListener
      * @param LoggerInterface|null $logger
      */
     public function __construct($definitions,
                                 ElementEntityFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
+                                ApplicationEngineListener $onLoadListener,
                                 LoggerInterface $logger = null)
     {
         $this->definitions = $definitions;
         $this->elementFactory = $elementFactory;
         $this->sourceTypeDirectory = $sourceInstanceFactory;
+        $this->onLoadListener = $onLoadListener;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -151,7 +157,7 @@ class ApplicationYAMLMapper
             $application->addLayerset($layerset);
         }
         $application->setSource(Application::SOURCE_YAML);
-        Application::postLoadStatic($application);
+        $this->onLoadListener->postLoad($application);
         return $application;
     }
 
