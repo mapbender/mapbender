@@ -15,9 +15,14 @@
         infoContent: null,
         mapPromise: null,
         baseUrl: null,
+        useDialog_: null,
+        popup_: null,
+        recordPopup_: null,
+
 
         _create: function() {
             var self = this;
+            this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             this.baseUrl = window.location.href.replace(/[?#].*$/, '');
             this._toggleEnabled(false);
             this.elementUrl = [Mapbender.configuration.application.urls.element, this.element.attr('id')].join('/');
@@ -48,6 +53,44 @@
         _toggleEnabled: function(enabled) {
             $('.-fn-save-new', this.element.prop('disabled', !enabled));
             $('input[name="title"]', this.element).prop('disabled', !enabled);
+        },
+        open: function(callback) {
+            this.closeCallback = callback || null;
+             if (!this.popup_) {
+                 this.popup_ = new Mapbender.Popup({
+                     modal: false,
+                     detachOnClose: false,
+                     destroyOnClose: false,
+                     draggable: true,
+                     resizable: true,
+                     title: this.element.attr('data-title'),
+                     content: this.element.get(0),
+                     cssClass: 'mbViewManager-dialog',
+                     buttons: [
+                         {
+                             label: Mapbender.trans('mb.actions.close'),
+                             cssClass: 'popupClose btn btn-sm btn-success'
+                         }
+                     ]
+                 });
+                 var self = this;
+                 this.popup_.$element.on('close', function() {
+                     self.close();
+                 });
+             }
+             this.popup_.$element.show();
+             this.popup_.focus();
+        },
+        close: function() {
+            this.popup_.$element.hide();
+            if (this.recordPopup_ && this.recordPopup_.$element) {
+                this.recordPopup_.close();
+            }
+            this.recordPopup_ = null;
+            if (this.closeCallback) {
+                (this.closeCallback)();
+                this.closeCallback = null;
+            }
         },
         _initEvents: function() {
             var self = this;
@@ -85,6 +128,7 @@
                 var $row = $clickTarget.closest('tr');
                 var recordId = !$clickTarget.is('.-fn-open-info') && $row.attr('data-id') || null;
                 self._openUpdateOrInfo($row, recordId);
+                return false;   // Avoid re-focusing dialog
             });
         },
         _load: function() {
@@ -211,6 +255,36 @@
             this._showRecordForm($row, $content, recordId);
         },
         _showRecordForm: function($targetRow, $content, recordId) {
+            if (this.useDialog_) {
+                this._showRecordDialog($targetRow, $content, recordId);
+            } else {
+                this._showRecordPopover($targetRow, $content, recordId);
+            }
+        },
+        _showRecordDialog: function($targetRow, $content, recordId) {
+            var self = this;
+            if (this.recordPopup_ && this.recordPopup_.$element) {
+                this.recordPopup_.close();
+            }
+            var popup = new Mapbender.Popup({
+                title: Mapbender.trans('mb.actions.edit'),
+                subtitle: this.element.attr('data-title'),
+                destroyOnClose: true,
+                content: $content.get(0),
+                draggable: true,
+                modal: false,
+                buttons: []
+            });
+            $content.on('click', '.-fn-update', function() {
+                self._replace($targetRow, $content, recordId);
+                popup.close();
+            });
+            $content.on('click', '.-fn-close', function() {
+                popup.close();
+            });
+            this.recordPopup_ = popup;
+        },
+        _showRecordPopover: function($targetRow, $content, recordId) {
             this._closePopovers();
             $content
                 .addClass('popover bottom')
@@ -241,8 +315,26 @@
                 deferred.reject();
             });
             $popover.data('deferred', deferred);
-            this._closePopovers();
-            $('.-js-confirmation-anchor-delete', $row).append($popover);
+            if (this.useDialog_) {
+                var dialog = new Mapbender.Popup({
+                    modal: true,
+                    width: 300,
+                    destroyOnClose: true,
+                    title: $('p', $popover).text(),
+                    buttons: $('button', $popover).get()
+                });
+                $('.-fn-cancel', dialog.$element).addClass('popupClose');
+                dialog.$element.on('click', '.-fn-confirm', function() {
+                    dialog.destroy();
+                    deferred.resolve();
+                });
+                dialog.$element.on('close', function() {
+                    deferred.reject();
+                });
+            } else {
+                this._closePopovers();
+                $('.-js-confirmation-anchor-delete', $row).append($popover);
+            }
 
             return deferred.promise();
         },
