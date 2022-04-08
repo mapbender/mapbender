@@ -1,4 +1,4 @@
-## dev-master @ dd6c12bba
+## dev-master @ 96c8867c1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
@@ -19,6 +19,7 @@
 * Support `tagName` option in popup widget (previously hardcoded to generate div)
 * Support passing DOM Elements into popup widget `buttons` option
 * Support localizing application region names (shown in backend); supply translations for fullscreen template regions
+* Add copyright icon to button icon choices ([PR#1376](https://github.com/mapbender/mapbender/pull/1376))
 
 ## v3.3.0
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
