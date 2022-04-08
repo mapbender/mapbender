@@ -1,5 +1,5 @@
 ## dev-master @ a4db1d12b
-* Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
+* Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
 * Fix broken resizable popup styling for projects using jqueryui css
