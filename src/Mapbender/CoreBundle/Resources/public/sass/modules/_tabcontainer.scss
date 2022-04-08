@@ -96,6 +96,7 @@
   .tab {
     @extend .buttonCore;
     display: inline-block;
+    font-size: $sidepaneButtonFontSize;
     padding: 0.25em 10px;
     margin: 0 0.25em 0.25em 0;
     line-height: 1.5;
@@ -132,6 +133,8 @@
     user-select: none;
     cursor: pointer;
     padding-left: 0.5em;
+    font-size: $accordionFontSize;
+    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
     &.active {

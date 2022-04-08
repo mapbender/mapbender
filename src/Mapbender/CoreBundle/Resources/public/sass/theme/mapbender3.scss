@@ -33,9 +33,6 @@
   color: $middleFontColor;
 }
 
-.linkButton, .button, .buttonCore {
-  font-size: 0.85rem;
-}
 .linkButton {
   &:hover, &:active{color:$ciColor;};
 }
