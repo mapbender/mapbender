@@ -10,11 +10,15 @@
     table {
       td.interface {
         text-align: right;
-        .btn, .loading {
-          margin-right: 0.25em;
+        white-space: nowrap;
+        .btn-group {
+          vertical-align: inherit;
+          .btn {
+            float: none;
+          }
         }
-        :last-child {
-          margin-right: 0;
+        .loading {
+          margin-right: 0.25em;
         }
       }
     }
