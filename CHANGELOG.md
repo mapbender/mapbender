@@ -1,4 +1,4 @@
-## dev-release/3.2 @ aee1ba9db
+## dev-release/3.2 @ dcf71fc80
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
@@ -12,6 +12,7 @@
 * Fix element (de)activation event not triggered for elements in sidepane
 * Fix element deactivation event not triggered for externally button-controlled element dialog closed with popup button
 * Fix Openlayers 2 overview map visually punching through sidepane
+* Fix server error when submitting application import with no file chosen
 * [ViewManager] support popup operation (place in content, trigger with an additional button element)
 * [ViewManager] fix layout overflow for very long record titles
 * [ViewManager] respect `showDate` configuration when showing / editing record
