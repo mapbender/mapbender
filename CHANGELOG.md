@@ -1,4 +1,4 @@
-## dev-master @ 583786385
+## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
