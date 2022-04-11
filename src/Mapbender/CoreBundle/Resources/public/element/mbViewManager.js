@@ -15,9 +15,14 @@
         infoContent: null,
         mapPromise: null,
         baseUrl: null,
+        useDialog_: null,
+        popup_: null,
+        recordPopup_: null,
+
 
         _create: function() {
             var self = this;
+            this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             this.baseUrl = window.location.href.replace(/[?#].*$/, '');
             this._toggleEnabled(false);
             this.elementUrl = [Mapbender.configuration.application.urls.element, this.element.attr('id')].join('/');
@@ -49,6 +54,44 @@
             $('.-fn-save-new', this.element.prop('disabled', !enabled));
             $('input[name="title"]', this.element).prop('disabled', !enabled);
         },
+        open: function(callback) {
+            this.closeCallback = callback || null;
+             if (!this.popup_) {
+                 this.popup_ = new Mapbender.Popup({
+                     modal: false,
+                     detachOnClose: false,
+                     destroyOnClose: false,
+                     draggable: true,
+                     resizable: true,
+                     title: this.element.attr('data-title'),
+                     content: this.element.get(0),
+                     cssClass: 'mbViewManager-dialog',
+                     buttons: [
+                         {
+                             label: Mapbender.trans('mb.actions.close'),
+                             cssClass: 'popupClose btn btn-sm btn-success'
+                         }
+                     ]
+                 });
+                 var self = this;
+                 this.popup_.$element.on('close', function() {
+                     self.close();
+                 });
+             }
+             this.popup_.$element.show();
+             this.popup_.focus();
+        },
+        close: function() {
+            this.popup_.$element.hide();
+            if (this.recordPopup_ && this.recordPopup_.$element) {
+                this.recordPopup_.close();
+            }
+            this.recordPopup_ = null;
+            if (this.closeCallback) {
+                (this.closeCallback)();
+                this.closeCallback = null;
+            }
+        },
         _initEvents: function() {
             var self = this;
             this.element.on('click', '.-fn-save-new', function() {
@@ -58,7 +101,8 @@
             });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
-                self._apply(self._decodeDiff(this));
+                var settings = self._extractLinkSettings(this);
+                self._apply(settings);
                 var $marker = $('.recall-marker', $(this).closest('tr'));
                 $('.recall-marker', self.element).not($marker).css({opacity: ''});
                 $marker.css({opacity: '1'});
@@ -66,7 +110,7 @@
                     $marker.animate({opacity: '0'});
                 });
             });
-            this.element.on('click', 'tr .name-cell', function() {
+            this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
             });
             this.element.on('click', '.-fn-delete', function() {
@@ -84,6 +128,7 @@
                 var $row = $clickTarget.closest('tr');
                 var recordId = !$clickTarget.is('.-fn-open-info') && $row.attr('data-id') || null;
                 self._openUpdateOrInfo($row, recordId);
+                return false;   // Avoid re-focusing dialog
             });
         },
         _load: function() {
@@ -104,7 +149,7 @@
             ;
         },
         _updateLinkUrl: function(link) {
-            var settings = this._decodeDiff(link)
+            var settings = this._extractLinkSettings(link);
             var params = this.mbMap.getModel().encodeSettingsDiff(settings);
             var hash = this.mbMap.getModel().encodeViewParams(settings.viewParams);
             var url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, ''), hash].join('#');
@@ -193,32 +238,65 @@
             };
         },
         _openUpdateOrInfo: function($row, recordId) {
-            this._closePopovers();
-            var $popover = $(document.createElement('div'))
-                .addClass('popover bottom')
-                .append($(document.createElement('div')).addClass('arrow'))
-            ;
+            var $content = $(document.createElement('div'));
             var isUpdate = !!recordId;
             if (isUpdate) {
-                $popover.append(this.updateContent);
+                $content.append(this.updateContent);
             } else {
-                $popover.append(this.infoContent);
+                $content.append(this.infoContent);
             }
-            $('input[name="title"]', $popover).val($row.attr('data-title'));
-            $('input[name="mtime"]', $popover).val($row.attr('data-mtime'));
+            $('input[name="title"]', $content).val($row.attr('data-title'));
+            $('input[name="mtime"]', $content).val($row.attr('data-mtime'));
             var statusText = $row.attr('data-visibility-group') === 'public'
                 ? Mapbender.trans('mb.core.viewManager.recordStatus.public')
                 : Mapbender.trans('mb.core.viewManager.recordStatus.private')
             ;
-            $('.-js-record-status', $popover).text(statusText);
-            $('.-js-update-content-anchor', $row).append($popover);
-
+            $('.-js-record-status', $content).text(statusText);
+            this._showRecordForm($row, $content, recordId);
+        },
+        _showRecordForm: function($targetRow, $content, recordId) {
+            if (this.useDialog_) {
+                this._showRecordDialog($targetRow, $content, recordId);
+            } else {
+                this._showRecordPopover($targetRow, $content, recordId);
+            }
+        },
+        _showRecordDialog: function($targetRow, $content, recordId) {
             var self = this;
-            $popover.on('click', '.-fn-update', function() {
-                self._replace($row, $popover, recordId);
+            if (this.recordPopup_ && this.recordPopup_.$element) {
+                this.recordPopup_.close();
+            }
+            var popup = new Mapbender.Popup({
+                title: Mapbender.trans('mb.actions.edit'),
+                subtitle: this.element.attr('data-title'),
+                destroyOnClose: true,
+                content: $content.get(0),
+                draggable: true,
+                modal: false,
+                buttons: []
             });
-            $popover.on('click', '.-fn-close', function() {
-                $popover.remove();
+            $content.on('click', '.-fn-update', function() {
+                self._replace($targetRow, $content, recordId);
+                popup.close();
+            });
+            $content.on('click', '.-fn-close', function() {
+                popup.close();
+            });
+            this.recordPopup_ = popup;
+        },
+        _showRecordPopover: function($targetRow, $content, recordId) {
+            this._closePopovers();
+            $content
+                .addClass('popover bottom')
+                .prepend($(document.createElement('div')).addClass('arrow'))
+            ;
+            $('.-js-update-content-anchor', $targetRow).append($content);
+            var self = this;
+            $content.on('click', '.-fn-update', function() {
+                self._replace($targetRow, $content, recordId);
+            });
+            $content.on('click', '.-fn-close', function() {
+                $content.remove();
             });
         },
         _confirm: function($row, content) {
@@ -237,8 +315,26 @@
                 deferred.reject();
             });
             $popover.data('deferred', deferred);
-            this._closePopovers();
-            $('.-js-confirmation-anchor-delete', $row).append($popover);
+            if (this.useDialog_) {
+                var dialog = new Mapbender.Popup({
+                    modal: true,
+                    width: 300,
+                    destroyOnClose: true,
+                    title: $('p', $popover).text(),
+                    buttons: $('button', $popover).get()
+                });
+                $('.-fn-cancel', dialog.$element).addClass('popupClose');
+                dialog.$element.on('click', '.-fn-confirm', function() {
+                    dialog.destroy();
+                    deferred.resolve();
+                });
+                dialog.$element.on('close', function() {
+                    deferred.reject();
+                });
+            } else {
+                this._closePopovers();
+                $('.-js-confirmation-anchor-delete', $row).append($popover);
+            }
 
             return deferred.promise();
         },
@@ -261,17 +357,29 @@
         },
         /**
          * @param {Element} node
-         * @return {mmMapSettingsDiff}
-         * @private
+         * @return {}
          */
-        _decodeDiff: function(node) {
+        _extractLinkSettings: function(node) {
             var raw = JSON.parse($(node).attr('data-diff'));
-            // unravel viewParams from scalar string => Object
-            var diff = {
+            return this._normalizeSettingsDiff(this._decodeLinkSettingsDiff(raw));
+        },
+        /**
+         * @param {Object} raw
+         * @return {mmMapSettingsDiff}
+         */
+        _decodeLinkSettingsDiff: function(raw) {
+            return {
                 viewParams: this.mbMap.getModel().decodeViewParams(raw.viewParams),
                 sources: raw.sources || [],
                 layersets: raw.layersets || []
             };
+        },
+        /**
+         * @param {mmMapSettingsDiff} diff
+         * @return {mmMapSettingsDiff}
+         * @private
+         */
+        _normalizeSettingsDiff: function(diff) {
             // Fix stringified numbers
             diff.sources = diff.sources.map(function(entry) {
                 if (typeof (entry.opacity) === 'string') {

@@ -79,7 +79,7 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ e65f202eb
+## v3.2.10
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
@@ -93,6 +93,10 @@ NOTE: the minimum compatible PHP version is now 7.2.
 * Fix element (de)activation event not triggered for elements in sidepane
 * Fix element deactivation event not triggered for externally button-controlled element dialog closed with popup button
 * Fix Openlayers 2 overview map visually punching through sidepane
+* Fix server error when submitting application import with no file chosen
+* [ViewManager] support popup operation (place in content, trigger with an additional button element)
+* [ViewManager] fix layout overflow for very long record titles
+* [ViewManager] respect `showDate` configuration when showing / editing record
 * Improve image export / print reproduction of feature label font sizes and weights
 * Improve image export / print reproduction of line dash patterns
 * Improve image export / print polygon label placement (calculate exterior ring centroid instead of average coordinate)
@@ -106,6 +110,7 @@ NOTE: the minimum compatible PHP version is now 7.2.
 * Further reduce floating elements interfering with map mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
 * Extract new sass variables for easier (separate) customization of button / accordion / sidepane button colors and text sizes (see [_variables.scss](https://github.com/mapbender/mapbender/blob/e65f202eb1f75ae2988deec545b0aae5f83c8dc8/src/Mapbender/CoreBundle/Resources/public/sass/libs/_variables.scss#L53) for full list)
 * Update default style of header buttons in "buttons"-type sidepane
+* Update default style of queued print job list (decouple from Digitizer table CSS)
 
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)

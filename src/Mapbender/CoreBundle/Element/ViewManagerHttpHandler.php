@@ -71,6 +71,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             'showDate' => $config['showDate'],
             'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($config),
+            'row_template' => $this->getRowTemplate(),
         );
         $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
         return new Response($content);
@@ -146,7 +147,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($element->getConfiguration()),
         );
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing-row.html.twig', $vars);
+        $content = $this->templating->render($this->getRowTemplate(), $vars);
         return new Response($content);
     }
 
@@ -157,7 +158,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             throw new BadRequestHttpException("Missing id");
         }
         /** @var ViewManagerState|null $record */
-        $record = $records = $this->getRepository()->find($id);
+        $record = $this->getRepository()->find($id);
         if ($record) {
             if (!$this->isAdmin()) {
                 if (!$record->getUserId() && !$this->checkGrant($element, 'deletePublic')) {
@@ -250,7 +251,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $grantsVariables = $this->getGrantsVariables($element->getConfiguration());
         switch ($operation) {
             default:
-                false;
+                return false;
             case 'deletePublic':
                 return $grantsVariables['deletePublic'];
             case 'savePublic':
@@ -258,5 +259,10 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             case 'savePrivate':
                 return $grantsVariables['savePrivate'];
         }
+    }
+
+    protected function getRowTemplate()
+    {
+        return 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig';
     }
 }

@@ -1,4 +1,24 @@
 /** Frontend only */
+/**
+  Amend potentially undefined variables, if included directly from older template that doesn't define them.
+  See libs/_variables.scss for full set.
+ */
+
+$accordionFontSize: 0.85rem !default;
+$accordionBackgroundColor: $buttonFirstColor !default;
+$accordionTextColor: $lightFontColor !default;
+$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%) !default;
+$accordionActiveTextColor: $lightFontColor !default;
+$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%) !default;
+
+$sidepaneButtonFontSize: 0.85rem !default;
+$sidepaneButtonTextColor: $lightFontColor !default;
+$sidepaneButtonBackgroundColor: $buttonFirstColor !default;
+$sidepaneButtonBorderColor: darken($buttonSecondColor, 5%) !default;
+$sidepaneButtonHoverColor: darken($buttonFirstColor, 5%) !default;
+$sidepaneButtonActiveTextColor: $lightFontColor !default;
+$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
+
 .tabContainer{
   .tabs {
     // Guarantee enough space so our tab.active can move up without clipping
@@ -132,9 +152,9 @@
   .accordion{
     user-select: none;
     cursor: pointer;
-    padding-left: 0.5em;
+    padding: 5px 0.5em;
     font-size: $accordionFontSize;
-    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
+    line-height: 1.2; // @todo: undo global fixed-pixel-unit line height!
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
     &.active {

@@ -145,20 +145,26 @@ $.widget("mapbender.mbPrintClientJobList", {
         return $table.dataTable().api();
     },
     _renderInterface: function (row) {
-        var parts = [];
+        var loader = null;
         var $icon;
 
+        var buttonsEmpty = true;
+        var $group = $(document.createElement('div'))
+            .addClass('btn-group btn-group-xs')
+        ;
         if (row.downloadUrl) {
             var $a = $('<a />')
+                .addClass('btn btn-default')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
             $icon = $('<i/>').addClass('fa fa-file-pdf-o');
             $a.append($icon);
-            parts.push($a.get(0).outerHTML);
+            $group.append($a);
+            buttonsEmpty = false;
         } else {
-            parts.push('<span><i class="fa fa-cog fa-spin"></i></span>');
+            loader = '<span class="loading"><i class="fa fa-cog fa-spin"></i></span>';
         }
         if (row.deleteUrl) {
             var deleteTitle = row.downloadUrl
@@ -167,15 +173,21 @@ $.widget("mapbender.mbPrintClientJobList", {
             ;
             var $deleteSpan = $('<span />')
                 .addClass('-fn-delete')
+                .addClass('btn btn-default')
                 .attr('data-url', row.deleteUrl)
                 .attr('data-id', row.id)
                 .attr('title', Mapbender.trans(deleteTitle))
             ;
             $icon = $('<i/>').addClass('fa fa-remove');
             $deleteSpan.append($icon);
-            parts.push($deleteSpan.get(0).outerHTML);
+            $group.append($deleteSpan);
+            buttonsEmpty = false;
         }
-        return parts.join('');
+        var html = loader || '';
+        if (!buttonsEmpty) {
+            html = [html, $group.get(0).outerHTML].join('');
+        }
+        return html;
     },
     _deleteHandler: function(evt) {
         var $button = $(evt.currentTarget);

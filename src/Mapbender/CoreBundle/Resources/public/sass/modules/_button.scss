@@ -1,4 +1,16 @@
 /** Frontend only */
+/**
+  Amend potentially undefined variables, if included directly from older template that doesn't define them.
+  See libs/_variables.scss for full set.
+ */
+$buttonFontSize: 0.85rem !default;
+$buttonTextColor: $lightFontColor !default;
+$buttonBorderColor: darken($buttonSecondColor, 5%) !default;
+$buttonHoverColor: darken($buttonFirstColor, 5%) !default;
+$buttonCriticalTextColor: $lightFontColor !default;
+$buttonCriticalBorderColor: darken($buttonCriticalSecondColor, 5%) !default;
+$buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
+
 .buttonCore, .linkButton {
   user-select: none;
   font-size: $buttonFontSize;

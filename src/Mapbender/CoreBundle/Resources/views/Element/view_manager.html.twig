@@ -35,6 +35,7 @@
                     <input name="title" type="text" class="form-control" />
                 </div>
             </div>
+            {%- if showDate -%}
             <div class="row form-group">
                 <div class="col-xs-3 col-3">
                     <label class="control-label">{{ 'mb.core.viewManager.date' | trans }}</label>
@@ -43,7 +44,10 @@
                     <input name="mtime" type="text" class="form-control" readonly="readonly" disabled="disabled" />
                 </div>
             </div>
+            {%- endif -%}
+            {%- if showPublicPrivateState -%}
             <p class="-js-record-status"></p>
+            {%- endif -%}
         </div>
         <div class="text-nowrap text-right">
             <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
