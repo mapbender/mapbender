@@ -164,6 +164,13 @@ body {
   color: $toolBarFontColor;
 }
 
+.accordionContainer .accordion {
+  // Trade padding for line-height (font size is quite large)
+  line-height: 1.42857143;    // = Bootstrap default
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .mb-element-layertree, .mb-element-basesourceswitcher {
   font-size: 1.1rem;
 }

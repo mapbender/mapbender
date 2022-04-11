@@ -152,9 +152,9 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
   .accordion{
     user-select: none;
     cursor: pointer;
-    padding-left: 0.5em;
+    padding: 5px 0.5em;
     font-size: $accordionFontSize;
-    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
+    line-height: 1.2; // @todo: undo global fixed-pixel-unit line height!
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
     &.active {
