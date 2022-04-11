@@ -308,6 +308,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .collapse-toggle {
+  $buttonTextColor: $lightFontColor !default;
   background: $buttonFirstColor;
   color: $buttonTextColor;
 }
