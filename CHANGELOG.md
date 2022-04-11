@@ -1,4 +1,4 @@
-## dev-release/3.2 @ dcf71fc80
+## v3.2.10
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
 * Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
