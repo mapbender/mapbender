@@ -13,6 +13,7 @@
 * Fix element deactivation event not triggered for externally button-controlled element dialog closed with popup button
 * Fix Openlayers 2 overview map visually punching through sidepane
 * Fix server error when submitting application import with no file chosen
+* Fix BaseSourceSwitcher losing instances on application import / duplication
 * [ViewManager] support popup operation (place in content, trigger with an additional button element)
 * [ViewManager] fix layout overflow for very long record titles
 * [ViewManager] respect `showDate` configuration when showing / editing record
