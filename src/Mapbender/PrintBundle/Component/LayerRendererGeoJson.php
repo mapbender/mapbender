@@ -532,49 +532,6 @@ class LayerRendererGeoJson extends LayerRenderer
     }
 
     /**
-     * Return an array appropriate for gd imagesetstyle that will impact lines
-     * drawn with a 'color' value of IMG_COLOR_STYLED.
-     * @see http://php.net/manual/en/function.imagesetstyle.php
-     *
-     * @param int $color from imagecollorallocate
-     * @param float $thickness
-     * @param string $patternName
-     * @param float $patternScale
-     * @return array
-     */
-    protected function getStrokeStyle($color, $thickness, $patternName='solid', $patternScale = 1.0)
-    {
-        // NOTE: GD actually counts one style entry per produced pixel, NOT per pixel-space length unit.
-        // => Length of the style array must scale with the line thickness
-        $dotLength = max(0, $patternScale * 15);
-        $dashLength = max(0, $patternScale * 45);
-        $longDashLength = max(0, $patternScale * 85);
-        $spaceLength = max(0, $patternScale * 45);
-
-        $dot = array_fill(0, intval(round($thickness * $dotLength)), $color);
-        $dash = array_fill(0, intval(round($thickness * $dashLength)), $color);
-        $longdash = array_fill(0, intval(round($thickness * $longDashLength)), $color);
-        $space = array_fill(0, intval(round($thickness * $spaceLength)), IMG_COLOR_TRANSPARENT);
-
-        switch ($patternName) {
-            case 'solid' :
-                return array($color);
-            case 'dot' :
-                return array_merge($dot, $space);
-            case 'dash' :
-                return array_merge($dash, $space);
-            case 'dashdot' :
-                return array_merge($dash, $space, $dot, $space);
-            case 'longdash' :
-                return array_merge($longdash, $space);
-            case 'longdashdot':
-                return array_merge($longdash, $space, $dot, $space);
-            default:
-                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
-        }
-    }
-
-    /**
      * @param ExportCanvas $canvas
      * @param array $style
      * @return float
