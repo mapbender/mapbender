@@ -1,3 +1,7 @@
+## dev-master @ 80717228f
+* Fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
+* Improve image export / print reproduction of customized Openlayers 6 line patterns
+
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
