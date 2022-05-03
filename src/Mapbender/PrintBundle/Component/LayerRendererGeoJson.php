@@ -254,17 +254,28 @@ class LayerRendererGeoJson extends LayerRenderer
         $transformedCoordSets = array();
         foreach ($geometry['coordinates'] as $lineString) {
             $transformedLineCoords = array();
-            foreach ($lineString as $j => $coord) {
-                $transformedCoord = $canvas->featureTransform->transformPair($coord);
-                // OpenLayers quirk: line label is anchored to ~center vertex of line.
-                // Proper MultiLine visual TBD...
-                if ($j == floor(count($lineString) / 2)) {
-                    $centroidSums['x'] += $transformedCoord[0];
-                    $centroidSums['y'] += $transformedCoord[1];
-                    ++$nCentroidPoints;
-                }
-                $transformedLineCoords[] = $transformedCoord;
+            foreach ($lineString as $coord) {
+                $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
             }
+            // OL6 line label is anchored on center vertex (odd coordinate count) or
+            // halfway between two center vertices (even coordinate count)
+            // Multilines apply that logic to each line individually, and then use
+            // over every individual line label position
+            /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/render/canvas/TextBuilder.js#L244 */
+            /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/render/canvas/TextBuilder.js#L250 */
+            $midPointOffset = max(0, floor((count($transformedLineCoords) - 1) / 2));
+            if (count($transformedLineCoords) % 2) {
+                // Odd vertex count; use center
+                $centroidSums['x'] += $transformedLineCoords[$midPointOffset][0];
+                $centroidSums['y'] += $transformedLineCoords[$midPointOffset][1];
+                $nCentroidPoints += 1;
+            } else {
+                // Even vertex count; average the two middle ones
+                $centroidSums['x'] += $transformedLineCoords[$midPointOffset][0] + $transformedLineCoords[$midPointOffset + 1][0];
+                $centroidSums['y'] += $transformedLineCoords[$midPointOffset][1] + $transformedLineCoords[$midPointOffset + 1][1];
+                $nCentroidPoints += 2;
+            }
+
             $transformedCoordSets[] = $transformedLineCoords;
         }
         if ($this->checkLineStyleVisibility($canvas, $style)) {
