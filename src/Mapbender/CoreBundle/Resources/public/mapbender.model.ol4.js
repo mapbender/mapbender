@@ -642,24 +642,8 @@ window.Mapbender.MapModelOl4 = (function() {
             if (stroke) {
                 Object.assign(style, this._extractColor(stroke.getColor(), 'strokeColor', 'strokeOpacity'));
                 style['strokeWidth'] = stroke.getWidth();
-                var lineDash = stroke.getLineDash() || 'solid';
-                if (Array.isArray(lineDash)) {
-                    switch (lineDash.length) {
-                        default:
-                            lineDash = 'solid';
-                            break;
-                        case 2:
-                            lineDash = (lineDash[0] < lineDash[1] && 'dot')
-                                || (lineDash[1] === lineDash[1] && 'dash')
-                                || 'longdash'
-                            ;
-                            break;
-                        case 4:
-                            lineDash = lineDash[2] >= 6 * lineDash[0] && 'longdashdot' || 'dashdot';
-                            break;
-                    }
-                }
-                style['strokeDashstyle'] = lineDash;
+                var lineDash = stroke.getLineDash();
+                style['strokeDashstyle'] = lineDash && lineDash.length && lineDash.slice() || 'solid';
             }
             if (image && (image instanceof ol.style.RegularShape)) {
                 style['pointRadius'] = image.getRadius() || 6;
