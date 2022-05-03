@@ -684,9 +684,13 @@ window.Mapbender.MapModelOl4 = (function() {
                     style['fontWeight'] = fontParts[0] !== 'normal' && fontParts[0] || 'regular';
                     fontParts.splice(0, 1);
                 }
+                var sizeRatio = (this.mbMap && this.mbMap.options.dpi || 96.) / (96. * (window.devicePixelRatio || 1));
                 if (/^\d+\w+$/.test(fontParts[0] || '')) {
-                    style['fontSize'] = fontParts[0];
+                    style['fontSize'] = [sizeRatio * parseFloat(fontParts[0]), 'px'].join('');
                     fontParts.splice(0, 1);
+                } else {
+                    // Default font size is 10px
+                    style['fontSize'] = [sizeRatio * 10, 'px'].join('');
                 }
                 var fontFamily = fontParts.join(' ');
                 if (fontFamily) {
