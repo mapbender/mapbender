@@ -382,6 +382,14 @@ window.Mapbender.MapModelOl4 = (function() {
         return this._geojsonFormat.writeFeatureObject(feature).geometry;
     },
     dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
+        // Sort features like the canvas renderer would
+        /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/renderer/canvas/VectorLayer.js#L651 */
+        /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/renderer/vector.js#L37 */
+        var orderFn = layer.getRenderOrder() || function(a, b) {
+            return parseInt(ol.getUid(a), 10) - parseInt(ol.getUid(b), 10);
+        };
+        features.sort(orderFn);
+
         var self = this;
         var gjf = this._geojsonFormat;
         var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
