@@ -679,8 +679,9 @@ window.Mapbender.MapModelOl4 = (function() {
             }
             if (font) {
                 var fontParts = font.split(/\s+/);
-                if (/^bold|regular|italic$/.test(fontParts[0] || '')) {
-                    style['fontWeight'] = fontParts[0];
+                // Digitizer custom styling quirk: support "normal" font-variant as an alias for "regular" font-weight
+                if (/^bold|regular|italic|normal$/.test(fontParts[0] || '')) {
+                    style['fontWeight'] = fontParts[0] !== 'normal' && fontParts[0] || 'regular';
                     fontParts.splice(0, 1);
                 }
                 if (/^\d+\w+$/.test(fontParts[0] || '')) {
