@@ -592,8 +592,44 @@ class LayerRendererGeoJson extends LayerRenderer
         return $canvas->getSubRegion($offsetX, $offsetY, $width, $height);
     }
 
-    protected function getPatternDescriptors($patternName)
+    /**
+     * Build list of draw segments and gap segments from either
+     * 1) Canvas / Openlayers 3/4/5/6 stroke line dash (array of integers)
+     * or
+     * 2) Legacy SVG / Openlayers 2 pattern name (string)
+     * @param string|integer[] $pattern
+     * @return array[]
+     */
+    protected function normalizeLinePattern($pattern)
     {
+        $infiniteDraw = array(
+            'type' => 'draw',
+            'length' => null,
+        );
+        if (!$pattern || $pattern === 'solid') {
+            /** No gaps anywhere */
+            return array($infiniteDraw);
+        }
+        if (\is_array($pattern)) {
+            // Repeat pattern if odd number of components
+            /** @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash#parameters */
+            if (count($pattern) % 2) {
+                $pattern = \array_values($pattern);
+                $pattern = \array_merge($pattern, $pattern);
+            }
+
+            $descriptors = array();
+            $drawToggle = true;
+            foreach ($pattern as $length) {
+                $descriptors[] = array(
+                    'length' => $length,
+                    'type' => $drawToggle ? 'draw' : 'gap',
+                );
+                $drawToggle = !$drawToggle;
+            }
+            return $descriptors;
+        }
+
         $dot = array(
             'type' => 'dot',
             'length' => 0,
@@ -610,11 +646,7 @@ class LayerRendererGeoJson extends LayerRenderer
             'type' => 'draw',
             'length' => 85,
         );
-        $infiniteDraw = array(
-            'type' => 'draw',
-            'length' => null,
-        );
-        switch ($patternName) {
+        switch ($pattern) {
             case 'solid' :
                 return array(
                     $infiniteDraw,
@@ -649,11 +681,18 @@ class LayerRendererGeoJson extends LayerRenderer
                     $gap,
                 );
             default:
-                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($patternName, true));
+                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($pattern, true));
         }
     }
 
-    protected function generatePatternFragments($patternName, $lineCoords, $patternScale, $closeLoop)
+    /**
+     * @param string|integer[] $pattern
+     * @param $lineCoords
+     * @param float $patternScale
+     * @param boolean $closeLoop
+     * @return array[]
+     */
+    protected function generatePatternFragments($pattern, $lineCoords, $patternScale, $closeLoop)
     {
         $dots = array();
         $lines = array();
@@ -664,7 +703,7 @@ class LayerRendererGeoJson extends LayerRenderer
             $segmentIterator = new LineStringIterator($lineCoords);
         }
 
-        $descriptors = $this->getPatternDescriptors($patternName);
+        $descriptors = $this->normalizeLinePattern($pattern);
         $descriptorIterator = new InfiniteCyclicArrayIterator($descriptors);
         $currentDescriptor = $descriptorIterator->current();
         $descriptorLengthLeft = $currentDescriptor['length'];
