@@ -6,7 +6,7 @@
         <li class="filterItem content-box content-box-lg">
         {% block boxlist_item_content -%}
           <h2 class="contentTitle">
-              {%- block item_title -%}{%- endblock -%}
+              {%- block item_title -%}{%- endblock -%} - ({{ item.id }})
           </h2>
           <div>
               {%- block item_content_main -%}{%- endblock -%}
