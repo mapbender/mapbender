@@ -1,119 +1,105 @@
 /**
- * Replacement CSS for original datatables CSS +/- workarounds for vis-ui-specific quirks
- * @todo: if this is a common Mapbender widget, it should be extracted from vis-ui so markup and CSS can be developed together
- * @todo: remove icon hacks (incompatible with FA5)
+ * CSS for misc DataManager / Digitizer tables
  * @todo: use datatables original css; only adjust for colors
  */
 .mapbender-element-result-table {
-
-  > .dataTables_wrapper {
-
-    > table[role="grid"] {
-      td, th {
-        padding: 4px;
-      }
-      > thead > tr > th {
-        background-color: $buttonFirstColor;
-        user-select: none;
-        border: 1px solid $buttonSecondColor;
-        &:last-child {
-          // match calculated with of .buttons column
-          border-right: none;
+  // Specific padding rule to overrule equally specific Bootstrap 3 .table rules
+  table {
+    >tbody, >thead, >tfoot {
+      >tr {
+        >th, >td {
+          padding: 4px;
         }
-        color: #ffffff;
-        font-weight: normal;
-
-        &.sorting, &.sorting_asc, &.sorting_desc {
-          cursor: pointer;
-          &:hover {
-            background-color: $buttonSecondColor;
-          }
-          &:before {
-            margin-right: 0.5em;
-          }
-        }
-
-        &.sorting_asc, &.sorting_desc {
-          background-color: $buttonFirstActiveColor;
-        }
-        &.sorting:before {
-          display: inline-block;
-          content: "\f0dc";
-          font-family: FontAwesome;
-        }
-        &.sorting_asc:before {
-          display: inline-block;
-          content: "\f160";
-          font-family: FontAwesome;
-        }
-        &.sorting_desc:before {
-          display: inline-block;
-          content: "\f161";
-          font-family: FontAwesome;
-        }
-      }
-      margin-bottom: 0;
-    }
-
-    > .dataTables_info {
-      margin-top: 8px;
-      text-align: center;
-      border-radius: 7px;
-      margin-bottom: 10px;
-      padding: 5px;
-      border: 1px solid $buttonFirstColor;
-    }
-    .dataTables_paginate {
-      // clearfix; should be redundant with original css
-      &:before,
-      &:after {
-        display: table; // 2
-        content: " "; // 1
-      }
-      &:after {
-        clear: both;
       }
     }
-
-    > .paging_simple_numbers {
-
-      > span {
+  }
+  // Specific rule for role="grid" table avoids matching nested / expanded detail tables
+  table[role="grid"] {
+    thead {
+      background-color: $buttonFirstColor;
+      color: $buttonTextColor;
+      user-select: none;
+      th + th {
+        border-left: 1px solid $buttonSecondColor;
+      }
+    }
+    th {
+      font-weight: normal;
+    }
+  }
+  .sorting, .sorting_asc, .sorting_desc {
+    cursor: pointer;
+    &:before {
+      display: inline-block;
+      margin-right: 0.5em;
+      font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
+    }
+  }
+  .sorting_asc, .sorting_desc {
+    background-color: $buttonFirstActiveColor;
+  }
+  .sorting:before {
+    content: "\f0dc";   // = .fa-sort / .fa-unsorted
+  }
+  .sorting_asc:before {
+    content: "\f160";   // = .fa-sort-amount-asc
+  }
+  .sorting_desc:before {
+    content: "\f161";   // = .fa-sort-amount-desc
+  }
+  .dataTables_info {
+    text-align: center;
+    border-radius: 7px;
+    padding: 5px;
+    border: 1px solid $buttonFirstColor;
+  }
+  .dataTables_paginate {
+    @extend .smallText;
+    display: flex;
+    flex-direction: row;
+    > span {    // Contains all direct page access buttons
+      flex: 1 0 auto;
+    }
+    .ellipsis {
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+    }
+  }
+  .paginate_button {
+    @extend .button;
+    padding: 5px;
+    &.current {
+      background-color: $buttonFirstActiveColor;
+    }
+    font-size: inherit;
+    &.disabled {
+      display: none;
+    }
+    &.previous {
+      margin-right: 5px;
+    }
+    &.previous, &.next {
+      // Hide label text node
+      font-size: 0;
+      &:before {
+        // Restore font size
+        @extend .smallText;
         display: inline-block;
-        > span {
-          padding-right: 5px;
-        }
-      }
-
-      a.paginate_button {
-        @extend .button;
-
-        &.previous {
-          float: left;
-          font-size: 0;
-          &:before{
-            @include buttonFAIcon("\f177");
-          }
-        }
-
-        &.next {
-          float: right;
-          font-size: 0;
-          &:after{
-            @include buttonFAIcon("\f178");
-          }
-        }
-
-        &.current {
-          background-color: $buttonFirstActiveColor;
-        }
-
-        &.disabled {
-          display: none;
-        }
-      }
-      a.paginate_button + a.paginate_button {
-        border-left: none;
+        font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       }
     }
+    &.previous:before {
+      content: '\f177';   // = .fa-long-arrow-left
+    }
+    &.next:before {
+      content: '\f178';   // = .fa-long-arrow-right
+    }
+  }
+  .paginate_button + .paginate_button {
+    border-left: none;
+  }
+  // Spacing between components (table, info, pagination)
+  table, .dataTables_info {
+    margin-bottom: 8px;
   }
 }
