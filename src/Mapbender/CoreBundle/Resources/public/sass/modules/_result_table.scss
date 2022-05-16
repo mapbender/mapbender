@@ -52,35 +52,6 @@
           font-family: FontAwesome;
         }
       }
-      > tbody > tr {
-        > td {
-          &.buttons {
-            text-align: right;
-            white-space: nowrap;
-            border-top: none;   // undo Bootstrap 1px top border on .table > tbody > tr > td
-            padding: 0;
-            > div.button-navigation {
-              display: inline-block;
-            }
-            .button {
-              padding: 3px 3px 2px 4px;
-              border-right-width: 0;
-            }
-            .button:last-child {
-              border-right-width: 1px;
-            }
-          }
-
-          &.selection {
-            padding-top: 0;
-            vertical-align: middle;
-            > input[type="checkbox"] {
-              margin: 0 auto;
-              vertical-align: middle;
-            }
-          }
-        }
-      }
       margin-bottom: 0;
     }
 
