@@ -7,6 +7,7 @@ $buttonFontSize: 0.85rem !default;
 $buttonTextColor: $lightFontColor !default;
 $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
 $buttonHoverColor: darken($buttonFirstColor, 5%) !default;
+$buttonHoverTextColor: $buttonTextColor !default;
 $buttonCriticalTextColor: $lightFontColor !default;
 $buttonCriticalBorderColor: darken($buttonCriticalSecondColor, 5%) !default;
 $buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
@@ -51,6 +52,7 @@ $buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
   background-color:$buttonFirstColor;
   border-color: $buttonBorderColor;
   &:hover{
+    color: $buttonHoverTextColor;
     background-color: $buttonHoverColor;
   }
 }
