@@ -61,8 +61,7 @@
       border-radius: 7px;
       margin-bottom: 10px;
       padding: 5px;
-      border: 1px solid #6FB536;
-      right: 0;
+      border: 1px solid $buttonFirstColor;
     }
     .dataTables_paginate {
       // clearfix; should be redundant with original css
