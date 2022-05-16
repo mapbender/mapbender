@@ -82,6 +82,9 @@ class Fullscreen extends Template
             case 'css':
                 return array(
                     '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_popup_dialog.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_tab_navigator.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_result_table.scss',
                 );
             case 'js':
                 return array(
