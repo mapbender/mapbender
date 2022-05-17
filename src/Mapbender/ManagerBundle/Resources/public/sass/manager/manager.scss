@@ -148,9 +148,6 @@ a.button, button, div.dropdown:not(.bs-dropdown) {
 textarea, input[type=text], input[type=number], input[type=password] {
   border-radius: 8px;
 }
-.input, .dropdown:not(.bs-dropdown) {
-  border-color: transparent;
-}
 
 a.button{
   color: $firstColor;
