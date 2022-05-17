@@ -132,7 +132,7 @@ class ApplicationAssetService
             $this->getTemplateLateAssetReferences($application, $type),
         ));
         $references = call_user_func_array('\array_merge', $referenceLists);
-        $references = array_unique($references);
+        $references = AssetReferenceUtil::deduplicate($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
         $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());

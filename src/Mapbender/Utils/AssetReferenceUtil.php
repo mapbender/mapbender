@@ -6,6 +6,28 @@ namespace Mapbender\Utils;
 
 class AssetReferenceUtil
 {
+    /**
+     * ~array_unique but compatible with StringAsset (and maybe other objects)
+     * Non-string inputs are retained without inspection.
+     *
+     * @param mixed[] $references
+     * @return mixed[]
+     */
+    public static function deduplicate(array $references)
+    {
+        $seen = array();
+        $refsOut = array();
+        foreach ($references as $reference) {
+            if (!\is_string($reference)) {
+                $refsOut[] = $reference;
+            } elseif (empty($seen[$reference])) {
+                $seen[$reference] = true;
+                $refsOut[] = $reference;
+            }
+        }
+        return $refsOut;
+    }
+
     public static function isQualified($reference)
     {
         // Leading '@' => assume bundle-qualified assetic reference
