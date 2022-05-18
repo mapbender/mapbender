@@ -75,7 +75,7 @@ class Copyright extends AbstractElementService implements ElementHttpHandlerInte
             'autoOpen' => false,
             'content' => null,
             'popupWidth'    => 300,
-            'popupHeight'   => 170,
+            'popupHeight' => null,
         );
     }
 

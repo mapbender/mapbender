@@ -17,22 +17,21 @@
             var options = widget.options;
             var element = widget.element;
             var width = options.popupWidth ? options.popupWidth : 350;
-            var height = options.popupHeight ? options.popupHeight : 350;
             this.callback = callback ? callback : null;
 
             if (!this.popup) {
                 $.ajax({url: this.elementUrl + 'content'}).then(function(response) {
-                    widget.popup = new Mapbender.Popup2({
+                    widget.popup = new Mapbender.Popup({
                         title: element.attr('data-title'),
                         modal:               true,
                         detachOnClose: false,
                         closeOnOutsideClick: true,
                         content: response,
                         width:               width,
-                        height:              height,
+                        height: options.popupHeight || null,
                         buttons: [
                             {
-                                label: 'OK',
+                                label: Mapbender.trans('mb.actions.accept'),
                                 cssClass: 'button popupClose'
                             }
                         ]

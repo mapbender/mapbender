@@ -24,7 +24,10 @@ mb:
       create:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
+    automatic: Automatisch
     confirm_form_discard: Änderungen verwerfen?
+    popup_height: Dialog-Höhe
+    popup_width: Dialog-Breite
     screentype:
       label: Bildschirmtyp
       choice:

@@ -30,11 +30,19 @@ class CopyrightAdminType extends AbstractType
             ))
             // @todo: this should be a positive integer
             ->add('popupWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
+                'required' => false,
+                'label' => 'mb.manager.popup_width',
+                'attr' => array(
+                    'placeholder' => '300px',
+                ),
             ))
             // @todo: this should be a positive integer
             ->add('popupHeight', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
+                'required' => false,
+                'label' => 'mb.manager.popup_height',
+                'attr' => array(
+                    'placeholder' => 'mb.manager.automatic',
+                ),
             ))
             ->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => true,
