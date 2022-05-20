@@ -47,6 +47,12 @@
             this.onMapLayerChanges();
             if (this.useDialog_ && this.options.autoOpen) {
                 this.open();
+                // Notify controlling button, if any
+                $(this.element).trigger('mapbender.elementactivated', {
+                    widget: this,
+                    sender: this,
+                    active: true
+                });
             }
             var rerenderOn = [
                 'mbmapsourceadded',
