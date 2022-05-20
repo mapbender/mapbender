@@ -43,6 +43,7 @@ mb:
           center: Center
       generate_button_menu: Generate menu for buttons
       menu_label: Menu label
+      visibility: Visibility
     element:
       screentype:
         mobile: Show on mobile screens
@@ -100,7 +101,6 @@ mb:
       zoombar:
         draggable: Draggable
       overview:
-        maximize: Maximize
         fix: Fix
       layerset:
         add: 'Add layerset'

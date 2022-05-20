@@ -43,6 +43,7 @@ mb:
           center: Zentriert
       generate_button_menu: Schaltflächen zu Menü zusammenfassen
       menu_label: Menütitel
+    visibility: Sichtbarkeit
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen
@@ -100,7 +101,6 @@ mb:
       zoombar:
         draggable: Verschiebbar
       overview:
-        maximize: Maximieren
         fix: Fixieren
       layerset:
         add: 'Layerset hinzufügen'

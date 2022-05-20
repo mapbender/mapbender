@@ -138,6 +138,10 @@ mb:
       tag:
         overview: Übersicht
         map: 'Karte (overview)'
+      admin:
+        visibility.closed_initially: Initial geschlossen
+        visibility.open_initially: Initial offen
+        visibility.open_permanent: Dauerhaft offen
     metadata:
       popup:
         title: Metadaten

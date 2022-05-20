@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Versleepbaar
       overview:
-        maximize: Maximaliseer
         fix: Repareer
       layerset:
         add: 'Voeg een lagenset toe'

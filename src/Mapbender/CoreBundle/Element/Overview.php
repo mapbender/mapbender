@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
@@ -13,8 +14,13 @@ use Mapbender\ManagerBundle\Component\Mapper;
  *
  * @author Paul Schmidt
  */
-class Overview extends AbstractElementService implements FloatingElement, ImportAwareInterface
+class Overview extends AbstractElementService
+    implements FloatingElement, ImportAwareInterface, ConfigMigrationInterface
 {
+
+    const VISIBILITY_CLOSED_INITIALLY = 'closed';
+    const VISIBILITY_OPEN_INITIALLY = 'open';
+    const VISIBILITY_OPEN_PERMANENT = 'open-permanent';
 
     /**
      * @inheritdoc
@@ -41,8 +47,8 @@ class Overview extends AbstractElementService implements FloatingElement, Import
             'layerset' => null,
             'width' => 200,
             'height' => 100,
-            'anchor' => 'right-top',
-            'maximized' => true,
+            'anchor' => 'right-bottom',
+            'visibility' => self::VISIBILITY_OPEN_INITIALLY,
             'fixed' => false,
         );
     }
@@ -86,8 +92,17 @@ class Overview extends AbstractElementService implements FloatingElement, Import
         $view = new TemplateView('MapbenderCoreBundle:Element:overview.html.twig');
         $view->attributes['class'] = 'mb-element-overview';
         $config = $element->getConfiguration();
-        if (empty($config['maximized'])) {
-            $view->attributes['class'] .= ' closed';
+        switch ($config['visibility']) {
+            case self::VISIBILITY_CLOSED_INITIALLY:
+                $view->attributes['class'] .= ' closed';
+                $view->variables['show_toggle'] = true;
+                break;
+            default:
+            case self::VISIBILITY_OPEN_INITIALLY:
+                $view->variables['show_toggle'] = true;
+                break;
+            case self::VISIBILITY_OPEN_PERMANENT:
+                $view->variables['show_toggle'] = false;
         }
         return $view;
     }
@@ -110,6 +125,18 @@ class Overview extends AbstractElementService implements FloatingElement, Import
                 true
             );
             $element->setConfiguration($configuration);
+        }
+    }
+
+    public static function updateEntityConfig(Element $entity)
+    {
+        $config = $entity->getConfiguration() ?: array();
+        if (\array_key_exists('maximized', $config)) {
+            $config += array(
+                'visibility' => ($config['maximized'] ? self::VISIBILITY_OPEN_INITIALLY : self::VISIBILITY_CLOSED_INITIALLY),
+            );
+            unset($config['maximized']);
+            $entity->setConfiguration($config);
         }
     }
 }

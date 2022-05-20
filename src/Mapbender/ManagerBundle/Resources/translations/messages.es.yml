@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Mobible
       overview:
-        maximize: Maximizar
         fix: Corregir
       layerset:
         add: 'Añadir conjunto de capas'

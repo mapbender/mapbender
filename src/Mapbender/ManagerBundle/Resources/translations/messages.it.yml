@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Trascinabile
       overview:
-        maximize: Massimizza
         fix: Fissa
       layerset:
         add: 'Aggiungi layerset'

@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Déplaçable
       overview:
-        maximize: Aggrandir
         fix: Fixer
       layerset:
         add: 'Ajouter un ensemble de couches'

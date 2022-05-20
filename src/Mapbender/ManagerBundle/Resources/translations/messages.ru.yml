@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Перетаскиваемый
       overview:
-        maximize: Максимизировать
         fix: Закрепить
       layerset:
         add: 'Добавить слои'

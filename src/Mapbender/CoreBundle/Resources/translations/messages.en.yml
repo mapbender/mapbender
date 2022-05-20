@@ -138,6 +138,10 @@ mb:
       tag:
         overview: overview
         map: map
+      admin:
+        visibility.closed_initially: Initially closed
+        visibility.open_initially: Initially open
+        visibility.open_permanent: Permanently open
     metadata:
       popup:
         title: Metadata

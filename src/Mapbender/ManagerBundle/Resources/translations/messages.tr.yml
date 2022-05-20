@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: 'Sürüklenebilir'
       overview:
-        maximize: 'Maksimuma çıkarma'
         fix: 'Sabit'
       layerset:
         add: 'Katman ekle'
