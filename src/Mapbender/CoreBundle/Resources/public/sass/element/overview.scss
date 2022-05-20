@@ -1,7 +1,9 @@
 .mb-element-overview {
   user-select: none;
+  position: relative; // For .toggleOverview absolute
 
   .toggleOverview {
+    position: absolute;
     padding: 0 6px;
     cursor: pointer;
     border-radius: $radius;
@@ -42,9 +44,6 @@
       opacity: 0;
       border: 0;
     }
-  }
-  .toggleOverview {
-    position: absolute;
   }
   .anchored-element-wrap-rt  & .toggleOverview {
     top: 0;
