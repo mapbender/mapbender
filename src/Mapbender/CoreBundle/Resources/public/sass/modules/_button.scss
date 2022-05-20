@@ -11,6 +11,7 @@ $buttonHoverTextColor: $buttonTextColor !default;
 $buttonCriticalTextColor: $lightFontColor !default;
 $buttonCriticalBorderColor: darken($buttonCriticalSecondColor, 5%) !default;
 $buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
+$buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
 
 .buttonCore, .linkButton {
   user-select: none;
@@ -61,7 +62,8 @@ $buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
   color: $buttonCriticalTextColor;
   background-color:$buttonCriticalFirstColor;
   border-color: $buttonCriticalBorderColor;
-  &:hover{
+  &:hover {
+    color: $buttonCriticalHoverTextColor;
     background-color: $buttonCriticalHoverColor;
   }
 }
