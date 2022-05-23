@@ -22,8 +22,9 @@
   <div class="authWrapper">
     {%- set backdrop = asset(login_backdrop_asset()) -%}
     {%- set hq_backdrop = login_backdrop_asset_hq() ? asset(login_backdrop_asset_hq()) : null -%}
-    <div class="container-login-img">
-    </div>
+    {%- block backdrop_markup -%}
+    <div class="container-login-img">{%- block inside_backdrop -%}{%- endblock -%}</div>
+    {%- endblock -%}
     <style>
       .container-login-img {
         background-image: url("{{ asset(login_backdrop_asset())}}");
