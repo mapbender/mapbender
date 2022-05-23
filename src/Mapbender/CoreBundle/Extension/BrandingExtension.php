@@ -19,7 +19,6 @@ class BrandingExtension extends AbstractExtension
     public function __construct($loginBackdrop)
     {
         $this->loginBackdrop = $loginBackdrop ?: 'bundles/mapbendercore/image/login-backdrop.jpg';
-        // $this->loginBackdrop = 'bundles/mapbendercore/kapfe.jpg'; //$loginBackdrop ?: 'bundles/mapbendercore/image/login-backdrop.jpg';
         $hqBackdrop = preg_replace('#(\.\w+)$#', '-4k${1}', $this->loginBackdrop);
         // NOTE: assumes cwd == docroot
         if (@\is_file($hqBackdrop) && @\is_readable($hqBackdrop)) {
