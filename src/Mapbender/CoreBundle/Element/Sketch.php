@@ -58,7 +58,6 @@ class Sketch extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             "auto_activate" => false,
             "deactivate_on_close" => true,
             "geometrytypes" => array(

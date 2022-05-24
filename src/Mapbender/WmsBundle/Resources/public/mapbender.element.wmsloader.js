@@ -13,13 +13,12 @@
         _layerOptionsOff: {options: {treeOptions: {selected: false}}},
         _create: function() {
             var self = this;
-            if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
-                return;
-            }
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
                 self._trigger('ready');
+            }, function() {
+                Mapbender.checkTarget('mbWmsloader');
             });
         },
         _setup: function(){

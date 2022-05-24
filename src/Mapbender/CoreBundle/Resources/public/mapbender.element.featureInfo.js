@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbFeatureInfo", {
         options: {
-            target: null,
             autoActivate: false,
             deactivateOnClose: true,
             displayType: 'tabs',
@@ -39,10 +38,10 @@
             };
 
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbFeatureInfo", self.options.target);
+                Mapbender.checkTarget("mbFeatureInfo");
             });
 
         },

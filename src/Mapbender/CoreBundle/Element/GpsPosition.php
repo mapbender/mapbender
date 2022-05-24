@@ -59,7 +59,6 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
     {
         return array_replace(parent::getDefaultConfiguration(), array(
             'autoStart'             => false,
-            'target'                => null,
             'icon' => 'iconGps',
             'average'               => 1,
             'follow'                => false,

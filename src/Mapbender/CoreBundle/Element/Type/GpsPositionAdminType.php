@@ -23,7 +23,6 @@ class GpsPositionAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.element.autostart',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
             ))

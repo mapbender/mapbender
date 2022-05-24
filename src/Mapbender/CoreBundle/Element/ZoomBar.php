@@ -56,7 +56,6 @@ class ZoomBar extends AbstractElementService implements FloatingElement
     public static function getDefaultConfiguration()
     {
         return array(
-            'target' => null,
             'components' => array(
                 "rotation",
                 "zoom_max",

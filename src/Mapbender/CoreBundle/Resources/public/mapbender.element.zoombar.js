@@ -2,7 +2,6 @@
 
 $.widget("mapbender.mbZoomBar", {
     options: {
-        target: null,
         draggable: true,
         zoomHomeRestoresLayers: false
     },
@@ -12,13 +11,12 @@ $.widget("mapbender.mbZoomBar", {
     configuredMapSettings: null,
 
     _create: function() {
-        if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
-            return;
-        }
         var self = this;
-        Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+        Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
             self.mbMap = mbMap;
             self._setup();
+        }, function() {
+            Mapbender.checkTarget('mbZoomBar');
         });
     },
 

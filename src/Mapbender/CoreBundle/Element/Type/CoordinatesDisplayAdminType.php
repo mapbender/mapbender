@@ -20,7 +20,6 @@ class CoordinatesDisplayAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.button.show_label',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('empty', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,

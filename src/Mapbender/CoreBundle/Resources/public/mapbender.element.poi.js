@@ -2,7 +2,6 @@
 
     $.widget('mapbender.mbPOI', {
         options: {
-            target: undefined,
             useMailto: false,
             gps: undefined
         },
@@ -18,13 +17,12 @@
 
         _create: function() {
             var self = this;
-            var target = this.options.target;
-            Mapbender.elementRegistry.waitReady(target).then(
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(
                 function(mbMap) {
                     self._setup(mbMap);
                 },
                 function() {
-                    Mapbender.checkTarget("mbPOI", target);
+                    Mapbender.checkTarget("mbPOI");
                 }
             );
         },

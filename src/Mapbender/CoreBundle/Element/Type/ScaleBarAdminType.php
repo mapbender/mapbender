@@ -13,7 +13,6 @@ class ScaleBarAdminType extends AbstractType
     {
         // @todo: add missing field labels
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             // @todo: should be an optional positive integer
             ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType')
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(

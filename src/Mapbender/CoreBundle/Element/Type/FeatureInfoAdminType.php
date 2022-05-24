@@ -32,7 +32,6 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))

@@ -12,7 +12,6 @@ class ScaleDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('scalePrefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,

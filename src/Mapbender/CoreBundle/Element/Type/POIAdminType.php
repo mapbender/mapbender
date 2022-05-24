@@ -29,7 +29,6 @@ class POIAdminType extends AbstractType
                     return \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\GpsPosition', true);
                 },
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
     }
 }

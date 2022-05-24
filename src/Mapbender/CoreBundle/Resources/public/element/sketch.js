@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbSketch", $.mapbender.mbBaseElement, {
         options: {
-            target: null,
             auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
@@ -35,11 +34,11 @@
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbSketch", self.options.target);
+                Mapbender.checkTarget('mbSketch');
             });
         },
         _setup: function(){

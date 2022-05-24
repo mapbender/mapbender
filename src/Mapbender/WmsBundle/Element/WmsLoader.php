@@ -74,7 +74,6 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             "autoOpen" => false,
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",

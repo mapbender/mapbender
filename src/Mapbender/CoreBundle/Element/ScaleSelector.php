@@ -64,7 +64,6 @@ class ScaleSelector extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             'label' => false,
             "tooltip" => static::getClassTitle(),
         );

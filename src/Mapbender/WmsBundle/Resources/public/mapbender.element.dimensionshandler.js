@@ -6,10 +6,10 @@
         model: null,
         _create: function () {
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbDimensionsHandler", self.options.target);
+                Mapbender.checkTarget('mbDimensionsHandler');
             });
         },
         _setup: function (mbMap) {

@@ -47,7 +47,6 @@ class POI extends AbstractElementService
             'useMailto' => true,
             /** @todo: use translatable texts */
             'body'      => 'Please take a look at this POI',
-            'target'    => null,
             'gps'       => null
         );
     }

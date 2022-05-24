@@ -38,7 +38,6 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     {
         return array(
             "tooltip" => "",
-            "target" => null,
             'dimensionsets' => array()
             
         );

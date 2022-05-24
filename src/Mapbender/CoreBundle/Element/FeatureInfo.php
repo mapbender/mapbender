@@ -63,7 +63,6 @@ class FeatureInfo extends AbstractElementService
             "printResult" => false,
             "onlyValid" => false,
             "displayType" => 'tabs',
-            "target" => null,
             "width" => 700,
             "height" => 500,
             "maxCount" => 100,

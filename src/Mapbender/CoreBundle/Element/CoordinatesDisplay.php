@@ -68,7 +68,6 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
             'empty' => 'x= - y= -',
             'prefix' => 'x= ',
             'separator' => ' y= ',
-            'target' => null
         );
     }
 
