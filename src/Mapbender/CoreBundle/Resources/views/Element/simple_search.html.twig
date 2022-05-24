@@ -1,6 +1,6 @@
 <form>
     <div class="autocompleteWrapper inputWrapper">
-        <input type="text" class="searchterm input"/>
+        <input type="text" class="searchterm input" placeholder="{{ placeholder | trans }}" />
     </div>
 {% if delay == 0 %}
     <input type="submit" value="{{'mb.core.simplesearch.input.search'|trans }}"/>

@@ -56,6 +56,7 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
     public static function getDefaultConfiguration()
     {
         return array(
+            'placeholder' => null,
             'query_url'       => 'http://',
             'query_key'       => 'q',
             'query_format'    => '%s',
@@ -86,6 +87,7 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
             $view->attributes['title'] = $element->getTitle();
         }
         $view->variables['delay'] = $config['delay'];
+        $view->variables['placeholder'] = $config['placeholder'] ?: $element->getTitle();
         return $view;
     }
 

@@ -74,6 +74,7 @@ mb:
         geometry:
           missing: The selected entry does not contain a geometry.
       admin:
+        placeholder: Placeholder
         sourceSrs: Source SRS
     searchrouter:
       no_results: 'No results found.'

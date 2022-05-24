@@ -25,6 +25,10 @@ class SimpleSearchAdminType extends AbstractType
         $defaults = SimpleSearch::getDefaultConfiguration();
 
         $builder
+            ->add('placeholder', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'label' => 'mb.core.simplesearch.admin.placeholder',
+                'required' => false,
+            ))
             ->add('query_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Query URL',
                 'required' => true,
