@@ -5,20 +5,10 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+
 
 class POIAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     /**
      * @inheritdoc
      */

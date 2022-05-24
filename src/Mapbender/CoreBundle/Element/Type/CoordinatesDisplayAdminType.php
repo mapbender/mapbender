@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+
 class CoordinatesDisplayAdminType extends AbstractType
 {
     /**
