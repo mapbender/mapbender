@@ -1,6 +1,18 @@
-## dev-master @ 80717228f
-* Fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
-* Improve image export / print reproduction of customized Openlayers 6 line patterns
+## dev-master @ c024c447e
+* [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
+* [Export / Print] improve reproduction of customized feature label sizes
+* [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
+* [Export / Print] improve reproduction of customized Openlayers 6 line patterns
+* [Copyright] Support automatic popup height (leave `height` configuration value empty)
+* [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
+* [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
+* Support template CSS references containing StringAsset objects (instead of file names)
+* Improve customizability of misc widget CSS (require files separately instead of `@import`)
+* Extract Sass variables for customizability
+  * `$buttonActiveTextColor` (~Digitizer table headings selected for sorting / current pagination button; complements background given in `$buttonFirstActiveColor`)
+  * `$buttonHoverTextColor`, `$buttonCriticalHoverTextColor` (misc popup / traditional element buttons)
+  * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
+* Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
 
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
