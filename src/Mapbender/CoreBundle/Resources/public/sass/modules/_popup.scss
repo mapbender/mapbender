@@ -105,6 +105,7 @@
     .popup {
       margin: 0 auto;
       max-height: 100%;
+      max-width: 100%;
       &.fom-popup {
         // .fom-popup buttons are styled with position: absolute; forcing max height on the poopup prevents them from
         // leaking into content or going off-screen
