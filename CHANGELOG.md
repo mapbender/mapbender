@@ -1,4 +1,7 @@
-## dev-master @ c024c447e
+## dev-master @ 71ecc984e
+* Fix misc errors reformatting Application custom css validation error messages
+* Fix Application custom css validation message not displayed
+* Fix wide modal popups (e.g. Copyright element) clipping over screen edge
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
