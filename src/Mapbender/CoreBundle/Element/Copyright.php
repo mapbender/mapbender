@@ -5,9 +5,10 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Twig;
 
 /**
  * A Copyright
@@ -18,10 +19,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class Copyright extends AbstractElementService implements ElementHttpHandlerInterface
 {
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templateEngine;
 
-    public function __construct(EngineInterface $templateEngine)
+    public function __construct(Twig\Environment $templateEngine)
     {
         $this->templateEngine = $templateEngine;
     }
@@ -112,9 +113,10 @@ class Copyright extends AbstractElementService implements ElementHttpHandlerInte
     {
         switch ($request->attributes->get('action')) {
             case 'content':
-                return $this->templateEngine->renderResponse('MapbenderCoreBundle:Element:copyright-content.html.twig', array(
+                $content = $this->templateEngine->render('MapbenderCoreBundle:Element:copyright-content.html.twig', array(
                     'configuration' => $element->getConfiguration(),
                 ));
+                return new Response($content);
             default:
                 throw new NotFoundHttpException();
         }

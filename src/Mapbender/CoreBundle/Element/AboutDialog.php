@@ -5,16 +5,17 @@ use Mapbender\Component\Element\ButtonLike;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Twig;
 
 class AboutDialog extends ButtonLike implements ElementHttpHandlerInterface
 {
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templateEngine;
 
-    public function __construct(EngineInterface $templateEngine)
+    public function __construct(Twig\Environment $templateEngine)
     {
         $this->templateEngine = $templateEngine;
     }
@@ -95,7 +96,8 @@ class AboutDialog extends ButtonLike implements ElementHttpHandlerInterface
         $action = $request->attributes->get('action');
         switch ($action) {
             case 'content':
-                return $this->templateEngine->renderResponse('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
+                $content = $this->templateEngine->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
+                return new Response($content);
             default:
                 throw new BadRequestHttpException("Unsupported action {$action}");
         }

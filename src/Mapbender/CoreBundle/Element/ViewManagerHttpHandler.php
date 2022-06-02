@@ -20,18 +20,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig;
 
 class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 {
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templating;
     /** @var EntityManagerInterface */
     protected $em;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
-    public function __construct(EngineInterface $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
+    public function __construct(Twig\Environment $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
     {
         $this->templating = $templating;
         $this->em = $em;

@@ -38,7 +38,7 @@
         </service>
         <service id="mapbender.element.Copyright" class="Mapbender\CoreBundle\Element\Copyright">
             <tag name="mapbender.element" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="twig" />
         </service>
         <service id="mapbender.element.Layertree" class="Mapbender\CoreBundle\Element\Layertree">
             <tag name="mapbender.element" />
@@ -84,7 +84,7 @@
             <argument type="service" id="mb.element.ViewManager.http_handler" />
         </service>
         <service id="mb.element.ViewManager.http_handler" class="%mapbender.element.ViewManager.http_handler.class%">
-            <argument type="service" id="templating" />
+            <argument type="service" id="twig" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
         </service>
@@ -102,7 +102,7 @@
         </service>
         <service id="mapbender.element.AboutDialog" class="Mapbender\CoreBundle\Element\AboutDialog">
             <tag name="mapbender.element" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="twig" />
         </service>
         <service id="mapbender.element.GpsPosition" class="Mapbender\CoreBundle\Element\GpsPosition">
             <tag name="mapbender.element" />
