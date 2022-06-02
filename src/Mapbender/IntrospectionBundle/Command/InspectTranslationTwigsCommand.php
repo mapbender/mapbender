@@ -12,11 +12,11 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
-use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Twig\Loader\FilesystemLoader;
 
 class InspectTranslationTwigsCommand extends Command
 {

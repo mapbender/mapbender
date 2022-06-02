@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig;
 
 class ApplicationMarkupRenderer
 {
@@ -19,7 +19,7 @@ class ApplicationMarkupRenderer
     protected $elementFilter;
     /** @var ElementMarkupRenderer */
     protected $elementRenderer;
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templatingEngine;
     /** @var bool */
     protected $allowResponsiveContainers;
@@ -29,7 +29,7 @@ class ApplicationMarkupRenderer
 
     public function __construct(ElementFilter $elementFilter,
                                 ElementMarkupRenderer $elementRenderer,
-                                EngineInterface $templatingEngine,
+                                Twig\Environment $templatingEngine,
                                 $allowResponsiveContainers)
     {
         $this->elementFilter = $elementFilter;

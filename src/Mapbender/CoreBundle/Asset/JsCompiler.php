@@ -3,8 +3,6 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
-use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Locates and merges JavaScript assets for applications.
@@ -13,15 +11,6 @@ use Symfony\Component\Templating\EngineInterface;
  */
 class JsCompiler extends AssetFactoryBase
 {
-    /** @var EngineInterface */
-    protected $templateEngine;
-
-    public function __construct(EngineInterface $templateEngine, FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
-    {
-        parent::__construct($fileLocator, $webDir, $bundleClassMap);
-        $this->templateEngine = $templateEngine;
-    }
-
     /**
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
