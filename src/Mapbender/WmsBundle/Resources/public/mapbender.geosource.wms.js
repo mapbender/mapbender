@@ -235,6 +235,7 @@ window.Mapbender.WmsSource = (function() {
                 LAYERS: [],
                 STYLES: [],
                 VERSION: this.configuration.options.version,
+                TRANSPARENT: this.configuration.options.transparent && 'true' || 'false',
                 FORMAT: this.configuration.options.format || null
             };
             var activatedLeaves = this.getActivatedLeaves();
