@@ -1,7 +1,9 @@
-## dev-master @ 71ecc984e
+## dev-master @ a103d43e4
 * Fix misc errors reformatting Application custom css validation error messages
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
+* Fix Openlayers 6 frontend / export / print not requesting WMS with configured "transparent" param
+* [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
@@ -16,6 +18,8 @@
   * `$buttonHoverTextColor`, `$buttonCriticalHoverTextColor` (misc popup / traditional element buttons)
   * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
+* Resolve misc twig deprecations
+* Resolve PHP zip method deprecations
 
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
