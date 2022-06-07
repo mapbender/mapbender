@@ -42,6 +42,16 @@ window.Mapbender.MapModelOl4 = (function() {
         }
 
         this.olMap = new ol.Map({
+            interactions: ol.interaction.defaults({dragPan: false}).extend([
+                new ol.interaction.DragPan({
+                    condition: function (mapBrowserEvent) {
+                        return (
+                            mapBrowserEvent.originalEvent.isPrimary &&
+                            mapBrowserEvent.originalEvent.button < 2
+                        );
+                    },
+                }),
+            ]),
             view: view,
             controls: [],
             target: this.mbMap.element.attr('id')
