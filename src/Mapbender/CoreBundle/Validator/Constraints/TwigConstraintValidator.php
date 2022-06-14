@@ -10,7 +10,7 @@ use Twig\Error\Error;
 class TwigConstraintValidator extends ConstraintValidator
 {
     /** @var Environment */
-    private $twig;
+    protected $twig;
 
     /**
      * @param Environment $twig

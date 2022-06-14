@@ -18,3 +18,10 @@ services:
             - '@twig'
         tags:
             - { name: validator.constraint_validator }
+
+    mapbender.validator.html:
+        class: Mapbender\CoreBundle\Validator\Constraints\HtmlConstraintValidator
+        arguments:
+            - '@twig'
+        tags:
+            - { name: validator.constraint_validator }

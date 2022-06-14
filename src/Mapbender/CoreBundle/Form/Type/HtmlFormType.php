@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Mapbender\CoreBundle\Validator\Constraints\HtmlConstraint;
-use Mapbender\CoreBundle\Validator\Constraints\TwigConstraint;
 
 /**
  * Class HtmlFormType
@@ -20,20 +19,11 @@ class HtmlFormType extends AbstractType
     private $htmlConstraint;
 
     /**
-     * @var TwigConstraint
-     */
-    private $twigConstraint;
-
-    /**
-     * HTMLElementAdminType constructor
-     *
      * @param HtmlConstraint $htmlConstraint
-     * @param TwigConstraint $twigConstraint
      */
-    public function __construct(HtmlConstraint $htmlConstraint, TwigConstraint $twigConstraint)
+    public function __construct(HtmlConstraint $htmlConstraint)
     {
         $this->htmlConstraint = $htmlConstraint;
-        $this->twigConstraint = $twigConstraint;
     }
 
     /**
@@ -44,7 +34,6 @@ class HtmlFormType extends AbstractType
         $resolver->setDefaults(array(
             'constraints' => array(
                 $this->htmlConstraint,
-                $this->twigConstraint,
             )
         ));
     }
