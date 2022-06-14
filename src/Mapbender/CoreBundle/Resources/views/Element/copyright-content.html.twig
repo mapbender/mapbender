@@ -1,1 +1,6 @@
-<p>{{ configuration.content |trans |raw }}</p>
+<p>
+    {%- set _captured -%}
+    {{- include(template_from_string(configuration.content)) -}}
+    {%- endset -%}
+    {{- _captured | trans | raw -}}
+</p>
