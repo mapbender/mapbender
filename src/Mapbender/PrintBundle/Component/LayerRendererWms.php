@@ -186,7 +186,7 @@ class LayerRendererWms extends LayerRenderer
         );
         if (false === stripos($layerDef['url'], 'TRANSPARENT=')) {
             $serviceParams += array(
-                'TRANSPARENT' => 'true',
+                'TRANSPARENT' => 'TRUE',
             );
         }
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
