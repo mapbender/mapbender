@@ -180,6 +180,13 @@ window.Mapbender.WmsSource = (function() {
                     // @see https://github.com/openlayers/ol2/blob/master/lib/OpenLayers/Layer/HTTPRequest.js#L157
                     newParams['_OLSALT'] = Math.random();
                 }
+                if (paramsChanged && visibilityChanged) {
+                    // Prevent Openlayers 6 from reusing the previous image contents while
+                    // still fetching from modified url
+                    if (olLayer.getRenderer() && olLayer.getRenderer().getImage()) {
+                        olLayer.getRenderer().image_ = null;
+                    }
+                }
                 engine.applyWmsParams(olLayer, newParams);
                 engine.setLayerVisibility(olLayer, true);
             }
