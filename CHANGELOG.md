@@ -1,4 +1,4 @@
-## dev-master @ a103d43e4
+## dev-master @ 248ca7209
 * Fix misc errors reformatting Application custom css validation error messages
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -9,6 +9,7 @@
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
 * [Export / Print] improve reproduction of customized Openlayers 6 line patterns
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
+* [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
 * Support template CSS references containing StringAsset objects (instead of file names)
