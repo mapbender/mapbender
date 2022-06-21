@@ -342,6 +342,28 @@ window.Mapbender.MapModelOl4 = (function() {
         }
     },
     /**
+     * Get gedesic units per meter at given point. UPMs are returned separately
+     * for vertical and horizontal axes.
+     *
+     * @param {Array<Number>} point
+     * @param {String} [srsName]
+     * @returns {{v: number, h: number}}
+     */
+    getUnitsPerMeterAt: function(point, srsName) {
+        var xform84 = proj4(srsName || this.getCurrentProjectionCode(), 'EPSG:4326').forward;
+        var left84 = xform84([point[0] - 0.5, point[1]]);
+        var right84 = xform84([point[0] + 0.5, point[1]]);
+        var bottom84 = xform84([point[0], point[1] - 0.5]);
+        var top84 = xform84([point[0], point[1] + 0.5]);
+
+        var distanceH = ol.sphere.getDistance(left84, right84);
+        var distanceV = ol.sphere.getDistance(bottom84, top84);
+        return {
+            h: 1.0 / distanceH,
+            v: 1.0 / distanceV
+        };
+    },
+    /**
      * Parses a single (E)WKT feature from text. Returns the engine-native feature.
      *
      * @param {String} text

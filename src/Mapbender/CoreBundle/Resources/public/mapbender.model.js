@@ -229,6 +229,31 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         return null;
     },
     /**
+     * Get gedesic units per meter at given point. UPMs are returned separately
+     * for vertical and horizontal axes.
+     *
+     * @param {Array<Number>} point
+     * @param {String} [srsName]
+     * @returns {{v: number, h: number}}
+     */
+    getUnitsPerMeterAt: function(point, srsName) {
+        var xform84 = function(point) {
+            var xy = Mapbender.mapEngine.transformCoordinate({x: point[0], y: point[1]}, srsName, 'EPSG:4326');
+            return {lon: xy.x, lat: xy.y};
+        };
+        var left84 = xform84([point[0] - 0.5, point[1]]);
+        var right84 = xform84([point[0] + 0.5, point[1]]);
+        var bottom84 = xform84([point[0], point[1] - 0.5]);
+        var top84 = xform84([point[0], point[1] + 0.5]);
+
+        var distanceH = OpenLayers.Util.distVincenty(left84, right84) * 1000;
+        var distanceV = OpenLayers.Util.distVincenty(bottom84, top84) * 1000;
+        return {
+            h: 1.0 / distanceH,
+            v: 1.0 / distanceV
+        };
+    },
+    /**
      * Calculates an extent from a geometry with buffer.
      * @param {OpenLayers.Geometry} geom geometry
      * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer).
