@@ -11,7 +11,6 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
@@ -100,7 +99,7 @@ class Importer extends RefreshableSourceLoader
         }
         $target->setContact($contact);
 
-        $this->updateLayer($target->getRootlayer(), $reloaded->getRootlayer());
+        $this->replaceSourceLayers($target, $reloaded);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
         /** @var ApplicationRepository $applicationRepository */
@@ -151,68 +150,16 @@ class Importer extends RefreshableSourceLoader
         return $this->httpTransport->getUrl($url);
     }
 
-    /**
-     * @param WmsLayerSource $target
-     * @param WmsLayerSource $updatedLayer
-     */
-    private function updateLayer(WmsLayerSource $target, WmsLayerSource $updatedLayer)
+    private function replaceSourceLayers(WmsSource $target, WmsSource $source)
     {
-        $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
-        EntityUtil::copyEntityFields($target, $updatedLayer, $classMeta, false);
-        $this->copyKeywords($target, $updatedLayer, 'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
-
-        /* handle sublayer- layer. Name is a unique identifier for a wms layer. */
-        /* remove missed layers */
-        $updatedSubLayers = $updatedLayer->getSublayer();
-        $targetSubLayers = $target->getSublayer();
-        foreach ($targetSubLayers as $layerOldSub) {
-            $removeChild = !$this->findLayer($layerOldSub, $updatedSubLayers);
-            if ($removeChild) {
-                $this->entityManager->remove($layerOldSub);
-                // NOTE: child layer is reachable from TWO different association collections and must be
-                //       manually removed from both, or it will be rediscovered and re-saved on flush
-                $targetSubLayers->removeElement($layerOldSub);
-                $target->getSource()->getLayers()->removeElement($layerOldSub);
-            }
+        foreach ($target->getLayers() as $oldLayer) {
+            $this->entityManager->remove($oldLayer);
         }
-        /* update founded layers, add new layers */
-        foreach ($updatedSubLayers as $subItemNew) {
-            $subItemsOld = $this->findLayer($subItemNew, $targetSubLayers);
-            if (count($subItemsOld) === 1) {
-                // update single layer
-                $this->updateLayer($subItemsOld[0], $subItemNew);
-            } else {
-                foreach ($subItemsOld as $layerToRemove) {
-                    $this->entityManager->remove($layerToRemove);
-                    $targetSubLayers->removeElement($layerToRemove);
-                    $target->getSource()->getLayers()->removeElement($layerToRemove);
-                }
-                $this->setLayerSourceRecursive($subItemNew, $target->getSource());
-                $target->addSublayer($subItemNew);
-            }
-        }
-    }
 
-    /**
-     * Finds a layers at the layerlist.
-     * @param WmsLayerSource $layer
-     * @param WmsLayerSource[] $layerList
-     * @return WmsLayerSource[]
-     */
-    private function findLayer($layer, $layerList)
-    {
-        $found = array();
-        $matchName = $layer->getName();
-        $matchTitle = $layer->getTitle();
+        $target->getLayers()->clear();
+        $target->getLayers()->add($source->getRootlayer());
 
-        foreach ($layerList as $candidate) {
-            $namesMatch = $matchName && $matchName === $candidate->getName();
-            $titlesMatch = $matchTitle && $matchTitle === $candidate->getTitle();
-            if ($namesMatch || (!$matchName && $titlesMatch)) {
-                $found[] = $candidate;
-            }
-        }
-        return $found;
+        $this->setLayerSourceRecursive($target->getRootlayer(), $target);
     }
 
     /**
@@ -222,7 +169,9 @@ class Importer extends RefreshableSourceLoader
     private function setLayerSourceRecursive(WmsLayerSource $layer, WmsSource $source)
     {
         $layer->setSource($source);
-        $source->getLayers()->add($layer);
+        if (!$source->getLayers()->contains($layer)) {
+            $source->getLayers()->add($layer);
+        }
         foreach ($layer->getSublayer() as $child) {
             $this->setLayerSourceRecursive($child, $source);
         }
@@ -231,7 +180,6 @@ class Importer extends RefreshableSourceLoader
     private function updateInstance(WmsInstance $instance)
     {
         $source = $instance->getSource();
-        $this->pruneInstanceLayers($instance);
 
         if ($getMapFormats = $source->getGetMap()->getFormats()) {
             if (!in_array($instance->getFormat(), $getMapFormats)) {
@@ -255,70 +203,57 @@ class Importer extends RefreshableSourceLoader
             $instance->setExceptionformat(null);
         }
         $this->updateInstanceDimensions($instance);
-        $instanceRoot = $instance->getRootlayer();
-        if (!$instanceRoot) {
-            $instanceRoot = new WmsInstanceLayer();
-            $instanceRoot->populateFromSource($instance, $instance->getSource()->getRootlayer());
-            $instance->setLayers(new ArrayCollection(array($instanceRoot)));
-        } else {
-            $this->updateInstanceLayer($instanceRoot);
-        }
+
+        $this->replaceInstanceLayers($instance, $source);
     }
 
-    /**
-     * @param WmsInstanceLayer $target
-     * @param ArrayCollection|WmsLayerSource[] $sourceChildren
-     */
-    protected function updateInstanceLayerChildren(WmsInstanceLayer $target, $sourceChildren)
+    protected function replaceInstanceLayers(WmsInstance $instance, WmsSource $source)
     {
-        // Maintain configured min / max scale and layertree settings
-        // Ordering will be reset to source ordering
-        $commonChildSources = new ArrayCollection();
-        $commonChildInstances = new ArrayCollection();
-        foreach ($target->getSublayer() as $instanceChild) {
-            $this->updateInstanceLayer($instanceChild);
-            $commonChildSources->add($instanceChild->getSourceItem());
-            $commonChildInstances->add($instanceChild);
-        }
-        $target->setSublayer(new ArrayCollection());
-        foreach ($sourceChildren as $sourceChild) {
-            $instanceChildIndex = $commonChildSources->indexOf($sourceChild);
-            if ($instanceChildIndex !== false) {
-                $matchedInstanceLayer = $commonChildInstances[$instanceChildIndex];
-                $matchedInstanceLayer->setPriority($sourceChild->getPriority());
-                $target->addSublayer($matchedInstanceLayer);
-            } else {
-                $instance = $target->getSourceInstance();
-                $sublayerInstance = new WmsInstanceLayer();
-                $sublayerInstance->populateFromSource($instance, $sourceChild);
-                $instance->getLayers()->add($sublayerInstance);
-                $target->addSublayer($sublayerInstance);
-                $this->entityManager->persist($sublayerInstance);
+        $oldInstanceRoot = $instance->getRootlayer();
+        // Store / "index" old instance layers so we may copy some manually
+        // configured properties over
+        $nameMap = array();
+        $titleMap = array();
+        foreach ($instance->getLayers() as $oldInstanceLayer) {
+            $sourceItem = $oldInstanceLayer->getSourceItem();
+            if ($sourceItem->getName()) {
+                $nameMap += array($sourceItem->getName() => $oldInstanceLayer);
+            }
+            if ($sourceItem->getTitle()) {
+                $titleMap += array($sourceItem->getTitle() => $oldInstanceLayer);
             }
         }
-    }
 
-    private function updateInstanceLayer(WmsInstanceLayer $target)
-    {
-        $sourceItem = $target->getSourceItem();
-        $this->updateInstanceLayerChildren($target, $sourceItem->getSublayer());
-        $queryable = $sourceItem->getQueryable();
-        if (!$queryable) {
-            if ($queryable !== null) {
-                $queryable = false;
+        // Start over
+        foreach ($instance->getLayers() as $oldInstanceLayer) {
+            $this->entityManager->remove($oldInstanceLayer);
+        }
+        $instance->getLayers()->clear();
+
+        $newRoot = new WmsInstanceLayer();
+        $newRoot->populateFromSource($instance, $source->getRootlayer());
+
+        $instanceLayerMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($newRoot));
+
+        // Salvage / copy previously configured instance layer properties
+        foreach ($instance->getLayers() as $newInstanceLayer) {
+            $copyFrom = false;
+            $name = $newInstanceLayer->getSourceItem()->getName();
+            $title = $newInstanceLayer->getSourceItem()->getTitle();
+            if (!$newInstanceLayer->getParent()) {
+                $copyFrom = $oldInstanceRoot;
+            } elseif ($name && !empty($nameMap[$name])) {
+                $copyFrom = $nameMap[$name];
+            } elseif ($title && !empty($titleMap[$title])) {
+                $copyFrom = $titleMap[$title];
             }
-            $target->setInfo($queryable);
-            $target->setAllowinfo($queryable);
+            if ($copyFrom) {
+                // Copy all configurable properties except priority (=sorting order)
+                $priority = $newInstanceLayer->getPriority();
+                EntityUtil::copyEntityFields($newInstanceLayer, $copyFrom, $instanceLayerMeta);
+                $newInstanceLayer->setPriority($priority);
+            }
         }
-        if ($sourceItem->getSublayer()->count() > 0) {
-            $target->setToggle(is_bool($target->getToggle()) ? $target->getToggle() : false);
-            $alowtoggle = is_bool($target->getAllowtoggle()) ? $target->getAllowtoggle() : true;
-            $target->setAllowtoggle($alowtoggle);
-        } else {
-            $target->setToggle(null);
-            $target->setAllowtoggle(null);
-        }
-        $this->entityManager->persist($target);
     }
 
     /**
@@ -375,53 +310,5 @@ class Importer extends RefreshableSourceLoader
             $offset += $this->assignLayerPriorities($child, $value + $offset);
         }
         return $offset;
-    }
-
-    /**
-     * @param WmsInstance $instance
-     * @deprecated update the doctrine schema, so the delete cascade handles this
-     */
-    protected function pruneInstanceLayers(WmsInstance $instance)
-    {
-        // This might be completely redundant on current schema. There is
-        // a delete cascade on the instance layer => source item relation.
-        // This remains only as a BC amenity for outdated schema
-        $uow = $this->entityManager->getUnitOfWork();
-        do {
-            $deleted = false;
-            foreach ($instance->getLayers() as $instanceLayer) {
-                $sourceLayer = $instanceLayer->getSourceItem();
-                if ($uow->isScheduledForDelete($sourceLayer)) {
-                    $this->entityManager->remove($instanceLayer);
-                    $deleted = $this->pruneInstanceSubLayer($instance->getRootlayer(), $instanceLayer);
-                    if ($deleted) {
-                        // restart loop after modifying collection(s)
-                        break;
-                    }
-                }
-            }
-        } while ($deleted);
-    }
-
-    /**
-     * @param WmsInstanceLayer $parent
-     * @param WmsInstanceLayer $toRemove
-     * @deprecated update the doctrine schema, so the delete cascade handles this
-     * @return bool
-     */
-    protected function pruneInstanceSubLayer(WmsInstanceLayer $parent, WmsInstanceLayer $toRemove)
-    {
-        // depth first recursion
-        foreach ($parent->getSublayer() as $sublayer) {
-            if ($this->pruneInstanceSubLayer($sublayer, $toRemove)) {
-                return true;
-            }
-            if ($sublayer === $toRemove) {
-                $parent->getSublayer()->removeElement($toRemove);
-                $toRemove->getSourceInstance()->getLayers()->removeElement($toRemove);
-                return true;
-            }
-        }
-        return false;
     }
 }
