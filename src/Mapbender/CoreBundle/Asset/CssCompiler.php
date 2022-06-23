@@ -29,16 +29,15 @@ class CssCompiler extends AssetFactoryBase
      * @param string $webDir
      * @param string[] $bundleClassMap
      * @param FilterInterface $sassFilter
-     * @param FilterInterface $cssRewriteFilter
      * @param RouterInterface $router
      */
     public function __construct(FileLocatorInterface $fileLocator, $webDir, $bundleClassMap,
-                                FilterInterface $sassFilter, FilterInterface $cssRewriteFilter,
+                                FilterInterface $sassFilter,
                                 RouterInterface $router)
     {
         parent::__construct($fileLocator, $webDir, $bundleClassMap);
         $this->sassFilter = $sassFilter;
-        $this->cssRewriteFilter = $cssRewriteFilter;
+        $this->cssRewriteFilter = new \Assetic\Filter\CssRewriteFilter();
         $this->router = $router;
     }
 
