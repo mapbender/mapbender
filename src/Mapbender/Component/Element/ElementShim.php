@@ -98,11 +98,15 @@ class ElementShim extends AbstractElementService
         $key = \spl_object_id($element);
         if (empty($this->components[$key])) {
             $hc = $this->handlingClassName;
+            if (!$hc) {
+                throw new InvalidElementClassException($element->getClass(), "No class implementation for {$element->getClass()}");
+            }
             /** @see \Mapbender\CoreBundle\Component\Element::__construct */
             $instance = new $hc($this->componentContainer, $element);
             if (!$instance instanceof ElementInterface) {
-                throw new InvalidElementClassException($this->handlingClassName);
+                throw new InvalidElementClassException($hc, "Incompatible class signature on {$hc} handling {$element->getClass()}");
             }
+
             $this->components[$key] = $instance;
         }
         return $this->components[$key];
