@@ -205,12 +205,7 @@ class ApplicationAssetService
                 break;
             case 'ol4-js':  // legacy identifier
             case Application::MAP_ENGINE_CURRENT . '-js':
-                // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
-                // Currently known missing:
-                // * ol.proj.getTransformFromProjections
-                // * ol.style.Style.defaultFunction
-                // @todo performance: minified version seems to work with the Webpack-based Openlayers 6 build but needs verification
-                if (false || !$this->debug) {
+                if (!$this->debug) {
                     $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
                 } else {
