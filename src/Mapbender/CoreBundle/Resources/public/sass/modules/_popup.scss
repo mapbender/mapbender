@@ -91,12 +91,8 @@
   }
   z-index: 100; // Same as .ui-front
   background-color:#f4f4f4;
-  border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
-  }
+  border: 1px solid $thirdColor;
+  border-bottom-width: 5px;
 }
 
 .popupContainer.modal {

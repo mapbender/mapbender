@@ -24,19 +24,18 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
     // Guarantee enough space so our tab.active can move up without clipping
     padding-top: 1px;
   }
+  .tab, .container {
+    border: 1px solid $thirdColor;
+    background-color:$contentColor;
+  }
   .tab{
     margin-right: -1px;
     color: $darkFontColor;
-    background-color:$contentColor;
     cursor:pointer;
     line-height: 3;
     position: relative; // for z-index
     z-index:10;
-    border:{
-      left:solid 1px $thirdColor;
-      top:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-    }
+    border-bottom: none;
     float:left;
     padding: 0 0.75em;;
     @extend .smallText;
@@ -61,13 +60,7 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
     padding:$space;
     position:relative;
     z-index:20;
-    background-color:$contentColor;
-    border:{
-      top:solid 3px $thirdColor;
-      left:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-      bottom:solid 1px $thirdColor;
-    }
+    border-top-width: 3px;
     &.active{display:block;}
   }
 }
