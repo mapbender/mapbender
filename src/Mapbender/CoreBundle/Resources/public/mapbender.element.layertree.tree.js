@@ -240,8 +240,15 @@
                     nodeType = this.consts.root;
                 }
                 $li.toggleClass('showLeaves', treeOptions.toggle);
-                var $folder = $('.-fn-toggle-children', $li);
-                $folder.toggleClass('iconFolderActive', treeOptions.toggle);
+            } else {
+                nodeType = this.consts.simple;
+            }
+            if (layer.children && layer.children.length && treeOptions.allow.toggle) {
+                $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', treeOptions.toggle);
+            } else {
+                $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
+            }
+            if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('.-fn-toggle-layer', $li).remove();
                 }
@@ -249,8 +256,6 @@
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }
             } else {
-                $('.-fn-toggle-children', $li).remove();
-                nodeType = this.consts.simple;
                 $childList.remove();
             }
             $li.attr('data-type', nodeType);

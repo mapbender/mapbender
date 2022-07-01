@@ -66,6 +66,12 @@
   .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
     margin-left: 4px;
   }
+
+  .disabled-placeholder {
+    pointer-events: none;
+    opacity: 0;
+    cursor: default;
+  }
 }
 
 $layer-slider-bar-height: 5px;
