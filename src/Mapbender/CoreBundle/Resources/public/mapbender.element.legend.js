@@ -284,6 +284,7 @@
                 closeOnESC: false,
                 detachOnClose: true,
                 content: [this.element],
+                cssClass: 'legend-dialog',
                 width: 350,
                 height: 500,
                 buttons: [
