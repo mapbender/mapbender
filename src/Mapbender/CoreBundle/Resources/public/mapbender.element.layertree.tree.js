@@ -629,32 +629,36 @@
         open: function(callback) {
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
-                var self = this;
                 if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('data-title'),
-                        modal: false,
-                        resizable: true,
-                        draggable: true,
-                        closeOnESC: false,
-                        detachOnClose: false,
-                        content: [self.element.show()],
-                        width: 350,
-                        height: 500,
-                        cssClass: 'customLayertree',
-                        buttons: [
-                            {
-                                label: Mapbender.trans('mb.actions.close'),
-                                cssClass: 'button popupClose'
-                            }
-                        ]
+                    var popupOptions = Object.assign(this.getPopupOptions(), {
+                        content: [this.element.show()]
                     });
+                    this.popup = new Mapbender.Popup2(popupOptions);
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popup.$element.show();
                 }
             }
             this._reset();
+        },
+        getPopupOptions: function() {
+            return {
+                title: this.element.attr('data-title'),
+                modal: false,
+                resizable: true,
+                draggable: true,
+                closeOnESC: false,
+                detachOnClose: false,
+                width: 350,
+                height: 500,
+                cssClass: 'layertree-dialog customLayertree',
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'button popupClose'
+                    }
+                ]
+            };
         },
         /**
          * Closes the popup dialog
