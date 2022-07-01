@@ -9,6 +9,8 @@
 @import "modules/dropdown";
 @import "modules/dateselector";
 
+$sidepaneBorderColor: #a2a2a2 !default;
+
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
   display: none;
@@ -201,8 +203,7 @@ ul.toolBar, .toolBar > ul {
   background-color: $contentColor;
   width: 350px;
 
-  border-color: $thirdColor;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid $sidepaneBorderColor;
   .toggleSideBar {
     font-size: 1.5rem;
     display: inline-block;
@@ -211,14 +212,16 @@ ul.toolBar, .toolBar > ul {
     border-bottom-right-radius: $radius;
   }
 
-  // style for the left side pane
-  &.left {
+  position: absolute;
+  .toggleSideBar {
     position: absolute;
+    top: 0;
+  }
+
+  &.left {
     left: 0;
-    border-right: 1px solid;
+    border-right: 1px solid $sidepaneBorderColor;
     .toggleSideBar {
-      position: absolute;
-      top: 0;
       left: 0;
       margin-left: 100%;
     }
@@ -226,12 +229,9 @@ ul.toolBar, .toolBar > ul {
 
   // style for the right side pane
   &.right {
-    position: absolute;
     right: 0;
-    border-left: 1px solid;
+    border-left: 1px solid $sidepaneBorderColor;
     .toggleSideBar {
-      position: absolute;
-      top: 0;
       right: 0;
       margin-right: 100%;
     }
