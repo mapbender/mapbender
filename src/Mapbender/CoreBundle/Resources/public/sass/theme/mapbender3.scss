@@ -201,7 +201,8 @@ ul.toolBar, .toolBar > ul {
   background-color: $contentColor;
   width: 350px;
 
-  border-bottom:1px solid darken(white, 30%);
+  border-color: $thirdColor;
+  border-bottom: 1px solid;
   .toggleSideBar {
     font-size: 1.5rem;
     display: inline-block;
@@ -214,7 +215,7 @@ ul.toolBar, .toolBar > ul {
   &.left {
     position: absolute;
     left: 0;
-    border-right:1px solid darken(white, 30%);
+    border-right: 1px solid;
     .toggleSideBar {
       position: absolute;
       top: 0;
@@ -227,7 +228,7 @@ ul.toolBar, .toolBar > ul {
   &.right {
     position: absolute;
     right: 0;
-    border-left:1px solid darken(white, 30%);
+    border-left: 1px solid;
     .toggleSideBar {
       position: absolute;
       top: 0;
