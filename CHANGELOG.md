@@ -1,4 +1,4 @@
-## dev-master @ b3cf2409e
+## dev-master @ fa1a2058c
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -11,6 +11,7 @@
 * [Export / Print] improve reproduction of customized feature label sizes
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
 * [Export / Print] improve reproduction of customized Openlayers 6 line patterns
+* [Print] Fix Openlayers 6 print scale calculations not respecting geodesic distortions at printout location
 * [Layertree] fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
