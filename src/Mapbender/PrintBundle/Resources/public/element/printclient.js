@@ -240,11 +240,16 @@
         },
         _getPrintBounds: function(centerX, centerY, scale) {
             if (Mapbender.mapEngine.code !== 'ol2') {
-                // OpenLayers 4
-                // @todo: geodesic aspect ratio
-                var pupm = this.map.getModel().getProjectionUnitsPerMeter();
-                var projectedWidth = this.width * scale * pupm;
-                var projectedHeight = this.height * scale * pupm;
+                // OpenLayers >= 4
+                var pupm = this.map.getModel().getUnitsPerMeterAt([centerX, centerY]);
+
+                // Compromise mode: match scale on longitude axis, allow distortions
+                // to remain on latitude.
+                // Otherwise e.g. EPSG:4326 would stop "looking like" EPSG:4326 completely in printout.
+                // This is also slightly less (though still somewhat) broken when using rotation.
+                var projectedWidth = this.width * scale * pupm.h;
+                var projectedHeight = this.height * scale * pupm.h; // This is deliberately not pupm.v!
+
                 return {
                     left: centerX - .5 * projectedWidth,
                     right: centerX + .5 * projectedWidth,
