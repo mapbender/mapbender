@@ -1,4 +1,4 @@
-## dev-master @ fa1a2058c
+## dev-master @ a0d0f20e1
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -30,6 +30,8 @@
 * Resolve misc twig deprecations
 * Resolve PHP zip method deprecations
 * Misc small performance tweaks
+  * use minified Proj4js asset in production
+  * use minified Openlayers 6 asset in production (requires update to [Rollup-based OL6 build](https://github.com/mapbender/openlayers6-es5/releases/tag/0.4.3.2))
 
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
