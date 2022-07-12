@@ -1,26 +1,34 @@
-## dev-master @ 248ca7209
-* Fix misc errors reformatting Application custom css validation error messages
+## dev-master @ b3cf2409e
+* Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
 * Fix Openlayers 6 frontend / export / print not requesting WMS with configured "transparent" param
+* Fix Openlayers 6 frontend temporarily displaying Wms with previous layer combination when reactivating with changed layer selection
+* Fix reloaded Wms sources containing more layers than advertised in capabilities in some cases
+* Fix empty / not helpful exception messages on incompatible / missing legacy element class
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
 * [Export / Print] improve reproduction of customized Openlayers 6 line patterns
+* [Layertree] fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
+* [DimensionsHandler] Fix garbled display of acronyms in dimension titles
 * Support template CSS references containing StringAsset objects (instead of file names)
 * Improve customizability of misc widget CSS (require files separately instead of `@import`)
 * Extract Sass variables for customizability
   * `$buttonActiveTextColor` (~Digitizer table headings selected for sorting / current pagination button; complements background given in `$buttonFirstActiveColor`)
   * `$buttonHoverTextColor`, `$buttonCriticalHoverTextColor` (misc popup / traditional element buttons)
   * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
+  * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
+* [Legend] add `.legend-dialog` for CSS customizability
 * Resolve misc twig deprecations
 * Resolve PHP zip method deprecations
+* Misc small performance tweaks
 
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
