@@ -30,8 +30,29 @@
             <td class="geometry-name"></td>
             <td class="geometry-actions">
                 <i class="geometry-remove fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.remove" | trans }}"></i>
-                <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}"></i>
+                <span class="static-popover-wrap -js-edit-content-anchor">
+                    <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}"></i>
+                </span>
                 <i class="geometry-zoom fa fas fa-search-plus clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.zoom" | trans }}"></i>
             </td>
         </tr>
     </table>
+    <div class="hidden -js-edit-content">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="label-text" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
+                <div class="col-8 col-xs-8"><input type="text" name="label-text" class="form-control"></div>
+            </div>
+            <div class="form-group" data-toolnames="circle">
+                <label for="radius" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
+                <div class="col-8 col-xs-8">
+                    <div class="input-group">
+                        <input type="text" name="radius" class="form-control"><div class="input-group-addon">m</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-nowrap text-right">
+            <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
+        </div>
+    </div>

@@ -21,6 +21,8 @@
         editing_: null,
         $labelInput_: null,
         useDialog_: false,
+        editContent_: null,
+        decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -32,6 +34,7 @@
                 'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
+            this.editContent_ = $('.-js-edit-content', this.element).remove().removeClass('hidden').html();
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -97,6 +100,7 @@
             if (this.useDialog_ && this.options.auto_activate) {
                 this.activate();
             }
+            this.trackLabelInput_(this.$labelInput_);
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
@@ -116,7 +120,7 @@
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
         },
-        deactivate: function(){
+        deactivate: function() {
             this._deactivateControl();
             this._endEdit();
             // end popup, if any
@@ -259,10 +263,26 @@
                     features: new ol.Collection([feature])
                 });
                 this.mbMap.getModel().olMap.addInteraction(this.editControl);
+                var $popoverContent = $($.parseHTML(this.editContent_));
+                var toolName = this._getFeatureAttribute(feature, 'toolName');
+                $('[data-toolnames]', $popoverContent).each(function() {
+                    var $this = $(this);
+                    var allowed = $this.attr('data-toolnames').split(',');
+                    if (-1 === allowed.indexOf(toolName)) {
+                        $this.remove();
+                    }
+                });
+                this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
+                if ('circle' === this._getFeatureAttribute(feature, 'toolName')) {
+                    var $radiusInput = $('input[name="radius"]', $popoverContent);
+                    $radiusInput.val(this.getFeatureRadius_(feature).toLocaleString());
+                    this.trackRadiusInput_($radiusInput);
+                }
+                var $row = this._getFeatureAttribute(feature, 'row');
+                this._showRecordPopover($row, $popoverContent);
             }
         },
         _endEdit: function() {
-            this.$labelInput_.off('keyup');
             if (this.editControl) {
                 if (Mapbender.mapEngine.code === 'ol2') {
                     this.editControl.deactivate();
@@ -296,6 +316,7 @@
             $('.geometry-name', row).text(this._getGeomLabel(feature));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
+            this._setFeatureAttribute(feature, 'row', row);
         },
         _removeFromGeomList: function(e){
             var $tr = $(e.target).closest('tr');
@@ -308,22 +329,35 @@
             $tr.remove();
         },
         _modifyFeature: function(e) {
-            var self = this;
             var $row = $(e.target).closest('tr');
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit();
-            this.$labelInput_.val(this._getFeatureLabel(eventFeature));
-            this.$labelInput_.prop('disabled', false);
-            this.$labelInput_.on('keyup', function() {
-                if (self._validateText()) {
+            this._startEdit(eventFeature);
+        },
+        trackLabelInput_: function($input) {
+            var self = this;
+            $input.on('keyup', function() {
+                if (self.editing_ && self._validateText()) {
                     var text = $(this).val().trim();
-                    self._updateFeatureLabel(eventFeature, text);
-                    var label = self._getGeomLabel(eventFeature);
+                    self._updateFeatureLabel(self.editing_, text);
+                    var label = self._getGeomLabel(self.editing_);
+                    var $row = self._getFeatureAttribute(self.editing_, 'row');
                     $('.geometry-name', $row).text(label);
                 }
             });
-            this._startEdit(eventFeature);
+        },
+        trackRadiusInput_: function($input) {
+            var self = this;
+            $input.on('keyup', function() {
+                if (self.editing_) {
+                    var rawVal = $input.val() || '';
+                    var radius = parseFloat(rawVal.replace(self.decimalSeparator_, '.'));
+                    if (!isNaN(radius)) {
+                        self.updateFeatureRadius_(self.editing_, radius);
+                    }
+                }
+            });
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
@@ -373,7 +407,43 @@
             if (this.layer) {
                 this.layer.retransform(data.from, data.to);
             }
-        }
+        },
+        _showRecordPopover: function($targetRow, $content) {
+            this._closePopovers();
+            var $popover = $(document.createElement('div'))
+                .addClass('popover bottom')
+                .prepend($(document.createElement('div')).addClass('arrow'))
+                .append($content)
+            ;
+            $('.-js-edit-content-anchor', $targetRow).append($popover);
+            $popover.on('click', '.-fn-close', function() {
+                $popover.remove();
+            });
+        },
+        _closePopovers: function() {
+            $('table .popover', this.element).each(function() {
+                var $other = $(this);
+                var otherPromise = $other.data('deferred');
+                if (otherPromise) {
+                    // Reject pending promises on delete confirmation popovers
+                    otherPromise.reject();
+                }
+                $other.remove();
+            });
+        },
+        getFeatureRadius_: function(feature) {
+            var extent = feature.getGeometry().getExtent();
+            var center = ol.extent.getCenter(extent);
+            var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
+            return (extent[2] - center[0]) / upm.h;
+        },
+        updateFeatureRadius_: function(feature, radius) {
+            var geom = feature.getGeometry();
+            var center = ol.extent.getCenter(geom.getExtent());
+            var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
+            var radius_ = radius * upm.h;
+            geom.setRadius(radius_);
+        },
+        __dummy__: null
     });
-
 })(jQuery);

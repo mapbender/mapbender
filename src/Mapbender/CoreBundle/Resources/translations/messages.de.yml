@@ -379,6 +379,7 @@ mb:
         text: Text
       inputs:
         label: Beschriftung
+        radius: Radius
       error:
         notext: 'Kein Text eingetragen'
       geometry:

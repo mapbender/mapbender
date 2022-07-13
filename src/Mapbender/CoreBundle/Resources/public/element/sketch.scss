@@ -4,4 +4,34 @@
       text-align:right;
     }
   }
+  .static-popover-wrap {
+    position: relative; // for anchoring of absolute-positioned .popover
+    .popover {
+      font-size: inherit;
+      min-width: 20em;
+      display: initial;
+      padding: 1em;
+      left: initial;
+      right: -2.5ch;
+
+      .arrow {
+        right: 2ch;
+        left: initial;
+      }
+
+      &.bottom {
+        top: 2ex;
+      }
+      .form-horizontal {
+        min-width: 17em;
+      }
+      .form-horizontal, .form-group {
+        margin-bottom: 0.75em;
+      }
+    }
+  }
+  .form-horizontal .control-label {
+    // Undo Bootstrap default right-aligned labels
+    text-align: left;
+  }
 }
