@@ -277,7 +277,7 @@
         _deactivateControl: function() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
-            $('.-fn--tool-off', this.element).prop('disabled', true);
+            $('.-fn-tool-off', this.element).prop('disabled', true);
             $('[data-tool-name]', this.element).removeClass('active');
         },
         _getGeomLabel: function(feature) {
