@@ -100,6 +100,7 @@ class Sketch extends AbstractElementService
         $view->attributes['class'] = 'mb-element-sketch';
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
         $view->variables['radiusEditing'] = $this->getRadiusEditing($element);
+        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
         return $view;
     }
 

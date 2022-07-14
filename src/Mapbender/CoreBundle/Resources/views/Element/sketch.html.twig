@@ -21,14 +21,28 @@
         </div>
         <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-default -fn-tool-off"><i class="fa fas fa-stop"></i></button>
     </div>
-    <div class="form-group">
-        <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>
-        <input name="label-text" type="text" class="form-control" disabled="disabled">
+    <div class="row">
+        <div class="form-group{{- (radiusEditing and dialogMode) ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
+            <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>
+            <input name="label-text" type="text" class="form-control" disabled="disabled">
+        </div>
+        {%- if radiusEditing and dialogMode -%}
+        <div class="form-group col-5 col-xs-5">
+            <label for="label-text" class="labelInput">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
+            <div class="input-group">
+                <input name="radius" type="text" class="form-control" disabled="disabled">
+                <div class="input-group-addon">m</div>
+            </div>
+        </div>
+        {%- endif -%}
     </div>
     <table class="table table-striped geometry-table">
         <tr class="geometry-item" data-id="">
+            <td class="compact row-marker">
+                <i class="fa fas fa-fw fa-angle-double-right"></i>
+            </td>
             <td class="geometry-name"></td>
-            <td class="geometry-actions">
+            <td class="geometry-actions compact text-nowrap">
                 <i class="geometry-remove fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.remove" | trans }}"></i>
                 <span class="static-popover-wrap -js-edit-content-anchor">
                     <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}"></i>

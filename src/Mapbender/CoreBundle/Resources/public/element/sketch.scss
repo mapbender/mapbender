@@ -34,4 +34,18 @@
     // Undo Bootstrap default right-aligned labels
     text-align: left;
   }
+  table {
+    td.compact, th.compact {
+      width: 1%;
+    }
+    >tbody>tr>td.geometry-name, >tbody>tr>td.row-marker {
+      padding-left: 0;
+    }
+    .row-marker {
+      opacity: 0;
+    }
+    .current-row .row-marker {
+      opacity: 1;
+    }
+  }
 }
