@@ -5,6 +5,7 @@
             auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
+            radiusEditing: false,
             paintstyles: {
                 'strokeColor': '#ff0000',
                 'fillColor': '#ff0000',
@@ -21,6 +22,8 @@
         editing_: null,
         $labelInput_: null,
         useDialog_: false,
+        editContent_: null,
+        decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -32,6 +35,7 @@
                 'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
             this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
+            this.editContent_ = $('.-js-edit-content', this.element).remove().removeClass('hidden').html();
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -97,6 +101,8 @@
             if (this.useDialog_ && this.options.auto_activate) {
                 this.activate();
             }
+            this.trackLabelInput_(this.$labelInput_);
+            this.trackRadiusInput_($('input[name="radius"]', this.element));
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
@@ -116,7 +122,7 @@
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
         },
-        deactivate: function(){
+        deactivate: function() {
             this._deactivateControl();
             this._endEdit();
             // end popup, if any
@@ -209,11 +215,18 @@
             var text = this.$labelInput_.val().trim();
             this._updateFeatureLabel(feature, text);
             this.$labelInput_.val('');
+            if (this.options.radiusEditing) {
+                var radius = this.getFeatureRadius_(feature)
+                var $radiusInput = $('input[name="radius"]', this.element);
+                $radiusInput.prop('disabled', toolName !== 'circle');
+                $radiusInput.val(radius !== null && radius.toLocaleString() || '');
+            }
             this._addToGeomList(feature);
         },
         _startDraw: function(toolName) {
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
             $('.-fn-tool-off', this.element).prop('disabled', false);
+            $('input[name="radius"]', this.element).prop('disabled', true);
             switch(toolName) {
                 case 'point':
                 case 'line':
@@ -249,6 +262,11 @@
          */
         _startEdit: function(feature) {
             this.editing_ = feature;
+            var $row = this._getFeatureAttribute(feature, 'row');
+            $('.geometry-item', this.element).not($row).removeClass('current-row');
+            $row.addClass('current-row');
+            var toolName = this._getFeatureAttribute(feature, 'toolName');
+            var formScope;
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.editControl.selectFeature(feature);
                 this.editControl.activate();
@@ -260,9 +278,36 @@
                 });
                 this.mbMap.getModel().olMap.addInteraction(this.editControl);
             }
+            if (this.useDialog_) {
+                formScope = this.element;
+            } else {
+                var $popoverContent = $($.parseHTML(this.editContent_));
+                $('[data-toolnames]', $popoverContent).each(function() {
+                    var $this = $(this);
+                    var allowed = $this.attr('data-toolnames').split(',');
+                    if (-1 === allowed.indexOf(toolName)) {
+                        $this.remove();
+                    }
+                });
+                formScope = $popoverContent;
+                this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
+                this.trackRadiusInput_($('input[name="radius"]', $popoverContent));
+                this._showRecordPopover($row, $popoverContent);
+            }
+            $('input[name="label-text"]', formScope)
+                .prop('disabled', false)
+                .val(this._getFeatureAttribute(feature, 'label') || '')
+            ;
+            if ('circle' === this._getFeatureAttribute(feature, 'toolName') && this.options.radiusEditing) {
+                $('input[name="radius"]', formScope)
+                    .prop('disabled', false)
+                    .val((this.getFeatureRadius_(feature) || 0).toLocaleString())
+                ;
+            } else {
+                $('input[name="radius"]', formScope).prop('disabled', true).val('');
+            }
         },
         _endEdit: function() {
-            this.$labelInput_.off('keyup');
             if (this.editControl) {
                 if (Mapbender.mapEngine.code === 'ol2') {
                     this.editControl.deactivate();
@@ -272,6 +317,7 @@
                     this.editControl = null;
                 }
             }
+            $('.geometry-item', this.element).removeClass('current-row');
             this.editing_ = null;
         },
         _deactivateControl: function() {
@@ -296,6 +342,7 @@
             $('.geometry-name', row).text(this._getGeomLabel(feature));
             var $geomtable = $('.geometry-table', this.element);
             $geomtable.append(row);
+            this._setFeatureAttribute(feature, 'row', row);
         },
         _removeFromGeomList: function(e){
             var $tr = $(e.target).closest('tr');
@@ -308,22 +355,35 @@
             $tr.remove();
         },
         _modifyFeature: function(e) {
-            var self = this;
             var $row = $(e.target).closest('tr');
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit();
-            this.$labelInput_.val(this._getFeatureLabel(eventFeature));
-            this.$labelInput_.prop('disabled', false);
-            this.$labelInput_.on('keyup', function() {
-                if (self._validateText()) {
+            this._startEdit(eventFeature);
+        },
+        trackLabelInput_: function($input) {
+            var self = this;
+            $input.on('keyup', function() {
+                if (self.editing_ && self._validateText()) {
                     var text = $(this).val().trim();
-                    self._updateFeatureLabel(eventFeature, text);
-                    var label = self._getGeomLabel(eventFeature);
+                    self._updateFeatureLabel(self.editing_, text);
+                    var label = self._getGeomLabel(self.editing_);
+                    var $row = self._getFeatureAttribute(self.editing_, 'row');
                     $('.geometry-name', $row).text(label);
                 }
             });
-            this._startEdit(eventFeature);
+        },
+        trackRadiusInput_: function($input) {
+            var self = this;
+            $input.on('keyup', function() {
+                if (self.editing_) {
+                    var rawVal = $input.val() || '';
+                    var radius = parseFloat(rawVal.replace(self.decimalSeparator_, '.'));
+                    if (!isNaN(radius)) {
+                        self.updateFeatureRadius_(self.editing_, radius);
+                    }
+                }
+            });
         },
         _zoomToFeature: function(e){
             this._deactivateControl();
@@ -373,7 +433,53 @@
             if (this.layer) {
                 this.layer.retransform(data.from, data.to);
             }
-        }
+        },
+        _showRecordPopover: function($targetRow, $content) {
+            var self = this;
+            this._closePopovers();
+            var $popover = $(document.createElement('div'))
+                .addClass('popover bottom')
+                .prepend($(document.createElement('div')).addClass('arrow'))
+                .append($content)
+            ;
+            $('.-js-edit-content-anchor', $targetRow).append($popover);
+            $popover.on('click', '.-fn-close', function() {
+                $popover.remove();
+                self._endEdit();
+            });
+        },
+        _closePopovers: function() {
+            $('table .popover', this.element).each(function() {
+                var $other = $(this);
+                var otherPromise = $other.data('deferred');
+                if (otherPromise) {
+                    // Reject pending promises on delete confirmation popovers
+                    otherPromise.reject();
+                }
+                $other.remove();
+            });
+        },
+        /**
+         * @param {Object} feature
+         * @returns {null|number}
+         * @private
+         */
+        getFeatureRadius_: function(feature) {
+            if ('circle' !== this._getFeatureAttribute(feature, 'toolName') || !this.options.radiusEditing) {
+                return null;
+            }
+            var extent = feature.getGeometry().getExtent();
+            var center = ol.extent.getCenter(extent);
+            var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
+            return (extent[2] - center[0]) / upm.h;
+        },
+        updateFeatureRadius_: function(feature, radius) {
+            var geom = feature.getGeometry();
+            var center = ol.extent.getCenter(geom.getExtent());
+            var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
+            var radius_ = radius * upm.h;
+            geom.setRadius(radius_);
+        },
+        __dummy__: null
     });
-
 })(jQuery);

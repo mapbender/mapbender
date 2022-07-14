@@ -378,6 +378,7 @@ mb:
         text: Text
       inputs:
         label: Label
+        radius: Radius
       error:
         notext: 'Text required'
       geometry:
