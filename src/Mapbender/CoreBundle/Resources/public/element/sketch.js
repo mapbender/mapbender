@@ -265,6 +265,8 @@
             var $row = this._getFeatureAttribute(feature, 'row');
             $('.geometry-item', this.element).not($row).removeClass('current-row');
             $row.addClass('current-row');
+            var toolName = this._getFeatureAttribute(feature, 'toolName');
+            var formScope;
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.editControl.selectFeature(feature);
                 this.editControl.activate();
@@ -275,36 +277,34 @@
                     features: new ol.Collection([feature])
                 });
                 this.mbMap.getModel().olMap.addInteraction(this.editControl);
-                var toolName = this._getFeatureAttribute(feature, 'toolName');
-                var formScope;
-                if (this.useDialog_) {
-                    formScope = this.element;
-                } else {
-                    var $popoverContent = $($.parseHTML(this.editContent_));
-                    $('[data-toolnames]', $popoverContent).each(function() {
-                        var $this = $(this);
-                        var allowed = $this.attr('data-toolnames').split(',');
-                        if (-1 === allowed.indexOf(toolName)) {
-                            $this.remove();
-                        }
-                    });
-                    formScope = $popoverContent;
-                    this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
-                    this.trackRadiusInput_($('input[name="radius"]', $popoverContent));
-                    this._showRecordPopover($row, $popoverContent);
-                }
-                $('input[name="label-text"]', formScope)
+            }
+            if (this.useDialog_) {
+                formScope = this.element;
+            } else {
+                var $popoverContent = $($.parseHTML(this.editContent_));
+                $('[data-toolnames]', $popoverContent).each(function() {
+                    var $this = $(this);
+                    var allowed = $this.attr('data-toolnames').split(',');
+                    if (-1 === allowed.indexOf(toolName)) {
+                        $this.remove();
+                    }
+                });
+                formScope = $popoverContent;
+                this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
+                this.trackRadiusInput_($('input[name="radius"]', $popoverContent));
+                this._showRecordPopover($row, $popoverContent);
+            }
+            $('input[name="label-text"]', formScope)
+                .prop('disabled', false)
+                .val(this._getFeatureAttribute(feature, 'label') || '')
+            ;
+            if ('circle' === this._getFeatureAttribute(feature, 'toolName') && this.options.radiusEditing) {
+                $('input[name="radius"]', formScope)
                     .prop('disabled', false)
-                    .val(this._getFeatureAttribute(feature, 'label') || '')
+                    .val((this.getFeatureRadius_(feature) || 0).toLocaleString())
                 ;
-                if ('circle' === this._getFeatureAttribute(feature, 'toolName') && this.options.radiusEditing) {
-                    $('input[name="radius"]', formScope)
-                        .prop('disabled', false)
-                        .val((this.getFeatureRadius_(feature) || 0).toLocaleString())
-                    ;
-                } else {
-                    $('input[name="radius"]', formScope).prop('disabled', true).val('');
-                }
+            } else {
+                $('input[name="radius"]', formScope).prop('disabled', true).val('');
             }
         },
         _endEdit: function() {
