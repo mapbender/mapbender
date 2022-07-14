@@ -366,11 +366,10 @@
         },
         _setupMapClickHandler: function () {
             var self = this;
-            self.target.element.on('mbmapclick', function (event, data) {
+            $(document).on('mbmapclick', function (event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
         },
-
         _createLayerStyle: function () {
             var strokeStyle = new ol.style.Stroke({
                 color: '#ff00ff', //rgba(255, 255, 255, 1)',

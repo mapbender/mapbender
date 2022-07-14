@@ -41,6 +41,7 @@
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source,
+                stopClick: true,
                 style: function(feature, resolution) {
                     var style = defaultStyleFn(feature, resolution);
                     return self._extendStyles(style, feature);

@@ -80,6 +80,8 @@
             if (this.clickActive) {
                 this._updatePoi(data.coordinate[0], data.coordinate[1]);
                 this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
+                // Stop further handlers
+                return false;
             }
         },
         _updatePoi: function(lon, lat) {
