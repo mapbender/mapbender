@@ -143,27 +143,32 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 case 'point':
                     return new ol.interaction.Draw({
                         type: 'Point',
+                        stopClick: true,
                         source: source
                     });
                 case 'line':
                     return new ol.interaction.Draw({
                         type: 'LineString',
+                        stopClick: true,
                         source: source
                     });
                 case 'polygon':
                     return new ol.interaction.Draw({
                         type: 'Polygon',
+                        stopClick: true,
                         source: source
                     });
                 case 'circle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
+                        stopClick: true,
                         source: source
                     });
                 case 'rectangle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
                         geometryFunction: ol.interaction.Draw.createBox(),
+                        stopClick: true,
                         source: source
                     });
                 default:
