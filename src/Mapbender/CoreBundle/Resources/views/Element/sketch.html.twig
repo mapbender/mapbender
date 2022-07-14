@@ -43,6 +43,7 @@
                 <label for="label-text" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
                 <div class="col-8 col-xs-8"><input type="text" name="label-text" class="form-control"></div>
             </div>
+            {%- if radiusEditing -%}
             <div class="form-group" data-toolnames="circle">
                 <label for="radius" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
                 <div class="col-8 col-xs-8">
@@ -51,6 +52,7 @@
                     </div>
                 </div>
             </div>
+            {%- endif -%}
         </div>
         <div class="text-nowrap text-right">
             <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>

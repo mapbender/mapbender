@@ -5,6 +5,7 @@
             auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
+            radiusEditing: false,
             paintstyles: {
                 'strokeColor': '#ff0000',
                 'fillColor': '#ff0000',
@@ -273,7 +274,7 @@
                     }
                 });
                 this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
-                if ('circle' === this._getFeatureAttribute(feature, 'toolName')) {
+                if ('circle' === this._getFeatureAttribute(feature, 'toolName') && this.options.radiusEditing) {
                     var $radiusInput = $('input[name="radius"]', $popoverContent);
                     $radiusInput.val(this.getFeatureRadius_(feature).toLocaleString());
                     this.trackRadiusInput_($radiusInput);
