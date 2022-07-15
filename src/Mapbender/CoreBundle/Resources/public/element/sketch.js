@@ -13,7 +13,6 @@
             }
         },
         mbMap: null,
-        map: null,
         layer: null,
         geomCounter: 0,
         rowTemplate: null,
@@ -47,8 +46,6 @@
         },
         _setup: function(){
             var $geomTable = $('.geometry-table', this.element);
-            // @todo: remove direct access to OpenLayers 2 map
-            this.map = this.mbMap.map.olMap;
             this.rowTemplate = $('tr', $geomTable).remove().removeClass('hidden');
             $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
