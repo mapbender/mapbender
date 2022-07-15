@@ -194,12 +194,12 @@
                     var script = this._getInjectionScript(source.id);
                     var iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
                     iframe.attr("srcdoc",script+data);
-                    this._addHeader(source);
+                    this._addHeader(source, url);
                     this._addContent(source, iframe, url);
                     break;
                 case 'text/plain':
                 default:
-                    this._addHeader(source);
+                    this._addHeader(source, url);
                     this._addContent(source, '<pre>' + data + '</pre>', url);
                     break;
             }
@@ -296,7 +296,7 @@
         _getHeaderId: function(source) {
             return [this.headerIdPrefix_, source.id].join('-');
         },
-        _addHeader: function(source) {
+        _addHeader: function(source, url) {
             var headerId = this._getHeaderId(source);
             var $header = $('#' + headerId, this.element);
             if ($header.length === 0) {
@@ -309,6 +309,11 @@
                 $header.addClass('active');
             }
             $header.text(source.getTitle());
+            $header.append($(document.createElement('a'))
+                .attr('href', url)
+                .attr('target', '_blank')
+                .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
+            );
         },
         _addContent: function(source, content, url) {
             var contentId = this._getContentId(source);
