@@ -60,7 +60,10 @@ class ElementFormFactory
             ),
         );
         if ($element->getId()) {
+            $options['attr']['id'] = 'element-' . $element->getId();
             $options['attr']['data-ft-element-id'] = $element->getId();
+        } else {
+            $options['attr']['id'] = 'element-new';
         }
 
         if (!$element->getClass()) {
