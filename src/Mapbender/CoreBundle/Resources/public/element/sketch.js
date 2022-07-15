@@ -55,13 +55,25 @@
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
-            $('.-js-pallette-container', this.element).on('click', '.color-select', function() {
+            $('.-js-pallette-container', this.element).on('click', '.color-select[data-color]', function() {
                 var $btn = $(this);
-                self.selectedColor_ = $btn.attr('data-color');
-                $btn.siblings().removeClass('active');
-                $btn.addClass('active');
+                self.setColor_($btn.attr('data-color'), $btn);
             });
             this.selectedColor_ = $('.color-select', this.element).eq(0).attr('data-color') || '#ff3333';
+            $('.-fn-color-customize', this.element).colorpicker({
+                format: 'hex',
+                input: false,
+                component: false
+            }).on('changeColor', function(evt) {
+                var color = evt.color.toString(true, 'hex');
+                var $btn = $('.custom-color-select', self.element);
+                $('.color-preview', $btn).css('background', color);
+                $btn
+                    .attr('data-color', color)
+                    .prop('disabled', false)
+                ;
+                self.setColor_(color, $btn);
+            });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             this.layer.customizeStyle({
@@ -488,6 +500,13 @@
             var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
             var radius_ = radius * upm.h;
             geom.setRadius(radius_);
+        },
+        setColor_: function(color, $button) {
+            this.selectedColor_ = color;
+            $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
+            if ($button.length) {
+                $button.addClass('active');
+            }
         },
         __dummy__: null
     });

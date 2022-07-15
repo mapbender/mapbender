@@ -23,10 +23,14 @@
     </div>
     <div class="form-group -js-pallette-container{{- colors | length <= 1 ? ' hidden' : '' -}}">
         <div class="btn-toolbar">
-            <div class="btn-group btn-group-sm">
+            <div class="btn-group btn-group-sm btn-group-sm-square">
                 {%- for color in colors -%}
                     <button type="button" class="btn btn-default color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
                 {%- endfor -%}
+            </div>
+            <div class="btn-group btn-group-sm btn-group-sm-square">
+                <button type="button" class="btn btn-default color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
+                <button type="button" class="-fn-color-customize btn btn-default"><i class="fa fas fa-fw fa-caret-down"></i></button>
             </div>
         </div>
     </div>
