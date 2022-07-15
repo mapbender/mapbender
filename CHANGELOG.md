@@ -1,4 +1,4 @@
-## dev-master @ 82aa2e487
+## dev-master @ b454dd915
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -12,12 +12,16 @@
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
 * [Export / Print] improve reproduction of customized Openlayers 6 line patterns
 * [Print] Fix Openlayers 6 print scale calculations not respecting geodesic distortions at printout location
+* [FeatureInfo] Add configurability for stroke colors and opacities on extracted features (see [PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* [FeatureInfo] disable while measuring tool / POI / Sketch drawing tools are active
+* [FeatureInfo] disable blue notify announcements for empty responses
 * [Layertree] fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
 * [Sketch] Add manual circle radius editing via input field ([PR#1420](https://github.com/mapbender/mapbender/pull/1420))
+* [Sketch] Fix initial visible content flash of empty table placeholder row
 * [Skecth] Misc user interface improvements
 * [DimensionsHandler] Fix garbled display of acronyms in dimension titles
 * Support template CSS references containing StringAsset objects (instead of file names)
