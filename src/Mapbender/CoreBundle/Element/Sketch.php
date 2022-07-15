@@ -67,6 +67,11 @@ class Sketch extends AbstractElementService
                 "rectangle",
                 "circle",
             ),
+            'colors' => array(
+                '#ff3333',
+                '#3333ff',
+                '#44ee44',
+            ),
         );
     }
 
@@ -101,6 +106,7 @@ class Sketch extends AbstractElementService
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
         $view->variables['radiusEditing'] = $this->getRadiusEditing($element);
         $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
+        $view->variables['colors'] = $element->getConfiguration()['colors'];
         return $view;
     }
 

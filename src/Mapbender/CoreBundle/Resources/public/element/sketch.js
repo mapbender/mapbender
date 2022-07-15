@@ -6,11 +6,7 @@
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             radiusEditing: false,
-            paintstyles: {
-                'strokeColor': '#ff0000',
-                'fillColor': '#ff0000',
-                'strokeWidth': '3'
-            }
+            colors: []
         },
         mbMap: null,
         layer: null,
@@ -23,6 +19,7 @@
         useDialog_: false,
         editContent_: null,
         decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
+        selectedColor_: null,
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -58,9 +55,23 @@
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
+            $('.-js-pallette-container', this.element).on('click', '.color-select', function() {
+                var $btn = $(this);
+                self.selectedColor_ = $btn.attr('data-color');
+                $btn.siblings().removeClass('active');
+                $btn.addClass('active');
+            });
+            this.selectedColor_ = $('.color-select', this.element).eq(0).attr('data-color') || '#ff3333';
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            this.layer.customizeStyle(Object.assign({}, this.options.paintstyles, {
+            this.layer.customizeStyle({
+                strokeWidth: 3,
+                fillColor: function(feature) {
+                    return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
+                },
+                strokeColor: function(feature) {
+                    return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
+                },
                 label: function(feature) {
                     return self._getFeatureAttribute(feature, 'label') || '';
                 },
@@ -78,7 +89,7 @@
                         return 0;
                     }
                 }
-            }));
+            });
 
             if (Mapbender.mapEngine.code === 'ol2') {
                 // OpenLayers 2: keep reusing single edit control
@@ -209,6 +220,7 @@
         },
         _onFeatureAdded: function(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
+            this._setFeatureAttribute(feature, 'color', this.selectedColor_);
             var text = this.$labelInput_.val().trim();
             this._updateFeatureLabel(feature, text);
             this.$labelInput_.val('');

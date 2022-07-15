@@ -73,11 +73,17 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             var defaultFn = ol.style.Style.defaultFunction;
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
-            var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'fillColor', 'fillOpacity')});
+            var callables = this.detectCallables_(svgWithDefaults);
+            var baseFill = new ol.style.Fill();
+            if (!callables.fillColor && !callables.fillOpacity) {
+                this.applyColor_(baseFill, svgWithDefaults, 'fillColor', 'fillOpacity');
+            }
             var baseStroke = new ol.style.Stroke({
-                color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'strokeColor', 'strokeOpacity'),
                 width: svgWithDefaults.strokeWidth
             });
+            if (!callables.strokeColor && !callables.strokeOpacity) {
+                this.applyColor_(baseStroke, svgWithDefaults, 'strokeColor', 'strokeOpacity');
+            }
             defaultStyle.setFill(baseFill);
             defaultStyle.setStroke(baseStroke);
             var textCallbacks = this._prepareTextStyleCallbacks(styles);
@@ -92,6 +98,7 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 fill: baseFill,
                 stroke: baseStroke
             });
+            var self = this;
             var customFeatureStyleFn = function(feature, resolution) {
                 var style = defaultStyle.clone();
                 var setterNames = Object.keys(textCallbacks);
@@ -104,12 +111,23 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 }
                 style.setText(textStyle);
                 style.setImage(pointImageStyle);
+                if (callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity) {
+                    var resolved = self.resolveCallables_(svgWithDefaults, callables, feature);
+                    self.applyColor_(style.getFill(), resolved, 'fillColor', 'fillOpacity');
+                    self.applyColor_(style.getStroke(), resolved, 'strokeColor', 'strokeOpacity');
+                    style.setImage(style.getImage().clone());
+                    self.applyColor_(style.getImage().getFill(), resolved, 'fillColor', 'fillOpacity');
+                    self.applyColor_(style.getImage().getStroke(), resolved, 'strokeColor', 'strokeOpacity');
+                }
                 return style;
             };
             var customLayerStyleFn = function(feature, resolution) {
                 return [customFeatureStyleFn(feature, resolution)];
             };
             this.wrappedLayer_.setStyle(customLayerStyleFn);
+        },
+        applyColor_: function(styleComponent, svgRules, colorProp, opacityProp) {
+            styleComponent.setColor(Mapbender.StyleUtil.svgToCssColorRule(svgRules, colorProp, opacityProp));
         },
         getMarkerFeature_: function(lon, lat, nativeStyle) {
             var feature = new ol.Feature({
@@ -278,6 +296,26 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 offsetX: svgStyles.labelXOffset,
                 offsetY: svgStyles.labelYOffset
             });
+        },
+        detectCallables_: function(o) {
+            var callables = {};
+            Object.keys(o).forEach(function(propname) {
+                if (typeof o[propname] === 'function') {
+                    callables[propname] = o[propname];
+                }
+            });
+            return callables;
+        },
+        resolveCallables_: function(baseRules, callables, feature) {
+            if (!Object.keys(callables).length) {
+                return baseRules;
+            } else {
+                var resolved = Object.assign({}, baseRules);
+                Object.keys(callables).forEach(function(propName) {
+                    resolved[propName] = callables[propName](feature);
+                });
+                return resolved;
+            }
         },
         dummy_: null
     });
