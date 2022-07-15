@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
@@ -15,6 +16,7 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
  * @author Christian Wygoda
  */
 class FeatureInfo extends AbstractElementService
+    implements ConfigMigrationInterface
 {
     /**
      * @inheritdoc
@@ -67,8 +69,12 @@ class FeatureInfo extends AbstractElementService
             "height" => 500,
             "maxCount" => 100,
             'highlighting' => false,
-            'featureColorDefault' => '#ffa500',
-            'featureColorHover' => '#ff0000',
+            'fillColorDefault' => '#ffa500',
+            'fillColorHover' => '#ff0000',
+            'strokeColorDefault' => '#ff4466',
+            'strokeColorHover' => '#ff0000',
+            'opacityDefault' => 40,
+            'opacityHover' => 70,
         );
     }
 
@@ -129,5 +135,19 @@ class FeatureInfo extends AbstractElementService
     public static function getFormTemplate()
     {
         return 'MapbenderCoreBundle:ElementAdmin:featureinfo.html.twig';
+    }
+
+    public static function updateEntityConfig(Element $entity)
+    {
+        $config = $entity->getConfiguration();
+        if (!empty($config['featureColorDefault'])) {
+            $config += array('fillColorDefault' => $config['featureColorDefault']);
+        }
+        if (!empty($config['featureColorHover'])) {
+            $config += array('fillColorHover' => $config['featureColorHover']);
+        }
+        unset($config['featureColorDefault']);
+        unset($config['featureColorHover']);
+        $entity->setConfiguration($config);
     }
 }

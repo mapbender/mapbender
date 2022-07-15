@@ -8,8 +8,8 @@
             printResult: false,
             onlyValid: false,
             highlighting: false,
-            featureColorDefault: '#ffa500',
-            featureColorHover: 'ff0000',
+            fillColorDefault: '#ffa500',
+            fillColorHover: 'ff0000',
             maxCount: 100,
             width: 700,
             height: 500
@@ -55,16 +55,9 @@
             }
 
             if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
-
-                this._createLayerStyle();
-
                 this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
-                    name: 'featureInfo',
-                    style: widget.featureInfoStyle,
-                    visible: true,
-                    minResolution: Mapbender.Model.scaleToResolution(0),
-                    maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+                    style: this._createLayerStyle()
                 });
 
                 this.mbMap.getModel().olMap.addLayer(this.highlightLayer);
@@ -366,50 +359,60 @@
             });
         },
         _createLayerStyle: function () {
-            var strokeStyle = new ol.style.Stroke({
-                color: '#ff00ff', //rgba(255, 255, 255, 1)',
-                lineCap: 'round',
-                width: 1
-            });
-            var defaultColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorDefault).slice(0, 3).concat(0.4);
-            var hoverColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorHover).slice(0, 3).concat(0.7);
-            this.featureInfoStyle = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: defaultColorComponents
-                    })
-                });
+            var settingsDefault = {
+                fill: this.options.fillColorDefault,
+                stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
+                opacity: this.options.opacityDefault,
+                fallbackOpacity: 0.7
             };
-
-            this.featureInfoStyle_hover = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: hoverColorComponents
-                    }),
-                    zIndex: 1000
-                });
+            var settingsHover = {
+                fill: this.options.fillColorHover || settingsDefault.fill,
+                stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
+                opacity: this.options.opacityHover,
+                fallbackOpacity: 0.4
+            };
+            var defaultStyle = this.processStyle_(settingsDefault);
+            var hoverStyle = this.processStyle_(settingsHover);
+            hoverStyle.setZIndex(1);
+            return function(feature) {
+                return [feature.get('hover') && hoverStyle || defaultStyle];
             }
         },
-
+        processStyle_: function(settings) {
+            var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
+            var strokeRgb = Mapbender.StyleUtil.parseCssColor(settings.stroke).slice(0, 3);
+            var opacityFloat = parseFloat(settings.opacity);
+            if (!isNaN(opacityFloat)) {
+                if (!(opacityFloat >= 0.0 && opacityFloat < 1.0)) {
+                    // Percentage to [0;1]
+                    opacityFloat /= 100.0;
+                }
+                opacityFloat = Math.min(Math.max(opacityFloat, 0.0), 1.0);
+            } else {
+                opacityFloat = settings.fallbackOpacity;
+            }
+            var strokeOpacity = Math.sqrt(opacityFloat);
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: fillRgb.concat(opacityFloat)
+                }),
+                stroke: new ol.style.Stroke({
+                    color: strokeRgb.concat(strokeOpacity)
+                })
+            });
+        },
         _postMessage: function(message) {
-            var widget = this;
             var data = message.data;
             if (data.elementId !== this.element.attr('id')) {
                 return;
             }
             if (this.isActive && this.highlightLayer && data.command === 'features') {
-                widget._populateFeatureInfoLayer(data);
+                this._populateFeatureInfoLayer(data);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
                 var feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
-                    if (data.state) {
-                        feature.setStyle(this.featureInfoStyle_hover);
-                    } else {
-                        feature.setStyle(null);
-                    }
+                    feature.set('hover', !!data.state);
                 }
             }
         },
@@ -436,21 +439,19 @@
             }
         },
         _createHighlightControl: function() {
-
-            var widget = this;
-
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
                 layers: [this.highlightLayer],
+                style: null,
                 multi: true
             });
 
             highlightControl.on('select', function (e) {
                 e.deselected.forEach(function (feature) {
-                    feature.setStyle(null);
+                    feature.set('hover', false);
                 });
                 e.selected.forEach(function (feature) {
-                    feature.setStyle(widget.featureInfoStyle_hover);
+                    feature.set('hover', true);
                 });
             });
 

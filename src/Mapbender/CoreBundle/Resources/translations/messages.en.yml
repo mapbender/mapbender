@@ -325,8 +325,11 @@ mb:
           onlyvalid: 'Only valid'
           highlighting_group: 'Highlighting'
           highlighting: 'Highlighting enabled'
-          featureColorDefault: Default color
-          featureColorHover: Hover color
+          default_group: Default
+          hover_group: On hover
+          fillColor: Fill color
+          strokeColor: Stroke color
+          opacity_pct: Opacity (%)
       printclient:
         label:
           autoopen: Auto-open

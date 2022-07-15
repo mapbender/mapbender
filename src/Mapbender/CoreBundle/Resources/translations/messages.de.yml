@@ -326,8 +326,11 @@ mb:
           onlyvalid: 'Nur valide zeigen'
           highlighting_group: 'Highlighting'
           highlighting: Highlighting aktiv
-          featureColorDefault: Grundfarbe
-          featureColorHover: Hover-Farbe
+          default_group: Standard
+          hover_group: Hover
+          fillColor: Füllfarbe
+          strokeColor: Strichfarbe
+          opacity_pct: Deckkraft (%)
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'
