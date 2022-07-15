@@ -68,7 +68,6 @@ class FeatureInfoAdminType extends AbstractType
                 'attr' => array(
                     'min' => 0,
                     'max' => 100,
-                    'class' => 'text-right',
                 ),
             ))
             ->add('fillColorHover', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -91,7 +90,6 @@ class FeatureInfoAdminType extends AbstractType
                 'attr' => array(
                     'min' => 0,
                     'max' => 100,
-                    'class' => 'text-right',
                 ),
             ))
         ;
