@@ -49,7 +49,7 @@
             var $geomTable = $('.geometry-table', this.element);
             // @todo: remove direct access to OpenLayers 2 map
             this.map = this.mbMap.map.olMap;
-            this.rowTemplate = $('tr', $geomTable).remove();
+            this.rowTemplate = $('tr', $geomTable).remove().removeClass('hidden');
             $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
