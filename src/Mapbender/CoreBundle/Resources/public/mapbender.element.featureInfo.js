@@ -55,16 +55,9 @@
             }
 
             if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
-
-                this._createLayerStyle();
-
                 this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
-                    name: 'featureInfo',
-                    style: widget.featureInfoStyle,
-                    visible: true,
-                    minResolution: Mapbender.Model.scaleToResolution(0),
-                    maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+                    style: this._createLayerStyle()
                 });
 
                 this.mbMap.getModel().olMap.addLayer(this.highlightLayer);
@@ -378,9 +371,12 @@
                 opacity: this.options.opacityHover,
                 fallbackOpacity: 0.4
             };
-            this.featureInfoStyle = this.processStyle_(settingsDefault);
-            this.featureInfoStyle_hover = this.processStyle_(settingsHover);
-            this.featureInfoStyle_hover.setZIndex(1);
+            var defaultStyle = this.processStyle_(settingsDefault);
+            var hoverStyle = this.processStyle_(settingsHover);
+            hoverStyle.setZIndex(1);
+            return function(feature) {
+                return [feature.get('hover') && hoverStyle || defaultStyle];
+            }
         },
         processStyle_: function(settings) {
             var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
@@ -406,22 +402,17 @@
             });
         },
         _postMessage: function(message) {
-            var widget = this;
             var data = message.data;
             if (data.elementId !== this.element.attr('id')) {
                 return;
             }
             if (this.isActive && this.highlightLayer && data.command === 'features') {
-                widget._populateFeatureInfoLayer(data);
+                this._populateFeatureInfoLayer(data);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
                 var feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
-                    if (data.state) {
-                        feature.setStyle(this.featureInfoStyle_hover);
-                    } else {
-                        feature.setStyle(null);
-                    }
+                    feature.set('hover', !!data.state);
                 }
             }
         },
@@ -448,21 +439,19 @@
             }
         },
         _createHighlightControl: function() {
-
-            var widget = this;
-
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
                 layers: [this.highlightLayer],
+                style: null,
                 multi: true
             });
 
             highlightControl.on('select', function (e) {
                 e.deselected.forEach(function (feature) {
-                    feature.setStyle(null);
+                    feature.set('hover', false);
                 });
                 e.selected.forEach(function (feature) {
-                    feature.setStyle(widget.featureInfoStyle_hover);
+                    feature.set('hover', true);
                 });
             });
 
