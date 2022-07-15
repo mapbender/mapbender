@@ -16,7 +16,6 @@
         },
         mbMap: null,
         popup: null,
-        contentManager: null,
         mobilePane: null,
         isActive: false,
         highlightLayer: null,
@@ -26,6 +25,7 @@
             content: null
         },
         iframeScriptContent_: '',
+        headerIdPrefix_: '',
 
         _create: function() {
             this.iframeScriptContent_ = $('.-js-iframe-script-template[data-script]', this.element).remove().attr('data-script');
@@ -34,6 +34,12 @@
                 header: $('.js-header', this.element).remove(),
                 content: $('.js-content', this.element).remove()
             };
+            if (this.options.displayType === 'tabs') {
+                this.headerIdPrefix_ = 'tab';
+            } else {
+                this.headerIdPrefix_ = 'accordion';
+            }
+            initTabContainer(this.element);
 
             var self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -41,7 +47,6 @@
             }, function() {
                 Mapbender.checkTarget("mbFeatureInfo");
             });
-
         },
 
 
@@ -148,7 +153,6 @@
         },
         _setInfo: function(source, url) {
             var self = this;
-            var layerTitle = source.getTitle();
             var ajaxOptions = {
                 url: url
             };
@@ -166,14 +170,11 @@
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
                 if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
-                    self._showOriginal(source, layerTitle, data_, mimetype);
-                    // Bind original url for print interaction
-                    var $documentNode = self._getDocumentNode(source.id);
-                    $documentNode.attr('data-url', url);
+                    self._showOriginal(source, data_, mimetype, url);
                     return true;
                 }
             }, function (jqXHR, textStatus, errorThrown) {
-                Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
+                Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
             });
             return request;
         },
@@ -187,39 +188,21 @@
                     return true;
             }
         },
-        _showOriginal: function(source, layerTitle, data, mimetype) {
-            var self = this;
+        _showOriginal: function(source, data, mimetype, url) {
             switch (mimetype.toLowerCase()) {
                 case 'text/html':
-                    var script = self._getInjectionScript(source.id);
+                    var script = this._getInjectionScript(source.id);
                     var iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
                     iframe.attr("srcdoc",script+data);
-                    self._addContent(source, layerTitle, iframe);
+                    this._addHeader(source);
+                    this._addContent(source, iframe, url);
                     break;
                 case 'text/plain':
                 default:
-                    this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
+                    this._addHeader(source);
+                    this._addContent(source, '<pre>' + data + '</pre>', url);
                     break;
             }
-        },
-        _getContentManager: function() {
-            if (!this.contentManager) {
-                this.contentManager = {
-                    $headerParent: $('.js-header-parent', this.element),
-                    $header: this.template.header,
-                    headerContentSel: '.js-header-content',
-                    headerId: function (id) {
-                        return this.$header.attr('data-idname') + id
-                    },
-                    $contentParent: $('.js-content-parent', this.element),
-                    $content: this.template.content,
-                    contentContentSel: '.js-content-content',
-                    contentId: function (id) {
-                        return this.$content.attr('data-idname') + id
-                    }
-                };
-            }
-            return this.contentManager;
         },
         _open: function() {
             $(document).trigger('mobilepane.switch-to-element', {
@@ -289,9 +272,6 @@
             }
             return buttons;
         },
-        _selectorSelfAndSub: function(idStr, classSel) {
-            return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
-        },
         _removeContent: function(source) {
             $('[data-source-id="' + source.id + '"]', this.element).remove();
             this._removeFeaturesBySourceId(source.id);
@@ -302,9 +282,6 @@
             }
          },
         clearAll: function() {
-            // Must call getContentManager at least once to "save" template markup
-            // @todo: get rid of contentManager to fix all remaining DOM state races
-            this._getContentManager();
             if (this.highlightLayer) {
                 this.highlightLayer.getSource().clear();
             }
@@ -313,43 +290,48 @@
             $('>.tabContainer > :not(.tabs)', this.element).remove();
             this.showingSources.splice(0);
         },
-        _getDocumentNode: function(sourceId) {
-            // @todo: get rid of the content manager
-            return $('#' + this._getContentManager().contentId(sourceId), this.element);
+        _getContentId: function(source) {
+            return ['container', source.id].join('-');
         },
-        _addContent: function(source, layerTitle, content) {
-            var manager = this._getContentManager();
-            var headerId = manager.headerId(source.id);
-            var contentId = manager.contentId(source.id);
+        _getHeaderId: function(source) {
+            return [this.headerIdPrefix_, source.id].join('-');
+        },
+        _addHeader: function(source) {
+            var headerId = this._getHeaderId(source);
             var $header = $('#' + headerId, this.element);
             if ($header.length === 0) {
-                $header = manager.$header.clone();
+                $header = this.template.header.clone();
                 $header.attr('id', headerId);
                 $header.attr('data-source-id', source.id);
-                manager.$headerParent.append($header);
+                $('.js-header-parent', this.element).append($header);
             }
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
                 $header.addClass('active');
             }
-            $(this._selectorSelfAndSub(headerId, manager.headerContentSel), this.element).text(layerTitle);
+            $header.text(source.getTitle());
+        },
+        _addContent: function(source, content, url) {
+            var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
-                $content = manager.$content.clone();
+                $content = this.template.content.clone();
                 $content.attr('id', contentId);
                 $content.attr('data-source-id', source.id);
-                manager.$contentParent.append($content);
+                $('.js-content-parent', this.element).append($content);
             }
-            $content.toggleClass('active', $header.hasClass('active'));
-            $(this._selectorSelfAndSub(contentId, manager.contentContentSel), this.element)
-                .empty().append(content);
-            initTabContainer(this.element);
+            $content.toggleClass('active', $('#' + this._getHeaderId(source), this.element).hasClass('active'));
+            // For print interaction
+            $content.attr('data-url', url);
+
+            var $appendTo = $content.hasClass('js-content-content') && $content || $('.js-content-content', $content);
+            $appendTo.empty().append(content);
         },
         _printContent: function() {
             var $documentNode = $('.js-content.active', this.element);
             var url = $documentNode.attr('data-url');
             // Always use proxy. Calling window.print on a cross-origin window is not allowed.
             var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
-            var w = window.open(proxifiedUrl, 'title', "attributes,scrollbars=yes,menubar=yes");
+            var w = window.open(proxifiedUrl);
             w.print();
         },
         _setupMapClickHandler: function () {
