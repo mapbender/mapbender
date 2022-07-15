@@ -72,6 +72,7 @@ class Sketch extends AbstractElementService
                 '#3333ff',
                 '#44ee44',
             ),
+            'allow_custom_color' => true,
         );
     }
 
@@ -107,6 +108,7 @@ class Sketch extends AbstractElementService
         $view->variables['radiusEditing'] = $this->getRadiusEditing($element);
         $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
         $view->variables['colors'] = $element->getConfiguration()['colors'];
+        $view->variables['allow_custom_color'] = $element->getConfiguration()['allow_custom_color'];
         return $view;
     }
 

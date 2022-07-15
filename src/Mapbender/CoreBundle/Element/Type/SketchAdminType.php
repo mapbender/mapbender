@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -37,6 +38,11 @@ class SketchAdminType extends AbstractType
             ))
             ->add('colors', TextType::class, array(
                 'required' => false,
+                'label' => 'mb.core.sketch.admin.colors'
+            ))
+            ->add('allow_custom_color', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.core.sketch.admin.allow_custom_color'
             ))
         ;
         $builder->get('colors')->addModelTransformer(new ArrayToCsvScalarTransformer());
