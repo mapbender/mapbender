@@ -14,10 +14,8 @@
             width: 700,
             height: 500
         },
-        target: null,
-        model: null,
+        mbMap: null,
         popup: null,
-        context: null,
         contentManager: null,
         mobilePane: null,
         isActive: false,
@@ -50,7 +48,7 @@
         _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
-            this.target = mbMap;
+            this.mbMap = mbMap;
             this._setupMapClickHandler();
             if (options.autoActivate || options.autoOpen) { // autoOpen old configuration
                 widget.activate();
@@ -69,7 +67,7 @@
                     maxResolution: Mapbender.Model.scaleToResolution(Infinity)
                 });
 
-                this.target.map.olMap.addLayer(this.highlightLayer);
+                this.mbMap.getModel().olMap.addLayer(this.highlightLayer);
                 window.addEventListener("message", function(message) {
                     widget._postMessage(message);
                 });
@@ -86,11 +84,11 @@
         },
         activate: function(callback) {
             this.callback = callback;
-            this.target.element.addClass('mb-feature-info-active');
+            this.mbMap.element.addClass('mb-feature-info-active');
             this.isActive = true;
         },
         deactivate: function() {
-            this.target.element.removeClass('mb-feature-info-active');
+            this.mbMap.element.removeClass('mb-feature-info-active');
             this.isActive = false;
             this.clearAll();
 
@@ -111,7 +109,7 @@
                 return;
             }
             var self = this, i;
-            var model = this.target.getModel();
+            var model = this.mbMap.getModel();
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
             var sourceUrlPairs = model.getSources().map(function(source) {
@@ -440,7 +438,6 @@
         _createHighlightControl: function() {
 
             var widget = this;
-            var map = this.target.map.olMap;
 
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
@@ -457,7 +454,7 @@
                 });
             });
 
-            map.addInteraction(highlightControl);
+            this.mbMap.getModel().olMap.addInteraction(highlightControl);
             highlightControl.setActive(true);
         },
         _getInjectionScript: function(sourceId) {
