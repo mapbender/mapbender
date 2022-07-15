@@ -8,8 +8,8 @@
             printResult: false,
             onlyValid: false,
             highlighting: false,
-            featureColorDefault: '#ffa500',
-            featureColorHover: 'ff0000',
+            fillColorDefault: '#ffa500',
+            fillColorHover: 'ff0000',
             maxCount: 100,
             width: 700,
             height: 500
@@ -367,14 +367,14 @@
         },
         _createLayerStyle: function () {
             var settingsDefault = {
-                fill: this.options.featureColorDefault,
-                stroke: this.options.strokeColorDefault || this.options.featureColorDefault,
+                fill: this.options.fillColorDefault,
+                stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
                 opacity: this.options.opacityDefault,
                 fallbackOpacity: 0.7
             };
             var settingsHover = {
-                fill: this.options.featureColorHover || settingsDefault.fill,
-                stroke: this.options.strokeColorHover || this.options.featureColorHover || settingsDefault.stroke,
+                fill: this.options.fillColorHover || settingsDefault.fill,
+                stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
                 opacity: this.options.opacityHover,
                 fallbackOpacity: 0.4
             };

@@ -15,13 +15,13 @@
     <div class="row">
         <fieldset class="col-12 col-xs-12 col-md-6">
             <legend>{{- 'mb.core.admin.featureinfo.label.default_group' | trans() -}}</legend>
-            {{- form_row(form.configuration.featureColorDefault) -}}
+            {{- form_row(form.configuration.fillColorDefault) -}}
             {{- form_row(form.configuration.strokeColorDefault) -}}
             {{- form_row(form.configuration.opacityDefault) -}}
         </fieldset>
         <fieldset class="col-12 col-xs-12 col-md-6">
             <legend>{{- 'mb.core.admin.featureinfo.label.hover_group' | trans() -}}</legend>
-            {{ form_row(form.configuration.featureColorHover) }}
+            {{ form_row(form.configuration.fillColorHover) }}
             {{ form_row(form.configuration.strokeColorHover) }}
             {{ form_row(form.configuration.opacityHover) }}
         </fieldset>
