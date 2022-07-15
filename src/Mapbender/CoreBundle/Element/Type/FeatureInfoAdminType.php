@@ -50,11 +50,49 @@ class FeatureInfoAdminType extends AbstractType
             ))
             ->add('featureColorDefault', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
-                'label' => 'mb.core.admin.featureinfo.label.featureColorDefault',
+                'label' => 'mb.core.admin.featureinfo.label.fillColor',
+                'attr' => array(
+                    'class' => '-js-init-colorpicker',
+                ),
+            ))
+            ->add('strokeColorDefault', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.strokeColor',
+                'attr' => array(
+                    'class' => '-js-init-colorpicker',
+                ),
+            ))
+            ->add('opacityDefault', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.opacity_pct',
+                'attr' => array(
+                    'min' => 0,
+                    'max' => 100,
+                    'class' => 'text-right',
+                ),
             ))
             ->add('featureColorHover', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
-                'label' => 'mb.core.admin.featureinfo.label.featureColorHover',
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.fillColor',
+                'attr' => array(
+                    'class' => '-js-init-colorpicker',
+                ),
+            ))
+            ->add('strokeColorHover', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.strokeColor',
+                'attr' => array(
+                    'class' => '-js-init-colorpicker',
+                ),
+            ))
+            ->add('opacityHover', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.opacity_pct',
+                'attr' => array(
+                    'min' => 0,
+                    'max' => 100,
+                    'class' => 'text-right',
+                ),
             ))
         ;
     }

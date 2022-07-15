@@ -366,33 +366,45 @@
             });
         },
         _createLayerStyle: function () {
-            var strokeStyle = new ol.style.Stroke({
-                color: '#ff00ff', //rgba(255, 255, 255, 1)',
-                lineCap: 'round',
-                width: 1
-            });
-            var defaultColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorDefault).slice(0, 3).concat(0.4);
-            var hoverColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorHover).slice(0, 3).concat(0.7);
-            this.featureInfoStyle = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: defaultColorComponents
-                    })
-                });
+            var settingsDefault = {
+                fill: this.options.featureColorDefault,
+                stroke: this.options.strokeColorDefault || this.options.featureColorDefault,
+                opacity: this.options.opacityDefault,
+                fallbackOpacity: 0.7
             };
-
-            this.featureInfoStyle_hover = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: hoverColorComponents
-                    }),
-                    zIndex: 1000
-                });
-            }
+            var settingsHover = {
+                fill: this.options.featureColorHover || settingsDefault.fill,
+                stroke: this.options.strokeColorHover || this.options.featureColorHover || settingsDefault.stroke,
+                opacity: this.options.opacityHover,
+                fallbackOpacity: 0.4
+            };
+            this.featureInfoStyle = this.processStyle_(settingsDefault);
+            this.featureInfoStyle_hover = this.processStyle_(settingsHover);
+            this.featureInfoStyle_hover.setZIndex(1);
         },
-
+        processStyle_: function(settings) {
+            var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
+            var strokeRgb = Mapbender.StyleUtil.parseCssColor(settings.stroke).slice(0, 3);
+            var opacityFloat = parseFloat(settings.opacity);
+            if (!isNaN(opacityFloat)) {
+                if (!(opacityFloat >= 0.0 && opacityFloat < 1.0)) {
+                    // Percentage to [0;1]
+                    opacityFloat /= 100.0;
+                }
+                opacityFloat = Math.min(Math.max(opacityFloat, 0.0), 1.0);
+            } else {
+                opacityFloat = settings.fallbackOpacity;
+            }
+            var strokeOpacity = Math.sqrt(opacityFloat);
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: fillRgb.concat(opacityFloat)
+                }),
+                stroke: new ol.style.Stroke({
+                    color: strokeRgb.concat(strokeOpacity)
+                })
+            });
+        },
         _postMessage: function(message) {
             var widget = this;
             var data = message.data;
