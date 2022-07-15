@@ -174,10 +174,7 @@
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
-                if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
-                    Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    return false;
-                } else {
+                if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
                     self._showOriginal(source, layerTitle, data_, mimetype);
                     // Bind original url for print interaction
                     var $documentNode = self._getDocumentNode(source.id);
