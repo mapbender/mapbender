@@ -39,6 +39,8 @@
             } else {
                 this.headerIdPrefix_ = 'accordion';
             }
+            // Avoid shared access to prototype values on non-scalar properties
+            this.showingSources = [];
             initTabContainer(this.element);
 
             var self = this;
