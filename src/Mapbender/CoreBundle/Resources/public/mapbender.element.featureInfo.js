@@ -112,16 +112,21 @@
             var model = this.mbMap.getModel();
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
-            var sourceUrlPairs = model.getSources().map(function(source) {
-                var url = model.getPointFeatureInfoUrl(source, x, y, self.options.maxCount);
-                return url && {
-                    source: source,
-                    url: url
-                };
-            }).filter(function(x) { return !!x; });
-            var validSources = sourceUrlPairs.map(function(sourceUrlEntry) {
-                return sourceUrlEntry.source;
-            });
+            var sources = model.getSources();
+            var sourceUrlPairs = [];
+            var validSources = [];
+            // Iterate in reverse to match layertree display order
+            for (var s = sources.length - 1; s >= 0; --s) {
+                var url = model.getPointFeatureInfoUrl(sources[s], x, y, this.options.maxCount);
+                if (url) {
+                    validSources.push(sources[s]);
+                    sourceUrlPairs.push({
+                        source: sources[s],
+                        url: url
+                    });
+                    this.addDisplayStub_(sources[s], url);
+                }
+            }
             for (i = 0; i < showingPreviously.length; ++i) {
                 if (-1 === validSources.indexOf(showingPreviously[i])) {
                     this._removeContent(showingPreviously[i]);
@@ -134,9 +139,10 @@
             sourceUrlPairs.forEach(function(entry) {
                 var source = entry.source;
                 var url = entry.url;
-                self._setInfo(source, url).then(function(success) {
-                    if (success) {
+                self._setInfo(source, url).then(function(content) {
+                    if (content) {
                         self.showingSources.push(source);
+                        self.showResponseContent_(source, content);
                         self._open();
                     } else {
                         self._removeContent(source);
@@ -172,8 +178,7 @@
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
                 if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
-                    self._showOriginal(source, data_, mimetype, url);
-                    return true;
+                    return self.formatResponse_(source, data_, mimetype);
                 }
             }, function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
@@ -190,20 +195,14 @@
                     return true;
             }
         },
-        _showOriginal: function(source, data, mimetype, url) {
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    var script = this._getInjectionScript(source.id);
-                    var iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
-                    iframe.attr("srcdoc",script+data);
-                    this._addHeader(source, url);
-                    this._addContent(source, iframe, url);
-                    break;
-                case 'text/plain':
-                default:
-                    this._addHeader(source, url);
-                    this._addContent(source, $(document.createElement('pre')).text(data));
-                    break;
+        formatResponse_: function(source, data, mimetype) {
+            if (mimetype.toLowerCase() === 'text/html') {
+                var script = this._getInjectionScript(source.id);
+                var $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
+                $iframe.attr("srcdoc", [script, data].join(''));
+                return $iframe.get();
+            } else {
+                return $(document.createElement('pre')).text(data).get();
             }
         },
         _open: function() {
@@ -275,12 +274,13 @@
             return buttons;
         },
         _removeContent: function(source) {
-            $('[data-source-id="' + source.id + '"]', this.element).remove();
+            $('[data-source-id="' + source.id + '"]', this.element).addClass('hidden');
+            $('.js-content-content[data-source-id="' + source.id + '"]', this.element).empty();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
             var $container = $('.tabContainer,.accordionContainer', this.element);
-            if (!$('.active', $container).length) {
-                $('>.tabs .tab, >.accordion', $container).first().click();
+            if (!$('.active', $container).not('.hidden').length) {
+                $('>.tabs .tab, >.accordion', $container).not('hidden').first().click();
             }
          },
         clearAll: function() {
@@ -298,40 +298,49 @@
         _getHeaderId: function(source) {
             return [this.headerIdPrefix_, source.id].join('-');
         },
-        _addHeader: function(source, url) {
+        addDisplayStub_: function(source, url) {
             var headerId = this._getHeaderId(source);
             var $header = $('#' + headerId, this.element);
             if ($header.length === 0) {
                 $header = this.template.header.clone();
                 $header.attr('id', headerId);
                 $header.attr('data-source-id', source.id);
+                $header.addClass('hidden');
                 $('.js-header-parent', this.element).append($header);
             }
-            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
-                $header.addClass('active');
-            }
             $header.text(source.getTitle());
+            $('a', $header).remove();
             $header.append($(document.createElement('a'))
                 .attr('href', url)
                 .attr('target', '_blank')
                 .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
             );
-        },
-        _addContent: function(source, content, url) {
             var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
                 $content = this.template.content.clone();
                 $content.attr('id', contentId);
                 $content.attr('data-source-id', source.id);
+                $content.addClass('hidden');
                 $('.js-content-parent', this.element).append($content);
             }
-            $content.toggleClass('active', $('#' + this._getHeaderId(source), this.element).hasClass('active'));
             // For print interaction
             $content.attr('data-url', url);
+        },
+        showResponseContent_: function(source, content) {
+            var headerId = this._getHeaderId(source);
+            var $header = $('#' + headerId, this.element);
+            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
+                $header.addClass('active');
+            }
+            var contentId = this._getContentId(source);
+            var $content = $('#' + contentId, this.element);
+            $content.toggleClass('active', $('#' + this._getHeaderId(source), this.element).hasClass('active'));
 
             var $appendTo = $content.hasClass('js-content-content') && $content || $('.js-content-content', $content);
             $appendTo.empty().append(content);
+            $header.removeClass('hidden');
+            $content.removeClass('hidden');
         },
         _printContent: function() {
             var $documentNode = $('.js-content.active', this.element);
