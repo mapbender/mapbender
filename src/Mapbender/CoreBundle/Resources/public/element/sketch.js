@@ -400,7 +400,7 @@
             $input.on('keyup', function() {
                 if (self.editing_) {
                     var rawVal = $input.val() || '';
-                    var radius = parseFloat(rawVal.replace(self.decimalSeparator_, '.'));
+                    var radius = self.numberFromLocaleString_(rawVal);
                     if (!isNaN(radius)) {
                         self.updateFeatureRadius_(self.editing_, radius);
                     }
@@ -522,6 +522,20 @@
             $('.color-preview', $btn).css('background', color);
             $btn.prop('disabled', false);
         },
+        numberFromLocaleString_: (function() {
+            var groupSeparator = ',';
+            var decimalSeparator = '.';
+            try {
+                var parts = (1024.5).toLocaleString().split(/\d+/);
+                decimalSeparator = parts[2] || parts[1];
+                groupSeparator = parts[2] && parts[1];
+            } catch (e) {
+                // Treat as en-US (dot separates decimals, comma separates groups)
+            }
+            return function(localized) {
+                return parseFloat(localized.replace(groupSeparator, '').replace(decimalSeparator, '.'));
+            }
+        })(),
         __dummy__: null
     });
 })(jQuery);
