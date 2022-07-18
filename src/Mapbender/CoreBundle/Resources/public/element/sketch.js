@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget("mapbender.mbSketch", $.mapbender.mbBaseElement, {
+    $.widget("mapbender.mbSketch", {
         options: {
             auto_activate: false,
             deactivate_on_close: true,
