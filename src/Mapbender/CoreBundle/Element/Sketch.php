@@ -4,9 +4,11 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 
 class Sketch extends AbstractElementService
+    implements ConfigMigrationInterface
 {
 
     /**
@@ -120,5 +122,16 @@ class Sketch extends AbstractElementService
     {
         $config = $element->getConfiguration() + $this->getDefaultConfiguration();
         return $element->getApplication()->getMapEngineCode() !== 'ol2' && \in_array('circle', $config['geometrytypes']);
+    }
+
+    public static function updateEntityConfig(Element $entity)
+    {
+        // Bridge undocumented legacy "paintstyles" to "colors"
+        $config = $entity->getConfiguration();
+        if (!empty($config['paintstyles']['fillColor'])) {
+            $config += array('colors' => array($config['paintstyles']['fillColor']));
+        }
+        unset($config['paintstyles']);
+        $entity->setConfiguration($config);
     }
 }
