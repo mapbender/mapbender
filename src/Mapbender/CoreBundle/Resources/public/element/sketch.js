@@ -385,7 +385,7 @@
         },
         trackLabelInput_: function($input) {
             var self = this;
-            $input.on('keyup', function() {
+            $input.on('input', function() {
                 if (self.editing_ && self._validateText()) {
                     var text = $(this).val().trim();
                     self._updateFeatureLabel(self.editing_, text);
@@ -397,7 +397,7 @@
         },
         trackRadiusInput_: function($input) {
             var self = this;
-            $input.on('keyup', function() {
+            $input.on('input', function() {
                 if (self.editing_) {
                     var rawVal = $input.val() || '';
                     var radius = self.numberFromLocaleString_(rawVal);
