@@ -200,7 +200,7 @@
                 case 'text/plain':
                 default:
                     this._addHeader(source, url);
-                    this._addContent(source, '<pre>' + data + '</pre>', url);
+                    this._addContent(source, $(document.createElement('pre')).text(data));
                     break;
             }
         },
