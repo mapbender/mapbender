@@ -327,6 +327,7 @@
             } else {
                 $('input[name="radius"]', formScope).prop('disabled', true).val('');
             }
+            this.setPickerColor_(this._getFeatureAttribute(feature, 'color') || this.selectedColor_);
         },
         _endEdit: function() {
             if (this.editControl) {
@@ -514,6 +515,12 @@
                     this.editing_.layer.redraw();
                 }
             }
+        },
+        setPickerColor_: function(color) {
+            $('.-fn-color-customize', this.element).colorpicker('updatePicker', color);
+            var $btn = $('.custom-color-select', this.element);
+            $('.color-preview', $btn).css('background', color);
+            $btn.prop('disabled', false);
         },
         __dummy__: null
     });
