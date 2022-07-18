@@ -1,4 +1,4 @@
-## dev-master @ f209331d7
+## dev-master @ 9c159f93e
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -16,6 +16,9 @@
 * [FeatureInfo] disable while measuring tool / POI / Sketch drawing tools are active
 * [FeatureInfo] disable blue notify announcements for empty responses
 * [FeatureInfo] add direct links to response(s) to tab / accordion headers
+* [FeatureInfo] Fix unpredictable display order of responses from multiple sources
+* [FeatureInfo] Fix encoding errors rendering plain text response
+* [FeatureInfo] Fix tab / accordion reuse not working as intended with multiple FeatureInfo elements in one application
 * [Layertree] fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
