@@ -6,11 +6,7 @@
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             radiusEditing: false,
-            paintstyles: {
-                'strokeColor': '#ff0000',
-                'fillColor': '#ff0000',
-                'strokeWidth': '3'
-            }
+            colors: []
         },
         mbMap: null,
         layer: null,
@@ -23,6 +19,7 @@
         useDialog_: false,
         editContent_: null,
         decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
+        selectedColor_: null,
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -58,9 +55,35 @@
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
+            $('.-js-pallette-container', this.element).on('click', '.color-select[data-color]', function() {
+                var $btn = $(this);
+                self.setColor_($btn.attr('data-color'), $btn);
+            });
+            this.selectedColor_ = $('.color-select', this.element).eq(0).attr('data-color') || '#ff3333';
+            $('.-fn-color-customize', this.element).colorpicker({
+                format: 'hex',
+                input: false,
+                component: false
+            }).on('changeColor', function(evt) {
+                var color = evt.color.toString(true, 'hex');
+                var $btn = $('.custom-color-select', self.element);
+                $('.color-preview', $btn).css('background', color);
+                $btn
+                    .attr('data-color', color)
+                    .prop('disabled', false)
+                ;
+                self.setColor_(color, $btn);
+            });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            this.layer.customizeStyle(Object.assign({}, this.options.paintstyles, {
+            this.layer.customizeStyle({
+                strokeWidth: 3,
+                fillColor: function(feature) {
+                    return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
+                },
+                strokeColor: function(feature) {
+                    return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
+                },
                 label: function(feature) {
                     return self._getFeatureAttribute(feature, 'label') || '';
                 },
@@ -78,7 +101,7 @@
                         return 0;
                     }
                 }
-            }));
+            });
 
             if (Mapbender.mapEngine.code === 'ol2') {
                 // OpenLayers 2: keep reusing single edit control
@@ -209,6 +232,7 @@
         },
         _onFeatureAdded: function(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
+            this._setFeatureAttribute(feature, 'color', this.selectedColor_);
             var text = this.$labelInput_.val().trim();
             this._updateFeatureLabel(feature, text);
             this.$labelInput_.val('');
@@ -303,6 +327,7 @@
             } else {
                 $('input[name="radius"]', formScope).prop('disabled', true).val('');
             }
+            this.setPickerColor_(this._getFeatureAttribute(feature, 'color') || this.selectedColor_);
         },
         _endEdit: function() {
             if (this.editControl) {
@@ -476,6 +501,26 @@
             var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
             var radius_ = radius * upm.h;
             geom.setRadius(radius_);
+        },
+        setColor_: function(color, $button) {
+            this.selectedColor_ = color;
+            $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
+            if ($button.length) {
+                $button.addClass('active');
+            }
+            if (this.editing_) {
+                this._setFeatureAttribute(this.editing_, 'color', color);
+                // OpenLayers 2 only
+                if (this.editing_.layer) {
+                    this.editing_.layer.redraw();
+                }
+            }
+        },
+        setPickerColor_: function(color) {
+            $('.-fn-color-customize', this.element).colorpicker('updatePicker', color);
+            var $btn = $('.custom-color-select', this.element);
+            $('.color-preview', $btn).css('background', color);
+            $btn.prop('disabled', false);
         },
         __dummy__: null
     });

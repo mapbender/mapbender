@@ -21,6 +21,22 @@
         </div>
         <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-default -fn-tool-off"><i class="fa fas fa-stop"></i></button>
     </div>
+    <div class="form-group -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
+        <div class="btn-toolbar">
+            <div class="btn-group btn-group-sm btn-group-sm-square">
+                {%- for color in colors -%}
+                    <button type="button" class="btn btn-default color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
+                {%- endfor -%}
+            </div>
+            {%- if allow_custom_color -%}
+            <div class="btn-group btn-group-sm btn-group-sm-square">
+                <button type="button" class="btn btn-default color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
+                <button type="button" class="-fn-color-customize btn btn-default"><i class="fa fas fa-fw fa-caret-down"></i></button>
+            </div>
+            {%- endif -%}
+        </div>
+    </div>
+
     <div class="row">
         <div class="form-group{{- (radiusEditing and dialogMode) ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
             <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>

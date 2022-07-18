@@ -397,6 +397,8 @@ mb:
       admin:
         auto_activate: 'Automatisches Aktivieren'
         deactivate_on_close: 'Beim Schließen deaktivieren'
+        colors: Farben
+        allow_custom_color: Farbanpassung erlauben
     # (imported) Yaml application amenity
     redlining:
       class:
