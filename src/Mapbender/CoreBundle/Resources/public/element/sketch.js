@@ -507,6 +507,13 @@
             if ($button.length) {
                 $button.addClass('active');
             }
+            if (this.editing_) {
+                this._setFeatureAttribute(this.editing_, 'color', color);
+                // OpenLayers 2 only
+                if (this.editing_.layer) {
+                    this.editing_.layer.redraw();
+                }
+            }
         },
         __dummy__: null
     });
