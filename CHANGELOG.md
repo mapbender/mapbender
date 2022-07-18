@@ -1,4 +1,4 @@
-## dev-master @ 0cb42fc4d
+## dev-master @ f209331d7
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -22,6 +22,7 @@
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
 * [Sketch] Add manual circle radius editing via input field ([PR#1420](https://github.com/mapbender/mapbender/pull/1420))
+* [Sketch] Add configurable multi-color pallette and user customizable color (see [PR#1422](https://github.com/mapbender/mapbender/pull/1422))
 * [Sketch] Fix initial visible content flash of empty table placeholder row
 * [Skecth] Misc user interface improvements
 * [DimensionsHandler] Fix garbled display of acronyms in dimension titles
