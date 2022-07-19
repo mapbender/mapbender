@@ -187,6 +187,7 @@
                 });
             } else {
                 this.popup.$element.removeClass('hidden');
+                this.popup.focus();
             }
         },
         getPopupOptions: function() {
