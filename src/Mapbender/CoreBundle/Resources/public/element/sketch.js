@@ -199,7 +199,8 @@
                 closeOnESC: false,
                 detachOnClose: false,
                 width: 500,
-                height: 380,
+                height: 500,
+                resizable: true,
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.close'),
