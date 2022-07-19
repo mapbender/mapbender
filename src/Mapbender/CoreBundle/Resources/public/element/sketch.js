@@ -177,28 +177,36 @@
         },
         _open: function(){
             var self = this;
-            if(!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup2({
-                    title: Mapbender.trans(this.options.title),
-                    draggable: true,
-                    header: true,
-                    modal: false,
-                    closeOnESC: false,
-                    content: self.element,
-                    detachOnClose: false,
-                    width: 500,
-                    height: 380,
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'button popupClose'
-                        }
-                    ]
+            if (!this.popup || !this.popup.$element) {
+                var options = Object.assign(this.getPopupOptions(), {
+                    content: this.element
                 });
-                this.popup.$element.on('close', $.proxy(this.deactivate, this));
+                this.popup = new Mapbender.Popup2(options);
+                this.popup.$element.on('close', function() {
+                    self.deactivate();
+                });
             } else {
                 this.popup.$element.removeClass('hidden');
             }
+        },
+        getPopupOptions: function() {
+            return {
+                title: Mapbender.trans(this.options.title),
+                cssClass: 'sketch-dialog',
+                draggable: true,
+                header: true,
+                modal: false,
+                closeOnESC: false,
+                detachOnClose: false,
+                width: 500,
+                height: 380,
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'button popupClose'
+                    }
+                ]
+            };
         },
         _close: function(){
             if (this.popup) {
