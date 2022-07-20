@@ -61,5 +61,10 @@
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>
         </service>
+        <service id="Mapbender\CoreBundle\Controller\SourceMetaDataController"
+                 class="Mapbender\CoreBundle\Controller\SourceMetaDataController"
+                 public="true" lazy="true">
+            <argument type="service" id="twig" />
+        </service>
     </services>
 </container>

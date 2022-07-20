@@ -2,13 +2,11 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -126,36 +124,6 @@ class ApplicationController extends ApplicationControllerBase
         }
         $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
-    }
-
-    /**
-     * Metadata action.
-     *
-     * @Route("/application/metadata/{instance}/{layerId}")
-     * @param SourceInstance $instance
-     * @param string $layerId
-     * @return Response
-     */
-    public function metadataAction(SourceInstance $instance, $layerId)
-    {
-        $layerCriteria = Criteria::create()
-            ->where(Criteria::expr()->eq('id', $layerId))
-        ;
-        $startLayerInstance = $instance->getLayers()->matching($layerCriteria)->first() ?: null;
-        // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
-        // @todo: give Yaml applications a proper object repository and make this work
-        $template = $instance->getSource()->getViewTemplate(true);
-        if (!$template) {
-            throw new NotFoundHttpException();
-        }
-        $content = $this->renderView($template, array(
-            'instance' => $instance,
-            'source' => $instance->getSource(),
-            'startLayerInstance' => $startLayerInstance,
-        ));
-        return  new Response($content, 200, array(
-            'Content-Type' => 'text/html',
-        ));
     }
 
     /**
