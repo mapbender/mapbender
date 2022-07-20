@@ -75,6 +75,8 @@
                     .prop('disabled', false)
                 ;
                 self.setColor_(color, $btn);
+            }).one('showPicker', function() {
+                self.setPickerColor_(self.selectedColor_, true);
             });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
