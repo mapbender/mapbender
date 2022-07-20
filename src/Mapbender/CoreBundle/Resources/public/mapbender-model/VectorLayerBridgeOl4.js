@@ -113,11 +113,20 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 style.setImage(pointImageStyle);
                 if (callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity) {
                     var resolved = self.resolveCallables_(svgWithDefaults, callables, feature);
-                    self.applyColor_(style.getFill(), resolved, 'fillColor', 'fillOpacity');
-                    self.applyColor_(style.getStroke(), resolved, 'strokeColor', 'strokeOpacity');
-                    style.setImage(style.getImage().clone());
-                    self.applyColor_(style.getImage().getFill(), resolved, 'fillColor', 'fillOpacity');
-                    self.applyColor_(style.getImage().getStroke(), resolved, 'strokeColor', 'strokeOpacity');
+                    var fillColor = Mapbender.StyleUtil.parseSvgColor(resolved, 'fillColor', 'fillOpacity');
+                    var strokeColor = Mapbender.StyleUtil.parseSvgColor(resolved, 'strokeColor', 'strokeOpacity');
+                    style.setFill(new ol.style.Fill({
+                        color: fillColor
+                    }));
+                    style.setStroke(new ol.style.Stroke({
+                        color: strokeColor,
+                        width: resolved.strokeWidth
+                    }));
+                    style.setImage(new ol.style.Circle({
+                        radius: resolved.pointRadius,
+                        fill: style.getFill(),
+                        stroke: style.getStroke()
+                    }));
                 }
                 return style;
             };
