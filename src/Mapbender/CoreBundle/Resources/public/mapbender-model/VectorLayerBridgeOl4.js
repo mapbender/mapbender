@@ -74,30 +74,15 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
             var callables = this.detectCallables_(svgWithDefaults);
-            var baseFill = new ol.style.Fill();
-            if (!callables.fillColor && !callables.fillOpacity) {
-                this.applyColor_(baseFill, svgWithDefaults, 'fillColor', 'fillOpacity');
+            if (!(callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity)) {
+                this.applyFillAndStroke_(defaultStyle, svgWithDefaults);
             }
-            var baseStroke = new ol.style.Stroke({
-                width: svgWithDefaults.strokeWidth
-            });
-            if (!callables.strokeColor && !callables.strokeOpacity) {
-                this.applyColor_(baseStroke, svgWithDefaults, 'strokeColor', 'strokeOpacity');
-            }
-            defaultStyle.setFill(baseFill);
-            defaultStyle.setStroke(baseStroke);
             var textCallbacks = this._prepareTextStyleCallbacks(styles);
-
             var textStyle = textCallbacks['setText'] && this._prepareTextStyle(svgWithDefaults);
             // we know that the default style function does not populate a text style, so we do not need to merge anything
             if (textStyle) {
                 defaultStyle.setText(textStyle);
             }
-            var pointImageStyle = new ol.style.Circle({
-                radius: svgWithDefaults.pointRadius,
-                fill: baseFill,
-                stroke: baseStroke
-            });
             var self = this;
             var customFeatureStyleFn = function(feature, resolution) {
                 var style = defaultStyle.clone();
@@ -110,33 +95,29 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     textStyle[setterName](value);
                 }
                 style.setText(textStyle);
-                style.setImage(pointImageStyle);
                 if (callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity) {
                     var resolved = self.resolveCallables_(svgWithDefaults, callables, feature);
-                    var fillColor = Mapbender.StyleUtil.parseSvgColor(resolved, 'fillColor', 'fillOpacity');
-                    var strokeColor = Mapbender.StyleUtil.parseSvgColor(resolved, 'strokeColor', 'strokeOpacity');
-                    style.setFill(new ol.style.Fill({
-                        color: fillColor
-                    }));
-                    style.setStroke(new ol.style.Stroke({
-                        color: strokeColor,
-                        width: resolved.strokeWidth
-                    }));
-                    style.setImage(new ol.style.Circle({
-                        radius: resolved.pointRadius,
-                        fill: style.getFill(),
-                        stroke: style.getStroke()
-                    }));
+                    self.applyFillAndStroke_(style, resolved);
                 }
-                return style;
+                return [style];
             };
-            var customLayerStyleFn = function(feature, resolution) {
-                return [customFeatureStyleFn(feature, resolution)];
-            };
-            this.wrappedLayer_.setStyle(customLayerStyleFn);
+            this.wrappedLayer_.setStyle(customFeatureStyleFn);
         },
-        applyColor_: function(styleComponent, svgRules, colorProp, opacityProp) {
-            styleComponent.setColor(Mapbender.StyleUtil.svgToCssColorRule(svgRules, colorProp, opacityProp));
+        applyFillAndStroke_: function(style, svgRules) {
+            var fillColor = Mapbender.StyleUtil.parseSvgColor(svgRules, 'fillColor', 'fillOpacity');
+            var strokeColor = Mapbender.StyleUtil.parseSvgColor(svgRules, 'strokeColor', 'strokeOpacity');
+            style.setFill(new ol.style.Fill({
+                color: fillColor
+            }));
+            style.setStroke(new ol.style.Stroke({
+                color: strokeColor,
+                width: svgRules.strokeWidth
+            }));
+            style.setImage(new ol.style.Circle({
+                radius: svgRules.pointRadius,
+                fill: style.getFill(),
+                stroke: style.getStroke()
+            }));
         },
         getMarkerFeature_: function(lon, lat, nativeStyle) {
             var feature = new ol.Feature({
