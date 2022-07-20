@@ -55,7 +55,8 @@
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
-            $('.-js-pallette-container', this.element).on('click', '.color-select[data-color]', function() {
+            var $pallette = $('.-js-pallette-container', this.element);
+            $pallette.on('click', '.color-select[data-color]', function() {
                 var $btn = $(this);
                 self.setColor_($btn.attr('data-color'), $btn);
             });
@@ -63,7 +64,8 @@
             $('.-fn-color-customize', this.element).colorpicker({
                 format: 'hex',
                 input: false,
-                component: false
+                component: false,
+                align: $('.color-select', $pallette).not('.custom-color-select').length >= 2 && 'right' || 'left'
             }).on('changeColor', function(evt) {
                 var color = evt.color.toString(true, 'hex');
                 var $btn = $('.custom-color-select', self.element);
