@@ -13,6 +13,7 @@
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {%- block form_errors -%}
+  {%- set errors = (errors | default([])) | map((error) => {message: error.message | trans}) -%}
   {{- block('bs3_errors') -}}
 {%- endblock form_errors -%}
 

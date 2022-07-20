@@ -203,7 +203,7 @@ mb:
           content: 'Really delete %userGroup%?'
     import:
       application:
-        failed: 'Application cannot be imported.'
+        failed: 'Application cannot be imported'
   core:
     admin:
       button:

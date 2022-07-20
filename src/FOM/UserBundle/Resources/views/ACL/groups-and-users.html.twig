@@ -26,9 +26,10 @@
           <td>
             <div class="checkbox">
               <label>
-                <input type="checkbox" data-label="{{ group.getTitle() }}"
+                {%- set _group_title = group.getTitle() | trans -%}
+                <input type="checkbox" data-label="{{ _group_title }}"
                        value="r:{{ group.getRole() }}" />
-                <i class="fa fas fa-group"></i>&nbsp;{{ group.getTitle() }}
+                <i class="fa fas fa-group"></i>&nbsp;{{ _group_title }}
               </label>
             </div>
           </td>

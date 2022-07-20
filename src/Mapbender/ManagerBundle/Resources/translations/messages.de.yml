@@ -203,7 +203,7 @@ mb:
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
     import:
       application:
-        failed: 'Anwendung kann nicht importiert werden.'
+        failed: 'Anwendung kann nicht importiert werden'
   core:
     admin:
       button:

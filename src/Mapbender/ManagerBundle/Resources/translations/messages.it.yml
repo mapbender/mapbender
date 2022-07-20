@@ -151,7 +151,7 @@ mb:
           content: 'Cancellare davvero %userGroup%?'
     import:
       application:
-        failed: 'L''applicazione non può essere importata.'
+        failed: 'L''applicazione non può essere importata'
   core:
     admin:
       button:

@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class ElementController
@@ -32,8 +31,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ElementController extends ApplicationControllerBase
 {
-    /** @var TranslatorInterface */
-    protected $translator;
     /** @var ElementInventoryService */
     protected $inventory;
     /** @var ElementEntityFactory */
@@ -43,13 +40,11 @@ class ElementController extends ApplicationControllerBase
     /** @var AclManager */
     protected $aclManager;
 
-    public function __construct(TranslatorInterface $translator,
-                                ElementInventoryService $inventory,
+    public function __construct(ElementInventoryService $inventory,
                                 ElementEntityFactory $factory,
                                 ElementFormFactory $elementFormFactory,
                                 AclManager $aclManager)
     {
-        $this->translator = $translator;
         $this->inventory = $inventory;
         $this->factory = $factory;
         $this->elementFormFactory = $elementFormFactory;
@@ -78,16 +73,13 @@ class ElementController extends ApplicationControllerBase
             if (!$this->checkRegionCompatibility($elementClassName, $region)) {
                 continue;
             }
-            // Translate before sorting for properly localized order
-            $title = $this->translator->trans($elementClassName::getClassTitle());
-            $elements[$title] = array(
+            $elements[] = array(
                 'class' => $elementClassName,
-                'title' => $title,
-                'description' => $this->translator->trans($elementClassName::getClassDescription()),
+                'title' => $elementClassName::getClassTitle(),
+                'description' => $elementClassName::getClassDescription(),
             );
         }
 
-        ksort($elements, SORT_LOCALE_STRING);
         return $this->render('@MapbenderManager/Element/select.html.twig', array(
             'elements' => $elements,
             'region' => $region,

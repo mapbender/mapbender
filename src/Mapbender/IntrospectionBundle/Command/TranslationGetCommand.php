@@ -8,8 +8,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Prints translated messages to the command line.
@@ -20,11 +18,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class TranslationGetCommand extends AbstractTranslationCommand
 {
-    /** @var TranslatorInterface|TranslatorBagInterface */
-    protected $translator;
-    /** @var string[]|false */
-    protected $fallbackLocales;
-
     protected function configure()
     {
         $this

@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * Application controller.
@@ -28,8 +28,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
-    /** @var TranslatorInterface */
-    protected $translator;
+    /** @var LocaleAwareInterface */
+    protected $localeProvider;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
     /** @var ElementInventoryService */
@@ -39,14 +39,14 @@ class ApplicationController extends ApplicationControllerBase
     protected $fileCacheDirectory;
     protected $isDebug;
 
-    public function __construct(TranslatorInterface $translator,
+    public function __construct(LocaleAwareInterface $localeProvider,
                                 ApplicationYAMLMapper $yamlRepository,
                                 ElementInventoryService $elementInventory,
                                 UploadsManager $uploadsManager,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
-        $this->translator = $translator;
+        $this->localeProvider = $localeProvider;
         $this->yamlRepository = $yamlRepository;
         $this->elementInventory = $elementInventory;
         $this->uploadsManager = $uploadsManager;
@@ -136,7 +136,7 @@ class ApplicationController extends ApplicationControllerBase
         // Output depends on locale and base url => bake into cache key
         // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
         $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-        $locale = $this->translator->getLocale();
+        $locale = $this->localeProvider->getLocale();
         // Output also depends on user (granted elements may vary)
         $user = $this->getUser();
         $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);

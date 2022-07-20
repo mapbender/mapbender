@@ -20,12 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ApplicationExchangeController extends AbstractController
 {
-    /** @var TranslatorInterface */
-    protected $translator;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
     /** @var ImportHandler */
@@ -33,12 +30,10 @@ class ApplicationExchangeController extends AbstractController
     /** @var ExportHandler */
     protected $exportHandler;
 
-    public function __construct(TranslatorInterface $translator,
-                                ApplicationYAMLMapper $yamlRepository,
+    public function __construct(ApplicationYAMLMapper $yamlRepository,
                                 ImportHandler $importHandler,
                                 ExportHandler $exportHandler)
     {
-        $this->translator = $translator;
         $this->yamlRepository = $yamlRepository;
         $this->importHandler = $importHandler;
         $this->exportHandler = $exportHandler;
@@ -76,16 +71,15 @@ class ApplicationExchangeController extends AbstractController
                 return $this->redirectToRoute('mapbender_manager_application_index');
             } catch (ImportException $e) {
                 $em->rollback();
-                $message = $this->translator->trans('mb.manager.import.application.failed') . " " . $e->getMessage();
-                $this->addFlash('error', $message);
+                $this->addFlash('error', 'mb.manager.import.application.failed');
+                $this->addFlash('error', ': ' . $e->getMessage());
                 // fall through to re-rendering form
             }
         }
-        return $this->render('@MapbenderManager/layouts/single_form.html.twig', array(
+        return $this->render('@MapbenderManager/Exchange/import.html.twig', array(
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.admin.application.import.btn.import',
-            'title' => $this->translator->trans('mb.manager.managerbundle.import_application'),
-            'return_path' => 'mapbender_manager_application_index'
+            'return_path' => 'mapbender_manager_application_index',
         ));
     }
 
@@ -123,7 +117,7 @@ class ApplicationExchangeController extends AbstractController
             if ($this->isGranted('EDIT', $clonedApp)) {
                 // Redirect to edit view of imported application
                 // @todo: distinct message for successful duplication?
-                $this->addFlash('success', $this->translator->trans('mb.application.create.success'));
+                $this->addFlash('success', 'mb.application.create.success');
                 return $this->redirectToRoute('mapbender_manager_application_edit', array(
                     'slug' => $clonedApp->getSlug(),
                 ));

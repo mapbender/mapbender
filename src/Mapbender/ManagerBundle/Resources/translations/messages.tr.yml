@@ -143,7 +143,7 @@ mb:
           title: 'Silme işlemini onayla'
     import:
       application:
-        failed: 'Uygulama içeri aktarıllamıyor (Import).'
+        failed: 'Uygulama içeri aktarıllamıyor (Import)'
   core:
     admin:
       button:

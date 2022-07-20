@@ -16,20 +16,15 @@ use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
-    /** @var TranslatorInterface */
-    protected $translator;
     /** @var TypeDirectoryService */
     protected $typeDirectory;
 
 
-    public function __construct(TranslatorInterface $translator,
-                                TypeDirectoryService $typeDirectory)
+    public function __construct(TypeDirectoryService $typeDirectory)
     {
-        $this->translator = $translator;
         $this->typeDirectory = $typeDirectory;
     }
 
@@ -113,7 +108,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $application->setUpdated(new \DateTime('now'));
 
         $entityManager->flush();
-        $this->addFlash('success', $this->translator->trans('mb.source.instance.create.success'));
+        $this->addFlash('success', 'mb.source.instance.create.success');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $slug,
             "instanceId" => $newInstance->getId(),
@@ -135,8 +130,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $instance->setLayerset(null);
         $em->persist($instance);
         $em->flush();
-        $msg = $this->translator->trans('mb.manager.sourceinstance.created_reusable');
-        $this->addFlash('success', $msg);
+        $this->addFlash('success', 'mb.manager.sourceinstance.created_reusable');
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
         ));

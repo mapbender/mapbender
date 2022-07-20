@@ -1,13 +1,12 @@
 <?php
 namespace Mapbender\CoreBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * User controller.
@@ -17,21 +16,25 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @author Christian Wygoda
  * @author Paul Schmidt
  */
-class LoginController extends Controller
+class LoginController
 {
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+    /** @var \Twig\Environment */
+    protected $templateEngine;
     /** @var AuthenticationUtils */
     protected $authUtils;
-    /** @var TranslatorInterface */
-    protected $translator;
     protected $enableRegistration;
     protected $enablePasswordReset;
 
-    public function __construct(AuthenticationUtils $authUtils,
-                                TranslatorInterface $translator,
+    public function __construct(FormFactoryInterface $formFactory,
+                                \Twig\Environment $templateEngine,
+                                AuthenticationUtils $authUtils,
                                 $enableRegistration, $enablePasswordReset)
     {
+        $this->formFactory = $formFactory;
+        $this->templateEngine = $templateEngine;
         $this->authUtils = $authUtils;
-        $this->translator = $translator;
         $this->enableRegistration = $enableRegistration;
         $this->enablePasswordReset = $enablePasswordReset;
     }
@@ -40,14 +43,14 @@ class LoginController extends Controller
      * User login
      *
      * @Route("/user/login", methods={"GET"})
-     * @Route("/user/login/check", methods={"POST"}, name="mapbender_core_login_logincheck")
+     * @Route("/user/login/check", methods={"POST"})
      * @param Request $request
      * @return Response
      */
     public function loginAction(Request $request)
     {
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LoginType', null, array(
-            'action' => $this->generateUrl('mapbender_core_login_logincheck'),
+        $form = $this->formFactory->create('Mapbender\CoreBundle\Form\Type\LoginType', null, array(
+            'action' => 'login/check',
         ));
 
         if ($request->getMethod() === 'GET') {
@@ -55,15 +58,15 @@ class LoginController extends Controller
             $lastUsername = $this->authUtils->getLastUsername();
             $form->get('_username')->setData($lastUsername);
             if ($error) {
-                $form->addError(new FormError($this->translator->trans($error->getMessage())));
+                $form->addError(new FormError($error->getMessage()));
             }
         }
 
-        return $this->render('@MapbenderCore/Login/login.html.twig', array(
+        return new Response($this->templateEngine->render('@MapbenderCore/Login/login.html.twig', array(
             'form' => $form->createView(),
             'selfregister' => $this->enableRegistration,
             'reset_password' => $this->enablePasswordReset,
-        ));
+        )));
     }
 
     /**

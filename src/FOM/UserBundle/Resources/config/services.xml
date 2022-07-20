@@ -98,7 +98,6 @@
         </service>
         <service id="fom.acl_assignment_filter" class="FOM\UserBundle\Component\AssignableSecurityIdentityFilter">
             <argument type="service" id="fom.identities.provider" />
-            <argument type="service" id="translator" />
             <argument>%fom.acl_assignment.show_users%</argument>
             <argument>%fom.acl_assignment.show_groups%</argument>
             <argument>%fom.acl_assignment.show_authenticated%</argument>

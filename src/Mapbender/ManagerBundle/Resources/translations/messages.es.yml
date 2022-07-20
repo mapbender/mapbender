@@ -151,7 +151,7 @@ mb:
           content: 'Realmente eliminar %userGroup%?'
     import:
       application:
-        failed: 'La aplicación no puede ser importada.'
+        failed: 'La aplicación no puede ser importada'
   core:
     admin:
       button:

@@ -151,7 +151,7 @@ mb:
           content: 'Действительно удалить%userGroup%?'
     import:
       application:
-        failed: 'Приложение не может быть импортировано.'
+        failed: 'Приложение не может быть импортировано'
   core:
     admin:
       button:

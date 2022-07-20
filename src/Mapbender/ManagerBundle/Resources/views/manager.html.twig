@@ -16,9 +16,11 @@
 {% block content %}
   <div class="head">
       {% include 'MapbenderManagerBundle:Index:menu.html.twig' %}
-      {% for key, flash in app.session.bag('flashes').all() %}
+      {% for key, messages in app.session.bag('flashes').all() %}
         <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
-          {{ flash | first }}
+            {%- for message in messages -%}
+                {{- message | trans -}}
+            {%- endfor -%}
         </div>
       {% endfor %}
   </div>

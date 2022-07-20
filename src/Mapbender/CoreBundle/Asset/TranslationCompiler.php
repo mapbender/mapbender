@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig;
 
 /**

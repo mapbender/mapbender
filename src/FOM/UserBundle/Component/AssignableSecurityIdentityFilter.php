@@ -10,7 +10,6 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controls which security identities will be listed when picking security identities to add to an Acl.
@@ -44,13 +43,12 @@ class AssignableSecurityIdentityFilter
 
     /**
      * @param IdentitiesProviderInterface $provider
-     * @param TranslatorInterface $translator
      * @param bool $showUsers
      * @param bool $showGroups
      * @param bool $showAuthenticated
      * @param bool $showAnonymous
      */
-    public function __construct(IdentitiesProviderInterface $provider, TranslatorInterface $translator,
+    public function __construct(IdentitiesProviderInterface $provider,
                                 $showUsers, $showGroups, $showAuthenticated, $showAnonymous)
     {
         $this->provider = $provider;
@@ -58,8 +56,8 @@ class AssignableSecurityIdentityFilter
         $this->allowGroups = $showGroups;
         $this->allowAuthenticated = $showAuthenticated;
         $this->allowAnonymous = $showAnonymous;
-        $this->anonGroup = new DummyGroup('IS_AUTHENTICATED_ANONYMOUSLY', $translator->trans('fom.acl.group_label.anonymous'));
-        $this->authenticatedGroup = new DummyGroup('ROLE_USER', $translator->trans('fom.acl.group_label.authenticated'));
+        $this->anonGroup = new DummyGroup('IS_AUTHENTICATED_ANONYMOUSLY', 'fom.acl.group_label.anonymous');
+        $this->authenticatedGroup = new DummyGroup('ROLE_USER', 'fom.acl.group_label.authenticated');
     }
 
     /**

@@ -29,7 +29,6 @@ use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Mapbender application management
@@ -43,8 +42,6 @@ class ApplicationController extends ApplicationControllerBase
 {
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
-    /** @var TranslatorInterface */
-    protected $translator;
     /** @var AclManager */
     protected $aclManager;
     /** @var UploadsManager */
@@ -52,13 +49,11 @@ class ApplicationController extends ApplicationControllerBase
     protected $enableResponsiveElements;
 
     public function __construct(MutableAclProviderInterface $aclProvider,
-                                TranslatorInterface $translator,
                                 AclManager $aclManager,
                                 UploadsManager $uploadsManager,
                                 $enableResponsiveElements)
     {
         $this->aclProvider = $aclProvider;
-        $this->translator = $translator;
         $this->aclManager = $aclManager;
         $this->uploadsManager = $uploadsManager;
         $this->enableResponsiveElements = $enableResponsiveElements;
@@ -96,7 +91,7 @@ class ApplicationController extends ApplicationControllerBase
             try {
                 $appDirectory = $this->uploadsManager->getSubdirectoryPath($application->getSlug(), true);
             } catch (IOException $e) {
-                $this->addFlash('error', $this->translate('mb.application.create.failure.create.directory'));
+                $this->addFlash('error', 'mb.application.create.failure.create.directory');
                 return $this->redirectToRoute('mapbender_manager_application_index');
             }
             $application->setUpdated(new \DateTime('now'));
@@ -122,7 +117,7 @@ class ApplicationController extends ApplicationControllerBase
             $em->persist($application);
             $em->flush();
             $em->commit();
-            $this->addFlash('success', $this->translate('mb.application.create.success'));
+            $this->addFlash('success', 'mb.application.create.success');
 
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $application->getSlug(),
@@ -181,15 +176,16 @@ class ApplicationController extends ApplicationControllerBase
                     $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
                 }
                 $em->commit();
-                $this->addFlash('success', $this->translate('mb.application.save.success'));
+                $this->addFlash('success', 'mb.application.save.success');
                 return $this->redirectToRoute('mapbender_manager_application_edit', array(
                     'slug' => $application->getSlug(),
                 ));
             } catch (IOException $e) {
-                $this->addFlash('error', $this->translate('mb.application.save.failure.create.directory') . ": {$e->getMessage()}");
+                $this->addFlash('error', 'mb.application.save.failure.create.directory');
+                $this->addFlash('error', ": {$e->getMessage()}");
                 $em->rollback();
             } catch (\Exception $e) {
-                $this->addFlash('error', $this->translate('mb.application.save.failure.general'));
+                $this->addFlash('error', 'mb.application.save.failure.general');
                 $em->rollback();
             }
         }
@@ -253,11 +249,11 @@ class ApplicationController extends ApplicationControllerBase
             $em->flush();
             $em->commit();
             $this->uploadsManager->removeSubdirectory($slug);
-            $this->addFlash('success', $this->translate('mb.application.remove.success'));
+            $this->addFlash('success', 'mb.application.remove.success');
         } catch (IOException $e) {
-            $this->addFlash('error', $this->translate('mb.application.failure.remove.directory'));
+            $this->addFlash('error', 'mb.application.failure.remove.directory');
         } catch (\Exception $e) {
-            $this->addFlash('error', $this->translate('mb.application.remove.failure.general'));
+            $this->addFlash('error', 'mb.application.remove.failure.general');
         }
 
         return new Response();
@@ -293,7 +289,7 @@ class ApplicationController extends ApplicationControllerBase
                 $em->persist($application);
                 $em->persist($layerset);
                 $em->flush();
-                $this->addFlash('success', $this->translate('mb.layerset.create.success'));
+                $this->addFlash('success', 'mb.layerset.create.success');
             } else {
                 foreach ($form->getErrors(false, true) as $error) {
                     $this->addFlash('error', $error->getMessage());
@@ -355,10 +351,10 @@ class ApplicationController extends ApplicationControllerBase
             $em->persist($application);
             $em->flush();
             $em->commit();
-            $this->addFlash('success', $this->translate('mb.layerset.remove.success'));
+            $this->addFlash('success', 'mb.layerset.remove.success');
         } else {
             /** @todo: emit 404 status */
-            $this->addFlash('error', $this->translate('mb.layerset.remove.failure'));
+            $this->addFlash('error', 'mb.layerset.remove.failure');
         }
         /** @todo: perform redirect server side, not client side */
         return new Response();
@@ -440,8 +436,7 @@ class ApplicationController extends ApplicationControllerBase
         $em->persist($application);
         $application->setUpdated(new \DateTime('now'));
         $em->flush();
-        $msg = $this->translate('mb.manager.sourceinstance.converted_to_bound');
-        $this->addFlash('success', $msg);
+        $this->addFlash('success', 'mb.manager.sourceinstance.converted_to_bound');
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
@@ -481,8 +476,7 @@ class ApplicationController extends ApplicationControllerBase
         // sanity
         $instance->setLayerset(null);
         $em->flush();
-        $msg = $this->translate('mb.manager.sourceinstance.reusable_assigned_to_application');
-        $this->addFlash('success', $msg);
+        $this->addFlash('success', 'mb.manager.sourceinstance.reusable_assigned_to_application');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
             "instanceId" => $instance->getId(),
@@ -662,17 +656,6 @@ class ApplicationController extends ApplicationControllerBase
             $propsEntity->setProperties($firstChoiceValues);
             $application->addRegionProperties($propsEntity);
         }
-    }
-
-    /**
-     * Translate string;
-     *
-     * @param string $key Key name
-     * @return string
-     */
-    protected function translate($key)
-    {
-        return $this->translator->trans($key);
     }
 
     /**
