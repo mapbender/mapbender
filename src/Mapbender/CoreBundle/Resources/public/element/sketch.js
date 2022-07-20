@@ -337,7 +337,13 @@
             } else {
                 $('input[name="radius"]', formScope).prop('disabled', true).val('');
             }
-            this.setPickerColor_(this._getFeatureAttribute(feature, 'color') || this.selectedColor_);
+            var featureColor = this._getFeatureAttribute(feature, 'color') || this.selectedColor_;
+            var $colorBtn = $('.color-select[data-color="' + featureColor + '"]', this.element);
+            if ($colorBtn.length) {
+                this.setColorButtonActive_($colorBtn);
+            } else {
+                this.setPickerColor_(featureColor, true);
+            }
         },
         _endEdit: function() {
             if (this.editControl) {
@@ -514,9 +520,8 @@
         },
         setColor_: function(color, $button) {
             this.selectedColor_ = color;
-            $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
             if ($button.length) {
-                $button.addClass('active');
+                this.setColorButtonActive_($button);
             }
             if (this.editing_) {
                 this._setFeatureAttribute(this.editing_, 'color', color);
@@ -526,11 +531,21 @@
                 }
             }
         },
-        setPickerColor_: function(color) {
+        setColorButtonActive_: function($button) {
+            $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
+            $button.addClass('active');
+        },
+        setPickerColor_: function(color, activateButton) {
             $('.-fn-color-customize', this.element).colorpicker('updatePicker', color);
             var $btn = $('.custom-color-select', this.element);
             $('.color-preview', $btn).css('background', color);
-            $btn.prop('disabled', false);
+            $btn
+                .attr('data-color', color)
+                .prop('disabled', false)
+            ;
+            if (activateButton) {
+                this.setColorButtonActive_($btn);
+            }
         },
         numberFromLocaleString_: (function() {
             var groupSeparator = ',';
