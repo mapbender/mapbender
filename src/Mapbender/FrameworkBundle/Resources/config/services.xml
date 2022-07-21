@@ -25,6 +25,7 @@
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
             <argument type="service" id="twig" />
+            <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
         <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">

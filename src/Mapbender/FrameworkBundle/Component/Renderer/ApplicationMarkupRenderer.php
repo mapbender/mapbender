@@ -7,10 +7,12 @@ namespace Mapbender\FrameworkBundle\Component\Renderer;
 use Mapbender\Component\Application\ElementDistribution;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Twig;
 
 class ApplicationMarkupRenderer
@@ -21,6 +23,8 @@ class ApplicationMarkupRenderer
     protected $elementRenderer;
     /** @var Twig\Environment */
     protected $templatingEngine;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     /** @var bool */
     protected $allowResponsiveContainers;
 
@@ -30,12 +34,33 @@ class ApplicationMarkupRenderer
     public function __construct(ElementFilter $elementFilter,
                                 ElementMarkupRenderer $elementRenderer,
                                 Twig\Environment $templatingEngine,
+                                UploadsManager $uploadsManager,
                                 $allowResponsiveContainers)
     {
         $this->elementFilter = $elementFilter;
         $this->elementRenderer = $elementRenderer;
         $this->templatingEngine = $templatingEngine;
+        $this->uploadsManager = $uploadsManager;
         $this->allowResponsiveContainers = $allowResponsiveContainers;
+    }
+
+    /**
+     * @param Application $application
+     * @return string
+     */
+    public function renderApplication(Application $application)
+    {
+        /** @var string|Template $templateCls */
+        $templateCls = $application->getTemplate();
+        /** @var Template $templateObj */
+        $templateObj = new $templateCls();
+        $twigTemplate = $templateObj->getTwigTemplate();
+        $vars = array_replace($templateObj->getTemplateVars($application), array(
+            'application' => $application,
+            'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
+            'body_class' => $templateObj->getBodyClass($application),
+        ));
+        return $this->templatingEngine->render($twigTemplate, $vars);
     }
 
     /**
@@ -227,5 +252,20 @@ class ApplicationMarkupRenderer
             $elements = \array_filter($elements, $filter);
         }
         return $elements;
+    }
+
+    /**
+     * @param Application $application
+     * @return string|null
+     */
+    protected function getPublicUploadsBaseUrl(Application $application)
+    {
+        $slug = $application->getSlug();
+        try {
+            $this->uploadsManager->getSubdirectoryPath($slug, true);
+            return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
+        } catch (IOException $e) {
+            return null;
+        }
     }
 }

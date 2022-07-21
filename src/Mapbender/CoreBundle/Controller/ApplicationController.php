@@ -3,11 +3,9 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Component\Template;
-use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,20 +29,20 @@ class ApplicationController extends ApplicationControllerBase
     protected $localeProvider;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
-    /** @var UploadsManager */
-    protected $uploadsManager;
+    /** @var ApplicationMarkupRenderer */
+    protected $renderer;
     protected $fileCacheDirectory;
     protected $isDebug;
 
     public function __construct(LocaleAwareInterface $localeProvider,
                                 ApplicationYAMLMapper $yamlRepository,
-                                UploadsManager $uploadsManager,
+                                ApplicationMarkupRenderer $renderer,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
         $this->localeProvider = $localeProvider;
         $this->yamlRepository = $yamlRepository;
-        $this->uploadsManager = $uploadsManager;
+        $this->renderer = $renderer;
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
     }
@@ -69,7 +67,7 @@ class ApplicationController extends ApplicationControllerBase
             $cacheFile = $this->getCachePath($request, $appEntity);
             $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
             if (!$cacheValid) {
-                $content = $this->renderApplication($appEntity);
+                $content = $this->renderer->renderApplication($appEntity);
                 file_put_contents($cacheFile, $content);
                 // allow file timestamp to be read again correctly for 'Last-Modified' header
                 clearstatcache($cacheFile, true);
@@ -78,27 +76,8 @@ class ApplicationController extends ApplicationControllerBase
             $response->isNotModified($request);
             return $response;
         } else {
-            return new Response($this->renderApplication($appEntity), 200, $headers);
+            return new Response($this->renderer->renderApplication($appEntity), 200, $headers);
         }
-    }
-
-    /**
-     * @param Application $application
-     * @return string
-     */
-    protected function renderApplication(Application $application)
-    {
-        /** @var string|Template $templateCls */
-        $templateCls = $application->getTemplate();
-        /** @var Template $templateObj */
-        $templateObj = new $templateCls();
-        $twigTemplate = $templateObj->getTwigTemplate();
-        $vars = array_replace($templateObj->getTemplateVars($application), array(
-            'application' => $application,
-            'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
-            'body_class' => $templateObj->getBodyClass($application),
-        ));
-        return $this->renderView($twigTemplate, $vars);
     }
 
     /**
@@ -145,20 +124,5 @@ class ApplicationController extends ApplicationControllerBase
 
         $name = "{$application->getSlug()}.{$locale}.{$userMarker}.{$baseUrlHash}.{$application->getMapEngineCode()}.html";
         return $this->fileCacheDirectory . "/{$name}";
-    }
-
-    /**
-     * @param Application $application
-     * @return string|null
-     */
-    protected function getPublicUploadsBaseUrl(Application $application)
-    {
-        $slug = $application->getSlug();
-        try {
-            $this->uploadsManager->getSubdirectoryPath($slug, true);
-            return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
-        } catch (IOException $e) {
-            return null;
-        }
     }
 }
