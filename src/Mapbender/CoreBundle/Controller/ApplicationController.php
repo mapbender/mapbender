@@ -4,16 +4,14 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * Application controller.
@@ -25,25 +23,22 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
-    /** @var LocaleAwareInterface */
-    protected $localeProvider;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
     /** @var ApplicationMarkupRenderer */
     protected $renderer;
-    protected $fileCacheDirectory;
+    /** @var ApplicationMarkupCache */
+    protected $markupCache;
     protected $isDebug;
 
-    public function __construct(LocaleAwareInterface $localeProvider,
-                                ApplicationYAMLMapper $yamlRepository,
+    public function __construct(ApplicationYAMLMapper $yamlRepository,
                                 ApplicationMarkupRenderer $renderer,
-                                $fileCacheDirectory,
+                                ApplicationMarkupCache $markupCache,
                                 $isDebug)
     {
-        $this->localeProvider = $localeProvider;
         $this->yamlRepository = $yamlRepository;
         $this->renderer = $renderer;
-        $this->fileCacheDirectory = $fileCacheDirectory;
+        $this->markupCache = $markupCache;
         $this->isDebug = $isDebug;
     }
 
@@ -58,25 +53,11 @@ class ApplicationController extends ApplicationControllerBase
     public function applicationAction(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
-        $headers = array(
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Cache-Control' => 'max-age=0, must-revalidate, private',
-        );
 
         if (!$this->isDebug) {
-            $cacheFile = $this->getCachePath($request, $appEntity);
-            $cacheValid = is_readable($cacheFile) && $appEntity->getUpdated()->getTimestamp() < filectime($cacheFile);
-            if (!$cacheValid) {
-                $content = $this->renderer->renderApplication($appEntity);
-                file_put_contents($cacheFile, $content);
-                // allow file timestamp to be read again correctly for 'Last-Modified' header
-                clearstatcache($cacheFile, true);
-            }
-            $response = new BinaryFileResponse($cacheFile, 200, $headers);
-            $response->isNotModified($request);
-            return $response;
+            return $this->markupCache->getMarkupResponse($request, $appEntity, $this->renderer);
         } else {
-            return new Response($this->renderer->renderApplication($appEntity), 200, $headers);
+            return new Response($this->renderer->renderApplication($appEntity));
         }
     }
 
@@ -98,31 +79,5 @@ class ApplicationController extends ApplicationControllerBase
         }
         $this->denyAccessUnlessGranted('VIEW', $application);
         return $application;
-    }
-
-    /**
-     * @param Request $request
-     * @param Application $application
-     * @return string
-     */
-    protected function getCachePath(Request $request, Application $application)
-    {
-        // Output depends on locale and base url => bake into cache key
-        // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
-        $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-        $locale = $this->localeProvider->getLocale();
-        // Output also depends on user (granted elements may vary)
-        $user = $this->getUser();
-        $isAnon = !$user || !\is_object($user) || !($user instanceof UserInterface);
-        // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-        if ($isAnon) {
-            $userMarker = 'anon';
-        } else {
-            $request->getSession()->start();
-            $userMarker = $request->getSession()->getId();
-        }
-
-        $name = "{$application->getSlug()}.{$locale}.{$userMarker}.{$baseUrlHash}.{$application->getMapEngineCode()}.html";
-        return $this->fileCacheDirectory . "/{$name}";
     }
 }

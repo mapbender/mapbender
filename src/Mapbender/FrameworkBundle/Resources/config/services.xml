@@ -28,6 +28,13 @@
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
+        <service id="mapbender.cache.application_markup"
+                 class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache"
+                 lazy="true">
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="translator" />
+            <argument>%kernel.cache_dir%</argument>
+        </service>
         <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="security.authorization_checker" />

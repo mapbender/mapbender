@@ -6,10 +6,9 @@
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
                  class="Mapbender\CoreBundle\Controller\ApplicationController"
                  public="true">
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.renderer.application_markup" />
-            <argument>%kernel.cache_dir%</argument>
+            <argument type="service" id="mapbender.cache.application_markup" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
