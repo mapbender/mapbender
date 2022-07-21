@@ -3,15 +3,11 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
-use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Application controller.
@@ -21,10 +17,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends ApplicationControllerBase
+class ApplicationController extends YamlApplicationAwareController
 {
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
     /** @var ApplicationMarkupRenderer */
     protected $renderer;
     /** @var ApplicationMarkupCache */
@@ -36,7 +30,7 @@ class ApplicationController extends ApplicationControllerBase
                                 ApplicationMarkupCache $markupCache,
                                 $isDebug)
     {
-        $this->yamlRepository = $yamlRepository;
+        parent::__construct($yamlRepository);
         $this->renderer = $renderer;
         $this->markupCache = $markupCache;
         $this->isDebug = $isDebug;
@@ -59,25 +53,5 @@ class ApplicationController extends ApplicationControllerBase
         } else {
             return new Response($this->renderer->renderApplication($appEntity));
         }
-    }
-
-    /**
-     * @param string $slug
-     * @return Application
-     * @throws NotFoundHttpException
-     * @throws AccessDeniedException
-     */
-    private function getApplicationEntity($slug)
-    {
-        /** @var Application|null $application */
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
-            'slug' => $slug,
-        ));
-        $application = $application ?: $this->yamlRepository->getApplication($slug);
-        if (!$application) {
-            throw new NotFoundHttpException();
-        }
-        $this->denyAccessUnlessGranted('VIEW', $application);
-        return $application;
     }
 }
