@@ -70,7 +70,7 @@ class InstanceTunnelController extends AbstractController
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $url = $instanceTunnel->getService()->getInternalUrl($request, false);
         if (!$url) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException();
         }
         if ($this->isDebug && $request->query->has('reveal-internal')) {
             return new Response($url);
