@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -32,8 +31,6 @@ class ApplicationController extends ApplicationControllerBase
     protected $localeProvider;
     /** @var ApplicationYAMLMapper */
     protected $yamlRepository;
-    /** @var ElementInventoryService */
-    protected $elementInventory;
     /** @var UploadsManager */
     protected $uploadsManager;
     protected $fileCacheDirectory;
@@ -41,14 +38,12 @@ class ApplicationController extends ApplicationControllerBase
 
     public function __construct(LocaleAwareInterface $localeProvider,
                                 ApplicationYAMLMapper $yamlRepository,
-                                ElementInventoryService $elementInventory,
                                 UploadsManager $uploadsManager,
                                 $fileCacheDirectory,
                                 $isDebug)
     {
         $this->localeProvider = $localeProvider;
         $this->yamlRepository = $yamlRepository;
-        $this->elementInventory = $elementInventory;
         $this->uploadsManager = $uploadsManager;
         $this->fileCacheDirectory = $fileCacheDirectory;
         $this->isDebug = $isDebug;
