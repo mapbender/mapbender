@@ -1,4 +1,4 @@
-## dev-master @ 9c159f93e
+## dev-master @ 3b3453fc1
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -23,6 +23,8 @@
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
+* [Overview] Fix initial flash of close icon on toggle button even if initially closed
+* [Overview] Fix layout changes on toggle (vs other elements positioned in the same map corner)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
 * [Sketch] Add manual circle radius editing via input field ([PR#1420](https://github.com/mapbender/mapbender/pull/1420))
 * [Sketch] Add configurable multi-color pallette and user customizable color (see [PR#1422](https://github.com/mapbender/mapbender/pull/1422))
@@ -43,6 +45,7 @@
 * Misc small performance tweaks
   * use minified Proj4js asset in production
   * use minified Openlayers 6 asset in production (requires update to [Rollup-based OL6 build](https://github.com/mapbender/openlayers6-es5/releases/tag/0.4.3.2))
+  * reduce service initialization overhead on common frontend requests
 
 ## v3.3.1
 * Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
