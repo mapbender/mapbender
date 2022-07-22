@@ -133,6 +133,10 @@ class ElementMarkupRenderer
      */
     protected function renderView(ElementView $view, $wrapperTag, $baseAttributes)
     {
+        if (!$view->cacheable) {
+            $baseAttributes += array('class' => '');
+            $baseAttributes['class'] = ltrim($baseAttributes['class'] . ' -js-reload-uncacheable');
+        }
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
         if ($view instanceof TemplateView) {
             $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);

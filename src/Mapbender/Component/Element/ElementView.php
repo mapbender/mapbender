@@ -10,4 +10,5 @@ namespace Mapbender\Component\Element;
 abstract class ElementView
 {
     public $attributes = array();
+    public $cacheable = true;
 }
