@@ -100,7 +100,6 @@
             mainMapModel.olMap.addControl(this.overview);
             $('.ol-overviewmap-map', $viewport)
                 .width(this.options.width)
-                .height(this.options.height)
             ;
 
             var self = this;

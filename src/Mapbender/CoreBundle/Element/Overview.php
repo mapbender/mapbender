@@ -103,7 +103,13 @@ class Overview extends AbstractElementService
                 break;
             case self::VISIBILITY_OPEN_PERMANENT:
                 $view->variables['show_toggle'] = false;
+                break;
         }
+        $view->variables += array(
+            'closed' => $config['visibility'] == self::VISIBILITY_CLOSED_INITIALLY,
+            'width' => $config['width'],
+            'height' => $config['height'],
+        );
         return $view;
     }
 

@@ -23,6 +23,9 @@
       }
     }
   }
+  .ol-overviewmap, .ol-overviewmap-map {
+    height: 100%;
+  }
   .ol-overviewmap {
     button {
       // OL4: renders a toggle button, which we delegate to for visibility
@@ -40,7 +43,6 @@
   &.closed {
     .olMap, .ol-overviewmap-map {
       width: 0 !important;
-      height: 0;
       opacity: 0;
       border: 0;
     }
