@@ -10,21 +10,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 class ApplicationMarkupCache
 {
     /** @var TokenStorageInterface */
     protected $tokenStorage;
+    /** @var AccessDecisionManagerInterface */
+    protected $accessDecisionManager;
     /** @var LocaleAwareInterface */
     protected $localeProvider;
     protected $basePath;
     protected $isDebug;
 
     public function __construct(TokenStorageInterface $tokenStorage,
+                                AccessDecisionManagerInterface $accessDecisionManager,
                                 LocaleAwareInterface $localeProvider,
                                 $basePath)
     {
+        $this->accessDecisionManager = $accessDecisionManager;
         $this->tokenStorage = $tokenStorage;
         $this->localeProvider = $localeProvider;
         $this->basePath = $basePath;
@@ -65,22 +70,42 @@ class ApplicationMarkupCache
      */
     protected function getFilePath(Request $request, Application $application)
     {
-        // Output depends on locale and base url => bake into cache key
-        // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
-        $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-        $locale = $this->localeProvider->getLocale();
-        $token = $this->tokenStorage->getToken();
-        $isAnon = !$token || ($token instanceof AnonymousToken);
+        // Output depends on
+        // 1) locale
+        // 2) Base url (app.php / app_dev.php / nothing); generated script / asset urls may differ
+        // 3) Granted element subset
+        // => Bake all of these into cache file path.
+        $parts = array(
+            $application->getSlug(),
+            $this->localeProvider->getLocale(),
+            $application->getMapEngineCode(),
+        );
+
         // Output also depends on user (granted elements may vary)
         // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
+        $hashParts = array(
+            $request->getBaseUrl(),
+        );
+        $token = $this->tokenStorage->getToken();
+        $isAnon = !$token || ($token instanceof AnonymousToken);
         if ($isAnon) {
-            $userMarker = 'anon';
+            // All anons will have the same grant check results. We can skip it, but we need to
+            // make sure this cache entry is only used by anons.
+            $parts[] = 'anon';
+            // Add base url hash. 16 bits of entropy should be enough for three possible base urls.
+            $parts[] = \substr(\md5($request->getBaseUrl()), 0, 4);
         } else {
-            $request->getSession()->start();
-            $userMarker = $request->getSession()->getId();
+            $hashParts = array(
+                $request->getBaseUrl(),
+            );
+            foreach ($application->getElements() as $element) {
+                if (!$this->accessDecisionManager->decide($token, array('VIEW'), $element)) {
+                    $hashParts[] = $element->getId();
+                }
+            }
+            $parts[] = \md5(implode(';', $hashParts));
         }
-
-        $name = "{$application->getSlug()}.{$locale}.{$userMarker}.{$baseUrlHash}.{$application->getMapEngineCode()}.html";
+        $name = \implode('.', $parts) . '.html';
         return $this->basePath . "/{$name}";
     }
 }
