@@ -6,6 +6,7 @@ use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\Utils\ApplicationUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,13 +45,9 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
         $application = $element->getApplication();
         $dimensions = array();
         if ($application) {
-            foreach ($application->getElements() as $otherElement) {
-                $otherClassName = $otherElement->getClass();
-                if ($otherClassName && ClassUtil::exists($otherClassName) && \is_a($otherClassName, 'Mapbender\Component\Element\MainMapElementInterface', true)) {
-                    // Map found
-                    $dimensions = $this->collectDimensions($otherElement);
-                    break;
-                }
+            $mapElement = ApplicationUtil::getMapElement($application);
+            if ($mapElement) {
+                $dimensions = $this->collectDimensions($mapElement);
             }
         }
         $event->getForm()

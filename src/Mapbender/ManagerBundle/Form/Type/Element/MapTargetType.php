@@ -7,6 +7,7 @@ namespace Mapbender\ManagerBundle\Form\Type\Element;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\Utils\ApplicationUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\IntegerToLocalizedStringTransformer;
@@ -45,11 +46,8 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getParent()->getData();
         $mapElements = array();
-        foreach ($element->getApplication()->getElements() as $other) {
-            $otherClassName = $other->getClass();
-            if ($element !== $other && $otherClassName && ClassUtil::exists($otherClassName) && \is_a($otherClassName, 'Mapbender\Component\Element\MainMapElementInterface', true)) {
-                $mapElements[$other->getId()] = $other;
-            }
+        foreach (ApplicationUtil::getMapElements($element->getApplication()) as $mapElement) {
+            $mapElements[$mapElement->getId()] = $mapElement;
         }
         $mapIds = array_keys($mapElements);
         $parentForm = $event->getForm()->getParent();
