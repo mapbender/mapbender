@@ -42,9 +42,9 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     initializeAutocompletePosition_: function() {
         /** @see https://api.jqueryui.com/autocomplete/#option-position */
-        var vertical = this.element.closest('.toolBar.bottom').length ? 'up' : 'down';
+        var vertical = this.element.closest('.toolBar.bottom,.anchored-element-wrap-lb,.anchored-element-wrap-rb').length ? 'up' : 'down';
         var horizontal = 'right';
-        if (this.element.closest('.toolBar').length) {
+        if (this.element.closest('.toolBar,.anchored-element-wrap').length) {
             var windowWidth = $('html').get(0).clientWidth;
             var node = this.element.get(0);
             var ownWidth = node.clientWidth;

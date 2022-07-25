@@ -5,6 +5,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Transport\HttpTransportInterface;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -15,7 +16,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @author Christian Wygoda
  */
-class SimpleSearch extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
+class SimpleSearch extends AbstractElementService
+    implements ConfigMigrationInterface, ElementHttpHandlerInterface, FloatableElement
 {
     /** @var HttpTransportInterface */
     protected $httpTransport;
