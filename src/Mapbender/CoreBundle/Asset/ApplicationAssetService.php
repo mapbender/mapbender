@@ -115,7 +115,13 @@ class ApplicationAssetService
         $referenceLists = array();
         if ($type === 'css') {
             $template = $this->getDummyTemplateComponent($application);
-            $referenceLists[] = $template->getSassVariablesAssets($application);
+            $variables = $template->getSassVariablesAssets($application);
+
+            $customVariables = $this->extractSassVariables($application->getCustomCss() ?: '');
+            if ($customVariables) {
+                $variables[] = new StringAsset($customVariables . "\n");
+            }
+            $referenceLists[] = $variables;
         }
         $referenceLists[] = $this->getBaseAssetReferences($type);
         if ($type === 'js') {
@@ -396,5 +402,26 @@ class ApplicationAssetService
         } else {
             return AssetReferenceUtil::qualifyBulk($scopeObject, $references, $this->strict);
         }
+    }
+
+    /**
+     * @param string $customCss
+     * @return string
+     */
+    protected function extractSassVariables($customCss)
+    {
+        // Strip multiline comments (including unclosed at the end)
+        $customCss = \preg_replace('#/\*.*?(\*/|$)#Ds', '', $customCss);
+        // Strip single-line comments
+        $customCss = \preg_replace('#//[^\n]*$#', '', $customCss);
+        // Strip leading whitespace
+        $customCss = \preg_replace('#^\s+#', '', $customCss);
+        $variableLines = array();
+        foreach (\explode("\n", $customCss) as $line) {
+            if (\trim($line) && \preg_match('#^\s*\$.*?:#', $line)) {
+                $variableLines[] = $line;
+            }
+        }
+        return \implode("\n", $variableLines);
     }
 }
