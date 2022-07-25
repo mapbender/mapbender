@@ -89,7 +89,6 @@ class Fullscreen extends Template
             case 'js':
                 return array(
                     '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                    '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
                 );
             case 'trans':

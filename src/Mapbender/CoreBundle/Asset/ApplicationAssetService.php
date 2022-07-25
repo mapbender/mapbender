@@ -129,6 +129,7 @@ class ApplicationAssetService
                 '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                 '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
             );
         }
         $referenceLists = array_merge($referenceLists, array(

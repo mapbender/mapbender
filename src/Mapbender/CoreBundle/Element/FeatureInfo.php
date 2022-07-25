@@ -102,7 +102,6 @@ class FeatureInfo extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.featureInfo.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss',
