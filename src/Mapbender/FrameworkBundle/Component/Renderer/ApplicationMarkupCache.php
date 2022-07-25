@@ -50,6 +50,11 @@ class ApplicationMarkupCache
             \clearstatcache($filePath, true);
             $response = new Response($html);
         }
+        $response->setVary(array(
+            'Accept-Language',
+            // Bust browser cache on session / login state change
+            'Cookie',
+        ));
         return $response;
     }
 
