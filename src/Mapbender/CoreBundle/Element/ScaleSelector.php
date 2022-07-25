@@ -6,6 +6,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\Utils\ApplicationUtil;
 
 /**
  * A ScaleSelector
@@ -83,10 +84,10 @@ class ScaleSelector extends AbstractElementService
         $view = new TemplateView('MapbenderCoreBundle:Element:scaleselector.html.twig');
         $view->attributes['class'] = 'mb-element-scaleselector';
         $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
-        $target = $element->getTargetElement('target');
+        $map = ApplicationUtil::getMapElement($element->getApplication());
         $scales = array();
-        if ($target) {
-            $mapConfig = $target->getConfiguration();
+        if ($map) {
+            $mapConfig = $map->getConfiguration();
             if (!empty($mapConfig['scales'])) {
                 $scales = $mapConfig['scales'];
                 asort($scales, SORT_NUMERIC | SORT_REGULAR);
