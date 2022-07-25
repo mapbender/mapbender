@@ -1,4 +1,4 @@
-## dev-master @ 3b3453fc1
+## dev-master @ f6e3efcd9
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -6,6 +6,7 @@
 * Fix Openlayers 6 frontend temporarily displaying Wms with previous layer combination when reactivating with changed layer selection
 * Fix reloaded Wms sources containing more layers than advertised in capabilities in some cases
 * Fix empty / not helpful exception messages on incompatible / missing legacy element class
+* Fix infinite pileup of application frontend html cache entry files (see [PR#1423](https://github.com/mapbender/mapbender/pull/1423))
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
