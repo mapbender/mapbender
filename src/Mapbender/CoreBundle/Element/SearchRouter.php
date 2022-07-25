@@ -148,7 +148,6 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         return array(
             'js'    => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
             ),
             'css'   => array(

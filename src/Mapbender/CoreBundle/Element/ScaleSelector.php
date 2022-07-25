@@ -41,8 +41,6 @@ class ScaleSelector extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.js',
-                /** @todo: upate legacy asset reference */
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.scss',

@@ -48,7 +48,6 @@ class SrsSelector extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
             ),
             'css' => array(

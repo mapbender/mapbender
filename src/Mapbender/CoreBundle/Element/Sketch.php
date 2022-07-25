@@ -43,7 +43,6 @@ class Sketch extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/element/sketch.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/element/sketch.scss',
