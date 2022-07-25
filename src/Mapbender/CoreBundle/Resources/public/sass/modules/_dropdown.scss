@@ -14,12 +14,13 @@ select.numeric {
   &.numeric {
     text-align: right;
   }
+  line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
 
   .dropdownValue, .dropdownList {
     user-select: none;
   }
   .dropdownValue {
-    height: #{$inputHeight - 4px};    // Deliberately downsize to fix weird vertical gaps after .dropdown
+    min-height: #{$inputHeight - 2px};    // Same as line-height; avoid zero height during initialization
     overflow-y: hidden;
     padding-left: 5px;
     &.iconDown:after {

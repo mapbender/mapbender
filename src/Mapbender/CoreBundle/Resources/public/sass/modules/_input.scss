@@ -11,11 +11,8 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
   padding-right: 5px;
 }
 
-.input:not(textarea), .dropdown:not(.bs-dropdown) {
+.input:not(textarea) {
   height: $inputHeight;
-}
-.dropdown:not(.bs-dropdown) {
-  line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
 }
 .input {
   &[disabled] {

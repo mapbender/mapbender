@@ -121,8 +121,7 @@ ul.toolBar, .toolBar > ul {
   }
   &.bottom {
     .dropdownList{
-      bottom:0;   // to "drop up"
-      margin-bottom: $inputHeight;
+      bottom: 100%;   // to "drop up"
     }
   }
 
