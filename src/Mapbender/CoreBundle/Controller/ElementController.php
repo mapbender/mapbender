@@ -7,6 +7,8 @@ namespace Mapbender\CoreBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
+use Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,12 +18,16 @@ class ElementController extends YamlApplicationAwareController
 {
     /** @var ElementFilter */
     protected $filter;
+    /** @var ElementMarkupRenderer */
+    protected $renderer;
 
     public function __construct(ApplicationYAMLMapper $yamlRepository,
-                                ElementFilter $filter)
+                                ElementFilter $filter,
+                                ElementMarkupRenderer $renderer)
     {
         parent::__construct($yamlRepository);
         $this->filter = $filter;
+        $this->renderer = $renderer;
     }
 
     /**
@@ -56,5 +62,36 @@ class ElementController extends YamlApplicationAwareController
         } else {
             throw new NotFoundHttpException();
         }
+    }
+
+    /**
+     * (Re-)render HTML for an element subset, replacing stale partial markup from cache.
+     * Only accessed via relative URL from script.
+     * See mapbender.application.js _initElements method
+     *
+     * @Route("/application/{slug}/elements", methods={"GET"})
+     * @param Request $request
+     * @param $slug
+     * @return Response
+     */
+    public function reloadMarkupAction(Request $request, $slug)
+    {
+        $application = $this->getApplicationEntity($slug);
+        $idsParam = $request->query->get('ids', '');
+        $ids = \array_filter(explode(',', $idsParam));
+
+        $criteria = Criteria::create()->where(Criteria::expr()->in('id', $ids));
+        $elements = $application->getElements()->matching($criteria)->getValues();
+        if (!$elements) {
+            throw new NotFoundHttpException();
+        }
+        $elements = $this->filter->prepareFrontend($elements, false, false);
+
+        $htmlMap = array();
+        foreach ($elements as $element) {
+            // Map to jQuery-friendly id selectors
+            $htmlMap['#' . $element->getId()] = $this->renderer->renderElements(array($element));
+        }
+        return new JsonResponse($htmlMap);
     }
 }

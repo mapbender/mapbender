@@ -42,6 +42,7 @@
                  public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="mapbender.renderer.element_markup" />
         </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
                  class="Mapbender\CoreBundle\Controller\ConfigController"

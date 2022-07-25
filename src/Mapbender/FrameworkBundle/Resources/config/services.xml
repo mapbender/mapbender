@@ -36,6 +36,7 @@
                  class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache"
                  lazy="true">
             <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="translator" />
             <argument>%kernel.cache_dir%</argument>
         </service>
