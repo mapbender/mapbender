@@ -13,11 +13,6 @@
                 self.open();
             });
         },
-
-        defaultAction: function () {
-            return this.open();
-        },
-
         open: function () {
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
