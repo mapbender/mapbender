@@ -2,10 +2,11 @@
 
     $.widget("mapbender.mbCopyright", {
         options: {},
-        elementUrl: null,
         popup: null,
+        content_: null,
+
         _create: function() {
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.content_ = $('.-js-popup-content', this.element).remove().removeClass('hidden');
             if(this.options.autoOpen){
                 this.open();
             }
@@ -13,32 +14,27 @@
         },
         
         open: function(callback) {
-            var widget = this;
-            var options = widget.options;
-            var element = widget.element;
-            var width = options.popupWidth ? options.popupWidth : 350;
             this.callback = callback ? callback : null;
 
             if (!this.popup) {
-                $.ajax({url: this.elementUrl + 'content'}).then(function(response) {
-                    widget.popup = new Mapbender.Popup({
-                        title: element.attr('data-title'),
-                        modal:               true,
-                        detachOnClose: false,
-                        closeOnOutsideClick: true,
-                        content: response,
-                        width:               width,
-                        height: options.popupHeight || null,
-                        buttons: [
-                            {
-                                label: Mapbender.trans('mb.actions.accept'),
-                                cssClass: 'button popupClose'
-                            }
-                        ]
-                    });
-                    widget.popup.$element.on('close', function() {
-                        widget.close();
-                    });
+                this.popup = new Mapbender.Popup({
+                    title: this.element.attr('data-title'),
+                    modal: true,
+                    detachOnClose: false,
+                    closeOnOutsideClick: true,
+                    content: this.content_,
+                    width: this.options.popupWidth || 350,
+                    height: this.options.popupHeight || null,
+                    buttons: [
+                        {
+                            label: Mapbender.trans('mb.actions.accept'),
+                            cssClass: 'button popupClose'
+                        }
+                    ]
+                });
+                var self = this;
+                this.popup.$element.on('close', function() {
+                    self.close();
                 });
             } else {
                 this.popup.$element.removeClass('hidden');

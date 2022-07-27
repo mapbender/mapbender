@@ -2,12 +2,9 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Mapbender\Utils\HtmlUtil;
 use Twig;
 
 /**
@@ -17,7 +14,7 @@ use Twig;
  * 
  * @author Paul Schmidt
  */
-class Copyright extends AbstractElementService implements ElementHttpHandlerInterface
+class Copyright extends AbstractElementService
 {
     /** @var Twig\Environment */
     protected $templateEngine;
@@ -90,7 +87,18 @@ class Copyright extends AbstractElementService implements ElementHttpHandlerInte
 
     public function getView(Element $element)
     {
-        $view = new StaticView('');
+        $config = $element->getConfiguration();
+        // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
+        $content = $this->templateEngine->createTemplate($config['content'] ?: '')->render(array(
+            'configuration' => $config,
+        ));
+        $wrapped = HtmlUtil::renderTag('div', $content, array(
+            'class' => 'hidden -js-popup-content',
+        ));
+        $view = new StaticView($wrapped);
+        if (!empty($config['content']) && false !== strpos($config['content'], '{')) {
+            $view->cacheable = false;
+        }
         $view->attributes['class'] = 'mb-element-copyright';
         $view->attributes['data-title'] = $element->getTitle();
         return $view;
@@ -102,23 +110,5 @@ class Copyright extends AbstractElementService implements ElementHttpHandlerInte
     public static function getFormTemplate()
     {
         return 'MapbenderCoreBundle:ElementAdmin:copyright.html.twig';
-    }
-
-    public function getHttpHandler(Element $element)
-    {
-        return $this;
-    }
-
-    public function handleRequest(Element $element, Request $request)
-    {
-        switch ($request->attributes->get('action')) {
-            case 'content':
-                $content = $this->templateEngine->render('MapbenderCoreBundle:Element:copyright-content.html.twig', array(
-                    'configuration' => $element->getConfiguration(),
-                ));
-                return new Response($content);
-            default:
-                throw new NotFoundHttpException();
-        }
     }
 }
