@@ -65,6 +65,10 @@ class HTMLElement extends AbstractElementService
         /** @see https://doc.mapbender.org/en/functions/misc/html.html for twig variable expectations */
         $view->variables['application'] = $element->getApplication();
         $view->variables['entity'] = $element;
+        // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
+        if (false !== strpos($config['content'], '{')) {
+            $view->cacheable = false;
+        }
         return $view;
     }
 
