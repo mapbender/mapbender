@@ -2,3 +2,6 @@
 {% if show_label and label %}
     <span>{{ label | trans }}</span>
 {% endif %}
+<div class="hidden -js-popup-content">
+    {{- content | raw -}}
+</div>

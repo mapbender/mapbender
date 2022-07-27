@@ -3,16 +3,13 @@
 
     $.widget("mapbender.mbAboutDialog", {
         options: {},
-        elementUrl: null,
         popup: null,
+        content_: null,
 
         _create: function () {
-            var self = this,
-                $me = $(this.element);
-
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + $me.attr('id') + '/';
-
-            $me.on('click', function () {
+            var self = this;
+            this.content_ = $('.-js-popup-content', this.element).remove().removeClass('hidden');
+            this.element.on('click', function () {
                 self.open();
             });
         },
@@ -28,7 +25,7 @@
                     modal: true,
                     draggable: false,
                     closeOnOutsideClick: true,
-                    content: [ $.ajax({url: this.elementUrl + 'content'})],
+                    content: this.content_,
                     width: 350,
                     height: 170,
                     buttons: [
