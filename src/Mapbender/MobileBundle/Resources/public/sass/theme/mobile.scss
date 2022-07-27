@@ -139,8 +139,6 @@
   min-height: 100%;
   overflow:auto;
   -webkit-overflow-scrolling: touch;
-  overflow-y: scroll;
-  clear: both;
 }
 .mobileClose{
   float: right;
@@ -198,6 +196,11 @@ body.mobile-template {
     line-height: 2.2;
   }
 }
+// Big fonts in SimpleSearch
+.autocompleteWrapper {
+  font-size: 1.5rem;
+}
+
 .mb-element-zoombar{
   z-index: 4;
   &.right-top{@include absolute($space $space '' '');}
@@ -212,6 +215,10 @@ body.mobile-template {
       &:nth-child(2n) {
         background-color: lighten($ciColor2, 15%);
       }
+    }
+    .layer-menu-btn {
+      // Pad out rows to not look weird against altering backgrounds
+      margin-right: 0.55em;
     }
   }
   .selectedWrapper {
@@ -233,3 +240,7 @@ body.mobile-template {
   }
 }
 
+.input {
+  height: auto;
+  line-height: 1.5;
+}
