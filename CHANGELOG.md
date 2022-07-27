@@ -1,4 +1,4 @@
-## dev-master @ 5961d0e50
+## dev-master @ 46476d024
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -7,6 +7,7 @@
 * Fix reloaded Wms sources containing more layers than advertised in capabilities in some cases
 * Fix empty / not helpful exception messages on incompatible / missing legacy element class
 * Fix infinite pileup of application frontend html cache entry files (see [PR#1423](https://github.com/mapbender/mapbender/pull/1423))
+* Fix toolbar item padding when using centered items
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
@@ -20,7 +21,10 @@
 * [FeatureInfo] Fix unpredictable display order of responses from multiple sources
 * [FeatureInfo] Fix encoding errors rendering plain text response
 * [FeatureInfo] Fix tab / accordion reuse not working as intended with multiple FeatureInfo elements in one application
-* [Layertree] fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
+* [GpsPosition] Fix error on click when placed in mobile template footer
+* [Layertree] Fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
+* [Layertree] Fix missing margin after layer menu button in mobile template
+* [Legend] add `.legend-dialog` for CSS customizability
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
@@ -28,6 +32,7 @@
 * [Overview] Fix layout changes on toggle (vs other elements positioned in the same map corner)
 * [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
 * [SimpleSearch] Support usage as a floating map overlay element
+* [SimpleSearch] Improve layout in mobile template
 * [Sketch] Add manual circle radius editing via input field ([PR#1420](https://github.com/mapbender/mapbender/pull/1420))
 * [Sketch] Add configurable multi-color pallette and user customizable color (see [PR#1422](https://github.com/mapbender/mapbender/pull/1422))
 * [Sketch] Fix initial visible content flash of empty table placeholder row
@@ -42,10 +47,10 @@
   * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
   * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
-* [Legend] add `.legend-dialog` for CSS customizability
-* Resolve misc twig deprecations
+* Resolve misc Twig deprecations
+* Resolve misc Symfony Acl deprecations
 * Resolve PHP zip method deprecations
-* Misc small performance tweaks
+* Misc performance tweaks
   * use minified Proj4js asset in production
   * use minified Openlayers 6 asset in production (requires update to [Rollup-based OL6 build](https://github.com/mapbender/openlayers6-es5/releases/tag/0.4.3.2))
   * reduce service initialization overhead on common frontend requests
