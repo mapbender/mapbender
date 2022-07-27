@@ -141,8 +141,7 @@ $.widget('mapbender.mbSimpleSearch', {
             },
             position: false,
             select: function(event, ui) {
-                // Adapt data format
-                self._onAutocompleteSelected(event, {data: ui.item});
+                self._onAutocompleteSelected(ui.item);
             }
         });
         // On manual submit (enter key, submit button), trigger autocomplete manually
@@ -153,9 +152,6 @@ $.widget('mapbender.mbSimpleSearch', {
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
         });
-
-        // On item selection in autocomplete, parse data and set map bbox
-        searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
     },
     _parseFeature: function(doc) {
         switch ((this.options.geom_format || '').toUpperCase()) {
@@ -213,8 +209,8 @@ $.widget('mapbender.mbSimpleSearch', {
             return this._extractAttribute(doc, this.options.label_attribute);
         }
     },
-    _onAutocompleteSelected: function(evt, evtData) {
-        var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
+    _onAutocompleteSelected: function(item) {
+        var feature = this._parseFeature(item[this.options.geom_attribute]);
 
         var zoomToFeatureOptions = {
             maxScale: parseInt(this.options.result_maxscale) || null,
