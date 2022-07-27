@@ -70,17 +70,18 @@ ul.toolBar, .toolBar > ul {
   margin: 0;
 }
 
+.toolBarItem {
+  white-space: nowrap;
+  vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+  padding: 5px;
+  display: inline-block;
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;
   user-select: none;
-  .toolBarItem {
-    white-space: nowrap;
-    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-  }
   >ul .toolBarItem {
-    padding:5px;
-    display: inline-block;
     > span {
       // amenity for buttons with ".iconBig" icons + labels
       // inline does not get enough height to wrap contents vertically, inline-block does
@@ -127,14 +128,12 @@ ul.toolBar, .toolBar > ul {
 
   .itemsRight {
     text-align:right;
-    .toolBarItem{padding-left:$space/4;}
     .dropdown:not(.numeric) {
       text-align: left;
     }
   }
   .itemsCenter {
     text-align:center;
-    .toolBarItem{padding-right:$space/2;}
   }
   // Undo fixed-pixel line height on body
   line-height: 1;
