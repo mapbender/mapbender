@@ -1,17 +1,31 @@
 .mb-element-simplesearch {
+  &.toolBarItem {
+    white-space: normal;
+  }
   .autocompleteWrapper {
     position: relative;
     .ui-autocomplete {
       min-width: 100%;
-      width: auto;
+      width: 22em;
+      max-width: 50vw;
+    }
+    &, &.right-down {
+      // .right-down is the default
+      .ui-autocomplete {
+        margin-top: -1px;
+      }
+    }
+    &.left-up, &.right-up {
+      .ui-autocomplete {
+        bottom: 100%;
+        margin-bottom: -1px;
+        margin-top: 0;
+      }
+    }
+    &.left-up, &.left-down {
+      .ui-autocomplete {
+        right: 0;
+      }
     }
   }
 }
-
-.mobilePane .mb-element-simplesearch {
-  .autocompleteWrapper {
-    width: 100%;
-  }
-}
-
-

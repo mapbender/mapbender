@@ -1,7 +1,7 @@
 $inputBorderColor: lighten($thirdColor, 15%) !default;
 $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 
-.input, .dropdown:not(.bs-dropdown) {
+.input, .dropdown:not(.bs-dropdown), .ui-autocomplete {
   color: $inputForegroundColor;
   border:solid 1px $inputBorderColor;
   background-color: $inputBackgroundColor;

@@ -1,4 +1,23 @@
 (function($) {
+$.widget('mapbender.uiAutocompleteStatic', $.ui.autocomplete, {
+    // ui.autocomplete variant that removes $.ui.position usage to avoid
+    // generating inline width / height / position styles
+    // @see https://github.com/jquery/jquery-ui/blob/main/ui/widgets/autocomplete.js#L527
+    _suggest: function(items) {
+        var ul = this.menu.element.empty();
+        this._renderMenu(ul, items);
+        this.isNewMenu = true;
+        this.menu.refresh();
+        ul.show();
+
+        if (this.options.autoFocus) {
+            this.menu.next();
+        }
+        this._on(this.document, {
+            mousedown: '_closeOnClickOutside'
+        });
+    }
+});
 
 $.widget('mapbender.mbSimpleSearch', {
     options: {
@@ -21,11 +40,10 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     mbMap: null,
     iconUrl_: null,
-    acPosition_: undefined,
 
     _create: function() {
         this.iconUrl_ = this.options.result_icon_url || null;
-        this.acPosition_ = this.initializeAutocompletePosition_()
+        this.initializeAutocompletePosition_()
         if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
             // Local, asset-relative
             var parts = [
@@ -60,6 +78,8 @@ $.widget('mapbender.mbSimpleSearch', {
                 horizontal = 'left';
             }
         }
+        // Adds .left-up / .left-down / .right-up / .right-down
+        $('.autocompleteWrapper', this.element).addClass([horizontal, vertical].join('-'));
 
         switch ([horizontal, vertical].join('-')) {
             default:
@@ -88,7 +108,7 @@ $.widget('mapbender.mbSimpleSearch', {
         // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
         var minLength = 2;
 
-        searchInput.autocomplete({
+        searchInput.uiAutocompleteStatic({
             appendTo: searchInput.parent().get(0),
             delay: self.options.delay,
             minLength: minLength,
@@ -119,7 +139,7 @@ $.widget('mapbender.mbSimpleSearch', {
                     })
                 ;
             },
-            position: this.acPosition_,
+            position: false,
             select: function(event, ui) {
                 // Adapt data format
                 self._onAutocompleteSelected(event, {data: ui.item});

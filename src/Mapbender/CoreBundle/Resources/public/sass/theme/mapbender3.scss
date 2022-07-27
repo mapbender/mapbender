@@ -398,8 +398,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .ui-autocomplete {
-  background-color: #fff;
-  border: solid 1px lighten($thirdColor, 15%);   // same as .input
   position: absolute; // do not expand DOM size when showing items
 
   line-height: 1.5;
@@ -407,13 +405,11 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     padding: 5px 5px;
     cursor: pointer;
     display: block;
-    opacity: 0.8;
     &:hover {
-      opacity: 1;
-      background-color: $contentColor;
+      background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
     }
   }
-  .toolBar & {
+  .toolBar &, .anchored-element-wrap & {
     max-height: 250px;
     overflow-y: hidden;
     text-align: left;
