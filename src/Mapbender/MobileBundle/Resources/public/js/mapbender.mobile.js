@@ -8,11 +8,11 @@ $(function(){
 
     $('.toolBar').on('click', '.mb-button', function(e) {
         var $button = $(this);
+        // This element may actually not be a control button, but a Gps Button or anything else
         var button = $button.data('mapbenderMbButton');
-        var buttonOptions = button.options;
-        var target = $('#' + buttonOptions.target);
-        var pane = target.closest('.mobilePane');
-        if (!(target && target.length && pane && pane.length)) {
+        var targetId = ((button || {}).options || {}).target;
+        var target = targetId && document.getElementById(targetId);
+        if (!target || !$(target).closest('.mobilePane').length) {
             return;
         }
         // HACK: prevent button from ever gaining a visual highlight
@@ -21,7 +21,7 @@ $(function(){
         e.stopImmediatePropagation();
 
         // supply button tooltip as emergency fallback if target element has no title
-        switchToElement_(target, $button.attr('title'));
+        switchToElement_($(target), $button.attr('title'));
         toggle_(true);
 
         return false;
