@@ -36,8 +36,7 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
                         'application' => $application,
                         'choice_filter' => function($choice) use ($sourceInstanceIds) {
                             /** @var SourceInstance $choice*/
-                            $inMapSourceInstances = in_array($choice->getId(), $sourceInstanceIds, false);
-                            return $inMapSourceInstances && $choice->isBasesource() && $choice->getEnabled();
+                            return \in_array($choice->getId(), $sourceInstanceIds, false);
                         },
                     ),
                 ))
@@ -69,8 +68,10 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
     {
         $sourceInstanceIds = array();
         foreach ($this->getLayersetsFromMapId($application, $mapId) as $layerset) {
-            foreach ($layerset->getCombinedInstances() as $sourceInstance) {
-                $sourceInstanceIds[] = $sourceInstance->getId();
+            foreach ($layerset->getCombinedInstanceAssignments() as $assignment) {
+                if ($assignment->getEnabled() && $assignment->getInstance()->isBasesource()) {
+                    $sourceInstanceIds[] = $assignment->getInstance()->getId();
+                }
             }
         }
         return $sourceInstanceIds;
