@@ -1,4 +1,4 @@
-## dev-master @ 46476d024
+## dev-master @ fc7bf480a
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -14,6 +14,7 @@
 * [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
 * [Export / Print] improve reproduction of customized Openlayers 6 line patterns
 * [Print] Fix Openlayers 6 print scale calculations not respecting geodesic distortions at printout location
+* [BaseSourceSwitcher] Fix BaseSourceSwitcher backend form offering disabled shared instances ([#1417](https://github.com/mapbender/mapbender/issues/1417))
 * [FeatureInfo] Add configurability for stroke colors and opacities on extracted features (see [PR#1323](https://github.com/mapbender/mapbender/pull/1323))
 * [FeatureInfo] disable while measuring tool / POI / Sketch drawing tools are active
 * [FeatureInfo] disable blue notify announcements for empty responses
