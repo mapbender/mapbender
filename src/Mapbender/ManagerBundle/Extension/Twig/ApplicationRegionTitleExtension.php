@@ -4,13 +4,21 @@
 namespace Mapbender\ManagerBundle\Extension\Twig;
 
 
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class ApplicationRegionTitleExtension extends AbstractExtension
 {
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
+
+    public function __construct(ApplicationTemplateRegistry $templateRegistry)
+    {
+        $this->templateRegistry = $templateRegistry;
+    }
+
     public function getFunctions()
     {
         return array(
@@ -20,12 +28,7 @@ class ApplicationRegionTitleExtension extends AbstractExtension
 
     public function application_region_title(Application $application, $regionName)
     {
-        /** @var Template|string $tpl */
-        $tpl = $application->getTemplate();
-        if ($tpl) {
-            return $tpl::getRegionTitle($regionName);
-        } else {
-            return \ucfirst($regionName);
-        }
+        $template = $this->templateRegistry->getApplicationTemplate($application);
+        return $template::getRegionTitle($regionName);
     }
 }

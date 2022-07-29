@@ -7,6 +7,7 @@
                  class="Mapbender\ManagerBundle\Controller\ApplicationController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="mapbender.application_template_registry" />
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.elements%</argument>

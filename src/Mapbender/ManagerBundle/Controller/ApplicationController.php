@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\AclManager;
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -14,6 +13,7 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -42,6 +42,8 @@ class ApplicationController extends ApplicationControllerBase
 {
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
+    /** @var ApplicationTemplateRegistry  */
+    protected $templateRegistry;
     /** @var AclManager */
     protected $aclManager;
     /** @var UploadsManager */
@@ -49,11 +51,13 @@ class ApplicationController extends ApplicationControllerBase
     protected $enableResponsiveElements;
 
     public function __construct(MutableAclProviderInterface $aclProvider,
+                                ApplicationTemplateRegistry $templateRegistry,
                                 AclManager $aclManager,
                                 UploadsManager $uploadsManager,
                                 $enableResponsiveElements)
     {
         $this->aclProvider = $aclProvider;
+        $this->templateRegistry = $templateRegistry;
         $this->aclManager = $aclManager;
         $this->uploadsManager = $uploadsManager;
         $this->enableResponsiveElements = $enableResponsiveElements;
@@ -189,17 +193,15 @@ class ApplicationController extends ApplicationControllerBase
                 $em->rollback();
             }
         }
-
-        /** @var string|Template $templateClass */
-        $templateClass = $application->getTemplate();
+        $template = $this->templateRegistry->getApplicationTemplate($application);
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application'         => $application,
-            'regions'             => $templateClass::getRegions(),
+            'regions' => $template->getRegions(),
             'form'                => $form->createView(),
-            'template_name'       => $templateClass::getTitle(),
+            'template_name' => $template->getTitle(),
             // Allow screenType filtering only on current map engine
             'allow_screentypes' => $this->enableResponsiveElements && $application->getMapEngineCode() !== Application::MAP_ENGINE_OL2,
             'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
@@ -639,9 +641,8 @@ class ApplicationController extends ApplicationControllerBase
      */
     protected function createRegionProperties(Application $application)
     {
-        /** @var string|Template $templateClass */
-        $templateClass = $application->getTemplate();
-        $templateProps = $templateClass::getRegionsProperties();
+        $template = $this->templateRegistry->getApplicationTemplate($application);
+        $templateProps = $template->getRegionsProperties();
 
         foreach ($templateProps as $regionName => $choices) {
             if (!$choices) {

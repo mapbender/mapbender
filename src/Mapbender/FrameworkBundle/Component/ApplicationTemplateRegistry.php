@@ -41,10 +41,13 @@ class ApplicationTemplateRegistry
 
     /**
      * @param Application $application
-     * @return Template
+     * @return Template|null
      */
     public function getApplicationTemplate(Application $application)
     {
-        return $this->handlers[$application->getTemplate()];
+        $setting = $application->getTemplate();
+        // Return null only for uninitialized application template prop
+        // (may happen when submitting new application form)
+        return $setting ? $this->handlers[$setting] : null;
     }
 }
