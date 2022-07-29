@@ -131,21 +131,6 @@ body {
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
 }
-.toolBar.top {
-
-  >ul .toolBarItem {
-    border-radius: 2 * $radius;
-    &.logoContainer {
-      border-radius: 0;
-      padding: 0; // use padding pixels for more of the logo
-    }
-  }
-  >ul .toolBarItem + .toolBarItem {
-    margin-left: 0.5rem;
-  }
-}
-
-
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }

@@ -77,42 +77,21 @@ ul.toolBar, .toolBar > ul {
   display: inline-block;
 }
 
+.toolBarItemActive {
+  // Invert background and foreground
+  background-color: $toolBarFontColor;
+  color: $toolBarBackgroundColor;
+}
+
+.toolBarItem + .toolBarItem {
+  margin-left: 0.5rem;
+}
+
 .toolBar {
   opacity: $toolBarOpacity;
   z-index: 4;
   user-select: none;
-  >ul .toolBarItem {
-    > span {
-      // amenity for buttons with ".iconBig" icons + labels
-      // inline does not get enough height to wrap contents vertically, inline-block does
-      display: inline-block;
-    }
-    .mb-element {
-      vertical-align: inherit;
-      display: inline-block;
-    }
-    @include border-radius($radius);
-    // spacing between icon and label for buttons and similar elements
-    [class^="icon"], [class*=" icon"] {
-      & +* {
-        margin-left: 0.4em;
-      }
-    }
-  }
-  .mb-button {
-    opacity: $toolBarButtonDefaultOpacity;
-    &:hover {
-      opacity: $toolBarButtonHoverOpacity;
-    }
-  }
-  .toolBarItemActive {
-    // Invert background and foreground
-    background-color: $toolBarFontColor;
-    color: $toolBarBackgroundColor;
-    .mb-button {
-      opacity: $toolBarButtonActiveOpacity;
-    }
-  }
+
   padding:$space/4 $space/2 $space/4 $space/2;
   border-color: darken($contentColor, 20%);
 
@@ -141,9 +120,6 @@ ul.toolBar, .toolBar > ul {
   label {
     margin-bottom: 0;
   }
-  a.mb-button:hover {
-    text-decoration: none;
-  }
   .menu-wrapper {
     .dropdown-menu {
       font-size: inherit;
@@ -161,6 +137,7 @@ ul.toolBar, .toolBar > ul {
     .toolBarItem {
       margin: 0.25em;
       padding: 0.25em;
+      display: block;
       .iconBig {
         // emulate ~.fa-fw for neat text alignment
         width: 1.25em;

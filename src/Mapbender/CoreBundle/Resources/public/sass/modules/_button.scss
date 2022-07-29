@@ -13,35 +13,26 @@ $buttonCriticalBorderColor: darken($buttonCriticalSecondColor, 5%) !default;
 $buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
 $buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
 
-.buttonCore, .linkButton {
+.button, .buttonCore, .linkButton {
   user-select: none;
   font-size: $buttonFontSize;
-}
-.buttonCore {
-  // Workaround for vintage Firefox <=29 (circa 2014) line-height mishandling on form buttons
-  // and misc other form elements.
-  // see https://bugzilla.mozilla.org/show_bug.cgi?id=697451
-  @-moz-document url-prefix(){
-    .buttonCore{font: ($fontSize - 2) sans-serif;}
-  }
-  cursor:pointer;
-  border:none;
-  outline: none;
   &:focus {
     outline: none;
   }
 }
+.button, .buttonCore {
+  cursor: pointer;
+  outline: none;
+  display: inline-block;
+}
 .button{
   padding:($space/4) ($space/2);
-  height: 24px;
   line-height: 1;
-  display: inline-block;
   margin:0;
   text-decoration: none;
 
   border-width: 1px;
   border-style: solid;
-  @extend .buttonCore;
   @include transition(all, 0.3s, ease-in-out);
 
   &:focus {
