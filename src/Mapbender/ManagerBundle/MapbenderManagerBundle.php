@@ -2,7 +2,6 @@
 
 namespace Mapbender\ManagerBundle;
 
-use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
@@ -11,8 +10,9 @@ use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MapbenderManagerBundle extends ManagerBundle
+class MapbenderManagerBundle extends Bundle
 {
 
     public function build(ContainerBuilder $container)

@@ -12,14 +12,14 @@ use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use FOM\UserBundle\DependencyInjection\Factory\SspiFactory;
-use Mapbender\ManagerBundle\Component\ManagerBundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * FOMUserBundle - provides user management
  *
  * @author Christian Wygoda
  */
-class FOMUserBundle extends ManagerBundle
+class FOMUserBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
@@ -40,7 +40,6 @@ class FOMUserBundle extends ManagerBundle
 
         $this->addMenu($container);
         $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', 'FOM\UserBundle\Entity\User'));
-        $container->addCompilerPass(new CollectAclClassesPass('fom.user.acl_classes'));
     }
 
     protected function addMenu(ContainerBuilder $container)
@@ -49,14 +48,5 @@ class FOMUserBundle extends ManagerBundle
             ->setWeight(100)
         ;
         $container->addCompilerPass(new RegisterMenuRoutesPass($securityItem));
-    }
-
-    public function getACLClasses()
-    {
-        return array(
-            'Symfony\Component\Security\Acl\Domain\Acl' => 'fom.user.userbundle.classes.acls',
-            'FOM\UserBundle\Entity\User' => 'fom.user.userbundle.classes.users',
-            'FOM\UserBundle\Entity\Group' => 'fom.user.userbundle.classes.groups',
-        );
     }
 }

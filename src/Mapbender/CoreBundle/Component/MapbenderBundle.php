@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\ManagerBundle\Component\ManagerBundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * The base bundle class for all Mapbender3 bundles.
@@ -19,7 +20,7 @@ use Mapbender\ManagerBundle\Component\ManagerBundle;
  * Declare services with `mapbender.application_template` tag to add custom application templates
  *    or displace existing Mapbender templates. See https://github.com/mapbender/mapbender/pull/1424
  */
-class MapbenderBundle extends ManagerBundle
+class MapbenderBundle extends Bundle
 {
     /**
      * Return list of element classes provided by this bundle.

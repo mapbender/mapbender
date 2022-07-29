@@ -8,18 +8,18 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
-use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 
 /**
  * @author Christian Wygoda
  */
-class MapbenderCoreBundle extends ManagerBundle
+class MapbenderCoreBundle extends Bundle
 {
 
     /**
@@ -46,17 +46,6 @@ class MapbenderCoreBundle extends ManagerBundle
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getACLClasses()
-    {
-        return array(
-            'Mapbender\CoreBundle\Entity\Application' => 'mb.terms.application.plural',
-            'Mapbender\CoreBundle\Entity\Source' => 'mb.terms.source.plural',
-        );
     }
 
     protected function loadConfigs(ContainerBuilder $container)
