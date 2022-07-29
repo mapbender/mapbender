@@ -96,6 +96,9 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
                 break;
             case 'footer':
                 $classes[] = 'bottom';
+                break;
+            default:
+                break;
         }
         return $classes;
     }
