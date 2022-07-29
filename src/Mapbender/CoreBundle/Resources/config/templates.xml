@@ -7,12 +7,12 @@
         <service id="mapbender.application_template.fullscreen"
                  class="Mapbender\CoreBundle\Template\Fullscreen"
                  abstract="true">
-            <tag name="mapbender.application_template" />
+            <tag name="mapbender.application_template" priority="-1" />
         </service>
         <service id="mapbender.application_template.fullscreen_alternative"
                  class="Mapbender\CoreBundle\Template\FullscreenAlternative"
                  abstract="true">
-            <tag name="mapbender.application_template" />
+            <tag name="mapbender.application_template" priority="-1" />
         </service>
     </services>
 </container>

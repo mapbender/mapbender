@@ -7,7 +7,7 @@
         <service id="mapbender.mobile.template_mobile"
                  class="Mapbender\MobileBundle\Template\Mobile"
                  abstract="true">
-            <tag name="mapbender.application_template" />
+            <tag name="mapbender.application_template" priority="-1" />
         </service>
     </services>
 </container>
