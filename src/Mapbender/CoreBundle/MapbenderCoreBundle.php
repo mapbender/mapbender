@@ -50,18 +50,6 @@ class MapbenderCoreBundle extends MapbenderBundle
     /**
      * @inheritdoc
      */
-    public function getTemplates()
-    {
-        return array
-            (
-                'Mapbender\CoreBundle\Template\Fullscreen',
-                'Mapbender\CoreBundle\Template\FullscreenAlternative',
-            );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getElements()
     {
         return array(
@@ -110,6 +98,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'constraints.yml',
             'formTypes.yml',
             'elements.xml',
+            'templates.xml',
         );
     }
 

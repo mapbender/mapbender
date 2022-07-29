@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="mapbender.automatic_locale">true</parameter>
         <parameter key="mapbender.force_engine">null</parameter>
+        <parameter key="mapbender.application_template.fallback">null</parameter>
     </parameters>
     <services>
         <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
@@ -26,9 +27,10 @@
         <service id="mapbender.renderer.application_markup"
                  class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer"
                  lazy="true">
+            <argument type="service" id="twig" />
+            <argument type="service" id="mapbender.application_template_registry" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
-            <argument type="service" id="twig" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
@@ -47,6 +49,11 @@
         <service id="mapbender.element_entity_factory" class="Mapbender\FrameworkBundle\Component\ElementEntityFactory">
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="translator" />
+        </service>
+        <service id="mapbender.application_template_registry" class="Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry">
+            <!-- NOTE: argument populated by RegisterApplicationTemplatesPass -->
+            <argument type="collection" />
+            <argument>%mapbender.application_template.fallback%</argument>
         </service>
         <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
             <argument type="service" id="mapbender.element_shim_factory.container" />

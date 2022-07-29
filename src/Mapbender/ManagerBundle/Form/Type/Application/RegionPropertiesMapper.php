@@ -7,14 +7,21 @@ namespace Mapbender\ManagerBundle\Form\Type\Application;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Symfony\Component\Form\DataMapperInterface;
 
 class RegionPropertiesMapper implements DataMapperInterface
 {
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
+
+    public function __construct(ApplicationTemplateRegistry $templateRegistry)
+    {
+        $this->templateRegistry = $templateRegistry;
+    }
+
     /**
      * @param Collection|Selectable|RegionProperties[] $viewData
      * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
@@ -83,9 +90,8 @@ class RegionPropertiesMapper implements DataMapperInterface
 
     protected function getRegionDefaults(Application $application, $regionName)
     {
-        /** @var Template|string $templateClass */
-        $templateClass = $application->getTemplate();
-        $defaults = $templateClass::getRegionPropertiesDefaults($regionName);
+        $template = $this->templateRegistry->getApplicationTemplate($application);
+        $defaults = $template->getRegionPropertiesDefaults($regionName);
         unset($defaults['label']);
         return $defaults;
     }

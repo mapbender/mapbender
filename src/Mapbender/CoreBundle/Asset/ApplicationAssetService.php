@@ -9,10 +9,10 @@ use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\Utils\AssetReferenceUtil;
 
@@ -34,6 +34,8 @@ class ApplicationAssetService
     protected $inventory;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
     /** @var bool */
     protected $debug;
     /** @var bool */
@@ -45,6 +47,7 @@ class ApplicationAssetService
                                 ElementFilter $elementFilter,
                                 ElementInventoryService $inventory,
                                 TypeDirectoryService $sourceTypeDirectory,
+                                ApplicationTemplateRegistry $templateRegistry,
                                 $debug=false,
                                 $strict=false)
     {
@@ -54,6 +57,7 @@ class ApplicationAssetService
         $this->elementFilter = $elementFilter;
         $this->inventory = $inventory;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->templateRegistry = $templateRegistry;
         $this->debug = $debug;
         $this->strict = $strict;
     }
@@ -114,7 +118,7 @@ class ApplicationAssetService
     {
         $referenceLists = array();
         if ($type === 'css') {
-            $template = $this->getDummyTemplateComponent($application);
+            $template = $this->templateRegistry->getApplicationTemplate($application);
             $variables = $template->getSassVariablesAssets($application);
 
             $customVariables = $this->extractSassVariables($application->getCustomCss() ?: '');
@@ -295,7 +299,7 @@ class ApplicationAssetService
      */
     public function getTemplateBaseAssetReferences(Application $application, $type)
     {
-        $templateComponent = $this->getDummyTemplateComponent($application);
+        $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         $refs = $templateComponent->getAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
     }
@@ -366,21 +370,9 @@ class ApplicationAssetService
      */
     public function getTemplateLateAssetReferences(Application $application, $type)
     {
-        $templateComponent = $this->getDummyTemplateComponent($application);
+        $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         $refs = $templateComponent->getLateAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
-    }
-
-    /**
-     * @param Application $application
-     * @return Template
-     */
-    protected function getDummyTemplateComponent(Application $application)
-    {
-        $templateClassName = $application->getTemplate();
-        /** @var Template $instance */
-        $instance = new $templateClassName();
-        return $instance;
     }
 
     /**
