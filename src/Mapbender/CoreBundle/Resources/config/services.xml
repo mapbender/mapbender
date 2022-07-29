@@ -240,6 +240,7 @@
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="mapbender.application_template_registry" />
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>
         </service>
