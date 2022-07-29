@@ -12,11 +12,13 @@ class ApplicationTemplateRegistry
 {
     /** @var IApplicationTemplateInterface[]|Template[] */
     protected $handlers = array();
+    /** @var IApplicationTemplateInterface|Template */
+    protected $fallback;
 
     /**
      * @param array<string, IApplicationTemplateInterface|string> $collection
      */
-    public function __construct($collection)
+    public function __construct($collection, $fallback)
     {
         foreach ($collection as $handling => $item) {
             if (\is_object($item)) {
@@ -24,6 +26,12 @@ class ApplicationTemplateRegistry
             } else {
                 $this->handlers[$handling] = new $item;
             }
+        }
+        if ($fallback) {
+            if (!\is_object($fallback)) {
+                $fallback = new $fallback;
+            }
+            $this->fallback = $fallback;
         }
     }
 
@@ -48,6 +56,14 @@ class ApplicationTemplateRegistry
         $setting = $application->getTemplate();
         // Return null only for uninitialized application template prop
         // (may happen when submitting new application form)
-        return $setting ? $this->handlers[$setting] : null;
+        if ($setting) {
+            if (!empty($this->handlers[$setting])) {
+                return $this->handlers[$setting];
+            } else {
+                return $this->fallback;
+            }
+        } else {
+            return null;
+        }
     }
 }

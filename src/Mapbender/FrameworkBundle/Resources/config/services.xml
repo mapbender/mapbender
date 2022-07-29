@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="mapbender.automatic_locale">true</parameter>
         <parameter key="mapbender.force_engine">null</parameter>
+        <parameter key="mapbender.application_template.fallback">null</parameter>
     </parameters>
     <services>
         <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
@@ -52,6 +53,7 @@
         <service id="mapbender.application_template_registry" class="Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry">
             <!-- NOTE: argument populated by RegisterApplicationTemplatesPass -->
             <argument type="collection" />
+            <argument>%mapbender.application_template.fallback%</argument>
         </service>
         <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
             <argument type="service" id="mapbender.element_shim_factory.container" />

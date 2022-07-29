@@ -21,6 +21,7 @@
         <parameter key="mapbender.application_exporter.service.class">Mapbender\ManagerBundle\Component\ExportHandler</parameter>
         <parameter key="mapbender.source.url_processor.service.class">Mapbender\CoreBundle\Component\Source\UrlProcessor</parameter>
         <parameter key="mapbender.sqlite_connection_listener.class">Mapbender\CoreBundle\Component\EventListener\SqliteConnectionListener</parameter>
+        <parameter key="mapbender.application_template.fallback">Mapbender\CoreBundle\Template\Fullscreen</parameter>
         <!-- strict mode flag cascade; set mapbender.strict to true to enable all checks at once -->
         <parameter key="mapbender.strict">false</parameter>
         <parameter key="mapbender.strict.element_api">%mapbender.strict%</parameter>
