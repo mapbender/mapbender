@@ -1,4 +1,4 @@
-## dev-master @ fc7bf480a
+## dev-master @ 35951b434
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -39,6 +39,7 @@
 * [Sketch] Fix initial visible content flash of empty table placeholder row
 * [Skecth] Misc user interface improvements
 * [DimensionsHandler] Fix garbled display of acronyms in dimension titles
+* Support replacement of shipping Application template PHP classes via `mapbender.application_template` tagged servics (see [PR#1424](https://github.com/mapbender/mapbender/pull/1424))
 * Support template CSS references containing StringAsset objects (instead of file names)
 * Support setting Scss variables in application custom css
 * Improve customizability of misc widget CSS (require files separately instead of `@import`)
