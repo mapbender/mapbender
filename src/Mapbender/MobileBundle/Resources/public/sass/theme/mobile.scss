@@ -110,6 +110,9 @@
   min-height: 100%;
   overflow:auto;
   -webkit-overflow-scrolling: touch;
+  .mb-element {
+    min-height: 90%;
+  }
 }
 .mobileClose{
   float: right;
