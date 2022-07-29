@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle;
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\AutodetectSasscBinaryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
@@ -9,16 +8,18 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
+use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
+
 /**
  * @author Christian Wygoda
  */
-class MapbenderCoreBundle extends MapbenderBundle
+class MapbenderCoreBundle extends ManagerBundle
 {
 
     /**
@@ -45,15 +46,6 @@ class MapbenderCoreBundle extends MapbenderBundle
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getElements()
-    {
-        return array(
-        );
     }
 
     /**

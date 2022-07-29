@@ -11,6 +11,13 @@ use Mapbender\ManagerBundle\Component\ManagerBundle;
  * aggregates these for use in the manager backend.
  *
  * @author Christian Wygoda
+ *
+ * @deprecated
+ *
+ * Declare services with `mapbender.element` tag to add custom elements
+ *    See https://github.com/mapbender/mapbender/pull/1367
+ * Declare services with `mapbender.application_template` tag to add custom application templates
+ *    or displace existing Mapbender templates. See https://github.com/mapbender/mapbender/pull/1424
  */
 class MapbenderBundle extends ManagerBundle
 {
