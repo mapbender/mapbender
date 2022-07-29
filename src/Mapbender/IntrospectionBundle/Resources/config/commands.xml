@@ -31,7 +31,7 @@
             <argument type="service" id="twig.loader" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.element_entity_factory" />
-            <argument>%kernel.bundles%</argument>
+            <argument type="service" id="mapbender.application_template_registry" />
         </service>
     </services>
 </container>
