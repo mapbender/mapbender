@@ -21,7 +21,7 @@
     .contentItem {
       height: 100%; // for accordion growth
       .mb-element-featureinfo {
-        height: 100%; // for accordion growth
+        height: 98%; // for accordion growth (conservative; avoid vertical scroll)
         .tabContainer {
           // Prevent doubled scrollbars Popup + iframe
           // NOTE: With default css 34px is the exact height of the tab header bar...
@@ -43,9 +43,6 @@
       > .tabs {
         > li.tab {
           font-size: 13px;
-        }
-        &:after {
-          clear: both;
         }
       }
     }

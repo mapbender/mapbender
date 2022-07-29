@@ -17,6 +17,7 @@
         position: relative;
       }
       @extend .buttonCore;
+      font-size: $buttonFontSize;
       > a {
         @extend .buttonColors;
         padding: ($space/4) ($space/2);

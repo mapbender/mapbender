@@ -15,7 +15,6 @@ $buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
 
 .button, .buttonCore, .linkButton {
   user-select: none;
-  font-size: $buttonFontSize;
   &:focus {
     outline: none;
   }

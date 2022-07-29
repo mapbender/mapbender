@@ -38,7 +38,6 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
     border-bottom: none;
     float:left;
     padding: 0 0.75em;;
-    @extend .smallText;
     user-select: none;
 
     &.active {
