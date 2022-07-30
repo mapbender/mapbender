@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle;
 
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
+use Mapbender\ManagerBundle\Component\Menu\SourceMenu;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -32,8 +33,7 @@ class MapbenderManagerBundle extends Bundle
         $appMenu = MenuItem::create("mb.terms.application.plural", 'mapbender_core_welcome_list')
             ->setWeight(10)
         ;
-        $sourceMenu = MenuItem::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
-            ->requireEntityGrant('Mapbender\CoreBundle\Entity\Source', 'VIEW')
+        $sourceMenu = SourceMenu::create('mb.terms.source.plural', 'mapbender_manager_repository_index')
             ->setWeight(20)
         ;
 

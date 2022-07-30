@@ -4,7 +4,6 @@
 namespace Mapbender\ManagerBundle\Component\Menu;
 
 
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -20,8 +19,6 @@ class MenuItem implements \Serializable
     protected $children;
     /** @var int|null */
     protected $weight;
-    /** @var array[] */
-    protected $requiredGrants = array();
     /** @var bool */
     protected $current = false;
     /** @var bool */
@@ -52,18 +49,6 @@ class MenuItem implements \Serializable
                 'weight' => $this->weight,
             );
         }
-        if ($this->requiredGrants) {
-            $data['grants'] = array();
-            foreach ($this->requiredGrants as $grantInfo) {
-                if (\is_array($grantInfo)) {
-                    /** @var ObjectIdentity $oid */
-                    $oid = $grantInfo['oid'];
-                    $data['grants'][] = $oid->getType() . ':' . implode(',', $grantInfo['attributes']);
-                } else {
-                    $data['grants'][] = $grantInfo;
-                }
-            }
-        }
         return \serialize($data);
     }
 
@@ -79,17 +64,6 @@ class MenuItem implements \Serializable
             $this->children = $data['children'];
         } else {
             $this->children = array();
-        }
-        if (isset($data['grants'])) {
-            foreach ($data['grants'] as $grantSpec) {
-                $parts = explode(':', $grantSpec);
-                if (1 === count($parts)) {
-                    $this->requireNamedGrant($parts[0]);
-                } else {
-                    $attributes = explode(',', $parts[1]);
-                    $this->requireEntityGrant($parts[0], $attributes);
-                }
-            }
         }
     }
 
@@ -129,42 +103,7 @@ class MenuItem implements \Serializable
 
     public function enabled(AuthorizationCheckerInterface $authorizationChecker)
     {
-        foreach ($this->requiredGrants as $requiredGrant) {
-            if (\is_array($requiredGrant)) {
-                if (!$authorizationChecker->isGranted($requiredGrant['attributes'], $requiredGrant['oid'])) {
-                    return false;
-                }
-            } else {
-                if (!$authorizationChecker->isGranted($requiredGrant)) {
-                    return false;
-                }
-            }
-        }
         return true;
-    }
-
-    /**
-     * @param $className
-     * @param $attributes
-     * @return $this
-     */
-    public function requireEntityGrant($className, $attributes)
-    {
-        $this->requiredGrants[] = array(
-            'oid' => new ObjectIdentity('class', $className),
-            'attributes' => (array)$attributes,
-        );
-        return $this;
-    }
-
-    /**
-     * @param string $name (e.g. 'ROLE_USER')
-     * @return $this
-     */
-    public function requireNamedGrant($name)
-    {
-        $this->requiredGrants[] = $name;
-        return $this;
     }
 
     /**
