@@ -1,4 +1,5 @@
 .mb-element-zoombar {
+  line-height: 1.25;
   .anchored-element-wrap & {
     // Avoid eating mouse interactions on map
     // ZoomBar has multiple sub-blocks with different widths that
@@ -32,12 +33,6 @@
     display: inline-block; // for automatic width and centering
     padding:5px;
     @include border-radius($radius);
-
-    > li,
-    .zoomSlider > span,
-    .zoomSlider > ul {
-      margin:3px 0;
-    }
   }
   .toolPane {
     font-size: 1.6rem;
