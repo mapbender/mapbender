@@ -32,7 +32,6 @@ $buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
 
   border-width: 1px;
   border-style: solid;
-  @include transition(all, 0.3s, ease-in-out);
 
   &:focus {
     box-shadow: 0 0 5px $buttonFirstActiveColor;
