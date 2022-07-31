@@ -1,5 +1,7 @@
 $(function(){
     var $mobilePane = $('#mobilePane');
+    var $activeButton = null;
+    var $activeElement = null;
     $('.mb-element', $mobilePane).addClass('hidden');
     $(document).on('mobilepane.switch-to-element', function(e, data) {
         switchToElement_(data.element);
@@ -15,13 +17,15 @@ $(function(){
         if (!target || !$(target).closest('.mobilePane').length) {
             return;
         }
-        // HACK: prevent button from ever gaining a visual highlight
-        $button.removeClass('toolBarItemActive');
-
         e.stopImmediatePropagation();
+        if ($activeButton) {
+            $activeButton.removeClass('toolBarItemActive');
+        }
+        $button.addClass('toolBarItemActive');
 
         // supply button tooltip as emergency fallback if target element has no title
         switchToElement_($(target), $button.attr('title'));
+        $activeButton = $button;
         toggle_(true);
 
         return false;
@@ -41,6 +45,11 @@ $(function(){
             $mobilePane.attr('data-state', 'opened')
         } else {
             $mobilePane.removeAttr('data-state');
+        }
+        if (!state && $activeButton) {
+            $activeButton.removeClass('toolBarItemActive');
+            $activeButton = null;
+            $activeElement = null;
         }
     }
     $('#mobilePaneClose').on('click', function() {
