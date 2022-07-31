@@ -15,14 +15,10 @@ $toolBarButtonActiveOpacity: 1.0;
 $accordionTextColor: $toolBarBackgroundColor;
 $accordionBackgroundColor: mix($toolBarBackgroundColor, $toolBarFontColor, 10%);
 $accordionActiveBackgroundColor: $toolBarFontColor;
-$accordionHoverBackgroundColor: $toolBarFontColor;
+
 $buttonTextColor: $toolBarFontColor;
 $buttonFirstColor: $toolBarBackgroundColor;
 $buttonBorderColor: $toolBarFontColor;
-$buttonHoverColor: $buttonFirstColor;
-$buttonHoverTextColor: $buttonTextColor;
 $buttonCriticalTextColor: $buttonTextColor;
 $buttonCriticalFirstColor: $buttonFirstColor;
 $buttonCriticalBorderColor: $buttonBorderColor;
-$buttonCriticalHoverTextColor: $buttonCriticalTextColor;
-$buttonCriticalHoverColor: $buttonCriticalFirstColor;

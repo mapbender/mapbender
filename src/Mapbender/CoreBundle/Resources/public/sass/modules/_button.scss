@@ -41,7 +41,7 @@ $buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
   color: $buttonTextColor;
   background-color:$buttonFirstColor;
   border-color: $buttonBorderColor;
-  &:hover{
+  body.desktop-template &:hover {
     color: $buttonHoverTextColor;
     background-color: $buttonHoverColor;
   }
@@ -51,7 +51,7 @@ $buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
   color: $buttonCriticalTextColor;
   background-color:$buttonCriticalFirstColor;
   border-color: $buttonCriticalBorderColor;
-  &:hover {
+  body.desktop-template &:hover {
     color: $buttonCriticalHoverTextColor;
     background-color: $buttonCriticalHoverColor;
   }

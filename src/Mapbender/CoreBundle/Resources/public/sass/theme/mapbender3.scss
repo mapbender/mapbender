@@ -44,7 +44,7 @@ $sidepaneBorderColor: #a2a2a2 !default;
 
 .toolbar-button-hover-effect {
   opacity: $toolBarButtonDefaultOpacity;
-  &:hover {
+  body.desktop-template &:hover {
     opacity: $toolBarButtonHoverOpacity;
   }
 }

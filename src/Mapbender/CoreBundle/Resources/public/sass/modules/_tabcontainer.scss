@@ -121,11 +121,8 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
       color: $sidepaneButtonActiveTextColor;
       background-color: $sidepaneButtonActiveBackgroundColor;
     }
-    &:hover {
+    body.desktop-template &:hover:not(.active) {
       background-color: $sidepaneButtonHoverColor;
-      &.active {
-        background-color: mix($sidepaneButtonHoverColor, $sidepaneButtonActiveBackgroundColor, 50%);
-      }
     }
   }
   .container {
@@ -153,11 +150,8 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
       color: $accordionActiveTextColor;
       background-color: $accordionActiveBackgroundColor;
     }
-    &:hover {
+    body.desktop-template &:hover:not(.active) {
       background-color: $accordionHoverBackgroundColor;
-      &.active {
-        background-color: mix($accordionHoverBackgroundColor, $accordionActiveBackgroundColor, 50%);
-      }
     }
   }
   .container-accordion {
