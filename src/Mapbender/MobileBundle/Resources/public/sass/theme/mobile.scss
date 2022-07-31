@@ -74,61 +74,52 @@
 
   &.bottom {
     border-top: 3px solid $ciColor2;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
   }
 }
 /* --------------------------------------------------------------- MOBILEPANE */
-.mobilePane{
+.mobilePane {
   background-color: $ciColor4;
   color: $darkFontColor;
-  z-index:10;
   height: 100%;
-  min-height: 100%;
-  opacity: 0;
-  @include absolute(100% 0 0 0);
-  @include transition(all .3s ease-in-out);
-  @include transform(translateY(0));
   padding: $space $space 0 $space;
-  .contentTitle{
+  .panel-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .contentTitle {
     margin-top: 0;
     color: $ciColor3;
     border-bottom: solid 5px $ciColor;
   }
-  .contentTitle, .mobileClose {
+  .title-wrap {
+    flex: 0;
     font-size: 2rem;
+    .contentTitle {
+      font-size: inherit;
+    }
   }
-  // @todo: it's called .active
-  &[data-state="opened"]{
+  position: relative;
+  @include transition(all .3s ease-in-out);
+  opacity: 0;
+  bottom: -100%;
+  &[data-state="opened"] {
     opacity: 1;
-    @include transform(translateY(-100%));
+    bottom: 0;
   }
 }
-.mobileContent{
-  height: 100%;
-  min-height: 100%;
-  overflow:auto;
+.mobileContent {
+  flex: 1;
+  overflow: auto;
   -webkit-overflow-scrolling: touch;
-  .mb-element {
-    min-height: 90%;
-  }
 }
 .mobileClose{
   float: right;
 }
-/* ------------------------------------------------------------------ CONTENT */
-.templateWrapper{
-  margin:0 auto;
-  overflow: hidden;
-  @include absolute(0 0 0 0);
-}
-.contentPane{@include absolute(0 0 0 0);}
-
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper {
   background-color: rgba($ciColor4, .7);
-  z-index: 12;
+  z-index: 2;
   @include absolute(0 0 0 0);
 }
 .splashScreen{

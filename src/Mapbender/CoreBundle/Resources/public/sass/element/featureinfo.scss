@@ -34,3 +34,11 @@
     }
   }
 }
+
+.mobilePane {
+  .mb-element-featureinfo {
+    // Use available space / avoid vertical scrolling inside + outside iframe
+    height: 94%;
+    min-height: 94%;
+  }
+}

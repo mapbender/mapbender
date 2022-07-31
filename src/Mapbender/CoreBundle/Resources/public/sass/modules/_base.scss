@@ -88,6 +88,7 @@ a {
   flex-grow: 1;
   display: inline-flex;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 body.desktop-template .mobile-only {
