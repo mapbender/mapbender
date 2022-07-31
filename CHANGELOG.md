@@ -1,4 +1,4 @@
-## dev-master @ 35951b434
+## dev-master @ 561028c09
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -8,6 +8,8 @@
 * Fix empty / not helpful exception messages on incompatible / missing legacy element class
 * Fix infinite pileup of application frontend html cache entry files (see [PR#1423](https://github.com/mapbender/mapbender/pull/1423))
 * Fix toolbar item padding when using centered items
+* Fix mobile template broken position of overlay elements in the bottom left / bottom right corners
+* Fix mobile template panel obscuring toolbar when opened
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
@@ -22,9 +24,11 @@
 * [FeatureInfo] Fix unpredictable display order of responses from multiple sources
 * [FeatureInfo] Fix encoding errors rendering plain text response
 * [FeatureInfo] Fix tab / accordion reuse not working as intended with multiple FeatureInfo elements in one application
+* [FeatureInfo] Fix tab container vertically overflowing popup
+* [FeatureInfo] Fix tab container sizing in mobile template
 * [GpsPosition] Fix error on click when placed in mobile template footer
 * [Layertree] Fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
-* [Layertree] Fix missing margin after layer menu button in mobile template
+* [Layertree] Fix layout of layer menuif enabled, and layer metadata popup in mobile template
 * [Legend] add `.legend-dialog` for CSS customizability
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
@@ -50,7 +54,7 @@
   * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
 * Resolve misc Twig deprecations
-* Resolve misc Symfony Acl deprecations
+* Resolve misc Symfony Acl / grants checks deprecations
 * Resolve PHP zip method deprecations
 * Misc performance tweaks
   * use minified Proj4js asset in production
