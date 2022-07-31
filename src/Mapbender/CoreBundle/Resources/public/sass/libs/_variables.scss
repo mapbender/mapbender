@@ -61,7 +61,7 @@ $buttonCriticalHoverTextColor: $buttonCriticalTextColor;
 $buttonCriticalBorderColor: #9f3434;
 $buttonCriticalHoverColor: #cd5151;
 // Button sizing
-$buttonFontSize: 0.85rem;
+$buttonFontSize: 100%;
 
 // Form inputs
 $inputBackgroundColor: $contentColor;
@@ -78,7 +78,7 @@ $elementBorderRadius: $containerBorderRadius - 2px;
 
 $sliderHandleBackgroundColor: $ciColor;
 
-$accordionFontSize: 1rem;
+$accordionFontSize: 100%;
 $accordionBackgroundColor: $buttonFirstColor;
 $accordionTextColor: $lightFontColor;
 $accordionActiveBackgroundColor: darken($buttonFirstColor, 10%);

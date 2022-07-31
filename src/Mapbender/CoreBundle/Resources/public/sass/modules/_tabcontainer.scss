@@ -4,14 +4,14 @@
   See libs/_variables.scss for full set.
  */
 
-$accordionFontSize: 1rem !default;
+$accordionFontSize: 100% !default;
 $accordionBackgroundColor: $buttonFirstColor !default;
 $accordionTextColor: $lightFontColor !default;
 $accordionActiveBackgroundColor: darken($buttonFirstColor, 10%) !default;
 $accordionActiveTextColor: $lightFontColor !default;
 $accordionHoverBackgroundColor: darken($buttonFirstColor, 5%) !default;
 
-$sidepaneButtonFontSize: 0.85rem !default;
+$sidepaneButtonFontSize: 100% !default;
 $sidepaneButtonTextColor: $lightFontColor !default;
 $sidepaneButtonBackgroundColor: $buttonFirstColor !default;
 $sidepaneButtonBorderColor: darken($buttonSecondColor, 5%) !default;

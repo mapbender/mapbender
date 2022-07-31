@@ -3,7 +3,7 @@
   Amend potentially undefined variables, if included directly from older template that doesn't define them.
   See libs/_variables.scss for full set.
  */
-$buttonFontSize: 0.85rem !default;
+$buttonFontSize: 100% !default;
 $buttonTextColor: $lightFontColor !default;
 $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
 $buttonHoverColor: darken($buttonFirstColor, 5%) !default;
