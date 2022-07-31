@@ -78,7 +78,7 @@ $elementBorderRadius: $containerBorderRadius - 2px;
 
 $sliderHandleBackgroundColor: $ciColor;
 
-$accordionFontSize: $buttonFontSize;
+$accordionFontSize: 1rem;
 $accordionBackgroundColor: $buttonFirstColor;
 $accordionTextColor: $lightFontColor;
 $accordionActiveBackgroundColor: darken($buttonFirstColor, 10%);

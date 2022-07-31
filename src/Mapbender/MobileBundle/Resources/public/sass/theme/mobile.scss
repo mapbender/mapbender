@@ -3,51 +3,8 @@
 @import "libs/icons";
 @import "theme/mapbender3";
 
-/* ------------------------------------------------------------------- BUTTON */
-.button{
-  @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                      inset 0 -10px 10px $buttonSecondColor);
-  &:hover{
-    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                        inset 0 -10px 10px darken($buttonSecondColor, 4%));
-  }
-  &.critical{
-    @include border-radius($radius);
-    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                        inset 0 -10px 10px $buttonCriticalSecondColor);
-    &:hover{
-      @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                          inset 0 -10px 10px darken($buttonCriticalSecondColor, 4%));
-    }
-  }
-}
-/* ----------------------------------------------------------------- DROPDOWN */
-.dropdown {
-  .dropdownList{
-    @include box-shadow(0px 0px 2px rgba(0, 0, 0, 0.1),
-                      inset 0px 0px 2px #fff);
-  }
-  @include border-radius($radius);
-}
-/* -------------------------------------------------------------------- POPUP */
-.overlay{
-  user-select: none;
-  @include transition(opacity 0.4s ease-in-out);
-}
-
 .popup{
-  @include transition(margin 0.4s ease-in-out);
-  @include border-radius($radius);
-  @include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.9),
-                      inset 0px 0px 2px #fff);
-}
-.popupContainer{
-  .popup{
-    margin-left: 0;
-  }
-  &.modal{
-    padding: 0;
-  }
+  background: #fff;
 }
 
 /* ------------------------------------------------------------- TABCONTAINER */

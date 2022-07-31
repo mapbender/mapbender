@@ -597,18 +597,19 @@
         _showMetadata: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var url = layer.options.metadataUrl;
+            var useModal = !!this._mobilePane;
             $.ajax(url)
                 .then(function(response) {
                     var metadataPopup = new Mapbender.Popup2({
                         title: Mapbender.trans("mb.core.metadata.popup.title"),
                         cssClass: 'metadataDialog',
-                        modal: false,
-                        resizable: true,
-                        draggable: true,
+                        modal: useModal,
+                        resizable: !useModal,
+                        draggable: !useModal,
                         content: $(response),
                         destroyOnClose: true,
-                        width: 850,
-                        height: 600,
+                        width: !useModal && 850 || '100%',
+                        height: !useModal && 600 || null,
                         buttons: [{
                             label: Mapbender.trans('mb.actions.close'),
                             cssClass: 'button popupClose critical'
