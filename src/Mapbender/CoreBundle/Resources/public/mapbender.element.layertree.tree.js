@@ -248,6 +248,8 @@
             } else {
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
+            $li.toggleClass('no-toggle-children', !!(layer.children && layer.children.length && !treeOptions.allow.toggle));
+
             if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('.-fn-toggle-layer', $li).remove();
