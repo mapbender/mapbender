@@ -11,7 +11,6 @@ html, body{
     family: $fontFamily;
     size: $fontSize;
   }
-  line-height:$lineHeight;
   color:$darkFontColor;
 }
 // @todo: Resolve conflicts of these extra list and heading rules with Bootstrap and
@@ -48,7 +47,6 @@ h1, h2, h3, h4, h5, h6 {
   table thead & {
     // Avoid margins inside table cells
     margin: 0;
-    line-height: 1.5;
   }
 }
 
