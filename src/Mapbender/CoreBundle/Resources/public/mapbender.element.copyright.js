@@ -32,18 +32,17 @@
                         }
                     ]
                 });
-                var self = this;
-                this.popup.$element.on('close', function() {
-                    self.close();
-                });
             } else {
-                this.popup.$element.removeClass('hidden');
-                this.popup.focus();
+                this.popup.open();
             }
+            var self = this;
+            this.popup.$element.one('close', function() {
+                self.close();
+            });
         },
         close: function(){
             if (this.popup) {
-                this.popup.$element.addClass('hidden');
+                this.popup.close();
             }
             if (this.callback) {
                 (this.callback)();
