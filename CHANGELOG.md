@@ -1,4 +1,4 @@
-## dev-master @ 561028c09
+## dev-master @ 994806238
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -10,6 +10,7 @@
 * Fix toolbar item padding when using centered items
 * Fix mobile template broken position of overlay elements in the bottom left / bottom right corners
 * Fix mobile template panel obscuring toolbar when opened
+* Fix frontend line heights ignoring font sizes
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
@@ -28,8 +29,10 @@
 * [FeatureInfo] Fix tab container sizing in mobile template
 * [GpsPosition] Fix error on click when placed in mobile template footer
 * [Layertree] Fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
-* [Layertree] Fix layout of layer menuif enabled, and layer metadata popup in mobile template
+* [Layertree] Fix layout of layer menu, if enabled, and layer metadata popup in mobile template
+* [Layertree] Show nested WMS layers in mobile (use `allowtoggle` instance layer setting to controls this, just like in desktop template)
 * [Legend] add `.legend-dialog` for CSS customizability
+* [Copyright] Fix dialog not opening on second interaction with targetting button
 * [Copyright] Support automatic popup height (leave `height` configuration value empty)
 * [Copyright] Support twig in content
 * [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
