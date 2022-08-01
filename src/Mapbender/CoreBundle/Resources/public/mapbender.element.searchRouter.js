@@ -183,9 +183,9 @@
         _setupAutocomplete: function(idx, input){
             var self = this;
             var $input = $(input);
-
+            $input.parent().addClass('autocompleteWrapper');
             $input.autocomplete({
-                appendTo: $input.closest('.form-group'),
+                appendTo: $input.parent().get(0),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
                 search: function(event) {

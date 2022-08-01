@@ -1,19 +1,16 @@
 $inputBorderColor: lighten($thirdColor, 15%) !default;
 $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 
-.input, .dropdown:not(.bs-dropdown), .ui-autocomplete {
+.input {
   color: $inputForegroundColor;
-  border:solid 1px $inputBorderColor;
   background-color: $inputBackgroundColor;
-}
-.input, .inputWrapper select {
-  padding-left: 5px;
-  padding-right: 5px;
+  border:solid 1px $inputBorderColor;
 }
 
-.input:not(textarea) {
-  height: $inputHeight;
+.input, .inputWrapper select {
+  padding: 5px;
 }
+
 .input {
   &[disabled] {
     background: darken($inputBackgroundColor, 10%)
@@ -38,9 +35,6 @@ textarea.input {
   display: inline-block;
   width: 100%;
   position: relative;
-}
-textarea.input {
-   min-height: 150px;
 }
 
 .inputWrapper{

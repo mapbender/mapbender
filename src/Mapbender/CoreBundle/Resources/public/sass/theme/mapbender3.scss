@@ -377,16 +377,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .ui-autocomplete {
-  position: absolute; // do not expand DOM size when showing items
-
-  li {
-    padding: 5px 5px;
-    cursor: pointer;
-    display: block;
-    &:hover {
-      background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
-    }
-  }
   .toolBar &, .anchored-element-wrap & {
     max-height: 250px;
     overflow-y: hidden;
