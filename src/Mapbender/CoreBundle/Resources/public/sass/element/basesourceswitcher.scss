@@ -9,7 +9,6 @@
 
   &.toolBarItem {
     // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
-    text-align: left;
     position: relative;
     z-index: 1;
     .state-check {
