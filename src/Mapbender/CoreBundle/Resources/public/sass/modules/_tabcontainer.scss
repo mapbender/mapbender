@@ -34,7 +34,6 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
     cursor:pointer;
     line-height: 3;
     position: relative; // for z-index
-    z-index:10;
     border-bottom: none;
     float:left;
     padding: 0 0.75em;;
@@ -47,7 +46,7 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
       // Stretch down to cover container border
       padding-bottom: 3px;
       margin-bottom: -3px;
-      z-index: 30;
+      z-index: 1;
     }
     &:hover, &:focus {
       outline: none;
@@ -58,20 +57,32 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
     display:none;
     padding:$space;
     position:relative;
-    z-index:20;
+    z-index: 1;
     border-top-width: 3px;
     &.active{display:block;}
   }
 }
 
-.tabContainerAlt, .accordionContainer {
+.tabContainerAlt,
+.accordionContainer,
+.popup .tabContainer,
+.mobileContent .tabContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 }
-.tabContainerAlt > .tabs, .accordionContainer > .accordion {
+.tabContainerAlt > .tabs,
+.accordionContainer > .accordion,
+.popup .tabContainer > .tabs,
+.mobileContent .tabContainer > .tabs {
   flex: 0 0 auto; // fixed size
+}
+.tabContainerAlt >.container,
+.accordionContainer > .container-accordion,
+.popup .tabContainer > .container,
+.mobileContent .tabContainer > .container {
+  flex: 1 1 auto; // grow and shrink
 }
 
 .tabContainerAlt >.container,
@@ -79,7 +90,6 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
   &:not(.active) {
     display: none;
   }
-  flex: 1 1 auto; // grow and shrink
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -133,7 +143,7 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 }
 
 .tabContainer .container, .tabContainerAlt .container {
-  width: auto;  // overrule Bootstrap .container (which has varying width depending on screen size)
+  width: 100%;  // overrule Bootstrap .container (which has varying width depending on screen size)
 }
 
 .accordionContainer {
