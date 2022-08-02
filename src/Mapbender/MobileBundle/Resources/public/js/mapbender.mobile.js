@@ -38,7 +38,7 @@ $(function(){
         if (!headerText || /^\w+(\.\w+)+$/.test(headerText)) {
             headerText = titleFallback || headerText || 'undefined';
         }
-        $('.contentTitle', $mobilePane).text(headerText);
+        $('.-js-element-title', $mobilePane).text(headerText);
     }
     function toggle_(state) {
         if (state) {

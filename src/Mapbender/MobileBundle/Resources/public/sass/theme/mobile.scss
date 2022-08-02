@@ -9,6 +9,7 @@
 
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer {
+  font-size: 75%;
   height: 100%;
   .tab {
     background: transparent;
@@ -35,6 +36,7 @@
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane {
+  font-size: 165%;
   background-color: $ciColor4;
   color: $darkFontColor;
   height: 100%;
@@ -45,16 +47,10 @@
     height: 100%;
   }
   .contentTitle {
-    margin-top: 0;
+    flex: 0;
+    font-size: 142%;
     color: $ciColor3;
     border-bottom: solid 5px $ciColor;
-  }
-  .title-wrap {
-    flex: 0;
-    font-size: 2rem;
-    .contentTitle {
-      font-size: inherit;
-    }
   }
   position: relative;
   @include transition(all .3s ease-in-out);
@@ -69,9 +65,6 @@
   flex: 1;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-}
-.mobileClose{
-  float: right;
 }
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper {
@@ -105,21 +98,12 @@
 }
 
 
-// Nice big fonts in layer selection
 body.mobile-template {
-  .mb-element-layertree, .mb-element-basesourceswitcher {
-    font-size: 2rem;
-  }
   .mb-element-layertree .leaveContainer, .mb-element-basesourceswithcer > .basesourcesetswitch {
     // Pad out rows to not look weird against potential even / odd background coloring
     padding-left: 0.5em;
     padding-right: 0.5em;
   }
-}
-
-// Big fonts in SimpleSearch
-.autocompleteWrapper {
-  font-size: 1.5rem;
 }
 
 /* ---------------------------------------------------------------- LAYERTREE */
