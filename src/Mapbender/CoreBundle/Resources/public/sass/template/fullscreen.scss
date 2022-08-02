@@ -19,6 +19,10 @@ body {
   overflow: hidden;
 }
 
+.labelInput, .inputWrapper, .dropdown:not(.bs-dropdown), .labelCheck {
+  font-size: 0.85rem;
+}
+
 .contentPane {
   // prevent invisible contained elements from gaining size; a sized contentPane breaks popup
   // positioning on drag / resize

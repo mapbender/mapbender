@@ -24,10 +24,6 @@ $sidepaneBorderColor: #a2a2a2 !default;
 .title {
   font-size: 1.35rem;
 }
-.labelInput, .inputWrapper, .dropdown:not(.bs-dropdown) {
-  font-size: 0.85rem;
-}
-
 .labelInput, .labelCheck {
   color: $middleFontColor;
 }
@@ -47,10 +43,6 @@ $sidepaneBorderColor: #a2a2a2 !default;
   body.desktop-template &:hover {
     opacity: $toolBarButtonHoverOpacity;
   }
-}
-
-.labelInput, .labelCheck {
-  font-size: 0.85rem;
 }
 
 .iconBig {
