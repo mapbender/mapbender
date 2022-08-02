@@ -7,22 +7,20 @@
   background: #fff;
 }
 
+$buttonBorderColor: darken($buttonSecondColor, 5%) !default;
+
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer {
   font-size: 75%;
   height: 100%;
-  .tab {
-    background: transparent;
-    &.active {
-      // Undo container border overlapping hack on active tab (our container has no border)
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
+  .tabs .tab, >.container {
+    border-color: $buttonBorderColor;
   }
-  > .container {
-    padding:0;
-    border: none;
-    height: 100%;
+  .mobilePane & >.container {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    margin-right: 1em;
   }
 }
 

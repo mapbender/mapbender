@@ -92,7 +92,7 @@ $popupBorderColor: #a2a2a2 !default;
     padding-bottom:$space;
   }
   z-index: 100; // Same as .ui-front
-  background-color:#f4f4f4;
+  background-color: #fff;
   border: 1px solid $popupBorderColor;
   border-bottom-width: 5px;
 }

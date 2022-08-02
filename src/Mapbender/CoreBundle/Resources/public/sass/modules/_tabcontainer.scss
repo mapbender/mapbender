@@ -20,33 +20,27 @@ $sidepaneButtonActiveTextColor: $lightFontColor !default;
 $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 
 .tabContainer{
-  .tabs {
-    // Guarantee enough space so our tab.active can move up without clipping
-    padding-top: 1px;
-  }
   .tab, .container {
     border: 1px solid $thirdColor;
-    background-color:$contentColor;
   }
   .tab{
+    background-color: #fff;   // Must be opaque
     margin-right: -1px;
-    color: $darkFontColor;
     cursor:pointer;
-    line-height: 3;
     position: relative; // for z-index
     border-bottom: none;
     float:left;
-    padding: 0 0.75em;;
+    padding: 0.75em;
     user-select: none;
+    // Cover container border
+    margin-bottom: -3px;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    opacity: 0.6;
 
     &.active {
-      // Stretch up
-      padding-top: 1px;
-      margin-top: -1px;
-      // Stretch down to cover container border
-      padding-bottom: 3px;
-      margin-bottom: -3px;
-      z-index: 1;
+      z-index: 2;
+      opacity: 1;
     }
     &:hover, &:focus {
       outline: none;
@@ -55,7 +49,7 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
   .container{
     clear:left;
     display:none;
-    padding:$space;
+    padding: 10px;
     position:relative;
     z-index: 1;
     border-top-width: 3px;
