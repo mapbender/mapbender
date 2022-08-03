@@ -35,8 +35,7 @@ $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane {
   font-size: 165%;
-  background-color: $ciColor4;
-  color: $darkFontColor;
+  background-color: #fff;
   height: 100%;
   padding: $space $space 0 $space;
   .panel-content {
@@ -47,7 +46,6 @@ $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
   .contentTitle {
     flex: 0;
     font-size: 142%;
-    color: $ciColor3;
     border-bottom: solid 5px $ciColor;
   }
   position: relative;
