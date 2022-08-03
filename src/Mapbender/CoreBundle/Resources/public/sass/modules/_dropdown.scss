@@ -14,15 +14,15 @@ select.numeric {
   position: relative;
   user-select: none;
   line-height: 1.5;
-  color: $inputForegroundColor;
-  background-color: $inputBackgroundColor;
 }
 
 .dropdown:not(.bs-dropdown) .dropdownValue,
 .dropdown:not(.bs-dropdown) .dropdownList,
+.autocompleteWrapper .input,
 .autocompleteWrapper .ui-autocomplete {
-  border:solid 1px $inputBorderColor;
-  background-color: inherit;
+  border: solid 1px $inputBorderColor;
+  background-color: $inputBackgroundColor;
+  color: $inputForegroundColor;
 }
 
 .dropdown:not(.bs-dropdown) .dropdownList,

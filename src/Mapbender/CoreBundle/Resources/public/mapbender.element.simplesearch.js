@@ -109,7 +109,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var minLength = 2;
 
         searchInput.uiAutocompleteStatic({
-            appendTo: searchInput.parent().get(0),
+            appendTo: searchInput.closest('.autocompleteWrapper').get(0),
             delay: self.options.delay,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
@@ -147,7 +147,10 @@ $.widget('mapbender.mbSimpleSearch', {
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
-            searchInput.autocomplete("search");
+            searchInput.uiAutocompleteStatic("search");
+        });
+        this.element.on('click', '.-fn-search', function() {
+            searchInput.uiAutocompleteStatic('search');
         });
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);

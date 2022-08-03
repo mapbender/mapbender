@@ -1,8 +1,8 @@
 <form>
-    <div class="autocompleteWrapper inputWrapper">
-        <input type="text" class="searchterm input" placeholder="{{ placeholder | trans }}" />
+    <div class="autocompleteWrapper">
+        <div class="input-group">
+            <input type="text" class="form-control searchterm" placeholder="{{ placeholder | trans }}" />
+            <div class="input-group-addon clickable -fn-search" title="{{'mb.core.simplesearch.input.search'|trans }}"><i class="fa fas fa-search"></i></div>
+        </div>
     </div>
-{% if delay == 0 %}
-    <input type="submit" value="{{'mb.core.simplesearch.input.search'|trans }}"/>
-{% endif %}
 </form>

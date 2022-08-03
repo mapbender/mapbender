@@ -151,3 +151,13 @@ body {
 .sidePane {
   font-size: 14px;
 }
+
+.autocompleteWrapper {
+  .form-control, .input-group-addon {
+    font-size: inherit;
+  }
+  .form-control {
+    padding: 5px;
+    height: auto;
+  }
+}
