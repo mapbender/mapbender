@@ -121,14 +121,6 @@ body {
   &.top {
     background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.9), rgba($toolBarBackgroundColor, 0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    // scale button icons and text all to the same size, undoing .iconBig
-    font-size: 1.6rem;
-    .toolBarItem {
-      .iconBig {
-        vertical-align: initial;
-        font-size: inherit;
-      }
-    }
   }
   &.bottom {
     background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.7), rgba($toolBarBackgroundColor, 0.9));

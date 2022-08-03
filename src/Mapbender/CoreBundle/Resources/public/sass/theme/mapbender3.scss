@@ -47,7 +47,10 @@ $sidepaneBorderColor: #a2a2a2 !default;
 
 .iconBig {
   font-size: 160%;
-  vertical-align: middle;   // for proper vertical align of following inline element, if any
+  &, &+* {
+    // Keep following inline element centered vertically despite resizing
+    vertical-align: middle;
+  }
   &:before {
     display: inline-block;
   }
