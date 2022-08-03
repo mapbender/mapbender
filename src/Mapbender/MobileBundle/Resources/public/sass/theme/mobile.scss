@@ -26,7 +26,10 @@ $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
 
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar {
-  font-size: 19px;
+  font-size: 14px;
+  .iconBig {
+    font-size: 200%;
+  }
 
   &.bottom {
     border-top: 3px solid $ciColor2;
@@ -34,7 +37,7 @@ $buttonBorderColor: darken($buttonSecondColor, 5%) !default;
 }
 /* --------------------------------------------------------------- MOBILEPANE */
 .mobilePane {
-  font-size: 165%;
+  font-size: 153%;
   background-color: #fff;
   height: 100%;
   padding: $space $space 0 $space;
