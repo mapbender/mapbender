@@ -188,6 +188,9 @@
                 appendTo: $input.parent().get(0),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
+                position: {
+                    of: false
+                },
                 source: function(request, response){
                     self._autocompleteSource($input).then(function(data) {
                         response(data.results);

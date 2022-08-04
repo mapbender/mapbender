@@ -1,23 +1,4 @@
 (function($) {
-$.widget('mapbender.uiAutocompleteStatic', $.ui.autocomplete, {
-    // ui.autocomplete variant that removes $.ui.position usage to avoid
-    // generating inline width / height / position styles
-    // @see https://github.com/jquery/jquery-ui/blob/main/ui/widgets/autocomplete.js#L527
-    _suggest: function(items) {
-        var ul = this.menu.element.empty();
-        this._renderMenu(ul, items);
-        this.isNewMenu = true;
-        this.menu.refresh();
-        ul.show();
-
-        if (this.options.autoFocus) {
-            this.menu.next();
-        }
-        this._on(this.document, {
-            mousedown: '_closeOnClickOutside'
-        });
-    }
-});
 
 $.widget('mapbender.mbSimpleSearch', {
     options: {
@@ -80,18 +61,6 @@ $.widget('mapbender.mbSimpleSearch', {
         }
         // Adds .left-up / .left-down / .right-up / .right-down
         $('.autocompleteWrapper', this.element).addClass([horizontal, vertical].join('-'));
-
-        switch ([horizontal, vertical].join('-')) {
-            default:
-            case 'right-down':
-                return undefined;
-            case 'right-up':
-                return {my: 'left bottom', at: 'left top', collision: 'none'};
-            case 'left-down':
-                return {my: 'right top', at: 'right bottom', collision: 'none'};
-            case 'left-up':
-                return {my: 'right bottom', at: 'right top', collision: 'none'};
-        }
     },
     _setup: function() {
         var self = this;
@@ -108,7 +77,7 @@ $.widget('mapbender.mbSimpleSearch', {
         // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
         var minLength = 2;
 
-        searchInput.uiAutocompleteStatic({
+        searchInput.autocomplete({
             appendTo: searchInput.closest('.autocompleteWrapper').get(0),
             delay: self.options.delay,
             minLength: minLength,
@@ -139,7 +108,9 @@ $.widget('mapbender.mbSimpleSearch', {
                     })
                 ;
             },
-            position: false,
+            position: {
+                of: false
+            },
             select: function(event, ui) {
                 self._onAutocompleteSelected(ui.item);
             }
@@ -147,10 +118,10 @@ $.widget('mapbender.mbSimpleSearch', {
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
-            searchInput.uiAutocompleteStatic("search");
+            searchInput.autocomplete("search");
         });
         this.element.on('click', '.-fn-search', function() {
-            searchInput.uiAutocompleteStatic('search');
+            searchInput.autocomplete('search');
         });
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
