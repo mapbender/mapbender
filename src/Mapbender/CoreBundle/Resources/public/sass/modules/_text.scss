@@ -24,9 +24,7 @@ h4, .h4 {
   user-select: none;
 }
 .labelInput {
-  line-height: 2;
   .form-horizontal & {
-    line-height: $inputHeight;
     margin-right: $space/2;
     vertical-align: top;
     &, &+.inputWrapper, &+.dropdown {

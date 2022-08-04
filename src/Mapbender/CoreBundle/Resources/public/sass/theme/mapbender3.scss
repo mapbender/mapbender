@@ -24,9 +24,6 @@ $sidepaneBorderColor: #a2a2a2 !default;
 .title {
   font-size: 1.35rem;
 }
-.labelInput {
-  color: $middleFontColor;
-}
 
 .linkButton {
   &:hover, &:active{color:$ciColor;};
@@ -155,7 +152,6 @@ ul.toolBar, .toolBar > ul {
     display: inline-block;
     margin-right: 0.5em;
     vertical-align: inherit;
-    line-height: $inputHeight;
   }
   .dropdown:not(.bs-dropdown) {
     width: auto;
@@ -270,11 +266,9 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     word-wrap: break-word;
 }
 
-.mapbender-popup, .fom-popup {
+.popup, .sidePane {
   label {
-    margin-bottom: 0;
     font-weight: normal;
-    line-height: inherit;
   }
 }
 
