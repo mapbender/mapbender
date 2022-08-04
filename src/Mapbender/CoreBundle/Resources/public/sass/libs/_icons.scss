@@ -93,7 +93,6 @@ span[class^="icon"], span[class*=" icon"] {
 
 @mixin buttonFAIcon($content) {
   content: $content;
-  font-size: $uiFontSize;
   font-family: FontAwesome;
   display: inline-block;
 }
