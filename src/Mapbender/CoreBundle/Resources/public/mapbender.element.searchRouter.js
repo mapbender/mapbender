@@ -191,6 +191,9 @@
                 position: {
                     of: false
                 },
+                classes: {
+                    'ui-autocomplete': 'dropdownList'
+                },
                 source: function(request, response){
                     self._autocompleteSource($input).then(function(data) {
                         response(data.results);

@@ -111,6 +111,9 @@ $.widget('mapbender.mbSimpleSearch', {
             position: {
                 of: false
             },
+            classes: {
+                'ui-autocomplete': 'dropdownList'
+            },
             select: function(event, ui) {
                 self._onAutocompleteSelected(ui.item);
             }

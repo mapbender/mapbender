@@ -13,53 +13,76 @@ select.numeric {
 .autocompleteWrapper {
   position: relative;
   user-select: none;
-  line-height: 1.5;
 }
 
 .dropdown:not(.bs-dropdown) .dropdownValue,
-.dropdown:not(.bs-dropdown) .dropdownList,
-.autocompleteWrapper .input,
-.autocompleteWrapper .ui-autocomplete {
+.dropdownList {
+  // Same as .input
   border: solid 1px $inputBorderColor;
   background-color: $inputBackgroundColor;
   color: $inputForegroundColor;
 }
 
-.dropdown:not(.bs-dropdown) .dropdownList,
-.autocompleteWrapper .ui-autocomplete {
+.dropdownList {
   position: absolute; // do not expand DOM size when showing items
-  z-index: 10;
+  display: none;
+  overflow: auto;
+  z-index: 100; // = .ui-front
+  max-height: 200px;
   min-width: 100%;
+
+  .dropdown &, .autocompleteWrapper &,
+  .right-down & {
+    // .right-down is the default
+    margin-top: -1px; // Overlap bottom border of dropdown value / ac input
+  }
+  .left-up &, .left-down & {
+    right: 0;
+  }
+  .left-up &, .right-up & {
+    bottom: 100%;
+    margin-bottom: -1px; // Overlap top border of dropdown value / ac input
+    margin-top: 0;
+  }
+  .group-label {
+    display: block;
+    cursor: default;
+    margin: 0;
+    color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
+    background-color: $inputForegroundColor;
+  }
+
+  ul {
+    padding-left: 5px;
+  }
 }
 
 .dropdown:not(.bs-dropdown) .dropdownValue,
-.autocompleteWrapper .input,
-.dropdownList .choice,
-.autocompleteWrapper .ui-autocomplete li {
+.dropdownList li:not(.nested-group),
+.dropdownList .group-label {
   padding: 5px;
 }
-.dropdownList .choice,
-.autocompleteWrapper .ui-autocomplete li {
+.dropdownList li {
   cursor: pointer;
   display: block;
-  &:hover {
+  &:not(.nested-group):hover {
     background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
   }
 }
 
 .dropdown:not(.bs-dropdown) {
-  cursor:pointer;
   select {
     display: none;
   }
   &.numeric {
     text-align: right;
   }
-
+  line-height: 1.5;   // Need known line height for min-height calculations
   .dropdownValue {
     min-height: calc(1.5em + 12px);   // Line height * font size + padding + border
     overflow-x: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
     &.iconDown {
       padding-right: 2em;
     }
@@ -69,22 +92,6 @@ select.numeric {
       position: absolute;
       right: 0;
       margin-right: .5em;
-    }
-  }
-  .dropdownList {
-    display:none;
-    overflow: auto;
-    max-height:200px;
-    .group-label {
-      display: block;
-      padding-left: 5px;
-      padding-right: 5px;
-      color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
-      background-color: $inputForegroundColor;
-    }
-
-    ul {
-      padding-left: 5px;
     }
   }
 }

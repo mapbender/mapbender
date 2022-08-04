@@ -109,7 +109,6 @@ ul.toolBar, .toolBar > ul {
       text-align: initial;
     }
   }
-  // Undo fixed-pixel line height on body
   line-height: 1;
   // Undo Bootstrap global label margin
   label {
@@ -148,6 +147,8 @@ ul.toolBar, .toolBar > ul {
 
 // Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
 .toolBarItem {
+  // Restore normal line height (vs 1 on .toolBar)
+  line-height: 1.42857143;
   label, .labelInput {
     display: inline-block;
     margin-right: 0.5em;

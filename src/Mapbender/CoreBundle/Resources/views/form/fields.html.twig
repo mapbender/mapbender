@@ -102,7 +102,7 @@
 {%- block hiddendropdown_option_display -%}
   {% for group_label, choice in options %}
     {%- if choice is iterable and choice.nogroup is not defined -%}
-    <li><label class="group-label">{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}</label>
+    <li class="nested-group"><label class="group-label">{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}</label>
       <ul class="group">
         {% set options = choice %}
         {{- block('hiddendropdown_option_display') }}
