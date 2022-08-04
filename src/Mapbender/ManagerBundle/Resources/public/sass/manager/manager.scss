@@ -138,10 +138,7 @@ div.contentTitle {
   }
 }
 
-a.button, button, div.dropdown:not(.bs-dropdown) {
-  border-radius: $elementBorderRadius;
-}
-textarea, input[type=text], input[type=number], input[type=password] {
+textarea, input[type=text], input[type=number], input[type=password], .dropdownValue, .dropdownList {
   border-radius: 8px;
 }
 
@@ -150,11 +147,6 @@ a.button{
   &:hover{
     color: $lightFontColor;
   }
-}
-ul.dropdownList{
-  border-bottom-left-radius: $elementBorderRadius;
-  border-bottom-right-radius: $elementBorderRadius;
-  margin-top: -3px;
 }
 
 .tabContainer {

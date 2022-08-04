@@ -53,8 +53,8 @@
 }
 
 .collectionRemove {
-  line-height: $inputHeight;
   position: absolute;
-  right: -1em;
+  right: -0.75em;
+  line-height: 2;
   z-index: 1;
 }

@@ -81,9 +81,6 @@
   .odd{background-color:darken($contentColor, 6%);}
 
   &.table {
-    tbody tr td {
-      line-height: $inputHeight;
-    }
     .titleColumn {
       width: 260px;
     }
