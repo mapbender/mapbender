@@ -188,13 +188,6 @@
                 appendTo: $input.parent().get(0),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
-                search: function(event) {
-                    self._autocompleteSearch(event);
-                    $input.autocomplete("close");
-                },
-                open: function(event, ui, t) {
-                    $(event.target).data("uiAutocomplete").menu.element.outerWidth($input.outerWidth());
-                },
                 source: function(request, response){
                     self._autocompleteSource($input).then(function(data) {
                         response(data.results);
@@ -236,22 +229,6 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             });
-        },
-
-        /**
-         * Autocomplete search handler.
-         *
-         * Checks if enough time has been passed since the last search. Basically
-         * this prevents an autocomplete poping up when a search is triggered by
-         * keyboard.
-         *
-         * @param  jQuery.Event event search event
-         * @param  Object       ui    n/a
-         */
-        _autocompleteSearch: function(event, ui,t){
-            var input = $(event.target);
-            var autoCompleteMenu = $(input.data("uiAutocomplete").menu.element);
-            autoCompleteMenu.addClass("search-router");
         },
 
         /**
@@ -528,15 +505,6 @@
         _hideMobile: function() {
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
-
-        /**
-         * Get current form
-         *
-         * @returns {*|HTMLElement}
-         */
-        getCurrentForm: function() {
-            var widget = this;
-            return $('form[name="' + widget.selected + '"]', widget.element);
-        }
+        __dummy__: null
     });
 })(jQuery);
