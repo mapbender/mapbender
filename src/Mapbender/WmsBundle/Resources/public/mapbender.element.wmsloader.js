@@ -23,7 +23,6 @@
         },
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.element.hide();
             var queryParams = Mapbender.Util.getUrlQueryParams(window.location.href);
             Mapbender.declarative = Mapbender.declarative || {};
             Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
@@ -47,7 +46,6 @@
             this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
-                this.element.show();
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('data-title'),
                     draggable: true,
