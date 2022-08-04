@@ -21,10 +21,6 @@ $sidepaneBorderColor: #a2a2a2 !default;
   border-bottom:dashed 1px darken(#fff, 30%);
 }
 
-.title {
-  font-size: 1.35rem;
-}
-
 .linkButton {
   &:hover, &:active{color:$ciColor;};
 }
