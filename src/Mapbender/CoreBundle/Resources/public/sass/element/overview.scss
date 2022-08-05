@@ -4,11 +4,8 @@
 
   .toggleOverview {
     position: absolute;
-    padding: 0 6px;
-    cursor: pointer;
-    border-radius: $radius;
-    font-size: 0.85rem;
-    line-height: 2;
+    padding: 3px;
+    border-radius: 3px;
   }
 
   .olMap, .ol-overviewmap-map {
@@ -50,19 +47,19 @@
   }
   .anchored-element-wrap-rt  & .toggleOverview {
     top: 0;
-    left: -25px;
+    left: -2.25em;
   }
   .anchored-element-wrap-lt & .toggleOverview {
     top: 0;
-    right: -25px;
+    right: -2.25em;
   }
   .anchored-element-wrap-rb & .toggleOverview {
     bottom: 0;
-    left: -25px;
+    left: -2.25em;
   }
   .anchored-element-wrap-lb & .toggleOverview {
     bottom: 0;
-    right: -25px;
+    right: -2.25em;
   }
   .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
     vertical-align: bottom;

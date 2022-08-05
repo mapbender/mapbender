@@ -168,20 +168,15 @@ ul.toolBar, .toolBar > ul {
   overflow: visible;
   background-color: $contentColor;
   width: 350px;
+  position: absolute;
 
   border-bottom: 1px solid $sidepaneBorderColor;
   .toggleSideBar {
     font-size: 1.5rem;
-    display: inline-block;
     padding: 5px;
-    border-top-right-radius: $radius;
-    border-bottom-right-radius: $radius;
-  }
-
-  position: absolute;
-  .toggleSideBar {
     position: absolute;
     top: 0;
+    border-radius: $radius;
   }
 
   &.left {
@@ -273,6 +268,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   $buttonTextColor: $lightFontColor !default;
   background: $buttonFirstColor;
   color: $buttonTextColor;
+  cursor: pointer;
 }
 
 // Filter Element visibility by "screenType"
