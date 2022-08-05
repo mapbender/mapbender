@@ -1,7 +1,10 @@
+$thirdColor: #a2a2a2 !default;
 $inputBorderColor: lighten($thirdColor, 15%) !default;
 $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 
-.input {
+.input,
+.dropdown:not(.bs-dropdown) .dropdownValue,
+.dropdownList {
   color: $inputForegroundColor;
   background-color: $inputBackgroundColor;
   border:solid 1px $inputBorderColor;

@@ -1,5 +1,3 @@
-$inputBorderColor: lighten($thirdColor, 15%) !default;
-
 select.numeric {
   // Right align selects with numeric content
   // see https://stackoverflow.com/a/43919388
@@ -13,14 +11,6 @@ select.numeric {
 .autocompleteWrapper {
   position: relative;
   user-select: none;
-}
-
-.dropdown:not(.bs-dropdown) .dropdownValue,
-.dropdownList {
-  // Same as .input
-  border: solid 1px $inputBorderColor;
-  background-color: $inputBackgroundColor;
-  color: $inputForegroundColor;
 }
 
 .dropdownList {
