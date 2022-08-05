@@ -1,4 +1,4 @@
-## dev-master @ 2188c1c16
+## dev-master @ 6932a33b4
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -10,8 +10,9 @@
 * Fix toolbar item padding when using centered items
 * Fix mobile template broken position of overlay elements in the bottom left / bottom right corners
 * Fix mobile template panel obscuring toolbar when opened
-* Fix frontend line heights ignoring font sizes
-* Fix font size scalability for form inputs
+* Fix frontend text flow (line height always relative to font size)
+* Fix font size scalability of form inputs
+* Fix layertree font size not matching anything else in frontend
 * Fix input sizing / misc element font sizes in mobile template
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
@@ -49,6 +50,7 @@
 * [Sketch] Fix initial visible content flash of empty table placeholder row
 * [Skecth] Misc user interface improvements
 * [DimensionsHandler] Fix garbled display of acronyms in dimension titles
+* [DimensionsHandler] Fix current value display in toolbar overlapping long dimension title
 * Support replacement of shipping Application template PHP classes via `mapbender.application_template` tagged servics (see [PR#1424](https://github.com/mapbender/mapbender/pull/1424))
 * Support template CSS references containing StringAsset objects (instead of file names)
 * Support setting Scss variables in application custom css
