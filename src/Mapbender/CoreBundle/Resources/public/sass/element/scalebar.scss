@@ -1,3 +1,6 @@
+$darkFontColor: #3f3f3f !default;
+$textColor: $darkFontColor !default;
+
 .mb-element-scaleline {
   .anchored-element-wrap & {
     // Avoid eating mouse interactions on map
@@ -9,9 +12,9 @@
   }
   .scaleBorder{
     border:{
-      left:solid 2px $firstColor;
-      right:solid 2px $firstColor;
-      bottom:solid 2px $firstColor;
+      left: solid 2px $textColor;
+      right: solid 2px $textColor;
+      bottom: solid 2px $textColor;
     }
     height:5px;
   }

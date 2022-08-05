@@ -1,4 +1,7 @@
-$popupBorderColor: #a2a2a2 !default;
+$panelBorderColor: #a2a2a2 !default;
+$popupBorderColor: $panelBorderColor !default;
+$backgroundColor: #fff !default;
+$popupBackgroundColor: $backgroundColor !default;
 
 .popupHead {
   .popupTitle {
@@ -92,7 +95,7 @@ $popupBorderColor: #a2a2a2 !default;
     padding-bottom:$space;
   }
   z-index: 100; // Same as .ui-front
-  background-color: #fff;
+  background-color: $popupBackgroundColor;
   border: 1px solid $popupBorderColor;
   border-bottom-width: 5px;
 }

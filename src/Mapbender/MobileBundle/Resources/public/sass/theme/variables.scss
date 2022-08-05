@@ -1,8 +1,8 @@
+$backgroundColor: #fff;
+$panelBorderColor: #ccc;
+
 // the holy colors
 $ciColor:#0066BA; // blue
-$ciColor2:#CCC; // gray
-$ciColor3:#134271 ; // blue
-$ciColor4:#fff ; // white
 $toolBarFontColor: #0066BA;
 $toolBarBackgroundColor: #fff;
 $toolBarOpacity: 1.0;
@@ -23,3 +23,9 @@ $buttonBorderColor: $toolBarFontColor;
 $buttonCriticalTextColor: $buttonTextColor;
 $buttonCriticalFirstColor: $buttonFirstColor;
 $buttonCriticalBorderColor: $buttonBorderColor;
+
+
+// Legacy
+$ciColor3: #134271; // Doesn't do anything
+$ciColor2: #CCC; // Doesn't do anything; (re)define $panelBorderColor instead
+$ciColor4: #fff; // Doesn't do anything; (re)define $backgroundColor instead

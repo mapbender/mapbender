@@ -1,3 +1,7 @@
+$panelBorderColor: #a2a2a2 !default;
+$darkFontColor: #3f3f3f !default;
+$textColor: $darkFontColor !default;
+
 .mb-element-layertree{
   user-select: none;
   .leave {
@@ -88,7 +92,7 @@ $layer-slider-bar-height: 5px;
   z-index: 45;
   // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
   width: 140px;
-  border: solid 1px $thirdColor;
+  border: solid 1px $panelBorderColor;
   cursor: default;
   @include border-radius($radius);
   // arrow icon
@@ -97,7 +101,7 @@ $layer-slider-bar-height: 5px;
     display: block;
     width: 0;
     height: 0;
-    border-bottom: 5px solid $firstColor;
+    border-bottom: 5px solid $panelBorderColor;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     position: absolute;
@@ -111,7 +115,7 @@ $layer-slider-bar-height: 5px;
     position: relative;
     color: $lightFontColor;
     height: $layer-slider-bar-height;
-    background-color: $thirdColor;
+    background: rgba($textColor, 0.4);
     margin-top: $space/3;
     margin-bottom: $space/2;
     cursor: pointer;

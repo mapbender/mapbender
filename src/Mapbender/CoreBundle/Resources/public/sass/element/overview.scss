@@ -1,3 +1,5 @@
+$panelBorderColor: #a2a2a2 !default;
+
 .mb-element-overview {
   user-select: none;
   position: relative; // For .toggleOverview absolute
@@ -12,7 +14,7 @@
     background-color: white;
     @include transition(all .2s linear);
     .ol-viewport, .olMapViewport {
-      border: 1px solid $thirdColor;
+      border: 1px solid $panelBorderColor;
     }
     .olMapViewport {
       > div {

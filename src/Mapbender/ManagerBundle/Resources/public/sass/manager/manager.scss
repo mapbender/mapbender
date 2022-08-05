@@ -1,4 +1,5 @@
 /* Backend styles include used by main backend and login */
+$textColor: #333 !default;
 
 @import "modules/base";
 @import "modules/text";
@@ -10,7 +11,6 @@
 @import "element/mbslider";
 
 body {
-  background-color: #e8e8e8;
   font-weight: 300;
 }
 // Use lighter 400 font-weight by default for implicitly "bold" elements
@@ -35,14 +35,10 @@ h4, .h4, .tabContainer > ul {
   .nav {
     font-weight: bold;
   }
-  .navbar-nav>li>a {
-    color: lighten($darkFontColor, 30%);
-    background-color: transparent;
-  }
   .navbar-toggle {
-    border-color: lighten($darkFontColor, 30%);
+    border-color: #ccc;
     .icon-bar {
-      background-color: lighten($darkFontColor, 30%);
+      background-color: $textColor;
     }
   }
   .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
@@ -142,13 +138,6 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
   border-radius: 8px;
 }
 
-a.button{
-  color: $firstColor;
-  &:hover{
-    color: $lightFontColor;
-  }
-}
-
 .tabContainer {
   > ul {
     margin-bottom: 2rem;
@@ -168,10 +157,8 @@ a.button{
     padding-right: 30px;
 
     font-weight: bold;
-    color: lighten($darkFontColor, 30%);
-
-    &.active {
-      color: $darkFontColor;
+    &:not(.active) {
+      opacity: 0.7;
     }
     &.active > a {
       // Trade bottom-padding for border to maintain height

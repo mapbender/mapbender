@@ -1,6 +1,6 @@
 /** Backend only */
 .table-bordered {
-  border-top: solid 3px $firstColor;
+  border-top: solid 3px #ccc;
   // Undo Bootstrap left / right borders on cells
   >tbody,>thead,>tfoot {
     >tr {

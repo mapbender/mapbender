@@ -1,6 +1,10 @@
 @import "_compass";
 @import "modules/jqueryui_minimal";
 
+$darkFontColor: #3f3f3f !default;
+$textColor: $darkFontColor !default;
+$backgroundColor: #fff !default;
+
 *{@include box-sizing(border-box);}
 html, body{
   width:100%;
@@ -11,8 +15,10 @@ html, body{
     family: $fontFamily;
     size: $fontSize;
   }
-  color:$darkFontColor;
+  color: $textColor;
+  background-color: $backgroundColor;
 }
+
 // @todo: Resolve conflicts of these extra list and heading rules with Bootstrap and
 //        general expectations. Should adopt Bootstrap convention to display lists with
 //        bullets / numbers and indents by default. Only lists that explicitly DO NOT want

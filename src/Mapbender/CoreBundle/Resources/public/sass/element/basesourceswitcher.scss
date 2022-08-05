@@ -1,3 +1,8 @@
+$backgroundColor: #fff !default;
+$darkFontColor: #3f3f3f !default;
+$textColor: $darkFontColor !default;
+$panelBorderColor: #a2a2a2 !default;
+
 .mb-element-basesourceswitcher {
   .basesourcegroup, .basesourcesetswitch {
     cursor: pointer;
@@ -15,16 +20,15 @@
     }
     .basesourcegroup, .basesourcesetswitch {
       padding: 0 5px;
-      background-color: #b5b5b5;
+      background-color: mix($backgroundColor, $textColor, 80%);
       &:hover, &[data-state="active"]{
-        color:$firstColor;
-        background-color: $contentColor;
+        background-color: $backgroundColor;
       }
       @include transition(all .2s ease-in-out);
+      border:solid 1px $panelBorderColor;
     }
     .basesourcegroup, > .basesourcesetswitch {
       display: inline-block;
-      border: solid 1px $thirdColor;
       border-right-width: 0;
       &:last-child {
         border-right-width: 1px;
@@ -40,9 +44,6 @@
     }
     .basesourcegroup:hover .basesourcesubswitcher {
       display: initial;
-    }
-    .basesourcegroup .basesourcesetswitch {
-      border:solid 1px $thirdColor;
     }
   }
   .toolBar.top & {

@@ -19,9 +19,11 @@ $sidepaneButtonHoverColor: darken($buttonFirstColor, 5%) !default;
 $sidepaneButtonActiveTextColor: $lightFontColor !default;
 $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 
+$panelBorderColor: #a2a2a2 !default;
+
 .tabContainer{
   .tab, .container {
-    border: 1px solid $thirdColor;
+    border: 1px solid $panelBorderColor;
   }
   .tab{
     background-color: #fff;   // Must be opaque
@@ -105,7 +107,7 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 .tabContainerAlt{
   > .tabs {
     list-style: none;
-    border-bottom: dashed 1px $thirdColor;
+    border-bottom: dashed 1px $panelBorderColor;
     padding-bottom: $space;
     margin-bottom: $space;
   }

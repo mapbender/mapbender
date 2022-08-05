@@ -1,10 +1,8 @@
+$backgroundColor: #fff;
+
 @import "libs/mixins";
 @import "libs/icons";
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
-
-body {
-  background-color: #fff;
-}
 
 .login-wrapper, .justify-v {
   display: flex;
