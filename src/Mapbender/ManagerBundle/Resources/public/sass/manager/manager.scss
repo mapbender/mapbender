@@ -181,13 +181,6 @@ a.button{
   }
 }
 
-.blueTabUnderline {
-  max-width: 67px;
-  height: 3px;
-  background-color: #079ee0;
-}
-
-
 .contentPane {
   width: 90%;
   max-width: 80rem;
@@ -206,7 +199,7 @@ a.button{
 
     .button-group {
       text-align: right;
-      margin: $space 0;
+      margin: 20px 0;
     }
   }
 }
@@ -274,7 +267,7 @@ a.button{
     padding: 3px .5em;
     margin: 0 .25em;
     user-select: none;
-    border-radius: $radius;
+    border-radius: 5px;
     input {
       display: none;
     }
@@ -351,7 +344,6 @@ a.button{
 .flashBox{
   $width:280px;
 
-  padding: ($space/4) ($space/2);
   text-align: center;
   width: $width;
   margin-left: -$width/2;
@@ -378,5 +370,18 @@ footer {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   i + * {
     margin-left: 0.5em;
+  }
+}
+
+.ui-sortable-handle {
+  cursor: move;
+  &:hover, &.ui-sortable-helper {
+    background-color: #f0f0f0;
+    .inputWrapper & {
+      background-color: darken($inputBackgroundColor, 10%);
+    }
+  }
+  .checkbox label, .radio label {
+    cursor: inherit;
   }
 }

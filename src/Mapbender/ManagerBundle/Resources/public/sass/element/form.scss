@@ -11,7 +11,7 @@
     resize: none;
   }
   .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + $space});
+    width: calc(100% - #{$labelWidth + 20px});
   }
   .choiceExpandedSortable {
     &.input {
@@ -19,29 +19,20 @@
       // @todo: .input should not have any height rule
       height: auto;
     }
-    .sortableItem {
-      cursor: move;
-      label {
-        cursor: inherit;
-      }
-      &:hover {
-        background-color: darken($inputBackgroundColor, 10%);
-      }
-    }
   }
   .left .checkbox {
     display: inline-block;
-    margin-right: $space;
+    margin-right: 20px;
   }
 }
 
 .extraWideLabelForm {
-  $label: 120px;
+  $labelWidth: 120px;
   .labelInput {
     width: 120px;
   }
   .inputWrapper, .dropdown {
-    width: calc(100% - #{$label + $space});
+    width: calc(100% - #{$labelWidth + 20px});
   }
 }
 

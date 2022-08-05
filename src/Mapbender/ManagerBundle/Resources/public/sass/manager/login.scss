@@ -2,11 +2,22 @@
 @import "libs/icons";
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
+body {
+  background-color: #fff;
+}
+
+.login-wrapper, .justify-v {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+.justify-v {
+  justify-content: center;
+}
 
 .authWrapper {
   .login-wrapper {
-    padding: $space;
-    background-color: lighten($contentColor, 2%);
+    padding: 20px;
     position: absolute;
     right: 0;
     width: 50vw;
@@ -16,9 +27,6 @@
     }
     max-width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
   }
 
   .container-login-img {
@@ -63,12 +71,6 @@
   }
   .linkButton {
     display: block;
-  }
-  .sitelinks {
-    // HACK: position absolute to get around flex + justify-content
-    position: absolute;
-    top: $space;
-    right: $space;
   }
 }
 

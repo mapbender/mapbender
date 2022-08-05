@@ -98,15 +98,6 @@
   thead>tr>th:first-child {
     padding-left: 0;
   }
-  tr.ui-sortable-handle {
-    cursor: move;
-    &:hover{
-      background-color:darken($contentColor, 3%);
-    }
-    &.ui-sortable-helper {
-      background-color:darken($contentColor, 4.8%);
-    }
-  }
   // Element region / Layerset titles use embedded h3 tags
   thead h3 {
     font-size: 140%;
@@ -132,8 +123,6 @@
 // cells to have forced expansion
 .elementsTable {
   .typeColumn, .titleColumn {width: 49%;}
-
-  .placeholderRow{height:$space;}
   .screentype-icon.disabled {
     opacity: 0.3;
   }

@@ -54,14 +54,20 @@
     background-color: #f5f5f5;    // = .panel-default
   }
   .extendedGroup {
+    .collectionAdd {
+      display: block;
+    }
+    .collectionItem {
+      display: inline-block;
+    }
     .labelInput {width:90px;}
     .inputWrapper, div.dropdown {
       width:200px;
     }
-    .collectionItem .collectionRemove {
-      left: #{90px + $space + 200px};
+    .collectionRemove {
+      right: -1.5em;
     }
-    .mb-slider{margin-top: $space/2;}
+    .mb-slider{margin-top: 10px;}
     .form-group .checkbox {
       margin-top: 0;
     }
@@ -74,11 +80,13 @@
 }
 
 .instanceTable{
-  margin-top:$space;
+  margin-top: 20px;
   .checkboxColumn{
     text-align:center;
   }
-  .odd{background-color:darken($contentColor, 6%);}
+  .odd {
+    background-color: #f0f0f0;
+  }
 
   &.table {
     .titleColumn {
