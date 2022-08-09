@@ -4,6 +4,13 @@ $panelBorderColor: #a2a2a2 !default;
 $sidepaneBorderColor: $panelBorderColor !default;
 $sidepaneTextColor: inherit !default;
 
+$toolBarBackgroundColor: #eee !default;
+$toolBarOpacity: 1.0 !default;
+$toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
+$toolBarTopBackground: $toolBarBackground !default;
+$toolBarBottomBackground: $toolBarBackground !default;
+$toolBarBorderColor: $panelBorderColor !default;
+
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";
@@ -80,18 +87,19 @@ ul.toolBar, .toolBar > ul {
 }
 
 .toolBar {
-  opacity: $toolBarOpacity;
   z-index: 4;
   user-select: none;
 
   padding:$space/4 $space/2 $space/4 $space/2;
-  border-color: darken($contentColor, 20%);
+  border-color: $toolBarBorderColor;
 
   &.top {
+    background: $toolBarTopBackground;
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
+    background: $toolBarBottomBackground;
     .dropdownList{
       bottom: 100%;   // to "drop up"
     }

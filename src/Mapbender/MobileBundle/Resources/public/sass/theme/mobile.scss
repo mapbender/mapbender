@@ -1,10 +1,11 @@
+$backgroundColor: #fff !default;
+$panelBorderColor: #ccc !default;
+$toolBarBorderColor: rgba($ciColor, 0.6) !default;
+
 @import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
 @import "theme/mapbender3";
-
-$backgroundColor: #fff !default;
-$panelBorderColor: #ccc !default;
 
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer {
@@ -26,7 +27,7 @@ $panelBorderColor: #ccc !default;
   }
 
   &.bottom {
-    border-top: 3px solid $panelBorderColor;
+    border-top: 3px solid $toolBarBorderColor;
   }
 }
 /* --------------------------------------------------------------- MOBILEPANE */

@@ -6,7 +6,8 @@ $panelBorderColor: #ccc;
 $ciColor:#0066BA; // blue
 $toolBarFontColor: #0066BA;
 $toolBarBackgroundColor: #fff;
-$toolBarOpacity: 1.0;
+$toolBarBackground: $toolBarBackgroundColor;
+$toolBarBorderColor: rgba($ciColor, 0.6);
 $fontSize: 14px;
 
 // Invert button hover opacity behavior (opaque when NOT hovered, lighter when hovered)

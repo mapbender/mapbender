@@ -15,6 +15,9 @@ $sliderHandleTextColor: $accordionActiveTextColor;
 $sidepaneTextColor: $textColor;
 $sidepaneBackground: linear-gradient(0deg, rgba($backgroundColor, 0.85), rgba($backgroundColor, 0.95));
 
+$toolBarTopBackground: linear-gradient(0deg, rgba($backgroundColor, 0.9), rgba($backgroundColor, 0.7));
+$toolBarBottomBackground: linear-gradient(0deg, rgba($backgroundColor, 0.7), rgba($backgroundColor, 0.9));
+
 $sidepaneButtonFontSize: 1rem;
 $sidepaneButtonBackgroundColor: transparent;  // Same as .sidePane
 $sidepaneButtonTextColor: $textColor;
