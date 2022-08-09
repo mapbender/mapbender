@@ -1,3 +1,9 @@
+$backgroundColor: #fff !default;
+$sidepaneBackground: $backgroundColor !default;
+$panelBorderColor: #a2a2a2 !default;
+$sidepaneBorderColor: $panelBorderColor !default;
+$sidepaneTextColor: inherit !default;
+
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";
@@ -8,8 +14,6 @@
 @import "modules/checkbox";
 @import "modules/dropdown";
 @import "modules/dateselector";
-
-$sidepaneBorderColor: #a2a2a2 !default;
 
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
@@ -164,9 +168,10 @@ ul.toolBar, .toolBar > ul {
     // undo historical float classes
     float: none;
   }
+  color: $sidepaneTextColor;
+  background: $sidepaneBackground;
   height: 100%;
   overflow: visible;
-  background-color: $contentColor;
   width: 350px;
   position: absolute;
 

@@ -1,3 +1,6 @@
+$textColor: #222 !default;
+$backgroundColor: #fff !default;
+
 $accordionFontSize: 1.6rem;
 $accordionBackgroundColor: #777;
 $accordionTextColor: #ddd;
@@ -9,10 +12,13 @@ $sliderHandleBackgroundColor: #a3a3a3;
 $sliderHandleBorderColor: $accordionActiveBackgroundColor;
 $sliderHandleTextColor: $accordionActiveTextColor;
 
+$sidepaneTextColor: $textColor;
+$sidepaneBackground: linear-gradient(0deg, rgba($backgroundColor, 0.85), rgba($backgroundColor, 0.95));
+
 $sidepaneButtonFontSize: 1rem;
-$sidepaneButtonBackgroundColor: $contentColor;  // Same as .sidePane
-$sidepaneButtonTextColor: $toolBarFontColor;    // Same as .sidePane
-$sidepaneButtonActiveTextColor: $toolBarFontColor;
+$sidepaneButtonBackgroundColor: transparent;  // Same as .sidePane
+$sidepaneButtonTextColor: $textColor;
+$sidepaneButtonActiveTextColor: $sidepaneButtonTextColor;
 $sidepaneButtonActiveBackgroundColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 92%);
 $sidepaneButtonHoverColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 96%);
 $sidepaneButtonBorderColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 50%);

@@ -126,14 +126,6 @@ body {
   background: #ccc;
 }
 
-.sidePane {
-  &:after {
-    clear: both;
-  }
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
-  color: $toolBarFontColor;
-}
-
 .accordionContainer .accordion {
   padding-top: 0;
   padding-bottom: 0;
