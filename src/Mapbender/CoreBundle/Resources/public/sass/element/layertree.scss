@@ -93,7 +93,6 @@ $layer-slider-bar-height: 5px;
   // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
   width: 140px;
   border: solid 1px $panelBorderColor;
-  cursor: default;
   @include border-radius($radius);
   // arrow icon
   &:before {
@@ -112,25 +111,16 @@ $layer-slider-bar-height: 5px;
     display: none;
   }
   .layer-slider-bar {
-    position: relative;
+    font-size: 85%;
     color: $lightFontColor;
-    height: $layer-slider-bar-height;
     background: rgba($textColor, 0.4);
-    margin-top: $space/3;
-    margin-bottom: $space/2;
-    cursor: pointer;
-    @include border-radius(2px);
+    border-color: transparent;
     .layer-slider-handle {
-      position: absolute;
-      top: -$layer-slider-bar-height;
-      left: 0;
-      cursor: pointer;
-      width: 30px;
-      height: 16px;
-      line-height: 16px;
+      // enforce minimum width so opacity handle (with text) doesn't
+      // look weird vs dimensions handle (no text)
+      min-width: 2.5em;
       background-color: $sliderHandleBackgroundColor;
-      text-align: center;
-      @include border-radius(4px);
+      border-color: $sliderHandleBackgroundColor;
     }
   }
 }

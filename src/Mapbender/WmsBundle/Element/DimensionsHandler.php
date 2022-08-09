@@ -63,7 +63,6 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
         );
     }

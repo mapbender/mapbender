@@ -8,7 +8,6 @@ $textColor: #333 !default;
 @import "modules/input";
 @import "modules/dropdown";
 @import "modules/table";
-@import "element/mbslider";
 
 body {
   font-weight: 300;
@@ -371,4 +370,8 @@ footer {
   .checkbox label, .radio label {
     cursor: inherit;
   }
+}
+
+.ui-slider .ui-slider-range {
+  background: #c2e5a4;
 }
