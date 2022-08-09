@@ -112,15 +112,12 @@ $layer-slider-bar-height: 5px;
   }
   .layer-slider-bar {
     font-size: 85%;
-    color: $lightFontColor;
     background: rgba($textColor, 0.4);
     border-color: transparent;
     .layer-slider-handle {
       // enforce minimum width so opacity handle (with text) doesn't
       // look weird vs dimensions handle (no text)
       min-width: 2.5em;
-      background-color: $sliderHandleBackgroundColor;
-      border-color: $sliderHandleBackgroundColor;
     }
   }
 }

@@ -18,7 +18,6 @@ $secondColor:#858585; // middle gray
 $contentColor:#f9f9f9; // very light gray
 $errorColor:#aa2323; // red
 
-$middleFontColor:#707070; // lighter gray
 $lightFontColor:#fff; // white
 
 // Toolbar colors (frontend)
@@ -55,7 +54,7 @@ $buttonFontSize: 100%;
 $inputBackgroundColor: $contentColor;
 $inputForegroundColor: $secondColor;
 
-$sliderHandleBackgroundColor: $ciColor;
+$sliderHandleBackgroundColor: #a3a3a3;
 
 $accordionFontSize: 100%;
 $accordionBackgroundColor: $buttonFirstColor;
@@ -81,6 +80,7 @@ $elementPopupWidth: $popupModalWidth; // Doesn't do anything
 $elementPopupBodyWidth: $elementPopupWidth - ($space * 3); // Doesn't do anything
 $popupMaxHeight:370px;  // Doesn't do anything
 $inputHeight:28px;  // Doesn't do anything
+$middleFontColor:#707070; // Doesn't do anything
 $thirdColor:#a2a2a2;  // Doesn't do anything
 $selectColor: #F7F79A;  // Doesn't do anything
 $mandatoryColor: #DCAF18;  // Doesn't do anything

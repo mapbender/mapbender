@@ -1,4 +1,5 @@
 $backgroundColor: #fff;
+$textColor: #333 !default;
 $panelBorderColor: #ccc;
 
 // the holy colors
@@ -24,6 +25,9 @@ $buttonCriticalTextColor: $buttonTextColor;
 $buttonCriticalFirstColor: $buttonFirstColor;
 $buttonCriticalBorderColor: $buttonBorderColor;
 
+$sliderHandleBackgroundColor: #fff;
+$sliderHandleBorderColor: $buttonBorderColor;
+$sliderHandleTextColor: $textColor;
 
 // Legacy
 $ciColor3: #134271; // Doesn't do anything
