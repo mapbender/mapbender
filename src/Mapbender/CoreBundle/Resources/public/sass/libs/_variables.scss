@@ -14,8 +14,6 @@ $popupModalWidth: 600px;
 
 //----------------------------------------------------------------colors
 $firstColor:#404040; // dark gray
-$secondColor:#858585; // middle gray
-$contentColor:#f9f9f9; // very light gray
 $errorColor:#aa2323; // red
 
 $lightFontColor:#fff; // white
@@ -51,8 +49,8 @@ $buttonCriticalHoverColor: #cd5151;
 $buttonFontSize: 100%;
 
 // Form inputs
-$inputBackgroundColor: $contentColor;
-$inputForegroundColor: $secondColor;
+$inputBackgroundColor: #f9f9f9;
+$inputForegroundColor: #858585;
 
 $sliderHandleBackgroundColor: #a3a3a3;
 
@@ -80,6 +78,8 @@ $elementPopupWidth: $popupModalWidth; // Doesn't do anything
 $elementPopupBodyWidth: $elementPopupWidth - ($space * 3); // Doesn't do anything
 $popupMaxHeight:370px;  // Doesn't do anything
 $inputHeight:28px;  // Doesn't do anything
+$contentColor:#f9f9f9; // Doesn't do anything
+$secondColor:#858585; // Doesn't do anything
 $middleFontColor:#707070; // Doesn't do anything
 $thirdColor:#a2a2a2;  // Doesn't do anything
 $selectColor: #F7F79A;  // Doesn't do anything
