@@ -1,7 +1,6 @@
 $backgroundColor: #fff !default;
 $sidepaneBackground: $backgroundColor !default;
-$panelBorderColor: #a2a2a2 !default;
-$sidepaneBorderColor: $panelBorderColor !default;
+$sidepaneBorderColor: #ccc !default;
 $sidepaneTextColor: inherit !default;
 
 $toolBarBackgroundColor: #eee !default;
@@ -9,7 +8,7 @@ $toolBarOpacity: 1.0 !default;
 $toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
 $toolBarTopBackground: $toolBarBackground !default;
 $toolBarBottomBackground: $toolBarBackground !default;
-$toolBarBorderColor: $panelBorderColor !default;
+$toolBarBorderColor: $sidepaneBorderColor !default;
 
 @import "modules/base";
 @import "modules/layout";

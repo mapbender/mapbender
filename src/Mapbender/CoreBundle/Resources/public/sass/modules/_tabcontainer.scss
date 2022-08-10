@@ -19,7 +19,7 @@ $sidepaneButtonHoverColor: darken($buttonFirstColor, 5%) !default;
 $sidepaneButtonActiveTextColor: $lightFontColor !default;
 $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 
-$panelBorderColor: #a2a2a2 !default;
+$panelBorderColor: #888 !default;
 
 .tabContainer{
   .tab, .container {

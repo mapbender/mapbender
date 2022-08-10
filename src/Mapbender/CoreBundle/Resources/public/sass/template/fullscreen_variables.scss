@@ -15,13 +15,17 @@ $sliderHandleTextColor: $accordionActiveTextColor;
 $sidepaneTextColor: $textColor;
 $sidepaneBackground: linear-gradient(0deg, rgba($backgroundColor, 0.85), rgba($backgroundColor, 0.95));
 
+$toolBarBorderColor: #ccc;
 $toolBarTopBackground: linear-gradient(0deg, rgba($backgroundColor, 0.9), rgba($backgroundColor, 0.7));
 $toolBarBottomBackground: linear-gradient(0deg, rgba($backgroundColor, 0.7), rgba($backgroundColor, 0.9));
 
 $sidepaneButtonFontSize: 1rem;
-$sidepaneButtonBackgroundColor: transparent;  // Same as .sidePane
+$sidepaneBorderColor: #ccc;
+$sidepaneButtonBackgroundColor: transparent;
 $sidepaneButtonTextColor: $textColor;
 $sidepaneButtonActiveTextColor: $sidepaneButtonTextColor;
 $sidepaneButtonActiveBackgroundColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 92%);
 $sidepaneButtonHoverColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 96%);
 $sidepaneButtonBorderColor: mix($sidepaneButtonBackgroundColor, $sidepaneButtonTextColor, 50%);
+
+$panelBorderColor: #888;
