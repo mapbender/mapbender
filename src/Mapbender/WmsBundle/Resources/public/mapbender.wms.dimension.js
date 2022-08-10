@@ -125,7 +125,7 @@ Mapbender.DimensionTime.prototype = Object.create(Mapbender.DimensionScalar.prot
 Mapbender.DimensionTime.prototype.constructor = Mapbender.DimensionTime;
 
 Mapbender.DimensionTime.prototype.getStep = function(value) {
-    var valueDate = new Date(value);
+    var valueDate = new Date([value].join('')); // Force string input to Date
     switch (this.step.getType()) {
         case 'year':
         case 'month':
