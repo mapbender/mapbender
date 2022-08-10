@@ -1,5 +1,7 @@
 .mb-element-printclient {
   overflow: visible;
+  // Reduce vertical size of potentially very long form
+  font-size: 11px;
 
   .button.active {
     background-color: #538e24;
