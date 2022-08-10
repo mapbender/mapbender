@@ -1,4 +1,4 @@
-## dev-master @ 6932a33b4
+## dev-master @ dca048c42
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -11,7 +11,8 @@
 * Fix mobile template broken position of overlay elements in the bottom left / bottom right corners
 * Fix mobile template panel obscuring toolbar when opened
 * Fix frontend text flow (line height always relative to font size)
-* Fix font size scalability of form inputs
+* Fix font size scalability of form inputs and sliders
+* Fix styling mismatches of DimensionsHandler slider vs Layertree context menu sliders
 * Fix layertree font size not matching anything else in frontend
 * Fix input sizing / misc element font sizes in mobile template
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
@@ -56,10 +57,15 @@
 * Support setting Scss variables in application custom css
 * Improve customizability of misc widget CSS (require files separately instead of `@import`)
 * Extract Sass variables for customizability
+  * `$textColor` and `$backgroundColor` for default content and popups
+  * `$panelBorderColor` for popups, tab container headings and misc popover menus (e.g. layertree layer context menu)
   * `$buttonActiveTextColor` (~Digitizer table headings selected for sorting / current pagination button; complements background given in `$buttonFirstActiveColor`)
   * `$buttonHoverTextColor`, `$buttonCriticalHoverTextColor` (misc popup / traditional element buttons)
   * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
-  * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
+  * `$sidepaneBorderColor`, `$popupBorderColor`, `$toolBarBorderColor` for misc layout element borders
+  * `$sliderHandleTextColor`, `$sliderHandleBorderColor` for layertree and dimensionhandler slider widgets, complementing previously available `$sliderHandleBackgroundColor`
+  * `$toolBarBackground`, `$toolBarTopBackground`, `$toolBarBottomBackground` for top / bottom toolbars styling
+  * `$desktopBreakpointWidth` for controlling responsive switch between mobile / desktop element and container visibility
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
 * Resolve misc Twig deprecations
 * Resolve misc Symfony Acl / grants checks deprecations
