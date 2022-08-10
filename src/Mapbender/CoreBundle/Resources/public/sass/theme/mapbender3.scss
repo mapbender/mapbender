@@ -9,6 +9,7 @@ $toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
 $toolBarTopBackground: $toolBarBackground !default;
 $toolBarBottomBackground: $toolBarBackground !default;
 $toolBarBorderColor: $sidepaneBorderColor !default;
+$desktopBreakpointWidth: 1200px !default;
 
 @import "modules/base";
 @import "modules/layout";
@@ -286,13 +287,13 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 // Filter Element visibility by "screenType"
 // @see Mapbender/CoreBundle/Extension/ElementMarkupExtension.php
 // @todo: eventually we may need to make the breaking pixel width configurable
-@media screen and (max-width: 1119px) {
+@media screen and (max-width: #{$desktopBreakpointWidth - 1px}) {
   .hide-screentype-mobile {
     display: none !important; // Overrule misc display: inline-block and such with !important
   }
 }
 
-@media screen and (min-width: 1120px) {
+@media screen and (min-width: $desktopBreakpointWidth) {
   .hide-screentype-desktop {
     display: none !important; // Overrule misc display: inline-block and such with !important
   }
