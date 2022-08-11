@@ -1,11 +1,13 @@
-{% for set_id, label in dimensionsets %}
-  <div id="{{ set_id }}" class="dimensionset">
+{% for dimension_config in dimensionsets %}
+  <div class="dimensionset"
+       data-group="{{ dimension_config.group | join('#') }}"
+       data-extent="{{ dimension_config.extent }}">
       <div class="row no-gutters">
-          <div class="col-xs-6 dimensionset-title">{{ label }}</div>
+          <div class="col-xs-6 dimensionset-title">{{ dimension_config.title }}</div>
           <div class="col-xs-6 dimensionset-value"></div>
       </div>
       <div class="row no-gutters">
-          <div class="col-xs-12 slider-wrap"><div class="mb-slider" id="dimensionset-{{ set_id }}"></div></div>
+          <div class="col-xs-12 slider-wrap"><div class="mb-slider"></div></div>
       </div>
   </div>
 {% endfor %}
