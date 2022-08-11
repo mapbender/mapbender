@@ -153,6 +153,10 @@ $(function() {
                 }
             ])
         });
+        $('.collection[data-sortable]', $form).sortable({
+            axis: 'y',
+            items: '>.collectionItem'
+        });
         $form.on('change', function() {
             $form.data('dirty', true);
             $form.data('discard', false);

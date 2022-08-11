@@ -29,22 +29,21 @@
 {%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
-  {% spaceless %}
-    {% if prototype is defined %}
-      {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
-    {% endif %}
-    {% if allow_delete %}
-      {% set attr = attr|merge({'data-allow-delete': 1 }) %}
-    {% endif %}
+  {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
+  {%- if sortable is defined -%}
+    {%- set attr = attr | merge({'data-sortable': '1'}) -%}
+  {%- endif -%}
+    {%- if prototype is defined -%}
+      {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {%- endif -%}
     <div {{ block('widget_container_attributes') }}>
-      {% if prototype is defined and form.vars.allow_add is not empty %}
+      {%- if prototype is defined and form.vars.allow_add is not empty -%}
         <span class="collectionAdd hover-highlight-effect"><i class="fa fas fa-plus"></i></span>
-      {% endif %}
+      {%- endif -%}
       {%- for child in form -%}
         {{- form_row(child) -}}
       {%- endfor -%}
     </div>
-  {% endspaceless %}
 {% endblock collection_widget %}
 
 {% block textarea_widget %}

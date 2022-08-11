@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -27,11 +28,10 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
         if ($application && $mapId) {
             $sourceInstanceIds = $this->getSourceInstanceIdsFromMapId($application, $mapId);
             $event->getForm()->getParent()
-                ->add('instancesets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
+                ->add('instancesets', SortableCollectionType::class, array(
                     'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
                     'allow_add' => true,
                     'allow_delete' => true,
-                    'auto_initialize' => false,
                     'entry_options' => array(
                         'application' => $application,
                         'choice_filter' => function($choice) use ($sourceInstanceIds) {
