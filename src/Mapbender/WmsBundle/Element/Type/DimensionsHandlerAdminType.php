@@ -6,6 +6,7 @@ use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Mapbender\Utils\ApplicationUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -51,7 +52,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
             }
         }
         $event->getForm()
-            ->add('dimensionsets', "Symfony\Component\Form\Extension\Core\Type\CollectionType", array(
+            ->add('dimensionsets', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
                 'allow_add' => !!count($dimensions),
                 'allow_delete' => true,
