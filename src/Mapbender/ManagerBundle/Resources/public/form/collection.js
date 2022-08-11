@@ -8,16 +8,15 @@ function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)
              .toString(16)
              .substring(1);
-};
+}
 
 function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
          s4() + '-' + s4() + s4() + s4();
 }
 
-$(document).on('click', '.collectionAdd', function(event) {
-    event.preventDefault();
-    var collection = $(this).closest('[data-prototype]'),
+$(document).on('click', '.collection > .collectionAdd', function() {
+    var collection = $(this).closest('.collection'),
         count = $('.collectionItem', collection).length,
         // The prototype text for the new item...
         prototype = collection.data('prototype'),
@@ -29,15 +28,12 @@ $(document).on('click', '.collectionAdd', function(event) {
             .addClass('collectionItem');
 
     collection.append(item);
+    collection.trigger('collectionlengthchange');
 });
 
-$(document).on('click', '.collectionRemove', function(event) {
-    event.preventDefault();
-
-    // Get the item...
-    var item = $(event.target).closest('.collectionItem');
-    // And remove it.
-    item.remove();
+$(document).on('click', '.collectionItem .collectionRemove', function() {
+    $(this).closest('.collectionItem').remove();
+    $(this).closest('.collection').trigger('collectionlengthchange');
 });
 
 })(jQuery);

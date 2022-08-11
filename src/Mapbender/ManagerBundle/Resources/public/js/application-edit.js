@@ -157,7 +157,7 @@ $(function() {
             axis: 'y',
             items: '>.collectionItem'
         });
-        $form.on('change', function() {
+        $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);
             $form.data('discard', false);
         });
