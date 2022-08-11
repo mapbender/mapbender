@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Element\Type;
 
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
+use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -79,7 +80,7 @@ class PrintClientAdminType extends AbstractType
             ->add('replace_pattern', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
             ))
-            ->add('templates', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('templates', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,
