@@ -1,4 +1,4 @@
-## dev-master @ dca048c42
+## dev-master @ 9550188e5
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -15,6 +15,9 @@
 * Fix styling mismatches of DimensionsHandler slider vs Layertree context menu sliders
 * Fix layertree font size not matching anything else in frontend
 * Fix input sizing / misc element font sizes in mobile template
+* Fix missing element form discard confirmation after adding to / removing from collections
+* Fix broken Wms instance dimension settings form initialization for year-granular time dimension
+* Support reordering collection items in element BaseSourceSwitcher / DimensionsHandler backend forms
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
