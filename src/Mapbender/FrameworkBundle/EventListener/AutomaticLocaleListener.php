@@ -29,7 +29,7 @@ class AutomaticLocaleListener
             $languages = \array_filter(explode(',', $accept));
             foreach ($languages as $language) {
                 $parts = explode(';', $language);   // Split off "q=" weighting factor
-                if ($parts[0] && \preg_match('#^(de|en|es|fr|it|tr|ru)#i', $parts[0])) {
+                if ($parts[0] && \preg_match('#^(de|en|es|fr|it|nl|tr|ru)#i', $parts[0])) {
                     try {
                         $request->setLocale(strtolower(substr($parts[0], 0, 2)));
                     } catch (\Symfony\Polyfill\Intl\Icu\Exception\MethodNotImplementedException $e) {
