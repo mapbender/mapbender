@@ -45,7 +45,12 @@ class LayertreeAdminType extends AbstractType
             ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
                 'required' => false,
             ))
+            ->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'label' => 'mb.core.admin.layertree.label.themes',
+                'required' => false,
+                'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
+            ))
         ;
-        $builder->get('target')->addEventSubscriber(new LayertreeSubscriber());
+        $builder->get('themes')->addEventSubscriber(new LayertreeSubscriber('themes'));
     }
 }

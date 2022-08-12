@@ -5,10 +5,9 @@ namespace Mapbender\CoreBundle\Element\Type\Subscriber;
 
 
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
+use Mapbender\Utils\ApplicationUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -24,9 +23,8 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
     {
         /** @var Application $application */
         $application = $event->getForm()->getParent()->getParent()->getData()->getApplication();
-        $mapId = $event->getData();
-        if ($application && $mapId) {
-            $sourceInstanceIds = $this->getSourceInstanceIdsFromMapId($application, $mapId);
+        if ($application) {
+            $sourceInstanceIds = $this->getSourceInstanceIds($application);
             $event->getForm()->getParent()
                 ->add('instancesets', SortableCollectionType::class, array(
                     'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
@@ -46,28 +44,12 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
 
     /**
      * @param Application $application
-     * @param int|string $elementId
-     * @return mixed[]
-     */
-    protected function getElementConfiguration($application, $elementId)
-    {
-        foreach ($application->getElements() as $element) {
-            if (strval($element->getId()) === strval($elementId)) {
-                return $element->getConfiguration();
-            }
-        }
-        throw new \RuntimeException("No Element with id " . var_export($elementId, true));
-    }
-
-    /**
-     * @param Application $application
-     * @param $mapId
      * @return array
      */
-    protected function getSourceInstanceIdsFromMapId(Application $application, $mapId)
+    protected function getSourceInstanceIds(Application $application)
     {
         $sourceInstanceIds = array();
-        foreach ($this->getLayersetsFromMapId($application, $mapId) as $layerset) {
+        foreach (ApplicationUtil::getMapLayersets($application) as $layerset) {
             foreach ($layerset->getCombinedInstanceAssignments() as $assignment) {
                 if ($assignment->getEnabled() && $assignment->getInstance()->isBasesource()) {
                     $sourceInstanceIds[] = $assignment->getInstance()->getId();
@@ -75,24 +57,5 @@ class BaseSourceSwitcherMapTargetSubscriber implements EventSubscriberInterface
             }
         }
         return $sourceInstanceIds;
-    }
-
-    /**
-     * @param Application $application
-     * @param string $mapId
-     * @return Layerset[]
-     */
-    protected function getLayersetsFromMapId(Application $application, $mapId)
-    {
-        $layersets = array();
-        $mapConfig = $this->getElementConfiguration($application, $mapId);
-        if ($mapId) {
-            $layersetIds = array_map('strval', ArrayUtil::getDefault($mapConfig, 'layersets', array()));
-            $layersets = $application->getLayersets()->filter(function($layerset) use ($layersetIds) {
-                /** @var Layerset $layerset */
-                return \in_array($layerset->getId(), $layersetIds, false);
-            });
-        }
-        return $layersets;
     }
 }

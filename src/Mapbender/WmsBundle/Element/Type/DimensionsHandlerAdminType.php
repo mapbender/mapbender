@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
-use Mapbender\Component\ClassUtil;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -46,10 +46,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
         $application = $element->getApplication();
         $dimensions = array();
         if ($application) {
-            $mapElement = ApplicationUtil::getMapElement($application);
-            if ($mapElement) {
-                $dimensions = $this->collectDimensions($mapElement);
-            }
+            $dimensions = $this->collectDimensions($application);
         }
         $event->getForm()
             ->add('dimensionsets', SortableCollectionType::class, array(
@@ -65,13 +62,13 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
     }
 
     /**
-     * @param Element $map
+     * @param Application $application
      * @return DimensionInst[]
      */
-    protected function collectDimensions(Element $map)
+    protected function collectDimensions(Application $application)
     {
         $dimensions = array();
-        foreach ($this->getMapLayersets($map) as $layerset) {
+        foreach (ApplicationUtil::getMapLayersets($application) as $layerset) {
             foreach ($layerset->getInstances(true) as $instance) {
                 if ($instance->getEnabled() && ($instance instanceof WmsInstance)) {
                     foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
@@ -84,22 +81,5 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
             }
         }
         return $dimensions;
-    }
-
-    /**
-     * @param Element $map
-     * @return Layerset[]
-     */
-    protected function getMapLayersets(Element $map)
-    {
-        $mapConfig = $map->getConfiguration();
-        $layersetIds = array_map('strval', ArrayUtil::getDefault($mapConfig, 'layersets', array()));
-        $layersets = array();
-        foreach ($map->getApplication()->getLayersets() as $layerset) {
-            if (in_array(strval($layerset->getId()), $layersetIds)) {
-                $layersets[] = $layerset;
-            }
-        }
-        return $layersets;
     }
 }
