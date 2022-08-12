@@ -17,7 +17,6 @@ class LayertreeAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.autoopen',

@@ -11,21 +11,16 @@ use Symfony\Component\Form\FormEvents;
 
 class LayertreeSubscriber implements EventSubscriberInterface
 {
-    /** @var string */
-    protected $fieldName;
-
-    public function __construct($fieldName)
-    {
-        $this->fieldName = $fieldName;
-    }
-
     /**
      * @inheritdoc
      */
     public static function getSubscribedEvents()
     {
         return array(
-            FormEvents::PRE_SET_DATA => 'preSetData',
+            // Run before collection ResizeFormListener preSetData
+            /** @see \Symfony\Component\Form\Extension\Core\Type\CollectionType::buildForm */
+            /** @see \Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener::getSubscribedEvents */
+            FormEvents::PRE_SET_DATA => ['preSetData', 1],
         );
     }
 
@@ -46,8 +41,8 @@ class LayertreeSubscriber implements EventSubscriberInterface
             !empty($configData["themes"]) ? $configData["themes"] : array()
         );
         $event->setData($themesData);
-        if (!$themesData) {
-            $event->getForm()->getParent()->remove($this->fieldName);
+        if (!$themesData && !$event->getForm()->isRoot()) {
+            $event->getForm()->getParent()->remove($event->getForm()->getName());
         }
     }
 
