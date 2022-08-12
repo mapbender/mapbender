@@ -33,14 +33,23 @@ class SortableCollectionType extends AbstractType implements EventSubscriberInte
     public static function getSubscribedEvents()
     {
         return array(
-            FormEvents::PRE_SUBMIT => 'preSubmit',
+            // Bump priority to run before collection events
+            /** @see \Symfony\Component\Form\Extension\Core\Type\CollectionType::buildForm */
+            /** @see \Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener::getSubscribedEvents */
+            FormEvents::PRE_SET_DATA => ['preSetData', 1],
+            FormEvents::PRE_SUBMIT => ['preSubmit', 1],
         );
+    }
+
+    public function preSetData(FormEvent $e)
+    {
+        // Reorder data in order of submitted form inputs (=document order)
+        // and strip any non-numeric keys.
+        $e->setData(\array_values($e->getData()));
     }
 
     public function preSubmit(FormEvent $e)
     {
-        // Reorder data in order of submitted form inputs (=document order)
-        // and strip any non-numeric keys.
         $e->setData(\array_values($e->getData()));
         $e->getForm()->setData(\array_values($e->getForm()->getData()));
     }
