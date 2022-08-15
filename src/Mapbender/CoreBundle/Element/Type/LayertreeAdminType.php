@@ -1,13 +1,11 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Mapbender\CoreBundle\Element\EventListener\LayertreeSubscriber;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-/**
- * LayertreeAdminType
- */
 class LayertreeAdminType extends AbstractType
 {
 
@@ -44,12 +42,10 @@ class LayertreeAdminType extends AbstractType
             ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
                 'required' => false,
             ))
-            ->add('themes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('themes', LayertreeThemeCollectionType::class, array(
                 'label' => 'mb.core.admin.layertree.label.themes',
                 'required' => false,
-                'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
             ))
         ;
-        $builder->get('themes')->addEventSubscriber(new LayertreeSubscriber('themes'));
     }
 }
