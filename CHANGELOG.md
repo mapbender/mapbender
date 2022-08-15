@@ -1,10 +1,11 @@
-## dev-master @ 9550188e5
+## dev-master @ 294ad1068
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
 * Fix Openlayers 6 frontend / export / print not requesting WMS with configured "transparent" param
 * Fix Openlayers 6 frontend temporarily displaying Wms with previous layer combination when reactivating with changed layer selection
 * Fix reloaded Wms sources containing more layers than advertised in capabilities in some cases
+* Fix missing auto-detection of `nl` locale (see [PR#1425](https://github.com/mapbender/mapbender/pull/1425))
 * Fix empty / not helpful exception messages on incompatible / missing legacy element class
 * Fix infinite pileup of application frontend html cache entry files (see [PR#1423](https://github.com/mapbender/mapbender/pull/1423))
 * Fix toolbar item padding when using centered items
@@ -17,7 +18,7 @@
 * Fix input sizing / misc element font sizes in mobile template
 * Fix missing element form discard confirmation after adding to / removing from collections
 * Fix broken Wms instance dimension settings form initialization for year-granular time dimension
-* Support reordering collection items in element BaseSourceSwitcher / DimensionsHandler backend forms
+* Support reordering collection items in element backend forms (BaseSourceSwitcher / DimensionsHandler / SearchRouter entries, PrintClient templates)
 * [Export / Print] fix errors if a named template region (e.g. 'date') repeats
 * [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
 * [Export / Print] improve reproduction of customized feature label sizes
