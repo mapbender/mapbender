@@ -36,7 +36,6 @@
             var element = widget.element;
 
             var routeSelect = $('select#search_routes_route', element);
-            var routeCount;
 
             element.on('submit', '.search-forms form', function(evt) {
                 evt.preventDefault();
@@ -53,13 +52,6 @@
 
             // Listen to changes of search select (switching and forms resetting)
             routeSelect.on('change', $.proxy(this._selectSearch, this));
-            routeCount = Object.keys(this.options.routes).length;
-            // But if there's only one search, we actually don't need the select
-            if(routeCount === 1){
-                $('#search_routes_route_control_group').hide()
-                    .next('hr').hide();
-            }
-
             element.on('click', '.search-action-buttons [data-action]', function() {
                 switch($(this).attr('data-action')) {
                     case ('reset'):
@@ -452,11 +444,10 @@
         /**
          * Set up result callback (zoom on click for example)
          */
-        _setupResultCallback: function(){
-            var routeNames = Object.keys(this.options.routes);
+        _setupResultCallback: function() {
             var uniqueEventNames = [];
-            for (var i = 0; i < routeNames.length; ++i) {
-                var routeConfig = this.options.routes[routeNames[i]];
+            for (var i = 0; i < this.options.routes.length; ++i) {
+                var routeConfig = this.options.routes[i];
                 var callbackConf = routeConfig.results && routeConfig.results.callback;
                 var routeEventName = callbackConf && callbackConf.event;
                 if (routeEventName && uniqueEventNames.indexOf(routeEventName) === -1) {
