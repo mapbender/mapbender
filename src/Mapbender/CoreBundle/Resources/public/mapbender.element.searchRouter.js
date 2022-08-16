@@ -70,6 +70,7 @@
             if (this.options.autoOpen) {
                 this.open();
             }
+            this.initTableEvents_();
             routeSelect.trigger('change');
         },
 
@@ -316,10 +317,10 @@
             var currentRoute = this.getCurrentRoute();
             var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
-                tbody = $('<tbody></tbody>'),
-                self = this;
+                $tbody = $('tbody', table)
+            ;
 
-            $('tbody', table).remove();
+            $tbody.empty();
             this.removeLastResults();
 
             if (features.length > 0) $('.no-results', this.element).hide();
@@ -329,7 +330,6 @@
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
-                row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
                 var props = Mapbender.mapEngine.getFeatureProperties(feature);
                 Object.keys(headers).map(function(header) {
@@ -337,23 +337,23 @@
                     row.append($('<td>' + (d || '') + '</td>'));
                 });
 
-                tbody.append(row);
+                $tbody.append(row);
                 this._highlightFeature(feature, 'default');
             }
-
-            table.append(tbody);
-
-            $('.search-results tbody tr')
-                .on('click', function () {
+        },
+        initTableEvents_: function() {
+            var self = this;
+            $('.search-results', this.element)
+                .on('click', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
                 })
-                .on('mouseenter', function () {
+                .on('mouseenter', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'temporary');
                 })
-                .on('mouseleave', function () {
+                .on('mouseleave', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     var styleName = feature === this.currentFeature ? 'select' : 'default';
                     self._highlightFeature(feature, styleName);
