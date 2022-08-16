@@ -217,7 +217,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $queueMode = !empty($config['renderMode']) && $config['renderMode'] === 'queued';
+        $queueMode = $this->enableQueue && !empty($config['renderMode']) && $config['renderMode'] === 'queued';
 
         if ($queueMode) {
             $template = 'MapbenderPrintBundle:Element:printclient-queued.html.twig';
