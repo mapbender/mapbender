@@ -27,11 +27,56 @@
         _createControl4: function() {
             var source = this.layer.getNativeLayer().getSource();
             var defaultStyleFn;
+            let  createEditingStyle = function() {
+                /** @type {Object<import("../geom/GeometryType.js").default, Array<Style>>} */
+                const styles = {};
+                const purple = [255, 0, 255, 1];
+                const yellow = [255, 255, 0, 1];
+                const width = 3;
+                styles[ol.geom.GeometryType.POLYGON] = [
+                    new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: [255, 0, 255, 0.5],
+                        }),
+                    }),
+                ];
+                styles[ol.geom.GeometryType.LINE_STRING] = [
+                    new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: purple,
+                            width: width + 2,
+                        }),
+                    }),
+                    new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: yellow,
+                            width: width,
+                        }),
+                    }),
+                ];
+                styles[ol.geom.GeometryType.POINT] = [
+                    new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: width * 2,
+                            fill: new ol.style.Fill({
+                                color: yellow,
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: purple,
+                                width: width / 2,
+                            }),
+                        }),
+                        zIndex: Infinity,
+                    }),
+                ];
+                return styles;
+            };
+
             if (ol.interaction.Draw.getDefaultStyleFunction) {
                 defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
             } else {
                 // Openlayers 6 special
-                var editingStyles = ol.style.Style.createEditingStyle();
+                var editingStyles = createEditingStyle();
                 defaultStyleFn = function(feature) {
                     return editingStyles[feature.getGeometry().getType()];
                 };
@@ -146,7 +191,7 @@
             this.container.append(this.segments);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
-            
+
             this._trigger('ready');
         },
         /**
