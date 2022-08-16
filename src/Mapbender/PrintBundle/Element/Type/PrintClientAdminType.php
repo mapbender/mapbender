@@ -36,7 +36,6 @@ class PrintClientAdminType extends AbstractType
         $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
         if ($this->queueable) {
             $builder->add('renderMode', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
@@ -44,7 +43,6 @@ class PrintClientAdminType extends AbstractType
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
             $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
