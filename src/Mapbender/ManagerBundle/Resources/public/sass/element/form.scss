@@ -41,6 +41,10 @@
   textarea {
     min-height: 100px;
   }
+  margin-bottom: 20px;
+  .form-group &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .collectionRemove {
