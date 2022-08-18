@@ -19,7 +19,7 @@ $panelBorderColor: #888 !default;
       display: none;
     }
     .basesourcegroup, .basesourcesetswitch {
-      padding: 0 5px;
+      padding: 5px;
       background-color: mix($backgroundColor, $textColor, 80%);
       &:hover, &[data-state="active"]{
         background-color: $backgroundColor;
