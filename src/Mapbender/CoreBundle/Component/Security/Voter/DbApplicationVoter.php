@@ -31,9 +31,7 @@ class DbApplicationVoter extends BaseApplicationVoter
         /** @var Application $subject */
         switch ($attribute) {
             case 'VIEW':
-                // Is published; see supports
-                assert(!!$subject->isPublished());
-                return true;
+                return $subject->isPublished();
             default:
                 return parent::voteOnAttribute($attribute, $subject, $token);
         }
