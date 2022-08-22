@@ -31,10 +31,16 @@ class DbApplicationVoter extends BaseApplicationVoter
         /** @var Application $subject */
         switch ($attribute) {
             case 'VIEW':
-                return $subject->isPublished();
+                return $this->voteViewUnpublished($subject, $token);
             default:
                 return parent::voteOnAttribute($attribute, $subject, $token);
         }
+    }
+
+    protected function voteViewUnpublished(Application $subject, TokenInterface $token)
+    {
+        // forward to ACL check on 'EDIT' attribute and explicitly DENY if not granted
+        return $this->accessDecisionManager->decide($token, array('EDIT'), $subject);
     }
 
     protected function getSupportedAttributes(Application $subject)
