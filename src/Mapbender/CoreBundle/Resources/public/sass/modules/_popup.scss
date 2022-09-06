@@ -130,6 +130,7 @@ $popupBackgroundColor: $backgroundColor !default;
   right: -.135em;
   bottom: -0.32em;
   cursor: se-resize;
+  line-height: 1;
 
   &:before{
     @include transform(rotate(45deg));
@@ -145,8 +146,6 @@ $popupBackgroundColor: $backgroundColor !default;
   background: none;
   width: auto;
   height: auto;
-  // Overrule global fixed-pixel line height :\
-  line-height: 1;
 }
 .popupScroll{
   overflow: auto;
