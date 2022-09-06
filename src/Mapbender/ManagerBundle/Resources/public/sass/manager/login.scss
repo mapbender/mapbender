@@ -13,6 +13,11 @@ $backgroundColor: #fff;
   justify-content: center;
 }
 
+.authWrapper, .login-wrapper {
+  // Fix form fields spilling into transparent area on narrow screens
+  background-color: inherit;
+}
+
 .authWrapper {
   .login-wrapper {
     padding: 20px;
