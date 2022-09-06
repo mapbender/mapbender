@@ -18,8 +18,10 @@ $panelBorderColor: #888 !default;
     .state-check {
       display: none;
     }
-    .basesourcegroup, .basesourcesetswitch {
+    .basesourcegroup > .group-title, .basesourcesetswitch {
       padding: 5px;
+    }
+    .basesourcegroup, .basesourcesetswitch {
       background-color: mix($backgroundColor, $textColor, 80%);
       &:hover, &[data-state="active"]{
         background-color: $backgroundColor;
@@ -40,7 +42,7 @@ $panelBorderColor: #888 !default;
     .basesourcesubswitcher {
       display: none;
       position: absolute;
-      right: 0;
+      right: -1px;  // Compensate for border
     }
     .basesourcegroup:hover .basesourcesubswitcher {
       display: initial;
@@ -67,8 +69,7 @@ $panelBorderColor: #888 !default;
   .toolBar.bottom & {
     .basesourcesubswitcher {
       // Make the child list "drop up"
-      bottom: 0;
-      margin-bottom: calc(1.5em - 1px);   // =line height + one border
+      bottom: 100%;
     }
   }
 }
