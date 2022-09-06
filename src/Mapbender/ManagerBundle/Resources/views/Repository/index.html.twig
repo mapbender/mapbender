@@ -61,7 +61,7 @@
             {%- endblock -%}
 
             {%- block item_title -%}
-                      <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}">{{ item.title }}</a> <sup>{{ item.alias }}</sup>
+              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}">{{ item.title }}</a> <sup>{{ item.alias }}&nbsp;#{{ item.id }}</sup>
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}
@@ -112,7 +112,7 @@
             {%- endblock -%}
 
             {%- block item_title -%}
-              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}">{{ item.title | default(item.source.title) }}</a>
+              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}">{{ item.title | default(item.source.title) }}</a>&nbsp;<sup>#{{ item.id }}</sup>
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}
