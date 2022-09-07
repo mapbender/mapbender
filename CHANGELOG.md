@@ -1,4 +1,4 @@
-## dev-master @ 248e26459
+## dev-master @ 6b350e844
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
@@ -61,15 +61,22 @@
 * Support template CSS references containing StringAsset objects (instead of file names)
 * Support setting Scss variables in application custom css
 * Improve customizability of misc widget CSS (require files separately instead of `@import`)
-* Extract Sass variables for customizability
+* Extract Scss variables for customizability
   * `$textColor` and `$backgroundColor` for default content and popups
   * `$panelBorderColor` for popups, tab container headings and misc popover menus (e.g. layertree layer context menu)
+  * `$buttonTextColor`, `$buttonBorderColor`, `$buttonHoverColor`, `$buttonHoverTextColor` for legacy custom "success" button border (submit / confirm etc in popups)
+  * `$buttonCriticalTextColor`, `$buttonCriticalBorderColor`, `$buttonCriticalHoverColor`, `$buttonCriticalHoverTextColor` for legacy custom "danger" button border (cancel / close / delete etc in popups)
   * `$buttonActiveTextColor` (~Digitizer table headings selected for sorting / current pagination button; complements background given in `$buttonFirstActiveColor`)
-  * `$buttonHoverTextColor`, `$buttonCriticalHoverTextColor` (misc popup / traditional element buttons)
   * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
-  * `$sidepaneBorderColor`, `$popupBorderColor`, `$toolBarBorderColor` for misc layout element borders
+  * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
+  * `$toolBarBackground`, `$toolBarBorderColor`, `$toolBarTopBackground`, `$toolBarBottomBackground` for top / bottom toolbars styling
+  * `$accordionTextColor`, `$accordionBackgroundColor`, `$accordionFontSize` for initial accordion header colors and typography in sidepane / FeatureInfo / Source metadata display
+  * `$accordionActiveTextColor`, `accordionActiveBackgroundColor` for coloring the currently selected accorion header
+  * `$accordionHoverBackgroundColor` for accordion header mouseover effect
+  * `$sidepaneButtonTextColor`, `$sidepaneButtonFontSize`, `$sidepaneButtonBackgroundColor`, `$sidepaneButtonBorderColor` for "buttons"-mode sidepane header buttons (default button state)
+  * `$sidepaneButtonActiveTextColor`, `$sidepaneButtonActiveBackgroundColor` for currently selected header button in "buttons"-mode sidepane
+  * `$sidepaneButtonHoverColor` for "buttons"-mode sidepane header mouseover effect
   * `$sliderHandleTextColor`, `$sliderHandleBorderColor` for layertree and dimensionhandler slider widgets, complementing previously available `$sliderHandleBackgroundColor`
-  * `$toolBarBackground`, `$toolBarTopBackground`, `$toolBarBottomBackground` for top / bottom toolbars styling
   * `$desktopBreakpointWidth` for controlling responsive switch between mobile / desktop element and container visibility
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
 * [Backend] Re-add display of ids in source / shared instance lists for searchability
