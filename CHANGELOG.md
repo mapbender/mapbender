@@ -1,4 +1,4 @@
-## dev-master @ 6b350e844
+## v3.3.2-RC1
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
 * Fix wide modal popups (e.g. Copyright element) clipping over screen edge
