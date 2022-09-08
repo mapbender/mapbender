@@ -826,26 +826,26 @@ window.Mapbender.MapModelOl4 = (function() {
             // Padding order is top, right, bottom, left, compatible with ol.View fit method
             /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L83 */
             var padding = [0, 0, 0, 0];
-            var others = $('.sidePane, .toolBar').get();
-            for (var i = 0; i < others.length; ++i) {
-                var otherRect = others[i].getBoundingClientRect();
-                if (otherRect.width >= 0.5 * viewRect.width) {
-                    if (otherRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
-                        // Top
-                        padding[0] = Math.max(otherRect.bottom - viewRect.top, padding[0], 0);
-                    } else {
-                        // Bottom
-                        padding[2] = Math.max(viewRect.bottom - otherRect.top, padding[2], 0);
-                    }
+            var sidepane = $('.sidePane').get(0);
+            var toolbars = $('.toolBar').get();
+            for (var i = 0; i < toolbars.length; ++i) {
+                var toolbarRect = toolbars[i].getBoundingClientRect();
+                if (toolbarRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
+                    // Top
+                    padding[0] = Math.max(toolbarRect.bottom - viewRect.top, padding[0], 0);
+                } else {
+                    // Bottom
+                    padding[2] = Math.max(viewRect.bottom - toolbarRect.top, padding[2], 0);
                 }
-                if (otherRect.height >= 0.5 * viewRect.height) {
-                    if (otherRect.left <= viewRect.left + 0.5 * viewRect.width) {
-                        // Left
-                        padding[3] = Math.max(otherRect.right - viewRect.left, padding[3], 0);
-                    } else {
-                        // Right
-                        padding[1] = Math.max(viewRect.right - otherRect.left, padding[1], 0);
-                    }
+            }
+            var sidepaneRect = sidepane && sidepane.getBoundingClientRect();
+            if (sidepaneRect) {
+                if (sidepaneRect.left <= viewRect.left + 0.5 * viewRect.width) {
+                    // Left
+                    padding[3] = Math.max(sidepaneRect.right - viewRect.left, padding[3], 0);
+                } else {
+                    // Right
+                    padding[1] = Math.max(viewRect.right - sidepaneRect.left, padding[1], 0);
                 }
             }
             return padding;
