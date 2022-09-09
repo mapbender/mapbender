@@ -5,13 +5,15 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
  * @author Paul Schmidt
  */
-class BaseSourceSwitcher extends AbstractElementService implements ImportAwareInterface
+class BaseSourceSwitcher extends AbstractElementService
+    implements FloatableElement, ImportAwareInterface
 {
 
     /**
@@ -38,6 +40,7 @@ class BaseSourceSwitcher extends AbstractElementService implements ImportAwareIn
         return array(
             'tooltip' => static::getClassTitle(),
             'instancesets' => array(),
+            'anchor' => 'right-bottom',
         );
     }
 

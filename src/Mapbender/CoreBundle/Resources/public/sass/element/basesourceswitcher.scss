@@ -72,4 +72,10 @@ $panelBorderColor: #888 !default;
       bottom: 100%;
     }
   }
+  .anchored-element-wrap & {
+    background-color: $backgroundColor;
+    font-size: 1.6rem;
+    border-radius: 3px;
+    padding: 5px;
+  }
 }
