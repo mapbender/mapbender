@@ -1,14 +1,19 @@
-  {%- for name, opts in configuration.groups -%}
+{%- if false -%}{%- block leaf -%}
+    <div class="basesourcesetswitch" data-title="{{ opts.title }}" data-sourceset="{{ opts.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opts.title | trans }}</div>
+{%- endblock -%}{%- endif -%}
+{%- for name, opts in configuration.groups -%}
     {%- if opts.type == 'item' -%}
-    <div class="basesourcesetswitch" data-sourceset="{{ opts.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opts.title | trans }}</div>
+        {{- block('leaf') -}}
     {%- else -%}
     <div class="basesourcegroup">
       <div class="desktop-only group-title">{{ name | trans }}</div>
       <div class="basesourcesubswitcher">
       {%- for opt in opts.items -%}
-          <div class="basesourcesetswitch" data-sourceset="{{ opt.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opt.title | trans }}</div>
+          {%- with {opts: opt} %}
+            {{- block('leaf') -}}
+          {%- endwith -%}
       {%- endfor -%}
       </div>
     </div>
     {%- endif -%}
-  {%- endfor -%}
+{%- endfor -%}
