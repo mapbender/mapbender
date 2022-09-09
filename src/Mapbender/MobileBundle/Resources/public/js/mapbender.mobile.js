@@ -21,12 +21,16 @@ $(function(){
         if ($activeButton) {
             $activeButton.removeClass('toolBarItemActive');
         }
-        $button.addClass('toolBarItemActive');
+        if (($activeButton && $activeButton.get(0)) === $button.get(0)) {
+            toggle_(false);
+        } else {
+            $button.addClass('toolBarItemActive');
 
-        // supply button tooltip as emergency fallback if target element has no title
-        switchToElement_($(target), $button.attr('title'));
-        $activeButton = $button;
-        toggle_(true);
+            // supply button tooltip as emergency fallback if target element has no title
+            switchToElement_($(target), $button.attr('title'));
+            $activeButton = $button;
+            toggle_(true);
+        }
 
         return false;
     });
