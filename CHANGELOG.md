@@ -1,3 +1,15 @@
+## dev-master @ 09cdb5d82
+* [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
+* [FeatureInfo] Add min / max range validation for backend form opacity settings
+* [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
+* [Export / Print] Fix visibility of grouped vector layers
+* [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
+* [BaseSourceSwitcher] add `data-title` attributes for id independent custom css matching
+* Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
+* Fix password creation in user registration process
+* [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
+* Add missing mobile pane close on click on currently active control button
+
 ## v3.3.2-RC1
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
 * Fix Application custom css validation message not displayed
