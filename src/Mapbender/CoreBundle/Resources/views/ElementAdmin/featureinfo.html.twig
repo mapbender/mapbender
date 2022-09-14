@@ -14,16 +14,12 @@
     {{ form_row(form.configuration.highlighting) }}
     <div class="row">
         <fieldset class="col-12 col-xs-12 col-md-6">
-            <legend>{{- 'mb.core.admin.featureinfo.label.default_group' | trans() -}}</legend>
-            {{- form_row(form.configuration.fillColorDefault) -}}
-            {{- form_row(form.configuration.strokeColorDefault) -}}
-            {{- form_row(form.configuration.opacityDefault) -}}
+            <legend>{{- form.configuration.defaultStyle.vars.label | trans -}}</legend>
+            {{- form_widget(form.configuration.defaultStyle) -}}
         </fieldset>
         <fieldset class="col-12 col-xs-12 col-md-6">
-            <legend>{{- 'mb.core.admin.featureinfo.label.hover_group' | trans() -}}</legend>
-            {{ form_row(form.configuration.fillColorHover) }}
-            {{ form_row(form.configuration.strokeColorHover) }}
-            {{ form_row(form.configuration.opacityHover) }}
+            <legend>{{- form.configuration.hoverStyle.vars.label | trans -}}</legend>
+            {{- form_widget(form.configuration.hoverStyle) -}}
         </fieldset>
         {{- form_rest(form.configuration) -}}
     </div>
