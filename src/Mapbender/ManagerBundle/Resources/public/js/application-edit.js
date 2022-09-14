@@ -127,7 +127,8 @@ $(function() {
                     callback: function() {
                         elementFormSubmit(this.$element, formUrl)
                             .then(function(data) {
-                                if (data.length > 0) {
+                                // NOTE: data is undefined in a HTTP 204 response
+                                if (data && data.length > 0) {
                                     // Form rendered back with validation error messages
                                     var wasDirty = $form.data('dirty');
                                     var $newForm = $(data).filter('form');

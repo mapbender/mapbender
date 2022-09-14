@@ -171,8 +171,13 @@ class ElementController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your element has been saved.');
-
-            return new Response('', 205);
+            // NOTE: On Symfony >=4.4.44 (4.4.43 is fine), Chromium / Chrome will not receive Response headers
+            //       when it immediately calls window.location.reload after a HTTP 205 "Reset Content".
+            //       This will trigger a client-side "Save as" prompt (undefined content type) instead of
+            //       rerendering the refreshed HTML page.
+            //       => Prefer HTTP 204 "No Content" as a workaround
+            # return new Response('', 205);
+            return new Response('', Response::HTTP_NO_CONTENT);
         }
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
             'form' => $form->createView(),
