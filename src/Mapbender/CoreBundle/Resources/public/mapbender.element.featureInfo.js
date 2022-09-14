@@ -369,14 +369,14 @@
                 opacity: this.options.opacityHover,
                 fallbackOpacity: 0.4
             };
-            var defaultStyle = this.processStyle_(settingsDefault);
-            var hoverStyle = this.processStyle_(settingsHover);
+            var defaultStyle = this.processStyle_(settingsDefault, false);
+            var hoverStyle = this.processStyle_(settingsHover, true);
             hoverStyle.setZIndex(1);
             return function(feature) {
                 return [feature.get('hover') && hoverStyle || defaultStyle];
             }
         },
-        processStyle_: function(settings) {
+        processStyle_: function(settings, hover) {
             var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
             var strokeRgb = Mapbender.StyleUtil.parseCssColor(settings.stroke).slice(0, 3);
             var opacityFloat = parseFloat(settings.opacity);
@@ -389,7 +389,7 @@
             } else {
                 opacityFloat = settings.fallbackOpacity;
             }
-            var strokeOpacity = Math.sqrt(opacityFloat);
+            var strokeOpacity = hover && 1.0 || Math.sqrt(opacityFloat);
             return new ol.style.Style({
                 fill: new ol.style.Fill({
                     color: fillRgb.concat(opacityFloat)
