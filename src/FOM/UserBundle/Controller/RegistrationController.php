@@ -73,9 +73,6 @@ class RegistrationController extends AbstractEmailProcessController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->userHelper->setPassword($user, $user->getPassword());
-
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
 
