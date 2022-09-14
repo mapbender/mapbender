@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
 
 
 class FeatureInfoStyleType extends AbstractType
@@ -44,6 +45,12 @@ class FeatureInfoStyleType extends AbstractType
                 'attr' => array(
                     'min' => 0,
                     'max' => 100,
+                ),
+                'constraints' => array(
+                    new Constraints\Range(array(
+                        'min' => 0,
+                        'max' => 100,
+                    )),
                 ),
             ))
         ;
