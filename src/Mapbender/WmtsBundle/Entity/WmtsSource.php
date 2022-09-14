@@ -63,7 +63,7 @@ class WmtsSource extends Source implements ContainingKeyword, MutableUrlTarget
 
     /**
      * @var ArrayCollection A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="WmtsSourceKeyword",mappedBy="reference", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="WmtsSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
      * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
