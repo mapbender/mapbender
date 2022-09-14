@@ -54,6 +54,7 @@ class FeatureInfoAdminType extends AbstractType
                 'fieldNameFillColor' => 'fillColorDefault',
                 'fieldNameStrokeColor' => 'strokeColorDefault',
                 'fieldNameOpacity' => 'opacityDefault',
+                'fieldNameStrokeWidth' => 'strokeWidthDefault',
             ))
             ->add('hoverStyle', FeatureInfoStyleType::class, array(
                 'label' => 'mb.core.admin.featureinfo.label.hover_group',
@@ -61,6 +62,7 @@ class FeatureInfoAdminType extends AbstractType
                 'fieldNameFillColor' => 'fillColorHover',
                 'fieldNameStrokeColor' => 'strokeColorHover',
                 'fieldNameOpacity' => 'opacityHover',
+                'fieldNameStrokeWidth' => 'strokeWidthHover',
             ))
         ;
     }

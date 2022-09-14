@@ -18,6 +18,7 @@ class FeatureInfoStyleType extends AbstractType
                 'fieldNameFillColor' => 'fillColor',
                 'fieldNameStrokeColor' => 'strokeColor',
                 'fieldNameOpacity' => 'opacity',
+                'fieldNameStrokeWidth' => 'strokeWidth',
             ))
         ;
     }
@@ -50,6 +51,18 @@ class FeatureInfoStyleType extends AbstractType
                     new Constraints\Range(array(
                         'min' => 0,
                         'max' => 100,
+                    )),
+                ),
+            ))
+            ->add($options['fieldNameStrokeWidth'], 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.stroke_width_px',
+                'attr' => array(
+                    'min' => 0,
+                ),
+                'constraints' => array(
+                    new Constraints\Range(array(
+                        'min' => 0,
                     )),
                 ),
             ))

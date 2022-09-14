@@ -75,6 +75,8 @@ class FeatureInfo extends AbstractElementService
             'strokeColorHover' => '#ff0000',
             'opacityDefault' => 40,
             'opacityHover' => 70,
+            'strokeWidthDefault' => 1,
+            'strokeWidthHover' => 3,
         );
     }
 

@@ -361,12 +361,14 @@
                 fill: this.options.fillColorDefault,
                 stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
                 opacity: this.options.opacityDefault,
+                strokeWidth: this.options.strokeWidthDefault,
                 fallbackOpacity: 0.7
             };
             var settingsHover = {
                 fill: this.options.fillColorHover || settingsDefault.fill,
                 stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
                 opacity: this.options.opacityHover,
+                strokeWidth: this.options.strokeWidthHover,
                 fallbackOpacity: 0.4
             };
             var defaultStyle = this.processStyle_(settingsDefault, false);
@@ -390,12 +392,15 @@
                 opacityFloat = settings.fallbackOpacity;
             }
             var strokeOpacity = hover && 1.0 || Math.sqrt(opacityFloat);
+            var strokeWidth = parseInt(settings.strokeWidth);
+            strokeWidth = isNaN(strokeWidth) && (hover && 3 || 1) || strokeWidth;
             return new ol.style.Style({
                 fill: new ol.style.Fill({
                     color: fillRgb.concat(opacityFloat)
                 }),
-                stroke: new ol.style.Stroke({
-                    color: strokeRgb.concat(strokeOpacity)
+                stroke: strokeWidth && new ol.style.Stroke({
+                    color: strokeRgb.concat(strokeOpacity),
+                    width: strokeWidth
                 })
             });
         },

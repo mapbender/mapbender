@@ -331,6 +331,7 @@ mb:
           fillColor: Füllfarbe
           strokeColor: Strichfarbe
           opacity_pct: Deckkraft (%)
+          stroke_width_px: Linienstärke (Pixel)
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'

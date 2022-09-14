@@ -330,6 +330,7 @@ mb:
           fillColor: Fill color
           strokeColor: Stroke color
           opacity_pct: Opacity (%)
+          stroke_width_px: Stroke width (pixels)
       printclient:
         label:
           autoopen: Auto-open
