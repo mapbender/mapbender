@@ -448,14 +448,27 @@
                 style: null,
                 multi: true
             });
+            var featureStack = [];
 
             highlightControl.on('select', function (e) {
+                // Avoid highlighting multiple geometrically nested features
+                // simultaneously. Re-highlight "outer" features when the mouse
+                // leaves the "inner" feature.
+                featureStack = featureStack.filter(function(feature) {
+                    return -1 === e.deselected.indexOf(feature);
+                });
                 e.deselected.forEach(function (feature) {
                     feature.set('hover', false);
                 });
                 e.selected.forEach(function (feature) {
-                    feature.set('hover', true);
+                    featureStack.forEach(function(feature) {
+                        feature.set('hover', false);
+                    });
+                    featureStack.push(feature);
                 });
+                if (featureStack.length) {
+                    featureStack[featureStack.length - 1].set('hover', true);
+                }
             });
 
             this.mbMap.getModel().olMap.addInteraction(highlightControl);
