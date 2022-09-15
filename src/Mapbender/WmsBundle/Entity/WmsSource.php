@@ -205,7 +205,7 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     public function __construct()
     {
         parent::__construct();
-        $this->setType(Source::TYPE_WMS);
+        $this->setType(self::TYPE_WMS);
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
@@ -857,8 +857,6 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Get keywords
-     *
      * @return ArrayCollection
      */
     public function getKeywords()

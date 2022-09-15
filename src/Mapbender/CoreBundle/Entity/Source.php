@@ -13,7 +13,11 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_source")
  * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\DiscriminatorColumn(name="discr", type="string", length=15)
+ * @ORM\DiscriminatorMap({
+ *     "wmssource"="\Mapbender\WmsBundle\Entity\WmsSource",
+ *     "wmtssource"="\Mapbender\WmtsBundle\Entity\WmtsSource"
+ * })
  * @ORM\HasLifecycleCallbacks()
  */
 abstract class Source implements MutableHttpOriginInterface
@@ -58,7 +62,7 @@ abstract class Source implements MutableHttpOriginInterface
      * @ORM\Column(type="string",nullable=true)
      */
     protected $type;
-    
+
     public function __construct()
     {
     }
@@ -200,8 +204,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * Returns a source type
-     *
      * @return string
      */
     public function getType()

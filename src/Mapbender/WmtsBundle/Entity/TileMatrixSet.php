@@ -76,7 +76,7 @@ class TileMatrixSet implements MutableUrlTarget
 
     /**
      *
-     * @return WmtsSource
+     * @return HttpTileSource
      */
     public function getSource()
     {
@@ -85,10 +85,10 @@ class TileMatrixSet implements MutableUrlTarget
 
     /**
      *
-     * @param WmtsSource $wmtssource
+     * @param HttpTileSource $wmtssource
      * @return TileMatrixSet
      */
-    public function setSource(WmtsSource $wmtssource)
+    public function setSource(HttpTileSource $wmtssource)
     {
         $this->source = $wmtssource;
         return $this;

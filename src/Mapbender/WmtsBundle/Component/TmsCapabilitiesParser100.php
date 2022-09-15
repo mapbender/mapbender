@@ -10,9 +10,9 @@ use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 
 /**
@@ -83,15 +83,15 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
 
     /**
      * Parses the GetCapabilities document
-     * @return WmtsSource
+     * @return HttpTileSource
      */
     public function parse()
     {
+        $source = HttpTileSource::tmsFactory();
         $vers = '1.0.0';
-        $wmts = new WmtsSource();
-        $wmts->setType(WmtsSource::TYPE_TMS);
+
         $root       = $this->doc->documentElement;
-        $this->parseService($wmts, $root);
+        $this->parseService($source, $root);
         $titleMapElts = $this->xpath->query("./TileMaps/TileMap", $root);
         
         foreach ($titleMapElts as $titleMapElt) {
@@ -106,22 +106,22 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
             $pos_vers = strpos($url, $vers);
             $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
             $url_layer = substr($url, $pos_vers + strlen($vers) + 1);
-            $tilemap->parseTileMap($wmts, $doc->documentElement, $url_raw, $url_layer);
+            $tilemap->parseTileMap($source, $doc->documentElement, $url_raw, $url_layer);
         }
-        return $wmts;
+        return $source;
     }
     
     /**
      * Parses the Service section of the GetCapabilities document
      *
-     * @param WmtsSource $wmts
+     * @param HttpTileSource $source
      * @param \DOMElement $cntxt
      */
-    private function parseService(WmtsSource $wmts, \DOMElement $cntxt)
+    private function parseService(HttpTileSource $source, \DOMElement $cntxt)
     {
-        $wmts->setVersion($this->getValue("./@version"));
-        $wmts->setTitle($this->getValue("./Title/text()"));
-        $wmts->setDescription($this->getValue("./Abstract/text()"));
+        $source->setVersion($this->getValue("./@version"));
+        $source->setTitle($this->getValue("./Title/text()"));
+        $source->setDescription($this->getValue("./Abstract/text()"));
 
         $keywords = explode(' ', $this->getValue("./KeywordList/text()"));
         foreach ($keywords as $value) {
@@ -129,8 +129,8 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
             if ($value) {
                 $keyword = new WmtsSourceKeyword();
                 $keyword->setValue($value);
-                $keyword->setReferenceObject($wmts);
-                $wmts->addKeyword($keyword);
+                $keyword->setReferenceObject($source);
+                $source->addKeyword($keyword);
             }
         }
 
@@ -171,14 +171,14 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
         $contact->setElectronicMailAddress(
             $this->getValue("./ContactInformation/ContactElectronicMailAddress/text()", $cntxt)
         );
-        $wmts->setContact($contact);
+        $source->setContact($contact);
     }
     
-    public function parseTileMap(WmtsSource $wmts, \DOMElement $cntx, $url, $layerIdent)
+    public function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent)
     {
         $layer = new WmtsLayerSource();
-        $wmts->addLayer($layer);
-        $layer->setSource($wmts);
+        $source->addLayer($layer);
+        $layer->setSource($source);
         $layer->setTitle($this->getValue("./Title/text()", $cntx));
         $layer->setAbstract($this->getValue("./Abstract/text()", $cntx));
         $layer->setIdentifier($layerIdent);
@@ -231,7 +231,7 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
             $tileSet->setTileheight($tileheight);
             $tileSetsSet->addTilematrix($tileSet);
         }
-        $wmts->addTilematrixset($tileSetsSet);
-        $tileSetsSet->setSource($wmts);
+        $source->addTilematrixset($tileSetsSet);
+        $tileSetsSet->setSource($source);
     }
 }
