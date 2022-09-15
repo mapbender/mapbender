@@ -212,37 +212,14 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $wmtslayer->setTitle($this->getValue("./ows:Title/text()", $contextElm));
         $wmtslayer->setAbstract($this->getValue("./ows:Abstract/text()", $contextElm));
 
-        $latlonbboxEl = $this->getValue("./ows:WGS84BoundingBox", $contextElm);
-        if ($latlonbboxEl !== null) {
-            $latlonBounds = new BoundingBox();
-            $bounds       = explode(
-                " ",
-                $this->getValue("./ows:LowerCorner/text()", $latlonbboxEl)
-                . " " . $this->getValue("./ows:UpperCorner/text()", $latlonbboxEl)
-            );
-            $latlonBounds->setSrs("EPSG:4326");
-            $latlonBounds
-                ->setMinx($bounds[0])
-                ->setMiny($bounds[1])
-                ->setMaxx($bounds[2])
-                ->setMaxy($bounds[3]);
-            $wmtslayer->setLatlonBounds($latlonBounds);
+        foreach ($contextElm->getElementsByTagName('WGS84BoundingBox') as $bboxElm) {
+            $bbox = $this->parseBoundingBox($bboxElm);
+            $bbox->setSrs('EPSG:4326');
+            $wmtslayer->setLatlonBounds($bbox);
+            break;
         }
-
-        $bboxEls = $this->xpath->query("./ows:BoundingBox", $contextElm);
-        foreach ($bboxEls as $bboxEl) {
-            $bbox = new BoundingBox();
-            $bounds       = explode(
-                " ",
-                $this->getValue("./ows:LowerCorner/text()", $bboxEl)
-                . " " . $this->getValue("./ows:UpperCorner/text()", $bboxEl)
-            );
-            $bbox->setSrs($this->getValue("./@crs", $bboxEl))
-                ->setMinx($bounds[0])
-                ->setMiny($bounds[1])
-                ->setMaxx($bounds[2])
-                ->setMaxy($bounds[3]);
-            $wmtslayer->addBoundingBox($bbox);
+        foreach ($contextElm->getElementsByTagName('BoundingBox') as $bboxElm) {
+            $wmtslayer->addBoundingBox($this->parseBoundingBox($bboxElm));
         }
 
         $wmtslayer->setIdentifier($this->getValue("./ows:Identifier/text()", $contextElm));
@@ -300,8 +277,7 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $tilematrixset->setTitle($this->getValue("./ows:Title/text()", $contextElm));
         $tilematrixset->setAbstract($this->getValue("./ows:Abstract/text()", $contextElm));
         $tilematrixset->setSupportedCrs($this->getValue("./ows:SupportedCRS/text()", $contextElm));
-        $tileMatrixEls = $this->xpath->query("./wmts:TileMatrix", $contextElm);
-        foreach ($tileMatrixEls as $tileMatrixEl) {
+        foreach ($contextElm->getElementsByTagName('TileMatrix') as $tileMatrixEl) {
             $tileMatrix = new TileMatrix();
             $tileMatrix->setIdentifier($this->getValue("./ows:Identifier/text()", $tileMatrixEl));
             $tileMatrix
@@ -339,5 +315,13 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
             $theme_->setParent($theme);
             $this->parseTheme($theme_, $themeEl);
         }
+    }
+
+    protected function parseBoundingBox(\DOMElement $element)
+    {
+        $crs = $element->getAttribute('crs') ?: null;
+        $lowerCorner = \explode(' ', $element->getElementsByTagName('LowerCorner')->item(0)->textContent);
+        $upperCorner = \explode(' ', $element->getElementsByTagName('UpperCorner')->item(0)->textContent);
+        return new BoundingBox($crs, $lowerCorner[0], $lowerCorner[1], $upperCorner[0], $upperCorner[1]);
     }
 }
