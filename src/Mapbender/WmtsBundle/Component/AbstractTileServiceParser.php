@@ -36,4 +36,21 @@ abstract class AbstractTileServiceParser
             return null;
         }
     }
+
+    /**
+     * @param \DOMElement $parent
+     * @param $localName
+     * @return \DOMNode|null
+     */
+    protected static function getFirstChildNode(\DOMElement $parent, $localName)
+    {
+        $matches = $parent->getElementsByTagName($localName);
+        return $matches->length ? $matches->item(0) : null;
+    }
+
+    protected static function getFirstChildNodeText(\DOMElement $parent, $localName, $default = null)
+    {
+        $node = static::getFirstChildNode($parent, $localName);
+        return $node ? ($node->textContent ?: $default) : $default;
+    }
 }

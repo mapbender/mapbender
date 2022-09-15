@@ -86,24 +86,27 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the ServiceIdentification section of the GetCapabilities document
-     * @param WmtsSource $wmts
+     * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceIdentification(WmtsSource $wmts, \DOMElement $contextElm)
+    private function parseServiceIdentification(WmtsSource $source, \DOMElement $contextElm)
     {
-        $wmts->setTitle($this->getValue("./ows:Title/text()", $contextElm));
-        $wmts->setDescription($this->getValue("./ows:Abstract/text()", $contextElm));
+        $source->setTitle($this->getFirstChildNodeText($contextElm, 'Title'));
+        $source->setDescription($this->getFirstChildNodeText($contextElm, 'Abstract'));
 
-        $keywordElList = $this->xpath->query("./ows:KeywordList/ows:Keyword", $contextElm);
-        $keywords      = new ArrayCollection();
-        foreach ($keywordElList as $keywordEl) {
-            $keyword = new WmtsSourceKeyword();
-            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setReferenceObject($wmts);
-            $keywords->add($keyword);
+        $keywordWrap = $this->getFirstChildNode($contextElm, 'Keywords');
+        $keywordElements = $keywordWrap ? $keywordWrap->getElementsByTagName('Keyword') : array();
+        foreach ($keywordElements as $keywordElement) {
+            $text = \trim($keywordElement->textContent);
+            if ($text) {
+                $keyword = new WmtsSourceKeyword();
+                $keyword->setValue($text);
+                $keyword->setReferenceObject($source);
+                $source->addKeyword($keyword);
+            }
         }
-        $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
-        $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
+        $source->setFees($this->getFirstChildNodeText($contextElm, 'Fees'));
+        $source->setAccessConstraints($this->getFirstChildNodeText($contextElm, 'AccessConstraints'));
     }
 
     /**
