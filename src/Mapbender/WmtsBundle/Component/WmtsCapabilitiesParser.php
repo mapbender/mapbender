@@ -15,24 +15,6 @@ use Mapbender\WmtsBundle\Component\Exception\WmtsException;
 abstract class WmtsCapabilitiesParser extends AbstractTileServiceParser
 {
     /**
-     * The XML representation of the Capabilites Document
-     * @var \DOMDocument
-     */
-    protected $doc;
-
-    /**
-     * Creates an instance
-     *
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        parent::__construct(new \DOMXPath($doc));
-        $this->doc = $doc;
-        $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
-    }
-
-    /**
      * Parses the capabilities document
      * @return \Mapbender\WmtsBundle\Entity\WmtsSource
      */

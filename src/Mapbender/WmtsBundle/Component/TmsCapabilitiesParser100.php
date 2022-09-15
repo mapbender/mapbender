@@ -20,6 +20,9 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
  */
 class TmsCapabilitiesParser100 extends AbstractTileServiceParser
 {
+    /** @var \DOMXPath */
+    protected $xpath;
+
     /**
      * The XML representation of the Capabilites Document
      * @var \DOMDocument
@@ -35,7 +38,7 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
      */
     public function __construct(HttpTransportInterface $httpTransport, \DOMDocument $doc)
     {
-        parent::__construct(new \DOMXPath($doc));
+        $this->xpath = new \DOMXPath($doc);
         $this->httpTransport = $httpTransport;
         $this->doc   = $doc;
     }
@@ -224,5 +227,34 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
         }
         $source->addTilematrixset($tileSetsSet);
         $tileSetsSet->setSource($source);
+    }
+
+    /**
+     * @param string $expression
+     * @param \DOMNode|null $startNode
+     * @return \DOMNode|null
+     * @deprecated decide what you want to match (child nodes or attributes or text contents)
+     */
+    protected function getValue($expression, \DOMNode $startNode = null)
+    {
+        try {
+            $elm = $this->xpath->query($expression, $startNode)->item(0);
+            if (!$elm) {
+                return null;
+            }
+            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
+                /** @var \DOMAttr $elm */
+                return $elm->value;
+            } elseif ($elm->nodeType == XML_TEXT_NODE) {
+                /** @var \DOMText $elm */
+                return $elm->wholeText;
+            } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
+                return $elm;
+            } else {
+                return null;
+            }
+        } catch (\Exception $E) {
+            return null;
+        }
     }
 }
