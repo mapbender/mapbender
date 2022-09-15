@@ -40,12 +40,15 @@ abstract class AbstractTileServiceParser
     /**
      * @param \DOMElement $parent
      * @param $localName
-     * @return \DOMNode|null
+     * @return \DOMElement|null
      */
     protected static function getFirstChildNode(\DOMElement $parent, $localName)
     {
         $matches = $parent->getElementsByTagName($localName);
-        return $matches->length ? $matches->item(0) : null;
+        return $matches->length && ($matches->item(0) instanceof \DOMElement)
+            ? $matches->item(0)
+            : null
+        ;
     }
 
     protected static function getFirstChildNodeText(\DOMElement $parent, $localName, $default = null)

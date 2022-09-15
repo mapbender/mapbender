@@ -133,45 +133,36 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
                 $source->addKeyword($keyword);
             }
         }
-
-        $contact = new Contact();
-        $contact->setPerson(
-            $this->getValue("./ContactInformation/ContactPersonPrimary/ContactPerson/text()", $cntxt)
-        );
-        $contact->setOrganization(
-            $this->getValue("./ContactInformation/ContactPersonPrimary/ContactOrganization/text()", $cntxt)
-        );
-        $contact->setPosition(
-            $this->getValue("./ContactInformation/ContactPosition/text()", $cntxt)
-        );
-        $contact->setAddressType(
-            $this->getValue("./ContactInformation/ContactAddress/AddressType/text()", $cntxt)
-        );
-        $contact->setAddress(
-            $this->getValue("./ContactInformation/ContactAddress/Address/text()", $cntxt)
-        );
-        $contact->setAddressCity(
-            $this->getValue("./ContactInformation/ContactAddress/City/text()", $cntxt)
-        );
-        $contact->setAddressStateOrProvince(
-            $this->getValue("./ContactInformation/ContactAddress/StateOrProvince/text()", $cntxt)
-        );
-        $contact->setAddressPostCode(
-            $this->getValue("./ContactInformation/ContactAddress/PostCode/text()", $cntxt)
-        );
-        $contact->setAddressCountry(
-            $this->getValue("./ContactInformation/ContactAddress/Country/text()", $cntxt)
-        );
-        $contact->setVoiceTelephone(
-            $this->getValue("./ContactInformation/ContactVoiceTelephone/text()", $cntxt)
-        );
-        $contact->setFacsimileTelephone(
-            $this->getValue("./ContactInformation/ContactFacsimileTelephone/text()", $cntxt)
-        );
-        $contact->setElectronicMailAddress(
-            $this->getValue("./ContactInformation/ContactElectronicMailAddress/text()", $cntxt)
-        );
+        $contact = new Contact();   // Default empty object if no info found
+        foreach ($cntxt->getElementsByTagName('ContactInformation') as $contactInfoEl) {
+            $contact = $this->parseContactInformation($contactInfoEl);
+            break;
+        }
         $source->setContact($contact);
+    }
+
+    protected function parseContactInformation(\DOMElement $element)
+    {
+        $personPrimaryEl = $this->getFirstChildNode($element, 'ContactPersonPrimary');
+        $addressEl = $this->getFirstChildNode($element, 'ContactAddress');
+        $contact = new Contact();
+        if ($personPrimaryEl) {
+            $contact->setPerson($this->getFirstChildNodeText($personPrimaryEl, 'ContactPerson'));
+            $contact->setOrganization($this->getFirstChildNodeText($personPrimaryEl, 'ContactOrganization'));
+        }
+        $contact->setPosition($this->getFirstChildNodeText($element, 'ContactPosition'));
+        if ($addressEl) {
+            $contact->setAddressType($this->getFirstChildNodeText($addressEl, 'AddressType'));
+            $contact->setAddress($this->getFirstChildNodeText($addressEl, 'Address'));
+            $contact->setAddressCity($this->getFirstChildNodeText($addressEl, 'City'));
+            $contact->setAddressStateOrProvince($this->getFirstChildNodeText($addressEl, 'StateOrProvince'));
+            $contact->setAddressPostCode($this->getFirstChildNodeText($addressEl, 'PostCode'));
+            $contact->setAddressCountry($this->getFirstChildNodeText($addressEl, 'Country'));
+        }
+        $contact->setVoiceTelephone($this->getFirstChildNodeText($element, 'ContactVoiceTelephone'));
+        $contact->setFacsimileTelephone($this->getFirstChildNodeText($element, 'ContactFacsimileTelephone'));
+        $contact->setElectronicMailAddress($this->getFirstChildNodeText($element, 'ContactElectronicMailAddress'));
+        return $contact;
     }
     
     public function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent)

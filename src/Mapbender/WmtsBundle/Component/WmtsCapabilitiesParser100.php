@@ -47,11 +47,11 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
         $root       = $this->doc->documentElement;
 
         $wmtssource->setVersion($this->getValue("./@version"));
-        $serviceIdentEl = $this->getValue("./ows:ServiceIdentification");
+        $serviceIdentEl = $this->getFirstChildNode($root, 'ServiceIdentification');
         if ($serviceIdentEl) {
             $this->parseServiceIdentification($wmtssource, $serviceIdentEl);
         }
-        $serverProviderEl = $this->getValue("./ows:ServiceProvider");
+        $serverProviderEl = $this->getFirstChildNode($root, 'ServiceProvider');
         if ($serverProviderEl) {
             $this->parseServiceProvider($wmtssource, $serverProviderEl);
         }
@@ -111,47 +111,38 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
 
     /**
      * Parses the ServiceProvider section of the GetCapabilities document
-     * @param WmtsSource $wmts
+     * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceProvider(WmtsSource $wmts, \DOMElement $contextElm)
+    private function parseServiceProvider(WmtsSource $source, \DOMElement $contextElm)
     {
-        $wmts->setServiceProviderSite($this->getValue("./wmts:OnlineResource/@xlink:href", $contextElm));
         $contact = new Contact();
-        $contact->setOrganization($this->getValue("./ows:ProviderName/text()", $contextElm));
-        $contact->setPerson($this->getValue("./ows:ServiceContact/ows:IndividualName/text()", $contextElm));
-        $contact->setPosition($this->getValue("./ows:ServiceContact/ows:PositionName/text()", $contextElm));
-        $contact->setVoiceTelephone(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Phone/ows:Voice/text()", $contextElm)
-        );
-        $contact->setFacsimileTelephone(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Phone/ows:Facsimile/text()", $contextElm)
-        );
-        $contact->setAddress(
-            $this->getValue("./wmts:ContactInformation/wmts:ContactAddress/wmts:Address/text()", $contextElm)
-        );
-        $contact->setAddressCity(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:DeliveryPoint/text()", $contextElm)
-        );
-        $contact->setAddressStateOrProvince(
-            $this->getValue(
-                "./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:AdministrativeArea/text()",
-                $contextElm
-            )
-        );
-        $contact->setAddressPostCode(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:PostalCode/text()", $contextElm)
-        );
-        $contact->setAddressCountry(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:Country/text()", $contextElm)
-        );
-        $contact->setElectronicMailAddress(
-            $this->getValue(
-                "./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:ElectronicMailAddress/text()",
-                $contextElm
-            )
-        );
-        $wmts->setContact($contact);
+        $contact->setOrganization($this->getFirstChildNodeText($contextElm, 'ProviderName'));
+        $serviceContactEl = $this->getFirstChildNode($contextElm, 'ServiceContact');
+        $providerSiteEl = $this->getFirstChildNode($contextElm, 'ProviderSite');
+        if ($providerSiteEl) {
+            $source->setServiceProviderSite($providerSiteEl->getAttribute('xlink:href'));
+        }
+        $contactInfoEl = $serviceContactEl ? $this->getFirstChildNode($serviceContactEl, 'ContactInfo') : null;
+        $addressEl = $contactInfoEl ? $this->getFirstChildNode($contactInfoEl, 'Address') : null;
+        $phoneEl = $contactInfoEl ? $this->getFirstChildNode($contactInfoEl, 'Phone') : null;
+
+        if ($serviceContactEl) {
+            $contact->setPerson($this->getFirstChildNodeText($serviceContactEl, 'IndividualName'));
+            $contact->setPosition($this->getFirstChildNodeText($serviceContactEl, 'PositionName'));
+        }
+        if ($phoneEl) {
+            $contact->setVoiceTelephone($this->getFirstChildNodeText($phoneEl, 'Voice'));
+            $contact->setFacsimileTelephone($this->getFirstChildNodeText($phoneEl, 'Facsimile'));
+        }
+        if ($addressEl) {
+            $contact->setAddressCity($this->getFirstChildNodeText($addressEl, 'City'));
+            $contact->setAddressStateOrProvince($this->getFirstChildNodeText($addressEl, 'AdministrativeArea'));
+            $contact->setAddressPostCode($this->getFirstChildNodeText($addressEl, 'PostalCode'));
+            $contact->setAddressCountry($this->getFirstChildNodeText($addressEl, 'Country'));
+            $contact->setElectronicMailAddress($this->getFirstChildNodeText($addressEl, 'ElectronicMailAddress'));
+        }
+        $source->setContact($contact);
     }
 
     /**
