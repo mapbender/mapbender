@@ -5,6 +5,7 @@ namespace Mapbender\WmtsBundle\Component;
 # https://geo.sv.rostock.de/geodienste/luftbild_mv-20/tms/1.0.0
 
 
+use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -18,8 +19,9 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 /**
  * @author Paul Schmidt
  */
-class TmsCapabilitiesParser100 extends AbstractTileServiceParser
+class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 {
+
     /** @var \DOMXPath */
     protected $xpath;
 

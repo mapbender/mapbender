@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
@@ -12,7 +13,7 @@ use Mapbender\WmtsBundle\Component\Exception\WmtsException;
  *
  * @author Paul Schmidt
  */
-abstract class WmtsCapabilitiesParser extends AbstractTileServiceParser
+abstract class WmtsCapabilitiesParser extends CapabilitiesDomParser
 {
     /**
      * Parses the capabilities document
