@@ -1,7 +1,9 @@
 {% extends 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
 {%- block source_meta_rows -%}
 {{- parent() -}}
+{%- if source.type == 'WMTS' -%}
 <tr><th>{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidername" | trans }}:</th><td>{{ source.serviceProviderName }}</td></tr>
 <tr><th>{{ "mb.wmts.wmtsloader.repo.view.label.serviceprovidersite" | trans }}:</th><td>{{ source.serviceProviderSite }}</td></tr>
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints }}</td></tr>
+{%- endif -%}
 {%- endblock -%}
