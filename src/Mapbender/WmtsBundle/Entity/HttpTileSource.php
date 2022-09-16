@@ -10,40 +10,22 @@ use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
-use Mapbender\CoreBundle\Entity\Source;
-use Symfony\Component\Validator\Constraints;
+
 
 /**
  * @ORM\MappedSuperclass
  * Contains only fields and methods common to both Wmts and TMS
  */
-abstract class HttpTileSource extends Source
+abstract class HttpTileSource extends HttpParsedSource
     implements MutableUrlTarget, ContainingKeyword
 {
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string", nullable=true)
      */
     protected $version = "";
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
-     * @Constraints\NotBlank()
-     * @Constraints\Url()
-     */
-    protected $originUrl = "";
-
-    /**
-     * @ORM\Column(type="text",nullable=true);
-     */
-    protected $username = null;
-
-    /**
-     * @ORM\Column(type="text",nullable=true);
-     */
-    protected $password = null;
 
     /**
      * @var WmtsLayerSource[]|ArrayCollection
@@ -124,54 +106,6 @@ abstract class HttpTileSource extends Source
     public function getVersion()
     {
         return $this->version;
-    }
-
-    /**
-     * @param string $originUrl
-     */
-    public function setOriginUrl($originUrl)
-    {
-        $this->originUrl = $originUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOriginUrl()
-    {
-        return $this->originUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
     }
 
     /**
