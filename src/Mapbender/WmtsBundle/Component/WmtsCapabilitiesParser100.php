@@ -106,7 +106,9 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     private function parseServiceProvider(WmtsSource $source, \DOMElement $contextElm)
     {
         $contact = new Contact();
-        $contact->setOrganization($this->getFirstChildNodeText($contextElm, 'ProviderName'));
+        $providerName = $this->getFirstChildNodeText($contextElm, 'ProviderName');
+        $source->setServiceProviderName($providerName);
+        $contact->setOrganization($providerName);
         $serviceContactEl = $this->getFirstChildNode($contextElm, 'ServiceContact');
         $providerSiteEl = $this->getFirstChildNode($contextElm, 'ProviderSite');
         if ($providerSiteEl) {
