@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace Mapbender\WmtsBundle\Component;
 
