@@ -2,6 +2,9 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+# https://geo.sv.rostock.de/geodienste/luftbild_mv-20/tms/1.0.0
+
+
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -173,7 +176,6 @@ class TmsCapabilitiesParser100 extends AbstractTileServiceParser
     
     public function parseTileMap(WmtsSource $wmts, \DOMElement $cntx, $url, $layerIdent)
     {
-        #http://geo.sv.rostock.de/geodienste/luftbild/tms/1.0.0/luftbild/EPSG25833/5/10/10.png
         $layer = new WmtsLayerSource();
         $wmts->addLayer($layer);
         $layer->setSource($wmts);
