@@ -302,9 +302,7 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set contact
-     *
-     * @param string $contact
+     * @param Contact $contact
      * @return $this
      */
     public function setContact($contact)
