@@ -32,52 +32,51 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     }
 
     /**
-     * @param WmsSource $wms
-     * @param \DOMElement $cntxt
+     * @param WmsSource $source
+     * @param \DOMElement $serviceEl
      */
-    protected function parseService(WmsSource $wms, \DOMElement $cntxt)
+    protected function parseService(WmsSource $source, \DOMElement $serviceEl)
     {
-        parent::parseService($wms, $cntxt);
-
-        $layerLimit = intval($this->getValue("./wms:LayerLimit/text()", $cntxt));
+        parent::parseService($source, $serviceEl);
+        $layerLimit = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'LayerLimit')));
         if ($layerLimit > 0) {
-            $wms->setLayerLimit(intval($layerLimit));
+            $source->setLayerLimit($layerLimit);
         }
-        $maxWidth = intval($this->getValue("./wms:MaxWidth/text()", $cntxt));
+        $maxWidth = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxWidth')));
         if ($maxWidth > 0) {
-            $wms->setMaxWidth(intval($maxWidth));
+            $source->setMaxWidth($maxWidth);
         }
-        $maxHeight = intval($this->getValue("./wms:MaxHeight/text()", $cntxt));
+        $maxHeight = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxHeight')));
         if ($maxHeight > 0) {
-            $wms->setMaxHeight(intval($maxHeight));
+            $source->setMaxHeight($maxHeight);
         }
     }
 
     /**
      * Parses the Layer section of the GetCapabilities document
      *
-     * @param WmsSource $wms
-     * @param \DOMElement $contextElm
-     * @return WmsLayerSource the created layer
+     * @param WmsSource $source
+     * @param \DOMElement $layerEl
+     * @return WmsLayerSource
      */
-    protected function parseLayer(WmsSource $wms, \DOMElement $contextElm)
+    protected function parseLayer(WmsSource $source, \DOMElement $layerEl)
     {
-        $wmslayer = parent::parseLayer($wms, $contextElm);
+        $layer = parent::parseLayer($source, $layerEl);
 
-        foreach ($this->getChildNodesByTagName($contextElm, 'CRS') as $crsEl) {
-            $wmslayer->addSrs(\trim($crsEl->textContent));
+        foreach ($this->getChildNodesByTagName($layerEl, 'CRS') as $crsEl) {
+            $layer->addSrs(\trim($crsEl->textContent));
         }
+        $minScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MinScaleDenominator'));
+        $maxScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MaxScaleDenominator'));
 
-        $minScaleEl = $this->getValue("./wms:MinScaleDenominator", $contextElm);
-        $maxScaleEl = $this->getValue("./wms:MaxScaleDenominator", $contextElm);
-        if ($minScaleEl !== null || $maxScaleEl !== null) {
-            $min = $this->getValue("./text()", $minScaleEl);
-            $max = $this->getValue("./text()", $maxScaleEl);
+        if (\strlen($minScaleText) || \strlen($maxScaleText)) {
+            $min = \strlen($minScaleText) ? $minScaleText : null;
+            $max = \strlen($maxScaleText) ? $maxScaleText : null;
             $min = $min !== null ? floatval($min) : null;
             $max = $max !== null ? floatval($max) : null;
-            $wmslayer->setScale(new MinMax($min, $max));
+            $layer->setScale(new MinMax($min, $max));
         }
-        return $wmslayer;
+        return $layer;
     }
 
     protected function parseLayerBoundingBox(\DOMElement $element = null)

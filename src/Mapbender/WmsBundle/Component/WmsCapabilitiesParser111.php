@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
@@ -17,30 +16,28 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
     /**
      * Parses the Layer section of the GetCapabilities document
      *
-     * @param WmsSource $wms
-     * @param \DOMElement $contextElm
-     * @return WmsLayerSource the created layer
+     * @param WmsSource $source
+     * @param \DOMElement $layerEl
+     * @return WmsLayerSource
      */
-    protected function parseLayer(WmsSource $wms, \DOMElement $contextElm)
+    protected function parseLayer(WmsSource $source, \DOMElement $layerEl)
     {
-        $wmslayer = parent::parseLayer($wms, $contextElm);
+        $layer = parent::parseLayer($source, $layerEl);
 
-        foreach ($this->getChildNodesByTagName($contextElm, 'SRS') as $srsEl) {
-            $wmslayer->addSrs(\trim($srsEl->textContent));
+        foreach ($this->getChildNodesByTagName($layerEl, 'SRS') as $srsEl) {
+            $layer->addSrs(\trim($srsEl->textContent));
         }
 
-        $scaleHintEl = $this->getValue("./ScaleHint", $contextElm);
-        if ($scaleHintEl !== null) {
-            $minScaleHint = $this->getValue("./@min", $scaleHintEl);
-            $maxScaleHint = $this->getValue("./@max", $scaleHintEl);
-            $minScaleHint = $minScaleHint !== null ? floatval($minScaleHint) : null;
-            $maxScaleHint = $maxScaleHint !== null ? floatval($maxScaleHint) : null;
+        $scaleHintEl = $this->getFirstChildNode($layerEl, 'ScaleHint');
+        if ($scaleHintEl) {
+            $minScaleHint = \floatval(\trim($scaleHintEl->getAttribute('min')));
+            $maxScaleHint = \floatval(\trim($scaleHintEl->getAttribute('max')));
             $minScale = !$minScaleHint ? null : round(($minScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
             $maxScale = !$maxScaleHint ? null : round(($maxScaleHint / sqrt(2.0)) * $this->resolution / 2.54 * 100);
-            $wmslayer->setScale(new MinMax($minScale, $maxScale));
+            $layer->setScale(new MinMax($minScale, $maxScale));
         }
 
-        return $wmslayer;
+        return $layer;
     }
 
     protected function parseLayerBoundingBox(\DOMElement $element = null)
