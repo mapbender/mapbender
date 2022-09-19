@@ -15,23 +15,6 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
 {
     /**
-     * Creates an instance
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        parent::__construct($doc);
-        foreach ($this->xpath->query('namespace::*', $this->doc->documentElement) as $node) {
-            $nsPrefix = $node->prefix;
-            $nsUri = $node->nodeValue;
-            if ($nsPrefix == "" && $nsUri == "http://www.opengis.net/wms") {
-                $nsPrefix = "wms";
-            }
-            $this->xpath->registerNamespace($nsPrefix, $nsUri);
-        }
-    }
-
-    /**
      * @param WmsSource $source
      * @param \DOMElement $serviceEl
      */

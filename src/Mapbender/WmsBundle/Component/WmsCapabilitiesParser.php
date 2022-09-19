@@ -30,11 +30,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
     protected $doc;
 
     /**
-     * An Xpath-instance
-     */
-    protected $xpath;
-
-    /**
      * The resolution
      *
      * @var integer
@@ -49,8 +44,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
     public function __construct(\DOMDocument $doc)
     {
         $this->doc = $doc;
-        $this->xpath = new \DOMXPath($doc);
-        $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     }
 
     /**
@@ -426,42 +419,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
     }
 
     /**
-     * Finds the value
-     * @param string $xpath xpath expression
-     * @param \DOMNode $contextElm the node to use as context for evaluating the
-     * XPath expression.
-     * @return string the value of item or the selected item or null
-     */
-    protected function getValue($xpath, $contextElm = null)
-    {
-        if (!$contextElm) {
-            $contextElm = $this->doc;
-        }
-        try {
-            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
-            if(!$elm) {
-                return null;
-            }
-            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
-                /** @var \DOMAttr $elm */
-                return $elm->value;
-            } else if ($elm->nodeType == XML_TEXT_NODE) {
-                /** @var \DOMText $elm */
-                return $elm->wholeText;
-            } else if ($elm->nodeType == XML_ELEMENT_NODE) {
-                return $elm;
-            } else if ($elm->nodeType == XML_CDATA_SECTION_NODE) {
-                /** @var \DOMCdataSection $elm */
-                return $elm->wholeText;
-            } else {
-                return null;
-            }
-        } catch (\Exception $E) {
-            return null;
-        }
-    }
-
-    /**
      * Creates a document
      *
      * @param string $data the string containing the XML
@@ -476,8 +433,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
         if (!@$doc->loadXML($data)) {
             throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
         }
-        // substitute xincludes
-        $doc->xinclude();
         if ($doc->documentElement->tagName == "ServiceExceptionReport") {
             $message = $doc->documentElement->nodeValue;
             throw new WmsException($message);
