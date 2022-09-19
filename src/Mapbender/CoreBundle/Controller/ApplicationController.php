@@ -77,6 +77,7 @@ class ApplicationController extends ApplicationControllerBase
         $headers = array(
             'Content-Type' => 'text/html; charset=UTF-8',
             'Cache-Control' => 'max-age=0, must-revalidate, private',
+            "Set-Cookie" => "$slug=1;"
         );
 
         if (!$this->isDebug) {
