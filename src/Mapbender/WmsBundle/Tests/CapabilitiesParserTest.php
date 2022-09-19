@@ -9,7 +9,7 @@ use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
  *   Tests the WmsCapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple
  */
-class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase
+class WmsCapabilitiesParserTest extends \PHPUnit\Framework\TestCase
 {
     public function testMinimal(){
 
