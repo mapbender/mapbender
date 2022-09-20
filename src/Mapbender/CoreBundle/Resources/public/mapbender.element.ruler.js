@@ -178,7 +178,19 @@
                 var nativeLayer = this.layer.getNativeLayer();
                 var defaultStyleFn = nativeLayer.getStyleFunction() || ol.style.Style.defaultFunction;
                 var customStyleFn = function(feature, resolution) {
+                    const purple = [255, 0, 255, 0.6];
+                    const yellow = [255, 255, 0, 0.6];
+                    const geomWidth = 3;
                     var styles = defaultStyleFn(feature, resolution);
+                    if (feature.getGeometry().getType() == 'Polygon'){
+                        styles[0].fill_.setColor(purple);
+                        styles[0].stroke_.setColor(yellow);
+                        styles[0].stroke_.setWidth(geomWidth);
+                    }
+                    else if (feature.getGeometry().getType() == 'LineString'){
+                        styles[0].stroke_.setColor(purple);
+                        styles[0].stroke_.setWidth(geomWidth);
+                    }
                     return self._extendStyles(styles, feature);
                 };
                 nativeLayer.setStyle(customStyleFn);
