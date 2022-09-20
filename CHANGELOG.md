@@ -1,4 +1,4 @@
-## dev-master @ 09cdb5d82
+## dev-master @ 4ccda3df0
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -6,7 +6,8 @@
 * [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
 * [BaseSourceSwitcher] add `data-title` attributes for id independent custom css matching
 * Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
-* Fix password creation in user registration process
+* Fix password creation in user registration process ([#1430](https://github.com/mapbender/mapbender/issues/1430))
+* Fix error loading WMTS that defines keywords
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
 * Add missing mobile pane close on click on currently active control button
 
