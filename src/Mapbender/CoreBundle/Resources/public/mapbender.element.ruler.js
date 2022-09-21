@@ -33,14 +33,14 @@
                 const purple = [255, 0, 255, 1];
                 const yellow = [255, 255, 0, 1];
                 const width = 3;
-                styles[ol.geom.GeometryType.POLYGON] = [
+                styles['Polygon'] = [
                     new ol.style.Style({
                         fill: new ol.style.Fill({
                             color: [255, 0, 255, 0.5],
                         }),
                     }),
                 ];
-                styles[ol.geom.GeometryType.LINE_STRING] = [
+                styles['LineString'] = [
                     new ol.style.Style({
                         stroke: new ol.style.Stroke({
                             color: purple,
@@ -54,7 +54,7 @@
                         }),
                     }),
                 ];
-                styles[ol.geom.GeometryType.POINT] = [
+                styles['Point'] = [
                     new ol.style.Style({
                         image: new ol.style.Circle({
                             radius: width * 2,
