@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints;
 
 class UserForgotPassType extends AbstractType
 {
@@ -15,9 +16,11 @@ class UserForgotPassType extends AbstractType
                 'attr' => array(
                     'autofocus' => 'on',
                 ),
+                'constraints' => array(
+                    new Constraints\NotBlank(),
+                ),
             ))
         ;
 
     }
 }
-

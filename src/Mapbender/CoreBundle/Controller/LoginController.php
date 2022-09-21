@@ -43,23 +43,27 @@ class LoginController
      * User login
      *
      * @Route("/user/login", methods={"GET"})
-     * @Route("/user/login/check", methods={"POST"})
      * @param Request $request
      * @return Response
      */
     public function loginAction(Request $request)
     {
-        $form = $this->formFactory->create('Mapbender\CoreBundle\Form\Type\LoginType', null, array(
+        $lastUsername = $this->authUtils->getLastUsername();
+        $form = $this->formFactory->createNamed(null, 'Mapbender\CoreBundle\Form\Type\LoginType', null, array(
             'action' => 'login/check',
+            // We will get back here from a redirect without receiving
+            // any form data at all. CSRF token validation will always
+            // fail, so disable it.
+            'csrf_protection' => false,
         ));
-
-        if ($request->getMethod() === 'GET') {
-            $error = $this->authUtils->getLastAuthenticationError(true);
-            $lastUsername = $this->authUtils->getLastUsername();
-            $form->get('_username')->setData($lastUsername);
-            if ($error) {
-                $form->addError(new FormError($error->getMessage()));
-            }
+        $error = $this->authUtils->getLastAuthenticationError(true);
+        if ($error) {
+            // Trigger field validation
+            $form->submit(array(
+                '_username' => $lastUsername ?: '',
+                '_password' => '',
+            ));
+            $form->addError(new FormError($error->getMessage()));
         }
 
         return new Response($this->templateEngine->render('@MapbenderCore/Login/login.html.twig', array(
@@ -70,10 +74,14 @@ class LoginController
     }
 
     /**
-     * @Route("/user/logout")
+     * Handled entirely by Symfony form_login / logout extensions.
+     * Action is never called. Only here to define urls, so the
+     * routing component doesn't throw 404.
+     *
+     * @Route("/user/logout", name="mapbender_core_login_logout")
+     * @Route("/user/login/check", methods={"POST"})
      */
-    public function logoutAction()
+    public function dummyAction()
     {
-        //Don't worry, this is actually intercepted by the security layer.
     }
 }

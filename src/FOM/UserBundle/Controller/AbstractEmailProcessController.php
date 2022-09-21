@@ -78,7 +78,6 @@ abstract class AbstractEmailProcessController extends UserControllerBase
             )),
         ));
         return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
-            'user' => $user,
             'form' => $form->createView(),
         ));
     }

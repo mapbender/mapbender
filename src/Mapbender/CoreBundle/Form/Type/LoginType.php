@@ -6,8 +6,7 @@ namespace Mapbender\CoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Validator\Constraints;
 
 class LoginType extends AbstractType
 {
@@ -20,23 +19,14 @@ class LoginType extends AbstractType
                 'attr' => array(
                     'autofocus' => 'autofocus',
                 ),
+                'constraints' => array(
+                    new Constraints\NotBlank(),
+                ),
             ))
             ->add('_password', 'Symfony\Component\Form\Extension\Core\Type\PasswordType', array(
                 'label' => 'fom.user.login.login.password',
             ))
         ;
     }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::finishView($view, $form, $options);
-        $view['_username']->vars = array_replace($view['_username']->vars, array(
-            'full_name' => '_username',
-        ));
-        $view['_password']->vars = array_replace($view['_password']->vars, array(
-            'full_name' => '_password',
-        ));
-    }
-
 
 }
