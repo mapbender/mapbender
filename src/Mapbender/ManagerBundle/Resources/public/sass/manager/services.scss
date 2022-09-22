@@ -92,9 +92,11 @@
     .titleColumn {
       width: 260px;
     }
-  }
-  td.itemType {
-    cursor:ns-resize;
+    >tbody>tr>td {
+      // Overrule Bootstrap .table to nicely align
+      // inputs vs smaller icons / checkboxes
+      vertical-align: middle;
+    }
   }
   .level1 .itemType{margin-left: 0.4em;}
   .level2 .itemType{margin-left: 0.8em;}

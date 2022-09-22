@@ -363,7 +363,7 @@ footer {
   cursor: move;
   &:hover, &.ui-sortable-helper {
     background-color: #f0f0f0;
-    .inputWrapper & {
+    .inputWrapper &, & > td > .inputWrapper .input {
       background-color: darken($inputBackgroundColor, 10%);
     }
   }
