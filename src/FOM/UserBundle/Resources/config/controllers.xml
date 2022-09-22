@@ -23,7 +23,10 @@
         </service>
         <service id="FOM\UserBundle\Controller\SecurityController"
                  class="FOM\UserBundle\Controller\SecurityController"
-                 public="true">
+                 public="true" lazy="true">
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="twig" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom.user.acl_classes%</argument>
         </service>
