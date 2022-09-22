@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'
     password:
       email_body_html: "&lt;p&gt;Hallo %user_username%,&lt;/p&gt;&lt;p&gt; u heeft om een nieuwe wachtwoord verzocht.\n&lt;br /&gt;Klik &lt;a href=\"%url%\"&gt;here&lt;/a&gt;."
-      request_error_no_user: 'Deze gebruiker kan niet gevonden worden.'
       done:
         password_reset: 'Reset wachtwoord'
         congratulations: Gefeliciteerd!
@@ -119,8 +118,6 @@ fom:
         title: 'Reset wachtwoord'
         email_been_sent: 'Een email met de reset code is naar uw email adres gestuurd.'
         back_to_login: 'Terug naar login'
-      request:
-        user_inactive: 'Deze gebruiker is niet geactiveerd. Activeer eerst de gebruikers.'
       email_body_text: 'Hallo %user_username%, u heeft om een nieuw wachtwoord gevraagd. Start de volgende link op "%url%".'
     userbundle:
       user_control: 'Gebruikers control'

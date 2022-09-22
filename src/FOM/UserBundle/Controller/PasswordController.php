@@ -2,6 +2,7 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,10 +36,13 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordController extends AbstractEmailProcessController
 {
+    /** @var LoggerInterface */
+    protected $logger;
     protected $enableReset;
     protected $maxTokenAge;
 
     public function __construct(\Swift_Mailer $mailer,
+                                LoggerInterface $logger,
                                 $userEntityClass,
                                 $emailFromName,
                                 $emailFromAddress,
@@ -46,6 +50,7 @@ class PasswordController extends AbstractEmailProcessController
                                 $maxTokenAge,
                                 $isDebug)
     {
+        $this->logger = $logger;
         parent::__construct($mailer, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
@@ -89,17 +94,15 @@ class PasswordController extends AbstractEmailProcessController
                     'email' => $searchValue,
                 ));
             }
-            if (!$user || $user->getRegistrationToken()) {
-                if ($user) {
-                    $message = $this->renderView('FOMUserBundle:Password:request-error-userinactive.html.twig');
-                } else {
-                    $message = $this->renderView('FOMUserBundle:Password:request-error-nosuchuser.html.twig');
-                }
-                $form->addError(new FormError($message));
-            } else {
+            if ($user) {
                 $this->setResetToken($user);
-                return $this->redirectToRoute('fom_user_password_send');
+                if (!$user->isEnabled()) {
+                    $this->logger->warning("Sending password reset link to currently inactive user {$user->getEmail()} ({$user->getUsername()})");
+                }
+            } else {
+                $this->logger->info("NOT sending password reset link to user '{$searchValue}'. No such user exists.");
             }
+            return $this->redirectToRoute('fom_user_password_send');
         }
 
         return $this->render('@FOMUser/Password/form.html.twig', array(

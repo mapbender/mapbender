@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'Nessun gruppo e utente definito.'
     password:
       email_body_html: '<p>Ciao %user_username%,</p><p>Hai richiesto una nuova password per il tuo account Mapbender3.<a href="%url%"> qui per cambiarlo.</p>'
-      request_error_no_user: 'Nessun utente di questo tipo può essere trovato.'
       done:
         password_reset: 'Reimpostazione della password'
         congratulations: Congratulazioni!
@@ -119,8 +118,6 @@ fom:
         title: 'Reimpostazione della password'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Torna alla login'
-      request:
-        user_inactive: 'Questo utente è inattivo. Si prega di attivare prima.'
       email_body_text: 'Ciao %user_username%, hai richiesto una nuova password per il tuo account Mapbender3. Si prega di seguire questo link per cambiarlo: "%url%".'
     userbundle:
       user_control: 'Controllo dell''utente'

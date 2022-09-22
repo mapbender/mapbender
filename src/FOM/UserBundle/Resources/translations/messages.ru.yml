@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'Нет групп и пользователей.'
     password:
       email_body_html: "\n          <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.\n          <br/>Нажмите, пожалуйста, <a href=\"%url%\">сюда</a>.\n        "
-      request_error_no_user: 'Пользователь не существует.'
       done:
         password_reset: 'Восстановление пароля'
         congratulations: Поздравляем!
@@ -119,8 +118,6 @@ fom:
         title: 'Восстановление пароля'
         email_been_sent: 'E-mail сброса пароля был отправлен на указанный Вами адрес.'
         back_to_login: 'Вернуться на страницу входа'
-      request:
-        user_inactive: 'Пользователь неактивен. Пожалуйста активируйте посредством E-Mail..'
       email_body_text: 'Здравствуйте %user_username%, Вы запросили новый пароль. Откройте в браузере ссылку "%url%".'
     userbundle:
       user_control: 'Контроль пользователя'
