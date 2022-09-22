@@ -7,6 +7,7 @@ namespace FOM\UserBundle\Controller;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Base class for controllers implementing user manipulation processes
@@ -16,12 +17,15 @@ abstract class AbstractEmailProcessController extends UserControllerBase
 {
     /** @var \Swift_Mailer */
     protected $mailer;
+    /** @var TranslatorInterface */
+    protected $translator;
 
     protected $emailFromAddress;
     protected $emailFromName;
     protected $isDebug;
 
     public function __construct(\Swift_Mailer $mailer,
+                                TranslatorInterface $translator,
                                 $userEntityClass,
                                 $emailFromAddress,
                                 $emailFromName,
@@ -29,6 +33,7 @@ abstract class AbstractEmailProcessController extends UserControllerBase
     {
         parent::__construct($userEntityClass);
         $this->mailer = $mailer;
+        $this->translator = $translator;
         $this->emailFromAddress = $emailFromAddress;
         $this->emailFromName = $emailFromName ?: $emailFromAddress;
         $this->isDebug = $isDebug;
@@ -64,6 +69,21 @@ abstract class AbstractEmailProcessController extends UserControllerBase
         $endTime = new \DateTime();
         $endTime->sub(new \DateInterval(sprintf("PT%dH", $timeInterval)));
         return !($startTime < $endTime);
+    }
+
+    protected function sendEmail($mailTo, $subject, $bodyText, $bodyHtml = null)
+    {
+        $message = new \Swift_Message();
+        $message->setSubject($subject);
+        $message->setFrom(array(
+            $this->emailFromAddress => $this->emailFromName,
+        ));
+        $message->setTo($mailTo);
+        $message->setBody($bodyText);
+        if ($bodyHtml) {
+            $message->addPart($bodyHtml, 'text/html');
+        }
+        $this->mailer->send($message);
     }
 
     /**

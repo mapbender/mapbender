@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Self registration controller.
@@ -26,6 +27,7 @@ class RegistrationController extends AbstractEmailProcessController
     protected $groupTitles;
 
     public function __construct(\Swift_Mailer $mailer,
+                                TranslatorInterface $translator,
                                 UserHelperService $userHelper,
                                 $userEntityClass,
                                 $emailFromAddress,
@@ -35,7 +37,7 @@ class RegistrationController extends AbstractEmailProcessController
                                 array $groupTitles,
                                 $isDebug)
     {
-        parent::__construct($mailer, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
+        parent::__construct($mailer, $translator, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
         $this->userHelper = $userHelper;
         $this->enableRegistration = $enableRegistration;
         $this->groupTitles = $groupTitles;
@@ -89,7 +91,7 @@ class RegistrationController extends AbstractEmailProcessController
                 }
             }
 
-            $this->sendEmail($user);
+            $this->sendRegistrationMail($user);
 
             $em = $this->getEntityManager();
             $em->persist($user);
@@ -153,7 +155,7 @@ class RegistrationController extends AbstractEmailProcessController
         $user->setRegistrationToken(hash("sha1",rand()));
         $user->setRegistrationTime(new \DateTime());
 
-        $this->sendEmail($user);
+        $this->sendRegistrationMail($user);
 
         $em = $this->getEntityManager();
         $em->persist($user);
@@ -176,21 +178,12 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * @param User $user
      */
-    protected function sendEmail($user)
+    protected function sendRegistrationMail($user)
     {
-       $mailFrom = array($this->emailFromAddress => $this->emailFromName);
        $text = $this->renderView('FOMUserBundle:Registration:email-body.text.twig', array("user" => $user));
        $html = $this->renderView('FOMUserBundle:Registration:email-body.html.twig', array("user" => $user));
-       $message = new \Swift_Message();
-       $message
-           ->setSubject($this->renderView('FOMUserBundle:Registration:email-subject.text.twig'))
-           ->setFrom($mailFrom)
-           ->setTo($user->getEmail())
-           ->setBody($text)
-           ->addPart($html, 'text/html')
-       ;
-
-       $this->mailer->send($message);
+        $subject = $this->translator->trans('fom.user.registration.email_subject');
+        $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }
 
     /**

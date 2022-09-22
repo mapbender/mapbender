@@ -12,6 +12,7 @@
                  class="FOM\UserBundle\Controller\PasswordController"
                  public="true">
             <argument type="service" id="mailer" />
+            <argument type="service" id="translator" />
             <argument type="service" id="logger" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
@@ -47,6 +48,7 @@
                  class="FOM\UserBundle\Controller\RegistrationController"
                  public="true">
             <argument type="service" id="mailer" />
+            <argument type="service" id="translator" />
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>

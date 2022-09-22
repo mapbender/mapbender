@@ -3,10 +3,10 @@ namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Password reset controller.
@@ -42,6 +42,7 @@ class PasswordController extends AbstractEmailProcessController
     protected $maxTokenAge;
 
     public function __construct(\Swift_Mailer $mailer,
+                                TranslatorInterface $translator,
                                 LoggerInterface $logger,
                                 $userEntityClass,
                                 $emailFromName,
@@ -51,7 +52,7 @@ class PasswordController extends AbstractEmailProcessController
                                 $isDebug)
     {
         $this->logger = $logger;
-        parent::__construct($mailer, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        parent::__construct($mailer, $translator, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
         if (!$this->enableReset) {
@@ -95,10 +96,14 @@ class PasswordController extends AbstractEmailProcessController
                 ));
             }
             if ($user) {
+                $em = $this->getEntityManager();
+                $em->persist($user);
                 $this->setResetToken($user);
                 if (!$user->isEnabled()) {
                     $this->logger->warning("Sending password reset link to currently inactive user {$user->getEmail()} ({$user->getUsername()})");
                 }
+                $this->sendResetTokenMail($user);
+                $em->flush();
             } else {
                 $this->logger->info("NOT sending password reset link to user '{$searchValue}'. No such user exists.");
             }
@@ -126,7 +131,11 @@ class PasswordController extends AbstractEmailProcessController
             ));
         }
 
+        $em = $this->getEntityManager();
+        $em->persist($user);
         $this->setResetToken($user);
+        $this->sendResetTokenMail($user);
+        $em->flush();
 
         return $this->redirectToRoute('fom_user_password_send');
     }
@@ -188,24 +197,14 @@ class PasswordController extends AbstractEmailProcessController
     {
         $user->setResetToken(hash("sha1", rand()));
         $user->setResetTime(new \DateTime());
+    }
 
-        //send email
-        $mailFrom = array($this->emailFromAddress => $this->emailFromName);
-
+    protected function sendResetTokenMail(User $user)
+    {
         $text = $this->renderView('@FOMUser/Password/email-body.text.twig', array("user" => $user));
         $html = $this->renderView('@FOMUser/Password/email-body.html.twig', array("user" => $user));
-        $message = new \Swift_Message();
-        $message
-            ->setSubject($this->renderView('@FOMUser/Password/email-subject.text.twig'))
-            ->setFrom($mailFrom)
-            ->setTo($user->getEmail())
-            ->setBody($text)
-            ->addPart($html, 'text/html')
-        ;
-        $this->mailer->send($message);
-
-        $em = $this->getEntityManager();
-        $em->flush();
+        $subject = $this->translator->trans('fom.user.password.email_subject');
+        $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }
 
     /**
