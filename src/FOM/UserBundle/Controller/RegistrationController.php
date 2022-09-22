@@ -116,7 +116,8 @@ class RegistrationController extends AbstractEmailProcessController
      */
     public function confirmAction(Request $request)
     {
-        $user = $this->getUserFromRegistrationToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromRegistrationToken($token);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
@@ -124,7 +125,11 @@ class RegistrationController extends AbstractEmailProcessController
         }
 
         if(!$this->checkTimeInterval($user->getRegistrationTime(), $this->maxTokenAge)) {
-            return $this->tokenExpired($user);
+            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+                'url' => $this->generateUrl('fom_user_registration_reset', array(
+                    'token' => $user->getRegistrationToken(),
+                )),
+            ));
         }
 
         // Unset token
@@ -139,13 +144,14 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 4a: Reset token (if expired)
      *
-     * @Route("/user/registration/reset", methods={"POST"})
+     * @Route("/user/registration/reset")
      * @param Request $request
      * @return Response
      */
     public function resetAction(Request $request)
     {
-        $user = $this->getUserFromRegistrationToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromRegistrationToken($token);
         if(!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
@@ -187,12 +193,11 @@ class RegistrationController extends AbstractEmailProcessController
     }
 
     /**
-     * @param Request $request
+     * @param string $token
      * @return User|null
      */
-    protected function getUserFromRegistrationToken(Request $request)
+    protected function getUserFromRegistrationToken($token)
     {
-        $token = $request->get('token');
         if ($token) {
             /** @var User|null $user */
             $user = $this->getUserRepository()->findOneBy(array(

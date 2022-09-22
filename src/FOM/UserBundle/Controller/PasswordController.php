@@ -118,13 +118,14 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 4a: Reset the reset token
      *
-     * @Route("/user/reset/reset", methods={"POST"})
+     * @Route("/user/reset/reset")
      * @param Request $request
      * @return Response
      */
     public function tokenResetAction(Request $request)
     {
-        $user = $this->getUserFromResetToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromResetToken($token);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
@@ -149,7 +150,8 @@ class PasswordController extends AbstractEmailProcessController
      */
     public function resetAction(Request $request)
     {
-        $user = $this->getUserFromResetToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromResetToken($token);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
@@ -157,7 +159,11 @@ class PasswordController extends AbstractEmailProcessController
         }
 
         if (!$this->checkTimeInterval($user->getResetTime(), $this->maxTokenAge)) {
-            return $this->tokenExpired($user);
+            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+                'url' => $this->generateUrl('fom_user_password_tokenreset', array(
+                    'token' => $user->getResetToken(),
+                )),
+            ));
         }
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserResetPassType', $user);
@@ -208,12 +214,11 @@ class PasswordController extends AbstractEmailProcessController
     }
 
     /**
-     * @param Request $request
+     * @param string $token
      * @return User|null
      */
-    protected function getUserFromResetToken(Request $request)
+    protected function getUserFromResetToken($token)
     {
-        $token = $request->get('token');
         if ($token) {
             /** @var User|null $user */
             $user = $this->getUserRepository()->findOneBy(array(

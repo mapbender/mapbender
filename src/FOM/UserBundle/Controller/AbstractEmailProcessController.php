@@ -85,20 +85,4 @@ abstract class AbstractEmailProcessController extends UserControllerBase
         }
         $this->mailer->send($message);
     }
-
-    /**
-     * @param User $user
-     * @return Response
-     */
-    protected function tokenExpired($user)
-    {
-        $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
-            'action' => $this->generateUrl('fom_user_password_tokenreset', array(
-                'token' => $user->getResetToken(),
-            )),
-        ));
-        return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
 }
