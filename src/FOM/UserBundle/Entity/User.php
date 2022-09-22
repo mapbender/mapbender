@@ -133,7 +133,7 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     /**
      * Set resetTime
      *
-     * @param string $resetTime
+     * @param \DateTime|null $resetTime
      */
     public function setResetTime($resetTime)
     {
