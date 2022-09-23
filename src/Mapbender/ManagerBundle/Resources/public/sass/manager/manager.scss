@@ -362,10 +362,7 @@ footer {
 .ui-sortable-handle {
   cursor: move;
   &:hover, &.ui-sortable-helper {
-    background-color: #f0f0f0;
-    .inputWrapper &, & > td > .inputWrapper .input {
-      background-color: darken($inputBackgroundColor, 10%);
-    }
+    background-color: #fafafa;
   }
   .checkbox label, .radio label {
     cursor: inherit;

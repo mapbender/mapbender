@@ -32,7 +32,6 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => array(
-                    'data-sortable' => 'choiceExpandedSortable',
                     'class' => 'input inputWrapper choiceExpandedSortable',
                 ),
             ))
