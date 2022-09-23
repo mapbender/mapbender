@@ -45,10 +45,12 @@ window.Mapbender.MapModelOl4 = (function() {
             interactions: ol.interaction.defaults({dragPan: false}).extend([
                 new ol.interaction.DragPan({
                     condition: function (mapBrowserEvent) {
-                        return (
+                        let cond = (
+                            !mapBrowserEvent.originalEvent.shiftKey &&
                             mapBrowserEvent.originalEvent.isPrimary &&
-                            mapBrowserEvent.originalEvent.button < 2
+                            (mapBrowserEvent.originalEvent.button < 2)
                         );
+                        return cond;
                     },
                 }),
             ]),
