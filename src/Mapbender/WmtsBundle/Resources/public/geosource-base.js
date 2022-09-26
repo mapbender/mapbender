@@ -252,8 +252,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
          * @return {WmtsTileMatrix}
          */
         _getMatrix: function(layer, scale, srsName) {
-            var units = Mapbender.mapEngine.getProjectionUnits(srsName);
-            var resolution = OpenLayers.Util.getResolutionFromScale(scale, units);
+            var resolution = Mapbender.Model.scaleToResolution(scale, undefined, srsName);
             var matrixSet = layer.getMatrixSet();
             var scaleDelta = Number.POSITIVE_INFINITY;
             var closestMatrix = null;
