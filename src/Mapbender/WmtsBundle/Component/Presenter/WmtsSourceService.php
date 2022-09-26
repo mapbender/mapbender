@@ -201,7 +201,9 @@ class WmtsSourceService extends SourceService
                     'tileWidth' => $tilematrix->getTilewidth(),
                     'tileHeight' => $tilematrix->getTileheight(),
                     'topLeftCorner' => $tilematrix->getTopleftcorner(),
-                    'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight())
+                    'matrixSize' =>  array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight()),
+                    // TMS only
+                    'href' => $tilematrix->getHref(),
                 );
             }
             $srsCodes = $this->getSrsAliases($tilematrixset->getSupportedCrs());
