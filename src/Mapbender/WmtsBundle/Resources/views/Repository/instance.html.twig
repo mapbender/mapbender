@@ -9,16 +9,16 @@
           <th>{{ form.title.vars.label | trans}}</th>
           <th class="matrixSet">{{"mb.wmts.wmtsloader.repo.instance.label.tilemartixset"|trans}}</th>
           <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.active"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
+          <th colspan="2" class="{{- ['checkboxColumn', _proto.allowselected.vars.columnClass | default(''), _proto.selected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
           <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
           <th></th>
         </tr>
         <tr>
           <th colspan="4"></th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="{{- ['checkboxColumn smallText', _proto.allowselected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="{{- ['checkboxColumn smallText', _proto.selected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="{{- ['checkboxColumn smallText', _proto.allowinfo.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="{{- ['checkboxColumn smallText', _proto.info.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th></th>
         </tr>
         <tr>

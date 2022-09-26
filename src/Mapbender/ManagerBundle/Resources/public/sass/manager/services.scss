@@ -81,12 +81,14 @@
 }
 
 .instanceTable{
-  margin-top: 20px;
   .checkboxColumn{
     text-align:center;
   }
-  .odd {
-    background-color: #f0f0f0;
+  .group-start {
+    border-left: 2px solid #ccc;
+  }
+  .group-end {
+    border-right: 2px solid #ccc;
   }
 
   &.table {
