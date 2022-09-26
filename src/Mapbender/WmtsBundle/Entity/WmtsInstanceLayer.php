@@ -64,12 +64,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     protected $style = "";
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $tileMatrixSet = "";
-
-
     public function __clone()
     {
         if ($this->id) {
@@ -229,26 +223,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     public function getStyle()
     {
         return $this->style;
-    }
-
-    /**
-     * Sets a tileMatrixSetLink
-     * @param string $tileMatrixSet
-     * @return $this
-     */
-    public function setTileMatrixSet($tileMatrixSet)
-    {
-        $this->tileMatrixSet = $tileMatrixSet;
-        return $this;
-    }
-
-    /**
-     * Gets a tileMatrixSetLink
-     * @return string
-     */
-    public function getTileMatrixSet()
-    {
-        return $this->tileMatrixSet;
     }
 
     public function __toString()

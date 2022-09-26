@@ -16,7 +16,7 @@ window.Mapbender.TmsSource = (function() {
             }
         },
         _layerFactoryOl2: function(compatibleLayer, srsName) {
-            var matrixSet = compatibleLayer.getMatrixSet();
+            var matrixSet = compatibleLayer.selectMatrixSet(srsName);
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
                 type: compatibleLayer.options.format.split('/').pop(),
@@ -30,7 +30,7 @@ window.Mapbender.TmsSource = (function() {
             return new OpenLayers.Layer.TMS(compatibleLayer.options.title, compatibleLayer.options.tileUrls, options);
         },
         _layerFactory: function(layer, srsName) {
-            var matrixSet = layer.getMatrixSet();
+            var matrixSet = layer.selectMatrixSet(srsName);
             var self = this;
             var gridOpts = {
                 origin: matrixSet.origin,
@@ -69,14 +69,27 @@ window.Mapbender.TmsSource = (function() {
             // @todo: resolve backend config wording weirdness
             return tileMatrix.scaleDenominator;
         },
-        /**
-         * @param {WmtsLayerConfig} layerDef
-         * @return {string}
-         */
-        getPrintBaseUrl: function(layerDef) {
-            return [layerDef.options.tileUrls[0], this.configuration.version, '/', layerDef.options.identifier].join('');
-        }
-
+        __dummy__: null
     });
     return TmsSource;
+}());
+
+window.Mapbender.TmsLayer = (function() {
+    function TmsLayer(definition) {
+        Mapbender.WmtsTmsBaseSourceLayer.apply(this, arguments);
+    }
+    TmsLayer.prototype = Object.create(Mapbender.WmtsTmsBaseSourceLayer.prototype);
+    Object.assign(TmsLayer.prototype, {
+        constructor: TmsLayer,
+        /**
+         * @param {String} srsName
+         * @return {string}
+         */
+        getPrintBaseUrl: function(srsName) {
+            return [this.options.tileUrls[0], this.source.configuration.version, '/', this.options.identifier].join('');
+        },
+        __dummy__: null
+    });
+    Mapbender.SourceLayer.typeMap['tms'] = TmsLayer;
+    return TmsLayer;
 }());

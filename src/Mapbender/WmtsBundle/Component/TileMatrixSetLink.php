@@ -41,7 +41,7 @@ class TileMatrixSetLink
     /**
      * Sets tileMatrixSet
      * @param string $tileMatrixSet
-     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink
+     * @return TileMatrixSetLink
      */
     public function setTileMatrixSet($tileMatrixSet)
     {
@@ -52,13 +52,11 @@ class TileMatrixSetLink
     /**
      * Sets tileMatrixSetLimits.
      * @param integer $tileMatrixSetLimits
-     * @return \Mapbender\WmtsBundle\Component\TileMatrixSetLink
+     * @return TileMatrixSetLink
      */
     public function setTileMatrixSetLimits($tileMatrixSetLimits)
     {
         $this->tileMatrixSetLimits = $tileMatrixSetLimits;
         return $this;
     }
-
-
 }

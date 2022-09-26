@@ -120,15 +120,18 @@ abstract class ConfigGeneratorCommon extends SourceService
             throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
         }
         $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
-        $configuration   = array(
+        $configuration = array(
             "id" => $layerId,
             'tileUrls' => array(),
             'format' => null,
             "title" => $instanceLayer->getTitle(),
             "style" => $instanceLayer->getStyle(),
             "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
-            "tilematrixset" => $instanceLayer->getTileMatrixSet(),
+            'matrixLinks' => array(),
         );
+        foreach ($sourceItem->getTilematrixSetlinks() as $tmsl) {
+            $configuration['matrixLinks'][] = $tmsl->getTileMatrixSet();
+        }
 
         foreach ($sourceItem->getResourceUrl() as $ru) {
             $resourceType = $ru->getResourceType() ?: 'tile';   // NOTE: TMS seems to have nulls here

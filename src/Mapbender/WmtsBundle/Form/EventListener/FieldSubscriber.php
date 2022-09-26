@@ -31,13 +31,6 @@ class FieldSubscriber implements EventSubscriberInterface
 
     protected function reconfigureFields(FormInterface $form, WmtsInstanceLayer $data)
     {
-        $form
-            ->add('tileMatrixSet', 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerMatrixSetType', array(
-                'instance_layer' => $data,
-                'label' => 'mb.wmts.wmtsloader.repo.instancelayerform.label.layer_matrixsets',
-            ))
-        ;
-
         $arrStyles = $data->getSourceItem()->getStyles();
         $styleOpt = array("" => "");
         foreach ($arrStyles as $style) {
