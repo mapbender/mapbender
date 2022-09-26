@@ -2,7 +2,7 @@
 {%- if false %}{# predefine blocks without immediately rendering them #}
     {% block _form_configuration_themes_widget %}
         <div class="inputWrapper">
-            <table class="table table-bordered" id="{{form.vars.id}}">
+            <table class="table table-outlined" id="{{form.vars.id}}">
             {% for theme in form.children %}
                 {{ form_row(theme) }}
             {% endfor %}

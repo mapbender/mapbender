@@ -205,7 +205,7 @@
     </div>
     {%- endif -%}
     {% set prototype = form_widget(form.vars.prototype) %}
-    <table id="listFilterPermission" class="permissionsTable table table-bordered {% if not (form | length) %}hidden{% endif %}">
+    <table id="listFilterPermission" class="permissionsTable table table-outlined {% if not (form | length) %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>

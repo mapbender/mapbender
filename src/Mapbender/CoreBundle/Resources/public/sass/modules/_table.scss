@@ -1,6 +1,13 @@
 /** Backend only */
+// .table-outlined := .table-bordered without
+// vertical cell borders (not in standard Bootstrap)
+.table-outlined {
+  border: 1px solid #ccc;
+}
+.table-outlined, .table-bordered {
+  border-top: 3px solid #ccc;
+}
 .table-bordered {
-  border-top: solid 3px #ccc;
   // Undo Bootstrap left / right borders on cells
   >tbody,>thead,>tfoot {
     >tr {
