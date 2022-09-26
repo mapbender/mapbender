@@ -7,8 +7,9 @@
     // Prevent undesired double-click => select all behaviour on quick toggles
     user-select: none;
   }
-  >.content-toggle i {
-    line-height: inherit;
+  // Fix calculated height on floating icon (see instance form vendor specific panel toggle)
+  >.content-toggle i.fa-lg.pull-right {
+    margin-top: 0.25em;
   }
 }
 .serviceContainer{
