@@ -7,33 +7,33 @@
         <tr>
           <th></th>
           <th>{{ form.title.vars.label | trans}}</th>
+          {%- block layer_table_headers1 -%}
           <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.active"|trans}}</th>
           <th colspan="2" class="{{- ['checkboxColumn', _proto.allowselected.vars.columnClass | default(''), _proto.selected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
-          <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
+          {%- endblock -%}
           <th></th>
         </tr>
         <tr>
           <th colspan="3"></th>
+          {%- block layer_table_headers2 -%}
           <th class="{{- ['checkboxColumn smallText', _proto.allowselected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th class="{{- ['checkboxColumn smallText', _proto.selected.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
-          <th class="{{- ['checkboxColumn smallText', _proto.allowinfo.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="{{- ['checkboxColumn smallText', _proto.info.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          {%- endblock -%}
           <th></th>
         </tr>
         <tr>
           <th colspan="2"></th>
+          {%- block layer_table_headers3 -%}
           {{ form_row(_proto.active, {'tagName': 'th'}) }}
           {{ form_row(_proto.allowselected, {'tagName': 'th'}) }}
           {{ form_row(_proto.selected, {'tagName': 'th'}) }}
-          {{ form_row(_proto.allowinfo, {'tagName': 'th'}) }}
-          {{ form_row(_proto.info, {'tagName': 'th'}) }}
+          {%- endblock -%}
           <th></th>
         </tr>
       </thead>
       <tbody>
-        {% for form in form.layers %}
-        {% include "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig"  with {'form': form }%}
-        {% endfor %}
+      {%- block layer_rows -%}
+      {%- endblock -%}
         <tr class="dummy">
           <td colspan="20"></td>
         </tr>

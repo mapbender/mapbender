@@ -10,6 +10,8 @@ use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
+use Mapbender\WmtsBundle\Form\Type\TmsInstanceType;
+use Mapbender\WmtsBundle\Form\Type\WmtsInstanceType;
 
 class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactory
 {
@@ -60,11 +62,27 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
 
     public function getFormTemplate(SourceInstance $instance)
     {
-        return '@MapbenderWmts/Repository/instance.html.twig';
+        $sourceType = $instance->getSource()->getType();
+        switch ($sourceType) {
+            default:
+                throw new \InvalidArgumentException("Unhandled source type " . \var_export($sourceType, true));
+            case Source::TYPE_WMTS:
+                return '@MapbenderWmts/Repository/instance-wmts.html.twig';
+            case Source::TYPE_TMS:
+                return '@MapbenderWmts/Repository/instance-tms.html.twig';
+        }
     }
 
     public function getFormType(SourceInstance $instance)
     {
-        return 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceInstanceLayersType';
+        $sourceType = $instance->getSource()->getType();
+        switch ($sourceType) {
+            default:
+                throw new \InvalidArgumentException("Unhandled source type " . \var_export($sourceType, true));
+            case Source::TYPE_WMTS:
+                return WmtsInstanceType::class;
+            case Source::TYPE_TMS:
+                return TmsInstanceType::class;
+        }
     }
 }

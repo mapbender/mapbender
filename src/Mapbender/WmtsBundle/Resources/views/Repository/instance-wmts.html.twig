@@ -1,0 +1,20 @@
+{%- extends "MapbenderWmtsBundle:Repository:instance.html.twig" -%}
+{%- block layer_table_headers1 -%}
+    {{- parent() -}}
+    <th class="checkboxColumn group-start group-end" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
+{%- endblock -%}
+{%- block layer_table_headers2 -%}
+    {{- parent() -}}
+    <th class="{{- ['checkboxColumn smallText', _proto.allowinfo.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+    <th class="{{- ['checkboxColumn smallText', _proto.info.vars.columnClass | default('')] | join(' ') -}}">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+{%- endblock -%}
+{%- block layer_table_headers3 -%}
+    {{- parent() -}}
+    {{ form_row(_proto.allowinfo, {'tagName': 'th'}) }}
+    {{ form_row(_proto.info, {'tagName': 'th'}) }}
+{%- endblock -%}
+{%- block layer_rows -%}
+  {%- for form in form.layers -%}
+  {%- include "MapbenderWmtsBundle:Repository:instance-layer-wmts.html.twig"  with {'form': form } -%}
+  {%- endfor -%}
+{%- endblock -%}

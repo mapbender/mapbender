@@ -1,27 +1,29 @@
 <?php
 
+
 namespace Mapbender\WmtsBundle\Form\Type;
 
+
+use Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType;
+use Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType;
+use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class WmtsInstanceInstanceLayersType extends AbstractType
+class TmsInstanceType extends AbstractType
 {
     public function getParent()
     {
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
-                'entry_type' => 'Mapbender\WmtsBundle\Form\Type\WmtsInstanceLayerType',
+            ->add('layers', SourceInstanceLayerCollectionType::class, array(
+                'entry_type' => SourceInstanceItemType::class,
                 'entry_options' => array(
-                    'data_class' => 'Mapbender\WmtsBundle\Entity\WmtsInstanceLayer',
+                    'data_class' => WmtsInstanceLayer::class,
                 ),
             ))
         ;

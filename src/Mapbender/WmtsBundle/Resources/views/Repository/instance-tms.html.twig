@@ -1,0 +1,6 @@
+{%- extends "MapbenderWmtsBundle:Repository:instance.html.twig" -%}
+{%- block layer_rows -%}
+  {%- for form in form.layers -%}
+  {%- include "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig"  with {'form': form } -%}
+  {%- endfor -%}
+{%- endblock -%}
