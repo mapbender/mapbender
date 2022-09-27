@@ -417,6 +417,26 @@ class WmsSourceService extends SourceService
         }
     }
 
+    /**
+     * Extend all URLs in the layer to run over owsproxy
+     * @todo: this should and can be part of the initial generation
+     *
+     * @param mixed[] $layerConfig
+     * @return mixed[]
+     */
+    protected function proxifyLayerUrls($layerConfig)
+    {
+        if (isset($layerConfig['children'])) {
+            foreach ($layerConfig['children'] as $ix => $childConfig) {
+                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig);
+            }
+        }
+        if (!empty($layerConfig['options']['legend']['url'])) {
+            $layerConfig['options']['legend']['url'] = $this->urlProcessor->proxifyUrl($layerConfig['options']['legend']['url']);
+        }
+        return $layerConfig;
+    }
+
     public function getScriptAssets(Application $application)
     {
         return array(

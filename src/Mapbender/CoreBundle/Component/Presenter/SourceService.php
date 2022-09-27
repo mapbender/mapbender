@@ -73,29 +73,4 @@ abstract class SourceService
             'isBaseSource' => $sourceInstance->isBasesource(),
         );
     }
-
-    /**
-     * Extend all URLs in the layer to run over owsproxy
-     * @todo: this should and can be part of the initial generation
-     *
-     * @param mixed[] $layerConfig
-     * @return mixed[]
-     */
-    protected function proxifyLayerUrls($layerConfig)
-    {
-        if (isset($layerConfig['children'])) {
-            foreach ($layerConfig['children'] as $ix => $childConfig) {
-                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig);
-            }
-        }
-        if (isset($layerConfig['options']['legend'])) {
-            // might have keys 'graphic' and 'url', both kind of serve the same purpose
-            $mangler = $this->urlProcessor;
-            $fn = function($url) use ($mangler) {
-                return $mangler->proxifyUrl($url);
-            };
-            $layerConfig['options']['legend'] = array_map($fn, $layerConfig['options']['legend']);
-        }
-        return $layerConfig;
-    }
 }
