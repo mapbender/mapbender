@@ -354,7 +354,7 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'js':
-                return $this->sourceTypeDirectory->getAssets($application, $type);
+                return $this->sourceTypeDirectory->getScriptAssets($application);
             case 'trans':
             case 'css':
                 return array();

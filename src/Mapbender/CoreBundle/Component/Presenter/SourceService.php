@@ -2,12 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter;
 
-use Mapbender\CoreBundle\Component\Source\SourceInstanceInformationInterface;
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
  * Generator for frontend-facing configuration for SourceInstance entities.
@@ -15,7 +12,8 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
  * Base class for atm the only shipping concrete implementation: @see WmsSourceService
  *
  */
-abstract class SourceService implements SourceInstanceInformationInterface
+abstract class SourceService
+    implements SourceInstanceConfigGenerator
 {
     /** @var UrlProcessor */
     protected $urlProcessor;
@@ -100,22 +98,4 @@ abstract class SourceService implements SourceInstanceInformationInterface
         }
         return $layerConfig;
     }
-
-    /**
-     * Must return list of assets of given type required for source instances to work on the client.
-     * @see TypeDirectoryService::getAssets()
-     *
-     * @param Application $application
-     * @param string $type must be 'js'
-     * @return string[]
-     */
-    abstract public function getAssets(Application $application, $type);
-
-    abstract public function getInternalLegendUrl(SourceInstanceItem $instanceLayer);
-
-    /**
-     * @param SourceInstance $sourceInstance
-     * @return bool
-     */
-    abstract public function useTunnel(SourceInstance $sourceInstance);
 }

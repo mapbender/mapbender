@@ -2,10 +2,10 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -141,21 +141,10 @@ class ConfigService
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
             $sourceService = $this->getSourceService($assignment->getInstance());
-            if (!$sourceService) {
-                // @todo: throw?
-                continue;
-            }
-            // @todo: move check into prefilter (get service twice?)
             if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $conf = $sourceService->getConfiguration($assignment->getInstance());
-            if (!$conf) {
-                // @todo: throw?
-                continue;
-            }
-
-            $configs[] = $conf;
+            $configs[] = $sourceService->getConfiguration($assignment->getInstance());
         }
         return $configs;
     }
@@ -190,12 +179,12 @@ class ConfigService
      * Get the concrete service that deals with the concrete SourceInstance type.
      *
      * @param SourceInstance $sourceInstance
-     * @return SourceService|null
+     * @return SourceInstanceConfigGenerator
      */
     protected function getSourceService(SourceInstance $sourceInstance)
     {
         // delegate to directory
-        return $this->sourceTypeDirectory->getSourceService($sourceInstance);
+        return $this->sourceTypeDirectory->getConfigGenerator($sourceInstance);
     }
 
     /**

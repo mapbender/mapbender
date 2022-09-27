@@ -306,18 +306,13 @@ class WmtsSourceService extends SourceService
         return false;
     }
 
-    public function getAssets(Application $application, $type)
+    public function getScriptAssets(Application $application)
     {
-        switch ($type) {
-            case 'js':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                    '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
-                    '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
-                    '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
-                );
-            default:
-                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
-        }
+        return array(
+            '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+            '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
+            '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
+            '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
+        );
     }
 }

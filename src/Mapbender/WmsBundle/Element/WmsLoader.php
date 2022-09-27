@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -229,10 +230,10 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
 
     /**
      * @param SourceInstance $instance
-     * @return \Mapbender\CoreBundle\Component\Presenter\SourceService|null
+     * @return SourceInstanceConfigGenerator
      */
     protected function getSourceService($instance)
     {
-        return $this->getSourceTypeDirectory()->getSourceService($instance);
+        return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
     }
 }
