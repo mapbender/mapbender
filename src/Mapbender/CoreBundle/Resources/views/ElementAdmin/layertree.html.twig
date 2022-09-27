@@ -10,7 +10,7 @@
         </div>
     {% endblock %}
     {% block _form_configuration_themes_entry_opened_row %}
-        <span class="item-opened" title="{{ form.vars.attr.title | trans }}">
+        <span class="item-opened clickable" title="{{ form.vars.attr.title | trans }}">
             <i class="fa fas fa-fw {{ form.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
             <span class="hidden">{{ form_widget(form) }}</span>
         </span>

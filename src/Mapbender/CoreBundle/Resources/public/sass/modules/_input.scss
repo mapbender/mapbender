@@ -55,3 +55,11 @@ table .checkbox {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+.checkbox label, .radio label {
+  > input {
+    // Defeat Chrome user agent stylesheet resetting checkbox
+    // cursor to "default"
+    cursor: inherit;
+  }
+}
