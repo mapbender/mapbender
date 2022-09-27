@@ -69,10 +69,13 @@ class WmsSourceService extends SourceService
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */
-        return parent::getInnerConfiguration($sourceInstance) + array(
+        $configuration =  parent::getInnerConfiguration($sourceInstance) + array(
             'options' => $this->getOptionsConfiguration($sourceInstance),
-            'children' => array($this->getRootLayerConfig($sourceInstance)),
+            'children' => array(
+                $this->getLayerConfiguration($sourceInstance->getRootlayer()),
+            ),
         );
+        return $this->postProcessUrls($sourceInstance, $configuration);
     }
 
     public function getOptionsConfiguration(WmsInstance $sourceInstance)
@@ -99,33 +102,6 @@ class WmsSourceService extends SourceService
             'ratio' => $ratio,
             'layerOrder' => $sourceInstance->getLayerOrder(),
         );
-    }
-
-    public function postProcessInnerConfiguration(SourceInstance $sourceInstance, $configuration)
-    {
-        /** @var WmsInstance $sourceInstance */
-        $configuration = parent::postProcessInnerConfiguration($sourceInstance, $configuration);
-        // upstream may return null if validation fails...
-        if ($configuration) {
-            $configuration = $this->postProcessUrls($sourceInstance, $configuration);
-        }
-        return $configuration;
-    }
-
-    /**
-     * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
-     *
-     * @param WmsInstance $sourceInstance
-     * @return array
-     */
-    public function getRootLayerConfig(WmsInstance $sourceInstance)
-    {
-        $rootlayer = $sourceInstance->getRootlayer();
-        if ($rootlayer->getActive()) {
-            return $this->getLayerConfiguration($rootlayer);
-        } else {
-            return array();
-        }
     }
 
     protected function getLayerConfiguration(WmsInstanceLayer $instanceLayer)
@@ -164,10 +140,12 @@ class WmsSourceService extends SourceService
     public function getConfiguration(SourceInstance $sourceInstance)
     {
         $config = parent::getConfiguration($sourceInstance);
+
         $root = $sourceInstance->getRootlayer();
-        if ($root) {
-            $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
+        if (!$root) {
+            throw new \RuntimeException("Cannot process Wms instance #{$sourceInstance->getId()} with no root layer");
         }
+        $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
         return $config;
     }
 
