@@ -278,15 +278,7 @@ class WmtsSourceService extends SourceService
      */
     protected function proxifyTileUrlTemplate($urlTemplate)
     {
-        // add dummy 'service' query param for owsproxy...
-        // @todo: remove service type 'intelligence' from owsproxy
-        $dummyServiceParam = 'service=WMS';
-        if (false !== strpos($urlTemplate, '?')) {
-            $urlWithService = "{$urlTemplate}&{$dummyServiceParam}";
-        } else {
-            $urlWithService = "{$urlTemplate}?{$dummyServiceParam}";
-        }
-        $proxyUrlInitial = $this->urlProcessor->proxifyUrl($urlWithService);
+        $proxyUrlInitial = $this->urlProcessor->proxifyUrl($urlTemplate);
         // Restore unencoded template placeholders
         return strtr($proxyUrlInitial, array(
             '%7B' => '{',
