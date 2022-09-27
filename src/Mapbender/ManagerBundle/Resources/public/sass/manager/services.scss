@@ -92,9 +92,6 @@
   }
 
   &.table {
-    .titleColumn {
-      width: 260px;
-    }
     >tbody>tr>td {
       // Overrule Bootstrap .table to nicely align
       // inputs vs smaller icons / checkboxes
@@ -106,6 +103,13 @@
   .level3 .itemType{margin-left: 1.2em;}
   .level4 .itemType{margin-left: 1.6em;}
   .dummy{display:none;}
+
+  .titleColumn {
+    width: 99%;   // Expand to maximum remaining width
+  }
+  td.itemType, .checkboxColumn {
+    width: 1%;    // Contract as far as possible
+  }
 }
 .infoMsgBox {
   &.popover {
