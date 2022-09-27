@@ -56,7 +56,7 @@ class WmsSourceService extends SourceService
     {
         /** @var WmsInstance $sourceInstance */
         $rootLayer = $sourceInstance->getRootlayer();
-        return parent::isInstanceEnabled($sourceInstance) && $rootLayer && $rootLayer->getActive();
+        return parent::isInstanceEnabled($sourceInstance) && $rootLayer;
     }
 
     public function canDeactivateLayer(SourceInstanceItem $layer)
