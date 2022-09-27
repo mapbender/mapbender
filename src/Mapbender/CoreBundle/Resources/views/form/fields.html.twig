@@ -108,7 +108,13 @@
       </ul>
     </li>
     {%- else -%}
-    <li class="choice" data-value="{{ choice.value }}">{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}</li>
+    <li class="choice" data-value="{{ choice.value }}">
+      {%- if choice.label -%}
+        {{- choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) -}}
+      {%- else -%}
+        &nbsp; {#- maintain height / prevent vertical collapse -#}
+      {%- endif -%}
+    </li>
     {%- endif -%}
   {% endfor %}
 {%- endblock %}
