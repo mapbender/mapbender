@@ -313,6 +313,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
     });
     Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
     Mapbender.SourceLayer.typeMap['tms'] = WmtsTmsBaseSourceLayer;
+    return WmtsTmsBaseSourceLayer;
 }());
 
 
