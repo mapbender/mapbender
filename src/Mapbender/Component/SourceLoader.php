@@ -23,6 +23,16 @@ abstract class SourceLoader
     }
 
     /**
+     * @return string
+     */
+    abstract public function getTypeLabel();
+
+    /**
+     * @return string
+     */
+    abstract public function getTypeCode();
+
+    /**
      * @param HttpOriginInterface $origin
      * @return Response
      * @throws InvalidUrlException

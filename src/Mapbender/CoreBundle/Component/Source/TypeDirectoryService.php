@@ -43,8 +43,8 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
     public function getTypeLabels()
     {
         $labelMap = array();
-        foreach ($this->configServices as $configService) {
-            $labelMap[$configService->getTypeCode()] = $configService->getTypeLabel();
+        foreach ($this->loaders as $loader) {
+            $labelMap[$loader->getTypeCode()] = $loader->getTypeLabel();
         }
         return $labelMap;
     }

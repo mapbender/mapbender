@@ -55,6 +55,16 @@ class Importer extends RefreshableSourceLoader
         $this->validator = $validator;
     }
 
+    public function getTypeCode()
+    {
+        return strtolower(Source::TYPE_WMS);
+    }
+
+    public function getTypeLabel()
+    {
+        return 'OGC WMS';
+    }
+
     /**
      * @inheritdoc
      * @throws InvalidUrlException

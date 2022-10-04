@@ -42,16 +42,6 @@ class WmsSourceService extends SourceService
         $this->defaultLayerOrder = $defaultLayerOrder;
     }
 
-    public function getTypeCode()
-    {
-        return strtolower(Source::TYPE_WMS);
-    }
-
-    public function getTypeLabel()
-    {
-        return 'OGC WMS';
-    }
-
     public function isInstanceEnabled(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */

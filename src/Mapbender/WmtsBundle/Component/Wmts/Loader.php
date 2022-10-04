@@ -9,6 +9,7 @@ use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
@@ -18,8 +19,6 @@ class Loader extends SourceLoader
 {
     /** @var XmlValidatorService */
     protected $validator;
-    /** @var mixed[] */
-    protected $proxyConfig;
 
     /**
      * @param HttpTransportInterface $httpTransport
@@ -29,6 +28,20 @@ class Loader extends SourceLoader
     {
         parent::__construct($httpTransport);
         $this->validator = $validator;
+    }
+
+    public function getTypeCode()
+    {
+        // HACK: do not show separate Wmts + Tms type choices
+        //       when loading a new source
+        return strtolower(Source::TYPE_WMTS);
+    }
+
+    public function getTypeLabel()
+    {
+        // HACK: do not show separate Wmts + Tms type choices
+        //       when loading a new source
+        return 'OGC WMTS / TMS';
     }
 
     /**

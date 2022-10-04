@@ -23,17 +23,6 @@ abstract class SourceService
         $this->urlProcessor = $urlProcessor;
     }
 
-    /**
-     * @return string
-     */
-    abstract public function getTypeLabel();
-
-    /**
-     * @return string
-     */
-    abstract public function getTypeCode();
-
-
     public function isInstanceEnabled(SourceInstance $sourceInstance)
     {
         return $sourceInstance->getEnabled();
