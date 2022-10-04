@@ -315,10 +315,10 @@
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
-                var $source = $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element);
-                var $theme = $source.parents('.themeContainer:first');
-                $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
-                if ($theme.length && $theme.find('.serviceContainer').length === 0){
+                var $source = this._getSourceNode(removed.source.id);
+                var $theme = $source.closest('.themeContainer', this.element);
+                $source.remove();
+                if (!$('.serviceContainer', $theme).length) {
                     $theme.remove();
                 }
             }
