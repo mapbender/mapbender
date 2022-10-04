@@ -16,13 +16,6 @@
         template: null,
         menuTemplate: null,
         popup: null,
-        consts: {
-            source: "source",
-            theme: "theme",
-            root: "root",
-            group: "group",
-            simple: "simple"
-        },
         _mobilePane: null,
         useDialog_: false,
         isTouch_: false,
@@ -133,7 +126,7 @@
             // all layers in the source container in DOM order
             var sourceId = $sourceContainer.attr('data-sourceid');
             var layerIdOrder = [];
-            $('li.leave[data-type="simple"]', $sourceContainer).each(function() {
+            $('.-js-leafnode', $sourceContainer).each(function() {
                 var $t = $(this);
                 var layerId = $t.attr('data-id');
                 if (typeof layerId !== "undefined") {
@@ -148,7 +141,7 @@
          * @private
          */
         _updateSourceOrder: function() {
-            var $roots = $('ul.layers li[data-type="root"]', this.element);
+            var $roots = $('.serviceContainer[data-sourceid]', this.element);
             var sourceIds = $roots.map(function() {
                 return $(this).attr('data-sourceid');
             }).get().reverse();
@@ -157,20 +150,10 @@
         _createSortable: function() {
             var self = this;
             var onUpdate = function(event, ui) {
-                var $elm = $(ui.item);
-                var type = $elm.attr('data-type');
-                switch (type) {
-                    case 'theme':
-                    case 'root':
-                        self._updateSourceOrder();
-                        break;
-                    case 'simple':
-                    case 'group':
-                        self._updateSource($elm.closest('.serviceContainer'));
-                        break;
-                    default:
-                        console.warn("Warning: unhandled element in layertree sorting", type, $elm);
-                        break;
+                if (ui.item.is('.themeContainer,.serviceContainer')) {
+                    self._updateSourceOrder();
+                } else {
+                    self._updateSource(ui.item.closest('.serviceContainer'));
                 }
             };
 
@@ -186,7 +169,6 @@
         },
         _createThemeNode: function(layerset, options) {
             var $li = this.themeTemplate.clone();
-            $li.attr('data-type', this.consts.theme);
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
             $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
@@ -223,7 +205,7 @@
 
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
-            var nodeType;
+
             var $childList = $('ul.layers', $li);
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('.-fn-toggle-info', $li).remove();
@@ -231,18 +213,12 @@
             if (!this._filterMenu(layer).length) {
                 $('.layer-menu-btn', $li).remove();
             }
-            if (layer.children && layer.children.length) {
-                if (layer.getParent()) {
-                    $li.addClass("groupContainer");
-                    nodeType = this.consts.group;
-                } else {
-                    $li.addClass("serviceContainer");
-                    nodeType = this.consts.root;
-                }
-                $li.toggleClass('showLeaves', treeOptions.toggle);
-            } else {
-                nodeType = this.consts.simple;
+            if (!layer.getParent()) {
+                $li.addClass("serviceContainer");
             }
+            $li.toggleClass('-js-leafnode', !layer.children || !layer.children.length);
+            $li.toggleClass('showLeaves', treeOptions.toggle);
+
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
                 $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', treeOptions.toggle);
             } else {
@@ -260,7 +236,6 @@
             } else {
                 $childList.remove();
             }
-            $li.attr('data-type', nodeType);
             this._updateLayerDisplay($li, layer);
             $li.find('.layer-title:first')
                 .attr('title', layer.options.title)
@@ -349,7 +324,7 @@
             }
         },
         _getSourceNode: function(sourceId) {
-            return $('li[data-sourceid="' + sourceId + '"][data-type="root"]', this.element);
+            return $('.serviceContainer[data-sourceid="' + sourceId + '"]', this.element);
         },
         _onSourceLoadStart: function(event, options) {
             var sourceId = options.source && options.source.id;

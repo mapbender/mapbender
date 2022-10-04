@@ -49,16 +49,13 @@ $textColor: $darkFontColor !default;
       opacity: 0.35;
     }
   }
-  .themeContainer{
-    .layers{display:none;}
-    &.showLeaves > .layers{display:block;}
+  .leave > .layers {
+    display: none;
   }
-  .serviceContainer, .groupContainer{
-    // show only layers which are toggled
-    .layers{display:none;}
-    &.showLeaves > .layers{display:block;}
+  .leave.showLeaves > .layers {
+    display: block;
+  }
 
-  }
   .no-toggle-children > .leaveContainer .-fn-toggle-children {
     display: none;
   }
