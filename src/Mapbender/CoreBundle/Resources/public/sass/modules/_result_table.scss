@@ -84,10 +84,13 @@ $buttonActiveTextColor: $buttonTextColor !default;
     }
     &.previous, &.next {
       // Hide label text node
-      font-size: 0;
+      text-indent: 50em;
+      overflow-x: hidden;
+      white-space: nowrap;
+      box-sizing: content-box;
+      width: 0.75em;
       &:before {
-        // Restore font size
-        @extend .smallText;
+        text-indent: -50em;
         display: inline-block;
         font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       }
