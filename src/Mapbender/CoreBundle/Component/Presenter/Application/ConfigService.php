@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Mapbender\Component\Event\ApplicationConfigEvent;
+use Mapbender\Component\Event\ApplicationEvent;
 use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
@@ -14,6 +16,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -23,6 +26,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConfigService
 {
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
     /** @var ElementFilter */
     protected $elementFilter;
     /** @var TypeDirectoryService */
@@ -38,13 +43,15 @@ class ConfigService
     protected $assetBaseUrl;
 
 
-    public function __construct(ElementFilter $elementFilter,
+    public function __construct(EventDispatcherInterface $eventDispatcher,
+                                ElementFilter $elementFilter,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 UrlProcessor $urlProcessor,
                                 UrlGeneratorInterface $router,
                                 PackageInterface $baseUrlPackage,
                                 $debug)
     {
+        $this->eventDispatcher = $eventDispatcher;
         $this->elementFilter = $elementFilter;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
@@ -59,13 +66,20 @@ class ConfigService
      */
     public function getConfiguration(Application $entity)
     {
-        /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
         $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
+
+        $this->eventDispatcher->dispatch(new ApplicationEvent($entity), ApplicationEvent::EVTNAME_BEFORE_CONFIG);
+
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
+
+        $evt = new ApplicationConfigEvent($entity, $configuration);
+        $this->eventDispatcher->dispatch($evt, ApplicationConfigEvent::EVTNAME_AFTER_CONFIG);
+        $configuration = $evt->getConfiguration();
+
         return $configuration;
     }
 

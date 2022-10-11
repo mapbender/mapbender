@@ -172,6 +172,7 @@
         <service id="mapbender.presenter.application.config.service"
                  class="%mapbender.presenter.application.config.service.class%"
                  lazy="true">
+            <argument type="service" id="event_dispatcher" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.source.url_processor.service" />
