@@ -8,7 +8,7 @@ use Mapbender\Component\Event\InitDbEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @todo: absorb EPSG importing / updating
@@ -36,6 +36,6 @@ class InitDbCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $event = new InitDbEvent($output);
-        $this->eventDispatcher->dispatch('mapbender.init.db', $event);
+        $this->eventDispatcher->dispatch($event, 'mapbender.init.db');
     }
 }
