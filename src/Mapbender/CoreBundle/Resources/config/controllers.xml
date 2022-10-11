@@ -46,9 +46,11 @@
         </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
                  class="Mapbender\CoreBundle\Controller\ConfigController"
-                 public="true">
+                 public="true"
+                 lazy="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
+            <argument type="service" id="mapbender.presenter.application.cache" />
             <argument>%cachable.mapbender.application.config%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\AssetsController"

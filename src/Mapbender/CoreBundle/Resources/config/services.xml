@@ -169,13 +169,13 @@
             <argument type="service" id="owsproxy.http_foundation_client" />
         </service>
 
-        <service id="mapbender.presenter.application.config.service" class="%mapbender.presenter.application.config.service.class%">
+        <service id="mapbender.presenter.application.config.service"
+                 class="%mapbender.presenter.application.config.service.class%"
+                 lazy="true">
             <argument type="service" id="mapbender.element_filter" />
-            <argument type="service" id="mapbender.presenter.application.cache" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.source.url_processor.service" />
             <argument type="service" id="router" />
-            <argument type="service" id="logger" />
             <argument type="service" id="assets._default_package" />
             <argument>%kernel.debug%</argument>
         </service>
