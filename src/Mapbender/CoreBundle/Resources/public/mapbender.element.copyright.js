@@ -25,6 +25,7 @@
                     content: this.content_,
                     width: this.options.popupWidth || 350,
                     height: this.options.popupHeight || null,
+                    cssClass: 'copyright-dialog',
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.accept'),
