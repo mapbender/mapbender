@@ -87,19 +87,6 @@ $(function() {
         root.toggleClass("active", !!rowCount && checkedCount === rowCount);
         root.toggleClass("multi", !!(rowCount && checkedCount) && checkedCount < rowCount);
     }
-    // toggle all permissions
-    var toggleAllPermissions = function(scope){
-        var self           = $(this);
-        var className    = self.attr("data-perm-type");
-        var permElements = $("tbody .checkWrapper[data-perm-type=" + className + "]", scope);
-        var state        = !self.hasClass("active");
-        $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
-            $(this).parent().toggleClass("active", state);
-        });
-
-        // change root permission state
-        setPermissionsRootState(className, scope);
-    };
     function appendAces($permissionsTable, $sidSelector, defaultPermissions) {
         var body = $("tbody", $permissionsTable);
         var proto = $("thead", $permissionsTable).attr("data-prototype");
@@ -156,17 +143,27 @@ $(function() {
         $head.find(".tagbox").each(function() {
             setPermissionsRootState($(this).attr("data-perm-type"), $table);
         });
-        $head.on('click', '.tagbox', function() {
-            toggleAllPermissions.call(this, $table);
-        });
     };
-    // toggle permission Event
-    var togglePermission = function(){
+    $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
         var $this = $(this);
+        var $cb = $('input[type="checkbox"]', this);
+        $cb.trigger('click');
+        $this.toggleClass('active', !!$cb.prop('checked'));
         var scope = $this.closest('table');
         setPermissionsRootState($this.attr("data-perm-type"), scope);
-    };
-    $(document).on("click", ".permissionsTable .checkWrapper", togglePermission);
+    });
+    $(document).on('click', '.permissionsTable thead .tagbox[data-perm-type]', function() {
+        var $this = $(this);
+        var $table = $(this).closest('table');
+        var permType = $this.attr("data-perm-type");
+        var permElements = $("tbody .tagbox[data-perm-type=" + permType + "]", $table);
+        $this.removeClass('multi');
+        $this.toggleClass('active');
+        var state = $this.hasClass("active");
+        $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
+            $(this).parent().toggleClass("active", state);
+        });
+    });
 
     $(document).on('click', '.ace-collection .-fn-add-permission[data-url]', function(event) {
         var $this = $(this);
