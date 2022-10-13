@@ -73,13 +73,15 @@
             // Fake radio button for font size scalability on mobile
             // @todo: use a real radio button..?
             var $fakeRadio = $('>.state-check', $node);
+            $node.attr('data-state', state && 'active' || null);
+            $('>i', $fakeRadio)
+                .toggleClass('fa-circle', !state)
+                .toggleClass('fa-dot-circle fa-dot-circle-o', state)
+            ;
             if (state) {
-                $node.attr('data-state', 'active');
-                $fakeRadio.addClass('iconRadioActive').removeClass('iconRadio');
                 $node.parentsUntil(this.element, '.basesourcegroup').attr('data-state', 'active');
             } else {
                 $node.attr('data-state', null);
-                $fakeRadio.addClass('iconRadio').removeClass('iconRadioActive');
                 var $group = $node.closest('.basesourcegroup', this.element);
                 while ($group.length) {
                     if ($('.basesourcesetswitch[data-state="active"]', $group).length) {

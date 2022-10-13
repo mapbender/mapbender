@@ -47,7 +47,7 @@
             {%- if not loop.first -%}
             <li class="zoom-level-gap"><i class="fa fas fa-ellipsis-v"></i></li>
             {%- endif -%}
-            <li class="iconZoomLevel clickable toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"></li>
+            <li class="clickable toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"><i class="fa far fa-circle"></i></li>
             {%- endfor -%}
         </ul>
         {% endif %}

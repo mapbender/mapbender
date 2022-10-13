@@ -171,7 +171,10 @@
             var $li = this.themeTemplate.clone();
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
+            $('.-fn-toggle-children', $li)
+                .toggleClass('fa-folder-open', options.opened)
+                .toggleClass('fa-folder', !options.opened)
+            ;
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             this._updateThemeNode(layerset, $li);
             return $li;
@@ -220,7 +223,10 @@
             $li.toggleClass('showLeaves', treeOptions.toggle);
 
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
-                $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', treeOptions.toggle);
+                $('.-fn-toggle-children', $li)
+                    .toggleClass('fa-folder-open', treeOptions.toggle)
+                    .toggleClass('fa-folder', !treeOptions.toggle)
+                ;
             } else {
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
@@ -352,9 +358,11 @@
                 return false;
             }
             var $node = $me.closest('.leave,.themeContainer');
-            var active = $node.hasClass('showLeaves');
-            $node.toggleClass('showLeaves', !active);
-            $me.toggleClass('iconFolderActive', !active);
+            var active = $node.toggleClass('showLeaves').hasClass('showLeaves');
+            $me
+                .toggleClass('fa-folder-open', active)
+                .toggleClass('fa-folder', !active)
+            ;
             return false;
         },
         _toggleSourceVisibility: function(e) {

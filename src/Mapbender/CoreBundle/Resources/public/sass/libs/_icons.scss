@@ -30,27 +30,13 @@ span[class^="icon"], span[class*=" icon"] {
   100%{transform:rotate(359deg)}
 }
 
-// all
-.iconCheckbox:before{content:"\f096"; font-family: FontAwesome;}
-.iconCheckboxActive:before{content:"\f046"; font-family: FontAwesome;}
-.iconCheckboxHalf:before{content:"\f147"; font-family: FontAwesome;}
-.iconRadio:before{content:"\f10c"; font-family: FontAwesome;}
-.iconRadioActive:before{content:"\f192"; font-family: FontAwesome;}
-.iconView:before{content:"\f108"; font-family: FontAwesome;}
-.iconHelp:before{content:"\f059"; font-family: FontAwesome;}
-.iconRight:before{content:"\f054"; font-family: FontAwesome;}
-.iconLeft:before{content:"\f053"; font-family: FontAwesome;}
-.iconTop:before{content:"\f077"; font-family: FontAwesome;}
-.iconMove:before{content:"\f047"; font-family: FontAwesome;}
-.iconMenu:before{content:"\f0c9"; font-family: FontAwesome;}
-
 // only frontend
 .iconAbout:before{content:"\f0c0"; font-family: FontAwesome;}
 .iconPrint:before{content:"\f02f"; font-family: FontAwesome;}
 .iconGps:before{content:"\f041"; font-family: FontAwesome;}
+.iconHelp:before{content:"\f059"; font-family: FontAwesome;}
 .iconLayertree:before{content:"\f0e8"; font-family: FontAwesome;}
 .iconLegend:before{content:"\f00b"; font-family: FontAwesome;}
-.iconInfo:before{content:"\f129"; font-family: FontAwesome;}
 .iconInfoActive:before{content:"\f05a"; font-family: FontAwesome;}
 .iconSearch:before{content:"\f002"; font-family: FontAwesome;}
 .iconWms:before, .iconOverview:before{content:"\f0ac"; font-family: FontAwesome;}
@@ -58,31 +44,11 @@ span[class^="icon"], span[class*=" icon"] {
 .iconWmcLoader:before {content:"\f07c"; font-family: FontAwesome;}
 .iconCoordinates:before{content:"\f05b"; font-family: FontAwesome;}
 .iconGpsTarget:before{content:"\f05b"; font-family: FontAwesome;}
-.iconPrev:before{content:"\f0e2"; font-family: FontAwesome;}
-.iconNext:before{content:"\f01e"; font-family: FontAwesome;}
-.iconZoomLevel:before{content:"\f10c"; font-family: FontAwesome;}
-.iconZoomLevelSelected:before{content:"\f111"; font-family: FontAwesome;}
 .iconAreaRuler:before{content:"\f125"; font-family: FontAwesome;}
-.iconFolder:before{content:"\f07b"; font-family: FontAwesome;}
-.iconFolderActive:before{content:"\f07c"; font-family: FontAwesome;}
 .iconPoi:before{content:"\f08d"; font-family: FontAwesome;}
 .iconImageExport:before{content:"\f030"; font-family: FontAwesome;}
 .iconSketch:before {content: "\f044"; font-family: FontAwesome;}
-.iconFile:before {content: "\f016"; font-family: FontAwesome;}
-.iconBars:before{content:"\f0c9"; font-family: FontAwesome;}
-.iconFileText:before{content:"\f0f6"; font-family: FontAwesome;}
-.iconCancel:before{ content: "\f05c"; font-family: FontAwesome;}
 .iconCopyright:before{ content: "\f1f9"; font-family: FontAwesome;}
-
-// only backend
-.iconGroup:before{content: "\f0c0"; font-family: FontAwesome;}
-.iconAdd:before{content: "\f067"; font-family: FontAwesome;}
-.iconRemove:before{content:"\f00d"; font-family: FontAwesome;}
-.iconOk:before{content:"\f00c" !important; font-family: FontAwesome;} // ACL user/group selection list hack (markup in FOM)
-.iconEdit:before{content:"\f013"; font-family: FontAwesome;}  // = .fa-cog
-.iconGroup:before{content:"\f0c0"; font-family: FontAwesome;}
-.iconUser:before{content:"\f007"; font-family: FontAwesome;}
-.iconReset:before{content:"\f021"; font-family: FontAwesome;}
 
 @mixin buttonFAIcon($content) {
   content: $content;

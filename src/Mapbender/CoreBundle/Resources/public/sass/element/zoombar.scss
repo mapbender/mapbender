@@ -53,6 +53,18 @@
       opacity: $toolBarButtonDefaultOpacity;
       margin-bottom: -1px;
     }
+    li[data-zoom] > i.far:before {
+      /** @todo FA5: remove this hack
+          Both filled and unfilled circle icons
+          use the same codepoint \f111, but a different font
+          (.fas vs .far).
+          \f111 on FA4 is the filled circle (fa-circle-o)
+          .fa-circle-o is not defined on FA5
+          There is no forward compatible CSS solution for FA5
+          that would still work on FA4.
+      */
+      content: "\f10c";   // = FA4 fa-circle-o
+    }
   }
 
   .rotation {

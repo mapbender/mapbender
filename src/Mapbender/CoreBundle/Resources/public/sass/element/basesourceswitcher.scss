@@ -78,4 +78,13 @@ $panelBorderColor: #888 !default;
     border-radius: 3px;
     padding: 5px;
   }
+  .far.fa-circle:before {
+    /** @todo FA5: remove this hack
+      In FA5 we want unmangled .far.fa-circle with codepoint \f111.
+      Codepoint \f111 is a solid filled circle on FA4.
+      There is no forward compatible markup that
+      works for both FA4 and FA5.
+     */
+    content: "\f10c"; // = FA4 .fa-circle-o
+  }
 }
