@@ -128,6 +128,7 @@ class ApplicationAssetService
             $referenceLists[] = $variables;
         }
         $referenceLists[] = $this->getBaseAssetReferences($type);
+        $referenceLists[] = $this->getFrontendBaseAssets($type);
         if ($type === 'js') {
             $referenceLists[] = array(
                 '@MapbenderCoreBundle/Resources/public/init/frontend.js',
@@ -265,19 +266,10 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/util.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-                    '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                    // form-theme specific widget auto-initialization
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                 );
@@ -289,6 +281,24 @@ class ApplicationAssetService
                 );
             default:
                 return array();
+        }
+    }
+
+    protected function getFrontendBaseAssets($type)
+    {
+        switch ($type) {
+            default:
+                return array();
+            case 'js':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
+                    '/components/datatables/media/js/jquery.dataTables.min.js',
+                );
         }
     }
 
