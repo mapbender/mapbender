@@ -1434,10 +1434,11 @@ window.Mapbender.MapModelBase = (function() {
 
             /* Check for unprocessable layers */
 
+            let unprocessable_layer_found = false;
+
             this.sourceTree.forEach((source)=>{
 
                 let localSetting = settings.sources.find((src)=>src.id == source.id);
-
 
                 iterate(source, (s,d) => {
                     if (!s.id) {
@@ -1453,12 +1454,11 @@ window.Mapbender.MapModelBase = (function() {
                     }
                 },0);
 
-                if (unprocessable_layer_found) {
-                    alert("In der Konfiguration des Layerbaums hat sich ein Fehler eingeschlichen. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
-                }
-
-
             });
+
+            if (unprocessable_layer_found) {
+                alert("In der Konfiguration des Layerbaums hat sich ein Fehler eingeschlichen. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
+            }
 
         },
 
