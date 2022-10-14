@@ -1217,6 +1217,7 @@ window.Mapbender.MapModelBase = (function() {
          */
         applySourceSettings: function(settings) {
             // @todo: defensive checks if source was actually changed to reduce reloads...?
+            this._checkForChangedSources(settings);
             var sources = [], i;
             for (i = 0; i < settings.layersets.length; ++i) {
                 var ls = this.getLayersetById(settings.layersets[i].id);
@@ -1396,6 +1397,42 @@ window.Mapbender.MapModelBase = (function() {
                 Math.abs(extent.top - extent.bottom) / viewportHeight
             );
         },
+
+        _checkForChangedSources: function(settings) {
+
+            let iterate = (wmssource, func, depth) => {
+                func(wmssource,depth);
+                wmssource.children.forEach((child)=> {
+                    iterate(child, func, depth+1);
+                });
+            }
+
+            let remaining_id_found = false;
+
+            this.sourceTree.forEach((source)=>{
+
+                let localSetting = settings.sources.find((src)=>src.id == source.id);
+
+                let wms_ids = [];
+
+                iterate(source, (s,d) => {
+                    if (!s.id) { wms_ids.push(s.options.id); }
+                },0);
+
+                let remaining_ids = localSetting.selectedIds.filter((id)=>!wms_ids.includes(id));
+
+                if (remaining_ids.length > 0) {
+                    remaining_id_found = true;
+                }
+
+            });
+
+            if (remaining_id_found) {
+                alert("Auf dem Server haben sich die IDs der Datenquellen geändert. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
+            }
+
+        },
+
         _comma_dangle_dummy: null
     });
 
