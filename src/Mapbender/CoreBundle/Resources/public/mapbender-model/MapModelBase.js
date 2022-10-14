@@ -1217,7 +1217,7 @@ window.Mapbender.MapModelBase = (function() {
          */
         applySourceSettings: function(settings) {
             // @todo: defensive checks if source was actually changed to reduce reloads...?
-            this._checkForChangedSources(settings);
+            this._checkForChangedSourcesAndUnprocessableLayers(settings);
             var sources = [], i;
             for (i = 0; i < settings.layersets.length; ++i) {
                 var ls = this.getLayersetById(settings.layersets[i].id);
@@ -1398,7 +1398,7 @@ window.Mapbender.MapModelBase = (function() {
             );
         },
 
-        _checkForChangedSources: function(settings) {
+        _checkForChangedSourcesAndUnprocessableLayers: function(settings) {
 
             let iterate = (wmssource, func, depth) => {
                 func(wmssource,depth);
@@ -1407,6 +1407,7 @@ window.Mapbender.MapModelBase = (function() {
                 });
             }
 
+            /* Check for changed sources */
             let remaining_id_found = false;
 
             this.sourceTree.forEach((source)=>{
@@ -1430,6 +1431,34 @@ window.Mapbender.MapModelBase = (function() {
             if (remaining_id_found) {
                 alert("Auf dem Server haben sich die IDs der Datenquellen geändert. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
             }
+
+            /* Check for unprocessable layers */
+
+            this.sourceTree.forEach((source)=>{
+
+                let localSetting = settings.sources.find((src)=>src.id == source.id);
+
+
+                iterate(source, (s,d) => {
+                    if (!s.id) {
+                        // Check if there is: selected layer that is not allowed to toggle but has non-selected sublayers and therefore is not possible to be enabled without reloading
+                        if (s.children.length > 0 && !s.options.treeOptions.allow.toggle) {
+                            if (
+                                localSetting.selectedIds.includes(s.options.id) &&
+                                !localSetting.selectedIds.some(si => s.children.map(c => c.options.id).includes(si))
+                            ) {
+                                unprocessable_layer_found = true;
+                            }
+                        }
+                    }
+                },0);
+
+                if (unprocessable_layer_found) {
+                    alert("In der Konfiguration des Layerbaums hat sich ein Fehler eingeschlichen. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
+                }
+
+
+            });
 
         },
 
