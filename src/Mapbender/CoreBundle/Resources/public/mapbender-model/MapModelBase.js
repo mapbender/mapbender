@@ -1217,7 +1217,11 @@ window.Mapbender.MapModelBase = (function() {
          */
         applySourceSettings: function(settings) {
             // @todo: defensive checks if source was actually changed to reduce reloads...?
-            this._checkForChangedSourcesAndUnprocessableLayers(settings);
+            try {
+                this._checkForChangedSourcesAndUnprocessableLayers(settings);
+            } catch(e) {
+                console.error("Ein Fehler ist aufgetreten beim Überprüfen von Inkonsistenzen zwischen lokalen Einstellungen und serverseitigen Layern",e);
+            }
             var sources = [], i;
             for (i = 0; i < settings.layersets.length; ++i) {
                 var ls = this.getLayersetById(settings.layersets[i].id);
