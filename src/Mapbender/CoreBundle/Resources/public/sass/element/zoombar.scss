@@ -103,9 +103,5 @@
   // If draggable = true
   .move-icon-wrap {
     cursor: move;
-    // Overrule icon wildcard cursor rule
-    > * {
-      cursor: inherit;
-    }
   }
 }
