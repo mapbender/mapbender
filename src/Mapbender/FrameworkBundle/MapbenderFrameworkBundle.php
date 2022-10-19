@@ -6,6 +6,7 @@ namespace Mapbender\FrameworkBundle;
 
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterApplicationTemplatesPass;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass;
+use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterIconPackagesPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,6 +29,9 @@ class MapbenderFrameworkBundle extends Bundle
         // Forward available application template classes to registry service
         /** @see \Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry */
         $container->addCompilerPass(new RegisterApplicationTemplatesPass('mapbender.application_template_registry'));
+        // Forward available icon packages to icon index
+        /** @see \Mapbender\FrameworkBundle\Component\IconIndex */
+        $container->addCompilerPass(new RegisterIconPackagesPass('mapbender.icon_index'));
     }
 
     public function getContainerExtension()

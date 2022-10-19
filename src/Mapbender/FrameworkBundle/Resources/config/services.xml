@@ -55,6 +55,19 @@
             <argument type="collection" />
             <argument>%mapbender.application_template.fallback%</argument>
         </service>
+        <service id="mapbender.icon_index"
+                 class="Mapbender\FrameworkBundle\Component\IconIndex"
+                 lazy="true">
+            <!-- initialized by compiler pass -->
+            <!-- will contain all services tagged with "mapbender.icon_package", sorted by priority -->
+            <argument type="collection" />
+        </service>
+        <service id="mapbender.twig.icon_markup"
+                 class="Mapbender\FrameworkBundle\Component\IconExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="twig.extension.assets" />
+            <argument type="service" id="mapbender.icon_index" />
+        </service>
         <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
             <argument type="service" id="mapbender.element_shim_factory.container" />
         </service>
