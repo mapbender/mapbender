@@ -100,3 +100,10 @@ body.desktop-template .mobile-only {
 body.mobile-template .desktop-only {
   display: none;
 }
+
+.hover-highlight-effect {
+  opacity: 0.65;
+  &:hover {
+    opacity: 1.0;
+  }
+}

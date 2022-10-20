@@ -84,13 +84,6 @@ span[class^="icon"], span[class*=" icon"] {
 .iconUser:before{content:"\f007"; font-family: FontAwesome;}
 .iconReset:before{content:"\f021"; font-family: FontAwesome;}
 
-.hover-highlight-effect {
-  opacity: 0.65;
-  &:hover {
-    opacity: 1.0;
-  }
-}
-
 @mixin buttonFAIcon($content) {
   content: $content;
   font-family: FontAwesome;
