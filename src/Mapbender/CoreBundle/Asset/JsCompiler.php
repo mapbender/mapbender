@@ -27,14 +27,8 @@ class JsCompiler extends AssetFactoryBase
     protected function getMigratedReferencesMapping()
     {
         return array(
-            '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => array(
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-            ),
-            '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js' => array(
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-            ),
+            '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+            '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
             '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
             '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
             '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',

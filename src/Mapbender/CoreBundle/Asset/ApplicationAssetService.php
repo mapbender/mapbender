@@ -295,7 +295,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                 );
         }
