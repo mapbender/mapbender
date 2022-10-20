@@ -27,6 +27,9 @@ class ExportResponse extends Response
     /** Excel export type */
     const TYPE_XLS = 'xls';
 
+    /** Excel export type */
+    const TYPE_XLSX = 'xlsx';
+
     /** CSV export type */
     const TYPE_CSV = 'csv';
 
@@ -73,6 +76,15 @@ class ExportResponse extends Response
                     $this->setXls($data);
                 }
                 break;
+
+            case self::TYPE_XLSX:
+                $this->setFileName($fileName.".xlsx");
+                if ($data) {
+                    $this->setXls($data);
+                }
+                break;
+            default:
+                throw new \Exception("Unknown export type");
         }
 
         if($enableDownload){
@@ -242,7 +254,7 @@ class ExportResponse extends Response
             $colNum = 0;
             $keys = array_keys($data[0]);
             $hasKeys = false;
-            
+
             /* check if has some key names */
             foreach ($keys as $keyName){
                 if(!is_numeric($keyName)){
@@ -250,7 +262,7 @@ class ExportResponse extends Response
                     break;
                 }
             }
-            
+
             if ($hasKeys) {
                 foreach ($keys as $key => $value) {
                     $value = utf8_decode($value);
