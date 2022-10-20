@@ -49,11 +49,13 @@ $textColor: $darkFontColor !default;
       opacity: 0.35;
     }
   }
-  .leave > .layers {
-    display: none;
-  }
-  .leave.showLeaves > .layers {
-    display: block;
+  .leave, .themeContainer {
+    > .layers {
+      display: none;
+    }
+    &.showLeaves > .layers {
+      display: block;
+    }
   }
 
   .no-toggle-children > .leaveContainer .-fn-toggle-children {
