@@ -1,7 +1,4 @@
-<span class="iconAbout iconBig"></span>
-{% if show_label and label %}
-    <span>{{ label | trans }}</span>
-{% endif %}
+{%- include 'MapbenderCoreBundle:Element:control_button.html.twig' with {icon: 'iconAbout' } -%}
 <div class="hidden -js-popup-content">
     {{- content | raw -}}
 </div>

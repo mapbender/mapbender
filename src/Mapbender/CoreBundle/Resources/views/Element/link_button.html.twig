@@ -1,8 +1,3 @@
 <a href="{{ link_target }}" target="_blank">
-  {% if icon %}
-    <span class="iconBig {{ icon }}"></span>
-  {% endif %}
-  {% if show_label or not icon %}
-  <span{% if icon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ label|trans }}</span>
-  {% endif %}
+  {%- include 'MapbenderCoreBundle:Element:control_button.html.twig' -%}
 </a>

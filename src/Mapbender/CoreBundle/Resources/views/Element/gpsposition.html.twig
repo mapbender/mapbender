@@ -1,4 +1,1 @@
-<span class="iconBig {{ icon | default('iconGps') }}"></span>
-{% if show_label and label %}
-    <span>{{ label | trans }}</span>
-{% endif %}
+{%- include 'MapbenderCoreBundle:Element:control_button.html.twig' with {icon: icon | default('iconGps')} -%}

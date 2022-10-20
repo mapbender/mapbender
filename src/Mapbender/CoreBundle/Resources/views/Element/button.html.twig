@@ -1,25 +1,5 @@
-{% set _haveIcon = (configuration.icon is defined and configuration.icon) %}
 {% if configuration.click is defined and configuration.click  %}
-  <a id="{{ id }}" target="_blank"
-     class="mb-button"
-     href="{{ configuration.click }}" title="{{ configuration.tooltip|default(title)|trans }}">
-    {% if _haveIcon %}
-      <span class="iconBig {{ configuration.icon }}"></span>
-    {% endif %}
-    {% if configuration.label %}
-    <span{% if _haveIcon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ title|trans }}</span>
-    {% endif %}
-  </a>
-{% else  %}
-  <span id="{{ id }}"
-        data-group="{{ configuration.group }}"
-        title="{{ configuration.tooltip|default(title)|trans }}"
-        class="mb-button">
-    {% if _haveIcon %}
-    <span class="iconBig {{ configuration.icon }}"></span>
-    {% endif %}
-    {% if configuration.label %}
-    <span{% if _haveIcon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ title|trans }}</span>
-    {% endif %}
-  </span>
+  {%- include 'MapbenderCoreBundle:Element:link_button.html.twig' -%}
+{% else %}
+  {%- include 'MapbenderCoreBundle:Element:control_button.html.twig' -%}
 {% endif %}
