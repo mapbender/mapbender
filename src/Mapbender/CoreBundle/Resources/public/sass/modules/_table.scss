@@ -37,8 +37,6 @@
 }
 td, th {
   &.iconColumn {
-    // Undo display: inline-block from the [class^="icon"] rule in libs/_icons.scss
-    display: table-cell !important;
     white-space: nowrap;
     text-align: right;
   }
