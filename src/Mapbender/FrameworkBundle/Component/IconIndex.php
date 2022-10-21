@@ -65,4 +65,15 @@ class IconIndex implements IconPackageInterface
     {
         throw new \LogicException("Index package cannot list aliases");
     }
+
+    public function normalizeAlias($iconCode)
+    {
+        foreach ($this->packages as $package) {
+            $aliases = $package->getAliases();
+            if (!empty($aliases[$iconCode])) {
+                return $aliases[$iconCode];
+            }
+        }
+        return $iconCode;
+    }
 }
