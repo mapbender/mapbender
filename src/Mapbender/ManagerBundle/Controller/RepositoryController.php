@@ -163,11 +163,17 @@ class RepositoryController extends ApplicationControllerBase
             'title' => Criteria::ASC,
             'id' => Criteria::ASC,
         ));
+        $oid = new ObjectIdentity('class', Source::class);
+        $grants = \array_filter(array(
+            'edit' => $this->isGranted('EDIT', $oid),
+            'delete' => $this->isGranted('DELETE', $oid),
+        ));
+        $grants['refresh'] = $grants['edit'] && $this->typeDirectory->getRefreshSupport($source);
         return $this->render($source->getViewTemplate(), array(
             'source' => $source,
             'applications' => $related,
             'title' => $source->getType() . ' ' . $source->getTitle(),
-            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
+            'grants' => $grants,
         ));
     }
 

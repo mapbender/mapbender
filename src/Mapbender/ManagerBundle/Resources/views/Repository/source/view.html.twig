@@ -1,9 +1,35 @@
 {% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
 {%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
 
+{%- block js -%}
+    {{- parent() -}}
+    <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
+{%- endblock -%}
+
 {% block heading %}
-    {%- if edit_shared_instances -%}
-        <a class="btn btn-sm btn-info pull-right" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"><i class="fa fas fa-wifi" ></i>&nbsp;{{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a>
+    {%- if grants is not empty -%}
+        <div class="dropdown bs-dropdown pull-right">
+            <button type="button" class="btn btn-default" data-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
+            <ul class="dropdown-menu">
+                {%- if grants.refresh | default(false) -%}
+                <li><a href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}"
+                    ><i class="fa fa-fw fas fa-refresh fa-sync-alt"></i> {{ 'mb.manager.admin.source.update' | trans }}</a></li>
+                {%- endif -%}
+                {%- if grants.edit | default(false) -%}
+                <li><a href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"
+                    ><i class="fa fa-fw fas fa-wifi"></i> {{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a></li>
+                {%- endif -%}
+                {%- if grants.delete | default(false) -%}
+                    {%- if (grants | length) > 1 -%}
+                        <li role="separator" class="divider"></li>
+                    {%- endif -%}
+                    <li class="label-danger"><a href="#"
+                           class="-fn-delete"
+                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId": source.id}) }}"
+                           data-id="{{ source.id }}"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i> {{ 'mb.actions.delete' | trans}}</a>
+                {%- endif -%}
+            </ul>
+        </div>
     {%- endif -%}
     {{ parent() }}
     <div class="clear"></div>
