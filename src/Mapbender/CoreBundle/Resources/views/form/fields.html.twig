@@ -38,7 +38,7 @@
     {%- endif -%}
     <div {{ block('widget_container_attributes') }}>
       {%- if prototype is defined and form.vars.allow_add is not empty -%}
-        <span class="collectionAdd hover-highlight-effect"><i class="fa fas fa-plus"></i></span>
+        <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
       {%- endif -%}
       {%- for child in form -%}
         {{- form_row(child) -}}
@@ -174,7 +174,7 @@
   {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
     <div class="collectionItem clear">
       {%- if form.parent.vars.allow_delete -%}
-        <span class="collectionRemove hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></span>
+        <a href="#" class="collectionRemove clickable hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></a>
       {%- endif -%}
       {# No label for collection item #}
       {{ form_widget(form) }}
