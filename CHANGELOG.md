@@ -1,4 +1,4 @@
-## dev-master @ a5f24d543
+## dev-master @ 637a366f7
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -23,6 +23,7 @@
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
 * [Backend] Fix visibility of text inputs in sortable collections (instance table, print templates etc) vs dragging highlight effect
 * [Backend] Fix mouse cursor on collection item add / remove interactions
+* [Backend] Add interaction menu (reload, create shared instance, delete) to source view
 * [Backend] Misc other styling fixes
 
 ## v3.3.2-RC1
