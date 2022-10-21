@@ -1,7 +1,4 @@
 {# Generate same markup as control button, but use fixed icon #}
 <a class="-fn-share-link" href="#">
-  <i class="fa fas fa-share-alt iconBig"></i>
-  {% if show_label and label %}
-  <span class="hidden-sm hidden-xs hidden-md-down">{{ label | trans }}</span>
-  {% endif %}
+  {%- include 'MapbenderCoreBundle:Element:control_button.html.twig' with {icon: 'fa fas fa-share-alt' } -%}
 </a>

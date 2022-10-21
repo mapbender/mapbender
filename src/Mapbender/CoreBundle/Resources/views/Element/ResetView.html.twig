@@ -1,5 +1,2 @@
 {# Generate same markup as control button, but predefine some (not configurable) expected variables #}
-    <span class="iconBig iconReset"></span>
-    {% if show_label and label %}
-    <span class="hidden-sm hidden-xs hidden-md-down">{{ label | trans }}</span>
-    {% endif %}
+{%- include 'MapbenderCoreBundle:Element:control_button.html.twig' with {icon: 'iconReset' } -%}
