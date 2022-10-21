@@ -46,7 +46,7 @@
             this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: self.element.attr('data-title'),
                     draggable: true,
                     modal: false,
@@ -54,7 +54,6 @@
                     content: self.element,
                     detachOnClose: false,
                     width: 500,
-                    height: 325,
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
