@@ -2,6 +2,8 @@
 namespace FOM\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Response;
+use Shuchkin\SimpleXLSXGen;
+
 
 /**
  * @author    Andriy Oblivantsev <eslider@gmail.com>
@@ -78,9 +80,9 @@ class ExportResponse extends Response
                 break;
 
             case self::TYPE_XLSX:
-                $this->setFileName($fileName.".xlsx");
+                $this->setFileName();
                 if ($data) {
-                    $this->setXls($data);
+                    $this->setXlsx($data);
                 }
                 break;
             default:
@@ -98,8 +100,8 @@ class ExportResponse extends Response
     public function enableDownload()
     {
         $this->headers->add(array('Cache-Control' => 'private',
-                                  'Pragma'        => 'no-cache',
-                                  'Expires'       => '0')
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0')
         );
     }
 
@@ -120,6 +122,17 @@ class ExportResponse extends Response
     public function setXls(array &$data){
         $output = self::genXLS($data);
         $this->setData($output);
+    }
+
+    /**
+     *
+     * @param array $data
+     * @return void
+     */
+
+    public function setXlsx(array &$data){
+        $xlsx = SimpleXLSXGen::fromArray( $data );
+        $this->setData($xlsx);
     }
 
     /**
@@ -152,7 +165,7 @@ class ExportResponse extends Response
      * @param mixed $output
      * @return $this
      */
-    public function setData(&$output){
+    public function setData($output){
         $this->headers->add(array('Content-Length' => strlen($output)));
         $this->setContent($output);
         return $this;

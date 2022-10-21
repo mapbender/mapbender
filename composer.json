@@ -39,7 +39,8 @@
         "components/jqueryui": "^1",
 
         "mapbender/openlayers6-es5": "~0.3 || ^1",
-        "mapbender/mapquery": "1.x"
+        "mapbender/mapquery": "1.x",
+        "shuchkin/simplexlsxgen": "^1.2"
     },
     "provide": {
         "mapbender/fom": "3.3",
