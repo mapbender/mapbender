@@ -38,6 +38,8 @@ class IconPackageFa4 implements IconPackageInterface
             'POI (FontAwesome)' => 'iconPoi',
             'Image Export (FontAwesome)' => 'iconImageExport',
             'Copyright (FontAwesome)' => 'iconCopyright',
+            'Share' => 'iconShare',
+            'Refresh' => 'iconRefresh',
         );
     }
 
@@ -83,6 +85,10 @@ class IconPackageFa4 implements IconPackageInterface
                 $class = 'fa fas fa-camera'; break;
             case 'iconCopyright':
                 $class = 'fa far fa-copyright'; break;
+            case 'iconShare':
+                $class = 'fa fas fa-share-alt'; break;
+            case 'iconRefresh':
+                $class = 'fa fas fa-sync-alt fa-refresh'; break;
         }
         return HtmlUtil::renderTag('i', '', array(
             'class' => $class,
@@ -100,6 +106,7 @@ class IconPackageFa4 implements IconPackageInterface
             'iconWmcEditor' => 'iconEdit',
             'iconSketch' => 'iconEdit',
             'iconGpsTarget' => 'iconCoordinates',
+            'iconReset' => 'iconRefresh',
         );
     }
 }
