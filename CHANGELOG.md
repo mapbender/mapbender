@@ -1,12 +1,14 @@
-## dev-master @ c23159cec
+## dev-master @ a5f24d543
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
 * [Export / Print] Fix visibility of grouped vector layers
 * [Export / Print] Fix errors printing with active Wmts source
 * [Layertree] Fix errors when dragging Wmts source to a new position
+* [Layertree] Fix theme folder not visually closing on click
 * [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
 * [BaseSourceSwitcher] add `data-title` attributes for id independent custom css matching
+* [WmsLoader] fix broken layout when using larger font size
 * Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
 * Fix Wmts locked to single CRS, even if it supports several
 * Fix password creation in user registration process ([#1430](https://github.com/mapbender/mapbender/issues/1430))
@@ -15,10 +17,13 @@
 * Fix missing link back to login on password reset process end landing page
 * Fix error loading any WMTS that defines keywords
 * Fix height collapse of choice with empty label in custom dropdown
+* Fix sizing of Digitizer table pagination buttons
+* [Mobile Template] Fix inability to close mobile pane via click on currently active control button
+* [Framework] Add server-side events `mb.before_application_config` and `mb.after_application_config`
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
 * [Backend] Fix visibility of text inputs in sortable collections (instance table, print templates etc) vs dragging highlight effect
+* [Backend] Fix mouse cursor on collection item add / remove interactions
 * [Backend] Misc other styling fixes
-* Add missing mobile pane close on click on currently active control button
 
 ## v3.3.2-RC1
 * Fix misc errors reformatting validation error messages when saving invalid application custom css
