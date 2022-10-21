@@ -51,6 +51,7 @@ $desktopBreakpointWidth: 1200px !default;
 
 .iconBig {
   font-size: 160%;
+  line-height: 1;
   &, &+* {
     // Keep following inline element centered vertically despite resizing
     vertical-align: middle;
@@ -142,6 +143,7 @@ ul.toolBar, .toolBar > ul {
       display: block;
       .iconBig {
         // emulate ~.fa-fw for neat text alignment
+        display: inline-block;
         width: 1.25em;
         text-align: center;
       }
