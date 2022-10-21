@@ -80,7 +80,7 @@ class ExportResponse extends Response
                 break;
 
             case self::TYPE_XLSX:
-                $this->setFileName($fileName.".xls");
+                $this->setFileName($fileName.".xlsx");
                 if ($data) {
                     $this->setXlsx($data);
                 }
