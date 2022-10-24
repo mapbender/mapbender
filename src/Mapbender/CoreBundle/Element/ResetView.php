@@ -53,7 +53,7 @@ class ResetView extends ButtonLike
         $defaults = array_replace(parent::getDefaultConfiguration(), array(
             'resetDynamicSources' => true,
         ));
-        // icon is hard-coded to iconReset (see twig template)
+        // icon is hard-coded (see twig template)
         unset($defaults['icon']);
         return $defaults;
     }

@@ -109,8 +109,13 @@ $.widget("mapbender.mbZoomBar", {
     _zoom2Slider: function() {
         var zoomLevel = this.mbMap.getModel().getCurrentZoomLevel();
         var $activeItem = $('[data-zoom="' + zoomLevel + '"]', this.zoomslider);
-        $('li', this.zoomslider).not($activeItem).removeClass('iconZoomLevelSelected');
-        $activeItem.addClass('iconZoomLevelSelected');
+        $('li', this.zoomslider).each(function() {
+            var isActive = $activeItem.is(this);
+            $('>i', this)
+                .toggleClass('fas', isActive)
+                .toggleClass('far', !isActive)
+            ;
+        });
     }
 });
 

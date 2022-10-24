@@ -1,5 +1,5 @@
 {%- if false -%}{%- block leaf -%}
-    <div class="basesourcesetswitch" data-title="{{ opts.title }}" data-sourceset="{{ opts.sources | join(',') }}" ><span class="state-check iconRadio"></span>{{ opts.title | trans }}</div>
+    <div class="basesourcesetswitch" data-title="{{ opts.title }}" data-sourceset="{{ opts.sources | join(',') }}" ><span class="state-check"><i class="fa far fa-circle"></i></span>{{ opts.title | trans }}</div>
 {%- endblock -%}{%- endif -%}
 {%- for name, opts in configuration.groups -%}
     {%- if opts.type == 'item' -%}

@@ -9,25 +9,19 @@ $textColor: $darkFontColor !default;
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: 0.75em;
+    margin-left: 0.6em;
+  }
+  .leaveContainer > .fa {
+    line-height: inherit;
+    // Constant size for icons for nice alignment stacking row-to-row
+    // Slightly less than .fa-fw (1.28571429em), but enough for the
+    // icons we actually use
+    min-width: 1.1em;
+    text-align: center;
   }
   .selectedWrapper.disabled, .featureInfoWrapper.disabled {
     opacity: 0.4;
     cursor: not-allowed;
-  }
-  .iconCheckbox, .iconCheckboxActive {
-    // Mitigate visual glyph height mismatch vs folder / info bubble icons
-    padding-top: 0.1ch;
-  }
-
-  .selectedWrapper, .featureInfoWrapper, .iconFolder, .sourceVisibilityWrapper {
-    // keep constant size to prevent visual "jump" on icon glyph change and neatly
-    // align icons across rows
-    text-align:center;
-    flex: 0 0 1em;
-    -ms-flex: 0 0 1em;
-    width: 1em; // pre-flex
-    margin-right: 0.28em;
   }
   .leaveContainer {
     display: flex;
@@ -118,5 +112,22 @@ $layer-slider-bar-height: 5px;
       // look weird vs dimensions handle (no text)
       min-width: 2.5em;
     }
+  }
+}
+.mb-element-layertree {
+  /** @todo FA5: remove these hacks
+      In FA5 both filled and unfilled icons
+      use the same codepoint, but a different font
+      (.fas vs .far).
+      On FA4, the filled and unfilled versions use
+      different codepoints.
+      There is no forward compatible markup that
+      works for both FA4 and FA5.
+  */
+  .far.fa-check-square:before {
+    content: "\f046";   // = (FA4 only) .fa-check-square-o
+  }
+  .far.fa-square:before {
+    content: "\f096";   // = (FA4 only) .fa-square-o
   }
 }

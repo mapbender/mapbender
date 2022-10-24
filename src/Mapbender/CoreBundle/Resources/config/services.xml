@@ -256,6 +256,12 @@
             <argument>%mapbender.disabled_elements%</argument>
             <argument type="service" id="mapbender.element_shim_factory" />
         </service>
+        <service id="mapbender.icon_package_fa4" class="Mapbender\CoreBundle\Component\IconPackageFa4">
+            <tag name="mapbender.icon_package" priority="-1" />
+        </service>
+        <service id="mapbender.icon_package_mbicons" class="Mapbender\CoreBundle\Component\IconPackageMbIcons">
+            <tag name="mapbender.icon_package" priority="-2" />
+        </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />

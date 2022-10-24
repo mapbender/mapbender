@@ -1,4 +1,5 @@
 .mb-button {
+  cursor: pointer;
   .toolBar & {
     border-radius: 2 * $radius;
     opacity: $toolBarButtonDefaultOpacity;
