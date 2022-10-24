@@ -25,7 +25,17 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
         $layer = parent::parseLayer($source, $layerEl);
 
         foreach ($this->getChildNodesByTagName($layerEl, 'SRS') as $srsEl) {
-            $layer->addSrs(\trim($srsEl->textContent));
+            /**
+             * NOTE: this may be an empty tag
+             * See WMS 1.1.1, section 7.1.4.5.5 "SRS"
+             * "Use a single SRS element with empty content (like so: "<SRS></SRS>") if
+             * there is no common SRS."
+             * oO
+             */
+            $srs = \trim($srsEl->textContent);
+            if ($srs) {
+                $layer->addSrs($srs);
+            }
         }
 
         $scaleHintEl = $this->getFirstChildNode($layerEl, 'ScaleHint');
