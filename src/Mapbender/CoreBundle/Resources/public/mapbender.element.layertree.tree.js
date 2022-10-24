@@ -81,10 +81,9 @@
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('click', '.-fn-toggle-theme', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '.-fn-toggle-layer:not(.disabled)', $.proxy(self._toggleSelected, self));
+            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', $.proxy(self._toggleSelected, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
@@ -111,7 +110,7 @@
             });
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
-                    $('.-fn-toggle-layer', this).click();
+                    $('.-fn-toggle-selected', this).click();
                 });
             }
         },
@@ -171,20 +170,13 @@
             var $li = this.themeTemplate.clone();
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('.-fn-toggle-children > i', $li)
-                .toggleClass('fa-folder-open', options.opened)
-                .toggleClass('fa-folder', !options.opened)
-            ;
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             this._updateThemeNode(layerset, $li);
             return $li;
         },
         _updateThemeNode: function(layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
-            var $themeControl = $('> .leaveContainer .-fn-toggle-theme', $node_);
-            if ($themeControl.length > 1) {
-                console.log("Multiple themes?!", $themeControl.get());
-            }
+            var $themeControl = $('> .leaveContainer .-fn-toggle-selected', $node_);
             var newState = layerset.getSelected();
             this.updateIconVisual_($themeControl, newState, true);
         },
@@ -234,7 +226,7 @@
 
             if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
-                    $('.-fn-toggle-layer', $li).remove();
+                    $('.-fn-toggle-selected', $li).remove();
                 }
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
@@ -314,7 +306,7 @@
         },
         _updateLayerCheckboxes: function($scope, treeOptions) {
             var allow = treeOptions.allow || {};
-            var $layerControl = $('.-fn-toggle-layer', $scope);
+            var $layerControl = $('.-fn-toggle-selected', $scope);
             var $infoControl = $('.-fn-toggle-info', $scope);
             this.updateIconVisual_($layerControl, treeOptions.selected, allow.selected);
             this.updateIconVisual_($infoControl, treeOptions.info, allow.info);
@@ -365,31 +357,24 @@
             ;
             return false;
         },
-        _toggleSourceVisibility: function(e) {
-            var $themeControl = $(e.currentTarget);
-            var newState = !$themeControl.hasClass('active');
-            this.updateIconVisual_($themeControl, newState, true);
-            var $themeNode = $themeControl.closest('.themeContainer');
-            var themeId = $themeNode.attr('data-layersetid');
-            var theme = Mapbender.layersets.filter(function(x) {
-                return x.id === themeId;
-            })[0];
-            this.model.controlTheme(theme, newState);
-            if (this._mobilePane) {
-                $('#mobilePaneClose', this._mobilePane).click();
-            }
-            return false;
-        },
         _toggleSelected: function(e) {
             var $target = $(e.currentTarget);
             var newState = !$target.hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
-            if (layer.parent) {
-                this.model.controlLayer(layer, newState);
+            var themeId = !source && $target.closest('.themeContainer').attr('data-layersetid');
+            if (themeId) {
+                var theme = Mapbender.layersets.filter(function(x) {
+                    return x.id === themeId;
+                })[0];
+                this.model.controlTheme(theme, newState);
             } else {
-                this.model.setSourceVisibility(source, newState);
+               if (layer.parent) {
+                    this.model.controlLayer(layer, newState);
+                } else {
+                    this.model.setSourceVisibility(source, newState);
+                }
             }
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
