@@ -1,4 +1,4 @@
-## dev-master @ 637a366f7
+## dev-master @ cbb398ef5
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -20,6 +20,7 @@
 * Fix sizing of Digitizer table pagination buttons
 * [Mobile Template] Fix inability to close mobile pane via click on currently active control button
 * [Framework] Add server-side events `mb.before_application_config` and `mb.after_application_config`
+* [Framework] Add extensible icon packages for button assignments ([PR#1434](https://github.com/mapbender/mapbender/pull/1434))
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
 * [Backend] Fix visibility of text inputs in sortable collections (instance table, print templates etc) vs dragging highlight effect
 * [Backend] Fix mouse cursor on collection item add / remove interactions
