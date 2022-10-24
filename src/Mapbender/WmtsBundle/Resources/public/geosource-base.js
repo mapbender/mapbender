@@ -62,6 +62,19 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             Mapbender.Source.prototype.destroyLayers.call(this, olMap);
             this.currentActiveLayer = null;
         },
+        refresh: function() {
+            this.nativeLayers.forEach(function(layer) {
+                if (typeof (layer.getSource) !== 'function') {
+                    console.warn("No Openlayers 2 implementation for tile service refresh");
+                    return;
+                }
+                var source = layer.getSource();
+                if (source.tileCache) {
+                    source.tileCache.clear();
+                    source.changed();
+                }
+            });
+        },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
         },

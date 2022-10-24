@@ -118,6 +118,12 @@ window.Mapbender.WmsSource = (function() {
             // delegate to root layer
             return this.configuration.children[0].getSelected();
         },
+        refresh: function() {
+            var cacheBreakParams = {
+                _OLSALT: Math.random()
+            };
+            this.addParams(cacheBreakParams);
+        },
         addParams: function(params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {
                 Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
