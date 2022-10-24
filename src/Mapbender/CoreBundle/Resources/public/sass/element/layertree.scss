@@ -44,9 +44,6 @@ $textColor: $darkFontColor !default;
     }
   }
 
-  .no-toggle-children > .leaveContainer .-fn-toggle-children {
-    display: none;
-  }
   .leave:not(.state-error) .error-icon-wrapper,
   .leave:not(.state-loading) .loading-icon-wrapper {
     display: none;

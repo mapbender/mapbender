@@ -51,7 +51,8 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
-            $('ul.layers:first', this.element).empty();
+            var $rootList = $('ul.layers:first', this.element);
+            $rootList.empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var source = sources[i];
@@ -61,16 +62,17 @@
                         var $themeNode = this._findThemeNode(source.layerset);
                         if (!$themeNode.length) {
                             $themeNode = this._createThemeNode(source.layerset, themeOptions);
-                            $('ul.layers:first', this.element).append($themeNode);
+                            $rootList.append($themeNode);
                         }
                         $('ul.layers:first', $themeNode).append($sourceNode);
                     } else {
-                        $("ul.layers:first", this.element).append($sourceNode);
+                        $rootList.append($sourceNode);
                     }
                     this._resetSourceAtTree(sources[i]);
                 }
             }
 
+            this.reIndent_($rootList, false);
             this._reset();
         },
         _reset: function() {
@@ -222,8 +224,6 @@
             } else {
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
-            $li.toggleClass('no-toggle-children', !!(layer.children && layer.children.length && !treeOptions.allow.toggle));
-
             if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
                     $('.-fn-toggle-selected', $li).remove();
@@ -251,9 +251,11 @@
             if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            var li_s = this._createSourceTree(source);
+            var $sourceTree = this._createSourceTree(source);
+            var $rootList = $('ul.layers:first', this.element);
             // Insert on top
-            $('ul.layers:first', this.element).prepend(li_s);
+            $rootList.prepend($sourceTree);
+            this.indent_($rootList, false);
             this._reset();
         },
         _onSourceChanged: function(event, data) {
@@ -663,6 +665,22 @@
             ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
+            }
+        },
+        reIndent_: function($lists, recursive) {
+            for (var l = 0; l < $lists.length; ++l) {
+                var list = $lists[l];
+                var $folderToggles = $('>li >.leaveContainer .-fn-toggle-children', list);
+                // If all folder toggles on this level of the tree are placeholders,
+                // "unindent" the whole list.
+                if ($folderToggles.filter('.disabled-placeholder').length === $folderToggles.length) {
+                    $folderToggles.addClass('hidden');
+                } else {
+                    $folderToggles.removeClass('hidden');
+                }
+                if (recursive) {
+                    this.reIndent_($('>li > .layers', list), recursive);
+                }
             }
         },
         _destroy: $.noop
