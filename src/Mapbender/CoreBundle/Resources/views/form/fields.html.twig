@@ -243,8 +243,7 @@
 
 {% block tagbox_widget %}
   {% spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
-         data-icon-on="active" data-icon-off="" >
+    <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
       {{- form.vars.attr.class -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>

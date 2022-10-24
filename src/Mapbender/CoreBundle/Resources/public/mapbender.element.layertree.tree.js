@@ -359,7 +359,7 @@
         },
         _toggleSelected: function(e) {
             var $target = $(e.currentTarget);
-            var newState = !$target.hasClass('active');
+            var newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
@@ -383,7 +383,7 @@
         },
         _toggleInfo: function(e) {
             var $target = $(e.currentTarget);
-            var newState = !$target.hasClass('active');
+            var newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
@@ -650,13 +650,17 @@
             }
         },
         updateIconVisual_: function($el, active, enabled) {
-            if (active !== null && (typeof active !== 'undefined')) {
-                $el.toggleClass('active', !!active);
-                $('>i', $el)
-                    .toggleClass($el.attr('data-icon-on'), !!active)
-                    .toggleClass($el.attr('data-icon-off'), !active)
-                ;
+            $el.toggleClass('active', !!active);
+            var icons;
+            if ($el.is('.-fn-toggle-info')) {
+                icons = ['fa-info', 'fa-info-circle'];
+            } else {
+                icons = ['fa-square', 'fa-check-square'];
             }
+            $('>i', $el)
+                .toggleClass(icons[1], !!active)
+                .toggleClass(icons[0], !active)
+            ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
             }
