@@ -1,20 +1,30 @@
   <ul class="layers" >
-      <li class="-fn-theme-template themeContainer hidden toggleable">
+      <li class="-fn-theme-template themeContainer hidden">
         <div class="leaveContainer">
-          <span class="-fn-toggle-children clickable fa fas fa-folder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
-          <span class="-fn-toggle-theme clickable sourceVisibilityWrapper fa far" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans  }}"
-                data-icon-on="fa-check-square" data-icon-off="fa-square"></span>
+          <span class="-fn-toggle-children clickable" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}">
+              <i class="fa fa-fw fas fa-folder"></i>
+          </span>
+          <span class="-fn-toggle-theme clickable" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans }}"
+                data-icon-on="fa-check-square" data-icon-off="fa-square">
+                <i class="fa fa-fw far fa-square"></i>
+          </span>
           <span class="layer-title"></span>
         </div>
         <ul class="layers"></ul>
       </li>
       <li class="-fn-template hidden leave showLeaves">
         <div class="leaveContainer">
-          <span class="-fn-toggle-children clickable fa fas fa-folder" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}"></span>
-          <span class="selectedWrapper clickable -fn-toggle-layer fa far" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}"
-                data-icon-on="fa-check-square" data-icon-off="fa-square"></span>
-          <span class="featureInfoWrapper clickable -fn-toggle-info fa fas" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}"
-                data-icon-on="fa-info-circle" data-icon-off="fa-info"></span>
+          <span class="-fn-toggle-children clickable" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}">
+            <i class="fa fa-fw fas fa-folder"></i>
+          </span>
+          <span class="clickable -fn-toggle-layer" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}"
+                data-icon-on="fa-check-square" data-icon-off="fa-square">
+              <i class="fa fa-fw far fa-square"></i>
+          </span>
+          <span class="clickable -fn-toggle-info" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}"
+                data-icon-on="fa-info-circle" data-icon-off="fa-info">
+                <i class="fa fa-fw fas fa-info"></i>
+          </span>
           <span class="layer-title"></span>
           <span class="error-icon-wrapper"><i class="fa fas fa-exclamation-triangle"></i></span>
           <span class="loading-icon-wrapper"><i class="fa fas fa-spinner fa-spin"></i></span>

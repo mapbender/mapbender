@@ -171,7 +171,7 @@
             var $li = this.themeTemplate.clone();
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('.-fn-toggle-children', $li)
+            $('.-fn-toggle-children > i', $li)
                 .toggleClass('fa-folder-open', options.opened)
                 .toggleClass('fa-folder', !options.opened)
             ;
@@ -223,7 +223,7 @@
             $li.toggleClass('showLeaves', treeOptions.toggle);
 
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
-                $('.-fn-toggle-children', $li)
+                $('.-fn-toggle-children > i', $li)
                     .toggleClass('fa-folder-open', treeOptions.toggle)
                     .toggleClass('fa-folder', !treeOptions.toggle)
                 ;
@@ -352,21 +352,21 @@
             $sourceEl.removeClass('state-loading').addClass('state-error');
         },
         _toggleFolder: function(e) {
-            var $me = $(e.target);
-            var layer = $(e.target).closest('li.leave').data('layer');
+            var $me = $(e.currentTarget);
+            var layer = $me.closest('li.leave').data('layer');
             if (layer && (!layer.children || !layer.options.treeOptions.allow.toggle)) {
                 return false;
             }
             var $node = $me.closest('.leave,.themeContainer');
             var active = $node.toggleClass('showLeaves').hasClass('showLeaves');
-            $me
+            $('>i', $me)
                 .toggleClass('fa-folder-open', active)
                 .toggleClass('fa-folder', !active)
             ;
             return false;
         },
         _toggleSourceVisibility: function(e) {
-            var $themeControl = $(e.target);
+            var $themeControl = $(e.currentTarget);
             var newState = !$themeControl.hasClass('active');
             this.updateIconVisual_($themeControl, newState, true);
             var $themeNode = $themeControl.closest('.themeContainer');
@@ -381,7 +381,7 @@
             return false;
         },
         _toggleSelected: function(e) {
-            var $target = $(e.target);
+            var $target = $(e.currentTarget);
             var newState = !$target.hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
@@ -397,10 +397,9 @@
             return false;
         },
         _toggleInfo: function(e) {
-            var $target = $(e.target);
+            var $target = $(e.currentTarget);
             var newState = !$target.hasClass('active');
-            $target.toggleClass('iconInfoActive active', newState);
-            $target.toggleClass('iconInfo', !newState);
+            this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
@@ -667,8 +666,11 @@
         },
         updateIconVisual_: function($el, active, enabled) {
             if (active !== null && (typeof active !== 'undefined')) {
-                $el.toggleClass(['active', $el.attr('data-icon-on')].join(' '), !!active);
-                $el.toggleClass($el.attr('data-icon-off'), !active);
+                $el.toggleClass('active', !!active);
+                $('>i', $el)
+                    .toggleClass($el.attr('data-icon-on'), !!active)
+                    .toggleClass($el.attr('data-icon-off'), !active)
+                ;
             }
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);

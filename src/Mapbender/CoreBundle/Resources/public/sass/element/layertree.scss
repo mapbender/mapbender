@@ -11,15 +11,7 @@ $textColor: $darkFontColor !default;
   .leave .leave, .themeContainer .leave {
     margin-left: 0.6em;
   }
-  .leaveContainer > .fa {
-    line-height: inherit;
-    // Constant size for icons for nice alignment stacking row-to-row
-    // Slightly less than .fa-fw (1.28571429em), but enough for the
-    // icons we actually use
-    min-width: 1.1em;
-    text-align: center;
-  }
-  .selectedWrapper.disabled, .featureInfoWrapper.disabled {
+  .disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
