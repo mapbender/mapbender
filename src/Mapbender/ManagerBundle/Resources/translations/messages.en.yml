@@ -110,7 +110,6 @@ mb:
         delete:
           title: 'Delete layerset'
           confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id in the form of SourceId/InstanceId'
         id: Id
       instance:
         add: 'Add instance'

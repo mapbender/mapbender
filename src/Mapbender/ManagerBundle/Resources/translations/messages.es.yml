@@ -61,7 +61,6 @@ mb:
         delete:
           title: 'Borrar conjunto de capas'
           confirm: '¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
-        id_description: Id
         id: Id
       instance:
         add: 'Añadir instancia'

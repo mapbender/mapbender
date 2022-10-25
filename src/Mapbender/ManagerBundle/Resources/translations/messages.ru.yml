@@ -61,7 +61,6 @@ mb:
         delete:
           title: 'Удалить слои'
           confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id в форме SourceId/InstanceId'
         id: Id
       instance:
         add: 'Добавить образец'

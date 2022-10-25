@@ -110,7 +110,6 @@ mb:
         delete:
           title: 'Layerset löschen'
           confirm: 'Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?'
-        id_description: 'Id in Form: SourceId/InstanceId'
         id: Id
       instance:
         add: 'Instanz hinzufügen'

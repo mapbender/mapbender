@@ -61,7 +61,6 @@ mb:
         delete:
           title: 'Katmanı sil'
           confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'
-        id_description: 'Id (Kimlik) KaynakId/ÖrnekId (SourceId/InstanceId) şeklinde oluşturulur'
         id: 'Kimlik'
       instance:
         add: 'Örnek ekle'

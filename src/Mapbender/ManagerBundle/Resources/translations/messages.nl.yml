@@ -61,7 +61,6 @@ mb:
         delete:
           title: 'Verwijder lagenset'
           confirm: 'Wilt u werkelijk de lagenset getiteld <span class="italic">%layerset_title%</span> verwijderen?'
-        id_description: 'Identificatie in formaat BronId/InstantieId'
         id: Id
       instance:
         add: 'Voeg instantie toe'

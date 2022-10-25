@@ -127,12 +127,15 @@
   }
 }
 
-.layersetTable{
-  .titleColumn {
-    width: 89%;
+.layersetTable {
+  th.titleColumn {
+    width: 60%;
   }
-  .typeColumn {
-    width: 10%;
+  th.sourceColumn {
+    width: 30%;
+  }
+  td.sourceColumn {
+    text-overflow: ellipsis;
   }
 }
 
