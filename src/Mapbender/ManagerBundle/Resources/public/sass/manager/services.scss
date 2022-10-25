@@ -114,16 +114,14 @@
 .infoMsgBox {
   &.popover {
     left: initial;
+    max-width: initial; // Overrule Bootstrap 276px max-width :[
   }
-  min-width: 260px;
+  min-width: 30em;
 
   .labelInput {
-    width: 40px;
+    width: 30%;
   }
-  .dropdown, .contentPane > .content form & .dropdown {
-    width: 170px;
-  }
-  .inputWrapper, .contentPane > .content form & .inputWrapper {
-    width: 170px;
+  .inputWrapper, .dropdown {
+    width: 65%;
   }
 }
