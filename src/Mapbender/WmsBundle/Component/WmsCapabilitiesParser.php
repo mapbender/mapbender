@@ -200,30 +200,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
         $source->setRemoteWcs($symbolizationEl->getAttribute('RemoteWCS'));
     }
 
-    protected function parseContactInformation(\DOMElement $ciEl)
-    {
-        $personPrimaryEl = $this->getFirstChildNode($ciEl, 'ContactPersonPrimary');
-        $addressEl = $this->getFirstChildNode($ciEl, 'ContactAddress');
-        $contact = new Contact();
-        if ($personPrimaryEl) {
-            $contact->setPerson($this->getFirstChildNodeText($personPrimaryEl, 'ContactPerson'));
-            $contact->setOrganization($this->getFirstChildNodeText($personPrimaryEl, 'ContactOrganization'));
-        }
-        $contact->setPosition($this->getFirstChildNodeText($ciEl, 'ContactPosition'));
-        if ($addressEl) {
-            $contact->setAddressType($this->getFirstChildNodeText($addressEl, 'AddressType'));
-            $contact->setAddress($this->getFirstChildNodeText($addressEl, 'Address'));
-            $contact->setAddressCity($this->getFirstChildNodeText($addressEl, 'City'));
-            $contact->setAddressStateOrProvince($this->getFirstChildNodeText($addressEl, 'StateOrProvince'));
-            $contact->setAddressPostCode($this->getFirstChildNodeText($addressEl, 'PostCode'));
-            $contact->setAddressCountry($this->getFirstChildNodeText($addressEl, 'Country'));
-        }
-        $contact->setVoiceTelephone($this->getFirstChildNodeText($ciEl, 'ContactVoiceTelephone'));
-        $contact->setFacsimileTelephone($this->getFirstChildNodeText($ciEl, 'ContactFacsimileTelephone'));
-        $contact->setElectronicMailAddress($this->getFirstChildNodeText($ciEl, 'ContactElectronicMailAddress'));
-        return $contact;
-    }
-
     protected function parseLayer(WmsSource $source, \DOMElement $layerEl)
     {
         $layer = new WmsLayerSource();
