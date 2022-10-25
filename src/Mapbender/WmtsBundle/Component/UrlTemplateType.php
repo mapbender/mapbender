@@ -35,7 +35,6 @@ class UrlTemplateType implements MutableUrlTarget
     public $template;
 
     /**
-     * Get format
      * @return string
      */
     public function getFormat()
@@ -44,7 +43,6 @@ class UrlTemplateType implements MutableUrlTarget
     }
 
     /**
-     * Gets resourceType
      * @return string
      */
     public function getResourceType()
@@ -53,7 +51,6 @@ class UrlTemplateType implements MutableUrlTarget
     }
 
     /**
-     * Gets template.
      * @return string
      */
     public function getTemplate()
@@ -62,7 +59,6 @@ class UrlTemplateType implements MutableUrlTarget
     }
 
     /**
-     * Sets format
      * @param string $format
      * @return $this
      */
@@ -73,7 +69,6 @@ class UrlTemplateType implements MutableUrlTarget
     }
 
     /**
-     * Sets resourceType
      * @param string $resourceType
      * @return $this
      */
@@ -84,7 +79,6 @@ class UrlTemplateType implements MutableUrlTarget
     }
 
     /**
-     * Sets template
      * @param string $template
      * @return $this
      */

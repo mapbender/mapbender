@@ -79,8 +79,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set opacity
-     *
      * @param integer $opacity
      * @return $this
      */
@@ -91,8 +89,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Get opacity
-     *
      * @return integer
      */
     public function getOpacity()
@@ -101,8 +97,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set proxy
-     *
      * @param boolean $proxy
      * @return $this
      */
@@ -113,8 +107,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Get proxy
-     *
      * @return boolean
      */
     public function getProxy()
@@ -123,8 +115,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Set wmtssource
-     *
      * @param WmtsSource $source
      * @return $this
      */
@@ -135,8 +125,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Get wmtssource
-     *
      * @return WmtsSource
      */
     public function getSource()
@@ -145,8 +133,6 @@ class WmtsInstance extends SourceInstance
     }
 
     /**
-     * Add layers
-     *
      * @param WmtsInstanceLayer $layer
      * @return $this
      */

@@ -61,7 +61,6 @@ class TileMatrix implements MutableUrlTarget
     public $matrixheight;
 
     /**
-     * Get identifier
      * @return string
      */
     public function getIdentifier()
@@ -70,7 +69,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set identifier
      * @param string $value
      */
     public function setIdentifier($value)
@@ -79,7 +77,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get scaledenominator
      * @return float
      */
     public function getScaledenominator()
@@ -88,7 +85,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set scaledenominator
      * @param float $value
      */
     public function setScaledenominator($value)
@@ -97,7 +93,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get href
      * @return string
      */
     public function getHref()
@@ -106,19 +101,15 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set resoulution
      * @param string $href
-     * @return \Mapbender\WmtsBundle\Component\TileMatrix
      */
     public function setHref($href)
     {
         $this->href = $href;
-        return $this;
     }
 
 
     /**
-     * Get topleftcorner
      * @return float[]
      */
     public function getTopleftcorner()
@@ -127,7 +118,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set topleftcorner
      * @param float[] $value
      */
     public function setTopleftcorner($value)
@@ -136,7 +126,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get tilewidth
      * @return string
      */
     public function getTilewidth()
@@ -145,7 +134,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set tilewidth
      * @param string $value
      */
     public function setTilewidth($value)
@@ -154,7 +142,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get tileheight
      * @return string
      */
     public function getTileheight()
@@ -163,7 +150,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set tileheight
      * @param string $value
      */
     public function setTileheight($value)
@@ -172,7 +158,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get matrixwidth
      * @return string
      */
     public function getMatrixwidth()
@@ -181,7 +166,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set matrixwidth
      * @param string $value
      */
     public function setMatrixwidth($value)
@@ -190,7 +174,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Get matrixheight
      * @return string
      */
     public function getMatrixheight()
@@ -199,7 +182,6 @@ class TileMatrix implements MutableUrlTarget
     }
 
     /**
-     * Set matrixheight
      * @param string $value
      */
     public function setMatrixheight($value)

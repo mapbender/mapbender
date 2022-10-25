@@ -39,7 +39,6 @@ class TileMatrixSetLink
     }
 
     /**
-     * Sets tileMatrixSet
      * @param string $tileMatrixSet
      * @return TileMatrixSetLink
      */
@@ -50,7 +49,6 @@ class TileMatrixSetLink
     }
 
     /**
-     * Sets tileMatrixSetLimits.
      * @param integer $tileMatrixSetLimits
      * @return TileMatrixSetLink
      */

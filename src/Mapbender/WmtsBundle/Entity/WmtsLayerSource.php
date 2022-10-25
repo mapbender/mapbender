@@ -79,8 +79,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set title
-     *
      * @param string $title
      */
     public function setTitle($title)
@@ -89,8 +87,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get title
-     *
      * @return string $title
      */
     public function getTitle()
@@ -99,8 +95,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set identifier
-     *
      * @param string $identifier
      */
     public function setIdentifier($identifier)
@@ -109,8 +103,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get identifier
-     *
      * @return string $identifier
      */
     public function getIdentifier()
@@ -119,8 +111,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set abstract
-     *
      * @param string $abstract
      */
     public function setAbstract($abstract)
@@ -129,8 +119,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get abstract
-     *
      * @return string $abstract
      */
     public function getAbstract()
@@ -139,9 +127,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set latlonBounds
-     *
-     * @param BoundingBox $latlonBounds
+     * @param BoundingBox|null $latlonBounds
      * @return $this
      */
     public function setLatlonBounds(BoundingBox $latlonBounds = NULL)
@@ -151,8 +137,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get latlonBounds
-     *
      * @return BoundingBox
      */
     public function getLatlonBounds()
@@ -161,8 +145,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add boundingBox
-     *
      * @param BoundingBox $boundingBoxes
      * @return $this
      */
@@ -173,8 +155,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set boundingBoxes
-     *
      * @param array $boundingBoxes
      * @return $this
      */
@@ -185,8 +165,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get boundingBoxes
-     *
      * @return BoundingBox[]
      */
     public function getBoundingBoxes()
@@ -195,7 +173,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set styles
      * @param array $styles
      * @return $this
      */
@@ -206,7 +183,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add style
      * @param Style $style
      * @return $this
      */
@@ -217,8 +193,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get styles
-     *
      * @return Style[]
      */
     public function getStyles()
@@ -228,8 +202,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 
 
     /**
-     * Set infoformats
-     *
      * @param array $infoformats
      * @return $this
      */
@@ -240,8 +212,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add infoformat
-     *
      * @param string $infoformat
      * @return $this
      */
@@ -252,9 +222,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get infoformats
-     *
-     * @return array
+     * @return string[]
      */
     public function getInfoformats()
     {
@@ -262,7 +230,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     *Gets tilematrixSetlinks.
      * @return TileMatrixSetLink[]
      */
     public function getTilematrixSetlinks()
@@ -271,7 +238,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Sets tilematrixSetlinks
      * @param TileMatrixSetLink[] $tilematrixSetlinks
      * @return $this
      */
@@ -282,7 +248,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Adds TileMatrixSetLink.
      * @param TileMatrixSetLink $tilematrixSetlink
      * @return $this
      */
@@ -293,7 +258,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set resourceUrl
      * @param UrlTemplateType[] $resourceUrls
      * @return $this
      */
@@ -304,7 +268,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add resourceUrl
      * @param UrlTemplateType $resourceUrl
      * @return $this
      */
@@ -315,8 +278,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get resourceUrl
-     *
      * @return UrlTemplateType[]
      */
     public function getResourceUrl()

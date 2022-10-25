@@ -21,8 +21,6 @@ class RequestInformation implements MutableUrlTarget
     public $httpPost;
 
     /**
-     * Get httpGet
-     *
      * @return string|null
      */
     public function getHttpGetRestful()
@@ -31,8 +29,6 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
-     * Set httpGetRestful
-     *
      * @param string $value
      * @return $this
      */
@@ -43,8 +39,6 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
-     * Get httpGetKvp
-     *
      * @return string|null
      */
     public function getHttpGetKvp()
@@ -53,8 +47,6 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
-     * Set httpGetKvp
-     *
      * @param string $value
      * @return $this
      */
@@ -65,7 +57,6 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
-     * Get httpPost
      * @return string|null
      */
     public function getHttpPost()
@@ -74,8 +65,6 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
-     * Set httpPost
-     *
      * @param string $value
      * @return $this
      */

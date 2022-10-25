@@ -24,8 +24,6 @@ class WmtsSourceKeyword extends Keyword
     protected $reference;
 
     /**
-     * Set reference object
-     *
      * @param ContainingKeyword $wmtssource
      * @return $this
      */
@@ -36,8 +34,6 @@ class WmtsSourceKeyword extends Keyword
     }
 
     /**
-     * Get reference object
-     *
      * @return ContainingKeyword
      */
     public function getReferenceObject()

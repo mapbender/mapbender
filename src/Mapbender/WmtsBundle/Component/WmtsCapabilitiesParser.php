@@ -60,8 +60,6 @@ abstract class WmtsCapabilitiesParser extends CapabilitiesDomParser
     }
 
     /**
-     * Gets a capabilities parser
-     *
      * @param \DOMDocument $doc the GetCapabilities document
      * @return static
      * @throws NotSupportedVersionException if a service version is not supported

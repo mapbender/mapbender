@@ -68,8 +68,6 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
     }
 
     /**
-     * Gets a capabilities parser
-     *
      * @param HttpTransportInterface $httpTransport
      * @param \DOMDocument $doc the GetCapabilities document
      * @return static

@@ -69,7 +69,6 @@ class Theme
     }
 
     /**
-     * Get id
      * @return integer id
      */
     public function getId()
@@ -96,7 +95,6 @@ class Theme
     }
 
     /**
-     * Get identifier
      * @return string identifier
      */
     public function getIdentifier()
@@ -115,7 +113,6 @@ class Theme
     }
 
     /**
-     * Get title
      * @return string title
      */
     public function getTitle()
@@ -134,7 +131,6 @@ class Theme
     }
 
     /**
-     * Get abstract
      * @return string abstract
      */
     public function getAbstract()
@@ -143,7 +139,6 @@ class Theme
     }
 
     /**
-     * Set abstract
      * @param string $abstract
      * @return $this
      */
