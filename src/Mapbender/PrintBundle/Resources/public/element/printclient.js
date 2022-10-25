@@ -451,6 +451,7 @@
             var control = new OpenLayers.Control.TransformFeature(this.layer, {
                 renderIntent: 'transform',
                 rotationHandleSymbolizer: 'rotate',
+                rotate: this.options.rotatable,
                 layer: this.layer
             });
             control.events.on({
@@ -475,7 +476,7 @@
             var self = this;
             var interaction = new ol.interaction.Transform({
                 translate: true,
-                rotate: true,
+                rotate: this.options.rotatable,
                 translateFeature: true,
                 stretch: false,
                 layers: [this.layer],
