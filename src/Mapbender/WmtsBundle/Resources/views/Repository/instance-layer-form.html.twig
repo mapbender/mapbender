@@ -13,8 +13,8 @@
         <div class="popover-content form-horizontal">
         {%- block layer_details_content -%}
           {%- set layer = form.vars.data -%}
-          {{- form_row(form.displayName, {'value': layer.sourceItem.identifier }) -}}
-          {{- form_row(form.supportedCrs, {'value': layer.sourceItem.getSupportedCrsNames() | join(', ')}) -}}
+          {{- form_row(form.displayName) -}}
+          {{- form_row(form.supportedCrs) -}}
         {%- endblock -%}
         </div>
       </div>

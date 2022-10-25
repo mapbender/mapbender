@@ -87,6 +87,7 @@ class WmsInstanceLayerType extends AbstractType
             $view['maxScale']->vars['attr'] = array(
                 'placeholder' => $layer->getInheritedMaxScale(),
             );
+            $view['displayName']->vars['value'] = $layer->getSourceItem()->getName();
         }
         $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
         $view['allowinfo']->vars['columnClass'] = 'group-start';
