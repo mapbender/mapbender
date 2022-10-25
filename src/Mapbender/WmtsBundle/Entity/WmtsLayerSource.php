@@ -278,7 +278,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     {
         $names = array();
         foreach ($this->getMatrixSets() as $matrixSet) {
-            return ConfigGeneratorCommon::urnToSrsCode($matrixSet->getSupportedCrs());
+            $names[] = ConfigGeneratorCommon::urnToSrsCode($matrixSet->getSupportedCrs());
         }
         return $names;
     }
