@@ -1,9 +1,10 @@
-## dev-master @ cbb398ef5
+## dev-master @ c42fc2316
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
 * [Export / Print] Fix visibility of grouped vector layers
 * [Export / Print] Fix errors printing with active Wmts source
+* [Print] Fix mouse rotation interaction offered even if `rotatable` config flag is false
 * [Layertree] Fix errors when dragging Wmts source to a new position
 * [Layertree] Fix theme folder not visually closing on click
 * [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
@@ -15,10 +16,13 @@
 * Fix password reset process leaking user account status information ([#1397](https://github.com/mapbender/mapbender/issues/1397))
 * Fix inability to reset expired registration token
 * Fix missing link back to login on password reset process end landing page
-* Fix error loading any WMTS that defines keywords
-* Fix height collapse of choice with empty label in custom dropdown
 * Fix sizing of Digitizer table pagination buttons
+* Fix errors with WMS 1.1.1 sources that declare an empty `<SRS>` tag on layers (source reload required)
+* Fix error loading any WMTS that defines keywords
+* Fix incomplete / erroneous parsing of Wmts contact information
+* Fix height collapse of choice with empty label in custom dropdown
 * [Mobile Template] Fix inability to close mobile pane via click on currently active control button
+* [Framework] Add client-side `refresh` method on Source objects
 * [Framework] Add server-side events `mb.before_application_config` and `mb.after_application_config`
 * [Framework] Add extensible icon packages for button assignments ([PR#1434](https://github.com/mapbender/mapbender/pull/1434))
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
