@@ -121,9 +121,6 @@ mb:
             toggletoc: 'Alterna nel TOC'
             allowreordertoc: 'Permetti Riordina nel TOC'
             moreinfo: 'Più Informazioni'
-            id:
-              title: ID
-              description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nome del Layer'
             style: Stile
       class:

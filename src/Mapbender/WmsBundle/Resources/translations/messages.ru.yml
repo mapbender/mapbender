@@ -119,9 +119,6 @@ mb:
             toggletoc: 'Toggle at TOC'
             allowreordertoc: 'Разрешить Упорядочить по ТОС'
             moreinfo: 'Больше информации'
-            id:
-              title: Id
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Имя слоя'
             style: Style
       admin:

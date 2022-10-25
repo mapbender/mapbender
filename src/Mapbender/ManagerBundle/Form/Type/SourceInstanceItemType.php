@@ -48,15 +48,6 @@ class SourceInstanceItemType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
             ))
-            ->add('displayId', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'mapped' => false,
-                'required' => false,
-                'attr' => array(
-                    'readonly' => 'readonly',
-                    'title' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.description',
-                ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.title',
-            ))
             ->add('displayName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'mapped' => false,
                 'required' => false,

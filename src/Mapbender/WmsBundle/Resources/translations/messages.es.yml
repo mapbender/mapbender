@@ -118,9 +118,6 @@ mb:
             toggletoc: 'Toggle en TOC'
             allowreordertoc: 'Permitir Reordenar en TOC'
             moreinfo: 'Más información'
-            id:
-              title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nombre de las Capas'
             style: Estilo
       class:

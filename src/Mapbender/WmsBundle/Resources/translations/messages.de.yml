@@ -121,9 +121,6 @@ mb:
             toggletoc: 'Umschalten im Layerbaum'
             allowreordertoc: 'Erlaubt sortieren im Layerbaum'
             moreinfo: 'Weitere Informationen'
-            id:
-              title: ID
-              description: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Name
             style: Style
       class:
