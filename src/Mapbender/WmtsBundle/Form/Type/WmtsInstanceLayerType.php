@@ -21,7 +21,7 @@ class WmtsInstanceLayerType extends AbstractType
 
     public function getParent()
     {
-        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
+        return TileInstanceLayerType::class;
     }
 
     /**

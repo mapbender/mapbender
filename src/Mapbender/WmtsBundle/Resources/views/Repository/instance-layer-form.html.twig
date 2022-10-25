@@ -14,6 +14,7 @@
         {%- block layer_details_content -%}
           {%- set layer = form.vars.data -%}
           {{- form_row(form.displayName, {'value': layer.sourceItem.identifier }) -}}
+          {{- form_row(form.supportedCrs, {'value': layer.sourceItem.getSupportedCrsNames() | join(', ')}) -}}
         {%- endblock -%}
         </div>
       </div>

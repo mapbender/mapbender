@@ -2,11 +2,13 @@
 
 namespace Mapbender\WmtsBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorCommon;
 use Mapbender\WmtsBundle\Component\Style;
 use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
 use Mapbender\WmtsBundle\Component\UrlTemplateType;
@@ -255,6 +257,30 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     {
         $this->tilematrixSetlinks[] = $tilematrixSetlink;
         return $this;
+    }
+
+    /**
+     * @return TileMatrixSet[]
+     */
+    public function getMatrixSets()
+    {
+        $identifiers = array();
+        foreach ($this->getTilematrixSetlinks() as $tmsl) {
+            $identifiers[] = $tmsl->getTileMatrixSet();
+        }
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->in('identifier', $identifiers))
+        ;
+        return $this->getSource()->getTilematrixsets()->matching($criteria)->getValues();
+    }
+
+    public function getSupportedCrsNames()
+    {
+        $names = array();
+        foreach ($this->getMatrixSets() as $matrixSet) {
+            return ConfigGeneratorCommon::urnToSrsCode($matrixSet->getSupportedCrs());
+        }
+        return $names;
     }
 
     /**

@@ -246,7 +246,7 @@ abstract class ConfigGeneratorCommon extends SourceService
      * @param string $urnOrCode
      * @return string
      */
-    protected function urnToSrsCode($urnOrCode)
+    public static function urnToSrsCode($urnOrCode)
     {
         return preg_replace('#^urn:.*?:([A-Z]+):.*?(\d+)$#', '$1:$2', $urnOrCode);
     }
