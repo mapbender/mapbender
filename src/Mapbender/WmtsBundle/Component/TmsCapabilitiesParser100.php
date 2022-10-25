@@ -22,9 +22,6 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 {
 
-    /** @var \DOMXPath */
-    protected $xpath;
-
     /**
      * The XML representation of the Capabilites Document
      * @var \DOMDocument
@@ -40,7 +37,6 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
      */
     public function __construct(HttpTransportInterface $httpTransport, \DOMDocument $doc)
     {
-        $this->xpath = new \DOMXPath($doc);
         $this->httpTransport = $httpTransport;
         $this->doc   = $doc;
     }
@@ -95,49 +91,42 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 
         $root       = $this->doc->documentElement;
         $this->parseService($source, $root);
-        $titleMapElts = $this->xpath->query("./TileMaps/TileMap", $root);
-        
-        foreach ($titleMapElts as $titleMapElt) {
-            $url         = $this->getValue("./@href", $titleMapElt);
+
+        foreach ($this->getChildNodesFromNamePath($root, array('TileMaps', 'TileMap')) as $tileMapEl) {
+            $url = $tileMapEl->getAttribute('href');
             $content = $this->httpTransport->getUrl($url)->getContent();
             $doc             = new \DOMDocument();
             if (!@$doc->loadXML($content)) {
                 throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
             }
-            $tilemap = new TmsCapabilitiesParser100($this->httpTransport, $doc);
             // Url Service endpoint (without the version number)
             $pos_vers = strpos($url, $vers);
             $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
             $url_layer = substr($url, $pos_vers + strlen($vers) + 1);
-            $tilemap->parseTileMap($source, $doc->documentElement, $url_raw, $url_layer);
+            $this->parseTileMap($source, $doc->documentElement, $url_raw, $url_layer);
         }
         return $source;
     }
     
     /**
-     * Parses the Service section of the GetCapabilities document
-     *
      * @param HttpTileSource $source
-     * @param \DOMElement $cntxt
+     * @param \DOMElement $rootNode
      */
-    private function parseService(HttpTileSource $source, \DOMElement $cntxt)
+    private function parseService(HttpTileSource $source, \DOMElement $rootNode)
     {
-        $source->setVersion($this->getValue("./@version"));
-        $source->setTitle($this->getValue("./Title/text()"));
-        $source->setDescription($this->getValue("./Abstract/text()"));
+        $source->setVersion($rootNode->getAttribute('version'));
+        $source->setTitle($this->getFirstChildNodeText($rootNode, 'Title'));
+        $source->setDescription($this->getFirstChildNodeText($rootNode, 'Abstract'));
 
-        $keywords = explode(' ', $this->getValue("./KeywordList/text()"));
+        $keywords = \array_filter(\preg_split('#\s+#u', $this->getFirstChildNodeText($rootNode, 'KeywordList')));
         foreach ($keywords as $value) {
-            $value = trim($value);
-            if ($value) {
-                $keyword = new WmtsSourceKeyword();
-                $keyword->setValue($value);
-                $keyword->setReferenceObject($source);
-                $source->addKeyword($keyword);
-            }
+            $keyword = new WmtsSourceKeyword();
+            $keyword->setValue($value);
+            $keyword->setReferenceObject($source);
+            $source->addKeyword($keyword);
         }
         $contact = new Contact();   // Default empty object if no info found
-        foreach ($cntxt->getElementsByTagName('ContactInformation') as $contactInfoEl) {
+        foreach ($rootNode->getElementsByTagName('ContactInformation') as $contactInfoEl) {
             $contact = $this->parseContactInformation($contactInfoEl);
             break;
         }
@@ -168,93 +157,91 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         return $contact;
     }
     
-    public function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent)
+    protected function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent)
     {
         $layer = new WmtsLayerSource();
         $source->addLayer($layer);
         $layer->setSource($source);
-        $layer->setTitle($this->getValue("./Title/text()", $cntx));
-        $layer->setAbstract($this->getValue("./Abstract/text()", $cntx));
+        $layer->setTitle($this->getFirstChildNodeText($cntx, 'Title'));
+        $layer->setAbstract($this->getFirstChildNodeText($cntx, 'Abstract'));
         $layer->setIdentifier($layerIdent);
 
-        $srs = $this->getValue("./SRS/text()", $cntx);
-        $profile = $this->getValue("./TileSets/@profile", $cntx);
-        $format = $this->getValue("./TileFormat/@mime-type", $cntx);
-        $tilewidth = $this->getValue("./TileFormat/@width", $cntx);
-        $tileheight = $this->getValue("./TileFormat/@height", $cntx);
+        $srs = $this->getFirstChildNodeText($cntx, 'SRS');
+        $tileFormatEl = $this->getFirstChildNode($cntx, 'TileFormat');
 
         $resourceUrl = new UrlTemplateType();
-        $layer->addResourceUrl(
-            $resourceUrl
-                ->setFormat($format)
-                ->setResourceType(null)
-                ->setTemplate($url)
-        );
+        $resourceUrl->setTemplate($url);
+        $resourceUrl->setFormat($tileFormatEl->getAttribute('mime-type'));
+        $layer->addResourceUrl($resourceUrl);
 
         $tmsl = new TileMatrixSetLink();
         $tmsl->setTileMatrixSet($layerIdent);
         $layer->addTilematrixSetlinks($tmsl);
 
-        $bbox = new BoundingBox();
-        $bbox->setSrs($srs)
-            ->setMinx($this->getValue("./BoundingBox/@minx", $cntx))
-            ->setMiny($this->getValue("./BoundingBox/@miny", $cntx))
-            ->setMaxx($this->getValue("./BoundingBox/@maxx", $cntx))
-            ->setMaxy($this->getValue("./BoundingBox/@maxy", $cntx));
+        $bboxEl = $this->getFirstChildNode($cntx, 'BoundingBox');
+        $bbox = $this->parseBoundingBox($bboxEl);
+        $bbox->setSrs($srs);
         $layer->addBoundingBox($bbox);
-
+        $originEl = $this->getFirstChildNode($cntx, 'Origin');
         $origin = array(
-            floatval($this->getValue("./Origin/@x", $cntx)),
-            floatval($this->getValue("./Origin/@y", $cntx))
+            floatval($originEl->getAttribute('x')),
+            floatval($originEl->getAttribute('y')),
         );
 
-        $tileSetsSet = new TileMatrixSet();
-        $tileSetsSet->setIdentifier($layerIdent);
-        $tileSetsSet->setTitle($this->getValue("./Title/text()", $cntx));
-        $tileSetsSet->setAbstract($this->getValue("./Abstract/text()", $cntx));
-        $tileSetsSet->setSupportedCrs($this->getValue("./SRS/text()", $cntx));
-        $tileSetsElts = $this->xpath->query("./TileSets/TileSet", $cntx);
-
-        foreach ($tileSetsElts as $tileSetEl) {
-            $tileSet = new TileMatrix();
-            $tileSet->setIdentifier($this->getValue("./@order", $tileSetEl));
-            $tileSet->setScaledenominator(floatval($this->getValue("./@units-per-pixel", $tileSetEl)));
-            $tileSet->setHref($this->getValue("./@href", $tileSetEl));
-            $tileSet->setTopleftcorner($origin);
-            $tileSet->setTilewidth($tilewidth);
-            $tileSet->setTileheight($tileheight);
-            $tileSetsSet->addTilematrix($tileSet);
+        $matrixSet = new TileMatrixSet();
+        $matrixSet->setIdentifier($layerIdent);
+        $matrixSet->setTitle($layer->getTitle());
+        $matrixSet->setAbstract($layer->getAbstract());
+        $matrixSet->setSupportedCrs($srs);
+        foreach ($this->getChildNodesFromNamePath($cntx, array('TileSets', 'TileSet')) as $tileSetEl) {
+            $tileMatrix = $this->parseTileSet($tileSetEl);
+            $tileMatrix->setTopleftcorner($origin);
+            $tileMatrix->setTilewidth($tileFormatEl->getAttribute('width'));
+            $tileMatrix->setTileheight($tileFormatEl->getAttribute('height'));
+            $matrixSet->addTilematrix($tileMatrix);
         }
-        $source->addTilematrixset($tileSetsSet);
-        $tileSetsSet->setSource($source);
+        $source->addTilematrixset($matrixSet);
+        $matrixSet->setSource($source);
+    }
+
+    protected function parseBoundingBox(\DOMElement $element)
+    {
+        $bbox = new BoundingBox();
+        $bbox->setMinx($element->getAttribute('minx'));
+        $bbox->setMiny($element->getAttribute('miny'));
+        $bbox->setMaxx($element->getAttribute('maxx'));
+        $bbox->setMaxy($element->getAttribute('maxy'));
+        return $bbox;
+    }
+
+    protected function parseTileSet(\DOMElement $element)
+    {
+        $tileMatrix = new TileMatrix();
+        $tileMatrix->setIdentifier($element->getAttribute('order'));
+        $tileMatrix->setScaledenominator(\floatval($element->getAttribute('units-per-pixel')));
+        $tileMatrix->setHref($element->getAttribute('href'));
+        return $tileMatrix;
     }
 
     /**
-     * @param string $expression
-     * @param \DOMNode|null $startNode
-     * @return \DOMNode|null
-     * @deprecated decide what you want to match (child nodes or attributes or text contents)
+     * Nested child element lookup convenience method.
+     *
+     * @param \DOMElement $parent
+     * @param string[] $path
+     * @return \DOMElement[]
      */
-    protected function getValue($expression, \DOMNode $startNode = null)
+    protected static function getChildNodesFromNamePath(\DOMElement $parent, array $path)
     {
-        try {
-            $elm = $this->xpath->query($expression, $startNode)->item(0);
-            if (!$elm) {
-                return null;
+        $path = \array_values($path);
+        if (count($path) > 1) {
+            $matches = array();
+            $remainingPath = \array_slice($path, 1);
+            foreach (static::getChildNodesByTagName($parent, $path[0]) as $nextParent) {
+                $matches = \array_merge($matches, static::getChildNodesFromNamePath($nextParent, $remainingPath));
             }
-            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
-                /** @var \DOMAttr $elm */
-                return $elm->value;
-            } elseif ($elm->nodeType == XML_TEXT_NODE) {
-                /** @var \DOMText $elm */
-                return $elm->wholeText;
-            } elseif ($elm->nodeType == XML_ELEMENT_NODE) {
-                return $elm;
-            } else {
-                return null;
-            }
-        } catch (\Exception $E) {
-            return null;
+            return $matches;
+        } else {
+            return static::getChildNodesByTagName($parent, $path[0]);
         }
     }
 }
