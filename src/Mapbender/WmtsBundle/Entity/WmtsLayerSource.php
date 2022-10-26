@@ -157,13 +157,11 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * @param array $boundingBoxes
-     * @return $this
+     * @param BoundingBox[] $boundingBoxes
      */
     public function setBoundingBoxes($boundingBoxes)
     {
-        $this->boundingBoxes = $boundingBoxes ? $boundingBoxes : array();
-        return $this;
+        $this->boundingBoxes = $boundingBoxes ?: array();
     }
 
     /**
@@ -309,22 +307,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function getResourceUrl()
     {
         return $this->resourceUrl;
-    }
-
-    /**
-     * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
-     * This is used in frontend config generation.
-     *
-     * @return BoundingBox[]
-     */
-    public function getMergedBoundingBoxes()
-    {
-        $bboxes = array();
-        $latLonBounds = $this->getLatlonBounds();
-        if ($latLonBounds) {
-            $bboxes[] = $latLonBounds;
-        }
-        return array_merge($bboxes, $this->getBoundingBoxes());
     }
 
     /**
