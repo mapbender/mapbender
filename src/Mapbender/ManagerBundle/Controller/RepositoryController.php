@@ -76,9 +76,11 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Repository/index.html.twig', array(
             'sources' => $sources,
             'shared_instances' => $sharedInstances,
-            'oid' => $oid,
-            'create_permission' => $this->isGranted('CREATE', $oid),
-            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
+            'grants' => array(
+                'create' => $this->isGranted('CREATE', $oid),
+                'edit' => $this->isGranted('EDIT', $oid),
+                'delete' => $this->isGranted('DELETE', $oid),
+            ),
         ));
     }
 
