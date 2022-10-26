@@ -17,6 +17,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
+use Mapbender\WmtsBundle\Component\InstanceFactoryWmts;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Entity\HttpTileSource;
@@ -145,7 +146,7 @@ class Loader extends SourceLoader
 
         foreach ($instance->getSource()->getLayers() as $sourceLayer) {
             $identifier = $sourceLayer->getIdentifier();
-            $newInstanceLayer = SourceInstanceFactory::createInstanceLayer($sourceLayer);
+            $newInstanceLayer = InstanceFactoryWmts::createInstanceLayer($sourceLayer);
             if (!empty($identifierMap[$identifier])) {
                 // Copy previous instance layer settings
                 EntityUtil::copyEntityFields($newInstanceLayer, $identifierMap[$identifier], $instanceLayerMeta);

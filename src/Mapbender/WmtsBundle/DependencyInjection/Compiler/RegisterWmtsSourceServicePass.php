@@ -26,7 +26,7 @@ class RegisterWmtsSourceServicePass implements CompilerPassInterface
         $typeDirectoryDefinition->addMethodCall('registerSubtypeService', array(
             'tms',
             new Reference('mapbender.source.tms.config_generator'),
-            new Reference('mapbender.source.wmts.instance_factory'),
+            new Reference('mapbender.source.tms.instance_factory'),
             new Reference('mapbender.importer.source.wmts.service'),
         ));
     }
