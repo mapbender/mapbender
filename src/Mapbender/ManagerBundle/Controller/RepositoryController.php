@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -179,7 +180,7 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * Deletes a Source (POST) or renders confirmation markup (GET)
-     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST"})
+     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param string $sourceId
      * @return Response
@@ -210,9 +211,18 @@ class RepositoryController extends ApplicationControllerBase
             'id' => Criteria::ASC,
         ));
         if ($request->getMethod() === Request::METHOD_GET) {
+            // Use an empty form to help client code follow the final redirect properly
+            // See Resources/public/confirm-delete.js
+            $dummyForm = $this->createForm(FormType::class, null, array(
+                'method' => 'DELETE',
+                'action' => $this->generateUrl('mapbender_manager_repository_delete', array(
+                    'sourceId' => $sourceId,
+                )),
+            ));
             return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
                 'source' => $source,
                 'applications' => $affectedApplications,
+                'form' => $dummyForm->createView(),
             ));
         }
         // capture ACL and entity updates in a single transaction

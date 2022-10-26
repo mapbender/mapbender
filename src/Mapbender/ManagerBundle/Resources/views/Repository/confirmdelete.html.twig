@@ -1,3 +1,5 @@
+{{- form_start(form) -}}
 <p>{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}?</p>
 
 {% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' with {'applications': applications } %}
+{{- form_end(form) -}}
