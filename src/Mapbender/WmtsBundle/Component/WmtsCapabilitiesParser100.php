@@ -2,8 +2,11 @@
 
 namespace Mapbender\WmtsBundle\Component;
 
+use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\LegendUrl;
 use Mapbender\WmtsBundle\Entity\Theme;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
@@ -12,30 +15,24 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 /**
- * @package Mapbender
  * @author Paul Schmidt
  */
-class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
+class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
 {
     /**
-     * @var \DOMDocument
-     */
-    protected $doc;
-
-    public function __construct(\DOMDocument $doc)
-    {
-        $this->doc = $doc;
-    }
-
-    /**
-     * Parses the GetCapabilities document
      * @return WmtsSource
      */
-    public function parse()
+    public function parse(\DOMDocument $doc)
     {
-        $source = new WmtsSource();
+        $version = $doc->documentElement->getAttribute("version");
+        if ('1.0.0' !== $version) {
+            // @todo: Show the user the incompatible version number
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+        }
+
+        $source = HttpTileSource::wmtsFactory();
         /** @var \DOMElement $root */
-        $root       = $this->doc->documentElement;
+        $root = $doc->documentElement;
 
         $source->setVersion($root->getAttribute('version'));
         $serviceIdentEl = $this->getFirstChildNode($root, 'ServiceIdentification');

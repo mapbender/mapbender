@@ -5,10 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
-use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Component\Exception\WmsException;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -24,12 +21,6 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
 {
 
     /**
-     * The XML representation of the Capabilites Document
-     * @var \DOMDocument
-     */
-    protected $doc;
-
-    /**
      * The resolution
      *
      * @var integer
@@ -37,24 +28,14 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
     protected $resolution = 72;
 
     /**
-     * Creates an instance
-     *
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        $this->doc = $doc;
-    }
-
-    /**
      * Parses the GetCapabilities document
      *
      * @return WmsSource
      */
-    public function parse()
+    public function parse(\DOMDocument $doc)
     {
         $wms = new WmsSource();
-        $root = $this->doc->documentElement;
+        $root = $doc->documentElement;
         $wms->setVersion($root->getAttribute('version'));
         $this->parseService($wms, $this->getFirstChildNode($root, 'Service'));
         $this->parseCapabilityList($wms, $this->getFirstChildNode($root, 'Capability'));
@@ -392,57 +373,5 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
             return $onlineResourceEl->getAttribute('xlink:href');
         }
         return $default;
-    }
-
-    /**
-     * Creates a document
-     *
-     * @param string $data the string containing the XML
-     * @return \DOMDocument a GetCapabilites document
-     * @throws XmlParseException if a GetCapabilities xml is not valid
-     * @throws WmsException if an service exception
-     * @throws NotSupportedVersionException if a service version is not supported
-     */
-    public static function createDocument($data)
-    {
-        $doc = new \DOMDocument();
-        if (!@$doc->loadXML($data)) {
-            throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
-        }
-        if ($doc->documentElement->tagName == "ServiceExceptionReport") {
-            $message = $doc->documentElement->nodeValue;
-            throw new WmsException($message);
-        }
-
-        if ($doc->documentElement->tagName !== "WMS_Capabilities"
-            && $doc->documentElement->tagName !== "WMT_MS_Capabilities") {
-            throw new NotSupportedVersionException("mb.wms.repository.parser.not_supported_document");
-        }
-
-        $version = $doc->documentElement->getAttribute("version");
-        if ($version !== "1.1.1" && $version !== "1.3.0") {
-            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
-        }
-        return $doc;
-    }
-
-    /**
-     * Gets a capabilities parser
-     *
-     * @param \DOMDocument $doc the GetCapabilities document
-     * @return WmsCapabilitiesParser111 | WmsCapabilitiesParser130 a capabilities parser
-     * @throws NotSupportedVersionException if a service version is not supported
-     */
-    public static function getParser(\DOMDocument $doc)
-    {
-        $version = $doc->documentElement->getAttribute("version");
-        switch ($version) {
-            case "1.1.1":
-                return new WmsCapabilitiesParser111($doc);
-            case "1.3.0":
-                return new WmsCapabilitiesParser130($doc);
-            default:
-                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
-        }
     }
 }

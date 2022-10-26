@@ -7,13 +7,15 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmtsBundle\Component\Exception\NoWmtsDocument;
+use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
-use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser;
+use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser100;
+use Mapbender\WmtsBundle\Entity\HttpTileSource;
 
 class Loader extends SourceLoader
 {
@@ -45,21 +47,26 @@ class Loader extends SourceLoader
     }
 
     /**
-     * @inheritdoc
      * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
-     * @throws \Mapbender\CoreBundle\Component\Exception\XmlParseException
-     * @throws \Mapbender\WmtsBundle\Component\Exception\WmtsException
+     * @throws XmlParseException
+     * @throws ServerResponseErrorException
+     * @return HttpTileSource
      */
     public function parseResponseContent($content)
     {
-        try {
-            $document = WmtsCapabilitiesParser::createDocument($content);
-            $source = WmtsCapabilitiesParser::getParser($document)->parse();
-        } catch (NoWmtsDocument $e) {
-            $document = TmsCapabilitiesParser100::createDocument($content);
-            $source = TmsCapabilitiesParser100::getParser($this->httpTransport, $document)->parse();
+        $doc = $this->xmlToDom($content);
+        switch ($doc->documentElement->tagName) {
+            // @todo: DI, handlers, prechecks
+            default:
+                // @todo: use a different exception to indicate lack of support
+                throw new XmlParseException('mb.wms.repository.parser.not_supported_document');
+            case 'TileMapService':
+                $parser = new TmsCapabilitiesParser100($this->httpTransport);
+                return $parser->parse($doc);
+            case 'Capabilities':
+                $parser = new WmtsCapabilitiesParser100();
+                return $parser->parse($doc);
         }
-        return $source;
     }
 
     /**
@@ -76,11 +83,6 @@ class Loader extends SourceLoader
 
     public function validateResponseContent($content)
     {
-        try {
-            $document = WmtsCapabilitiesParser::createDocument($content);
-        } catch (NoWmtsDocument $e) {
-            $document = TmsCapabilitiesParser100::createDocument($content);
-        }
-        $this->validator->validateDocument($document);
+        $this->validator->validateDocument($this->xmlToDom($content));
     }
 }

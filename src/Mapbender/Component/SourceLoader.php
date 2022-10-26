@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SourceLoader
@@ -61,6 +62,9 @@ abstract class SourceLoader
     public function evaluateServer(HttpOriginInterface $origin)
     {
         $response = $this->getResponse($origin);
+        // @todo: detect / show connection errors and server error codes
+        // if (!$response->isOk()) {
+        // ...
         $source = $this->parseResponseContent($response->getContent());
         $this->updateOrigin($source, $origin);
         return $source;
@@ -100,5 +104,28 @@ abstract class SourceLoader
         if (empty($parts['scheme']) || empty($parts['host'])) {
             throw new InvalidUrlException($url);
         }
+    }
+
+    /**
+     * @param string $content
+     * @return \DOMDocument
+     * @throws XmlParseException
+     * @throws ServerResponseErrorException
+     */
+    protected function xmlToDom($content)
+    {
+        $doc = new \DOMDocument();
+        $xmlSuccess = @$doc->loadXML($content);
+
+        if (!$xmlSuccess || !$doc->documentElement) {
+            // @todo: use a different exception to indicate server response failure
+            throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
+        }
+        if (false !== \stripos($doc->documentElement->tagName, 'Exception')) {
+            // @todo: use a different exception to indicate server response failure
+            // @todo: Show the user the server's error message
+            throw new ServerResponseErrorException($doc->documentElement->textContent);
+        }
+        return $doc;
     }
 }

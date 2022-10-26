@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -130,6 +131,10 @@ class RepositoryController extends ApplicationControllerBase
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
+            } catch (ServerResponseErrorException $e) {
+                // @todo: use different text to indicate server response failure, not parsing failure
+                $form->addError(new FormError('mb.wms.repository.parser.couldnotparse'));
+                $form->addError(new FormError($e->getMessage()));
             } catch (\Exception $e) {
                 $form->addError(new FormError($e->getMessage()));
             }

@@ -4,19 +4,15 @@
 * @author Karim Malhas <karim@malhas.de>
 */
 
-use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 /**
  *   Tests the WmsCapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple
  */
-class WmsCapabilitiesParserTest extends \PHPUnit\Framework\TestCase
+class WmsCapabilitiesParserTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
     public function testMinimal(){
-
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
-        $doc = WmsCapabilitiesParser::createDocument($data);
-        $parser  = WmsCapabilitiesParser::getParser($doc);
-        $wms = $parser->parse();
+        $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertSame("OGC:WMS",$wms->getName(),"Name is wrong");
         $this->assertSame("The example.com Test WMS",$wms->getTitle(),  "title is wrong");
         $this->assertEquals(1,count($wms->getLayers()),"layercount is wrong");
@@ -31,9 +27,7 @@ class WmsCapabilitiesParserTest extends \PHPUnit\Framework\TestCase
 
     public function testLayersRootLayerOnly(){
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
-        $doc = WmsCapabilitiesParser::createDocument($data);
-        $parser  = WmsCapabilitiesParser::getParser($doc);
-        $wms = $parser->parse();
+        $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertEquals(1,$wms->getLayers()->count());
 
         $rootLayer = $wms->getRootlayer();
@@ -46,9 +40,7 @@ class WmsCapabilitiesParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMap(){
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
-        $doc = WmsCapabilitiesParser::createDocument($data);
-        $parser  = WmsCapabilitiesParser::getParser($doc);
-        $wms = $parser->parse();
+        $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertEquals(1,$wms->getLayers()->count());
 
         //$this->assertSame("image/png",$wms->getDefaultRequestGetMapFormat());
@@ -63,6 +55,16 @@ class WmsCapabilitiesParserTest extends \PHPUnit\Framework\TestCase
         $bb = $rootLayer->getLatlonBounds();
         $strbb = $bb->getMinx()." ".$bb->getMiny()." ".$bb->getMaxx()." ".$bb->getMaxy();
         $this->assertEquals("-10.4 35.7 -180 180",$strbb);
+    }
+
+    protected static function getImporter()
+    {
+        if (!self::$booted) {
+            self::bootKernel();
+        }
+        /** @var \Mapbender\WmsBundle\Component\Wms\Importer $importer*/
+        $importer = self::$kernel->getContainer()->get('mapbender.importer.source.wms.service');
+        return $importer;
     }
 
 }

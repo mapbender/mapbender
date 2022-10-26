@@ -22,74 +22,31 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 {
 
-    /**
-     * The XML representation of the Capabilites Document
-     * @var \DOMDocument
-     */
-    protected $doc;
-
     /** @var HttpTransportInterface */
     protected $httpTransport;
 
     /**
      * @param HttpTransportInterface $httpTransport
-     * @param \DOMDocument $doc
      */
-    public function __construct(HttpTransportInterface $httpTransport, \DOMDocument $doc)
+    public function __construct(HttpTransportInterface $httpTransport)
     {
         $this->httpTransport = $httpTransport;
-        $this->doc   = $doc;
     }
 
     /**
-     * Creates a document
-     *
-     * @param string $data the string containing the XML
-     * @return \DOMDocument a GetCapabilites document
-     * @throws XmlParseException if a GetCapabilities xml is not valid
-     * @throws NotSupportedVersionException if a service version is not supported
-     */
-    public static function createDocument($data)
-    {
-        $doc = new \DOMDocument();
-        if (!@$doc->loadXML($data)) {
-            throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
-        }
-
-        $version = $doc->documentElement->getAttribute("version");
-        if ($version !== "1.0.0") {
-            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
-        }
-        return $doc;
-    }
-
-    /**
-     * @param HttpTransportInterface $httpTransport
-     * @param \DOMDocument $doc the GetCapabilities document
-     * @return static
-     * @throws NotSupportedVersionException if a service version is not supported
-     */
-    public static function getParser(HttpTransportInterface $httpTransport, \DOMDocument $doc)
-    {
-        $version = $doc->documentElement->getAttribute("version");
-        switch ($version) {
-            case "1.0.0":
-                return new TmsCapabilitiesParser100($httpTransport, $doc);
-            default:
-                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
-        }
-    }
-
-    /**
-     * Parses the GetCapabilities document
      * @return HttpTileSource
      */
-    public function parse()
+    public function parse(\DOMDocument $doc)
     {
-        $source = HttpTileSource::tmsFactory();
-        $vers = '1.0.0';
+        $vers = $doc->documentElement->getAttribute("version");
+        if ('1.0.0' !== $vers) {
+            // @todo: Show the user the incompatible version number
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+        }
 
-        $root       = $this->doc->documentElement;
+        $source = HttpTileSource::tmsFactory();
+
+        $root =$doc->documentElement;
         $this->parseService($source, $root);
 
         foreach ($this->getChildNodesFromNamePath($root, array('TileMaps', 'TileMap')) as $tileMapEl) {
