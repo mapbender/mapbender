@@ -5,7 +5,7 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\Component\Loader\RefreshableSourceLoader;
+use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -24,7 +24,7 @@ use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 
-class Loader extends RefreshableSourceLoader
+class Loader extends SourceLoader
 {
     /** @var EntityManagerInterface */
     protected $entityManager;
@@ -93,12 +93,6 @@ class Loader extends RefreshableSourceLoader
     public function validateResponseContent($content)
     {
         $this->validator->validateDocument($this->xmlToDom($content));
-    }
-
-    public function getRefreshUrl(Source $target)
-    {
-        // Unchanged
-        return $target->getOriginUrl();
     }
 
     public function updateSource(Source $target, Source $reloaded)

@@ -11,11 +11,9 @@
         <div class="dropdown bs-dropdown pull-right">
             <button type="button" class="btn btn-default" data-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
             <ul class="dropdown-menu">
-                {%- if grants.refresh | default(false) -%}
+                {%- if grants.edit | default(false) -%}
                 <li><a href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}"
                     ><i class="fa fa-fw fas fa-refresh fa-sync-alt"></i> {{ 'mb.manager.admin.source.update' | trans }}</a></li>
-                {%- endif -%}
-                {%- if grants.edit | default(false) -%}
                 <li><a href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"
                     ><i class="fa fa-fw fas fa-wifi"></i> {{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a></li>
                 {%- endif -%}

@@ -10,7 +10,9 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\Exception\Loader\RefreshTypeMismatchException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
+use Mapbender\Exception\Loader\SourceLoaderException;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SourceLoader
@@ -93,6 +95,39 @@ abstract class SourceLoader
         $target->setUsername($origin->getUsername());
         $target->setPassword($origin->getPassword());
     }
+
+    public function getRefreshUrl(Source $target)
+    {
+        return $target->getOriginUrl();
+    }
+
+    /**
+     * @param Source $target
+     * @param HttpOriginInterface $origin
+     * @throws SourceLoaderException
+     */
+    public function refresh(Source $target, HttpOriginInterface $origin)
+    {
+        $reloadedSource = $this->evaluateServer($origin);
+        $this->beforeSourceUpdate($target, $reloadedSource);
+        $this->updateSource($target, $reloadedSource);
+        $this->updateOrigin($target, $origin);
+    }
+
+    /**
+     * @param Source $target
+     * @param Source $reloaded
+     * @throws RefreshTypeMismatchException
+     */
+    protected function beforeSourceUpdate(Source $target, Source $reloaded)
+    {
+        if ($target->getType() !== $reloaded->getType()) {
+            $message = "Source type mismatch: {$target->getType()} (old) vs {$reloaded->getType()} (reloaded)";
+            throw new RefreshTypeMismatchException($message);
+        }
+    }
+
+    abstract public function updateSource(Source $target, Source $reloaded);
 
     /**
      * @param string $url

@@ -49,7 +49,7 @@
 
             {%- block item_interactions -%}
                             <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
-                            {% if item.id in reloadableIds %}
+                            {% if is_granted('EDIT', oid) %}
                               <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ item.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
                             {% endif %}
                             {% if is_granted('DELETE', oid) %}

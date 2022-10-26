@@ -2,7 +2,6 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
-use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -66,19 +65,6 @@ class RepositoryController extends ApplicationControllerBase
             'id' => 'ASC',
         ));
 
-        $reloadableIds = array();
-        // NOTE: direct object grants checks do not work because Symfony ACL cannot currently infer from e.g. concrete
-        // WmsSource to global grants assigned on abstract base class Source
-        // THE ONLY directly assigned grant on a concrete Source is 'OWNER' on newly loaded sources, assigned to the
-        // User that added the source to the system, but not editable in any way.
-        // => On listings ALWAYS check grants on oids for sources, nothing else works as expected
-        if ($this->isGranted('EDIT', $oid)) {
-            foreach ($sources as $source) {
-                if ($this->typeDirectory->getRefreshSupport($source)) {
-                    $reloadableIds[] = $source->getId();
-                }
-            }
-        }
         /** @var SourceInstanceRepository $instanceRepository */
         $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
 
@@ -89,7 +75,6 @@ class RepositoryController extends ApplicationControllerBase
 
         return $this->render('@MapbenderManager/Repository/index.html.twig', array(
             'sources' => $sources,
-            'reloadableIds' => $reloadableIds,
             'shared_instances' => $sharedInstances,
             'oid' => $oid,
             'create_permission' => $this->isGranted('CREATE', $oid),
@@ -174,7 +159,6 @@ class RepositoryController extends ApplicationControllerBase
             'edit' => $this->isGranted('EDIT', $oid),
             'delete' => $this->isGranted('DELETE', $oid),
         ));
-        $grants['refresh'] = $grants['edit'] && $this->typeDirectory->getRefreshSupport($source);
         return $this->render($source->getViewTemplate(), array(
             'source' => $source,
             'applications' => $related,
@@ -268,10 +252,6 @@ class RepositoryController extends ApplicationControllerBase
             $this->denyAccessUnlessGranted('EDIT', $oid);
             throw $this->createNotFoundException();
         }
-        $canUpdate = $this->typeDirectory->getRefreshSupport($source);
-        if (!$canUpdate) {
-            throw $this->createNotFoundException();
-        }
         // Must have VIEW + EDIT on either any Source globally, or on this particular
         // Source
         if (!$this->isGranted('VIEW', $oid)) {
@@ -281,7 +261,6 @@ class RepositoryController extends ApplicationControllerBase
             $this->denyAccessUnlessGranted('EDIT', $source);
         }
 
-        /** @var RefreshableSourceLoader $loader */
         $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));

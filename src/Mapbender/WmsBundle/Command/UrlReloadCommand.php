@@ -28,12 +28,10 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
         $target = $this->getSourceById($targetId);
         $origin = $this->getOrigin($input);
         $this->processOrigin($origin, $input);
-        $reloaded = $this->loadSource($origin);
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $this->getImporter()->updateSource($target, $reloaded);
-            $this->getImporter()->updateOrigin($target, $origin);
+            $this->getImporter()->refresh($target, $origin);
             $em->persist($target);
             $em->flush();
             $em->commit();

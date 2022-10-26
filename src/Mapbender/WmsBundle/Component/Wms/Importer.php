@@ -4,7 +4,7 @@ namespace Mapbender\WmsBundle\Component\Wms;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Mapbender\Component\Loader\RefreshableSourceLoader;
+use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
-class Importer extends RefreshableSourceLoader
+class Importer extends SourceLoader
 {
     /** @var XmlValidatorService */
     protected $validator;
@@ -149,12 +149,12 @@ class Importer extends RefreshableSourceLoader
      */
     public function getRefreshUrl(Source $target)
     {
-        /** @var WmsSource $target */
-        $persistedUrl = $target->getOriginUrl();
+        $persistedUrl = parent::getRefreshUrl($target);
         $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($persistedUrl, 'version', null);
         if ($detectedVersion) {
             return $persistedUrl;
         } else {
+            /** @var WmsSource $target */
             return  UrlUtil::validateUrl($persistedUrl, array(
                 'VERSION' => $target->getVersion(),
             ));
