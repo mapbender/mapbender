@@ -37,6 +37,15 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
         );
     }
 
+    protected function formatTileUrl(WmtsInstanceLayer $instanceLayer, $url)
+    {
+        $style = $instanceLayer->getStyle();
+        // Spec unclear about capitalization => do both
+        $url = \str_replace('{Style}', $style, $url);
+        $url = \str_replace('{style}', $style, $url);
+        return $url;
+    }
+
     /**
      * Return the client-facing configuration for a layer's legend
      *

@@ -119,13 +119,10 @@ abstract class ConfigGeneratorCommon extends SourceService
         if (!$layerId) {
             throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
         }
-        $useProxy = !!$instanceLayer->getSourceInstance()->getProxy();
         $configuration = array(
             "id" => $layerId,
             'tileUrls' => array(),
-            'format' => null,
             "title" => $instanceLayer->getTitle(),
-            "style" => $instanceLayer->getStyle(),
             "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
             'matrixLinks' => array(),
         );
@@ -133,18 +130,8 @@ abstract class ConfigGeneratorCommon extends SourceService
             $configuration['matrixLinks'][] = $tmsl->getTileMatrixSet();
         }
 
-        foreach ($sourceItem->getResourceUrl() as $ru) {
-            $resourceType = $ru->getResourceType() ?: 'tile';   // NOTE: TMS seems to have nulls here
-            if ($resourceType == 'tile') {
-                $urlTemplate = $ru->getTemplate();
-                if ($useProxy) {
-                    $urlTemplate = $this->proxifyTileUrlTemplate($urlTemplate);
-                }
-                $configuration['tileUrls'][] = $urlTemplate;
-                if (!$configuration['format'] && $ru->getFormat()) {
-                    $configuration['format'] = $ru->getFormat();
-                }
-            }
+        foreach ($sourceItem->getTileResources() as $ru) {
+            $configuration['tileUrls'][] = $this->formatTileUrl($instanceLayer, $ru->getTemplate());
         }
         $legendConfig = $this->getLayerLegendConfig($instanceLayer);
         if ($legendConfig) {
@@ -159,6 +146,14 @@ abstract class ConfigGeneratorCommon extends SourceService
         $configuration['bbox'] = $bboxConfigs;
 
         return $configuration;
+    }
+
+    protected function formatTileUrl(WmtsInstanceLayer $instanceLayer, $url)
+    {
+        if ($instanceLayer->getSourceInstance()->getProxy()) {
+            $url = $this->proxifyTileUrlTemplate($url);
+        }
+        return $url;
     }
 
     /**

@@ -67,6 +67,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     protected $tilematrixSetlinks;
 
     /**
+     * @var UrlTemplateType[]
      * @ORM\Column(type="array", nullable=true)
      */
     protected $resourceUrl;
@@ -310,16 +311,27 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
+     * @return UrlTemplateType[]
+     */
+    public function getTileResources()
+    {
+        $matches = array();
+        foreach ($this->resourceUrl as $ru) {
+            if ($ru->getResourceType() === 'tile') {
+                $matches[] = $ru;
+            }
+        }
+        return $matches;
+    }
+
+    /**
      * @return string[]
      */
     public function getUniqueTileFormats()
     {
         $formats = array();
-        foreach ($this->getResourceUrl() as $resourceUrl) {
-            $resourceType = $resourceUrl->getResourceType() ?: 'tile';
-            if ($resourceType === 'tile') {
-                $formats[] = $resourceUrl->getFormat();
-            }
+        foreach ($this->getTileResources() as $resourceUrl) {
+            $formats[] = $resourceUrl->getFormat();
         }
         return array_unique($formats);
     }

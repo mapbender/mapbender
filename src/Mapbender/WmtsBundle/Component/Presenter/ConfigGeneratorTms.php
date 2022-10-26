@@ -7,6 +7,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Component\TileMatrix;
+use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 
 class ConfigGeneratorTms extends ConfigGeneratorCommon
 {
@@ -50,5 +51,20 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         return parent::formatTileMatrix($tilematrix) + array(
             'href' => $tilematrix->getHref(),
         );
+    }
+
+    /**
+     * @param WmtsInstanceLayer $instanceLayer
+     * @return array
+     */
+    protected function formatInstanceLayerOptions(SourceInstanceItem $instanceLayer)
+    {
+        $options = parent::formatInstanceLayerOptions($instanceLayer);
+        foreach ($instanceLayer->getSourceItem()->getTileResources() as $ru) {
+            $options += \array_filter(array(
+                'extension' => $ru->getExtension(),
+            ));
+        }
+        return $options;
     }
 }

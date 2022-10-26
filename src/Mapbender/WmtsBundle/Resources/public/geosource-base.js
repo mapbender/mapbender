@@ -160,8 +160,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 opacity: this.configuration.options.opacity,
                 name: layer.options.title,
                 url: layer.options.tileUrls,
-                format: layer.options.format,
-                style: layer.options.style,
                 serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                     return self._getMatrixResolution(tileMatrix, srsName);
                 })

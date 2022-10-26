@@ -89,6 +89,7 @@ class WmtsInstanceLayerType extends AbstractType
             'label' => 'mb.wmts.wmtsloader.repo.instance.label.style',
             'choices' => $choices,
             "required" => false,
+            'placeholder' => false,
         ));
     }
 }

@@ -19,7 +19,7 @@ window.Mapbender.TmsSource = (function() {
             var matrixSet = compatibleLayer.selectMatrixSet(srsName);
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
-                type: compatibleLayer.options.format.split('/').pop(),
+                type: compatibleLayer.options.extension,
                 layername: compatibleLayer.options.identifier,
                 serviceVersion: this.configuration.version,
                 tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1])
@@ -39,14 +39,14 @@ window.Mapbender.TmsSource = (function() {
                 }),
                 extent: layer.getBounds(srsName, true)
             };
-            var imgExt = /jp(e)?g$/i.test(layer.options.format) && '.jpg' || '.png';
+
             var sourceOpts = {
                 tileUrlFunction: function(coord, ratio, projection) {
                     return [
                         matrixSet.tilematrices[coord[0]].href.replace(/[/&?]*$/, ''),
                         '/', coord[1],
                         '/', -coord[2] - 1,
-                        imgExt
+                        '.', layer.options.extension
                     ].join('');
                 },
                 projection: srsName,

@@ -53,7 +53,7 @@ class Style
      */
     public function setIsDefault($isDefault)
     {
-        $this->isDefault = $isDefault ? true : false;
+        $this->isDefault = $isDefault;
         return $this;
     }
 

@@ -104,6 +104,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         $resourceUrl = new UrlTemplateType();
         $resourceUrl->setTemplate($url);
         $resourceUrl->setFormat($tileFormatEl->getAttribute('mime-type'));
+        $resourceUrl->setExtension($tileFormatEl->getAttribute('extension'));
         $layer->addResourceUrl($resourceUrl);
 
         $tmsl = new TileMatrixSetLink();

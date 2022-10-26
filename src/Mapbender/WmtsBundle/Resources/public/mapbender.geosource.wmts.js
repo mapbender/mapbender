@@ -20,6 +20,7 @@ window.Mapbender.WmtsSource = (function() {
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
                 requestEncoding: 'REST',
+                style: false,
                 layer: compatibleLayer.options.identifier,
                 matrixSet: matrixSet.identifier,
                 matrixIds: matrixSet.tilematrices.map(function(matrix) {
@@ -55,8 +56,6 @@ window.Mapbender.WmtsSource = (function() {
                 urls: layer.options.tileUrls.map(function(tileUrlTemplate) {
                     return tileUrlTemplate.replace('{TileMatrixSet}', matrixSet.identifier);
                 }),
-                format: layer.options.format,
-                style: layer.options.style,
                 projection: srsName,
                 tileGrid: new ol.tilegrid.WMTS(gridOpts)
             };
@@ -99,9 +98,6 @@ window.Mapbender.WmtsLayer = (function() {
             var tileMatrixSet = this.selectMatrixSet(srsName);
             var template = this.options.tileUrls[0];
             return template
-                .replace('{Style}', this.options.style)
-                // NOTE: casing of '{Style}' placeholder unspecified, emulate OpenLayers dual-casing support quirk
-                .replace('{style}', this.options.style)
                 .replace('{TileMatrixSet}', tileMatrixSet.identifier)
             ;
         },

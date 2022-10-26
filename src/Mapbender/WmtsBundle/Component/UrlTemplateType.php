@@ -35,6 +35,12 @@ class UrlTemplateType implements MutableUrlTarget
     public $template;
 
     /**
+     * TMS only. From <TileMap> => <TileFormat> node.
+     * @var string
+     */
+    public $extension;
+
+    /**
      * @return string
      */
     public function getFormat()
@@ -47,7 +53,7 @@ class UrlTemplateType implements MutableUrlTarget
      */
     public function getResourceType()
     {
-        return $this->resourceType;
+        return $this->resourceType ?: 'tile';
     }
 
     /**
@@ -86,6 +92,20 @@ class UrlTemplateType implements MutableUrlTarget
     {
         $this->template = $template;
         return $this;
+    }
+
+    public function getExtension()
+    {
+        if (!$this->extension && $this->format) {
+            return \preg_match('#^image/jp(e)?g$/i#', $this->format) ? 'jpg' : 'png';
+        } else {
+            return $this->extension;
+        }
+    }
+
+    public function setExtension($extension)
+    {
+        $this->extension = $extension;
     }
 
     public function mutateUrls(OneWayTransformer $transformer)
