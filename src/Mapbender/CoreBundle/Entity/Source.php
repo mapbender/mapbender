@@ -22,12 +22,6 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  */
 abstract class Source implements MutableHttpOriginInterface
 {
-
-    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
-    const STATUS_OK = 'OK';
-    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
-    const STATUS_UNREACHABLE = 'UNREACHABLE';
-
     const TYPE_WMS = "WMS";
     const TYPE_WMTS = "WMTS";
     const TYPE_TMS = "TMS";
@@ -179,18 +173,6 @@ abstract class Source implements MutableHttpOriginInterface
     public function getValid()
     {
         return true;
-    }
-
-    /**
-     * Source status is a client-side runtime concept helping to visualize live network response errors.
-     * It's meaningless server-side.
-     *
-     * @return string
-     * @deprecated
-     */
-    final public function getStatus()
-    {
-        return self::STATUS_OK;
     }
 
     /**
