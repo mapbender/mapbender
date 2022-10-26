@@ -94,7 +94,6 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
     {
         $layer = new WmtsLayerSource();
         $source->addLayer($layer);
-        $layer->setSource($source);
         $layer->setTitle($this->getFirstChildNodeText($cntx, 'Title'));
         $layer->setAbstract($this->getFirstChildNodeText($cntx, 'Abstract'));
         $layer->setIdentifier($layerIdent);

@@ -4,31 +4,40 @@
 namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
-use Mapbender\Component\SourceLoader;
+use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\Loader\RefreshableSourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\WmtsBundle\Component\TmsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Component\WmtsCapabilitiesParser100;
 use Mapbender\WmtsBundle\Entity\HttpTileSource;
+use Mapbender\WmtsBundle\Entity\WmtsInstance;
+use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
+use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 
-class Loader extends SourceLoader
+class Loader extends RefreshableSourceLoader
 {
+    /** @var EntityManagerInterface */
+    protected $entityManager;
+
     /** @var XmlValidatorService */
     protected $validator;
 
-    /**
-     * @param HttpTransportInterface $httpTransport
-     * @param XmlValidatorService $validator
-     */
-    public function __construct(HttpTransportInterface $httpTransport, XmlValidatorService $validator)
+    public function __construct(EntityManagerInterface $entityManager,
+                                HttpTransportInterface $httpTransport,
+                                XmlValidatorService $validator)
     {
         parent::__construct($httpTransport);
+        $this->entityManager = $entityManager;
         $this->validator = $validator;
     }
 
@@ -84,5 +93,70 @@ class Loader extends SourceLoader
     public function validateResponseContent($content)
     {
         $this->validator->validateDocument($this->xmlToDom($content));
+    }
+
+    public function getRefreshUrl(Source $target)
+    {
+        // Unchanged
+        return $target->getOriginUrl();
+    }
+
+    public function updateSource(Source $target, Source $reloaded)
+    {
+        /** @var HttpTileSource $target */
+        /** @var HttpTileSource $reloaded */
+        if ($target->getContact()) {
+            $this->entityManager->remove($target->getContact());
+        }
+        $target->setContact(clone ($reloaded->getContact()));
+
+        $this->replaceSourceLayers($target, $reloaded);
+
+        KeywordUpdater::updateKeywords($target, $reloaded, $this->entityManager, WmtsSourceKeyword::class);
+
+        /** @var ApplicationRepository $applicationRepository */
+        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
+            $application->setUpdated(new \DateTime('now'));
+            $this->entityManager->persist($application);
+        }
+
+        foreach ($target->getInstances() as $instance) {
+            $this->updateInstance($instance);
+            $this->entityManager->persist($instance);
+        }
+    }
+
+    protected function replaceSourceLayers(HttpTileSource $target, HttpTileSource $source)
+    {
+        foreach ($target->getLayers() as $old) {
+            $this->entityManager->remove($old);
+        }
+        $target->getLayers()->clear();
+        foreach ($source->getLayers() as $layer) {
+            $target->addLayer($layer);
+        }
+    }
+
+    protected function updateInstance(WmtsInstance $instance)
+    {
+        $identifierMap = array();
+        foreach ($instance->getLayers() as $instanceLayer) {
+            $identifier = $instanceLayer->getSourceItem()->getIdentifier();
+            $identifierMap[$identifier] = $instanceLayer;
+            $this->entityManager->remove($instanceLayer);
+        }
+        $instance->getLayers()->clear();
+        $instanceLayerMeta = $this->entityManager->getClassMetadata(WmtsInstanceLayer::class);
+
+        foreach ($instance->getSource()->getLayers() as $sourceLayer) {
+            $identifier = $sourceLayer->getIdentifier();
+            $newInstanceLayer = SourceInstanceFactory::createInstanceLayer($sourceLayer);
+            if (!empty($identifierMap[$identifier])) {
+                // Copy previous instance layer settings
+                EntityUtil::copyEntityFields($newInstanceLayer, $identifierMap[$identifier], $instanceLayerMeta);
+            }
+            $instance->addLayer($newInstanceLayer);
+        }
     }
 }

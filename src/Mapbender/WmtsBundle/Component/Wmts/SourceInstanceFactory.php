@@ -24,7 +24,6 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
 
         foreach ($source->getLayers() as $layer) {
             $instLayer = $this->createInstanceLayer($layer);
-            $instLayer->setSourceInstance($instance);
             $instance->addLayer($instLayer);
         }
         // avoid persistence errors (non-nullable column)
@@ -32,7 +31,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         return $instance;
     }
 
-    protected function createInstanceLayer(WmtsLayerSource $sourceLayer)
+    public static function createInstanceLayer(WmtsLayerSource $sourceLayer)
     {
         $instanceLayer = new WmtsInstanceLayer();
         $instanceLayer->setSourceItem($sourceLayer);

@@ -134,12 +134,11 @@ class WmtsInstance extends SourceInstance
 
     /**
      * @param WmtsInstanceLayer $layer
-     * @return $this
      */
     public function addLayer(WmtsInstanceLayer $layer)
     {
         $this->layers->add($layer);
-        return $this;
+        $layer->setSourceInstance($this);
     }
 
     /**

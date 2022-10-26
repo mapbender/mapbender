@@ -51,7 +51,6 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         foreach ($this->getChildNodesByTagName($root, 'Contents') as $contentsEl) {
             foreach ($this->getChildNodesByTagName($contentsEl, 'Layer') as $layerEl) {
                 $layer = $this->parseLayer($layerEl);
-                $layer->setSource($source);
                 $source->addLayer($layer);
             }
             foreach ($this->getChildNodesByTagName($contentsEl, 'TileMatrixSet') as $matrixsetEl) {

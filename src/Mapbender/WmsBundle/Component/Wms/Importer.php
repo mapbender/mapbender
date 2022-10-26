@@ -116,7 +116,6 @@ class Importer extends RefreshableSourceLoader
      */
     public function updateSource(Source $target, Source $reloaded)
     {
-        $this->beforeSourceUpdate($target, $reloaded);
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));

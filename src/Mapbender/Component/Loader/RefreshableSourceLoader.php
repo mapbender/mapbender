@@ -21,6 +21,7 @@ abstract class RefreshableSourceLoader extends SourceLoader
     public function refresh(Source $target, HttpOriginInterface $origin)
     {
         $reloadedSource = $this->evaluateServer($origin);
+        $this->beforeSourceUpdate($target, $reloadedSource);
         $this->updateSource($target, $reloadedSource);
         $this->updateOrigin($target, $origin);
     }
