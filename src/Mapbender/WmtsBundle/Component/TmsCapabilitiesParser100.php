@@ -53,12 +53,12 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
-            throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
+            throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
         }
 
         $version = $doc->documentElement->getAttribute("version");
         if ($version !== "1.0.0") {
-            throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
         return $doc;
     }
@@ -76,7 +76,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
             case "1.0.0":
                 return new TmsCapabilitiesParser100($httpTransport, $doc);
             default:
-                throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
+                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
     }
 
@@ -97,7 +97,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
             $content = $this->httpTransport->getUrl($url)->getContent();
             $doc             = new \DOMDocument();
             if (!@$doc->loadXML($content)) {
-                throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
+                throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
             }
             // Url Service endpoint (without the version number)
             $pos_vers = strpos($url, $vers);

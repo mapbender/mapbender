@@ -35,7 +35,7 @@ abstract class WmtsCapabilitiesParser extends CapabilitiesDomParser
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
-            throw new XmlParseException("mb.wmts.repository.parser.couldnotparse");
+            throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
         }
         // substitute xincludes
         $doc->xinclude();
@@ -49,12 +49,12 @@ abstract class WmtsCapabilitiesParser extends CapabilitiesDomParser
         }
 
         if ($rootTagName !== "Capabilities") {
-            throw new NotSupportedVersionException("mb.wmts.repository.parser.not_supported_document");
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_document');
         }
 
         $version = $rootTag->getAttribute("version");
         if ($version !== "1.0.0") {
-            throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
         return $doc;
     }
@@ -71,7 +71,7 @@ abstract class WmtsCapabilitiesParser extends CapabilitiesDomParser
             case "1.0.0":
                 return new WmtsCapabilitiesParser100($doc);
             default:
-                throw new NotSupportedVersionException('mb.wmts.repository.parser.not_supported_version');
+                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
     }
 }
