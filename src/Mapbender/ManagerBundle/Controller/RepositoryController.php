@@ -123,8 +123,7 @@ class RepositoryController extends ApplicationControllerBase
                 $form->addError(new FormError('mb.manager.http_connection_error'));
                 $form->addError(new FormError($e->getMessage()));
             } catch (ServerResponseErrorException $e) {
-                // @todo: use different text to indicate server response failure, not parsing failure
-                $form->addError(new FormError('mb.wms.repository.parser.couldnotparse'));
+                $form->addError(new FormError('mb.manager.http_error_response'));
                 $form->addError(new FormError($e->getMessage()));
             } catch (\Exception $e) {
                 $form->addError(new FormError($e->getMessage()));

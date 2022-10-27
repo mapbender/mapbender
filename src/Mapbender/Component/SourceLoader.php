@@ -64,9 +64,12 @@ abstract class SourceLoader
     public function evaluateServer(HttpOriginInterface $origin)
     {
         $response = $this->getResponse($origin);
-        // @todo: detect / show connection errors and server error codes
-        // if (!$response->isOk()) {
-        // ...
+        if (!$response->isOk()) {
+            // __toString is the only way to access the statusText property :(
+            $statusLine = \preg_replace('#[\r\n].*$#m', '', $response->__toString());
+            throw new ServerResponseErrorException($statusLine, $response->getStatusCode());
+        }
+
         $source = $this->parseResponseContent($response->getContent());
         $this->updateOrigin($source, $origin);
         return $source;

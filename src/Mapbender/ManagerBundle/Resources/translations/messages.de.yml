@@ -204,6 +204,7 @@ mb:
       application:
         failed: 'Anwendung kann nicht importiert werden'
     http_connection_error: Verbindungsaufbau fehlgeschlagen
+    http_error_response: Der kontaktierte Dienst hat eine Fehlermeldung gesendet
   core:
     admin:
       button:
