@@ -203,6 +203,7 @@ mb:
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden'
+    http_connection_error: Verbindungsaufbau fehlgeschlagen
   core:
     admin:
       button:

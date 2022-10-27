@@ -2,6 +2,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
+use Mapbender\Component\Transport\ConnectionErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -118,6 +119,9 @@ class RepositoryController extends ApplicationControllerBase
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
+            } catch (ConnectionErrorException $e) {
+                $form->addError(new FormError('mb.manager.http_connection_error'));
+                $form->addError(new FormError($e->getMessage()));
             } catch (ServerResponseErrorException $e) {
                 // @todo: use different text to indicate server response failure, not parsing failure
                 $form->addError(new FormError('mb.wms.repository.parser.couldnotparse'));

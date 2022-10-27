@@ -203,6 +203,7 @@ mb:
     import:
       application:
         failed: 'Application cannot be imported'
+    http_connection_error: Connection failed
   core:
     admin:
       button:
