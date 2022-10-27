@@ -35,22 +35,18 @@ class ImageTransport
     {
         try {
             $response = $this->baseTransport->getUrl($url);
-            $image = @imagecreatefromstring($response->getContent());
-            if ($image) {
-                imagesavealpha($image, true);
-                if ($opacity <= (1.0 - 1 / 127)) {
-                    $multipliedImage = GdUtil::multiplyAlpha($image, $opacity);
-                    if ($multipliedImage !== $image) {
-                        imagedestroy($image);
-                    }
-                    return $multipliedImage;
-                } else {
-                    return $image;
+            $image = imagecreatefromstring($response->getContent());
+            imagesavealpha($image, true);
+            if ($opacity <= (1.0 - 1 / 127)) {
+                $multipliedImage = GdUtil::multiplyAlpha($image, $opacity);
+                if ($multipliedImage !== $image) {
+                    imagedestroy($image);
                 }
+                return $multipliedImage;
             } else {
-                return null;
+                return $image;
             }
-        } catch (\RuntimeException $e) {
+        } catch (\ErrorException $e) {
             return null;
         }
     }
