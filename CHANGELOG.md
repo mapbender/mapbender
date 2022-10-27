@@ -1,4 +1,4 @@
-## dev-master @ c42fc2316
+## dev-master @ 9cc8f250a
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -28,7 +28,12 @@
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
 * [Backend] Fix visibility of text inputs in sortable collections (instance table, print templates etc) vs dragging highlight effect
 * [Backend] Fix mouse cursor on collection item add / remove interactions
+* [Backend] Fix German-only error messages when loading Wmts source
+* [Backend] Fix inability to reload Wmts source
 * [Backend] Add interaction menu (reload, create shared instance, delete) to source view
+* [Backend] Add source (with link to source view) into a distinct column in application layersets view
+* [Backend] Improve error messages when loading sources
+* [Backend] Show supported CRS for Wmts layers in instance editing details popover
 * [Backend] Misc other styling fixes
 
 ## v3.3.2-RC1
