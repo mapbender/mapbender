@@ -3,6 +3,8 @@
 
 namespace OwsProxy3\CoreBundle\Component;
 
+use Mapbender\Component\Transport\ConnectionErrorException;
+use Mapbender\Component\Transport\ConnectionTimeoutException;
 use OwsProxy3\CoreBundle\Controller\OwsProxyController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -46,12 +48,25 @@ class HttpFoundationClient extends CurlClientCommon
         $rawResponse = \curl_exec($ch);
         if ($rawResponse !== false) {
             $response = $this->parseResponse($ch, $rawResponse);
+            \curl_close($ch);
         } else {
             $curlError = \curl_error($ch);
-            $response = Response::create('');
-            $response->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE, $curlError ?: null);
+            $errorCode = \curl_errno($ch);
+            \curl_close($ch);
+            switch ($errorCode) {
+                case 6: // CURLE_COULDNT_RESOLVE_HOST
+                case 7: // CURLE_COULDNT_CONNECT
+                    throw new ConnectionErrorException($curlError, $errorCode);
+                case 5: //CURLE_COULDNT_RESOLVE_PROXY
+                    throw new ConnectionErrorException('', $errorCode);
+                case 28: // CURLE_OPERATION_TIMEDOUT
+                    throw new ConnectionTimeoutException($curlError, $errorCode);
+                default:
+                    // Uh-oh
+                    $response = Response::create('');
+                    $response->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE, $curlError ?: null);
+            }
         }
-        \curl_close($ch);
         return $response;
     }
 

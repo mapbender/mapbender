@@ -11,6 +11,7 @@ interface HttpTransportInterface
     /**
      * @param string $url
      * @return Response
+     * @throws ConnectionErrorException
      */
     public function getUrl($url);
 }
