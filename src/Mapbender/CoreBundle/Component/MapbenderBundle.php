@@ -1,15 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\ManagerBundle\Component\ManagerBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * The base bundle class for all Mapbender3 bundles.
- *
- * Mapbender3 bundles are special in a way as they expose lists of their
- * elements, layers and templates for the central Mapbender3 service, which
- * aggregates these for use in the manager backend.
+ * Legacy mapbender bundle with methods to list Element and Template classes
  *
  * @author Christian Wygoda
  *

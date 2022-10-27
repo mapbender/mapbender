@@ -10,13 +10,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Initializes the combined inventory of all Mapbender Elements advertised by all active
- * MapbenderBundles.
- * Because the kernel is not available to compiler passes initialized from a bundle, this
- * pass is actually initialized by the BaseKernel itself.
+ * Initializes Element inventory from legacy MapbenderBundle::getElements()
  *
  * @see ElementInventoryService::setInventory()
- * @see BaseKernel::buildContainer()
+ * @deprecated use services tagged with 'mapbender.element'
  */
 class RebuildElementInventoryPass implements CompilerPassInterface
 {

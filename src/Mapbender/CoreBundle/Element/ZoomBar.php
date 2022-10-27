@@ -9,8 +9,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\Utils\ApplicationUtil;
 
 /**
- * Mapbender Zoombar
- *
  * The Zoombar element provides a control to pan and zoom, similar to the
  * OpenLayers PanZoomBar control. This element though is easier to use when
  * custom styling is needed.
