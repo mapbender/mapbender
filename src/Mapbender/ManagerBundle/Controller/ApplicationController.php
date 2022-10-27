@@ -670,20 +670,4 @@ class ApplicationController extends ApplicationControllerBase
         $tokenStorage = $this->get('security.token_storage');
         return $tokenStorage->getToken();
     }
-
-    /**
-     * @param string $slug
-     * @return Application
-     */
-    protected function requireDbApplication($slug)
-    {
-        /** @var Application|null $application */
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
-            'slug' => $slug,
-        ));
-        if (!$application) {
-            throw $this->createNotFoundException("No such application");
-        }
-        return $application;
-    }
 }
