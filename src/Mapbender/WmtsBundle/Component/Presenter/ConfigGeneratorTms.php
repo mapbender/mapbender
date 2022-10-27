@@ -36,6 +36,29 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         );
     }
 
+    protected function getLayerConfigs($sourceInstance)
+    {
+        // Deduplicate by title, merging matrix sets.
+        // TMS XML structure cannot model multiple matrix sets / multiple CRSes
+        // on the same layer. Instead, layers are repeated with different matrix sets.
+        $titleMap = array();
+        foreach ($sourceInstance->getLayers() as $layer) {
+            if ($layer->getActive()) {
+                $title = $layer->getSourceItem()->getTitle();
+                if (\array_key_exists($title, $titleMap)) {
+                    $this->mergeLayer($titleMap[$title], $layer);
+                } else {
+                    $titleMap[$title] = $layer;
+                }
+            }
+        }
+        $layerConfigs = array();
+        foreach ($titleMap as $layer) {
+            $layerConfigs[] = $this->formatInstanceLayer($layer, false);
+        }
+        return $layerConfigs;
+    }
+
     public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
     {
         return null;
@@ -66,5 +89,12 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
             ));
         }
         return $options;
+    }
+
+    protected function mergeLayer(WmtsInstanceLayer $target, WmtsInstanceLayer $next)
+    {
+        foreach ($next->getSourceItem()->getTilematrixSetlinks() as $tmsl) {
+            $target->getSourceItem()->addTilematrixSetlinks($tmsl);
+        }
     }
 }
