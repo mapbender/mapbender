@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\RefreshTypeMismatchException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Exception\Loader\SourceLoaderException;
@@ -45,7 +46,6 @@ abstract class SourceLoader
     /**
      * @param string $content
      * @return Source
-     * @throws XmlParseException
      */
     abstract public function parseResponseContent($content);
 
@@ -58,7 +58,6 @@ abstract class SourceLoader
     /**
      * @param HttpOriginInterface $origin
      * @return Source
-     * @throws XmlParseException
      * @throws InvalidUrlException
      */
     public function evaluateServer(HttpOriginInterface $origin)
@@ -147,17 +146,20 @@ abstract class SourceLoader
     /**
      * @param string $content
      * @return \DOMDocument
-     * @throws XmlParseException
-     * @throws ServerResponseErrorException
+     * @throws SourceLoaderException
      */
     protected function xmlToDom($content)
     {
         $doc = new \DOMDocument();
-        $xmlSuccess = @$doc->loadXML($content);
+        try {
+            $xmlSuccess = $doc->loadXML($content);
+        } catch (\ErrorException $e) {
+            $message = \preg_replace('#^.*?::loadXml\(\):\s+#i', '', $e->getMessage());
+            throw new MalformedXmlException($content, $message, $e->getCode(), $e);
+        }
 
         if (!$xmlSuccess || !$doc->documentElement) {
-            // @todo: use a different exception to indicate server response failure
-            throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
+            throw new MalformedXmlException($content);
         }
         if (false !== \stripos($doc->documentElement->tagName, 'Exception')) {
             // @todo: use a different exception to indicate server response failure

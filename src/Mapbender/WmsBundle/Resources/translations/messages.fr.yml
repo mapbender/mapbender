@@ -133,8 +133,6 @@ mb:
         couldnotparse: 'Impossible d''analyser CapabilitiesDocument'
         not_supported_document: 'Le CapabilitiesDocument n''est pas supporté'
         not_supported_version: 'La version du service WMS n''est pas supportée'
-        not_valid_dtd: 'Un document WMS est invalide (DTD).'
-        not_valid_xsd: 'Un document WMS est invalide (XSD).'
     metadata:
       section:
         common:

@@ -151,6 +151,8 @@ mb:
     import:
       application:
         failed: 'Приложение не может быть импортировано'
+    xml_invalid: Документ не действует
+    xml_malformed: Документ не действует  # @todo: supply distinct message
   core:
     admin:
       button:

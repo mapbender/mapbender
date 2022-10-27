@@ -129,11 +129,9 @@ mb:
           splitlayers: 'Partir las capas'
     repository:
       parser:
-        couldnotparse: 'Could not parse'
-        not_supported_document: 'Not supported document'
-        not_supported_version: 'Not supported version'
-        not_valid_dtd: 'Dtd not valid'
-        not_valid_xsd: 'XSD not valid'
+        couldnotparse: ~
+        not_supported_document: ~
+        not_supported_version: ~
     metadata:
       section:
         common:

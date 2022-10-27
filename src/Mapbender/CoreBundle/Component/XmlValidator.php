@@ -97,7 +97,7 @@ class XmlValidator
         }
 
         if (!@$docH->validate()) { // check with DTD
-            throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
+            throw new XmlParseException('mb.manager.invalid_xml');
         }
     }
 
@@ -134,7 +134,7 @@ EOF
             }
             $this->logger->error($message);
             libxml_clear_errors();
-            throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
+            throw new XmlParseException('mb.manager.invalid_xml');
         }
         libxml_clear_errors();
     }

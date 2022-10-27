@@ -151,6 +151,8 @@ mb:
     import:
       application:
         failed: 'L''applicazione non può essere importata'
+    xml_invalid: Il documento non è valido
+    xml_malformed: Il documento non è valido  # @todo: supply distinct message
   core:
     admin:
       button:

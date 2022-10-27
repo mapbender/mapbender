@@ -205,6 +205,8 @@ mb:
         failed: 'Anwendung kann nicht importiert werden'
     http_connection_error: Verbindungsaufbau fehlgeschlagen
     http_error_response: Der kontaktierte Dienst hat eine Fehlermeldung gesendet
+    xml_invalid: Das XML Dokument ist nicht valide
+    xml_malformed: Kein XML oder ungültige XML-Struktur
   core:
     admin:
       button:

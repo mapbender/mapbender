@@ -151,6 +151,8 @@ mb:
     import:
       application:
         failed: 'La aplicación no puede ser importada'
+    xml_invalid: ~
+    xml_malformed: ~
   core:
     admin:
       button:

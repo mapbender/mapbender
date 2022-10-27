@@ -135,8 +135,6 @@ mb:
         couldnotparse: 'Could not parse CapabilitiesDocument'
         not_supported_document: 'Not supported CapabilitiesDocument'
         not_supported_version: 'The WMS version is not supported'
-        not_valid_dtd: 'A WMS document is not valid (DTD).'
-        not_valid_xsd: 'A WMS document is not valid (XSD).'
     metadata:
       section:
         common:

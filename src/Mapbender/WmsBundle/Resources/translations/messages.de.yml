@@ -135,8 +135,6 @@ mb:
         couldnotparse: 'Das XML Dokument kann  nicht geparst werden.'
         not_supported_document: 'Das XML Dokument ist nicht unterstützt.'
         not_supported_version: 'Die WMS Version ist nicht unterstützt.'
-        not_valid_dtd: 'Das XML Dokument ist nicht valid (DTD).'
-        not_valid_xsd: 'Das XML Dokument ist nicht valid (XSD).'
     metadata:
       section:
         common:

@@ -151,6 +151,8 @@ mb:
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
+    xml_invalid: Ongeldig document
+    xml_malformed: Ongeldig document # @todo: supply distinct message
   core:
     admin:
       button:

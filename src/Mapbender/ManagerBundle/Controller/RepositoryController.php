@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
+use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
@@ -125,6 +126,12 @@ class RepositoryController extends ApplicationControllerBase
             } catch (ServerResponseErrorException $e) {
                 $form->addError(new FormError('mb.manager.http_error_response'));
                 $form->addError(new FormError($e->getMessage()));
+            } catch (MalformedXmlException $e) {
+                $form->addError(new FormError('mb.manager.xml_malformed'));
+                $form->addError(new FormError($e->getContent(true, true, 100) . '...'));
+                if ($e->getMessage()) {
+                    $form->addError(new FormError($e->getMessage()));
+                }
             } catch (\Exception $e) {
                 $form->addError(new FormError($e->getMessage()));
             }
