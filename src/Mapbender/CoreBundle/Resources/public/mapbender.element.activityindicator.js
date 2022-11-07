@@ -29,7 +29,7 @@
                 self.loadingLayers.push(source);
                 self._onLayerLoadChange();
             });
-            mbMap.element.on('mbmapsourceloadend mbmapsourceremoved', function(event, data) {
+            mbMap.element.on('mbmapsourceloadend mbmapsourceremoved mbmapsourceloaderror', function(event, data) {
                 var source = data.source;
                 self.loadingLayers = self.loadingLayers.filter(function(x) {
                     return x !== source;
