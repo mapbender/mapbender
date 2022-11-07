@@ -1,4 +1,4 @@
-## dev-master @ 9cc8f250a
+## dev-master @ 230324481
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -9,7 +9,8 @@
 * [Layertree] Fix theme folder not visually closing on click
 * [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
 * [BaseSourceSwitcher] add `data-title` attributes for id independent custom css matching
-* [WmsLoader] fix broken layout when using larger font size
+* [WmsLoader] Fix broken layout when using larger font size
+* [ActivityIndicator] Fix inidicator not turning off if a Wms GetMap returns an http error
 * Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
 * Fix Wmts locked to single CRS, even if it supports several
 * Fix password creation in user registration process ([#1430](https://github.com/mapbender/mapbender/issues/1430))
