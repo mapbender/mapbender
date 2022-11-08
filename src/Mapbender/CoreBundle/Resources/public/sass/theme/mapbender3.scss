@@ -10,6 +10,7 @@ $toolBarTopBackground: $toolBarBackground !default;
 $toolBarBottomBackground: $toolBarBackground !default;
 $toolBarBorderColor: $sidepaneBorderColor !default;
 $desktopBreakpointWidth: 1200px !default;
+$hoverEffects: true !default;
 
 @import "modules/base";
 @import "modules/layout";
@@ -44,8 +45,10 @@ $desktopBreakpointWidth: 1200px !default;
 
 .toolbar-button-hover-effect {
   opacity: $toolBarButtonDefaultOpacity;
-  body.desktop-template &:hover {
-    opacity: $toolBarButtonHoverOpacity;
+  @if $hoverEffects {
+    &:hover {
+      opacity: $toolBarButtonHoverOpacity;
+    }
   }
 }
 

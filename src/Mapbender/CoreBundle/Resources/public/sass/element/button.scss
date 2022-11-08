@@ -1,10 +1,14 @@
+$hoverEffects: true !default;
+
 .mb-button {
   cursor: pointer;
   .toolBar & {
     border-radius: 2 * $radius;
     opacity: $toolBarButtonDefaultOpacity;
-    body.desktop-template &:hover {
-      opacity: $toolBarButtonHoverOpacity;
+    @if $hoverEffects {
+      &:hover {
+        opacity: $toolBarButtonHoverOpacity;
+      }
     }
     &.toolBarItemActive {
       opacity: $toolBarButtonActiveOpacity;

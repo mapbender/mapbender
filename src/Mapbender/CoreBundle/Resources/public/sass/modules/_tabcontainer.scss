@@ -21,6 +21,8 @@ $sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 
 $panelBorderColor: #888 !default;
 
+$hoverEffects: true !default;
+
 .tabContainer{
   .tab, .container {
     border: 1px solid $panelBorderColor;
@@ -126,8 +128,10 @@ $panelBorderColor: #888 !default;
       color: $sidepaneButtonActiveTextColor;
       background-color: $sidepaneButtonActiveBackgroundColor;
     }
-    body.desktop-template &:hover:not(.active) {
-      background-color: $sidepaneButtonHoverColor;
+    @if $hoverEffects {
+      &:hover:not(.active) {
+        background-color: $sidepaneButtonHoverColor;
+      }
     }
   }
   .container {
@@ -154,8 +158,10 @@ $panelBorderColor: #888 !default;
       color: $accordionActiveTextColor;
       background-color: $accordionActiveBackgroundColor;
     }
-    body.desktop-template &:hover:not(.active) {
-      background-color: $accordionHoverBackgroundColor;
+    @if $hoverEffects {
+      &:hover:not(.active) {
+        background-color: $accordionHoverBackgroundColor;
+      }
     }
   }
   .container-accordion {
