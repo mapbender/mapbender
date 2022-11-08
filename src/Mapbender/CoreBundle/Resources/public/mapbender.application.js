@@ -429,7 +429,24 @@ $.extend(Mapbender, (function($) {
     return {
         source: {},
         initElement: initElement,
-        setup: setup
+        setup: setup,
+        /**
+         * @typedef {Object} mbUserInfo
+         * @property {String|null} name
+         * @property {boolean} isAnonymous
+         * @property {Array<String>} roles
+         */
+        /**
+         * @returns {Promise<mbUserInfo>}
+         * @since v3.2.2
+         */
+        loadUserInfo: (function() {
+            // Fetch once, reuse response
+            var promise = $.getJSON('../userinfo.json').promise();
+            return function() {
+                return promise;
+            }
+        }())
     }
 }(jQuery)));
 
