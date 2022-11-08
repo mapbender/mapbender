@@ -442,8 +442,9 @@ $.extend(Mapbender, (function($) {
          */
         loadUserInfo: (function() {
             // Fetch once, reuse response
-            var promise = $.getJSON('../userinfo.json').promise();
+            var promise = null;
             return function() {
+                promise = promise || $.getJSON('../userinfo.json').promise();
                 return promise;
             }
         }())
