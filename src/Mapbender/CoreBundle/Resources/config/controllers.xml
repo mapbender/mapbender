@@ -44,6 +44,12 @@
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
         </service>
+        <service id="Mapbender\CoreBundle\Controller\UserInfoController"
+                 class="Mapbender\CoreBundle\Controller\UserInfoController"
+                 public="true"
+                 lazy="true">
+            <argument type="service" id="mapbender.user_info_provider" />
+        </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
                  class="Mapbender\CoreBundle\Controller\ConfigController"
                  public="true"

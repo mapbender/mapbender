@@ -7,6 +7,7 @@
         <parameter key="mapbender.automatic_locale">true</parameter>
         <parameter key="mapbender.force_engine">null</parameter>
         <parameter key="mapbender.application_template.fallback">null</parameter>
+        <parameter key="mapbender.user_info_provider.class">Mapbender\FrameworkBundle\Component\UserInfoProvider</parameter>
     </parameters>
     <services>
         <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
@@ -54,6 +55,11 @@
             <!-- NOTE: argument populated by RegisterApplicationTemplatesPass -->
             <argument type="collection" />
             <argument>%mapbender.application_template.fallback%</argument>
+        </service>
+        <service id="mapbender.user_info_provider"
+                 class="%mapbender.user_info_provider.class%"
+                 lazy="true">
+            <argument type="service" id="security.token_storage" />
         </service>
         <service id="mapbender.icon_index"
                  class="Mapbender\FrameworkBundle\Component\IconIndex"
