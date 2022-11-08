@@ -1,0 +1,260 @@
+mb:
+  application:
+    create:
+      success: Ваш застосунок було створено.
+      failure:
+        create.directory: Неможливо створити каталог застосунку.
+    save:
+      success: Ваш застосунок було збережено.
+      failure:
+        general: Помилка при спробі зберегти ваш застосунок.
+        create.directory: Ваш застосунок було оновлено, але не вдається створити каталоги застосунку.
+    remove:
+      success: Ваш застосунок було видалено.
+      failure:
+        general: Не вдалося видалити ваш застосунок.
+        already.removed: Ваш застосунок вже видалено.
+        remove.directory: Ваш застосунок було видалено, але каталоги застосунку неможливо видалити.
+  layerset:
+    create:
+      success: Ваш набір шарів створено.
+      failure:
+        unique.title: Назва набору шарів уже використовується.
+    remove:
+      success: Ваш набір шарів було видалено.
+      failure: Виникла помилка при видаленні набору шарів.
+  source:
+    instance:
+      create:
+        success: Новий екземпляр було створено, але його потрібно відредагувати.
+  manager:
+    admin:
+      sources: Джерела
+      source:
+        add: 'Додати джерело'
+        show_metadata: 'Показати метадані'
+        delete: 'Видалити джерело'
+        new:
+          add: 'Додати джерело'
+        valid: 'Джерело дійсне'
+        notvalid: 'Джерело недійсне'
+        no_source: 'Немає доступного джерела'
+        update: 'Оновити джерело'
+        status:
+          ok: 'Джерело OK'
+          toupdate: 'Джерело більше не актуальне'
+          unreachable: 'Джерело недоступне'
+      map:
+        max_extent: 'Максимальна область'
+        start_extent: 'Початкова область'
+      element:
+        delete:
+          title: 'Видалити елемент'
+          confirm: 'Ви дійсно хочете видалити елемент?'
+        btn:
+          delete: Видалити
+          cancel: Скасувати
+        requirements: 'Обов`язкові поля позначені темними мітками, а необов`язкові - світлими.'
+        base_data: 'Базові дані'
+        configuration: Конфігурація
+        title: Назва
+        type: Тип
+        add: 'Додати новий елемент до'
+        show_hide: 'Переключити показ/приховування елемента'
+        edit: 'Редагувати елемент'
+        no_element_added:
+          '': 'Немає доданих елементів'
+      messagebox:
+        only_region_elements: 'Доступні елементи відображаються лише для цього регіону.'
+      zoombar:
+        draggable: Може бути перетягнутим
+      filter:
+        source: 'Фільтр джерел'
+        layerset: 'Фільтр набору шарів'
+        application: 'Фільтр застосунків'
+        element: 'Фільтр'
+      overview:
+        maximize: Розгорнути
+        fix: Закріпити
+      layerset:
+        add: 'Додати набір шарів'
+        title: Назва
+        type: Тип
+        edit: 'Редагувати набір шарів'
+        delete:
+          title: 'Видалити шари'
+          confirm: 'Ви дійсно хочете видалити набір шарів з назвою <span class="italic">%layerset_title%</span>?'
+        id_description: 'Id у формі SourceId/InstanceId'
+        id: Id
+      instance:
+        add: 'Додати екземпляр'
+        show_hide: 'Переключити показ/приховування екземпляру'
+        edit: 'Редагувати екземпляр'
+        delete:
+          title: 'Видалити екземпляр'
+          confirm: 'Ви дійсно хочете видалити екземпляр <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Жодного екземпляра не додано'
+        no_layer_added: 'Жодного шару не додано'
+      template: Шаблон
+      application:
+        view: Огляд
+        edit:
+          title: 'Редагувати застосунок'
+          base_data: 'Базові дані'
+        layouts: 'Панелі інструментів'
+        layersets: Шари
+        custom_css: CSS
+        security:
+          title: Безпека
+          add_users_groups: 'Додати користувачів та групи'
+          public: активовано
+        save: Зберегти
+        cancel: Скасувати
+        view_this: 'Показати застосунок'
+        duplicate: 'Створити копію застосунку'
+        public:
+          on_off: 'Переключити опублікування/скасування публікації застосунку'
+        delete: 'Видалити застосунок'
+        no_application: 'Немає доступних застосунків'
+        new:
+          title: 'Новий застосунок'
+          base_data: 'Базові дані'
+        create_use: 'Заповніть основну інформацію під час створення нового застосунку, а потім використовуйте режим редагування, щоб додати елементи та шари.'
+        btn:
+          create: Створити
+          cancel: Скасувати
+        upload:
+          button: 'Вибрати файл:'
+          label: 'Файл не обрано'
+          tooltip: 'Натисніть, щоб завантажити знімок екрана'
+        export:
+          addAcl: ACLs
+          addSources: Джерела
+          btn:
+            export: Експорт
+            cancel: Скасувати
+        import:
+          addApplications: Застосунки
+          addAcl: ACLs
+          addSources: Джерела
+          btn:
+            import: Імпорт
+            cancel: Скасувати
+        title: Назва
+        url:
+          title: 'Назва URL'
+        description: Опис
+        template: Шаблон
+        edit:
+          title: 'Звичайний'
+          base_data: 'Базові дані'
+      applications: Застосунки
+    managerbundle:
+      applications: Застосунки
+      new_application: 'Новий застосунок'
+      sources: Джерела
+      add_source: 'Додати джерело'
+      add_user_group: 'Додати користувачів та групи'
+      acl_element: 'Acl елемент'
+      import_application: Імпорт
+      export_application: Експорт
+    element:
+      yaml:
+        message: 'Використовуйте <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> формат для опису конфігурації елемента.'
+    be:
+      element:
+        delete: 'Видалити елемент ''%element_title%'''
+    components:
+      popup:
+        add_element:
+          title: 'Додати елемент'
+          btn:
+            ok: Ок
+            cancel: Скасувати
+            back: Назад
+        edit_element:
+          title: 'Редагувати елемент'
+          btn:
+            ok: Оновити
+            cancel: Скасувати
+        delete_element:
+          subtitle: елемент
+          title: 'Підтвердити видалення'
+          btn:
+            ok: Видалити
+            cancel: Скасувати
+        add_edit_layerset:
+          title_edit: 'Редагувати набір шарів'
+          title_add: 'Додати набір шарів'
+          btn:
+            ok: Ок
+            cancel: Скасувати
+        delete_layerset:
+          title: 'Видалити набір шарів'
+          btn:
+            ok: Видалити
+            cancel: Скасувати
+        add_instance:
+          title: 'Вибрати джерело'
+          btn:
+            cancel: Скасувати
+        delete_instance:
+          title: 'Підтвердити видалення'
+          btn:
+            ok: Видалити
+            cancel: Скасувати
+        element_acl:
+          btn:
+            cancel: Скасувати
+            ok: Оновити
+            add: Додати
+            back: Назад
+            remove: Видалити
+    template:
+      region:
+        tabs:
+          label: Вкладки
+        accordion:
+          label: Accordion
+    upload:
+      label_delete: 'Знімок екрана видалено'
+    import:
+      application:
+        failed: 'Застосунок не може бути імпортовано.'
+      acl:
+        failed: 'ACL не може бути імпортовано.'
+      source:
+        failed: 'Джерело не може бути імпортовано.'
+  core:
+    admin:
+      button:
+        show_label: 'Показати мітку'
+      scaleselector:
+        show_label: 'Показати мітку'
+      corrdsdisplay:
+        label: 'Показати мітку назви'
+      srsselector:
+        show_label: 'Показати позначку'
+      gpsposition:
+        show_label: 'Показати позначку'
+      element:
+        autostart: Автозапуск
+      about_dialog:
+        show_label: 'Показати мітку кнопки'
+    element:
+      ru:
+        button:
+          show_label: 'Показати позначку'
+    entity:
+      app:
+        screenshotfile:
+          error: 'Файл завеликий (% uploadFileSize% байт). Дозволений максимальний розмір становить %MaxFileSize% байт.'
+          format_error: 'Цей формат не підтримується!'
+          resolution:
+            error: 'Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.'
+form:
+  manager:
+    admin:
+      application:
+        export:
+          application: Застосунки

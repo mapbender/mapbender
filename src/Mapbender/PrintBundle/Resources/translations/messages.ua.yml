@@ -1,0 +1,20 @@
+mb:
+   print:
+     imageexport:
+       popup:
+         btn:
+           ok: Експорт
+           cancel: Скасувати
+       info:
+         noactivelayer: 'Немає активного шару!'
+       chooseformat:'Виберіть формат експорту'
+       class:
+         title: 'Експорт зображення'
+         description: |
+           'Дозволяє експортувати поточне відображення картки.
+           Доступні формати PNG і JPEG.'
+       tag:
+         image: зображення
+         export: експорт
+         jpeg: jpeg
+         png: png
