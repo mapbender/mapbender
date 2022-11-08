@@ -145,9 +145,6 @@ mb:
           title: 'Назва URL'
         description: Опис
         template: Шаблон
-        edit:
-          title: 'Звичайний'
-          base_data: 'Базові дані'
       applications: Застосунки
     managerbundle:
       applications: Застосунки

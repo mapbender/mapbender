@@ -7,7 +7,7 @@ mb:
            cancel: Скасувати
        info:
          noactivelayer: 'Немає активного шару!'
-       chooseformat:'Виберіть формат експорту'
+       chooseformat: 'Виберіть формат експорту'
        class:
          title: 'Експорт зображення'
          description: |
