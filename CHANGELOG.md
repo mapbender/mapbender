@@ -1,4 +1,4 @@
-## dev-master @ 230324481
+## dev-master @ 05781ccf0
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -24,6 +24,7 @@
 * Fix height collapse of choice with empty label in custom dropdown
 * [Mobile Template] Fix inability to close mobile pane via click on currently active control button
 * [Framework] Add client-side `refresh` method on Source objects
+* [Framework] Add client-side user information (see [PR#1436](https://github.com/mapbender/mapbender/pull/1436))
 * [Framework] Add server-side events `mb.before_application_config` and `mb.after_application_config`
 * [Framework] Add extensible icon packages for button assignments ([PR#1434](https://github.com/mapbender/mapbender/pull/1434))
 * [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
@@ -117,6 +118,7 @@
   * `$sidepaneButtonHoverColor` for "buttons"-mode sidepane header mouseover effect
   * `$sliderHandleTextColor`, `$sliderHandleBorderColor` for layertree and dimensionhandler slider widgets, complementing previously available `$sliderHandleBackgroundColor`
   * `$desktopBreakpointWidth` for controlling responsive switch between mobile / desktop element and container visibility
+  * `$hoverEffects` to globally enable / disable misc hover effects
 * Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
 * [Backend] Re-add display of ids in source / shared instance lists for searchability
 * Resolve misc Twig deprecations
