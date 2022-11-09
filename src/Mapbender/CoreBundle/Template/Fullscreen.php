@@ -145,6 +145,7 @@ class Fullscreen extends Template
                 return array(
                     'name' => 'accordion',
                     'align' => 'left',
+                    'closed' => false,
                 );
             default:
                 return parent::getRegionPropertiesDefaults($regionName);
