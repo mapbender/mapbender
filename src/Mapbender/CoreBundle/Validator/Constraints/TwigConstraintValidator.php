@@ -27,7 +27,7 @@ class TwigConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         try {
-            $source = new \Twig\Source($value, 'input');
+            $source = new \Twig\Source($value ?: '', 'input');
             $this->twig->parse($this->twig->tokenize($source));
         } catch (Error $e) {
             $this->context->addViolation('twig.invalid');
