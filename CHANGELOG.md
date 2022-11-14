@@ -1,4 +1,4 @@
-## dev-master @ e3a6bb6ce
+## dev-master @ 6c9862075
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
@@ -14,6 +14,7 @@
 * [HTMLElement] Fix errors validating content if it uses twig variables `entity` or `application` ([#1438](https://github.com/mapbender/mapbender/issues/1438))
 * [HTMLElement] Fix errors validating pure whitespace content
 * [Copyright] Enable twig + html validation
+* [Map] Use default tile size instead of minimum tile size if set to empty ([#1433]((https://github.com/mapbender/mapbender/issues/1433))
 * Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
 * Fix Wmts locked to single CRS, even if it supports several
 * Fix password creation in user registration process ([#1430](https://github.com/mapbender/mapbender/issues/1430))
