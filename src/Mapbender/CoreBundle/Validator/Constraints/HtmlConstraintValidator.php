@@ -3,8 +3,9 @@
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
-class HtmlConstraintValidator extends TwigConstraintValidator
+class HtmlConstraintValidator extends ConstraintValidator
 {
     /**
      * @param string $value
@@ -12,19 +13,14 @@ class HtmlConstraintValidator extends TwigConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        $errorCountBefore = count($this->context->getViolations());
-        parent::validate($value, $constraint);
-        if (count($this->context->getViolations()) === $errorCountBefore) {
-            $afterTwig = $this->twig->createTemplate($value ?: '')->render($constraint->payload['variables']);
+        // Avoid DOMDocument complaining about empty value
+        // see https://www.php.net/manual/en/domdocument.loadhtml.php
+        if ($value) {
             try {
                 $dom = new \DOMDocument;
-                $dom->loadHTML($afterTwig);
+                $dom->loadHTML($value);
             } catch (\Exception $e) {
-                // Ignore DOMDocument complaining about empty value
-                // see https://www.php.net/manual/en/domdocument.loadhtml.php
-                if ($afterTwig) {
-                    $this->context->addViolation('html.invalid');
-                }
+                $this->context->addViolation('html.invalid');
             }
         }
     }

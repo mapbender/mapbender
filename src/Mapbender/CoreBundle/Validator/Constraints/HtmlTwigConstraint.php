@@ -4,7 +4,11 @@ namespace Mapbender\CoreBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class TwigConstraint extends Constraint
+/**
+ * Given input must be both valid twig and valid HTML.
+ * (HTML validity checked on twig rendering output)
+ */
+class HtmlTwigConstraint extends Constraint
 {
     public function __construct(array $variables = array())
     {
@@ -16,6 +20,6 @@ class TwigConstraint extends Constraint
 
     public function validatedBy()
     {
-        return TwigConstraintValidator::class;
+        return HtmlTwigConstraintValidator::class;
     }
 }

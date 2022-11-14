@@ -2,8 +2,8 @@ services:
     #
     # Validators
     #
-    mapbender.validator.twig:
-        class: Mapbender\CoreBundle\Validator\Constraints\TwigConstraintValidator
+    mapbender.validator.html_twig:
+        class: Mapbender\CoreBundle\Validator\Constraints\HtmlTwigConstraintValidator
         arguments:
             - '@twig'
         tags:
@@ -11,7 +11,5 @@ services:
 
     mapbender.validator.html:
         class: Mapbender\CoreBundle\Validator\Constraints\HtmlConstraintValidator
-        arguments:
-            - '@twig'
         tags:
             - { name: validator.constraint_validator }

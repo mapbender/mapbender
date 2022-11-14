@@ -3,7 +3,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Element\HTMLElement;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Validator\Constraints\HtmlConstraint;
+use Mapbender\CoreBundle\Validator\Constraints\HtmlTwigConstraint;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -43,7 +43,7 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
         $element = $event->getForm()->getParent()->getData();
         $event->getForm()->add('content', TextareaType::class, array(
             'required' => false,
-            'constraints' => new HtmlConstraint(array(
+            'constraints' => new HtmlTwigConstraint(array(
                 // Same twig variable scope as frontend
                 /** @see HTMLElement::getView */
                 'entity' => $element,

@@ -3,11 +3,10 @@
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintValidator;
 use Twig\Environment;
 use Twig\Error\Error;
 
-class TwigConstraintValidator extends ConstraintValidator
+class HtmlTwigConstraintValidator extends HtmlConstraintValidator
 {
     /** @var Environment */
     protected $twig;
@@ -29,9 +28,15 @@ class TwigConstraintValidator extends ConstraintValidator
         try {
             $source = new \Twig\Source($value ?: '', 'input');
             $this->twig->parse($this->twig->tokenize($source));
+            $structureValid = true;
         } catch (Error $e) {
             $this->context->addViolation('twig.invalid');
             $this->context->addViolation($e->getMessage());
+            $structureValid = false;
+        }
+        if ($structureValid) {
+            $afterTwig = $this->twig->createTemplate($value ?: '')->render($constraint->payload['variables']);
+            parent::validate($afterTwig ?: '', $constraint);
         }
     }
 }
