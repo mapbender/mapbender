@@ -1,8 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Validator\Constraints\HtmlTwigConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CopyrightAdminType extends AbstractType
 {
@@ -35,6 +37,10 @@ class CopyrightAdminType extends AbstractType
             ))
             ->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => true,
+                'constraints' => array(
+                    new NotBlank(),
+                    new HtmlTwigConstraint(),
+                ),
             ))
         ;
     }
