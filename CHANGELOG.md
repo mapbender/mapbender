@@ -1,4 +1,4 @@
-## dev-master @ 6c9862075
+## v3.3.2
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
 * [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
