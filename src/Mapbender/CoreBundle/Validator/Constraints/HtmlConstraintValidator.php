@@ -15,7 +15,7 @@ class HtmlConstraintValidator extends TwigConstraintValidator
         $errorCountBefore = count($this->context->getViolations());
         parent::validate($value, $constraint);
         if (count($this->context->getViolations()) === $errorCountBefore) {
-            $afterTwig = $this->twig->createTemplate($value)->render();
+            $afterTwig = $this->twig->createTemplate($value)->render($constraint->payload['variables']);
             try {
                 $dom = new \DOMDocument;
                 $dom->loadHTML($afterTwig);

@@ -77,7 +77,6 @@ class MapbenderCoreBundle extends Bundle
             'commands.xml',
             'mapbender.yml',
             'constraints.yml',
-            'formTypes.yml',
             'elements.xml',
             'templates.xml',
         );

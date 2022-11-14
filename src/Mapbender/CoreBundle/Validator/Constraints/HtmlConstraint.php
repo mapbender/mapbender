@@ -2,9 +2,7 @@
 
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
-
-class HtmlConstraint extends Constraint
+class HtmlConstraint extends TwigConstraint
 {
     public function validatedBy()
     {
