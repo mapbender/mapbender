@@ -133,6 +133,14 @@ abstract class BaseKernel extends Kernel
         return $keptBundleInstances;
     }
 
+    public function boot()
+    {
+        parent::boot();
+        if ($this->isDebug() && \class_exists('Doctrine\Deprecations\Deprecation')) {
+            \Doctrine\Deprecations\Deprecation::enableWithTriggerError();
+        }
+    }
+
     protected function buildContainer()
     {
         $container = parent::buildContainer();
