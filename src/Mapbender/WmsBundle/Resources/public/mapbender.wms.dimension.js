@@ -235,6 +235,9 @@ Mapbender.DimensionTime.DateTemplate = function(value) {
     if (!truths.length) {
         throw new Error("Invalid date template input " + value);
     }
+    if (timeString && /Z$/.test(value)) {
+        this.timeSuffix = 'Z';
+    }
 };
 
 Object.assign(Mapbender.DimensionTime.DateTemplate.prototype, {
@@ -252,6 +255,9 @@ Object.assign(Mapbender.DimensionTime.DateTemplate.prototype, {
         } else if (!this.hmsm[3]) {
             // strip milliseconds
             value = value.replace(/(T\d\d:\d\d:\d\d)(.*)$/, '$1');
+        }
+        if (this.hmsm[0] && this.timeSuffix) {
+            value = [value, this.timeSuffix].join('');
         }
         if (!this.ymd[0]) {
             // strip date portion entirely
