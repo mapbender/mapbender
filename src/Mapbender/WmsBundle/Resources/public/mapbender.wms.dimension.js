@@ -212,12 +212,21 @@ Mapbender.DimensionTime.DateTemplate = function(value) {
         console.warn("Ambiguous vcard date format, truncating ambiguously", dateTimeStr);
         dateTimeStr = date.toISOString().replace(/([-T:]00)*\.000(Z?)$/, '');
     }
-    var dateTimeParts = dateTimeStr.split('T');
+    var dateTimeParts = dateTimeStr.split(/[T ]/, 2);
+
     var dateString = dateTimeParts[0];
     var timeString = dateTimeParts[1];
     if (dateString.indexOf(':') !== -1) {
         dateString = '';
         timeString = dateTimeParts[0];
+    }
+    if (dateString.length) {
+        // Could be "T" or a single space
+        this.timePrefix = dateTimeStr.charAt((dateString || '').length);
+    } else {
+        // Pure time (no date)
+        // Prefix is either "T" or empty (NOT a space)
+        this.timePrefix = dateTimeStr.charAt(0) === 'T' && 'T' || '';
     }
     this.ymd = dateString.split('-').map(function(part) {
         return part && !isNaN(parseInt(part));
@@ -269,8 +278,8 @@ Object.assign(Mapbender.DimensionTime.DateTemplate.prototype, {
             // strip day, keep time portion
             value = value.replace(/^(\d\d\d\d-\d\d)([^T]*)(.*)$/, '$1$3');
         }
-        // if only time portion remains, strip leading T
-        return value.replace(/^T/, '');
+        // Replace "T" with time prefix
+        return value.replace(/T/, this.timePrefix);
     }
 });
 
