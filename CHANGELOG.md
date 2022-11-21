@@ -1,3 +1,14 @@
+## dev-master @ d90559b99
+* Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
+* Fix broken Wms layer toggling in legacy Openlayers 2 applications
+* Support additional Wms time dimension request parameter format variants:
+ * Date + time separated by space instead of 'T'
+ * "Compact" date formats without dashes between year, month and day
+ * trailing 'Z' in time portion
+ * Leading 'T' for time-only formats
+* [Backend] Fix shared instance editing url showing usage instead of editing form
+* Enable doctrine deprecation warnings in log (dev environment only)
+
 ## v3.3.2
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
 * [FeatureInfo] Add min / max range validation for backend form opacity settings
