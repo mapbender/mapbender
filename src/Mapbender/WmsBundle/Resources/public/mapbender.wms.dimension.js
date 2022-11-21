@@ -218,7 +218,8 @@ Mapbender.DimensionTime.DateTemplate = function(value) {
 
     var dateString = dateTimeParts[0];
     var timeString = dateTimeParts[1];
-    if (dateString.indexOf(':') !== -1) {
+    if (dateString.indexOf(':') !== -1 || (!timeString && dateString.length <= 3)) {
+        // Time only, no date
         dateString = '';
         timeString = dateTimeParts[0];
     }
@@ -230,11 +231,42 @@ Mapbender.DimensionTime.DateTemplate = function(value) {
         // Prefix is either "T" or empty (NOT a space)
         this.timePrefix = dateTimeStr.charAt(0) === 'T' && 'T' || '';
     }
-    this.ymd = dateString.split('-').map(function(part) {
-        return part && !isNaN(parseInt(part));
-    });
+    switch (true) {
+        default:
+            throw new Error("Invalid date template input " + value);
+        case '' === dateString:
+            this.ymd  = [false, false, false];
+            this.dateSeparator = '';
+            break;
+        case /^\d{4}$/.test(dateString):
+            // Year only, separator irrelevant
+            this.ymd = [true, false, false];
+            this.dateSeparator = '';
+            break;
+        case /^\d{4}-\d{2}$/.test(dateString):
+            // YYYY-MM with dash separator
+            this.ymd = [true, true, false];
+            this.dateSeparator = '-';
+            break;
+        case /^\d{6}$/.test(dateString):
+            // Gapless YYYYMM
+            this.ymd = [true, true, false];
+            this.dateSeparator = '';
+            break;
+        case /^\d{4}-\d{2}-\d{2}$/.test(dateString):
+            // YYYY-MM-DD with dash separator
+            this.ymd = [true, true, true];
+            this.dateSeparator = '-';
+            break;
+        case /^\d{8}$/.test(dateString):
+            // Gapless YYYYMMDD
+            this.ymd = [true, true, true];
+            this.dateSeparator = '';
+            break;
+    }
+
     this.hmsm = (timeString || '').replace(/Z$/, '').split(':').map(function(part) {
-        return part && !isNaN(parseInt(part));
+        return part && !isNaN(parseInt(part)) || false;
     });
     if ((timeString || '').indexOf('.') !== -1) {
         this.hmsm[2] = true;
@@ -281,7 +313,10 @@ Object.assign(Mapbender.DimensionTime.DateTemplate.prototype, {
             value = value.replace(/^(\d\d\d\d-\d\d)([^T]*)(.*)$/, '$1$3');
         }
         // Replace "T" with time prefix
-        return value.replace(/T/, this.timePrefix);
+        value = value.replace(/T/, this.timePrefix);
+        // Replace "-" with date separator ("-" or empty string)
+        value = value.replace(/-/g, this.dateSeparator);
+        return value;
     }
 });
 
