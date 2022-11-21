@@ -206,6 +206,8 @@ Mapbender.DimensionTime.prototype.innerJoin = function innerJoin(another) {
 };
 
 Mapbender.DimensionTime.DateTemplate = function(value) {
+    // For a nice summary of possible format variants, see
+    // https://mapserver.org/ogc/wms_time.html#time-patterns
     var dateTimeStr = '' + value;
     if(dateTimeStr.indexOf('-') === 0) {
         var date = new Date(value);
