@@ -87,7 +87,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
                  . ' FROM ' . $connection->quoteIdentifier($tn)
                  . ' GROUP BY application_id, region'
         ;
-        $results = $connection->query($scanSql)->fetchAll(FetchMode::ASSOCIATIVE);
+        $results = $connection->executeQuery($scanSql)->fetchAll(FetchMode::ASSOCIATIVE);
         $applicationMap = array();
         foreach ($results as $row) {
             $needReorder = $row['c1'] != $row['c0'];

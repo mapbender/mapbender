@@ -27,7 +27,7 @@ class SqliteConnectionListener implements EventSubscriber
     public function postConnect(ConnectionEventArgs $args)
     {
         if (!$this->skipForeignKeys) {
-            $platform = $args->getDatabasePlatform();
+            $platform = $args->getConnection()->getDatabasePlatform();
             if ($platform instanceof SqlitePlatform) {
                 $this->enableForeignKeys($args->getConnection());
             }
@@ -61,9 +61,6 @@ class SqliteConnectionListener implements EventSubscriber
 
     protected function undoEnableForeignKeys(Connection $connection)
     {
-        if (php_sapi_name() === 'cli') {
-            echo "Undoing foreign keys on " . $connection->getHost() . ':' . $connection->getPort();
-        }
         $connection->exec('PRAGMA foreign_keys = OFF;');
     }
 
