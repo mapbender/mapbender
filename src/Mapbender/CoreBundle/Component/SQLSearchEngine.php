@@ -44,9 +44,6 @@ class SQLSearchEngine
      */
     public function autocomplete($config, $key, $value, $properties, $srs, $extent)
     {
-        if (is_object($properties)) {
-            $properties = get_object_vars($properties);
-        }
         $connection     = $this->getConnection($config);
         $qb             = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
