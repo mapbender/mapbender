@@ -17,15 +17,8 @@ class Configuration implements ConfigurationInterface {
     {
         $rootName = 'fom_user';
         $treeBuilder = new TreeBuilder($rootName);
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            // Symfony >= 4.1+
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // Deprecated on Symfony 4, error on Symfony 5
-            $rootNode = $treeBuilder->root($rootName);
-        }
 
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
                 // not used, value irrelevant; kept to avoid errors with older
                 // starter config.yml
