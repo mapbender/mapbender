@@ -4,7 +4,7 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -22,7 +22,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
-use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -328,7 +327,6 @@ class ImportHandler extends ExchangeHandler
         }
 
         foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
-            /** @var EntryInterface $sourceEntry */
             $entryIdentity = $sourceEntry->getSecurityIdentity();
             $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
         }
