@@ -2,14 +2,14 @@
 
 namespace FOM\UserBundle\Security\Firewall;
 
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use FOM\UserBundle\Security\Authentication\Token\SspiUserToken;
 
-class SspiListener implements ListenerInterface {
+class SspiListener
+{
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
@@ -26,11 +26,9 @@ class SspiListener implements ListenerInterface {
         $this->manager = $manager;
     }
 
-    /**
-     * @param GetResponseEvent $evt
-     */
-    public function handle(GetResponseEvent $evt) {
-        $request = $evt->getRequest();
+    public function __invoke(RequestEvent $event)
+    {
+        $request = $event->getRequest();
 
         // check if username is set, let it override
         if($request->get('_username')) {
