@@ -56,8 +56,6 @@ class DatabaseUpgradeCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
     protected function updateMapElementConfigs(InputInterface $input, OutputInterface $output)
     {

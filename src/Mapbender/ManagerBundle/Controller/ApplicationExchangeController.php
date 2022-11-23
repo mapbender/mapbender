@@ -4,7 +4,6 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
@@ -45,7 +44,6 @@ class ApplicationExchangeController extends AbstractController
      * @ManagerRoute("/application/import", name="mapbender_manager_application_import", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
-     * @throws DBALException
      */
     public function importAction(Request $request)
     {
@@ -89,7 +87,6 @@ class ApplicationExchangeController extends AbstractController
      * @ManagerRoute("/application/{slug}/copydirectly", name="mapbender_manager_application_copydirectly", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
      * @param string $slug
      * @return Response
-     * @throws DBALException
      */
     public function copyDirectlyAction($slug)
     {

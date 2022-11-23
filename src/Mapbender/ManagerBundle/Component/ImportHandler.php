@@ -228,7 +228,6 @@ class ImportHandler extends ExchangeHandler
      * Imports sources.
      * @param ImportState $state
      * @param array $data data to import
-     * @throws ORMException
      */
     private function importSources(ImportState $state, $data)
     {
@@ -249,7 +248,6 @@ class ImportHandler extends ExchangeHandler
      * @param ImportState $state
      * @param array $data data to import
      * @return Application[]
-     * @throws ORMException
      */
     private function importApplicationEntities(ImportState $state, $data)
     {
@@ -414,7 +412,6 @@ class ImportHandler extends ExchangeHandler
      * @param ImportState $state
      * @param mixed $data
      * @return array|null|number|string|object
-     * @throws \Doctrine\ORM\ORMException
      */
     protected function handleData(ImportState $state, $data)
     {
@@ -470,7 +467,6 @@ class ImportHandler extends ExchangeHandler
      * @param EntityHelper $entityInfo
      * @param array $data
      * @return object|null
-     * @throws ORMException
      */
     protected function handleEntity(ImportState $state, EntityHelper $entityInfo, array $data)
     {
@@ -519,7 +515,6 @@ class ImportHandler extends ExchangeHandler
      * @param AbstractObjectHelper $classInfo
      * @param array $data
      * @return object
-     * @throws ORMException
      */
     protected function handleClass(ImportState $state, AbstractObjectHelper $classInfo, array $data)
     {
