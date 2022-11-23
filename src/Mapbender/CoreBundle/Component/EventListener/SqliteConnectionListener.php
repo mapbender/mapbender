@@ -56,12 +56,12 @@ class SqliteConnectionListener implements EventSubscriber
     {
         // remember connection so we can undo this
         $this->modifiedConnections[] = $connection;
-        $connection->exec('PRAGMA foreign_keys = ON;');
+        $connection->executeStatement('PRAGMA foreign_keys = ON;');
     }
 
     protected function undoEnableForeignKeys(Connection $connection)
     {
-        $connection->exec('PRAGMA foreign_keys = OFF;');
+        $connection->executeStatement('PRAGMA foreign_keys = OFF;');
     }
 
     public function getForeignKeyBlacklistedCommandNames()
