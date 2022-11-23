@@ -50,6 +50,9 @@ abstract class BaseKernel extends Kernel
      * @param BundleInterface[] $bundles   Bundle array link
      * @param string            $nameSpace Name space prefix as string
      * @return BundleInterface[] Bundle array
+     *
+     * @deprecated explicitly register your desired bundles in the kernel
+     * @todo v3.4: remove
      */
     public function addNameSpaceBundles(array &$bundles, $nameSpace)
     {
