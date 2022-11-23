@@ -57,11 +57,10 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         // Build WHERE condition
-        $cond = $qb->expr()->andX();
-        $cond->add($this->getTextMatchExpression($key, $value, 'ilike', $qb));
+        $qb->where($this->getTextMatchExpression($key, $value, 'ilike', $qb));
         if ($srs && $extent && !empty($config['class_options']['geometry_attribute'])) {
             $geomColumn = 't.' . $connection->quoteIdentifier(trim($config['class_options']['geometry_attribute'], '"'));
-            $cond->add($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
         }
 
         $logger = $this->container->get('logger');
@@ -69,14 +68,13 @@ class SQLSearchEngine
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
                 if (!empty($properties[$otherProp])) {
-                    $cond->add($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
+                    $qb->andWhere($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
                     $logger->warn('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
                 }
             }
         }
 
-        $qb->where($cond);
         $qb->orderBy('t.' . $key, 'ASC');
 
         $stmt = $qb->execute();
@@ -127,20 +125,17 @@ class SQLSearchEngine
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
-        $cond = $qb->expr()->andX();
         foreach($data['form'] as $key => $value) {
             if (!$value) {
                 continue;
             }
             $fieldConfig = $this->getFormFieldConfig($config, $key);
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
-            $cond->add($this->getTextMatchExpression($key, $value, $matchMode, $qb));
+            $qb->andWhere($this->getTextMatchExpression($key, $value, $matchMode, $qb));
         }
         if ($srs && $extent) {
-            $cond->add($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
         }
-
-        $qb->where($cond);
 
         $stmt = $qb->execute();
         return $this->rowsToGeoJson($stmt);
