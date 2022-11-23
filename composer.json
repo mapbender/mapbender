@@ -9,7 +9,7 @@
         "ext-dom": "*",
         "ext-gd": "*",
         "ext-curl": "*",
-        "symfony/symfony": "^4.2",
+        "symfony/symfony": "^4.3",
         "symfony/security-acl": "~2.8 || ~3.0",
         "symfony/acl-bundle": "^1 || ^2",
         "twig/twig": "^2.13",
