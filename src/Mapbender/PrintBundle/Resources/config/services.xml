@@ -30,6 +30,7 @@
         <parameter key="mapbender.print.template_dir">%mapbender.print.resource_dir%/templates</parameter>
         <parameter key="mapbender.print.legend_handler.service.class">Mapbender\PrintBundle\Component\LegendHandler</parameter>
         <parameter key="mapbender.print.template_parser.service.class">Mapbender\PrintBundle\Component\OdgParser</parameter>
+        <!-- deprecated pre-3.2 remnant; @todo v3.4: remove -->
         <parameter key="mapbender.print_service_bridge.service.class">Mapbender\PrintBundle\Component\Service\PrintServiceBridge</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
@@ -110,6 +111,7 @@
             <argument>%mapbender.print.resource_dir%</argument>
             <argument>%mapbender.print.temp_dir%</argument>
         </service>
+        <!-- deprecated pre-3.2 remnant; @todo v3.4: remove -->
         <service id="mapbender.print_service_bridge.service" class="%mapbender.print_service_bridge.service.class%">
             <argument type="service" id="mapbender.print.service" />
             <argument type="service" id="mapbender.print_plugin_host.service" />

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Registered in container at mapbender.print_service_bridge.service (yes, exactly like that)
  * @deprecated inject / access PrintService (service id "mapbender.print.service") and / or plugin host (service id "mapbender.print.plugin_host.service) directly
+ * @todo v3.4: remove
  */
 class PrintServiceBridge implements PrintServiceInterface
 {
