@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FOM\UserBundle\EventListener\UserProfileListener;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("email")
  * @ORM\Table(name="fom_user")
  */
-class User extends AbstractUser implements AdvancedUserInterface, EquatableInterface
+class User extends AbstractUser implements EquatableInterface
 {
     /**
      * @ORM\Column(type="string", nullable=false, length=255, unique=true)
@@ -213,14 +212,6 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     /**
      * @return bool
      */
-    public function isCredentialsNonExpired()
-    {
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
     public function isEnabled()
     {
         if ($this->profile && method_exists($this->profile, 'isEnabled')) {
@@ -263,14 +254,6 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     public function getProfile()
     {
         return $this->profile;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isAccountNonLocked()
-    {
-        return true;
     }
 
     // why...?

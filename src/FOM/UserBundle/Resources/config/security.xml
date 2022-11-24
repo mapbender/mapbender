@@ -24,6 +24,9 @@
             <argument type="service" id="security.user_checker"/>
         </service>
 
+        <service id="fom.security.authentication_listener.account_status" class="FOM\UserBundle\Security\Authentication\AccountStatusCheckSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
         <service id="fom.security.failed_login_listener" class="%fom_user.failed_login_listener.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument>%fom_user.login_attempts_before_delay%</argument>
