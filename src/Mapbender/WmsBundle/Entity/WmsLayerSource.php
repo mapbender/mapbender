@@ -311,7 +311,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setCascaded($cascaded)
     {
-        $this->cascaded = $cascaded;
+        $this->cascaded = \intval($cascaded) ?: 0;
         return $this;
     }
 
@@ -333,7 +333,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setOpaque($opaque)
     {
-        $this->opaque = $opaque;
+        $this->opaque = !!$opaque;
         return $this;
     }
 
@@ -355,7 +355,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setNoSubset($noSubset)
     {
-        $this->noSubset = $noSubset;
+        $this->noSubset = !!$noSubset;
         return $this;
     }
 
@@ -377,7 +377,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setFixedWidth($fixedWidth = null)
     {
-        $this->fixedWidth = $fixedWidth;
+        $this->fixedWidth = $fixedWidth ?: null;
         return $this;
     }
 
@@ -399,7 +399,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setFixedHeight($fixedHeight = null)
     {
-        $this->fixedHeight = $fixedHeight;
+        $this->fixedHeight = $fixedHeight ?: null;
         return $this;
     }
 
