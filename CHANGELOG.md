@@ -1,6 +1,8 @@
-## dev-master @ d90559b99
+## dev-master @ 04af9d69a
+* Fix Wms loading errors with PostgreSQL default database
 * Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
 * Fix broken Wms layer toggling in legacy Openlayers 2 applications
+* Fix errors running mapbender:database:check console command on Windows (missing posix extension)
 * Support additional Wms time dimension request parameter format variants:
  * Date + time separated by space instead of 'T'
  * "Compact" date formats without dashes between year, month and day
@@ -8,6 +10,8 @@
  * Leading 'T' for time-only formats
 * [Backend] Fix shared instance editing url showing usage instead of editing form
 * Enable doctrine deprecation warnings in log (dev environment only)
+* Resolve misc Symfony 5 incompatibilities
+* Resolve misc Doctrine DBAL 3 incompatibilities
 
 ## v3.3.2
 * [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
