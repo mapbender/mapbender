@@ -26,6 +26,7 @@
 
         <service id="fom.security.authentication_listener.account_status" class="FOM\UserBundle\Security\Authentication\AccountStatusCheckSubscriber">
             <tag name="kernel.event_subscriber" />
+            <argument type="service" id="fom.security.failed_login_listener" on-invalid="null" />
         </service>
         <service id="fom.security.failed_login_listener" class="%fom_user.failed_login_listener.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />

@@ -4,11 +4,13 @@
 namespace FOM\UserBundle\Security\Authentication;
 
 
-use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\EventListener\FailedLoginListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\AuthenticationEvents;
-use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
 use Symfony\Component\Security\Core\Exception\AccountExpiredException;
+use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 
 /**
@@ -21,6 +23,16 @@ use Symfony\Component\Security\Core\Exception\DisabledException;
  */
 class AccountStatusCheckSubscriber implements EventSubscriberInterface
 {
+    protected $loggingFailureSubscriber;
+
+    /**
+     * @param FailedLoginListener|null $loggingFailureSubscriber
+     */
+    public function __construct($loggingFailureSubscriber = null)
+    {
+        $this->loggingFailureSubscriber = $loggingFailureSubscriber;
+    }
+
     public static function getSubscribedEvents()
     {
         return array(
@@ -28,7 +40,20 @@ class AccountStatusCheckSubscriber implements EventSubscriberInterface
         );
     }
 
-    public function onAuthenticationSuccess(AuthenticationSuccessEvent $evt)
+    public function onAuthenticationSuccess(AuthenticationEvent $evt)
+    {
+        try {
+            $this->check($evt);
+        } catch (AccountStatusException $e) {
+            if ($this->loggingFailureSubscriber && \method_exists($this->loggingFailureSubscriber, 'onLoginFailure')) {
+                $failureEvent = new AuthenticationFailureEvent($evt->getAuthenticationToken(), $e);
+                $this->loggingFailureSubscriber->onLoginFailure($failureEvent);
+            }
+            throw $e;
+        }
+    }
+
+    public function check(AuthenticationEvent $evt)
     {
         $user = $evt->getAuthenticationToken()->getUser();
         if (\is_object($user)) {
