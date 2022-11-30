@@ -33,7 +33,7 @@ class SourceInstanceController extends ApplicationControllerBase
 
     /**
      * @Route("/application/{slug}/instance/{instanceId}", name="mapbender_manager_repository_instance")
-     * @Route("/instance/{instanceId}/edit", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
+     * @Route("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
      * @Route("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance_scoped", requirements={"instanceId"="\d+"})
      * @param Request $request
      * @param string|null $slug
