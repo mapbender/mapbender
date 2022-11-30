@@ -7,11 +7,17 @@
         _create: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(this.options.autoOpen){
-                this.open();
+                let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup');
+                let item = window.localStorage.getItem(key);
+                if (!item) {
+                    this.open();
+                } else {
+                    console.log("Don't show copyright popup")
+                }
             }
             this._trigger('ready');
         },
-        
+
         open: function(callback) {
             var widget = this;
             var options = widget.options;
@@ -32,8 +38,17 @@
                         height:              height,
                         buttons:             {
                             'ok': {
-                                label: 'OK',
+                                label: 'OK, ich habe verstanden',
                                 cssClass: 'button right popupClose'
+                            },
+                            'ok_2': {
+                                label: 'OK, diese Meldung nicht mehr anzeigen',
+                                cssClass: 'button right popupClose',
+                                callback: function() {
+                                    let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup');
+                                    window.localStorage.setItem(key, '1');
+                                    this.close();
+                                }
                             }
                         }
                     });
