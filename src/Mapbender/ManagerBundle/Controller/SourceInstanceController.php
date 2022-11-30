@@ -32,17 +32,6 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/{instance}", methods={"GET"})
-     * @param SourceInstance $instance
-     * @return Response
-     */
-    public function viewAction(SourceInstance $instance)
-    {
-        $viewData = $this->getApplicationRelationViewData($instance);
-        return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
-    }
-
-    /**
      * @Route("/application/{slug}/instance/{instanceId}", name="mapbender_manager_repository_instance")
      * @Route("/instance/{instanceId}/edit", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
      * @Route("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance_scoped", requirements={"instanceId"="\d+"})
@@ -134,7 +123,8 @@ class SourceInstanceController extends ApplicationControllerBase
                 ));
             }
         } else {
-            return $this->viewAction($instance);
+            $viewData = $this->getApplicationRelationViewData($instance);
+            return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
         }
     }
 
@@ -403,7 +393,6 @@ class SourceInstanceController extends ApplicationControllerBase
             })->getValues();
             if (!$relatedLayersets) {
                 throw new \LogicException("Instance => Application lookup error; should contain instance #{$instance->getId()}, but doesn't");
-                continue;
             }
             $appViewData = array(
                 'application' => $application,
@@ -412,7 +401,6 @@ class SourceInstanceController extends ApplicationControllerBase
             foreach ($relatedLayersets as $ls) {
                 $layersetViewData = array(
                     'layerset' => $ls,
-                    'instance_assignments' => array(),
                 );
                 $assignments = $ls->getCombinedInstanceAssignments()->filter(function ($a) use ($instance) {
                     /** @var SourceInstanceAssignment $a */
