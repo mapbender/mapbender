@@ -43,6 +43,11 @@
             <argument type="service" id="translator" />
             <argument>%kernel.cache_dir%</argument>
         </service>
+        <service id="mapbender.cache.backend"
+                 class="Mapbender\CoreBundle\Component\Cache\Backend\File"
+                 lazy="true">
+            <argument>%kernel.cache_dir%</argument>
+        </service>
         <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="security.authorization_checker" />
