@@ -1,14 +1,16 @@
-## dev-master @ 04af9d69a
+## dev-master @ 2f8f48629
 * Fix Wms loading errors with PostgreSQL default database
 * Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
 * Fix broken Wms layer toggling in legacy Openlayers 2 applications
 * Fix errors running mapbender:database:check console command on Windows (missing posix extension)
+* [BaseSourceSwitcher] Fix text alignment when used as a floating map overlay element
 * Support additional Wms time dimension request parameter format variants:
  * Date + time separated by space instead of 'T'
  * "Compact" date formats without dashes between year, month and day
  * trailing 'Z' in time portion
  * Leading 'T' for time-only formats
-* [Backend] Fix shared instance editing url showing usage instead of editing form
+* [Backend] Fix shared instance editing url showing usage in applications instead of editing form
+* [Backend] Fix redirect back to shared instance list after confirming shared instance deletion
 * Enable doctrine deprecation warnings in log (dev environment only)
 * Resolve misc Symfony 5 incompatibilities
 * Resolve misc Doctrine DBAL 3 incompatibilities
