@@ -35,7 +35,7 @@ class MenuItem implements \Serializable
         $this->children = array();
     }
 
-    public function serialize()
+    public function __serialize()
     {
         $data = array(
             'title' => $this->title,
@@ -49,12 +49,22 @@ class MenuItem implements \Serializable
                 'weight' => $this->weight,
             );
         }
-        return \serialize($data);
+        return $data;
+    }
+
+    public function serialize()
+    {
+        return \serialize($this->__serialize());
     }
 
     public function unserialize($serialized)
     {
         $data = \unserialize($serialized);
+        $this->__unserialize($data);
+    }
+
+    public function __unserialize(array $data)
+    {
         $this->title = $data['title'];
         $this->route = $data['route'];
         if (isset($data['weight'])) {
