@@ -255,7 +255,7 @@
             var $rootList = $('ul.layers:first', this.element);
             // Insert on top
             $rootList.prepend($sourceTree);
-            this.indent_($rootList, false);
+            this.reIndent_($rootList, false);
             this._reset();
         },
         _onSourceChanged: function(event, data) {
