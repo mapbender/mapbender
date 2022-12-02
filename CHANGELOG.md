@@ -1,4 +1,4 @@
-## dev-master @ 22cf449ad
+## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database
 * Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
 * Fix broken Wms layer toggling in legacy Openlayers 2 applications
