@@ -7,7 +7,7 @@
         _create: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(this.options.autoOpen){
-                let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup');
+                let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup_'+this.getContentHash());
                 let item = window.localStorage.getItem(key);
                 if (!item) {
                     this.open();
@@ -25,7 +25,6 @@
             var width = options.popupWidth ? options.popupWidth : 350;
             var height = options.popupHeight ? options.popupHeight : 350;
             this.callback = callback ? callback : null;
-
             if (!this.popup) {
                 $.ajax({url: this.elementUrl + 'content'}).then(function(response) {
                     widget.popup = new Mapbender.Popup2({
@@ -45,7 +44,7 @@
                                 label: 'OK, diese Meldung nicht mehr anzeigen',
                                 cssClass: 'button right popupClose',
                                 callback: function() {
-                                    let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup');
+                                    let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup_'+widget.getContentHash());
                                     window.localStorage.setItem(key, '1');
                                     this.close();
                                 }
@@ -59,6 +58,17 @@
             } else {
                 this.popup.$element.show();
             }
+        },
+
+        getContentHash() {
+            const stringHashCode = str => {
+                let hash = 0
+                for (let i = 0; i < str.length; ++i)
+                    hash = Math.imul(31, hash) + str.charCodeAt(i)
+
+                return hash | 0
+            }
+          return stringHashCode(this.options.content);
         },
         close: function(){
             if(this.popup){
