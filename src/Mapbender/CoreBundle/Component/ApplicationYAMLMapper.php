@@ -172,8 +172,13 @@ class ApplicationYAMLMapper
         $layerset
             ->setId($layersetId)
             ->setTitle(strval($layersetId))
+            ->setSelected(!empty($layersetDefinition['selected']))
         ;
-        $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $layersetDefinition);
+        $layersetProps = array(
+            'selected',
+        );
+        $instanceDefinitions = \array_diff_key($layersetDefinition, \array_flip($layersetProps));
+        $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $instanceDefinitions);
         $layerset->setInstances($instanceCollection);
         return $layerset;
     }
