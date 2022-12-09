@@ -59,11 +59,10 @@ window.Mapbender.LayerGroup = (function() {
 })();
 
 window.Mapbender.Layerset = (function() {
-    function Layerset(title, id) {
+    function Layerset(title, id, selected) {
         Mapbender.LayerGroup.call(this, title, null);
         this.id = id;
-        // layersets always start out enabled
-        this.selected = true;
+        this.selected = selected;
     }
     Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Layerset.prototype, {

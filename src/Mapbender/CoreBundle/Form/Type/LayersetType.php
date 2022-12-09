@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class LayersetType extends AbstractType
@@ -19,6 +20,10 @@ class LayersetType extends AbstractType
                 'attr' => array(
                     'maxlength' => 128,
                 ),
+            ))
+            ->add('selected', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
             ))
         ;
     }

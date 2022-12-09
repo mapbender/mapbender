@@ -130,6 +130,7 @@ class ConfigService
             $configs[] = array(
                 'id' => strval($layerSet->getId()),
                 'title' => $layerSet->getTitle() ?: strval($layerSet->getId()),
+                'selected' => $layerSet->getSelected(),
                 'instances' => $this->getSourceInstanceConfigs($layerSet),
             );
         }

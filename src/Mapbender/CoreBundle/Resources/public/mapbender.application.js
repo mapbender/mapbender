@@ -266,7 +266,7 @@ $.extend(Mapbender, (function($) {
         var layersets = [];
         for (var i = 0; i < configs.length; ++i) {
             var lsConfig = configs[i];
-            var layerset = new Mapbender.Layerset(lsConfig.title, lsConfig.id);
+            var layerset = new Mapbender.Layerset(lsConfig.title, lsConfig.id, lsConfig.selected);
             layerset.siblings = layersets;
 
             var instanceConfigs = lsConfig.instances;
