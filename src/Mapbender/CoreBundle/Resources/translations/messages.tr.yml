@@ -250,7 +250,6 @@ mb:
           usemailto: 'Mailto`yu kullanın'
       legend:
         label:
-          autoopen: 'Otomatik aç'
           hideemptylayers: 'Boş katmanları gizle'
           generatelegendurl: 'Lejant URL`si oluştur'
           showsourcetitle: 'Kaynak başlığını göster'
@@ -268,13 +267,9 @@ mb:
           rotatable: 'Döndürülebilir'
           legend: 'Lejant yazdır'
           legend_default_behaviour: 'Lejant onay kutusu etkin'
-      copyright:
-        label:
-          autoopen: 'Otomatik aç'
       layertree:
         label:
           showbasesources: 'Altlık kaynaklarını göster'
-          autoopen: 'Otomatik aç'
           showlayerremove: 'Katman kaldır aracını göster'
           usetheme: 'Tematik katman'
           themes: 'Temalar'

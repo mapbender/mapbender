@@ -24,6 +24,7 @@ mb:
       create:
         success: 'È stata creata una nuova istanza. Si prega di modificarla.'
   manager:
+    autoOpen: Apertura automatica
     admin:
       sources: Risorse
       source:

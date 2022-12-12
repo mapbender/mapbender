@@ -128,7 +128,6 @@ mb:
         description: 'Carica un WMS attraverso la getCapabilities-Request'
       admin:
         label:
-          autoopen: 'Apertura automatica'
           splitlayers: 'Dividi layers'
     repository:
       parser:

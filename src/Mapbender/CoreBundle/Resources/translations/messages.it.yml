@@ -249,7 +249,6 @@ mb:
           usemailto: 'Usa Mailto'
       legend:
         label:
-          autoopen: Apertura automatica
           hideemptylayers: 'Nascondi i layers vuoti'
           generatelegendurl: 'Genera la url per la legenda'
           showsourcetitle: 'Mostra il titolo della risorsa'
@@ -267,13 +266,9 @@ mb:
           rotatable: Ruotabile
           legend: 'Stampa la legenda'
           legend_default_behaviour: 'Checkbox della legenda attivo'
-      copyright:
-        label:
-          autoopen: 'Apertura automatica'
       layertree:
         label:
           showbasesources: 'Mostra la risorsa di base'
-          autoopen: 'Apertura automatica'
           showlayerremove: 'Mostra i layer rimossi'
           usetheme: 'Layer tematico'
           themes: Temi

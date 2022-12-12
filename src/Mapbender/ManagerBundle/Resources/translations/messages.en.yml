@@ -25,6 +25,7 @@ mb:
         success: A new instance has been created. Please edit it.
   manager:
     automatic: Automatic
+    autoOpen: Open automatically
     confirm_form_discard: Discard changes?
     popup_height: Dialog height
     popup_width: Dialog width

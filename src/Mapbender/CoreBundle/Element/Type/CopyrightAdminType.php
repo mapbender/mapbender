@@ -17,7 +17,7 @@ class CopyrightAdminType extends AbstractType
         $builder
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.copyright.label.autoopen',
+                'label' => 'mb.manager.autoOpen',
             ))
             // @todo: this should be a positive integer
             ->add('popupWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

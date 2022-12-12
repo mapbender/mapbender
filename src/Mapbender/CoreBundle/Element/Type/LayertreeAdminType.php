@@ -17,7 +17,7 @@ class LayertreeAdminType extends AbstractType
         $builder
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.layertree.label.autoopen',
+                'label' => 'mb.manager.autoOpen',
             ))
             ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

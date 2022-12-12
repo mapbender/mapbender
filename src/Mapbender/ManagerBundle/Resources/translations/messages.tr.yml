@@ -24,6 +24,7 @@ mb:
       create:
         success: 'Yeni bir örnek oluşturuldu, lütfen düzenleyin.'
   manager:
+    autoOpen: Otomatik aç
     admin:
       sources: 'Kaynaklar'
       source:

@@ -249,7 +249,6 @@ mb:
           usemailto: 'Использование mailto'
       legend:
         label:
-          autoopen: Авто-открытие
           hideemptylayers: 'Скрыть пустые слои'
           generatelegendurl: 'Генерировать URL легенды'
           showsourcetitle: 'Показать название источника'
@@ -267,13 +266,9 @@ mb:
           rotatable: Поворачиваемые
           legend: 'Легенда'
           legend_default_behaviour: 'Legend checkbox active'
-      copyright:
-        label:
-          autoopen: Авто-открытие
       layertree:
         label:
           showbasesources: 'Показать базу источника'
-          autoopen: Авто-открытие
           showlayerremove: 'Показать удаление слоя'
           usetheme: 'Тематический слой'
           themes: Темы

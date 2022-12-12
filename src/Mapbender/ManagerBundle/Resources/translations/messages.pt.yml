@@ -24,6 +24,7 @@ mb:
       create:
         success: ~
   manager:
+    autoOpen: Abrir automaticamente
     admin:
       sources: Origens de dados
       source:

@@ -125,9 +125,7 @@ mb:
         description: 'Charge un service WMS via une requête ''getCapabilities'''
       admin:
         label:
-          autoopen: 'Ouverture automatique'
           splitlayers: 'Séparer les couches'
-          declarative: 'Use declarative'
     repository:
       parser:
         couldnotparse: 'Impossible d''analyser CapabilitiesDocument'

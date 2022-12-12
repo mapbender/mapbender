@@ -312,7 +312,6 @@ mb:
           usemailto: 'Use Mailto'
       legend:
         label:
-          autoopen: Auto-open
           hideemptylayers: 'Hide empty layers'
           generatelegendurl: 'Generate legend url'
           showsourcetitle: 'Show source title'
@@ -338,13 +337,9 @@ mb:
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'
           required_fields_first: Display required fields first
-      copyright:
-        label:
-          autoopen: Auto-open
       layertree:
         label:
           showbasesources: 'Show base sources'
-          autoopen: Autoopen
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
