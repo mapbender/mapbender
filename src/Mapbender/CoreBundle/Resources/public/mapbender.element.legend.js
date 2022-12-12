@@ -1,9 +1,7 @@
 (function($) {
 
-    $.widget("mapbender.mbLegend", {
+    $.widget("mapbender.mbLegend", $.mapbender.mbDialogElement, {
         options: {
-            autoOpen:                 true,
-            target:                   null,
             showSourceTitle:          true,
             showLayerTitle:           true,
             showGroupedLayerTitle: true
@@ -45,7 +43,7 @@
          */
         onMapLoaded: function(e) {
             this.onMapLayerChanges();
-            if (this.useDialog_ && this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
                 // Notify controlling button, if any
                 $(this.element).trigger('mapbender.elementactivated', {

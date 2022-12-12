@@ -1,9 +1,7 @@
 (function($){
 
-    $.widget("mapbender.mbWmsloader", {
+    $.widget("mapbender.mbWmsloader", $.mapbender.mbDialogElement, {
         options: {
-            autoOpen: false,
-            title: Mapbender.trans('mb.wms.wmsloader.title'),
             wms_url: null
         },
         loadedSourcesCount: 0,
@@ -35,7 +33,7 @@
             if (queryParams.wms_id) {
                 this._getInstances(queryParams.wms_id);
             }
-            if (this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
             }
         },

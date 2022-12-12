@@ -1,8 +1,6 @@
 (function($) {
-    $.widget("mapbender.mbLayertree", {
+    $.widget("mapbender.mbLayertree", $.mapbender.mbDialogElement, {
         options: {
-            type: 'element',
-            autoOpen: false,
             useTheme: false,
             target: null,
             showBaseSource: true,
@@ -23,7 +21,7 @@
         _create: function() {
             // see https://stackoverflow.com/a/4819886
             this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-            this.useDialog_ = !this.element.closest('.sideContent,.mobilePane').length;
+            this.useDialog_ = this.checkDialogMode();
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -43,7 +41,7 @@
 
             this.model = mbMap.getModel();
             this._createTree();
-            if (this.useDialog_ && this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
             }
             this._createEvents();

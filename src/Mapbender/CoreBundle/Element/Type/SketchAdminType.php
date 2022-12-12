@@ -16,7 +16,7 @@ class SketchAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('auto_activate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.core.sketch.admin.auto_activate',
             ))
