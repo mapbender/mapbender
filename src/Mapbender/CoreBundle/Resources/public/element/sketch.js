@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbSketch", $.mapbender.mbDialogElement, {
         options: {
-            auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             radiusEditing: false,
