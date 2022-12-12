@@ -129,13 +129,6 @@ class ApplicationAssetService
         }
         $referenceLists[] = $this->getBaseAssetReferences($type);
         $referenceLists[] = $this->getFrontendBaseAssets($type);
-        if ($type === 'js') {
-            $referenceLists[] = array(
-                '@MapbenderCoreBundle/Resources/public/init/frontend.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
-            );
-        }
         $referenceLists = array_merge($referenceLists, array(
             $this->getMapEngineAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
@@ -296,6 +289,9 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '@MapbenderCoreBundle/Resources/public/init/frontend.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                 );
         }
     }
