@@ -652,6 +652,68 @@
                                 callback: function() {
                                     self.close();
                                 }
+                            },
+                            'dialog': {
+                                label: 'dialog',
+                                cssClass: 'button right',
+                                callback: function() {
+                                    // First, create the dialog container
+                                    let $dialog = $("<div></div>");
+                                    $dialog.dialog({
+                                        // Set the dialog options
+                                        autoOpen: false,
+                                        modal: true,
+                                        width: 400
+                                    });
+
+                                    let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>").appendTo($dialog);
+                                    var $list = $("<ul>").appendTo($dialog);
+
+                                    $addButton.click(function() {
+                                        // Create a default item name using the current timestamp in German format
+                                        var defaultName = new Date().toLocaleString("de-DE");
+
+                                        // Prompt the user for a custom name for the item
+                                        var itemName = prompt("Enter a name for the item:", defaultName);
+
+                                        // Add the item to the list and attach a click event handler
+                                        $("<li>")
+                                            .text(itemName)
+                                            .click(function() {
+                                                // When the item is clicked, trigger the "itemclick" event
+                                                $(this).trigger("itemclick");
+                                            })
+                                            .appendTo($list);
+
+                                        // Trigger the "itemadded" event
+                                        $list.trigger("itemadded");
+                                    });
+
+                                    $list.on("itemadded", "li", function() {
+                                        var $deleteButton = $("<button><i class='fa fa-trash'></button>").appendTo(this);
+
+                                        console.log("added");
+                                        // Attach a click event handler to the delete button
+                                        $deleteButton.click(function() {
+                                            // When the delete button is clicked, remove the item from the list
+                                            $(this)
+                                                .closest("li")
+                                                .remove();
+
+                                            // Trigger the "itemdeleted" event
+                                            $list.trigger("itemdeleted");
+                                        });
+                                    });
+
+                                    $list.on("itemdeleted", "li", function() {
+                                        console.log("deleted");
+                                    });
+
+                                    $list.on("itemclick", "li", function() {
+                                        console.log("clicked");
+                                    });
+
+                                }
                             }
                         }
                     });

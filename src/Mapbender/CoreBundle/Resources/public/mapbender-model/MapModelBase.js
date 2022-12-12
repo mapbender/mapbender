@@ -1424,7 +1424,7 @@ window.Mapbender.MapModelBase = (function() {
                     if (!s.id) { wms_ids.push(s.options.id); }
                 },0);
 
-                let remaining_ids = localSetting.selectedIds.filter((id)=>!wms_ids.includes(id));
+                let remaining_ids = localSetting && localSetting.selectedIds ? localSetting.selectedIds.filter((id)=>!wms_ids.includes(id)) : {};
 
                 if (remaining_ids.length > 0) {
                     remaining_id_found = true;
