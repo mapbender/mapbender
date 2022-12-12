@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Afficher le titre des groupes de couches'
       featureinfo:
         label:
-          autoopen: ~
           deactivateonclose: ~
           onlyvalid: ~
           highlighting: ~
@@ -312,7 +311,6 @@ mb:
         title: Annotation
         description: 'Outil d''annotation'
       admin:
-        auto_activate: ~
         deactivate_on_close: Désactiver à la fermeture
     # (imported) Yaml application amenity
     redlining:

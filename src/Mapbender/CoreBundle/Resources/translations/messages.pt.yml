@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Mostrar o título da camada agrupada'
       featureinfo:
         label:
-          autoopen: 'Abrir automaticamente'
           deactivateonclose: 'Desativar ao fechar'
           onlyvalid: 'Mostrar válido somente'
           highlighting: ~

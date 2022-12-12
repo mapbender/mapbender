@@ -24,6 +24,7 @@ mb:
       create:
         success: Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.
   manager:
+    autoActivate: Automatisch geactiveerd
     autoOpen: Automatisch openen
     admin:
       sources: Bronnen

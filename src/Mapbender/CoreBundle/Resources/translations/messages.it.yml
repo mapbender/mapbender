@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Mostra il titolo dei layers raggruppati'
       featureinfo:
         label:
-          autoopen: 'Apertura automatica'
           deactivateonclose: 'Disattiva in chiusura'
           onlyvalid: 'Solo per le feature valide'
           highlighting: ~
@@ -307,7 +306,6 @@ mb:
         title: ~
         description: ~
       admin:
-        auto_activate: Auto-attivazione
         deactivate_on_close: Disattiva alla chiusura
 
 # Login exceptions

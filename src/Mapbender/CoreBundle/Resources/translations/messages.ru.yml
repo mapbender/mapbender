@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Показать название группы слоев'
       featureinfo:
         label:
-          autoopen: Авто-открытие
           deactivateonclose: 'Деактивировать при закрытии'
           onlyvalid: 'Только действительные'
           highlighting: ~
@@ -314,7 +313,6 @@ mb:
         title: ~
         description: ~
       admin:
-        auto_activate: Автоактивирование
         deactivate_on_close: Деактивировать при закрытии
 
 # Login exceptions

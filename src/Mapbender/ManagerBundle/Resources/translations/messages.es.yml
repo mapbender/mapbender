@@ -24,6 +24,7 @@ mb:
       create:
         success: ~
   manager:
+    autoActivate: Auto inicio
     autoOpen: Auto abrir
     admin:
       sources: Fuentes

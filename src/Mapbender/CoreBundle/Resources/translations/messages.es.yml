@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Mostrar titulo de capa agrupado'
       featureinfo:
         label:
-          autoopen: Autoabrir
           deactivateonclose: 'Desactivar al cerrar'
           onlyvalid: ~
           highlighting: ~

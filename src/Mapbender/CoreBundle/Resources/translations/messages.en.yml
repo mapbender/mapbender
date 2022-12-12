@@ -319,7 +319,6 @@ mb:
           showgroupedlayertitle: 'Show grouped layer title'
       featureinfo:
         label:
-          autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
           onlyvalid: 'Only valid'
           highlighting_group: 'Highlighting'
@@ -390,7 +389,6 @@ mb:
         title: Sketches
         description: Drawing tool
       admin:
-        auto_activate: Auto activate
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color

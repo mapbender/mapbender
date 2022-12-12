@@ -256,7 +256,6 @@ mb:
           showgroupedlayertitle: 'Toon gegroepeerde laag-titel'
       featureinfo:
         label:
-          autoopen: 'Automatisch openen'
           deactivateonclose: 'Deactiveer bij sluiten'
           onlyvalid: 'Alleen geldig'
           highlighting: ~
@@ -305,7 +304,6 @@ mb:
         title: Tekenen
         description: Tekentool
       admin:
-        auto_activate: Automatisch geactiveerd
         deactivate_on_close: Deactiveer bij sluiten
     # (imported) Yaml application amenity
     redlining:

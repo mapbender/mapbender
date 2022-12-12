@@ -257,7 +257,6 @@ mb:
           showgroupedlayertitle: 'Gruplanmış katman başlığını göster'
       featureinfo:
         label:
-          autoopen: 'Otomatik aç'
           deactivateonclose: 'Kapandığında devre dışı bırak'
           onlyvalid: 'Sadece geçerli olan'
           highlighting: ~
@@ -313,7 +312,6 @@ mb:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
       admin:
-        auto_activate: Otomatik etkinleştir
         deactivate_on_close: Kapandığında devre dışı bırak
     # (imported) Yaml application amenity
     redlining:

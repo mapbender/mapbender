@@ -321,7 +321,6 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
-          autoopen: 'Automatisches Öffnen'
           onlyvalid: 'Nur valide zeigen'
           highlighting_group: 'Highlighting'
           highlighting: Highlighting aktiv
@@ -391,7 +390,6 @@ mb:
         title: Skizzen
         description: Zeichenwerkzeug
       admin:
-        auto_activate: 'Automatisches Aktivieren'
         deactivate_on_close: 'Beim Schließen deaktivieren'
         colors: Farben
         allow_custom_color: Farbanpassung erlauben
