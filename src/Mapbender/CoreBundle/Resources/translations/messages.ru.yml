@@ -261,7 +261,6 @@ mb:
           highlighting: ~
       printclient:
         label:
-          autoopen: Авто-открытие
           rotatable: Поворачиваемые
           legend: 'Легенда'
           legend_default_behaviour: 'Legend checkbox active'

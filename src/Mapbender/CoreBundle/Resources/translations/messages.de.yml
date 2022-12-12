@@ -332,7 +332,6 @@ mb:
           stroke_width_px: Linienstärke (Pixel)
       printclient:
         label:
-          autoopen: 'Automatisches Öffnen'
           rotatable: Drehbar
           legend: 'Legende drucken'
           legend_default_behaviour: 'Legenden Checkbox aktiv'

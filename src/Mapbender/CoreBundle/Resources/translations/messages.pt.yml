@@ -261,7 +261,6 @@ mb:
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Abrir automaticamente'
           rotatable: 'Pode girar'
           legend: 'Imprimir legenda'
           legend_default_behaviour: ~

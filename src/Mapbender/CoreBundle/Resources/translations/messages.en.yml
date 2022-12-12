@@ -331,7 +331,6 @@ mb:
           stroke_width_px: Stroke width (pixels)
       printclient:
         label:
-          autoopen: Auto-open
           rotatable: Rotatable
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'

@@ -261,7 +261,6 @@ mb:
           highlighting: ~
       printclient:
         label:
-          autoopen: Autoabrir
           rotatable: ~
           legend: ~
           legend_default_behaviour: ~

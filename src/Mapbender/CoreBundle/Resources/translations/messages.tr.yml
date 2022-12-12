@@ -262,7 +262,6 @@ mb:
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Otomatik aç'
           rotatable: 'Döndürülebilir'
           legend: 'Lejant yazdır'
           legend_default_behaviour: 'Lejant onay kutusu etkin'

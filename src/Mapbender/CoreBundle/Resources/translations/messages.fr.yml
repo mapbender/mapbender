@@ -261,7 +261,6 @@ mb:
           highlighting: ~
       printclient:
         label:
-          autoopen: ~
           rotatable: Pivotable
           legend: 'Imprimer la légende'
           legend_default_behaviour: ~
