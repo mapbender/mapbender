@@ -291,6 +291,7 @@ class ApplicationAssetService
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                     '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                 );
         }
