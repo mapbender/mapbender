@@ -362,6 +362,9 @@ $(function() {
     });
 
     $(document).on('click', '.-fn-toggle-flag[data-url]', function() {
+        if (this.type === 'checkbox') {
+            return true;
+        }
         var $this = $(this);
         $this.toggleClass('-js-on -js-off');
         var iconSet = $this.attr('data-toggle-flag-icons').split(':');
@@ -380,5 +383,16 @@ $(function() {
                 .toggleClass(iconSet[0], !enabled)
             ;
         });
+    });
+    $(document).on('change', 'input[type="checkbox"][data-url].-fn-toggle-flag', function() {
+        var $this = $(this);
+        $.ajax($this.attr('data-url'), {
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                // Send string "true" or string "false"
+                enabled: "" + $this.prop('checked')
+            }
+        })
     });
 });

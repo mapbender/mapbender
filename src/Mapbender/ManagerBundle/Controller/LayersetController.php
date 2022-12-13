@@ -87,4 +87,25 @@ class LayersetController extends ApplicationControllerBase
             return new Response();
         }
     }
+
+    /**
+     * Setter action for "selected" flag (single value, immediate by ajax, no form)
+     *
+     * @ManagerRoute("/layerset/{layerset}/toggleselected", methods={"POST"})
+     * @param Request $request
+     * @param Layerset $layerset
+     * @return Response
+     */
+    public function setselectedAction(Request $request, Layerset $layerset)
+    {
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+        $em = $this->getEntityManager();
+        $layerset->setSelected($request->request->getBoolean('enabled'));
+        $application->setUpdated(new \DateTime('now'));
+        $em->persist($layerset);
+        $em->persist($application);
+        $em->flush();
+        return new Response('', Response::HTTP_NO_CONTENT);
+    }
 }
