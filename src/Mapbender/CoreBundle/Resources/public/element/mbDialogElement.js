@@ -39,19 +39,14 @@
          * @returns boolean
          */
         checkDialogMode: function(element) {
-            var $element = element && $(element) || this.element;
-            return !$element.closest('.sideContent, .mobilePane').length;
+            return Mapbender.ElementUtil.checkDialogMode(element || this.element);
         },
         /**
          * @param {jQuery|HTMLElement} [element]
          * @returns boolean
          */
         checkResponsiveVisibility: function(element) {
-            // Use (non-cascaded!) applied CSS visibility rule
-            // Mapbender responsive controls use display: none
-            var $element = element && $(element) || this.element;
-            return $element.css('display') !== 'none';
-
+            return Mapbender.ElementUtil.checkResponsiveVisibility(element || this.element);
         },
         __dummy__: null
     });

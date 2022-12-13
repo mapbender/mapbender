@@ -450,3 +450,28 @@ Mapbender.Util.unpackObjectParam = function(values, name) {
 
     return params[name] || null;
 };
+
+Mapbender.ElementUtil = {
+    /**
+     * Checks the markup region containing the element for reasonable
+     * dialog mode behaviour.
+     * I.e. returns true if element is placed in "content" region
+     * in a fullscreen template; returns false if element is placed
+     * in a sidepane or mobile pane.
+     *
+     * @param {jQuery|HTMLElement} element
+     * @returns boolean
+     */
+    checkDialogMode: function(element) {
+        return !$(element).closest('.sideContent, .mobilePane').length;
+    },
+    /**
+     * @param {jQuery|HTMLElement} element
+     * @returns boolean
+     */
+    checkResponsiveVisibility: function(element) {
+        // Use (non-cascaded!) applied CSS visibility rule
+        // Mapbender responsive controls use display: none
+        return $(element).css('display') !== 'none';
+    }
+};

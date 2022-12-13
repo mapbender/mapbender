@@ -105,7 +105,7 @@
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(x, y) {
-            if (!this.isActive) {
+            if (!this.isActive || !Mapbender.ElementUtil.checkResponsiveVisibility(this.element)) {
                 return;
             }
             var self = this, i;
