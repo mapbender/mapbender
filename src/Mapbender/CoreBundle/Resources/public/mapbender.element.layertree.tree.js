@@ -669,7 +669,7 @@
                                             at: "center",
                                             of: window
                                         },
-                                        modal: true,
+                                        modal: false,
                                         zIndex: 10000,
                                         width: 'auto',
                                         open: function(event, ui) {
@@ -723,7 +723,7 @@
 
                                     $list.on("itemadded", null, function(e, li) {
                                         let name = $(li).text();
-                                        let settings = self.model.getLocalStorageSettings();
+                                        let settings = self.model.getLocalStorageSettings() || self.model.getCurrentSourceSettings();
                                         self.setUserDefinedLocalStorageSettings(name,settings)
                                     });
 
@@ -737,7 +737,7 @@
                                         var settings = self.getUserDefinedLocalStorageSettings(name);
                                         if (settings) {
                                             console.log("applied settings",settings);
-                                            self.model.applySettings(settings);
+                                            self.applySourceSettings(settings);
                                         } else {
                                             console.error("No settings found for name " + name);
                                         }
@@ -755,6 +755,15 @@
             this._reset();
         },
 
+        applySourceSettings: function(settings) {
+            var sources = this.model.applySourceSettings(settings);
+            // Perform map view updates for (updated) sources; we deliberately defer this until after the view param
+            // update because out of bounds / scale / CRS applicability checks heavily depend on view params.
+            for (var i = 0; i < sources.length; ++i) {
+                this.model._checkSource(sources[i], true);
+            }
+        },
+
         getUserDefinedLocalStorageSettings: function(name = null) {
             var key = this.model.getLocalStoragePersistenceKey_('userDefinedSettings:');
             var settings = window.localStorage.getItem(key);
@@ -768,7 +777,7 @@
         setUserDefinedLocalStorageSettings: function(name, settings) {
             var key = this.model.getLocalStoragePersistenceKey_('userDefinedSettings:' );
             var _settings = window.localStorage.getItem(key);
-            var parsedSettings = _settings && JSON.parse(_settings) || {};
+            var parsedSettings = _settings ? JSON.parse(_settings) : {};
             parsedSettings[name] = settings;
             if (settings === null) {
                 delete parsedSettings[name];
