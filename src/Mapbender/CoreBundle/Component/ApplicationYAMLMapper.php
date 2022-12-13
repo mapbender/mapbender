@@ -172,8 +172,11 @@ class ApplicationYAMLMapper
         $layerset
             ->setId($layersetId)
             ->setTitle(strval($layersetId))
-            ->setSelected(!empty($layersetDefinition['selected']))
         ;
+        // Keep default (true) if "selected" is not set
+        if (isset($layersetDefinition['selected'])) {
+            $layerset->setSelected($layersetDefinition['selected']);
+        }
         $layersetProps = array(
             'selected',
         );
