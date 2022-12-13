@@ -122,3 +122,23 @@ $layer-slider-bar-height: 5px;
     }
   }
 }
+
+.userDefinedLayerTree {
+
+    ul {
+        margin-top: 10px;
+        li {
+            height: 34px;
+            button {
+                float:right;
+                margin-left:20px;
+                margin-top: -4px;
+            }
+            :hover {
+                text-decoration: underline;
+                cursor:pointer;
+            }
+        }
+    }
+
+}

@@ -654,63 +654,93 @@
                                 }
                             },
                             'dialog': {
-                                label: 'dialog',
+                                label: 'Benutzerbasierte Einstellungen',
                                 cssClass: 'button right',
                                 callback: function() {
                                     // First, create the dialog container
-                                    let $dialog = $("<div></div>");
+                                    let $dialog = $("<div style='z-index: 10000'></div>");
                                     $dialog.dialog({
                                         // Set the dialog options
-                                        autoOpen: false,
+                                        closeText: "",
+                                        dialogClass: 'userDefinedLayerTree',
+                                        autoOpen: true,
+                                        position: {
+                                            my: "center",
+                                            at: "center",
+                                            of: window
+                                        },
                                         modal: true,
-                                        width: 400
+                                        zIndex: 10000,
+                                        width: 'auto',
+                                        open: function(event, ui) {
+                                            $(this).parent().css("z-index", 90001);
+                                        }
                                     });
 
                                     let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>").appendTo($dialog);
                                     var $list = $("<ul>").appendTo($dialog);
 
-                                    $addButton.click(function() {
-                                        // Create a default item name using the current timestamp in German format
-                                        var defaultName = new Date().toLocaleString("de-DE");
 
-                                        // Prompt the user for a custom name for the item
-                                        var itemName = prompt("Enter a name for the item:", defaultName);
+                                    let add = function(itemName) {
 
+                                        let $li = $("<li>");
                                         // Add the item to the list and attach a click event handler
-                                        $("<li>")
-                                            .text(itemName)
-                                            .click(function() {
-                                                // When the item is clicked, trigger the "itemclick" event
-                                                $(this).trigger("itemclick");
-                                            })
-                                            .appendTo($list);
+                                        $li.html("<span>"+itemName+"</span>").click(function () {
+                                            // When the item is clicked, trigger the "itemclick" event
+                                            $(this).trigger("itemclick");
+                                        }).appendTo($list);
+
+                                        var $deleteButton = $("<button><i class='fa fa-trash'></button>").appendTo($li);
+                                        $deleteButton.click(function () {
+                                            $(this).closest("li").remove();
+                                            $list.trigger("itemdeleted",$li);
+                                        });
 
                                         // Trigger the "itemadded" event
-                                        $list.trigger("itemadded");
+                                        $list.trigger("itemadded", $li);
+                                    }
+
+                                    // Add the list items
+                                    let settings = self.getUserDefinedLocalStorageSettings();
+                                    settings && Object.keys(settings).forEach(function(name, setting) {
+                                       add(name);
                                     });
 
-                                    $list.on("itemadded", "li", function() {
-                                        var $deleteButton = $("<button><i class='fa fa-trash'></button>").appendTo(this);
 
-                                        console.log("added");
-                                        // Attach a click event handler to the delete button
-                                        $deleteButton.click(function() {
-                                            // When the delete button is clicked, remove the item from the list
-                                            $(this)
-                                                .closest("li")
-                                                .remove();
+                                    $addButton.click(function(){
+                                        // Create a default item name using the current timestamp in German format
+                                        var defaultName = new Date().toLocaleString("de-DE");
+                                        // Prompt the user for a custom name for the item
+                                        var itemName = prompt("Unter welchem Namen soll der aktuelle Zustand des Layerbaums abgespeichert werden?", defaultName);
 
-                                            // Trigger the "itemdeleted" event
-                                            $list.trigger("itemdeleted");
-                                        });
+                                        if (self.getUserDefinedLocalStorageSettings()[itemName]) {
+                                            console.error("Item "+itemName+" already exists");
+                                            return;
+                                        }
+
+                                        add(itemName);
                                     });
 
-                                    $list.on("itemdeleted", "li", function() {
-                                        console.log("deleted");
+                                    $list.on("itemadded", null, function(e, li) {
+                                        let name = $(li).text();
+                                        let settings = self.model.getLocalStorageSettings();
+                                        self.setUserDefinedLocalStorageSettings(name,settings)
+                                    });
+
+                                    $list.on("itemdeleted", null, function(e,li) {
+                                        let name = $(li).text();
+                                        self.setUserDefinedLocalStorageSettings(name,null);
                                     });
 
                                     $list.on("itemclick", "li", function() {
-                                        console.log("clicked");
+                                        let name = $(this).text();
+                                        var settings = self.getUserDefinedLocalStorageSettings(name);
+                                        if (settings) {
+                                            console.log("applied settings",settings);
+                                            self.model.applySettings(settings);
+                                        } else {
+                                            console.error("No settings found for name " + name);
+                                        }
                                     });
 
                                 }
@@ -723,6 +753,32 @@
                 }
             }
             this._reset();
+        },
+
+        getUserDefinedLocalStorageSettings: function(name = null) {
+            var key = this.model.getLocalStoragePersistenceKey_('userDefinedSettings:');
+            var settings = window.localStorage.getItem(key);
+            if (name) {
+                return JSON.parse(settings)[name];
+            } else {
+                return settings ? JSON.parse(settings) : {};
+            }
+        },
+
+        setUserDefinedLocalStorageSettings: function(name, settings) {
+            var key = this.model.getLocalStoragePersistenceKey_('userDefinedSettings:' );
+            var _settings = window.localStorage.getItem(key);
+            var parsedSettings = _settings && JSON.parse(_settings) || {};
+            parsedSettings[name] = settings;
+            if (settings === null) {
+                delete parsedSettings[name];
+            }
+            var serialized = JSON.stringify(parsedSettings);
+            if(!serialized) {
+                console.error("Could not serialize settings",parsedSettings);
+                return;
+            }
+            window.localStorage.setItem(key, serialized);
         },
         /**
          * Closes the popup dialog
