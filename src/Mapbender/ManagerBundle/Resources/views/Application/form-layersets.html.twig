@@ -27,11 +27,23 @@
               <th class="sourceColumn">{{ 'mb.terms.source.singular' | trans }}</th>
               <th class="typeColumn">{{ 'mb.manager.admin.layerset.type' | trans }}</th>
               <th class="iconColumn">
-                <i class="-fn-add-instance fa fas fa-plus hover-highlight-effect" title="{{"mb.manager.admin.instance.add"|trans}}" data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
-                {#- this comment eats whitespace -#}
-                <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
-                {#- this comment eats whitespace -#}
-                <i class="-fn-delete-layerset fa fa-trash-o far fa-trash-alt hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
+                {%- apply spaceless -%}
+                <a href="#" class="-fn-add-instance hover-highlight-effect"
+                   title="{{ "mb.manager.admin.instance.add" | trans }}"
+                   data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}">
+                  <i class="fa fas fa-plus"></i>
+                </a>
+                <a href="#" class="-fn-edit-layerset hover-highlight-effect"
+                   title="{{ "mb.manager.admin.layerset.edit" | trans }} {{layerset.title}}"
+                   data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}">
+                    <i class="fa fas fa-cog"></i>
+                </a>
+                <a href="#" class="-fn-delete-layerset hover-highlight-effect"
+                   title="{{ "mb.manager.admin.layerset.delete.title" | trans }} {{layerset.title}}"
+                   data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}">
+                    <i class="fa fa-trash-o far fa-trash-alt"></i>
+                </a>
+                {%- endapply -%}
               </th>
             </tr>
           </thead>
@@ -69,16 +81,23 @@
                   {%- endif -%}
                   &nbsp;{{ instance.source.type }}</td>
                 <td class="iconColumn">
-                  <span class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
+                  {%- apply spaceless -%}
+                  <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"
                        data-url="{{ _toggle_url }}">
                     <i class="fa fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
-                  </span>
+                  </a>
                   {%- if _edit_url -%}
                   <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
                   {%- endif -%}
-                  <span data-url="{{ _delete_url }}" class="-fn-delete hover-highlight-effect" title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
+                  <a href="#"
+                     class="-fn-delete hover-highlight-effect"
+                     title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}"
+                     data-url="{{ _delete_url }}">
+                    <i class="fa fa-trash-o far fa-trash-alt"></i>
+                  </a>
+                  {%- endapply -%}
                 </td>
               </tr>
             {%- endwith -%}{%- endwith -%}
