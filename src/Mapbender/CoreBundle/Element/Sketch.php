@@ -59,7 +59,7 @@ class Sketch extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "auto_activate" => false,
+            'autoOpen' => false,
             "deactivate_on_close" => true,
             "geometrytypes" => array(
                 "point",
@@ -131,6 +131,10 @@ class Sketch extends AbstractElementService
             $config += array('colors' => array($config['paintstyles']['fillColor']));
         }
         unset($config['paintstyles']);
+        if (isset($config['auto_activate'])) {
+            $config['autoOpen'] = $config['auto_activate'];
+        }
+        unset($config['auto_activate']);
         $entity->setConfiguration($config);
     }
 }

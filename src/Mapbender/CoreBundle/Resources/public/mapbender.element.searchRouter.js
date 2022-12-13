@@ -1,6 +1,6 @@
 (function($){
 
-    $.widget('mapbender.mbSearchRouter', {
+    $.widget('mapbender.mbSearchRouter', $.mapbender.mbDialogElement, {
         options: {
         },
         callbackUrl: null,
@@ -13,7 +13,7 @@
         _create: function() {
             var self = this;
             this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
+            this.useDialog_ = this.checkDialogMode();
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
@@ -67,7 +67,7 @@
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
             this._trigger('ready');
-            if (this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
             }
             this.initTableEvents_();

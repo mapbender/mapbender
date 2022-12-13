@@ -33,7 +33,7 @@ class WmsLoaderAdminType extends AbstractType
             ))
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.admin.label.autoopen',
+                'label' => 'mb.manager.autoOpen',
             ))
             ->add('splitLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

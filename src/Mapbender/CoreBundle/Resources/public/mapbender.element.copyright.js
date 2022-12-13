@@ -1,18 +1,17 @@
 (function($) {
 
-    $.widget("mapbender.mbCopyright", {
+    $.widget("mapbender.mbCopyright", $.mapbender.mbDialogElement, {
         options: {},
         popup: null,
         content_: null,
 
         _create: function() {
             this.content_ = $('.-js-popup-content', this.element).remove().removeClass('hidden');
-            if(this.options.autoOpen){
+            if (this.checkAutoOpen()) {
                 this.open();
             }
             this._trigger('ready');
         },
-        
         open: function(callback) {
             this.callback = callback ? callback : null;
 

@@ -312,7 +312,6 @@ mb:
           usemailto: 'Use Mailto'
       legend:
         label:
-          autoopen: Auto-open
           hideemptylayers: 'Hide empty layers'
           generatelegendurl: 'Generate legend url'
           showsourcetitle: 'Show source title'
@@ -320,7 +319,6 @@ mb:
           showgroupedlayertitle: 'Show grouped layer title'
       featureinfo:
         label:
-          autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
           onlyvalid: 'Only valid'
           highlighting_group: 'Highlighting'
@@ -333,18 +331,13 @@ mb:
           stroke_width_px: Stroke width (pixels)
       printclient:
         label:
-          autoopen: Auto-open
           rotatable: Rotatable
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'
           required_fields_first: Display required fields first
-      copyright:
-        label:
-          autoopen: Auto-open
       layertree:
         label:
           showbasesources: 'Show base sources'
-          autoopen: Autoopen
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
@@ -395,7 +388,6 @@ mb:
         title: Sketches
         description: Drawing tool
       admin:
-        auto_activate: Auto activate
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color

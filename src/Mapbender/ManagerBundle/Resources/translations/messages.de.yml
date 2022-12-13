@@ -25,6 +25,8 @@ mb:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
     automatic: Automatisch
+    autoActivate: Automatisch aktivieren
+    autoOpen: Automatisch öffnen
     confirm_form_discard: Änderungen verwerfen?
     popup_height: Dialog-Höhe
     popup_width: Dialog-Breite

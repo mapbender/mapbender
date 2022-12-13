@@ -249,7 +249,6 @@ mb:
           usemailto: 'Usa Mailto'
       legend:
         label:
-          autoopen: Apertura automatica
           hideemptylayers: 'Nascondi i layers vuoti'
           generatelegendurl: 'Genera la url per la legenda'
           showsourcetitle: 'Mostra il titolo della risorsa'
@@ -257,23 +256,17 @@ mb:
           showgroupedlayertitle: 'Mostra il titolo dei layers raggruppati'
       featureinfo:
         label:
-          autoopen: 'Apertura automatica'
           deactivateonclose: 'Disattiva in chiusura'
           onlyvalid: 'Solo per le feature valide'
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Apertura automatica'
           rotatable: Ruotabile
           legend: 'Stampa la legenda'
           legend_default_behaviour: 'Checkbox della legenda attivo'
-      copyright:
-        label:
-          autoopen: 'Apertura automatica'
       layertree:
         label:
           showbasesources: 'Mostra la risorsa di base'
-          autoopen: 'Apertura automatica'
           showlayerremove: 'Mostra i layer rimossi'
           usetheme: 'Layer tematico'
           themes: Temi
@@ -312,7 +305,6 @@ mb:
         title: ~
         description: ~
       admin:
-        auto_activate: Auto-attivazione
         deactivate_on_close: Disattiva alla chiusura
 
 # Login exceptions

@@ -21,7 +21,7 @@ class FeatureInfoAdminType extends AbstractType
             ))
             ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.featureinfo.label.autoopen',
+                'label' => 'mb.manager.autoActivate',
             ))
             ->add('printResult', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
             ->add('deactivateOnClose', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(

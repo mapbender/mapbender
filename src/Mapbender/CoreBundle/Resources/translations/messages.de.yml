@@ -313,7 +313,6 @@ mb:
           usemailto: 'Versenden per Mail - Mailclient öffnen'
       legend:
         label:
-          autoopen: 'Automatisches Öffnen'
           hideemptylayers: 'Ebenen ohne Objekte ausblenden'
           generatelegendurl: 'Legenden-URL generieren'
           showsourcetitle: 'Titel der Datenquelle anzeigen'
@@ -322,7 +321,6 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
-          autoopen: 'Automatisches Öffnen'
           onlyvalid: 'Nur valide zeigen'
           highlighting_group: 'Highlighting'
           highlighting: Highlighting aktiv
@@ -334,18 +332,13 @@ mb:
           stroke_width_px: Linienstärke (Pixel)
       printclient:
         label:
-          autoopen: 'Automatisches Öffnen'
           rotatable: Drehbar
           legend: 'Legende drucken'
           legend_default_behaviour: 'Legenden Checkbox aktiv'
           required_fields_first: Pflichtfelder ganz oben anzeigen
-      copyright:
-        label:
-          autoopen: 'Automatisches Öffnen'
       layertree:
         label:
           showbasesources: 'BaseSources anzeigen'
-          autoopen: 'Automatisches Öffnen'
           showlayerremove: '"Layer entfernen" anzeigen'
           usetheme: 'Thematischer Layer'
           themes: Themen
@@ -396,7 +389,6 @@ mb:
         title: Skizzen
         description: Zeichenwerkzeug
       admin:
-        auto_activate: 'Automatisches Aktivieren'
         deactivate_on_close: 'Beim Schließen deaktivieren'
         colors: Farben
         allow_custom_color: Farbanpassung erlauben

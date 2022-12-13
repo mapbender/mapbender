@@ -249,7 +249,6 @@ mb:
           usemailto: 'Gebruik mail-link'
       legend:
         label:
-          autoopen: 'Automatisch openen'
           hideemptylayers: 'Verberg lege lagen'
           generatelegendurl: 'Genereer legenda url'
           showsourcetitle: 'Toon bron-titel'
@@ -257,23 +256,17 @@ mb:
           showgroupedlayertitle: 'Toon gegroepeerde laag-titel'
       featureinfo:
         label:
-          autoopen: 'Automatisch openen'
           deactivateonclose: 'Deactiveer bij sluiten'
           onlyvalid: 'Alleen geldig'
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Automatisch openen'
           rotatable: Roteerbaar
           legend: Legenda
           legend_default_behaviour: 'Legenda aan/uit actief'
-      copyright:
-        label:
-          autoopen: 'Automatisch openen'
       layertree:
         label:
           showbasesources: 'Toon basis-bronnen'
-          autoopen: 'Automatisch openen'
           showlayerremove: 'Toon verwijder-laag knop'
           usetheme: 'Gebruik thema'
           themes: Themas
@@ -310,7 +303,6 @@ mb:
         title: Tekenen
         description: Tekentool
       admin:
-        auto_activate: Automatisch geactiveerd
         deactivate_on_close: Deactiveer bij sluiten
     # (imported) Yaml application amenity
     redlining:

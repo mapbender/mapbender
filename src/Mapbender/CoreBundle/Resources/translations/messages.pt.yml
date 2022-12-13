@@ -249,7 +249,6 @@ mb:
           usemailto: 'Use mailto'
       legend:
         label:
-          autoopen: 'Abrir automaticamente'
           hideemptylayers: 'Oculta camadas sem objetos'
           generatelegendurl: 'Gerar URL de legenda'
           showsourcetitle: 'Mostrar o título de origem de dados'
@@ -257,23 +256,17 @@ mb:
           showgroupedlayertitle: 'Mostrar o título da camada agrupada'
       featureinfo:
         label:
-          autoopen: 'Abrir automaticamente'
           deactivateonclose: 'Desativar ao fechar'
           onlyvalid: 'Mostrar válido somente'
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Abrir automaticamente'
           rotatable: 'Pode girar'
           legend: 'Imprimir legenda'
           legend_default_behaviour: ~
-      copyright:
-        label:
-          autoopen: 'Abrir automaticamente'
       layertree:
         label:
           showbasesources: 'Mostrar BaseSources'
-          autoopen: 'Abrir automaticamente'
           showlayerremove: 'Show layer remove'
           usetheme: 'Mostrar o tema'
           themes: Temas

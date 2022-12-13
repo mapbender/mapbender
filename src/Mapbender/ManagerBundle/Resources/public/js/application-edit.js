@@ -1,4 +1,9 @@
 $(function() {
+    $(document).on('click', 'a[href="#"]', function(e) {
+        e.preventDefault();
+        // Allow other event handlers to continue processing
+        return true;
+    });
     function _handleLoginRedirect(html) {
         if (/^<(!DOCTYPE|html)/i.test(html)) {
             // Redirected to login

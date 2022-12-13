@@ -249,7 +249,6 @@ mb:
           usemailto: 'Usar Email a'
       legend:
         label:
-          autoopen: Autoabrir
           hideemptylayers: 'Ocultar capas vacías'
           generatelegendurl: 'Generar leyenda url'
           showsourcetitle: 'Mostrar título de fuente'
@@ -257,23 +256,17 @@ mb:
           showgroupedlayertitle: 'Mostrar titulo de capa agrupado'
       featureinfo:
         label:
-          autoopen: Autoabrir
           deactivateonclose: 'Desactivar al cerrar'
           onlyvalid: ~
           highlighting: ~
       printclient:
         label:
-          autoopen: Autoabrir
           rotatable: ~
           legend: ~
           legend_default_behaviour: ~
-      copyright:
-        label:
-          autoopen: Autoabrir
       layertree:
         label:
           showbasesources: 'Mostar fuentes bases'
-          autoopen: Autoabrir
           showlayerremove: 'Mostrar quitar capa'
           usetheme: ~
           themes: ~

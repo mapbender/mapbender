@@ -1,8 +1,7 @@
 (function($){
 
-    $.widget("mapbender.mbSketch", {
+    $.widget("mapbender.mbSketch", $.mapbender.mbDialogElement, {
         options: {
-            auto_activate: false,
             deactivate_on_close: true,
             geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
             radiusEditing: false,
@@ -30,7 +29,7 @@
                 'circle': Mapbender.trans('mb.core.sketch.geometrytype.circle'),
                 'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
-            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
+            this.useDialog_ = this.checkDialogMode();
             this.editContent_ = $('.-js-edit-content', this.element).remove().removeClass('hidden').html();
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
@@ -122,7 +121,7 @@
             }
             this.setupMapEventListeners();
             this._trigger('ready');
-            if (this.useDialog_ && this.options.auto_activate) {
+            if (this.checkAutoOpen()) {
                 this.activate();
             }
             this.trackLabelInput_(this.$labelInput_);

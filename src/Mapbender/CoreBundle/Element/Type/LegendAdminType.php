@@ -15,7 +15,7 @@ class LegendAdminType extends AbstractType
         $builder
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.legend.label.autoopen',
+                'label' => 'mb.manager.autoOpen',
             ))
             ->add('showSourceTitle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
