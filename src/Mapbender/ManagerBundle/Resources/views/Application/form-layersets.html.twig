@@ -5,7 +5,7 @@
     {%- endif -%}
   </div>
   <div class="col-xs-6 col-6 text-right">
-    <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_application_newlayerset", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
+    <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_layerset_new", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
       <i class="fa fas fa-2x fa-plus"></i>
     </span>
   </div>
@@ -29,9 +29,9 @@
               <th class="iconColumn">
                 <i class="-fn-add-instance fa fas fa-plus hover-highlight-effect" title="{{"mb.manager.admin.instance.add"|trans}}" data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
+                <i class="-fn-edit-layerset fa fas fa-cog hover-highlight-effect" title="{{"mb.manager.admin.layerset.edit"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
                 {#- this comment eats whitespace -#}
-                <i class="-fn-delete-layerset fa fa-trash-o far fa-trash-alt hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_application_confirmdeletelayerset", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
+                <i class="-fn-delete-layerset fa fa-trash-o far fa-trash-alt hover-highlight-effect" title="{{"mb.manager.admin.layerset.delete.title"|trans}} {{layerset.title}}" data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}"></i>
               </th>
             </tr>
           </thead>
