@@ -656,94 +656,7 @@
                             'dialog': {
                                 label: 'Benutzerbasierte Einstellungen',
                                 cssClass: 'button right',
-                                callback: function() {
-                                    // First, create the dialog container
-                                    let $dialog = $("<div style='z-index: 10000'></div>");
-                                    $dialog.dialog({
-                                        // Set the dialog options
-                                        closeText: "",
-                                        dialogClass: 'userDefinedLayerTree',
-                                        autoOpen: true,
-                                        position: {
-                                            my: "center",
-                                            at: "center",
-                                            of: window
-                                        },
-                                        modal: false,
-                                        zIndex: 10000,
-                                        width: 'auto',
-                                        open: function(event, ui) {
-                                            $(this).parent().css("z-index", 90001);
-                                        }
-                                    });
-
-                                    let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>").appendTo($dialog);
-                                    var $list = $("<ul>").appendTo($dialog);
-
-
-                                    let add = function(itemName) {
-
-                                        let $li = $("<li>");
-                                        // Add the item to the list and attach a click event handler
-                                        $li.html("<span>"+itemName+"</span>").click(function () {
-                                            // When the item is clicked, trigger the "itemclick" event
-                                            $(this).trigger("itemclick");
-                                        }).appendTo($list);
-
-                                        var $deleteButton = $("<button><i class='fa fa-trash'></button>").appendTo($li);
-                                        $deleteButton.click(function () {
-                                            $(this).closest("li").remove();
-                                            $list.trigger("itemdeleted",$li);
-                                        });
-
-                                        // Trigger the "itemadded" event
-                                        $list.trigger("itemadded", $li);
-                                    }
-
-                                    // Add the list items
-                                    let settings = self.getUserDefinedLocalStorageSettings();
-                                    settings && Object.keys(settings).forEach(function(name, setting) {
-                                       add(name);
-                                    });
-
-
-                                    $addButton.click(function(){
-                                        // Create a default item name using the current timestamp in German format
-                                        var defaultName = new Date().toLocaleString("de-DE");
-                                        // Prompt the user for a custom name for the item
-                                        var itemName = prompt("Unter welchem Namen soll der aktuelle Zustand des Layerbaums abgespeichert werden?", defaultName);
-
-                                        if (self.getUserDefinedLocalStorageSettings()[itemName]) {
-                                            console.error("Item "+itemName+" already exists");
-                                            return;
-                                        }
-
-                                        add(itemName);
-                                    });
-
-                                    $list.on("itemadded", null, function(e, li) {
-                                        let name = $(li).text();
-                                        let settings = self.model.getLocalStorageSettings() || self.model.getCurrentSourceSettings();
-                                        self.setUserDefinedLocalStorageSettings(name,settings)
-                                    });
-
-                                    $list.on("itemdeleted", null, function(e,li) {
-                                        let name = $(li).text();
-                                        self.setUserDefinedLocalStorageSettings(name,null);
-                                    });
-
-                                    $list.on("itemclick", "li", function() {
-                                        let name = $(this).text();
-                                        var settings = self.getUserDefinedLocalStorageSettings(name);
-                                        if (settings) {
-                                            console.log("applied settings",settings);
-                                            self.applySourceSettings(settings);
-                                        } else {
-                                            console.error("No settings found for name " + name);
-                                        }
-                                    });
-
-                                }
+                                callback: self.openUserDefinedLocalStorageDialog.bind(self),
                             }
                         }
                     });
@@ -754,6 +667,121 @@
             }
             this._reset();
         },
+
+        /**
+         * Closes the popup dialog
+         */
+        close: function() {
+            if (this.useDialog_) {
+                if (this.popup && this.popup.$element) {
+                    this.popup.$element.hide();
+                }
+            }
+            if (this.callback) {
+                (this.callback)();
+                this.callback = null;
+            }
+        },
+        updateIconVisual_: function($el, active, enabled) {
+            if (active !== null && (typeof active !== 'undefined')) {
+                $el.toggleClass(['active', $el.attr('data-icon-on')].join(' '), !!active);
+                $el.toggleClass($el.attr('data-icon-off'), !active);
+            }
+            if (enabled !== null && (typeof enabled !== 'undefined')) {
+                $el.toggleClass('disabled', !enabled);
+            }
+        },
+        _destroy: $.noop,
+
+
+    /*** User defined local storage ***/
+
+    openUserDefinedLocalStorageDialog: function() {
+        let self = this;
+        // First, create the dialog container
+        let $dialog = $("<div style='z-index: 10000'></div>");
+        $dialog.dialog({
+            // Set the dialog options
+            closeText: "",
+            dialogClass: 'userDefinedLayerTree',
+            autoOpen: true,
+            position: {
+                my: "center",
+                at: "center",
+                of: window
+            },
+            modal: false,
+            zIndex: 10000,
+            width: 'auto',
+            open: function(event, ui) {
+                $(this).parent().css("z-index", 90001);
+            }
+        });
+
+        let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>").appendTo($dialog);
+        var $list = $("<ul>").appendTo($dialog);
+
+
+        let add = function(itemName) {
+
+            let $li = $("<li>");
+            $li.html("<span>"+itemName+"</span>").click(function () {
+                $(this).trigger("itemclick");
+            }).appendTo($list);
+
+            var $deleteButton = $("<button><i class='fa fa-trash'></button>").appendTo($li);
+            $deleteButton.click(function () {
+                $(this).closest("li").remove();
+                $list.trigger("itemdeleted",$li);
+            });
+
+            $list.trigger("itemadded", $li);
+        }
+
+        // Add the list items
+        let settings = self.getUserDefinedLocalStorageSettings();
+        settings && Object.keys(settings).forEach(function(name, setting) {
+            add(name);
+        });
+
+
+        $addButton.click(function(){
+            // Create a default item name using the current timestamp in German format
+            var defaultName = new Date().toLocaleString("de-DE");
+            // Prompt the user for a custom name for the item
+            var itemName = prompt("Unter welchem Namen soll der aktuelle Zustand des Layerbaums abgespeichert werden?", defaultName);
+
+            if (self.getUserDefinedLocalStorageSettings()[itemName]) {
+                console.error("Item "+itemName+" already exists");
+                return;
+            }
+
+            add(itemName);
+        });
+
+        $list.on("itemadded", null, function(e, li) {
+            let name = $(li).text();
+            let settings = self.model.getLocalStorageSettings() || self.model.getCurrentSourceSettings();
+            self.setUserDefinedLocalStorageSettings(name,settings)
+        });
+
+        $list.on("itemdeleted", null, function(e,li) {
+            let name = $(li).text();
+            self.setUserDefinedLocalStorageSettings(name,null);
+        });
+
+        $list.on("itemclick", "li", function() {
+            let name = $(this).text();
+            var settings = self.getUserDefinedLocalStorageSettings(name);
+            if (settings) {
+                console.log("applied settings",settings);
+                self.applySourceSettings(settings);
+            } else {
+                console.error("No settings found for name " + name);
+            }
+        });
+
+    },
 
         applySourceSettings: function(settings) {
             var sources = this.model.applySourceSettings(settings);
@@ -789,30 +817,7 @@
             }
             window.localStorage.setItem(key, serialized);
         },
-        /**
-         * Closes the popup dialog
-         */
-        close: function() {
-            if (this.useDialog_) {
-                if (this.popup && this.popup.$element) {
-                    this.popup.$element.hide();
-                }
-            }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
-        },
-        updateIconVisual_: function($el, active, enabled) {
-            if (active !== null && (typeof active !== 'undefined')) {
-                $el.toggleClass(['active', $el.attr('data-icon-on')].join(' '), !!active);
-                $el.toggleClass($el.attr('data-icon-off'), !active);
-            }
-            if (enabled !== null && (typeof enabled !== 'undefined')) {
-                $el.toggleClass('disabled', !enabled);
-            }
-        },
-        _destroy: $.noop
+
     });
 
 })(jQuery);

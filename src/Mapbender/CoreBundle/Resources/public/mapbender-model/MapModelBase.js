@@ -1433,7 +1433,7 @@ window.Mapbender.MapModelBase = (function() {
             });
 
             if (remaining_id_found) {
-                alert("Auf dem Server haben sich die IDs der Datenquellen geändert. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste")
+                alert("Auf dem Server haben sich die IDs der Datenquellen geändert. Um einen reibungslosen Ablauf zu gewährleisten, wird empfohlen, den Layerbaum neu zu laden. Drücken Sie dafür den 'Neu laden' Button in der Werkzeugleiste. Sollten Sie benutzerbasierte Einstellungen im Layerbaum nutzen, empfiehlt es sich ebenso, diese zu entfernen und neu anzulegen.");
             }
 
             /* Check for unprocessable layers */
