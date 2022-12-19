@@ -1,0 +1,4 @@
+fom:
+  user:
+    password:
+      repeat_mismatch: Поля пароля повинні збігатися.

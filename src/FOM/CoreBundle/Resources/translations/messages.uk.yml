@@ -1,0 +1,12 @@
+fom:
+  core:
+    components:
+      popup:
+        delete_user_group:
+          title: 'Підтвердити видалення'
+          content: 'Дійсно видалити %userGroup%?'
+          btn:
+            cancel: Відміна
+            ok: Підтвердити
+    fields:
+      no_user_group_defined: 'Користувач або група не визначені.'

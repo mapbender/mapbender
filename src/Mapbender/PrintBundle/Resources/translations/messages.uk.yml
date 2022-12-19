@@ -1,0 +1,48 @@
+mb:
+  print:
+    imageexport:
+      popup:
+        btn:
+          ok: Експорт
+          cancel: Скасувати
+      info:
+        noactivelayer: 'Немає активного шару!'
+      chooseformat: 'Виберіть формат експорту'
+      class:
+        title: 'Експорт зображення'
+        description: 'Дозволяє експортувати поточне відображення картки. Доступні формати PNG і JPEG.'
+      tag:
+        image: зображення
+        export: експорт
+        jpeg: jpeg
+        png: png
+    printclient:
+      tab:
+        settings: Налаштування завдання
+        joblist: Останні завдання
+      joblist:
+        header:
+          id: '#'
+          ctime: створено
+          status: статус
+        status:
+          pending: очікування
+          processing: обробка
+          finished: закінчено
+        open: відкрити
+        delete: видалити
+        cancel: Скасувати
+        nodata: немає даних
+        loading: завантаження
+    admin:
+      printclient:
+        renderMode:
+          label: Режим
+          choice:
+            direct: прямий
+            queued: в черзі
+        queueAccess:
+          label: Черга завдань
+          choice:
+            global: глобальний
+            private: приватний

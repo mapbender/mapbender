@@ -1,0 +1,46 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: Набори матриць
+            theme: Тема
+            serviceprovidername: Постачальник послуг
+            serviceprovidersite: Веб-сайт постачальника послуг
+        tilematrixset:
+          label:
+            identifier: Ідентифікатор
+            supportedcrs: Підтримувані CRS
+            title: Назва
+            abstract: Анотація
+          matrixes: Матриці
+        theme:
+          label:
+            identifier: Ідентифікатор
+            title: Назва
+            abstract: Анотація
+            layerrefs: Layerrefs
+        instance:
+          label:
+            # tilemartixset: Tilemartixset
+            style: Стиль
+        # instancelayerform:
+          # label:
+            # layer_matrixsets: доступні набори матриць
+            # layer_styles: доступні стилі
+        layer:
+          label:
+            identifier: Ідентифікатор
+            formats: Формати
+            title: Назва
+            abstract: Анотація
+            latlonbounds: LatLonBounds
+            tilematrixsetlinks: TileMartixSetLinks
+        tilematrix:
+          label:
+            identifier: Ідентифікатор
+            scaledenominator: ScaleDenominator
+            topleftcorner: TopLeftCorner
+            tilesize: Розмір плитки
+            matrixsize: Розмір матриці
