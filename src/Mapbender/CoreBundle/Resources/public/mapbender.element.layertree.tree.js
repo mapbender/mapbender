@@ -716,6 +716,11 @@
             width: '300',
             open: function(event, ui) {
                 $(this).parent().css("z-index", 90001);
+            },
+            buttons: {
+                "Schließen": function() {
+                    $(this).dialog("close");
+                }
             }
         });
 
@@ -723,7 +728,7 @@
 
         var $list = $("<ul>").appendTo($dialog);
 
-        let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>");
+        let $addButton = $("<button title='Layereinstellungen speichern'><i class=\"fa fa-plus\"></i></button>");
         let $addInput = $("<input name=\"addInput\">");
         let $li = $("<li>").appendTo($list);
         $addInput.appendTo($li);
