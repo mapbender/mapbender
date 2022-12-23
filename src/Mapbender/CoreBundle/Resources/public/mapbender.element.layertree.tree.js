@@ -703,6 +703,7 @@
         $dialog.dialog({
             // Set the dialog options
             closeText: "",
+            title: "Eigene Layereinstellungen",
             dialogClass: 'userDefinedLayerTree',
             autoOpen: true,
             position: {
@@ -712,7 +713,7 @@
             },
             modal: false,
             zIndex: 10000,
-            width: 'auto',
+            width: '300',
             open: function(event, ui) {
                 $(this).parent().css("z-index", 90001);
             }
