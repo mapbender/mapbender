@@ -654,7 +654,7 @@
                                 }
                             },
                             'dialog': {
-                                label: 'Benutzerbasierte Einstellungen',
+                                label: 'Eigene Layereinstellungen',
                                 cssClass: 'button right',
                                 callback: self.openUserDefinedLocalStorageDialog.bind(self),
                             }
