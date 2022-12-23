@@ -719,11 +719,23 @@
             }
         });
 
-        let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>").appendTo($dialog);
+
+
         var $list = $("<ul>").appendTo($dialog);
+
+        let $addButton = $("<button><i class=\"fa fa-plus\"></i></button>");
+        let $addInput = $("<input name=\"addInput\">");
+        let $li = $("<li>").appendTo($list);
+        $addInput.appendTo($li);
+        $addButton.appendTo($li);
+        $("<li class='empty'>").appendTo($list);
 
 
         let add = function(itemName) {
+
+            if(!itemName) {
+                return;
+            }
 
             let $li = $("<li>");
             $li.html("<span>"+itemName+"</span>").click(function () {
@@ -735,6 +747,8 @@
                 $(this).closest("li").remove();
                 $list.trigger("itemdeleted",$li);
             });
+
+            $addInput.val("");
 
             $list.trigger("itemadded", $li);
         }
@@ -750,7 +764,7 @@
             // Create a default item name using the current timestamp in German format
             var defaultName = new Date().toLocaleString("de-DE");
             // Prompt the user for a custom name for the item
-            var itemName = prompt("Unter welchem Namen soll der aktuelle Zustand des Layerbaums abgespeichert werden?", defaultName);
+            let itemName = $addInput.val();
 
             if (self.getUserDefinedLocalStorageSettings()[itemName]) {
                 console.error("Item "+itemName+" already exists");

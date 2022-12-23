@@ -138,6 +138,14 @@ $layer-slider-bar-height: 5px;
                 text-decoration: underline;
                 cursor:pointer;
             }
+
+            input {
+                margin-top: -7px;
+            }
+
+            &.empty {
+                border-top: 1px solid #ccc;
+            }
         }
     }
 
