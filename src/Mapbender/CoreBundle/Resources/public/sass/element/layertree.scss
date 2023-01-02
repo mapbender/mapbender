@@ -126,26 +126,33 @@ $layer-slider-bar-height: 5px;
 .userDefinedLayerTree {
 
     ul {
+
         margin-top: 10px;
+
         li {
+
+            display: flex;
+            align-items: center;
+
             height: 34px;
+
             button {
-                float:right;
-                margin-left:20px;
-                margin-top: -4px;
-            }
-            :hover {
-                text-decoration: underline;
-                cursor:pointer;
+                margin-left: auto;
             }
 
-            input {
-                margin-top: -7px;
+            span:hover {
+                text-decoration: underline;
+                cursor:pointer;
             }
 
             &.empty {
                 border-top: 1px solid #ccc;
             }
+
+        }
+
+        :nth-child(odd):not(:first-child) {
+            background-color: lightgray;
         }
     }
 

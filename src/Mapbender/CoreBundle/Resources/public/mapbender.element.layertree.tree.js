@@ -728,8 +728,8 @@
 
         var $list = $("<ul>").appendTo($dialog);
 
-        let $addButton = $("<button title='Layereinstellungen speichern'><i class=\"fa fa-plus\"></i></button>");
-        let $addInput = $("<input name=\"addInput\">");
+        let $addButton = $("<button title='Layereinstellungen speichern'><i class=\"fa fa-floppy-o\"></i></button>");
+        let $addInput = $("<input name=\"addInput\" placeholder='Titel eingeben...'>");
         let $li = $("<li>").appendTo($list);
         $addInput.appendTo($li);
         $addButton.appendTo($li);
