@@ -1444,6 +1444,11 @@ window.Mapbender.MapModelBase = (function() {
 
                 let localSetting = settings.sources.find((src)=>src.id == source.id);
 
+                if (!localSetting) {
+                    console.log("No local setting found for source " + source.id, source);
+                    return;
+                }
+
                 iterate(source, (s,d) => {
                     if (!s.id) {
                         // Check if there is: selected layer that is not allowed to toggle but has non-selected sublayers and therefore is not possible to be enabled without reloading
