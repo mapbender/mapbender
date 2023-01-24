@@ -5,6 +5,8 @@
  * @see https://github.com/Viglino/ol-ext/tree/v1.1.3
  *
  * Retrieved from https://github.com/Viglino/ol-ext/blob/v1.1.3/interaction/transforminteraction.js
+ * Patched to support Openlayers NPM package switching to ES6 classes at versions >= 7.0.0
+ * Patch diff in ol.interaction.Transform.js.patch
  */
 
 /** Interaction rotate
@@ -23,8 +25,39 @@
  *	- style {} list of ol.style for handles
  *
  */
-ol.interaction.Transform = function(options) 
-{	if (!options) options={};
+ol.interaction.Transform = (function() {
+	if (/^\s*class/.test(ol.interaction.Pointer.toString())) {
+		// Parent is an ES6 class
+		class Transform extends ol.interaction.Pointer {
+			constructor(options) {
+				// "Must call super constructor in derived class before accessing 'this'"
+				super({
+					handleDownEvent: Transform.prototype.handleDownEvent_,
+					handleDragEvent: Transform.prototype.handleDragEvent_,
+					handleMoveEvent: Transform.prototype.handleMoveEvent_,
+					handleUpEvent: Transform.prototype.handleUpEvent_
+				});
+				this.initialize(options || {});
+			}
+		}
+		return Transform;
+	} else {
+		var constructor = function Transform(options) {
+			ol.interaction.Pointer.call(this, {
+				handleDownEvent: this.handleDownEvent_,
+				handleDragEvent: this.handleDragEvent_,
+				handleMoveEvent: this.handleMoveEvent_,
+				handleUpEvent: this.handleUpEvent_
+			});
+			this.initialize(options || {});
+		}
+		constructor.prototype = Object.create(ol.interaction.Pointer.prototype);
+		constructor.prototype.constructor = constructor;
+		return constructor;
+	}
+})();
+
+ol.interaction.Transform.prototype.initialize = function initialize(options) {
 	var self = this;
 
 	// Create a new overlay layer for the sketch
@@ -41,15 +74,6 @@ ol.interaction.Transform = function(options)
 				{	return (self.style[(feature.get('handle')||'default')+(feature.get('constraint')||'')+(feature.get('option')||'')]);
 				}
 		});
-
-	// Extend pointer
-	ol.interaction.Pointer.call(this, 
-	{	handleDownEvent: this.handleDownEvent_,
-		handleDragEvent: this.handleDragEvent_,
-		handleMoveEvent: this.handleMoveEvent_,
-		handleUpEvent: this.handleUpEvent_
-	});
-
 	/** Collection of feature to transform */
 	this.features_ = options.features;
 	/** List of layers to transform */
@@ -69,15 +93,16 @@ ol.interaction.Transform = function(options)
 	this.set('keepAspectRatio', (options.keepAspectRatio || function(e){ return e.originalEvent.shiftKey }));
 
 	// Force redraw when changed
-	this.on ('propertychange', function()
-	{	this.drawSketch_();
+	this.on ('propertychange', function() {
+		if (this.map_ && this.getActive()) {
+			this.drawSketch_();
+		}
 	});
 
 	// setstyle
 	this.setDefaultStyle();
 
 };
-ol.inherits(ol.interaction.Transform, ol.interaction.Pointer);
 
 /** Cursors for transform
 */
@@ -110,6 +135,7 @@ ol.interaction.Transform.prototype.setMap = function(map)
 		this.isTouch = /touch/.test(map.getViewport().className);
 		this.setDefaultStyle();
 	}
+	 this.overlayLayer_.setVisible(map && this.active || false);
 };
 
 /**
@@ -119,7 +145,9 @@ ol.interaction.Transform.prototype.setMap = function(map)
  */
 ol.interaction.Transform.prototype.setActive = function(b) 
 {	this.select(null);
-	this.overlayLayer_.setVisible(b);
+	if (this.map_) {
+		this.overlayLayer_.setVisible(b);
+	}
 	ol.interaction.Pointer.prototype.setActive.call (this, b);
 };
 
@@ -295,7 +323,9 @@ ol.interaction.Transform.prototype.drawSketch_ = function(center)
 ol.interaction.Transform.prototype.select = function(feature)
 {	this.feature_ = feature;
 	this.ispt_ = this.feature_ ? (this.feature_.getGeometry().getType() == "Point") : false;
-	this.drawSketch_();
+	if (this.map_) {
+		this.drawSketch_();
+	}
 	this.dispatchEvent({ type:'select', feature: this.feature_ });
 }
 
