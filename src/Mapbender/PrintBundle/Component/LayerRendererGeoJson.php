@@ -93,6 +93,9 @@ class LayerRendererGeoJson extends LayerRenderer
             case 'polygon':
                 $this->drawPolygon($canvas, $feature);
                 break;
+            case 'multipoint' :
+                $this->drawMultiPoint($canvas, $feature);
+                break;
             case 'multipolygon':
                 $this->drawMultiPolygon($canvas, $feature);
                 break;
@@ -290,44 +293,66 @@ class LayerRendererGeoJson extends LayerRenderer
         }
     }
 
+
     /**
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
     protected function drawPoint($canvas, $geometry)
     {
+        // promote to single-item MultiLineString and delegate
+        $mPoint = array_replace($geometry, array(
+            'type' => 'MultiPoint',
+            'coordinates' => array($geometry['coordinates']),
+        ));
+        $this->drawMultiPoint($canvas, $mPoint);
+    }
+
+    /**
+     * @param ExportCanvas $canvas
+     * @param mixed[] $geometry
+     */
+    protected function drawMultiPoint($canvas, $geometry)
+    {
+
         $style = $this->getFeatureStyle($geometry);
         $resizeFactor = $canvas->featureTransform->lineScale;
 
-        $p = $canvas->featureTransform->transformPair($geometry['coordinates']);
-        $p[0] = round($p[0]);
-        $p[1] = round($p[1]);
+        foreach ($geometry['coordinates'] as $point) {
 
-        $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
-        if (isset($style['fillColor']) && $style['fillOpacity'] > 0) {
-            $color = $this->getColor(
-                $style['fillColor'],
-                $style['fillOpacity'],
-                $canvas->resource);
-            $canvas->drawFilledCircle($p[0], $p[1], $color, $diameter);
-        }
-        if (isset($style['strokeColor']) && $style['strokeOpacity'] > 0 && $style['strokeWidth']) {
-            $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
-            if ($strokeWidth > 0) {
-                $strokeColor = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
-                $this->drawCircleOutline($canvas, $p[0], $p[1], $diameter / 2, $strokeColor, $strokeWidth);
-                imagecolordeallocate($canvas->resource, $strokeColor);
+            $p = $canvas->featureTransform->transformPair($point);
+            $p[0] = round($p[0]);
+            $p[1] = round($p[1]);
+
+            $diameter = max(1, round(2 * $style['pointRadius'] * $resizeFactor));
+            if (isset($style['fillColor']) && $style['fillOpacity'] > 0) {
+                $color = $this->getColor(
+                    $style['fillColor'],
+                    $style['fillOpacity'],
+                    $canvas->resource);
+                $canvas->drawFilledCircle($p[0], $p[1], $color, $diameter);
             }
-        }
-        if (!empty($style['label'])) {
-            $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
-        }
-        if (!empty($style['externalGraphic'])) {
-            $anchorXy = array(
-                'x' => $p[0],
-                'y' => $p[1],
-            );
-            $this->markerRenderer->addFeatureGraphic($canvas, $anchorXy, $style);
+
+
+            if (isset($style['strokeColor']) && $style['strokeOpacity'] > 0 && $style['strokeWidth']) {
+                $strokeWidth = max(0, intval(round($style['strokeWidth'] * $canvas->featureTransform->lineScale)));
+                if ($strokeWidth > 0) {
+                    $strokeColor = $this->getColor($style['strokeColor'], $style['strokeOpacity'], $canvas->resource);
+                    $this->drawCircleOutline($canvas, $p[0], $p[1], $diameter / 2, $strokeColor, $strokeWidth);
+                    imagecolordeallocate($canvas->resource, $strokeColor);
+                }
+            }
+            if (!empty($style['label'])) {
+                $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
+            }
+            if (!empty($style['externalGraphic'])) {
+                $anchorXy = array(
+                    'x' => $p[0],
+                    'y' => $p[1],
+                );
+                $this->markerRenderer->addFeatureGraphic($canvas, $anchorXy, $style);
+            }
+
         }
     }
 
