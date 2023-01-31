@@ -138,14 +138,17 @@ window.Mapbender.StyleUtil = (function() {
             var keywordRule = cssKeywordColors[rule];
             if (typeof keywordRule !== 'undefined') {
                 hexPairs = [keywordRule.slice(1, 3), keywordRule.slice(3, 5), keywordRule.slice(5, 7)];
-            } else if (/^#[a-z0-9]{3,6}$/i.test(rule)) {
-                if (rule.length === 4) {
+            } else if (/^#[a-z0-9]{3,8}$/i.test(rule)) {
+                if (rule.length === 4 || rule.length === 5) {
                     // short form, e.g. '#9cf', expand to six digits
-                    hexPairs = [rule[1], rule[2], rule[3]].map(function(digit) {
+                    hexPairs = [...rule].filter(r=>r!='#').map(function(digit) {
                         return [digit, digit].join('');
                     });
                 } else {
                     hexPairs = [rule.slice(1, 3), rule.slice(3, 5), rule.slice(5, 7)];
+                    if (rule.length==9) {
+                        hexPairs.push(rule.slice(7,9));
+                    }
                 }
             }
             if (hexPairs) {
