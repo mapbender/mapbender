@@ -31,7 +31,7 @@ window.Mapbender.StyleUtil = (function() {
         parseCssColor: function(cssColor) {
             var components = this._parseCssColor(cssColor);
             if (components.length < 4) {
-                components.push(1.0);
+                components.push(0xff);
             }
             return components;
         },
@@ -166,7 +166,7 @@ window.Mapbender.StyleUtil = (function() {
                         return parseInt(component);
                     });
                     if (typeof (matches[4]) !== 'undefined') {
-                        components.push(parseFloat(matches[4]));
+                        components.push(parseInt(matches[4]));
                     }
                     return components;
                 }
