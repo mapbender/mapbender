@@ -94,7 +94,8 @@ window.Mapbender.StyleUtil = (function() {
             ruleObject[colorProp] = this._componentsToHexRgbRule(components);
             if (opacityProp) {
                 if (typeof (components[3]) !== undefined) {
-                    ruleObject[opacityProp] = components[3];
+                    // assuming the 4th component is given as 1 byte and demanded as opacity (0<opacity<1)
+                    ruleObject[opacityProp] = components[3] / 255;
                 } else {
                     ruleObject[opacityProp] = 1.0;
                 }
