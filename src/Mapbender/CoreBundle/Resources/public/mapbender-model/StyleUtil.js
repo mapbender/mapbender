@@ -137,6 +137,10 @@ window.Mapbender.StyleUtil = (function() {
         _parseCssColor: function(rule) {
             var hexPairs;
             var keywordRule = cssKeywordColors[rule];
+
+            if (rule == null) {
+                return [];
+            }
             if (typeof keywordRule !== 'undefined') {
                 hexPairs = [keywordRule.slice(1, 3), keywordRule.slice(3, 5), keywordRule.slice(5, 7)];
             } else if (/^#[a-z0-9]{3,8}$/i.test(rule)) {
