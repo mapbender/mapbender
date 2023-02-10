@@ -1,3 +1,10 @@
+## dev-master @ 112fe6f4e
+* Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
+* Add responsive awareness for dialog elements with `autoOpen` enabled
+* Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
+* Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
+* Fix Openlayers 7 incompatibility in print rotation control
+
 ## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database
 * Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
