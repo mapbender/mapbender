@@ -173,7 +173,15 @@ class ApplicationYAMLMapper
             ->setId($layersetId)
             ->setTitle(strval($layersetId))
         ;
-        $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $layersetDefinition);
+        // Keep default (true) if "selected" is not set
+        if (isset($layersetDefinition['selected'])) {
+            $layerset->setSelected($layersetDefinition['selected']);
+        }
+        $layersetProps = array(
+            'selected',
+        );
+        $instanceDefinitions = \array_diff_key($layersetDefinition, \array_flip($layersetProps));
+        $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $instanceDefinitions);
         $layerset->setInstances($instanceCollection);
         return $layerset;
     }

@@ -147,8 +147,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         } else {
             unset($definition['elements']);
         }
+        $layersetProps = array(
+            'selected',
+        );
         foreach ($definition['layersets'] as $lsIndex => $instanceConfigs) {
             foreach ($instanceConfigs as $instanceId => $instanceConfig) {
+                if (\in_array($instanceId, $layersetProps)) {
+                    continue;
+                }
                 $definition['layersets'][$lsIndex][$instanceId] = $this->processSourceInstanceDefinition($instanceConfig, $instanceId, $lsIndex);
             }
         }
