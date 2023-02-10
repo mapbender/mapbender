@@ -44,7 +44,8 @@ class Layerset
     protected $application;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * NOTE: must specify portable default to avoid a nullable troolean column
+     * @ORM\Column(type="boolean", nullable=false, options={"default": false})
      */
     protected $selected = true;
 
@@ -149,7 +150,7 @@ class Layerset
      */
     public function getSelected()
     {
-        return $this->selected || \is_null($this->selected);
+        return !!$this->selected;
     }
 
     /**
