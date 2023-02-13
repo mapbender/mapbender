@@ -1,0 +1,8 @@
+fom:
+  core:
+    manager:
+      logged_as: 'Ви ввійшли як'
+      you_account: 'Ваш аккаунт'
+      btn:
+        logout: Вийти
+        login: Увійтиf

@@ -1,0 +1,155 @@
+fom:
+  acl:
+    group_label:
+      anonymous: Анонімні користувачі
+      authenticated: Усі автентифіковані користувачі
+  user:
+    registration:
+      email_body_html: '<p>Вітаємо, %user_username%,</p><p>Ви нещодавно зареєструвались. Для завершення Вашої реєстрації, будь ласка, натисніть <a href="%url%">тут</a>.</p>'
+      done:
+        title: Реєстрація
+        congratulations: 'Вітаємо, реєстрація прошла успішно!'
+        account_activated: 'Ваш акаунт успішно активований і готовий до використання.'
+        back_to_login: 'Повернутись на сторінку входу'
+      form:
+        title: Реєстрація
+        choose_password: 'Оберіть пароль'
+        confirm_password: 'Підтвердіть пароль'
+        email: E-mail
+        back_to_login: 'Повернутись на сторінку входу'
+        register: Реєстрація
+      email_subject: 'Ваша реєстрація'
+      send:
+        title: Реєстрація
+        account_created: 'Ваш акаунт створено. E-mail з кодом активації і посиланням відправлений на вказану Вами адресу.'
+        back_to_login: 'Повернутись на сторінку входу'
+      email_body_text: 'Вітаємо %user_username%, Ви нещодавно зареєструвались. Для завершення Вашої реєстрації, будь ласка, відкрийте в вашому браузері посилання %url%.'
+    group:
+      index:
+        groups: Групи
+        add_new_group: 'Додати нову групу'
+        title: Назва
+        description: Опис
+        edit_group: 'Змінити групу'
+        delete_group: 'Видалити групу'
+        no_groups_available: 'Немає доступних груп.'
+      form:
+        edit_group: 'Змінити групу'
+        new_group: 'Нова група'
+      container:
+        base_data: 'Базові дані'
+        users: Користувачі
+        users_of_selected: 'Користувачів вибрано: %users_count%'
+        no_user_exists: 'Немає користувача.'
+    login:
+      error_tockenexp:
+        title: 'Відновлення пароля'
+        sorry: Вибачте!
+        registration_token_expired: 'На жаль, тимчасовий період підтвердження Вашої реєстрації закінчився, спробуйте запросити новий реєстраційний токен.'
+        request_new_token: 'Запросити новий токен'
+        back_to_login: 'Повернутись на сторінку входу'
+      login:
+        title: Увійти
+        username: Ім''я
+        password: Пароль
+        register: Реєстрація
+        forgot_password: 'Забули пароль'
+        login: Увійти
+      error_notocken:
+        password_reset: 'Відновлення пароля'
+        sorry: Вибачте!
+        no_such_tocken: 'Токен невірний. Якщо ви вважаєте, що виникла помилка, будь ласка, зв''яжіться з адміністратором додатку.'
+        contact: 'Зв''язатись з адміністратором'
+        back_to_login: 'Повернутись на сторінку входу'
+    user:
+      index:
+        title: Користувачі
+        add_new_user: 'Додати нового користувача'
+        name: Ім''я
+        email: E-Mail
+        groups: Групи
+        edit_user: 'Редагувати користувача'
+        contact_user: 'Зв''язатися з користувачем електронною поштою'
+        edit_group: 'Змінити групу'
+        delete_user: 'Видалити користувача'
+        no_users_available: 'Немає доступних користувачів.'
+      form:
+        edit_user: 'Редагувати користувача'
+        new_user: 'Новий користувач'
+      container:
+        base_data: 'Базові дані'
+        profile: Профіль
+        groups: Групи
+        security: Безпека
+        choose_password: 'Оберіть пароль'
+        confirm_password: 'Підтвердіть пароль'
+        name: Ім''я
+        users_of_selected: 'Користувачів обрано: %users_count%'
+        no_groups_defined: Немає груп
+        username: 'Ім''я користувача'
+        description: Опис
+        activated: активировано
+    acl:
+      index:
+        access_control_lists: 'Глобальні списки контролю доступу'
+        name: Ім''я
+        class: Клас
+        edit: Редагувати
+      required: 'Обов''язкові поля позначені темними мітками, а необов''язкові світлим кольором.'
+      edit:
+        edit_class_acl: 'Редагувати клас ACL для %name%'
+      groups_users:
+        name: Ім''я
+        no_goups_users: 'Немає груп і користувачів.'
+    password:
+      email_body_html: "\n          <p>Вітаємо, %user_username%.</p><p>Ви запросили новий пароль.\n          <br/>Натисність, будь ласка, <a href=\"%url%\">тут</a>.\n        "
+     # request_error_no_user: 'Користувач не існує.'
+      done:
+        password_reset: 'Відновлення пароля'
+        congratulations: Вітаємо!
+        password_been_reset: 'Ваш пароль успішно відновлено.'
+        back_to_login: 'Повернутись на сторінку входу'
+      reset:
+        title: 'Відновлення пароля'
+        btn: 'Відновлення пароля'
+      form:
+        message: 'Для відновлення пароля, будь ласка, введіть Ваше ім''я користувача або електронну адресу.'
+        title: 'Забули пароль'
+        username_email: 'Ім''я користувача або адреса електронної пошти'
+        back_to_login: 'Повернутись на сторінку входу'
+        require_password: 'Потрібен пароль'
+      email_subject: 'Забули пароль'
+      send:
+        title: 'Відновлення пароля'
+        email_been_sent: 'E-mail скидання пароля був відправлений на вказану Вами адресу.'
+        back_to_login: 'Повернутись на сторінку входу'
+      # request:
+        # user_inactive: 'Користувач неактивний. Будь ласка, активуйте за допомогою E-Mail.'
+      email_body_text: 'Вітаємо, %user_username%, Вы запросили новий пароль. Відкрийте в браузері посилання "%url%".'
+    userbundle:
+      user_control: 'Контроль користувача'
+      users: Користувачі
+      new_user: 'Новий користувач'
+      groups: Групи
+      new_group: 'Нова група'
+      classes:
+        acls: ACLs
+        users: Користувачі
+        groups: Групи
+      roles:
+        super_admin: 'Може керувати всім (супер-адміністратор)'
+        user_admin: 'Може керувати користувачами та групами'
+IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
+form:
+  profile:
+    basic:
+      firstname: Ім'я
+      lastName: Прізвище
+      notes: Замітка
+      phone: Телефон
+      organizationName: Організація
+      organizationRole: Посада
+      street: Вулиця
+      zipCode: 'Поштовий індекс'
+      city: Місто
+      country: Країна

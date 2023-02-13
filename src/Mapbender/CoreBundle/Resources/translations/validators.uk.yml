@@ -1,0 +1,2 @@
+html.invalid: 'HTML містить помилку!'
+twig.invalid: 'TWIG містить помилку!'
