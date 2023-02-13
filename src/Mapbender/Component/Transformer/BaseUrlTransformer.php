@@ -37,9 +37,14 @@ class BaseUrlTransformer implements OneWayTransformer
             'port',
         );
         $baseUrl = UrlUtil::reconstructFromParts(array_intersect_key($parts, array_flip($baseUrlParts)));
+
         $baseUrl = $this->transformer->process($baseUrl);
         $newParts = array_filter(parse_url($baseUrl));
-        $reconstructed = UrlUtil::reconstructFromParts(array_replace($parts, $newParts));
+        $updatedParts = $newParts + $parts;
+        if (empty($newParts['port'])) {
+            unset($updatedParts['port']);
+        }
+        $reconstructed = UrlUtil::reconstructFromParts($updatedParts);
         // OGC service special: service URLs like to end in '?' or '&', which
         // is lost on reconstruction. If the original had this, restore it.
         $patterns = array(
