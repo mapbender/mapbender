@@ -1,6 +1,9 @@
-## dev-master @ 112fe6f4e
+## dev-master @ df7481c88
+* Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
+* Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
 * Add responsive awareness for dialog elements with `autoOpen` enabled
+* [SearchRouter] fix no result filtering on "0" value
 * Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Fix Openlayers 7 incompatibility in print rotation control
