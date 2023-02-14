@@ -31,7 +31,7 @@ window.Mapbender.StyleUtil = (function() {
         parseCssColor: function(cssColor) {
             var components = this._parseCssColor(cssColor);
             if (components.length < 4) {
-                components.push(0xff);
+                components.push(1.0);
             }
             return components;
         },
@@ -94,8 +94,7 @@ window.Mapbender.StyleUtil = (function() {
             ruleObject[colorProp] = this._componentsToHexRgbRule(components);
             if (opacityProp) {
                 if (typeof (components[3]) !== undefined) {
-                    // assuming the 4th component is given as 1 byte and demanded as opacity (0<opacity<1)
-                    ruleObject[opacityProp] = components[3] / 255;
+                    ruleObject[opacityProp] = components[3];
                 } else {
                     ruleObject[opacityProp] = 1.0;
                 }
@@ -156,6 +155,10 @@ window.Mapbender.StyleUtil = (function() {
                     }
                 }
             }
+            // convert opacity from hex to decimal
+            if (hexPairs.length == 4) {
+                hexPairs[3] = parseInt(hexPairs[3], 16) / 255;
+            }
             if (hexPairs) {
                 return hexPairs.map(function(hexPair) {
                     return parseInt(hexPair, 16);
@@ -170,7 +173,7 @@ window.Mapbender.StyleUtil = (function() {
                         return parseInt(component);
                     });
                     if (typeof (matches[4]) !== 'undefined') {
-                        components.push(parseInt(matches[4]));
+                        components.push(parseFloat(matches[4]));
                     }
                     return components;
                 }
