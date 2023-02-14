@@ -423,7 +423,6 @@ window.Mapbender.MapModelOl4 = (function() {
                 if (feature.convertStyle) {
                     feature.convertStyle(style);
                 }
-                console.log(style);
                 var featureDump = Object.assign({}, baseFeatureDump);
                 var geom = (style.getGeometryFunction())(feature);
                 featureDump.geometry = dumpGeometry(geom);
