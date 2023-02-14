@@ -155,13 +155,14 @@ window.Mapbender.StyleUtil = (function() {
                     }
                 }
             }
-            // convert opacity from hex to decimal
-            if (hexPairs.length == 4) {
-                hexPairs[3] = parseInt(hexPairs[3], 16) / 255;
-            }
             if (hexPairs) {
-                return hexPairs.map(function(hexPair) {
-                    return parseInt(hexPair, 16);
+                return hexPairs.map(function(hexPair,index) {
+                    if (index == 3) {
+                        // convert opacity from hex to decimal
+                        return parseInt(hexPair, 16) / 255;
+                    } else {
+                        return parseInt(hexPair, 16);
+                    }
                 });
             } else {
                 var matches = (rule || '').match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*((?:\d*\.\d+)|(?:\d+(?:\.\d*)?))\)$/);
