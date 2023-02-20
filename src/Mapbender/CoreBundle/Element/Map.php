@@ -86,9 +86,11 @@ class Map extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js',
+                '@MapbenderCoreBundle/Resources/public/ol-contextmenu/ol-contextmenu.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/map.scss',
+                '@MapbenderCoreBundle/Resources/public/ol-contextmenu/ol-contextmenu.css',
             )
         );
     }

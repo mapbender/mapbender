@@ -49,6 +49,7 @@
             window.Mapbender.Model = this.model;
             this.map = this.model.map;
             self._trigger('ready');
+            self._createContextMenu();
         },
         getMapState: function(){
             return this.model.getMapState();
@@ -115,7 +116,21 @@
             var dpr = window.devicePixelRatio || 1;
             return 96. * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
         },
-        _comma_dangle_dummy: null
+        _comma_dangle_dummy: null,
+
+        _createContextMenu: function() {
+
+            let contextmenu = new ContextMenu({
+                width: 250,
+                defaultItems: false,
+                items: [],
+            });
+            // in order to easily recognize the Control later on
+            contextmenu.isContextMenu = true;
+
+
+            this.map.olMap.addControl(contextmenu);
+        }
     });
 
 })(jQuery);
