@@ -272,13 +272,18 @@
         /**
          * Prepare search result table
          */
-        _prepareResultTable: function(container){
+        _prepareResultTable: function(container) {
             var currentRoute = this.getCurrentRoute();
-            if (!currentRoute || typeof currentRoute.results.headers === 'undefined'){
-                return;
+            if (currentRoute && currentRoute.results.headers) {
+                container.append(this.renderTable(currentRoute));
             }
-
-            var headers = currentRoute.results.headers;
+        },
+        /**
+         * @param {Object} routeConfig
+         * @returns {HTMLElement|jQuery}
+         */
+        renderTable: function(routeConfig) {
+            var headers = routeConfig.results.headers;
             var $headers = $(document.createElement('tr'));
 
             var table = $(document.createElement('table')).addClass('table table-condensed table-striped table-hover');
@@ -288,8 +293,7 @@
             }
             table.append($(document.createElement('thead')).append($headers));
             table.append($('<tbody></tbody>'));
-
-            container.append(table);
+            return table;
         },
 
         /**
