@@ -63,6 +63,10 @@ a {
   }
 }
 
+p a, label a {
+    text-decoration: underline;
+}
+
 .clickable {
   cursor: pointer;
 }
