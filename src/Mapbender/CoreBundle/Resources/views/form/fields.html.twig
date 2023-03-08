@@ -182,6 +182,7 @@
   {%- else -%}
     <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}
+      {{- form_help(form) -}}
       {{- form_widget(form) -}}
       {{- form_errors(form) -}}
     </div>
