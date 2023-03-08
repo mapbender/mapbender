@@ -235,6 +235,7 @@
          */
         _search: function() {
             var form = $('form[name="' + this.selected + '"]', this.element);
+            if (form.get(0).reportValidity && !form.get(0).reportValidity()) return;
             var valid = true;
             $.each($(':input[required]', form), function() {
                 if('' === $(this).val()) {
