@@ -84,7 +84,17 @@ class ReloadSourcesCommand extends Command
     protected function processSource(Source $source, InputInterface $input, OutputInterface $output)
     {
         $loader = $this->sourceTypeDirectory->getSourceLoaderByType($source->getType());
-        $loader->refresh($source, $source);
+        $em = $this->getEntityManager();
+        $em->beginTransaction();
+        try {
+            $loader->refresh($source, $source);
+            $em->persist($source);
+            $em->flush();
+            $em->commit();
+        } catch (\Throwable|\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     protected function getEntityManager()
