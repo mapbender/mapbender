@@ -4,6 +4,12 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services
         https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Mapbender\FrameworkBundle\Command\ListSourcesCommand"
+                 class="Mapbender\FrameworkBundle\Command\ListSourcesCommand"
+                 lazy="true">
+            <tag name="console.command" command="mapbender:sources:list" />
+            <argument type="service" id="doctrine" />
+        </service>
         <service id="Mapbender\FrameworkBundle\Command\ReloadSourcesCommand"
                  class="Mapbender\FrameworkBundle\Command\ReloadSourcesCommand"
                  lazy="true">
