@@ -36,7 +36,8 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         $em->beginTransaction();
         try {
             $em->persist($target);
-            $this->getImporter()->updateSource($target, $reloaded);
+            $instanceUpdateOptions = $this->getImporter()->getDefaultInstanceUpdateOptions($target);
+            $this->getImporter()->updateSource($target, $reloaded, $instanceUpdateOptions);
             // Restore origin url and credentials (source from file import produces empty values)
             $this->getImporter()->updateOrigin($target, $initialOrigin);
             $em->flush();

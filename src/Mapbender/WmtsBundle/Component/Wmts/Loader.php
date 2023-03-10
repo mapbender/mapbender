@@ -5,6 +5,7 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\Component\SourceInstanceUpdateOptions;
 use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -96,7 +97,7 @@ class Loader extends SourceLoader
         $this->validator->validateDocument($this->xmlToDom($content));
     }
 
-    public function updateSource(Source $target, Source $reloaded)
+    public function updateSource(Source $target, Source $reloaded, SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         /** @var HttpTileSource $target */
         /** @var HttpTileSource $reloaded */
@@ -117,7 +118,7 @@ class Loader extends SourceLoader
         }
 
         foreach ($target->getInstances() as $instance) {
-            $this->updateInstance($instance);
+            $this->updateInstance($instance, $instanceUpdateOptions);
             $this->entityManager->persist($instance);
         }
     }
@@ -133,7 +134,8 @@ class Loader extends SourceLoader
         }
     }
 
-    protected function updateInstance(WmtsInstance $instance)
+    protected function updateInstance(WmtsInstance $instance,
+                                      SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         $identifierMap = array();
         foreach ($instance->getLayers() as $instanceLayer) {
@@ -153,5 +155,14 @@ class Loader extends SourceLoader
             }
             $instance->addLayer($newInstanceLayer);
         }
+    }
+
+    public function getDefaultInstanceUpdateOptions(Source $source): SourceInstanceUpdateOptions
+    {
+        $options = parent::getDefaultInstanceUpdateOptions($source);
+        // Multi-layer support for WMTS is still quite broken
+        // Avoid application errors by making all extra layers inactive by default
+        $options->newLayersActive = false;
+        return $options;
     }
 }

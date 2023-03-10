@@ -269,6 +269,8 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
+        $instanceUpdateOptions = $loader->getDefaultInstanceUpdateOptions($source);
+        // @todo: extend reload form to allow control over instance-level settings for newly found layers
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
         $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
@@ -278,7 +280,7 @@ class RepositoryController extends ApplicationControllerBase
             $em = $this->getEntityManager();
             $em->beginTransaction();
             try {
-                $loader->refresh($source, $formModel);
+                $loader->refresh($source, $formModel, $instanceUpdateOptions);
                 $em->persist($source);
 
                 $em->flush();

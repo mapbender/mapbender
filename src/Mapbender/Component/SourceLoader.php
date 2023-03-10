@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\RefreshTypeMismatchException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
@@ -106,13 +107,16 @@ abstract class SourceLoader
     /**
      * @param Source $target
      * @param HttpOriginInterface $origin
+     * @param SourceInstanceUpdateOptions $instanceUpdateOptions
      * @throws SourceLoaderException
      */
-    public function refresh(Source $target, HttpOriginInterface $origin)
+    public function refresh(Source $target,
+                            HttpOriginInterface $origin,
+                            SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         $reloadedSource = $this->evaluateServer($origin);
         $this->beforeSourceUpdate($target, $reloadedSource);
-        $this->updateSource($target, $reloadedSource);
+        $this->updateSource($target, $reloadedSource, $instanceUpdateOptions);
         $this->updateOrigin($target, $origin);
     }
 
@@ -129,7 +133,7 @@ abstract class SourceLoader
         }
     }
 
-    abstract public function updateSource(Source $target, Source $reloaded);
+    abstract public function updateSource(Source $target, Source $reloaded, SourceInstanceUpdateOptions $instanceUpdateOptions);
 
     /**
      * @param string $url
@@ -167,5 +171,25 @@ abstract class SourceLoader
             throw new ServerResponseErrorException($doc->documentElement->textContent);
         }
         return $doc;
+    }
+
+    /**
+     * @param SourceInstanceItem $layer
+     * @param SourceInstanceUpdateOptions $options
+     * @param bool $isNew
+     */
+    protected function applyInstanceLayerUpdateOptions(SourceInstanceItem $layer,
+                                                       SourceInstanceUpdateOptions $options,
+                                                       $isNew)
+    {
+        if ($isNew) {
+            $layer->setActive($options->newLayersActive);
+            $layer->setSelected($options->newLayersSelected);
+        }
+    }
+
+    public function getDefaultInstanceUpdateOptions(Source $source): SourceInstanceUpdateOptions
+    {
+        return new SourceInstanceUpdateOptions();
     }
 }

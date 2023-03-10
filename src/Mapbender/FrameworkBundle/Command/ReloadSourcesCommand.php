@@ -5,11 +5,14 @@ namespace Mapbender\FrameworkBundle\Command;
 
 
 use Doctrine\Persistence\ManagerRegistry;
+use Mapbender\Component\SourceInstanceUpdateOptions;
+use Mapbender\Component\SourceLoader;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -45,6 +48,8 @@ class ReloadSourcesCommand extends Command
         $this
             ->setHelp('Reloads map sources')
             ->addArgument('ids', InputArgument::REQUIRED | InputArgument::IS_ARRAY)
+            ->addOption('new-layers-active', null, InputOption::VALUE_REQUIRED, 'Set newly found layers active in instances (0 or 1)')
+            ->addOption('new-layers-selected', null, InputOption::VALUE_REQUIRED, 'Set newly found layers selected in instances (0 or 1)')
         ;
     }
 
@@ -83,11 +88,12 @@ class ReloadSourcesCommand extends Command
 
     protected function processSource(Source $source, InputInterface $input, OutputInterface $output)
     {
-        $loader = $this->sourceTypeDirectory->getSourceLoaderByType($source->getType());
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $loader->refresh($source, $source);
+            $loader = $this->getReloadHandler($source);
+            $instanceUpdateOptions = $this->getInstanceUpdateOptions($source, $input);
+            $loader->refresh($source, $source, $instanceUpdateOptions);
             $em->persist($source);
             $em->flush();
             $em->commit();
@@ -95,6 +101,37 @@ class ReloadSourcesCommand extends Command
             $em->rollback();
             throw $e;
         }
+    }
+
+    protected function getInstanceUpdateOptions(Source $source, InputInterface $input): SourceInstanceUpdateOptions
+    {
+        $options = $this->getReloadHandler($source)->getDefaultInstanceUpdateOptions($source);
+        if (null !== $input->getOption('new-layers-active')) {
+            $options->newLayersActive = $this->parseBoolean($input->getOption('new-layers-active'));
+        }
+        if (null !== $input->getOption('new-layers-selected')) {
+            $options->newLayersSelected = $this->parseBoolean($input->getOption('new-layers-selected'));
+        }
+        return $options;
+    }
+
+    protected function parseBoolean(string $x = null): bool
+    {
+        if (\strlen($x) && !\is_numeric($x)) {
+            // Allow (abbreviations of) "true", "yes"
+            return \in_array(\strtolower($x)[0], array(
+                'y',
+                't',
+            ));
+        } else {
+            // "0" => false, "1" => true
+            return !!$x;
+        }
+    }
+
+    protected function getReloadHandler(Source $source): SourceLoader
+    {
+        return $this->sourceTypeDirectory->getSourceLoaderByType($source->getType());
     }
 
     protected function getEntityManager()

@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Component\Wms;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
+use Mapbender\Component\SourceInstanceUpdateOptions;
 use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
@@ -112,9 +113,10 @@ class Importer extends SourceLoader
     /**
      * @param Source $target
      * @param Source $reloaded
+     * @param SourceInstanceUpdateOptions $instanceUpdateOptions
      * @throws \Exception
      */
-    public function updateSource(Source $target, Source $reloaded)
+    public function updateSource(Source $target, Source $reloaded, SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
@@ -138,7 +140,7 @@ class Importer extends SourceLoader
         }
 
         foreach ($target->getInstances() as $instance) {
-            $this->updateInstance($instance);
+            $this->updateInstance($instance, $instanceUpdateOptions);
             $this->entityManager->persist($instance);
         }
     }
@@ -205,7 +207,7 @@ class Importer extends SourceLoader
         }
     }
 
-    private function updateInstance(WmsInstance $instance)
+    private function updateInstance(WmsInstance $instance, SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         $source = $instance->getSource();
 
@@ -232,10 +234,12 @@ class Importer extends SourceLoader
         }
         $this->updateInstanceDimensions($instance);
 
-        $this->replaceInstanceLayers($instance, $source);
+        $this->replaceInstanceLayers($instance, $source, $instanceUpdateOptions);
     }
 
-    protected function replaceInstanceLayers(WmsInstance $instance, WmsSource $source)
+    protected function replaceInstanceLayers(WmsInstance $instance,
+                                             WmsSource $source,
+                                             SourceInstanceUpdateOptions $instanceUpdateOptions)
     {
         $oldInstanceRoot = $instance->getRootlayer();
         // Store / "index" old instance layers so we may copy some manually
@@ -281,6 +285,7 @@ class Importer extends SourceLoader
                 EntityUtil::copyEntityFields($newInstanceLayer, $copyFrom, $instanceLayerMeta);
                 $newInstanceLayer->setPriority($priority);
             }
+            $this->applyInstanceLayerUpdateOptions($newInstanceLayer, $instanceUpdateOptions, !$copyFrom);
         }
     }
 

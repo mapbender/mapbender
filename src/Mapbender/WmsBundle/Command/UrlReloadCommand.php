@@ -31,7 +31,8 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $this->getImporter()->refresh($target, $origin);
+            $instanceUpdateOptions = $this->getImporter()->getDefaultInstanceUpdateOptions($target);
+            $this->getImporter()->refresh($target, $origin, $instanceUpdateOptions);
             $em->persist($target);
             $em->flush();
             $em->commit();
