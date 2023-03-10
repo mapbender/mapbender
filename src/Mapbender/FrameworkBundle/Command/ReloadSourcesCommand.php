@@ -50,16 +50,35 @@ class ReloadSourcesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $unrenderedException = null;
         foreach ($input->getArgument('ids') as $id) {
-            /** @var Source $source */
-            $source = $this->getEntityManager()->find(Source::class, $id);
-            $output->writeln('Relading ' . \implode(' ', array(
-                    $source->getTypeLabel(),
-                    '#' . $source->getId(),
-                    '"' . $source->getTitle() . '"',
-            )));
-            $this->processSource($source, $input, $output);
+            try {
+                $this->processIdArgument($id, $input, $output);
+            } catch (\Exception|\Throwable $e) {
+                if ($unrenderedException) {
+                    $this->getApplication()->renderThrowable($unrenderedException, $output);
+                }
+                $unrenderedException = $e;
+            }
         }
+        if ($unrenderedException) {
+            throw $unrenderedException;
+        }
+    }
+
+    protected function processIdArgument($id, InputInterface $input, OutputInterface $output)
+    {
+        /** @var Source|null $source */
+        $source = $this->getEntityManager()->find(Source::class, $id);
+        if (!$source) {
+            throw new \LogicException("No source with id " . \var_export($id, true));
+        }
+        $output->writeln('Relading ' . \implode(' ', array(
+                $source->getTypeLabel(),
+                '#' . $source->getId(),
+                '"' . $source->getTitle() . '"',
+        )));
+        $this->processSource($source, $input, $output);
     }
 
     protected function processSource(Source $source, InputInterface $input, OutputInterface $output)
