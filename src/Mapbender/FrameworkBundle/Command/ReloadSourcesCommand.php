@@ -46,7 +46,7 @@ class ReloadSourcesCommand extends Command
     protected function configure()
     {
         $this
-            ->setHelp('Reloads map sources')
+            ->setDescription('Reloads existing map source(s) by id')
             ->addArgument('ids', InputArgument::REQUIRED | InputArgument::IS_ARRAY)
             ->addOption('new-layers-active', null, InputOption::VALUE_REQUIRED, 'Set newly found layers active in instances (0 or 1)')
             ->addOption('new-layers-selected', null, InputOption::VALUE_REQUIRED, 'Set newly found layers selected in instances (0 or 1)')
