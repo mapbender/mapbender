@@ -57,6 +57,8 @@
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'button',
                             callback: function(){
+                                var form = this.$element.find('form').get(0);
+                                if (form.reportValidity && !form.reportValidity()) return;
                                 var url = $('input[name="loadWmsUrl"]', self.element).val();
                                 if(url === ''){
                                     $('input[name="loadWmsUrl"]', self.element).focus();

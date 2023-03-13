@@ -62,7 +62,9 @@ select.numeric {
 
 .dropdown:not(.bs-dropdown) {
   select {
-    display: none;
+    z-index: -1; // not using display: none to show native HTML tooltip when required field is missing
+    position: absolute;
+    user-select: none;
   }
   &.numeric {
     text-align: right;
