@@ -65,3 +65,19 @@ $hoverEffects: true !default;
 .linkButton {
   user-select: none;
 }
+
+.button-close {
+    position: absolute;
+    background: none;
+    border: none;
+    z-index: 10;
+    right: 0;
+    padding: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+
+    input:placeholder-shown + & {
+        display: none;
+    }
+}

@@ -1,8 +1,20 @@
 <form>
     <div class="autocompleteWrapper">
-        <div class="input-group">
-            <input type="text" class="form-control searchterm" placeholder="{{ placeholder | trans }}" />
-            <div class="input-group-addon clickable -fn-search" title="{{'mb.core.simplesearch.input.search'|trans }}"><i class="fa fas fa-search"></i></div>
+        <div class="input-group" style="position: relative">
+            <div class="input-group">
+                <input type="text" class="form-control searchterm" style="padding-right: 25px;"
+                       placeholder="{{ placeholder | trans }}"
+                       aria-label="{{ 'mb.core.simplesearch.input.searchterm'|trans }}"/>
+                <button class="-fn-reset button-close"
+                        aria-label="{{ 'mb.core.simplesearch.input.clear'|trans }}">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="btn input-group-addon -fn-search" role="search"
+                 title="{{ 'mb.core.simplesearch.input.search'|trans }}"
+                 aria-label="{{ 'mb.core.simplesearch.input.search'|trans }}">
+                <i class="fa fas fa-search"></i>
+            </div>
         </div>
     </div>
 </form>

@@ -66,7 +66,9 @@ mb:
         about: Info-Dialog
     simplesearch:
       input:
+        searchterm: Suchbegriff
         search: Suchen
+        clear: Eingabe löschen
       class:
         title: 'Einfache Suche'
         description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
