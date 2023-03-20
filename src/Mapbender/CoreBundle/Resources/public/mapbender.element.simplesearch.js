@@ -66,6 +66,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         this.searchInput = $('.searchterm', this.element);
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
+        const form = this.element.closest('form').get(0);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
         if (this.iconUrl_) {
@@ -122,9 +123,11 @@ $.widget('mapbender.mbSimpleSearch', {
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
+            if (form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete("search");
         }.bind(this));
         this.element.on('click', '.-fn-search', function() {
+            if (form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete('search');
         }.bind(this));
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
@@ -202,21 +205,24 @@ $.widget('mapbender.mbSimpleSearch', {
     _setFeatureMarker: function(feature) {
         this.layer.clear();
         Mapbender.vectorLayerPool.raiseElementLayers(this);
-        var layer = this.layer;
-        // @todo: add feature center / centroid api
-        var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
-        var center = {
-            lon: .5 * (bounds.left + bounds.right),
-            lat: .5 * (bounds.top + bounds.bottom)
-        };
-        // fallback for broken icon: render a simple point geometry
-        var onMissingIcon = function() {
-            layer.addMarker(center.lon, center.lat);
-        };
-        if (this.iconUrl_) {
-            layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
+
+        if (feature.getGeometry().getType() === 'Point') {
+            var layer = this.layer;
+            // @todo: add feature center / centroid api
+            var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
+            var center = {
+                lon: .5 * (bounds.left + bounds.right),
+                lat: .5 * (bounds.top + bounds.bottom)
+            };
+            // fallback for broken icon: render a simple point geometry
+            const onMissingIcon = () => layer.addMarker(center.lon, center.lat);
+            if (this.iconUrl_) {
+                layer.addIconMarker('simplesearch', center.lon, center.lat).then(null, onMissingIcon);
+            } else {
+                onMissingIcon();
+            }
         } else {
-            onMissingIcon();
+            this.layer.addNativeFeatures([feature]);
         }
     },
 

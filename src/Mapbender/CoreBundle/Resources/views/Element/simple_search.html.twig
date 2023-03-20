@@ -1,9 +1,11 @@
 <form>
     <div class="autocompleteWrapper">
         <div class="input-group" style="position: relative">
-            <div class="input-group">
+            <div class="input-group input-group-growing">
                 <input type="text" class="form-control searchterm" style="padding-right: 25px;"
                        placeholder="{{ placeholder | trans }}"
+                       minlength="2"
+                       required="required"
                        aria-label="{{ 'mb.core.simplesearch.input.searchterm'|trans }}"/>
                 <button class="-fn-reset button-close" type="reset"
                         aria-label="{{ 'mb.core.simplesearch.input.clear'|trans }}">
