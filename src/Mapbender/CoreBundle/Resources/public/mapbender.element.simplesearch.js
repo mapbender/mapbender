@@ -64,7 +64,8 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _setup: function() {
         var self = this;
-        var searchInput = $('.searchterm', this.element);
+        this.searchInput = $('.searchterm', this.element);
+        this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
         if (this.iconUrl_) {
@@ -77,8 +78,8 @@ $.widget('mapbender.mbSimpleSearch', {
         // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
         var minLength = 2;
 
-        searchInput.autocomplete({
-            appendTo: searchInput.closest('.autocompleteWrapper').get(0),
+        this.searchInput.autocomplete({
+            appendTo: this.searchInput.closest('.autocompleteWrapper').get(0),
             delay: self.options.delay,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
@@ -121,11 +122,11 @@ $.widget('mapbender.mbSimpleSearch', {
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
-            searchInput.autocomplete("search");
-        });
+            this.searchInput.autocomplete("search");
+        }.bind(this));
         this.element.on('click', '.-fn-search', function() {
-            searchInput.autocomplete('search');
-        });
+            this.searchInput.autocomplete('search');
+        }.bind(this));
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
         });
@@ -238,7 +239,12 @@ $.widget('mapbender.mbSimpleSearch', {
         }
 
         return tokens.join(' ');
-    }
+    },
+
+    _clearInputAndMarker: function () {
+        this.searchInput.val('');
+        this.layer.clear();
+    },
 });
 
 })(jQuery);
