@@ -71,6 +71,10 @@ window.Mapbender.bootstrapModal = (function($) {
         $element.one('hidden.bs.modal', function() {
             $element.remove();
         });
+        $element.find('[data-toggle="popover"]').popover({
+            html: true,
+            placement: 'left',
+        });
         return $element;
     }
 
