@@ -62,9 +62,9 @@ class SimpleSearch extends AbstractElementService
             'query_url'       => 'http://',
             'query_key'       => 'q',
             'query_format'    => '%s',
-            'token_regex'     => '[^a-zA-Z0-9äöüÄÖÜß]',
-            'token_regex_in'  => '([a-zA-ZäöüÄÖÜß]{3,})',
-            'token_regex_out' => '$1*',
+            'token_regex'     => '',
+            'token_regex_in'  => '',
+            'token_regex_out' => '',
             'collection_path' => '',
             'label_attribute' => 'label',
             'geom_attribute'  => 'geom',
@@ -129,7 +129,7 @@ class SimpleSearch extends AbstractElementService
     {
         $configuration = $element->getConfiguration();
         $q             = $request->get('term', '');
-        $qf            = $configuration['query_format'] ? $configuration['query_format'] : '%s';
+        $qf            = $configuration['query_format'] ?: '%s';
 
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {

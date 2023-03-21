@@ -1,68 +1,100 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Element\SimpleSearch;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class SimpleSearchAdminType extends AbstractType
 {
+    use MapbenderTypeTrait;
+
+    private TranslatorInterface $trans;
+
+    public function __construct(TranslatorInterface $trans)
+    {
+        $this->trans = $trans;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $defaults = SimpleSearch::getDefaultConfiguration();
 
         $builder
-            ->add('placeholder', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('placeholder', TextType::class, $this->createInlineHelpText([
                 'label' => 'mb.core.simplesearch.admin.placeholder',
+                'help' => 'mb.core.simplesearch.admin.placeholder.help',
                 'required' => false,
-            ))
-            ->add('query_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Query URL',
+            ], $this->trans))
+            ->add('query_url', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.query_url',
+                'help' => 'mb.core.simplesearch.admin.query_url.help',
                 'required' => true,
-            ))
-            ->add('query_key', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Query URL key',
+            ], $this->trans))
+            ->add('query_key', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.query_key',
+                'help' => 'mb.core.simplesearch.admin.query_key.help',
                 'required' => true,
-            ))
-            ->add('query_ws_replace', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Query Whitespace replacement pattern',
+            ], $this->trans))
+            ->add('query_ws_replace', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.query_ws_replace',
+                'help' => 'mb.core.simplesearch.admin.query_ws_replace.help',
                 'trim' => false,
-            ))
-            ->add('query_format', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Query key format',
+            ], $this->trans))
+            ->add('query_format', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.query_format',
+                'help' => 'mb.core.simplesearch.admin.query_format.help',
                 'required' => true,
-            ))
-            ->add('token_regex', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Token (JavaScript regex)',
+            ], $this->trans))
+            ->add('token_regex', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.token_regex',
+                'help' => 'mb.core.simplesearch.admin.token_regex.help',
                 'required' => false,
-            ))
-            ->add('token_regex_in', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Token search (JavaScript regex)',
+            ], $this->trans))
+            ->add('token_regex_in', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.token_regex_in',
+                'help' => 'mb.core.simplesearch.admin.token_regex_in.help',
                 'required' => false,
-            ))
-            ->add('token_regex_out', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'label' => 'Token replace (JavaScript regex)',
+            ], $this->trans))
+            ->add('token_regex_out', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.token_regex_out',
+                'help' => 'mb.core.simplesearch.admin.token_regex_out.help',
                 'required' => false,
-            ))
-            ->add('collection_path', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ], $this->trans))
+            ->add('collection_path', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.collection_path',
+                'help' => 'mb.core.simplesearch.admin.collection_path.help',
                 'required' => false,
-            ))
-            ->add('label_attribute', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ], $this->trans))
+            ->add('label_attribute', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.label_attribute',
+                'help' => 'mb.core.simplesearch.admin.label_attribute.help',
                 'required' => true,
-            ))
-            ->add('geom_attribute', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ], $this->trans))
+            ->add('geom_attribute', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.geom_attribute',
+                'help' => 'mb.core.simplesearch.admin.geom_attribute.help',
                 'required' => true,
-            ))
-            ->add('geom_format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ], $this->trans))
+            ->add('geom_format', ChoiceType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.geom_format',
+                'help' => 'mb.core.simplesearch.admin.geom_format.help',
                 'choices' => array(
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON',
                 ),
                 'required' => true,
-            ))
-            ->add('sourceSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ], $this->trans))
+            ->add('sourceSrs', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.sourceSrs',
+                'help' => 'mb.core.simplesearch.admin.sourceSrs.help',
                 'constraints' => array(
                     new Constraints\Regex('#^EPSG:\d+$#')
                 ),
@@ -71,21 +103,35 @@ class SimpleSearchAdminType extends AbstractType
                 ),
                 'empty_data' => $defaults['sourceSrs'],
                 'required' => false,
-                'label' => 'mb.core.simplesearch.admin.sourceSrs',
-            ))
-            ->add('delay', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
+            ], $this->trans))
+            ->add('delay', NumberType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.delay',
+                'help' => 'mb.core.simplesearch.admin.delay.help',
                 'required' => true,
-            ))
-            ->add('result_buffer', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-            ))
-            ->add('result_minscale', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-            ))
-            ->add('result_maxscale', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
-            ))
-            ->add('result_icon_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-            ))
-            ->add('result_icon_offset', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-            ))
+            ], $this->trans))
+            ->add('result_buffer', NumberType::class, $this->createInlineHelpText([
+                    'label' => 'mb.core.simplesearch.admin.result_buffer',
+                    'help' => 'mb.core.simplesearch.admin.result_buffer.help',
+                ]
+                , $this->trans))
+            ->add('result_minscale', NumberType::class, $this->createInlineHelpText([
+                    'label' => 'mb.core.simplesearch.admin.result_minscale',
+                    'help' => 'mb.core.simplesearch.admin.result_minscale.help',
+                ]
+                , $this->trans))
+            ->add('result_maxscale', NumberType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.result_maxscale',
+                'help' => 'mb.core.simplesearch.admin.result_maxscale.help',
+            ], $this->trans))
+            ->add('result_icon_url', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.result_icon_url',
+                'help' => 'mb.core.simplesearch.admin.result_icon_url.help',
+
+            ], $this->trans))
+            ->add('result_icon_offset', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.result_icon_offset',
+                'help' => 'mb.core.simplesearch.admin.result_icon_offset.help',
+            ], $this->trans))
         ;
     }
 }

@@ -77,7 +77,43 @@ mb:
           missing: The selected entry does not contain a geometry.
       admin:
         placeholder: Placeholder
+        placeholder.help: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.
+        query_url: Query URL
+        query_url.help: Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)
+        query_key: Query URL parameter key
+        query_key.help: The query parameter key to append (e.g. <code>q</code>)
+        query_ws_replace: Query Whitespace replacement pattern
+        query_ws_replace.help: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>
+        query_format: Query key format
+        query_format.help: Format for PHP's <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected
+        token_regex: "Tokenizer: Split Regex"
+        token_regex.help: "The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)"
+        token_regex_in: "Tokenizer: Search Regex"
+        token_regex_in.help: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".
+        token_regex_out: "Tokenizer: Replacement Regex"
+        token_regex_out.help: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.
+        collection_path: Results JSON Path
+        collection_path.help: <a href="https://github.com/json-path/JsonPath" target="_blank">JSON path</a> pointing to the array of results within the search url's response. E.g. <code>response.results</code>
+        label_attribute: Label Attribute
+        label_attribute.help: JSON Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>
+        geom_attribute: geom_attribute
+        geom_attribute.help: JSON Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>
+        geom_format: Geometry Format
+        geom_format.help: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Source SRS
+        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>
+        delay: Search Delay [ms]
+        delay.help: The automatic search will trigger that many milliseconds after the last key input.
+        result_buffer: Result Buffer
+        result_buffer.help: TODO
+        result_minscale: Minimum Scale
+        result_minscale.help: TODO
+        result_maxscale: Maximum Scale
+        result_maxscale.help: TODO
+        result_icon_url: Icon URL
+        result_icon_url.help: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.
+        result_icon_offset: Icon Offset
+        result_icon_offset.help: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin
     searchrouter:
       no_results: 'No results found.'
       result_counter: 'Results: %count%'

@@ -123,11 +123,11 @@ $.widget('mapbender.mbSimpleSearch', {
         // On manual submit (enter key, submit button), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
-            if (form.reportValidity && !form.reportValidity()) return;
+            if (form && form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete("search");
         }.bind(this));
         this.element.on('click', '.-fn-search', function() {
-            if (form.reportValidity && !form.reportValidity()) return;
+            if (form && form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete('search');
         }.bind(this));
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {

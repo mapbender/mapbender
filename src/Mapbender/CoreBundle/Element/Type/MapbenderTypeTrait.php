@@ -17,7 +17,7 @@ trait MapbenderTypeTrait
     {
         if (empty($typeConfiguration['help'])) return $typeConfiguration;
         $typeConfiguration['help'] = '<i class="fa fa-question-circle"  data-toggle="popover" data-content="'
-            . str_replace('"', '\\"', $trans->trans($typeConfiguration['help']))
+            . htmlspecialchars( $trans->trans($typeConfiguration['help']))
             . '"></i>';
         $typeConfiguration['help_html'] = true;
         $helpAttr = array_key_exists('help_attr', $typeConfiguration) ? $typeConfiguration['help_attr'] : [];
