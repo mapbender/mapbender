@@ -95,13 +95,14 @@ class SimpleSearch extends AbstractElementService
     {
         $view = new TemplateView('MapbenderCoreBundle:Element:simple_search.html.twig');
         $view->attributes['class'] = 'mb-element-simplesearch';
-        $config = $element->getConfiguration();
+        $configurations = $element->getConfiguration()['configurations'];
         if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
-        // TODO: make this customizable
-        $view->variables['delay'] = $config['configurations'][0]['delay'];
-        $view->variables['placeholder'] = $config['configurations'][0]['placeholder'] ?: $element->getTitle();
+        $view->variables['placeholder'] = $configurations[0]['placeholder'] ?: $configurations[0]['title'] ?: $element->getTitle();
+        if(count($configurations) > 1) {
+            $view->variables['configuration_titles'] = array_map(fn($c) => $c['title'], $configurations);
+        }
         return $view;
     }
 
@@ -219,6 +220,7 @@ class SimpleSearch extends AbstractElementService
         }
 
         if (!isset($config['configurations'])) {
+            $config['title'] = $entity->getTitle() ?: $config['placeholder'];
             $config = ['configurations' => [$config]];
         }
 

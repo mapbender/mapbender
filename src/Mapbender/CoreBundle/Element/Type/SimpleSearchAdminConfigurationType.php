@@ -28,6 +28,11 @@ class SimpleSearchAdminConfigurationType extends AbstractType
         $defaults = SimpleSearch::getDefaultChildConfiguration();
 
         $builder
+            ->add('title', TextType::class, $this->createInlineHelpText([
+                'label' => 'mb.core.simplesearch.admin.title',
+                'help' => 'mb.core.simplesearch.admin.title.help',
+                'required' => true,
+            ], $this->trans))
             ->add('placeholder', TextType::class, $this->createInlineHelpText([
                 'label' => 'mb.core.simplesearch.admin.placeholder',
                 'help' => 'mb.core.simplesearch.admin.placeholder.help',

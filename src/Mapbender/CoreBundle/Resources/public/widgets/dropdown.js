@@ -36,6 +36,7 @@ $(function () {
     function updateValueDisplay(wrapper) {
         var $select = $('select', wrapper).first();
         var $valueDisplay = $('>.dropdownValue', wrapper);
+        if ($valueDisplay.hasClass('hide-value')) return;
         var $option = $('option:selected', $select).first();
         $valueDisplay.text($option.text());
     }
@@ -109,7 +110,8 @@ $(function () {
         var $select = $('>select', $dropdown);
         var val = $choice.attr('data-value');
         var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', $select);
-        $('>.dropdownValue', $dropdown).text(opt.text());
+        var $valueDisplay = $('>.dropdownValue', $dropdown);
+        if (!$valueDisplay.hasClass('hide-value')) $valueDisplay.text(opt.text());
         $select.val(opt.val());
         $select.trigger('change');
         $list.hide();

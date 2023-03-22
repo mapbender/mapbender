@@ -55,6 +55,9 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         this.searchInput = $('.searchterm', this.element);
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
+        this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
+            console.log($(e.target).val());
+        });
         const form = this.element.closest('form').get(0);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);

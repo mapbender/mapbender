@@ -1,12 +1,43 @@
 .mb-element-simplesearch {
-  &.toolBarItem {
-    white-space: normal;
-  }
-  &.toolBarItem .ui-autocomplete {
-    width: 22em;
-    max-width: 50vw;
-  }
+    &.toolBarItem {
+        white-space: normal;
+    }
+
+    &.toolBarItem .ui-autocomplete {
+        width: 22em;
+        max-width: 50vw;
+    }
+
+    .dropdown:not(.bs-dropdown) {
+        border-left: none;
+        background: $backgroundColor;
+        text-align: left;
+        display: table-cell;
+        width: auto;
+        padding: 0;
+        vertical-align: middle;
+
+        .dropdownValue {
+            border: none;
+            background: none;
+            min-height: initial;
+
+            &:after {
+                left: 50%;
+                top: 50%;
+                transform: translateY(-50%) translateX(-50%);
+                margin-right: 5px;
+                margin-top: -1px;
+            }
+        }
+    }
+
+    .dropdownList {
+        right: 0;
+        margin-top: 10px;
+    }
 }
+
 .sidePane .input-group-growing {
     width: 100%;
 }

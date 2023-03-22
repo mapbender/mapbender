@@ -7,11 +7,22 @@
                        minlength="2"
                        required="required"
                        aria-label="{{ 'mb.core.simplesearch.input.searchterm'|trans }}"/>
-                <button class="-fn-reset button-close" type="reset"
+                <button class="-fn-reset button-close hover-highlight-effect" type="reset"
                         aria-label="{{ 'mb.core.simplesearch.input.clear'|trans }}">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
+            {% if configuration_titles is defined %}
+                <div class="input-group-addon btn dropdown -fn-simple_search-toggle-dropdown" href="#">
+                    <select class="hiddenDropdown -fn-simple_search-select-configuration">
+                        {% for title in configuration_titles %}
+                            <option value="{{ loop.index - 1 }}">{{ title }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="dropdownValue iconDown hide-value"></div>
+                    <ul class="dropdownList"></ul>
+                </div><!-- /btn-group -->
+            {% endif %}
             <div class="btn input-group-addon -fn-search" role="search"
                  title="{{ 'mb.core.simplesearch.input.search'|trans }}"
                  aria-label="{{ 'mb.core.simplesearch.input.search'|trans }}">

@@ -78,6 +78,8 @@ mb:
           missing: Der ausgewählte Eintrag enthält keine Geometrie.
       admin:
         configurations: Konfigurationen
+        title: Titel
+        title.help: Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird
         placeholder: Platzhalter
         placeholder.help: Text, der im Suchfeld angezeigt wird, wenn dieses leer ist. Wird der Platzhalter nicht gesetzt, wird der Titel verwendet.
         query_url: Query URL
@@ -100,7 +102,7 @@ mb:
         label_attribute.help: JSON Path (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, das als Beschriftung angezeigt werden soll, z.B. <code>label</code>. Alternativ kann ein String-Template angegeben werden, z.B. <code>Stadt ${properties.address.city} - ${properties.address.road}</code>
         geom_attribute: Attribut für Geometrie
         geom_attribute.help: JSON Path (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, in dem die Geometrie verfügbar ist, z.B. <code>geom</code>
-        geom_format: Geomtrie-Format
+        geom_format: Geometrie-Format
         geom_format.help: Format, in dem die Geometrie verfügbar ist, entweder <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Quell-SRS
         sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG-Code</a> der in der Such-URL verwendeten Projektion, inklusive des Präfixes <code>EPSG:</code>, z.B. <code>EPSG:25832</code>
