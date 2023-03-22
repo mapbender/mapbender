@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class MapbenderCollectionType extends AbstractType
 {
     public const INITIAL_STATE_ALL_COLLAPSED = 'all_collapsed';
+    public const INITIAL_STATE_ALL_COLLAPSED_EXCEPT_SINGLE_ENTRY = 'all_collapsed_except_single';
     public const INITIAL_STATE_ALL_OPENED = 'all_opened';
     public const INITIAL_STATE_FIRST_OPENED = 'first_opened';
     public const INITIAL_STATE_LAST_OPENED = 'last_opened';

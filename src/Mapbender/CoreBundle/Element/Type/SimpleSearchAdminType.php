@@ -15,7 +15,7 @@ class SimpleSearchAdminType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'allow_collapse' => true,
-                'initial_collapse_state' => MapbenderCollectionType::INITIAL_STATE_ALL_COLLAPSED,
+                'initial_collapse_state' => MapbenderCollectionType::INITIAL_STATE_ALL_COLLAPSED_EXCEPT_SINGLE_ENTRY,
                 'entry_type' => SimpleSearchAdminConfigurationType::class,
             ))
         ;
