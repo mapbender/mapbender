@@ -2,34 +2,23 @@
 
 $.widget('mapbender.mbSimpleSearch', {
     options: {
-        /** one of 'WKT', 'GeoJSON' */
-        geom_format: null,
-        token_regex: null,
-        token_regex_in: null,
-        token_regex_out: null,
-        label_attribute: null,
-        geom_attribute: null,
-        result_buffer: null,
-        result_minscale: null,
-        result_maxscale: null,
-        result_icon_url: null,
-        result_icon_offset: null,
-        sourceSrs: 'EPSG:4326',
-        delay: 0
+        configurations: []
     },
 
     layer: null,
     mbMap: null,
     iconUrl_: null,
+    selectedConfiguration: 0,
 
     _create: function() {
-        this.iconUrl_ = this.options.result_icon_url || null;
+        this.selectedConfiguration = 0;
+        this.iconUrl_ = this.options['configurations'][this.selectedConfiguration].result_icon_url || null;
         this.initializeAutocompletePosition_()
-        if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
+        if (this.options['configurations'][this.selectedConfiguration].result_icon_url && !/^(\w+:)?\/\//.test(this.options['configurations'][this.selectedConfiguration].result_icon_url)) {
             // Local, asset-relative
             var parts = [
                 Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
-                this.options.result_icon_url.replace(/^\//, '')
+                this.options['configurations'][this.selectedConfiguration].result_icon_url.replace(/^\//, '')
             ];
             this.iconUrl_ = parts.join('/');
         }
@@ -70,7 +59,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
         if (this.iconUrl_) {
-            var offset = (this.options.result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
+            var offset = (this.options['configurations'][this.selectedConfiguration].result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
                 return parseInt(x) || 0;
             });
             this.layer.addCustomIconMarkerStyle('simplesearch', this.iconUrl_, offset[0], offset[1]);
@@ -81,7 +70,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
         this.searchInput.autocomplete({
             appendTo: this.searchInput.closest('.autocompleteWrapper').get(0),
-            delay: self.options.delay,
+            delay: self.options['configurations'][self.selectedConfiguration].delay,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
             source: function(request, responseCallback) {
@@ -97,7 +86,7 @@ $.widget('mapbender.mbSimpleSearch', {
                                 label: self._formatLabel(item)
                             });
                         }).filter(function(item) {
-                            var geomEmpty = !item[self.options.geom_attribute];
+                            var geomEmpty = !item[self.options['configurations'][self.selectedConfiguration].geom_attribute];
                             if (geomEmpty) {
                                 console.warn("Missing geometry in SimpleSearch item", item);
                             }
@@ -135,13 +124,13 @@ $.widget('mapbender.mbSimpleSearch', {
         });
     },
     _parseFeature: function(doc) {
-        switch ((this.options.geom_format || '').toUpperCase()) {
+        switch ((this.options['configurations'][this.selectedConfiguration].geom_format || '').toUpperCase()) {
             case 'WKT':
-                return this.mbMap.getModel().parseWktFeature(doc, this.options.sourceSrs);
+                return this.mbMap.getModel().parseWktFeature(doc, this.options['configurations'][this.selectedConfiguration].sourceSrs);
             case 'GEOJSON':
-                return this.mbMap.getModel().parseGeoJsonFeature(doc, this.options.sourceSrs);
+                return this.mbMap.getModel().parseGeoJsonFeature(doc, this.options['configurations'][this.selectedConfiguration].sourceSrs);
             default:
-                throw new Error("Invalid geom_format " + this.options.geom_format);
+                throw new Error("Invalid geom_format " + this.options['configurations'][this.selectedConfiguration].geom_format);
         }
     },
     /**
@@ -167,7 +156,7 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _formatLabel: function(doc) {
         // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
-        var templateParts = this.options.label_attribute.split(/\${([^}]+)}/g);
+        var templateParts = this.options['configurations'][this.selectedConfiguration].label_attribute.split(/\${([^}]+)}/g);
         if (templateParts.length > 1) {
             var parts = [];
             for (var i = 0; i < templateParts.length; i += 2) {
@@ -187,16 +176,16 @@ $.widget('mapbender.mbSimpleSearch', {
             }
             return parts.join('').replace(/(^[\s.,:]+)|([\s.,:]+$)/g, '');
         } else {
-            return this._extractAttribute(doc, this.options.label_attribute);
+            return this._extractAttribute(doc, this.options['configurations'][this.selectedConfiguration].label_attribute);
         }
     },
     _onAutocompleteSelected: function(item) {
-        var feature = this._parseFeature(item[this.options.geom_attribute]);
+        var feature = this._parseFeature(item[this.options['configurations'][this.selectedConfiguration].geom_attribute]);
 
         var zoomToFeatureOptions = {
-            maxScale: parseInt(this.options.result_maxscale) || null,
-            minScale: parseInt(this.options.result_minscale) || null,
-            buffer: parseInt(this.options.result_buffer) || null
+            maxScale: parseInt(this.options['configurations'][this.selectedConfiguration].result_maxscale) || null,
+            minScale: parseInt(this.options['configurations'][this.selectedConfiguration].result_minscale) || null,
+            buffer: parseInt(this.options['configurations'][this.selectedConfiguration].result_buffer) || null
         };
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
@@ -231,17 +220,17 @@ $.widget('mapbender.mbSimpleSearch', {
     },
 
     _tokenize: function(string) {
-        if (!(this.options.token_regex_in && this.options.token_regex_out)) return string;
+        if (!(this.options['configurations'][this.selectedConfiguration].token_regex_in && this.options['configurations'][this.selectedConfiguration].token_regex_out)) return string;
 
-        if (this.options.token_regex) {
-            var regexp = new RegExp(this.options.token_regex, 'g');
+        if (this.options['configurations'][this.selectedConfiguration].token_regex) {
+            var regexp = new RegExp(this.options['configurations'][this.selectedConfiguration].token_regex, 'g');
             string = string.replace(regexp, " ");
         }
 
         var tokens = string.split(' ');
-        var regex = new RegExp(this.options.token_regex_in);
+        var regex = new RegExp(this.options['configurations'][this.selectedConfiguration].token_regex_in);
         for(var i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].replace(regex, this.options.token_regex_out);
+            tokens[i] = tokens[i].replace(regex, this.options['configurations'][this.selectedConfiguration].token_regex_out);
         }
 
         return tokens.join(' ');

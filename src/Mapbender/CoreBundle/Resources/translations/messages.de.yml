@@ -77,6 +77,7 @@ mb:
         geometry:
           missing: Der ausgewählte Eintrag enthält keine Geometrie.
       admin:
+        configurations: Konfigurationen
         placeholder: Platzhalter
         placeholder.help: Text, der im Suchfeld angezeigt wird, wenn dieses leer ist. Wird der Platzhalter nicht gesetzt, wird der Titel verwendet.
         query_url: Query URL

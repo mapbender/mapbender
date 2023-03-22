@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
@@ -6,6 +7,7 @@ use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -24,7 +26,7 @@ class SimpleSearch extends AbstractElementService
     protected $isDebug;
 
     public function __construct(HttpTransportInterface $httpTransport,
-                                $isDebug = false)
+                                                       $isDebug = false)
     {
         $this->httpTransport = $httpTransport;
         $this->isDebug = $isDebug;
@@ -42,7 +44,7 @@ class SimpleSearch extends AbstractElementService
 
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType';
+        return SimpleSearchAdminType::class;
     }
 
     public static function getFormTemplate()
@@ -57,19 +59,28 @@ class SimpleSearch extends AbstractElementService
 
     public static function getDefaultConfiguration()
     {
+        return [
+            'configurations' => [
+                self::getDefaultChildConfiguration()
+            ]
+        ];
+    }
+
+    public static function getDefaultChildConfiguration()
+    {
         return array(
             'placeholder' => null,
-            'query_url'       => 'http://',
-            'query_key'       => 'q',
-            'query_format'    => '%s',
-            'token_regex'     => '',
-            'token_regex_in'  => '',
+            'query_url' => 'http://',
+            'query_key' => 'q',
+            'query_format' => '%s',
+            'token_regex' => '',
+            'token_regex_in' => '',
             'token_regex_out' => '',
             'collection_path' => '',
             'label_attribute' => 'label',
-            'geom_attribute'  => 'geom',
-            'geom_format'     => 'WKT',
-            'delay'           => 300,
+            'geom_attribute' => 'geom',
+            'geom_format' => 'WKT',
+            'delay' => 300,
             'sourceSrs' => 'EPSG:4326',
             'query_ws_replace' => null,
             'result_buffer' => 300,
@@ -88,8 +99,9 @@ class SimpleSearch extends AbstractElementService
         if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
-        $view->variables['delay'] = $config['delay'];
-        $view->variables['placeholder'] = $config['placeholder'] ?: $element->getTitle();
+        // TODO: make this customizable
+        $view->variables['delay'] = $config['configurations'][0]['delay'];
+        $view->variables['placeholder'] = $config['configurations'][0]['placeholder'] ?: $element->getTitle();
         return $view;
     }
 
@@ -98,8 +110,9 @@ class SimpleSearch extends AbstractElementService
         $config = parent::getClientConfiguration($element);
         // Hide internal query url (may include basic auth credentials)
         unset($config['url']);
-        if (empty($config['sourceSrs'])) {
-            $config['sourceSrs'] = $this->getDefaultConfiguration()['sourceSrs'];
+        // TODO: make this customizable
+        if (empty($config['configurations'][0]['sourceSrs'])) {
+            $config['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][0]['sourceSrs'];
         }
         return $config;
     }
@@ -110,10 +123,10 @@ class SimpleSearch extends AbstractElementService
     public function getRequiredAssets(Element $element)
     {
         return array(
-            'js'    => array(
+            'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
             ),
-            'css'   => array(
+            'css' => array(
                 "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
             ),
             'trans' => array(
@@ -121,15 +134,18 @@ class SimpleSearch extends AbstractElementService
             ),
         );
     }
+
     public function getHttpHandler(Element $element)
     {
         return $this;
     }
+
     public function handleRequest(Element $element, Request $request)
     {
-        $configuration = $element->getConfiguration();
-        $q             = $request->get('term', '');
-        $qf            = $configuration['query_format'] ?: '%s';
+        // TODO: make this customizable
+        $configuration = $element->getConfiguration()['configurations'][0];
+        $q = $request->get('term', '');
+        $qf = $configuration['query_format'] ?: '%s';
 
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {
@@ -155,7 +171,7 @@ class SimpleSearch extends AbstractElementService
                 throw new \RuntimeException("Invalid json response " . json_last_error_msg() . " from " . $url);
             }
             foreach (explode('.', $configuration['collection_path']) as $key) {
-                $data = $data[ $key ];
+                $data = $data[$key];
             }
             // Rebuild entire response from scratch to discard potentially invalid upstream headers etc
             // see https://github.com/mapbender/mapbender/issues/1303
