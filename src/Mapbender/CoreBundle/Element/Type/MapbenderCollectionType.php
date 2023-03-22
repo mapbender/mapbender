@@ -14,6 +14,7 @@ class MapbenderCollectionType extends AbstractType
     public const INITIAL_STATE_ALL_COLLAPSED = 'all_collapsed';
     public const INITIAL_STATE_ALL_OPENED = 'all_opened';
     public const INITIAL_STATE_FIRST_OPENED = 'first_opened';
+    public const INITIAL_STATE_LAST_OPENED = 'last_opened';
 
     public function getParent()
     {

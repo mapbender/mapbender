@@ -183,6 +183,13 @@
     {% set allowCollapse = form.parent.vars.allow_collapse is defined and form.parent.vars.allow_collapse %}
 
     {% if allowCollapse %}
+      {# get index of item within parent for initial collapse state #}
+      {% set index = -1 %}
+      {% for child in form.parent.children %}
+          {% if child == form %}
+              {% set index = loop.index %}
+          {% endif %}
+      {% endfor %}
       <div class="panel panel-default collectionItem clear">
         <div class="panel-heading" role="tab" id="headingOne">
           <h4 class="panel-title">
@@ -203,7 +210,11 @@
             </a>
           </h4>
         </div>
-        <div class="panel-collapse collapse in" role="tabpanel"
+        {% set opened = form.parent.vars.initial_collapse_state == 'all_opened'
+            or (form.parent.vars.initial_collapse_state == 'first_opened' and index == 1)
+            or (form.parent.vars.initial_collapse_state == 'last_opened' and index == form.parent.children | length)
+        %}
+        <div class="panel-collapse collapse {% if opened %}in{% endif %}" role="tabpanel"
            aria-labelledby="headingOne">
           <div class="panel-body">
               {{ form_widget(form) }}
