@@ -1,18 +1,18 @@
 window.Mapbender = window.Mapbender || {};
-window.Mapbender.bootstrapModal = (function($) {
+window.Mapbender.bootstrapModal = (function ($) {
     var wrapperTemplate = [
         '<div class="modal" tabindex="-1" role="dialog">',
-          '<div class="modal-dialog modal-dialog-scrollable" role="document"></div>',
+        '<div class="modal-dialog modal-dialog-scrollable" role="document"></div>',
         '</div>'
-        ].join('');
+    ].join('');
     var contentTemplate = [
         '<div class="modal-header">',
-          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>',
-          '<h2 class="modal-title"></h2>',
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>',
+        '<h2 class="modal-title"></h2>',
         '</div>',
         '<div class="modal-body"></div>',
         '<div class="modal-footer"></div>'
-        ].join('');
+    ].join('');
 
     var $wrapper, $mContent;
 
@@ -68,12 +68,8 @@ window.Mapbender.bootstrapModal = (function($) {
             $('.modal-footer', $element).append($b);
         }
         $element.modal({backdrop: 'static'});
-        $element.one('hidden.bs.modal', function() {
+        $element.one('hidden.bs.modal', function () {
             $element.remove();
-        });
-        $element.find('[data-toggle="popover"]').popover({
-            html: true,
-            placement: 'left',
         });
         return $element;
     }

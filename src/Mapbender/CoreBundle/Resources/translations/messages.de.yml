@@ -39,6 +39,7 @@ mb:
   form:
     choice_required: Auswahl erforderlich
     choice_optional: Nichts ausgewählt
+    unnamed_entry: Unbenannter Eintrag
   states:
     active: aktiv
     inactive: inaktiv

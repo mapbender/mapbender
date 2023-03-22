@@ -29,21 +29,28 @@
 {%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
+  {% set allowCollapse = form.vars.allow_collapse is defined and form.vars.allow_collapse %}
+  {% if allowCollapse %}
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  {% endif %}
   {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
   {%- if sortable is defined -%}
     {%- set attr = attr | merge({'data-sortable': '1'}) -%}
   {%- endif -%}
-    {%- if prototype is defined -%}
-      {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+  {%- if prototype is defined -%}
+    {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+  {%- endif -%}
+  <div {{ block('widget_container_attributes') }}>
+    {%- if prototype is defined and form.vars.allow_add is not empty -%}
+      <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
     {%- endif -%}
-    <div {{ block('widget_container_attributes') }}>
-      {%- if prototype is defined and form.vars.allow_add is not empty -%}
-        <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
-      {%- endif -%}
-      {%- for child in form -%}
+    {%- for child in form -%}
         {{- form_row(child) -}}
-      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+  {% if allowCollapse %}
     </div>
+  {% endif %}
 {% endblock collection_widget %}
 
 {% block textarea_widget %}
@@ -172,13 +179,36 @@
 
 {% block form_row %}
   {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
-    <div class="collectionItem clear">
-      {%- if form.parent.vars.allow_delete -%}
-        <a href="#" class="collectionRemove clickable hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></a>
-      {%- endif -%}
-      {# No label for collection item #}
-      {{ form_widget(form) }}
-    </div>
+
+    {% set allowCollapse = form.parent.vars.allow_collapse is defined and form.parent.vars.allow_collapse %}
+
+    {% if allowCollapse %}
+      <div class="panel panel-default collectionItem clear">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" class="collapse-toggle"
+               aria-expanded="true">
+                <span class="panel-label" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse in" role="tabpanel"
+           aria-labelledby="headingOne">
+          <div class="panel-body">
+              {{ form_widget(form) }}
+          </div>
+        </div>
+      </div>
+    {% else %}
+        <div class="collectionItem clear">
+            {%- if form.parent.vars.allow_delete -%}
+                <a href="#" class="collectionRemove clickable hover-highlight-effect"><i
+                        class="fa fa-fw fa-trash-o far fa-trash-alt"></i></a>
+            {%- endif -%}
+            {# No label for collection item #}
+            {{ form_widget(form) }}
+        </div>
+    {% endif %}
   {%- else -%}
     <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
       {{- form_label(form) -}}

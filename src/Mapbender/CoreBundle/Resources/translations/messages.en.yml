@@ -39,6 +39,7 @@ mb:
   form:
     choice_required: Choose one
     choice_optional: None
+    unnamed_entry: Unnamed Entry
   states:
     active: active
     inactive: inactive
@@ -76,6 +77,7 @@ mb:
         geometry:
           missing: The selected entry does not contain a geometry.
       admin:
+        configurations: Configurations
         placeholder: Placeholder
         placeholder.help: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.
         query_url: Query URL
