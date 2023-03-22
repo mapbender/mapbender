@@ -38,7 +38,7 @@
     {%- set attr = attr | merge({'data-sortable': '1'}) -%}
   {%- endif -%}
   {%- if prototype is defined -%}
-    {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {%- set attr = attr|merge({'data-prototype': form_row(prototype) | spaceless }) -%}
   {%- endif -%}
   <div {{ block('widget_container_attributes') }}>
     {%- if prototype is defined and form.vars.allow_add is not empty -%}
@@ -186,9 +186,20 @@
       <div class="panel panel-default collectionItem clear">
         <div class="panel-heading" role="tab" id="headingOne">
           <h4 class="panel-title">
-            <a role="button" class="collapse-toggle"
-               aria-expanded="true">
+            <a role="button" class="collapse-toggle" aria-expanded="true">
                 <span class="panel-label" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
+                <div class="panel-buttons">
+                    {%- if form.parent.vars.allow_add -%}
+                    <a href="#" class="collectionDuplicate clickable hover-highlight-effect">
+                        <i class="fa fa-fw fa-copy far"></i>
+                    </a>
+                    {%- endif -%}
+                    {%- if form.parent.vars.allow_delete -%}
+                    <a href="#" class="collectionRemove clickable hover-highlight-effect">
+                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                    </a>
+                    {%- endif -%}
+                </div>
             </a>
           </h4>
         </div>

@@ -15,8 +15,8 @@
             s4() + '-' + s4() + s4() + s4();
     }
 
-    $(document).on('click', '.collection > .collectionAdd', function () {
-        var collection = $(this).closest('.collection'),
+    function addItem(trigger) {
+        const collection = $(trigger).closest('.collection'),
             count = $('.collectionItem', collection).length,
             // The prototype text for the new item...
             prototype = collection.data('prototype'),
@@ -28,7 +28,31 @@
                 .addClass('collectionItem');
 
         collection.append(item);
-        collection.trigger('collectionlengthchange');
+        return item;
+    }
+
+    function onFirstInputOfItemChanged(input) {
+        const $label = $(input).closest('.panel').find('.panel-label');
+        let value = input.value;
+        if (!value) value = $label.attr('data-unnamed');
+        $label.text(value);
+    }
+
+    $(document).on('click', '.collection > .collectionAdd', function (e) {
+        const $item = addItem(e.target);
+        $item.closest('.collection').trigger('collectionlengthchange');
+    });
+
+    $(document).on('click', '.collection .collectionDuplicate', function (e) {
+        const $item = addItem(e.target);
+        const $originalItemInputs = $(e.target).closest('.collectionItem').find('input, select');
+        const $newItemInputs = $item.find('input, select');
+        $newItemInputs.each(function (index, el) {
+            $(el).val($originalItemInputs.eq(index).val());
+            if (index === 0) onFirstInputOfItemChanged(el);
+        });
+
+        $item.closest('.collection').trigger('collectionlengthchange');
     });
 
     $(document).on('click', '.collectionItem .collectionRemove', function () {
@@ -45,24 +69,18 @@
             });
         }
         initPopovers();
-        $modal.on('collectionlengthchange', function() {
+        $modal.on('collectionlengthchange', function () {
             initPopovers();
         });
 
         $modal.on('click', '.collapse-toggle', function (e) {
             $(e.target).closest('.panel').find('.collapse').collapse('toggle');
         });
-        const onNameChanged = function (input) {
-            const $label = $(input).closest('.panel').find('.panel-label');
-            let value = input.value;
-            if (!value) value = $label.attr('data-unnamed');
-            $label.text(value);
-        }
         $modal.find('.panel-group').on('keyup', '.form-group:first-child input', function (e) {
-            onNameChanged(e.target);
+            onFirstInputOfItemChanged(e.target);
         });
         $modal.find('.panel-group .form-group:first-child input').each(function (i, e) {
-            onNameChanged(e);
+            onFirstInputOfItemChanged(e);
         });
     })
 
