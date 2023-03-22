@@ -6,12 +6,12 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Transport\HttpTransportInterface;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\HttpFoundation\Request;
-use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Simple Search - Just type, select and show result
@@ -217,6 +217,11 @@ class SimpleSearch extends AbstractElementService
             // a Yaml application cloned into the database.
             $config['token_regex'] = implode(',', $config['token_regex']);
         }
+
+        if (!isset($config['configurations'])) {
+            $config = ['configurations' => [$config]];
+        }
+
         $entity->setConfiguration($config);
     }
 
