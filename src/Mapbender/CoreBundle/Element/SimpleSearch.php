@@ -70,7 +70,7 @@ class SimpleSearch extends AbstractElementService
     {
         return array(
             'placeholder' => null,
-            'query_url' => 'http://',
+            'query_url' => 'https://',
             'query_key' => 'q',
             'query_format' => '%s',
             'token_regex' => '',
@@ -100,7 +100,7 @@ class SimpleSearch extends AbstractElementService
             $view->attributes['title'] = $element->getTitle();
         }
         $view->variables['placeholder'] = $configurations[0]['placeholder'] ?: $configurations[0]['title'] ?: $element->getTitle();
-        if(count($configurations) > 1) {
+        if (count($configurations) > 1) {
             $view->variables['configuration_titles'] = array_map(fn($c) => $c['title'], $configurations);
         }
         return $view;
@@ -111,9 +111,10 @@ class SimpleSearch extends AbstractElementService
         $config = parent::getClientConfiguration($element);
         // Hide internal query url (may include basic auth credentials)
         unset($config['url']);
-        // TODO: make this customizable
-        if (empty($config['configurations'][0]['sourceSrs'])) {
-            $config['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][0]['sourceSrs'];
+        for ($i = 0; $i < count($config['configurations']); $i++) {
+            if (empty($config['configurations'][$i]['sourceSrs'])) {
+                $config['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][$i]['sourceSrs'];
+            }
         }
         return $config;
     }
@@ -143,9 +144,9 @@ class SimpleSearch extends AbstractElementService
 
     public function handleRequest(Element $element, Request $request)
     {
-        // TODO: make this customizable
-        $configuration = $element->getConfiguration()['configurations'][0];
         $q = $request->get('term', '');
+        $configurationIndex = $request->get('selectedConfiguration', 0);
+        $configuration = $element->getConfiguration()['configurations'][$configurationIndex];
         $qf = $configuration['query_format'] ?: '%s';
 
         // Replace Whitespace if desired

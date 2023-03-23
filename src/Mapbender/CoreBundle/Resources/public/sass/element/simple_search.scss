@@ -30,11 +30,15 @@
                 margin-top: -1px;
             }
         }
+
+        .dropdownList {
+            right: 0;
+            margin-top: 10px;
+        }
     }
 
-    .dropdownList {
-        right: 0;
-        margin-top: 10px;
+    .choice-selected {
+        font-weight: 600;
     }
 }
 

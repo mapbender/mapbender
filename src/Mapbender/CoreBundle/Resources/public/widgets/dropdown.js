@@ -75,8 +75,10 @@ $(function () {
         if (dropdownList.children().length === 0) {
             $('option', $select).each(function (i, e) {
                 var node = $('<li>');
+                const value = $(e).attr('value');
                 node.addClass('choice');
-                node.attr('data-value', $(e).attr('value'));
+                if ($select.val() === value) node.addClass('choice-selected');
+                node.attr('data-value', value);
                 node.text($(e).text());
                 dropdownList.append(node);
             });
@@ -115,6 +117,8 @@ $(function () {
         $select.val(opt.val());
         $select.trigger('change');
         $list.hide();
+        $list.find('.choice').removeClass('choice-selected');
+        $choice.addClass('choice-selected');
         return false;
     }
     $('.dropdown').each(function () {

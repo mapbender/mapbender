@@ -5,28 +5,42 @@ $.widget('mapbender.mbSimpleSearch', {
         configurations: []
     },
 
+    initialised: false,
     layer: null,
     mbMap: null,
     iconUrl_: null,
     selectedConfiguration: 0,
 
     _create: function() {
-        this.selectedConfiguration = 0;
-        this.iconUrl_ = this.options['configurations'][this.selectedConfiguration].result_icon_url || null;
+        this._setSelectedConfiguration(0);
         this.initializeAutocompletePosition_()
-        if (this.options['configurations'][this.selectedConfiguration].result_icon_url && !/^(\w+:)?\/\//.test(this.options['configurations'][this.selectedConfiguration].result_icon_url)) {
-            // Local, asset-relative
-            var parts = [
-                Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
-                this.options['configurations'][this.selectedConfiguration].result_icon_url.replace(/^\//, '')
-            ];
-            this.iconUrl_ = parts.join('/');
-        }
         var self = this;
         Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
             self.mbMap = mbMap;
             self._setup();
         });
+    },
+    _setSelectedConfiguration: function(index) {
+        this.selectedConfiguration = index;
+        const configuration = this.options['configurations'][index];
+
+        this.iconUrl_ = configuration.result_icon_url || null;
+
+        if (configuration.result_icon_url && !/^(\w+:)?\/\//.test(configuration.result_icon_url)) {
+            // Local, asset-relative
+            var parts = [
+                Mapbender.configuration.application.urls.asset.replace(/\/$/, ''),
+                configuration.result_icon_url.replace(/^\//, '')
+            ];
+            this.iconUrl_ = parts.join('/');
+        }
+
+        if (this.initialised) {
+            this.searchInput.autocomplete('option', {
+                delay: configuration.delay,
+            });
+            this.searchInput.attr('placeholder', configuration.placeholder || configuration.title);
+        }
     },
     initializeAutocompletePosition_: function() {
         /** @see https://api.jqueryui.com/autocomplete/#option-position */
@@ -56,9 +70,11 @@ $.widget('mapbender.mbSimpleSearch', {
         this.searchInput = $('.searchterm', this.element);
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
         this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
-            console.log($(e.target).val());
-        });
-        const form = this.element.closest('form').get(0);
+            const selectedVal = $(e.target).val();
+            if (selectedVal < 0 || selectedVal >= this.options.configurations.length) return;
+            this._setSelectedConfiguration(selectedVal)
+        }.bind(this));
+        const form = this.element.find('form').get(0);
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
         if (this.iconUrl_) {
@@ -80,9 +96,10 @@ $.widget('mapbender.mbSimpleSearch', {
                 var term = self._tokenize(request.term);
                 if (!term || term.length < minLength) {
                     responseCallback([]);
+                    self.element
                     return;
                 }
-                $.getJSON(url, {term: term})
+                $.getJSON(url, {term: term, selectedConfiguration: self.selectedConfiguration})
                     .then(function(response) {
                         var formatted =  (response || []).map(function(item) {
                             return Object.assign(item, {
@@ -125,6 +142,7 @@ $.widget('mapbender.mbSimpleSearch', {
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
         });
+        this.initialised = true;
     },
     _parseFeature: function(doc) {
         switch ((this.options['configurations'][this.selectedConfiguration].geom_format || '').toUpperCase()) {
@@ -159,7 +177,8 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _formatLabel: function(doc) {
         // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
-        var templateParts = this.options['configurations'][this.selectedConfiguration].label_attribute.split(/\${([^}]+)}/g);
+        const configuration = this.options['configurations'][this.selectedConfiguration];
+        var templateParts = configuration.label_attribute.split(/\${([^}]+)}/g);
         if (templateParts.length > 1) {
             var parts = [];
             for (var i = 0; i < templateParts.length; i += 2) {
@@ -179,16 +198,17 @@ $.widget('mapbender.mbSimpleSearch', {
             }
             return parts.join('').replace(/(^[\s.,:]+)|([\s.,:]+$)/g, '');
         } else {
-            return this._extractAttribute(doc, this.options['configurations'][this.selectedConfiguration].label_attribute);
+            return this._extractAttribute(doc, configuration.label_attribute);
         }
     },
     _onAutocompleteSelected: function(item) {
-        var feature = this._parseFeature(item[this.options['configurations'][this.selectedConfiguration].geom_attribute]);
+        const configuration = this.options['configurations'][this.selectedConfiguration];
+        var feature = this._parseFeature(item[configuration.geom_attribute]);
 
         var zoomToFeatureOptions = {
-            maxScale: parseInt(this.options['configurations'][this.selectedConfiguration].result_maxscale) || null,
-            minScale: parseInt(this.options['configurations'][this.selectedConfiguration].result_minscale) || null,
-            buffer: parseInt(this.options['configurations'][this.selectedConfiguration].result_buffer) || null
+            maxScale: parseInt(configuration.result_maxscale) || null,
+            minScale: parseInt(configuration.result_minscale) || null,
+            buffer: parseInt(configuration.result_buffer) || null
         };
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
@@ -223,17 +243,18 @@ $.widget('mapbender.mbSimpleSearch', {
     },
 
     _tokenize: function(string) {
-        if (!(this.options['configurations'][this.selectedConfiguration].token_regex_in && this.options['configurations'][this.selectedConfiguration].token_regex_out)) return string;
+        const configuration = this.options['configurations'][this.selectedConfiguration];
+        if (!(configuration.token_regex_in && configuration.token_regex_out)) return string;
 
-        if (this.options['configurations'][this.selectedConfiguration].token_regex) {
-            var regexp = new RegExp(this.options['configurations'][this.selectedConfiguration].token_regex, 'g');
+        if (configuration.token_regex) {
+            var regexp = new RegExp(configuration.token_regex, 'g');
             string = string.replace(regexp, " ");
         }
 
         var tokens = string.split(' ');
-        var regex = new RegExp(this.options['configurations'][this.selectedConfiguration].token_regex_in);
+        var regex = new RegExp(configuration.token_regex_in);
         for(var i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].replace(regex, this.options['configurations'][this.selectedConfiguration].token_regex_out);
+            tokens[i] = tokens[i].replace(regex, configuration.token_regex_out);
         }
 
         return tokens.join(' ');
