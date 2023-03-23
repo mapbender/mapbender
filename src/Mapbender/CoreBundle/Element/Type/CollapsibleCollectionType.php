@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Each item can be expanded and collapsed individually, individual items can be reordered, deleted and duplicated.
  *
  * The option `initial_collapse_state` can be used to decide which items should be expanded or collapsed when loading a form
- * Note that forms that contain an error and newly created forms will always be expanded regardless of this setting
+ * Note that items that contain an error and newly created items will always be expanded regardless of this setting
  */
 class CollapsibleCollectionType extends AbstractType
 {

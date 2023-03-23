@@ -116,7 +116,7 @@ class SimpleSearch extends AbstractElementService
         unset($config['url']);
         for ($i = 0; $i < count($config['configurations']); $i++) {
             if (empty($config['configurations'][$i]['sourceSrs'])) {
-                $config['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][$i]['sourceSrs'];
+                $config['configurations'][$i]['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][$i]['sourceSrs'];
             }
         }
         return $config;
