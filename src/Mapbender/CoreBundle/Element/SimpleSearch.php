@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Simple Search - Just type, select and show result
@@ -23,12 +24,15 @@ class SimpleSearch extends AbstractElementService
 {
     /** @var HttpTransportInterface */
     protected $httpTransport;
+    protected TranslatorInterface $translator;
     protected $isDebug;
 
     public function __construct(HttpTransportInterface $httpTransport,
+                                TranslatorInterface    $translator,
                                                        $isDebug = false)
     {
         $this->httpTransport = $httpTransport;
+        $this->translator = $translator;
         $this->isDebug = $isDebug;
     }
 
@@ -99,9 +103,8 @@ class SimpleSearch extends AbstractElementService
         if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
-        $view->variables['placeholder'] = $configurations[0]['placeholder'] ?: $configurations[0]['title'] ?: $element->getTitle();
         if (count($configurations) > 1) {
-            $view->variables['configuration_titles'] = array_map(fn($c) => $c['title'], $configurations);
+            $view->variables['configuration_titles'] = array_map(fn($c) => $this->translator->trans($c['title']), $configurations);
         }
         return $view;
     }

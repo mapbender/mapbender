@@ -12,7 +12,7 @@ $.widget('mapbender.mbSimpleSearch', {
     selectedConfiguration: 0,
 
     _create: function() {
-        this._setSelectedConfiguration(0);
+        this._setSelectedConfiguration(this._getSavedConfiguration());
         this.initializeAutocompletePosition_()
         var self = this;
         Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
@@ -21,8 +21,8 @@ $.widget('mapbender.mbSimpleSearch', {
         });
     },
     _setSelectedConfiguration: function(index) {
-        this.selectedConfiguration = index;
-        const configuration = this.options['configurations'][index];
+        this.selectedConfiguration = parseInt(index);
+        const configuration = this.options['configurations'][this.selectedConfiguration];
 
         this.iconUrl_ = configuration.result_icon_url || null;
 
@@ -39,8 +39,39 @@ $.widget('mapbender.mbSimpleSearch', {
             this.searchInput.autocomplete('option', {
                 delay: configuration.delay,
             });
-            this.searchInput.attr('placeholder', configuration.placeholder || configuration.title);
+            this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
+            this._saveConfiguration(this.selectedConfiguration)
         }
+
+    },
+    _getSavedConfiguration: function () {
+        if (!window.localStorage) return 0;
+        const storedJson = localStorage.getItem('mb.simple-search');
+        if (!storedJson) return 0;
+        let storedConfiguration;
+        try {
+            storedConfiguration = JSON.parse(storedJson);
+        } catch (e) {
+            return 0;
+        }
+        if (this.element.attr('id') in storedConfiguration) {
+            return storedConfiguration[this.element.attr('id')];
+        }
+        return 0;
+    },
+    _saveConfiguration: function (index) {
+        if (!window.localStorage) return 0;
+        let storedConfiguration = {};
+        const storedJson = localStorage.getItem('mb.simple-search');
+        if (storedJson) {
+            try {
+                storedConfiguration = JSON.parse(storedJson);
+            } catch (e) {
+                storedConfiguration = {};
+            }
+        }
+        storedConfiguration[this.element.attr('id')] = index;
+        localStorage.setItem('mb.simple-search', JSON.stringify(storedConfiguration));
     },
     initializeAutocompletePosition_: function() {
         /** @see https://api.jqueryui.com/autocomplete/#option-position */
@@ -67,7 +98,9 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _setup: function() {
         var self = this;
+        const configuration = this.options['configurations'][this.selectedConfiguration];
         this.searchInput = $('.searchterm', this.element);
+        this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
         this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
             const selectedVal = $(e.target).val();
@@ -78,7 +111,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
         this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
         if (this.iconUrl_) {
-            var offset = (this.options['configurations'][this.selectedConfiguration].result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
+            var offset = (configuration.result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
                 return parseInt(x) || 0;
             });
             this.layer.addCustomIconMarkerStyle('simplesearch', this.iconUrl_, offset[0], offset[1]);
@@ -89,7 +122,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
         this.searchInput.autocomplete({
             appendTo: this.searchInput.closest('.autocompleteWrapper').get(0),
-            delay: self.options['configurations'][self.selectedConfiguration].delay,
+            delay: configuration.delay,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
             source: function(request, responseCallback) {
@@ -145,13 +178,14 @@ $.widget('mapbender.mbSimpleSearch', {
         this.initialised = true;
     },
     _parseFeature: function(doc) {
-        switch ((this.options['configurations'][this.selectedConfiguration].geom_format || '').toUpperCase()) {
+        const configuration = this.options['configurations'][this.selectedConfiguration];
+        switch ((configuration.geom_format || '').toUpperCase()) {
             case 'WKT':
-                return this.mbMap.getModel().parseWktFeature(doc, this.options['configurations'][this.selectedConfiguration].sourceSrs);
+                return this.mbMap.getModel().parseWktFeature(doc, configuration.sourceSrs);
             case 'GEOJSON':
-                return this.mbMap.getModel().parseGeoJsonFeature(doc, this.options['configurations'][this.selectedConfiguration].sourceSrs);
+                return this.mbMap.getModel().parseGeoJsonFeature(doc, configuration.sourceSrs);
             default:
-                throw new Error("Invalid geom_format " + this.options['configurations'][this.selectedConfiguration].geom_format);
+                throw new Error("Invalid geom_format " + configuration.geom_format);
         }
     },
     /**
