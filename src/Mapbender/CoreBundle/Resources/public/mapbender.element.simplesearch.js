@@ -37,7 +37,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
         if (this.initialised) {
             this.searchInput.autocomplete('option', {
-                delay: configuration.delay,
+                delay: configuration.delay || 300,
             });
             this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
             this._saveConfiguration(this.selectedConfiguration)
@@ -122,7 +122,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
         this.searchInput.autocomplete({
             appendTo: this.searchInput.closest('.autocompleteWrapper').get(0),
-            delay: configuration.delay,
+            delay: configuration.delay || 300,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
             source: function(request, responseCallback) {

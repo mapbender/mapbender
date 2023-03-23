@@ -194,7 +194,7 @@
         <div class="panel-heading" role="tab" id="headingOne">
           <h4 class="panel-title">
             <a role="button" class="collapse-toggle" aria-expanded="true">
-                <span class="panel-label" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
+                <span class="panel-label {% if not form.vars.valid  %}text-danger{% endif %}" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
                 <div class="panel-buttons">
                     {%- if form.parent.vars.allow_add -%}
                     <a href="#" class="collectionDuplicate clickable hover-highlight-effect">
@@ -210,7 +210,9 @@
             </a>
           </h4>
         </div>
-        {% set opened = form.parent.vars.initial_collapse_state == 'all_opened'
+        {% set opened = not form.vars.valid
+            or index == -1
+            or form.parent.vars.initial_collapse_state == 'all_opened'
             or (form.parent.vars.initial_collapse_state == 'first_opened' and index == 1)
             or (form.parent.vars.initial_collapse_state == 'last_opened' and index == form.parent.children | length)
             or (form.parent.vars.initial_collapse_state == 'all_collapsed_except_single' and form.parent.children | length == 1)

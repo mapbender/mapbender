@@ -105,19 +105,22 @@ mb:
         geom_format: Geometrie-Format
         geom_format.help: Format, in dem die Geometrie verfügbar ist, entweder <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Quell-SRS
-        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG-Code</a> der in der Such-URL verwendeten Projektion, inklusive des Präfixes <code>EPSG:</code>, z.B. <code>EPSG:25832</code>
+        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG-Code</a> der in der Such-URL verwendeten Projektion, inklusive des Präfixes <code>EPSG:</code>, z.B. <code>EPSG:25832</code>. Falls nicht angegeben, wird angenommen, dass die Ergebnisse in der Standard-Kartenprojektion vorliegen.
         delay: Such-Verzögerung [ms]
-        delay.help: Zeit in Millisekunden, die nach der letzten Tasteneingabe gewartet wird, bis die Suche automatisch ausgeführt wird
-        result_buffer: Ergebnis-Puffer
-        result_buffer.help: TODO
-        result_minscale: Mindestskalierung
-        result_minscale.help: TODO
-        result_maxscale: Maximalskalierung
-        result_maxscale.help: TODO
+        delay.help: "Zeit in Millisekunden, die nach der letzten Tasteneingabe gewartet wird, bis die Suche automatisch ausgeführt wird. Standard: 300ms"
+        result_buffer: Ergebnis-Puffer [Karteneinheiten]
+        result_buffer.help: Bestimmt indirekt die Zoomstufe, die nach Auswählen eines Ergebnisses erscheint. Um die Geometrie herum ist mindestens der ausgewählte Bereich sichtbar. Die Einheit Karteneinheiten variiert je nach Projektion, meist sind es Meter. Eine Kombination zu Maßstab (min/max) ist grundsätzlich möglich, kann aber zu unerwünschten Ergebnissen führen.
+        result_minscale: minimaler Maßstab [Nenner]
+        result_minscale.help: "Alternative Angabe der Zoomstufe. Je nach Größe der Zielgeometrie wird ein Maßstab zwischen <code>min</code> und <code>max</code> eingestellt. Bei einem Maßstab <code>1 : 1000</code> muss nur <code>1000</code> eingegeben werden. Für einen festen Maßstab genügt die Eingabe des minimalen Maßstabs."
+        result_maxscale: maximaler Maßstab [Nenner]
         result_icon_url: Icon URL
         result_icon_url.help: URL zu einer Bilddatei, die als Marker für Punktgeometrien verwendet wird. Kann relativ oder absolut sein. Der Standard-Pin liegt unter <code>/bundles/mapbendercore/image/pin_red.png</code>.
         result_icon_offset: Icon Versatz
         result_icon_offset.help: Positionskorrektur des Icons als kommagetrennter x und y-Versatz, z.B. <code>-6,-32</code> für den Standard-Pin
+      errors:
+        invalid_query_format: Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!
+        invalid_epsg_code: "Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein"
+        no_configuration_added: Bitte fügen Sie mindestens eine Konfiguration hinzu
     searchrouter:
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'

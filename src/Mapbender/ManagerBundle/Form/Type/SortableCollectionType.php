@@ -45,12 +45,16 @@ class SortableCollectionType extends AbstractType implements EventSubscriberInte
     {
         // Reorder data in order of submitted form inputs (=document order)
         // and strip any non-numeric keys.
-        $e->setData(\array_values($e->getData()));
+        $data = $e->getData();
+        if ($data === null) return;
+        $e->setData(\array_values($data));
     }
 
     public function preSubmit(FormEvent $e)
     {
-        $e->setData(\array_values($e->getData()));
+        $data = $e->getData();
+        if ($data === null) return;
+        $e->setData(\array_values($data));
         $e->getForm()->setData(\array_values($e->getForm()->getData()));
     }
 }
