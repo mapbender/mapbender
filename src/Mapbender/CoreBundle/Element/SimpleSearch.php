@@ -224,7 +224,10 @@ class SimpleSearch extends AbstractElementService
         }
 
         if (!isset($config['configurations'])) {
-            $config['title'] = $entity->getTitle() ?: $config['placeholder'];
+            $config['title'] = $entity->getTitle();
+            if (!$entity->getTitle()) {
+                $config['title'] = array_key_exists('placeholder', $config) ? $config['placeholder'] : "";
+            }
             $config = ['configurations' => [$config]];
         }
 
