@@ -95,12 +95,12 @@ mb:
         token_regex_in.help: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".
         token_regex_out: "Tokenizer: Replacement Regex"
         token_regex_out.help: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.
-        collection_path: Results JSON Path
-        collection_path.help: <a href="https://github.com/json-path/JsonPath" target="_blank">JSON path</a> pointing to the array of results within the search url's response. E.g. <code>response.results</code>
+        collection_path: Results Path
+        collection_path.help: Path pointing to the array of results within the search url's response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)
         label_attribute: Label Attribute
-        label_attribute.help: JSON Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>
-        geom_attribute: geom_attribute
-        geom_attribute.help: JSON Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>
+        label_attribute.help: Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>
+        geom_attribute: Geometry Attribute
+        geom_attribute.help: Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)
         geom_format: Geometry Format
         geom_format.help: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Source SRS

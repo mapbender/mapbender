@@ -96,12 +96,12 @@ mb:
         token_regex_in.help: Innerhalb jedes Tokens (siehe Split Regex) wird nach diesem regulären Ausdruck gesucht und mit dem Wert aus "Ersetzungs-Regex" ersetzt.
         token_regex_out: "Tokenizer: Ersetzungs-Regex"
         token_regex_out.help: Innerhalb jedes Tokens (siehe Split Regex) wird der regulären Ausdruck aus "Such-Regex" mit diesem Wert ersetzt. Gefundene Gruppen werden mit <code>$</code> durchnummeriert referenziert. Beispielsweise würde <code>$1*</code> an jedes Suchwort ein Stern ergänzen.
-        collection_path: JSON Path der Ergebnisse
-        collection_path.help: <a href="https://github.com/json-path/JsonPath" target="_blank">JSON path</a> zu der Liste an Ergebnissen innerhalb der Antwort der Such-URL. Z.B. <code>response.results</code>
+        collection_path: Pfad zu den Ergebnissen
+        collection_path.help: Pfad zu der Liste an Ergebnissen innerhalb der Antwort der Such-URL. Jede Hierarchie-Ebene ist durch einen Punkt getrennt, z.B. <code>response.docs</code> (Solr-Standard), <code>features</code> (GeoJSON)
         label_attribute: Attribut für Beschriftung
-        label_attribute.help: JSON Path (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, das als Beschriftung angezeigt werden soll, z.B. <code>label</code>. Alternativ kann ein String-Template angegeben werden, z.B. <code>Stadt ${properties.address.city} - ${properties.address.road}</code>
+        label_attribute.help: Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, das als Beschriftung angezeigt werden soll, z.B. <code>label</code>. Alternativ kann ein String-Template angegeben werden, z.B. <code>Stadt ${properties.address.city} - ${properties.address.road}</code>
         geom_attribute: Attribut für Geometrie
-        geom_attribute.help: JSON Path (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, in dem die Geometrie verfügbar ist, z.B. <code>geom</code>
+        geom_attribute.help: Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, in dem die Geometrie verfügbar ist, z.B. <code>geom</code>, <code>geometry</code> (GeoJSON)
         geom_format: Geometrie-Format
         geom_format.help: Format, in dem die Geometrie verfügbar ist, entweder <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Quell-SRS
