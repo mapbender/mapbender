@@ -231,6 +231,10 @@ class SimpleSearch extends AbstractElementService
             $config = ['configurations' => [$config]];
         }
 
+        if (!array_key_exists('anchor', $config) || $config['anchor'] === null) {
+            $config['anchor'] = 'right-top';
+        }
+
         $entity->setConfiguration($config);
     }
 
