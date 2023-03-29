@@ -14,6 +14,7 @@ mb:
     reset: Reset
     save: Save
     search: Search
+    duplicate: Duplicate
   terms:
     application:
       singular: Application

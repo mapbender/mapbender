@@ -196,13 +196,16 @@
             <a role="button" class="collapse-toggle" aria-expanded="true">
                 <span class="panel-label {% if not form.vars.valid  %}text-danger{% endif %}" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
                 <div class="panel-buttons">
+                    <a href="#" class="collapse-toggle clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}">
+                        <i class="fa fa-fw fa-cog far"></i>
+                    </a>
                     {%- if form.parent.vars.allow_add -%}
-                    <a href="#" class="collectionDuplicate clickable hover-highlight-effect">
+                    <a href="#" class="collectionDuplicate clickable hover-highlight-effect" title="{{ 'mb.actions.duplicate' | trans }}">
                         <i class="fa fa-fw fa-copy far"></i>
                     </a>
                     {%- endif -%}
                     {%- if form.parent.vars.allow_delete -%}
-                    <a href="#" class="collectionRemove clickable hover-highlight-effect">
+                    <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
                         <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
                     </a>
                     {%- endif -%}
