@@ -40,6 +40,18 @@
 
     $(document).on('click', '.collection > .collectionAdd', function (e) {
         const $item = addItem(e.target);
+        const $collection = $(e.target).closest('.collection');
+        const defaults = $collection.data('defaults');
+        const findLastPartOfName = new RegExp(/\[([^\[]+)\]$/);
+        $item.find('input, select').each(function (index, el) {
+            const $field = $(el);
+            const matches = $field.attr('name').match(findLastPartOfName);
+            if (matches.length < 2) return;
+            const name = matches[1];
+            if (name in defaults) {
+                $field.val(defaults[name]);
+            }
+        });
         $item.closest('.collection').trigger('collectionlengthchange');
     });
 
