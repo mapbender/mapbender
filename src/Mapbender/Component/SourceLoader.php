@@ -112,7 +112,7 @@ abstract class SourceLoader
     {
         $reloadedSource = $this->evaluateServer($origin);
         $this->beforeSourceUpdate($target, $reloadedSource);
-        $this->updateSource($target, $reloadedSource);
+        $this->updateSource($target, $reloadedSource, $origin instanceof SourceLoaderSettings ? $origin : null);
         $this->updateOrigin($target, $origin);
     }
 
@@ -129,7 +129,7 @@ abstract class SourceLoader
         }
     }
 
-    abstract public function updateSource(Source $target, Source $reloaded);
+    abstract public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null);
 
     /**
      * @param string $url

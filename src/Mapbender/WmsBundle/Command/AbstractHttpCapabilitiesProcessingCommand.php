@@ -13,6 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabilitiesProcessingCommand
 {
+    private const OPTION_DISABLE_NEW_LAYERS = 'disable-new-layers';
+
     protected function configure()
     {
         $this
@@ -20,6 +22,7 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
             ->addOption('user', null, InputOption::VALUE_REQUIRED, 'Username (basicauth)', '')
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Password (basic auth)', '')
             ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
+            ->addOption(self::OPTION_DISABLE_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be disabled in existing instances')
         ;
     }
 
@@ -42,6 +45,10 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
         $origin->setOriginUrl($input->getArgument('serviceUrl'));
         $origin->setUsername($input->getOption('user'));
         $origin->setPassword($input->getOption('password'));
+
+        if ($input->getOption(self::OPTION_DISABLE_NEW_LAYERS)) {
+            $origin->setActivateNewLayers(false);
+        }
         return $origin;
     }
 

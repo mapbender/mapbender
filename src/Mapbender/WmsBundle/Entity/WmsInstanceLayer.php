@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
@@ -102,10 +103,12 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * WmsInstanceLayer constructor.
      */
-    public function __construct()
+    public function __construct(bool $activate = true)
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+        $this->active = $activate;
+        $this->selected = $activate;
     }
 
     public function __clone()
@@ -509,7 +512,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param WmsInstance $instance
      * @param WmsLayerSource $layerSource
      */
-    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource)
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, ?SourceLoaderSettings $settings = null)
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
@@ -527,7 +530,7 @@ class WmsInstanceLayer extends SourceInstanceItem
             $this->setAllowtoggle(null);
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $subLayerInstance = new static();
+            $subLayerInstance = new static($settings !== null ? $settings->activateNewLayers() : true);
             $subLayerInstance->populateFromSource($instance, $wmslayersourceSub);
             $subLayerInstance->setParent($this);
             $this->addSublayer($subLayerInstance);

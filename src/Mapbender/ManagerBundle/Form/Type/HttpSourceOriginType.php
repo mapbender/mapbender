@@ -5,6 +5,9 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class HttpSourceOriginType extends AbstractType
@@ -12,7 +15,7 @@ class HttpSourceOriginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('originUrl', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('originUrl', TextType::class, array(
                 'required' => true,
                 'label' => 'mb.manager.source.serviceurl',
                 'attr' => array(
@@ -20,19 +23,23 @@ class HttpSourceOriginType extends AbstractType
                     'title' => 'The GetCapabilities url',
                 ),
             ))
-            ->add('username', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('username', TextType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.username',
                 'attr' => array(
                     'autocomplete' => 'off',
                 ),
             ))
-            ->add('password', 'Symfony\Component\Form\Extension\Core\Type\PasswordType', array(
+            ->add('password', PasswordType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.password',
                 'attr' => array(
-                    'autocomplete' => 'off',
+                    'autocomplete' => 'new-password',
                 ),
+            ))
+            ->add('activate_new_layers', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.manager.source.activate_new_layers',
             ))
         ;
     }
