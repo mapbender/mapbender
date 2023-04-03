@@ -159,9 +159,11 @@ $(function() {
                 }
             ])
         });
-        $('.collection[data-sortable]', $form).sortable({
+        const $sortableCollection = $('.collection[data-sortable]', $form);
+        $sortableCollection.sortable({
             axis: 'y',
-            items: '>.collectionItem'
+            items: '>.collectionItem',
+            handle: $sortableCollection.find('.panel-heading').length > 0 ? '.panel-heading' : false,
         });
         $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);

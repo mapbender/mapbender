@@ -89,8 +89,10 @@
         <tr>
           <th>{{ "mb.wms.wmsloader.repo.layer.label.logourl" | trans }}:</th>
           <td>
-            {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
-            {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
+            {% if layer.attribution.logoUrl %}
+                {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
+                {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
+            {% endif %}
           </td>
         </tr>
         {{- macros.end_subsection() -}}

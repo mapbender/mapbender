@@ -92,6 +92,11 @@
             <argument>%mapbender.sitelinks%</argument>
         </service>
 
+        <service id="mapbender.form_type.simple_search_configuration_admin" class="Mapbender\CoreBundle\Element\Type\SimpleSearchAdminConfigurationType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
