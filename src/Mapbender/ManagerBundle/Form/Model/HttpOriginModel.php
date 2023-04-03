@@ -14,6 +14,7 @@ class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSetting
     protected $username;
     protected $password;
     protected bool $activateNewLayers = true;
+    protected bool $selectNewLayers = true;
 
     /**
      * @return string
@@ -75,9 +76,20 @@ class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSetting
         return $this;
     }
 
+    public function setSelectNewLayers(bool $selectNewLayers): self
+    {
+        $this->selectNewLayers = $selectNewLayers;
+        return $this;
+    }
+
     public function activateNewLayers(): bool
     {
         return $this->activateNewLayers;
+    }
+
+    public function selectNewLayers(): bool
+    {
+        return $this->selectNewLayers;
     }
 
     /**

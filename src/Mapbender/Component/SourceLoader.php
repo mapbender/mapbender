@@ -112,7 +112,8 @@ abstract class SourceLoader
     {
         $reloadedSource = $this->evaluateServer($origin);
         $this->beforeSourceUpdate($target, $reloadedSource);
-        $this->updateSource($target, $reloadedSource, $origin instanceof SourceLoaderSettings ? $origin : null);
+        $settings = $origin instanceof SourceLoaderSettings ? $origin : null;
+        $this->updateSource($target, $reloadedSource, $settings);
         $this->updateOrigin($target, $origin);
     }
 

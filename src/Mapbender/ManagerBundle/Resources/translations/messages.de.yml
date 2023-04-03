@@ -175,6 +175,7 @@ mb:
       username: Benutzername
       password: Passwort
       activate_new_layers: Neu hinzugefügte Layer aktivieren
+      select_new_layers: Neu hinzugefügte Layer auswählen
       load: Laden
     managerbundle:
       new_application: 'Neue Anwendung'

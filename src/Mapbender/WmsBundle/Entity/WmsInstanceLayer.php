@@ -103,12 +103,14 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * WmsInstanceLayer constructor.
      */
-    public function __construct(bool $activate = true)
+    public function __construct(SourceLoaderSettings $settings = null)
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
-        $this->active = $activate;
-        $this->selected = $activate;
+        if ($settings !== null) {
+            $this->active = $settings->activateNewLayers();
+            $this->selected = $settings->selectNewLayers();;
+        }
     }
 
     public function __clone()
@@ -530,7 +532,7 @@ class WmsInstanceLayer extends SourceInstanceItem
             $this->setAllowtoggle(null);
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $subLayerInstance = new static($settings !== null ? $settings->activateNewLayers() : true);
+            $subLayerInstance = new static($settings);
             $subLayerInstance->populateFromSource($instance, $wmslayersourceSub);
             $subLayerInstance->setParent($this);
             $this->addSublayer($subLayerInstance);

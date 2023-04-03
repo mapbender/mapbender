@@ -41,6 +41,10 @@ class HttpSourceOriginType extends AbstractType
                 'required' => false,
                 'label' => 'mb.manager.source.activate_new_layers',
             ))
+            ->add('select_new_layers', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.manager.source.select_new_layers',
+            ))
         ;
     }
 }
