@@ -2,7 +2,7 @@
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
-* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url` command ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
+* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
 * Add responsive awareness for dialog elements with `autoOpen` enabled
 * Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)

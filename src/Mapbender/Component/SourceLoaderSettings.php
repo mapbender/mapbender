@@ -4,6 +4,6 @@ namespace Mapbender\Component;
 
 interface SourceLoaderSettings
 {
-    public function activateNewLayers();
-    public function selectNewLayers();
+    public function activateNewLayers(): bool;
+    public function selectNewLayers(): bool;
 }

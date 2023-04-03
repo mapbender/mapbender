@@ -9,9 +9,18 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HttpSourceOriginType extends AbstractType
 {
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'show_update_fields' => false,
+        ));
+    }
+
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -37,14 +46,18 @@ class HttpSourceOriginType extends AbstractType
                     'autocomplete' => 'new-password',
                 ),
             ))
-            ->add('activate_new_layers', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'mb.manager.source.activate_new_layers',
-            ))
-            ->add('select_new_layers', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'mb.manager.source.select_new_layers',
-            ))
         ;
+        if ($options['show_update_fields']) {
+            $builder
+                ->add('activate_new_layers', CheckboxType::class, array(
+                    'required' => false,
+                    'label' => 'mb.manager.source.activate_new_layers',
+                ))
+                ->add('select_new_layers', CheckboxType::class, array(
+                    'required' => false,
+                    'label' => 'mb.manager.source.select_new_layers',
+                ))
+            ;
+        }
     }
 }

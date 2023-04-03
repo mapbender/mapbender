@@ -13,8 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabilitiesProcessingCommand
 {
-    private const OPTION_DESELECT_NEW_LAYERS = 'deselect-new-layers';
-    private const OPTION_DEACTIVATE_NEW_LAYERS = 'deactivate-new-layers';
+    public const OPTION_DESELECT_NEW_LAYERS = 'deselect-new-layers';
+    public const OPTION_DEACTIVATE_NEW_LAYERS = 'deactivate-new-layers';
 
     protected function configure()
     {
