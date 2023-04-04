@@ -210,7 +210,7 @@ class WmsSource extends HttpParsedSource
     /**
      * Get name
      *
-     * 
+     *
      */
     public function getName()
     {
@@ -232,7 +232,7 @@ class WmsSource extends HttpParsedSource
     /**
      * Get version
      *
-     * 
+     *
      */
     public function getVersion()
     {
@@ -254,7 +254,7 @@ class WmsSource extends HttpParsedSource
     /**
      * Get onlineResource
      *
-     * 
+     *
      */
     public function getOnlineResource()
     {
@@ -274,7 +274,7 @@ class WmsSource extends HttpParsedSource
     /**
      * Get contact
      *
-     * 
+     *
      */
     public function getContact()
     {
@@ -433,7 +433,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setSupportSld($supportSld)
     {
-        $this->supportSld = $supportSld;
+        $this->supportSld = (bool) $supportSld;
         return $this;
     }
 
@@ -455,7 +455,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setUserLayer($userLayer)
     {
-        $this->userLayer = $userLayer;
+        $this->userLayer = (bool) $userLayer;
         return $this;
     }
 
@@ -477,7 +477,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setUserStyle($userStyle)
     {
-        $this->userStyle = $userStyle;
+        $this->userStyle = (bool) $userStyle;
         return $this;
     }
 
@@ -499,7 +499,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setRemoteWfs($remoteWfs = null)
     {
-        $this->remoteWfs = $remoteWfs;
+        $this->remoteWfs = (bool) $remoteWfs;
         return $this;
     }
 
@@ -521,7 +521,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setInlineFeature($inlineFeature = null)
     {
-        $this->inlineFeature = $inlineFeature;
+        $this->inlineFeature = (bool) $inlineFeature;
         return $this;
     }
 
@@ -543,7 +543,7 @@ class WmsSource extends HttpParsedSource
      */
     public function setRemoteWcs($remoteWcs)
     {
-        $this->remoteWcs = $remoteWcs;
+        $this->remoteWcs = (bool) $remoteWcs;
         return $this;
     }
 

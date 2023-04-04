@@ -311,7 +311,7 @@ class WmsInstance extends SourceInstance
      */
     public function setTransparency($transparency)
     {
-        $this->transparency = $transparency;
+        $this->transparency = (bool) $transparency;
         return $this;
     }
 
@@ -333,7 +333,9 @@ class WmsInstance extends SourceInstance
      */
     public function setOpacity($opacity)
     {
-        $this->opacity = $opacity;
+        if (is_numeric($opacity)) {
+            $this->opacity = $opacity;
+        }
         return $this;
     }
 
@@ -355,7 +357,7 @@ class WmsInstance extends SourceInstance
      */
     public function setProxy($proxy)
     {
-        $this->proxy = $proxy;
+        $this->proxy = (bool) $proxy;
         return $this;
     }
 
@@ -377,7 +379,7 @@ class WmsInstance extends SourceInstance
      */
     public function setTiled($tiled)
     {
-        $this->tiled = $tiled;
+        $this->tiled = (bool) $tiled;
         return $this;
     }
 
@@ -399,7 +401,9 @@ class WmsInstance extends SourceInstance
      */
     public function setRatio($ratio)
     {
-        $this->ratio = floatval($ratio);
+        if (is_numeric($ratio)) {
+            $this->ratio = floatval($ratio);
+        }
 
         return $this;
     }
