@@ -118,6 +118,9 @@ mb:
             toggletoc: 'Basculer en cliquant'
             allowreordertoc: 'Permettre la réorganisation en cliquant'
             moreinfo: 'Plus d''informations'
+            id:
+              title: ID
+              description: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nom de la couche'
             style: Style
       class:

@@ -118,6 +118,9 @@ mb:
             toggletoc: 'Mudar no árvore de camadas'
             allowreordertoc: 'Permite organizar no árvore de camadas'
             moreinfo: 'Mais informações'
+            id:
+              title: ID
+              description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Nome
             style: Estilo
       class:
