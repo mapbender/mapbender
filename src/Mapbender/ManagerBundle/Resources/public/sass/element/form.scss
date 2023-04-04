@@ -85,3 +85,17 @@
   }
 }
 
+.checkbox-icon-toggled {
+    display: none;
+}
+.checkbox-icon-toggled-label-off, .checkbox-icon-toggled-label-on {
+    min-width: 13px;
+}
+.checkbox-icon-toggled:checked ~ .checkbox-icon-toggled-label-off,
+.checkbox-icon-toggled ~ .checkbox-icon-toggled-label-on {
+    display: none;
+}
+
+.checkbox-icon-toggled:checked ~ .checkbox-icon-toggled-label-on {
+    display: inline-block;
+}
