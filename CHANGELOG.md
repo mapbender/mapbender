@@ -8,7 +8,7 @@
 * [SearchRouter] fix no result filtering on "0" value
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
-* Fix Wms loading errors with PostgreSQL default database (correction) (#1441)
+* Fix WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
 * Fix: Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
 * Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
