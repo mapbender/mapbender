@@ -3,6 +3,7 @@
 
 namespace Mapbender\WmsBundle\Command;
 
+use Mapbender\Component\BaseSourceLoaderSettings;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,8 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
             ->addArgument('path', InputArgument::REQUIRED)
             ->addOption('validate', null, InputOption::VALUE_NONE)
+            ->addOption(AbstractHttpCapabilitiesProcessingCommand::OPTION_DEACTIVATE_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.')
+            ->addOption(AbstractHttpCapabilitiesProcessingCommand::OPTION_DESELECT_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deselected in existing instances. Deselected layers are not visible on the map by default, but appear in the layer tree and can be selected by users.')
         ;
     }
 
@@ -36,7 +39,11 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         $em->beginTransaction();
         try {
             $em->persist($target);
-            $this->getImporter()->updateSource($target, $reloaded);
+            $settings = new BaseSourceLoaderSettings(
+                !$input->getOption(AbstractHttpCapabilitiesProcessingCommand::OPTION_DEACTIVATE_NEW_LAYERS),
+                !$input->getOption(AbstractHttpCapabilitiesProcessingCommand::OPTION_DESELECT_NEW_LAYERS),
+            );
+            $this->getImporter()->updateSource($target, $reloaded, $settings);
             // Restore origin url and credentials (source from file import produces empty values)
             $this->getImporter()->updateOrigin($target, $initialOrigin);
             $em->flush();
@@ -56,7 +63,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         if ($this->getValidationOption($input)) {
             $this->getImporter()->validateResponseContent($content);
         }
-        return  $this->getImporter()->parseResponseContent($content);
+        return $this->getImporter()->parseResponseContent($content);
     }
 
     protected function getValidationOption(InputInterface $input)

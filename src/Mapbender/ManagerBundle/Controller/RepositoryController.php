@@ -13,6 +13,7 @@ use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -271,7 +272,7 @@ class RepositoryController extends ApplicationControllerBase
         $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
+        $form = $this->createForm(HttpSourceOriginType::class, $formModel, ['show_update_fields' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -4,14 +4,17 @@
 namespace Mapbender\ManagerBundle\Form\Model;
 
 
+use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
-class HttpOriginModel implements MutableHttpOriginInterface
+class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSettings
 {
     protected $originUrl;
     protected $username;
     protected $password;
+    protected bool $activateNewLayers = true;
+    protected bool $selectNewLayers = true;
 
     /**
      * @return string
@@ -65,6 +68,28 @@ class HttpOriginModel implements MutableHttpOriginInterface
     {
         $this->password = $password;
         return $this;
+    }
+
+    public function setActivateNewLayers(bool $activateNewLayers): self
+    {
+        $this->activateNewLayers = $activateNewLayers;
+        return $this;
+    }
+
+    public function setSelectNewLayers(bool $selectNewLayers): self
+    {
+        $this->selectNewLayers = $selectNewLayers;
+        return $this;
+    }
+
+    public function activateNewLayers(): bool
+    {
+        return $this->activateNewLayers;
+    }
+
+    public function selectNewLayers(): bool
+    {
+        return $this->selectNewLayers;
     }
 
     /**

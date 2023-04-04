@@ -173,6 +173,7 @@
 {% block checkbox_row %}
   <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
     {{- block('checkbox_widget') -}}
+    {{- form_help(form) -}}
     {{- form_errors(form) -}}
   </div>
 {% endblock checkbox_row %}

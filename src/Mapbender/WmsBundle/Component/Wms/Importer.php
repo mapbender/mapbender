@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Component\Wms;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Mapbender\Component\SourceLoader;
+use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -12,8 +13,8 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -114,7 +115,7 @@ class Importer extends SourceLoader
      * @param Source $reloaded
      * @throws \Exception
      */
-    public function updateSource(Source $target, Source $reloaded)
+    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null)
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
@@ -138,7 +139,7 @@ class Importer extends SourceLoader
         }
 
         foreach ($target->getInstances() as $instance) {
-            $this->updateInstance($instance);
+            $this->updateInstance($instance, $settings);
             $this->entityManager->persist($instance);
         }
     }
@@ -205,7 +206,7 @@ class Importer extends SourceLoader
         }
     }
 
-    private function updateInstance(WmsInstance $instance)
+    private function updateInstance(WmsInstance $instance, ?SourceLoaderSettings $settings = null)
     {
         $source = $instance->getSource();
 
@@ -232,10 +233,10 @@ class Importer extends SourceLoader
         }
         $this->updateInstanceDimensions($instance);
 
-        $this->replaceInstanceLayers($instance, $source);
+        $this->replaceInstanceLayers($instance, $source, $settings);
     }
 
-    protected function replaceInstanceLayers(WmsInstance $instance, WmsSource $source)
+    protected function replaceInstanceLayers(WmsInstance $instance, WmsSource $source, ?SourceLoaderSettings $settings = null)
     {
         $oldInstanceRoot = $instance->getRootlayer();
         // Store / "index" old instance layers so we may copy some manually
@@ -259,7 +260,7 @@ class Importer extends SourceLoader
         $instance->getLayers()->clear();
 
         $newRoot = new WmsInstanceLayer();
-        $newRoot->populateFromSource($instance, $source->getRootlayer());
+        $newRoot->populateFromSource($instance, $source->getRootlayer(), $settings);
 
         $instanceLayerMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($newRoot));
 
