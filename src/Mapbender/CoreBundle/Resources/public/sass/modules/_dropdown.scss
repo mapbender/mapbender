@@ -65,8 +65,8 @@ select.numeric {
     z-index: -1; // not using display: none to show native HTML tooltip when required field is missing
     position: absolute;
     user-select: none;
-    left: 0;
-    top: 0;
+    left: 3px;
+    top: 3px;
     max-width: 1px;
   }
   &.numeric {

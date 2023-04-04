@@ -121,6 +121,9 @@ mb:
             toggletoc: 'Toggle at TOC'
             allowreordertoc: 'Allow Reorder at TOC'
             moreinfo: More information
+            id:
+              title: ID
+              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Layer''s Name'
             style: Style
       class:
