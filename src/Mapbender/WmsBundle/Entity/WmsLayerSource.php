@@ -164,10 +164,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Set parent
      *
-     * @param WmsLayerSource $parent
+     * @param ?WmsLayerSource $parent
      * @return $this
      */
-    public function setParent(WmsLayerSource $parent = null)
+    public function setParent(?WmsLayerSource $parent = null)
     {
         $this->parent = $parent;
         return $this;
@@ -289,7 +289,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setQueryable($queryable)
     {
-        $this->queryable = !!$queryable;
+        $this->queryable = (bool) $queryable;
         return $this;
     }
 
@@ -311,7 +311,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setCascaded($cascaded)
     {
-        $this->cascaded = \intval($cascaded) ?: 0;
+        $this->cascaded = is_numeric($cascaded) ? intval($cascaded) : 0;
         return $this;
     }
 
@@ -333,7 +333,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setOpaque($opaque)
     {
-        $this->opaque = !!$opaque;
+        $this->opaque = (bool) $opaque;
         return $this;
     }
 
@@ -355,7 +355,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setNoSubset($noSubset)
     {
-        $this->noSubset = !!$noSubset;
+        $this->noSubset = (bool) $noSubset;
         return $this;
     }
 
@@ -369,15 +369,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         return $this->noSubset;
     }
 
-    /**
-     * Set fixedWidth
-     *
-     * @param integer $fixedWidth
-     * @return $this
-     */
     public function setFixedWidth($fixedWidth = null)
     {
-        $this->fixedWidth = $fixedWidth ?: null;
+        $this->fixedWidth = is_numeric($fixedWidth) ? intval($fixedWidth) : null;
         return $this;
     }
 

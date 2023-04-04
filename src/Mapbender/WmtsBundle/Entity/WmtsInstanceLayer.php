@@ -95,7 +95,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     public function setActive($active)
     {
-        $this->active = $active;
+        $this->active = (bool) $active;
         return $this;
     }
 
@@ -113,7 +113,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowselected($allowselected)
     {
-        $this->allowselected = $allowselected;
+        $this->allowselected = (bool) $allowselected;
         return $this;
     }
 
@@ -131,7 +131,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     public function setSelected($selected)
     {
-        $this->selected = $selected;
+        $this->selected = (bool) $selected;
         return $this;
     }
 
@@ -149,7 +149,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     public function setInfo($info)
     {
-        $this->info = $info;
+        $this->info = (bool) $info;
         return $this;
     }
 
@@ -167,7 +167,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowinfo($allowinfo)
     {
-        $this->allowinfo = $allowinfo;
+        $this->allowinfo = (bool) $allowinfo;
         return $this;
     }
 
