@@ -114,7 +114,9 @@ mb:
             maxsclase: 'Maximaler Maßstab'
             active: aktiv
             allowselecttoc: 'Erlaubt Auswahl im Layerbaum'
-            selectedtoc: 'Ausgewählt im Layerbaum'
+            selectedtoc: 'Layerset beim Start der Anwendung auswählen. Achtung: Checkbox aktiv lassen, falls keine thematischen Ebenen verwendet werden'
+            selectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum aktiv. Einstellung sollte nur geändert werden, wenn thematische Ebenen verwendet werden'
+            unselectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum inaktiv. Achtung: Falls thematische Ebenen nicht verwendet werden, ist das Layerset dann nicht aufrufbar'
             allowinfotoc: 'Erlaubt FeatureInfo im Layerbaum'
             infotoc: 'FeatureInfo im Layerbaum'
             allowtoggletoc: 'Erlaubt umschalten im Layerbaum'

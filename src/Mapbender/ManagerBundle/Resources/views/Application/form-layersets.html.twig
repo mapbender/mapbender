@@ -21,16 +21,6 @@
                 <h3>{{ layerset.title }}</h3>
               </th>
               <th colspan="3" class="text-right valign-top">
-                <div class="checkbox">
-                  <label for="toggle-layerset-selected-{{ layerset.id }}">
-                    <input id="toggle-layerset-selected-{{ layerset.id }}" type="checkbox"
-                           class="-fn-toggle-flag"
-                           data-url="{{ path('mapbender_manager_layerset_setselected', {layerset: layerset}) }}"
-                           {{- layerset.selected ? ' checked' : '' -}}>
-                    {{ 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc' | trans -}}
-                  </label>
-                </div>
-
                 <p class="text-nowrap iconColumn">
                 {%- apply spaceless -%}
                 <a href="#" class="-fn-add-instance hover-highlight-effect"
@@ -43,6 +33,20 @@
                    data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}">
                     <i class="fa fas fa-cog"></i>
                 </a>
+                <span>
+                  <input id="toggle-layerset-selected-{{ layerset.id }}" type="checkbox"
+                     class="-fn-toggle-flag checkbox-icon-toggled"
+                     data-url="{{ path('mapbender_manager_layerset_setselected', {layerset: layerset}) }}"
+                     {{- layerset.selected ? ' checked' : '' -}}>
+                  <label for="toggle-layerset-selected-{{ layerset.id }}"
+                         class="fa fas fa-square-o checkbox-icon-toggled-label-off hover-highlight-effect"
+                         title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.unselectedtoc.help' | trans -}}"
+                  ></label>
+                  <label for="toggle-layerset-selected-{{ layerset.id }}"
+                         class="fa fas fa-check-square-o checkbox-icon-toggled-label-on hover-highlight-effect"
+                         title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc.help' | trans -}}"
+                  ></label>
+                </span>
                 <a href="#" class="-fn-delete-layerset hover-highlight-effect"
                    title="{{ "mb.manager.admin.layerset.delete.title" | trans }} {{layerset.title}}"
                    data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}">

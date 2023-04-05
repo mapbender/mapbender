@@ -114,7 +114,9 @@ mb:
             maxsclase: Maxsclase
             active: active
             allowselecttoc: 'Allow Select at TOC'
-            selectedtoc: 'Selected  at TOC'
+            selectedtoc: 'Select layer on startup. Caution: Leave this checkbox checked if you are not using thematic layers'
+            selectedtoc.help: 'The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
+            unselectedtoc.help: 'The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
             allowinfotoc: 'Allow FeatureInfo at TOC'
             infotoc: 'FeatureInfo at TOC'
             allowtoggletoc: 'Allow Toggle at TOC'
