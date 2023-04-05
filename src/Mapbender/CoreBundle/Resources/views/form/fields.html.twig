@@ -98,7 +98,12 @@
     {%- set _selected = get_value_choice(preferred_choices, value) | default(get_value_choice(choices, value)) -%}
     {%- set _selected = _selected | default(first_choice(preferred_choices)) | default(first_choice(choices)) -%}
     {%- if _selected -%}
-      {{ choice_translation_domain is same as(false) ? _selected.label : _selected.label|trans({}, choice_translation_domain) }}
+        {% set selectedLabel = choice_translation_domain is same as(false) ? _selected.label : _selected.label|trans({}, choice_translation_domain) %}
+        {%- if dropdown_elements_html is defined -%}
+           {{- selectedLabel | raw -}}
+        {%- else -%}
+           {{- selectedLabel -}}
+        {%- endif -%}
     {%- elseif placeholder -%}
       {{ placeholder }}
     {%- endif -%}
@@ -117,7 +122,12 @@
     {%- else -%}
     <li class="choice" data-value="{{ choice.value }}">
       {%- if choice.label -%}
-        {{- choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) -}}
+        {% set choiceLabel = choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) %}
+        {%- if dropdown_elements_html is defined -%}
+           {{- choiceLabel | raw -}}
+        {%- else -%}
+           {{- choiceLabel -}}
+        {%- endif -%}
       {%- else -%}
         &nbsp; {#- maintain height / prevent vertical collapse -#}
       {%- endif -%}
@@ -132,7 +142,7 @@
       {{- block('symfony_choice_widget_collapsed') -}}
     </div>
   {%- else -%}
-    <div class="dropdown"{%- if attr.title is defined -%} title="{{ translation_domain is same as(false) ? attr.title : attr.title|trans({}, translation_domain) }}"{%- endif -%}>
+    <div class="dropdown"{%- if attr.title is defined -%} title="{{ translation_domain is same as(false) ? attr.title : attr.title|trans({}, translation_domain) }}"{%- endif -%}{% if dropdown_elements_html is defined %} data-html="true"{% endif %}>
     {%- set attr = attr | merge({'class': ('hiddenDropdown ' ~ (attr.class | default (''))) | trim}) -%}
     {{- block('symfony_choice_widget_collapsed') -}}
     <div class="dropdownValue iconDown">

@@ -38,7 +38,12 @@ $(function () {
         var $valueDisplay = $('>.dropdownValue', wrapper);
         if ($valueDisplay.hasClass('hide-value')) return;
         var $option = $('option:selected', $select).first();
-        $valueDisplay.text($option.text());
+        let text = $option.html();
+        if ($(wrapper).attr('data-html')) {
+            const parser = (new DOMParser()).parseFromString(text, 'text/html');
+            text = parser.documentElement.textContent;
+        }
+        $valueDisplay.html(text);
     }
     function installFormEvents(form) {
         var handler = function() {
@@ -113,7 +118,7 @@ $(function () {
         var val = $choice.attr('data-value');
         var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', $select);
         var $valueDisplay = $('>.dropdownValue', $dropdown);
-        if (!$valueDisplay.hasClass('hide-value')) $valueDisplay.text(opt.text());
+        if (!$valueDisplay.hasClass('hide-value')) $valueDisplay.html(opt.html());
         $select.val(opt.val());
         $select.trigger('change');
         $list.hide();
