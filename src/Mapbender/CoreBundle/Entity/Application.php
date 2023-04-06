@@ -106,6 +106,7 @@ class Application
     /**
      * @var Layerset[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"remove"})
+     * @ORM\OrderBy({"title" = "asc"})
      */
     protected $layersets;
 
