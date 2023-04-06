@@ -11,6 +11,7 @@
 * [SearchRouter] fix no result filtering on "0" value
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
+* [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([#1453](https://github.com/mapbender/mapbender/issues/1453))
 * Fix WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
 * Fix: Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
 * Fix: Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
