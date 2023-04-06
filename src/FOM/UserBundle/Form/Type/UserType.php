@@ -41,6 +41,7 @@ class UserType extends AbstractType
                 'label' => 'fom.user.user.container.username',
                 'attr' => array(
                     'autofocus' => true,
+                    'autocomplete' => 'off',
                 ),
                 'disabled' => !$options['allow_name_editing'],
                 'required' => $options['allow_name_editing'],
