@@ -63,7 +63,7 @@
          */
         _updateScale: function() {
             var scale = this.mbMap.getModel().getCurrentScale(false);
-            this.$select.val(scale).trigger('dropdown.changevisual');
+            this.$select.val(scale);
             if (!this.$select.val()) {
                 // unconfigured fractional scale
                 var $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));

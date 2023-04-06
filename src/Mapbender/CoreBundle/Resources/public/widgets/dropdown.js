@@ -34,16 +34,19 @@ $(function () {
         });
     }
     function updateValueDisplay(wrapper) {
-        var $select = $('select', wrapper).first();
-        var $valueDisplay = $('>.dropdownValue', wrapper);
+        const $wrapper = $(wrapper);
+        var $select = $('select', $wrapper).first();
+        var $valueDisplay = $('>.dropdownValue', $wrapper);
         if ($valueDisplay.hasClass('hide-value')) return;
         var $option = $('option:selected', $select).first();
         let text = $option.html();
-        if ($(wrapper).attr('data-html')) {
+        if ($wrapper.attr('data-html')) {
             const parser = (new DOMParser()).parseFromString(text, 'text/html');
             text = parser.documentElement.textContent;
         }
-        $valueDisplay.html(text);
+        if (text || !$wrapper.attr('data-prevent-empty')) {
+            $valueDisplay.html(text);
+        }
     }
     function installFormEvents(form) {
         var handler = function() {

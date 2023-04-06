@@ -1,7 +1,7 @@
 {% if show_label %}
   <span class="labelInput">{{ title|trans }}</span>
 {% endif %}
-  <div class="dropdown numeric">
+  <div class="dropdown numeric" data-prevent-empty="true">
     <select class="hiddenDropdown">
       {%- for scale in scales -%}
         <option value="{{ scale }}">{{ scale | formatted_number }}</option>
