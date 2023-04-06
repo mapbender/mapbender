@@ -67,7 +67,7 @@
             if (!this.$select.val()) {
                 // unconfigured fractional scale
                 var $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
-                $displayArea.text(Math.round(scale));
+                $displayArea.text(Math.round(scale).toLocaleString());
             }
         },
 

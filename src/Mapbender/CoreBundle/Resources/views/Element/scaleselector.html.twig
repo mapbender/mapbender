@@ -4,7 +4,7 @@
   <div class="dropdown numeric">
     <select class="hiddenDropdown">
       {%- for scale in scales -%}
-        <option value="{{ scale }}">{{ scale }}</option>
+        <option value="{{ scale }}">{{ scale | formatted_number }}</option>
       {%- endfor -%}
     </select>
     <div class="dropdownValue iconDown"></div>
