@@ -31,6 +31,10 @@
     }
 }
 
+.checkbox ~ .help-text-inline {
+    margin-top: -20px;
+}
+
 .popover {
     width: 300px;
     max-width: 500px;
