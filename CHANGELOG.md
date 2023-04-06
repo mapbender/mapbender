@@ -7,6 +7,7 @@
 * Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
+* Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
 * [SearchRouter] fix no result filtering on "0" value
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
