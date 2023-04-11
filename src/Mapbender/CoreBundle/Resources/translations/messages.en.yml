@@ -422,12 +422,9 @@ mb:
         polygon: Polygon
         rectangle: Rectangle
         circle: Circle
-        text: Text
       inputs:
         label: Label
         radius: Radius
-      error:
-        notext: 'Text required'
       geometry:
         action:
           remove: 'Remove geometry'

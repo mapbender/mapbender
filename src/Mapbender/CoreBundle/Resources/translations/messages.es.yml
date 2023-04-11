@@ -293,9 +293,6 @@ mb:
         polygon: ~
         rectangle: ~
         circle: Circulo
-        text: ~
-      error:
-        notext: ~
       geometry:
         action:
           remove: ~

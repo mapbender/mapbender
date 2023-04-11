@@ -300,9 +300,6 @@ mb:
         polygon: Полигон
         rectangle: Прямоугольник
         circle: Круг
-        text: Текст
-      error:
-        notext: ~
       geometry:
         action:
           remove: 'Удалить геометрию'

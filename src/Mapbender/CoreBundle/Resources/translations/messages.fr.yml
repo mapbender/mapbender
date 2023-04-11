@@ -300,7 +300,6 @@ mb:
         polygon: Polygone
         rectangle: Rectangle
         circle: Cercle
-        text: Texte
       geometry:
         action:
           remove: 'Supprimer la géométrie'

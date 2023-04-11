@@ -301,7 +301,6 @@ mb:
         polygon: 'Çokgen'
         rectangle: 'Dikdörtgen'
         circle: Çember
-        text: 'Metin'
       geometry:
         action:
           remove: 'Geometriyi kaldır'
