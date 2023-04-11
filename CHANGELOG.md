@@ -9,6 +9,7 @@
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
 * Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
 * [SearchRouter] fix no result filtering on "0" value
+* [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
 * Fix WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)

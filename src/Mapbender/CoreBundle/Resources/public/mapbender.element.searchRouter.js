@@ -311,6 +311,12 @@
                 this._searchResultsTable(results);
             }
             this._showResultState(results);
+
+            if (results.length === 1) {
+                const options = currentRoute && currentRoute.results && currentRoute.results.callback
+                    && currentRoute.results.callback.options;
+                this._zoomToFeature(results[0], options);
+            }
         },
 
         /**
@@ -476,15 +482,17 @@
             if (!callbackConf || event.type !== callbackConf.event) {
                 return;
             }
-            var row = $(event.currentTarget),
-                feature = row.data('feature')
-            ;
-            var zoomToFeatureOptions;
-            if (callbackConf.options) {
+            const row = $(event.currentTarget);
+            const feature = row.data('feature');
+            this._zoomToFeature(feature, callbackConf.options)
+        },
+        _zoomToFeature: function(feature, options) {
+            let zoomToFeatureOptions;
+            if (options) {
                 zoomToFeatureOptions = {
-                    maxScale: parseInt(callbackConf.options.maxScale) || null,
-                    minScale: parseInt(callbackConf.options.minScale) || null,
-                    buffer: parseInt(callbackConf.options.buffer) || null
+                    maxScale: parseInt(options.maxScale) || null,
+                    minScale: parseInt(options.minScale) || null,
+                    buffer: parseInt(options.buffer) || null
                 };
             }
             this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
