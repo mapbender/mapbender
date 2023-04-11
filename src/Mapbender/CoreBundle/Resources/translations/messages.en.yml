@@ -300,6 +300,11 @@ mb:
         scale: scale
         bar: bar
     scaledisplay:
+      label: Scale
+      scale_prefix: Prefix
+      scale_prefix.help:  Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user's language.
+      unit_prefix: Shorten scale
+      unit_prefix.help: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.
       class:
         title: 'Scale display'
         description: 'Displays the current map scale'

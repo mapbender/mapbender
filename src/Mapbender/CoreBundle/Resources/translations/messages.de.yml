@@ -302,6 +302,11 @@ mb:
         scale: Maßstab
         bar: Leiste
     scaledisplay:
+      label: Maßstab
+      scale_prefix: Präfix
+      scale_prefix.help:  Bezeichnung, die vor der Maßstabsangabe steht. Der Standard <code>mb.core.scaledisplay.label</code> wird als <code>Maßstab</code> in der Sprache des Benutzers gerendert.
+      unit_prefix: Maßstab abkürzen
+      unit_prefix.help: Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.
       class:
         title: Maßstabsanzeige
         description: 'Der aktuelle Maßstab wird angezeigt.'
