@@ -79,7 +79,8 @@ class ComponentsController
                 $path = $this->getVendorPath() . "/components/{$packageName}";
                 break;
             case 'bootstrap-colorpicker':
-                $path = $this->getWebPath() . '/bundles/mapbendercore/bootstrap-colorpicker';
+            case 'jquery-ui-touch-punch':
+                $path = $this->getWebPath() . "/bundles/mapbendercore/{$packageName}";
                 break;
             case 'mapbender-icons':
                 $path = $this->getVendorPath() . "/mapbender/{$packageName}";
