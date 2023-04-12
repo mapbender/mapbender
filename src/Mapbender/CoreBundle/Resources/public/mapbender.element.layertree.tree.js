@@ -376,9 +376,7 @@
                     this.model.setSourceVisibility(source, newState);
                 }
             }
-            if (this._mobilePane) {
-                $('#mobilePaneClose', this._mobilePane).click();
-            }
+
             return false;
         },
         _toggleInfo: function(e) {
