@@ -16,11 +16,9 @@
         popup: null,
         _mobilePane: null,
         useDialog_: false,
-        isTouch_: false,
 
         _create: function() {
             // see https://stackoverflow.com/a/4819886
-            this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
             this.useDialog_ = this.checkDialogMode();
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
@@ -74,17 +72,16 @@
             this._reset();
         },
         _reset: function() {
-            // Prevent initializing sortable on touch devices, as it breaks touch clicks on folder toggle
-            if (this.options.allowReorder && !this.isTouch_) {
+            if (this.options.allowReorder) {
                 this._createSortable();
             }
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', $.proxy(self._toggleSelected, self));
-            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
+            this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
+            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
             });
