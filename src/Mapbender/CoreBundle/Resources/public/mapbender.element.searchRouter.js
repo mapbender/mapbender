@@ -256,7 +256,11 @@
                     url: url,
                     data: JSON.stringify(data),
                     method: 'POST'
-                }).then(function(response) {
+                })
+                    .fail(function(err) {
+                        Mapbender.error(Mapbender.trans(err.responseText));
+                    })
+                    .then(function(response) {
                     var features = response.features.map(function(data) {
                         var gjInput = {
                             type: 'Feature',
