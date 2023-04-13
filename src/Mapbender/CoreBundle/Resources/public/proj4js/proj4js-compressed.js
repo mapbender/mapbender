@@ -1,14 +1,14 @@
 /*
-  proj4js.js -- Javascript reprojection library. 
-  
+  proj4js.js -- Javascript reprojection library.
+
   Authors:      Mike Adair madairATdmsolutions.ca
                 Richard Greenwood richATgreenwoodmap.com
                 Didier Richard didier.richardATign.fr
                 Stephen Irons stephen.ironsATclear.net.nz
                 Olivier Terral oterralATgmail.com
-                
-  License:      
- Copyright (c) 2012, Mike Adair, Richard Greenwood, Didier Richard, 
+
+  License:
+ Copyright (c) 2012, Mike Adair, Richard Greenwood, Didier Richard,
                      Stephen Irons and Olivier Terral
 
  Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,7 +28,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  DEALINGS IN THE SOFTWARE.
- 
+
  Note: This program is an almost direct port of the C library PROJ.4.
 */
 var Proj4js={defaultDatum:"WGS84",transform:function(a,c,b){if(!a.readyToUse)return this.reportError("Proj4js initialization for:"+a.srsCode+" not yet complete"),b;if(!c.readyToUse)return this.reportError("Proj4js initialization for:"+c.srsCode+" not yet complete"),b;if(a.datum&&c.datum&&((a.datum.datum_type==Proj4js.common.PJD_3PARAM||a.datum.datum_type==Proj4js.common.PJD_7PARAM)&&"WGS84"!=c.datumCode||(c.datum.datum_type==Proj4js.common.PJD_3PARAM||c.datum.datum_type==Proj4js.common.PJD_7PARAM)&&
