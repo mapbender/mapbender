@@ -324,7 +324,7 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
   text-align: center;
   width: $width;
   margin-left: -$width/2;
-  position: absolute;
+  position: fixed;
   z-index: 1035;  // Must be higher than .navbar-fixed-top's 1030
   top: 0;
   left: 50%;
