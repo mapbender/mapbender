@@ -110,6 +110,12 @@ $(function() {
                     token: $item.attr('data-token'),
                 }
             });
+            $item.closest('#all-instances').find('tbody').each(function(index, el) {
+                const $el = $(el);
+                const childCount = $el.find('tr:not(.dummy)').length;
+                const $dummy = $el.find('.dummy')
+                if (childCount > 0) $dummy.hide(); else $dummy.show();
+            });
         }
     });
 

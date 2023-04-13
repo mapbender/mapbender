@@ -122,12 +122,11 @@
                 </td>
               </tr>
             {%- endwith -%}{%- endwith -%}
-            {% else %}
-              <tr class="dummy">
-                <td></td>
-                <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
-              </tr>
             {% endfor %}
+            <tr class="dummy"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
+              <td></td>
+              <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
+            </tr>
           </tbody>
         </table>
       </li>
