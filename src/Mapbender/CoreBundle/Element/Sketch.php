@@ -136,17 +136,20 @@ class Sketch extends AbstractElementService
         }
         unset($config['auto_activate']);
 
-        // Geometry Type "text" deprecated and replaced by "point" in v3.3.4
-        $position = array_search('text', $config['geometrytypes']);
-        if ($position !== false) {
-            if (in_array('point', $config['geometrytypes'])) {
-                // do not add 'point' a second time if it already exists
-                unset($config['geometrytypes'][$position]);
-                $config['geometrytypes'] = array_values($config['geometrytypes']);
-            } else {
-                // no 'point' in configuration, replace existing entry
-                $config['geometrytypes'][$position] = 'point';
+        if (array_key_exists('geometrytypes', $config)) {
+            // Geometry Type "text" deprecated and replaced by "point" in v3.3.4
+            $position = array_search('text', $config['geometrytypes']);
+            if ($position !== false) {
+                if (in_array('point', $config['geometrytypes'])) {
+                    // do not add 'point' a second time if it already exists
+                    unset($config['geometrytypes'][$position]);
+                    $config['geometrytypes'] = array_values($config['geometrytypes']);
+                } else {
+                    // no 'point' in configuration, replace existing entry
+                    $config['geometrytypes'][$position] = 'point';
+                }
             }
+
         }
 
         $entity->setConfiguration($config);
