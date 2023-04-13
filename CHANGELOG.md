@@ -5,7 +5,11 @@ Manual changes required during upgrade:
 csrf_token_generator: security.csrf.token_manager
 ```
 
-Changelog:
+Security:
+* Added CSRF protection tokens in various places throughout the application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458))
+* Users without edit rights were able to delete and hide elements within an application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/20a48ecc01f0d02df0075b4fcd2b15160de3d99b))
+
+Features:
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
@@ -29,6 +33,20 @@ Changelog:
 * Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Fix Openlayers 7 incompatibility in print rotation control
 * Fix: CSRF-Tokens added in various places throughout the application 
+* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
+* [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
+* [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([#1453](https://github.com/mapbender/mapbender/issues/1453))
+
+Bugfixes:
+* WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
+* Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
+* Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
+* inconsistent labelling for open (dialog) automatically vs activate automatically settings
+* mouse cursor behaviour on misc interactions on "Layersets" backend page
+* Openlayers 7 incompatibility in print rotation control 
+* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/2452f9d1d30a2f4b55691d76b9c73729fb6777b4))
+* [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
+* [SearchRouter] fix no result filtering on "0" value
 
 ## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database
