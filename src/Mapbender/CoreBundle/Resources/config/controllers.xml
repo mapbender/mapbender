@@ -20,8 +20,6 @@
         <service id="Mapbender\CoreBundle\Controller\LoginController"
                  class="Mapbender\CoreBundle\Controller\LoginController"
                  public="true">
-            <argument type="service" id="form.factory" />
-            <argument type="service" id="twig" />
             <argument type="service" id="security.authentication_utils" />
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>

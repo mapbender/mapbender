@@ -1,4 +1,11 @@
 ## v3.3.4-RC1
+Manual changes required during upgrade:
+* In `app/config/security.yml` add the following line at `security.firewalls.secured_area.form_login`: 
+```yml
+csrf_token_generator: security.csrf.token_manager
+```
+
+Changelog:
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
@@ -21,6 +28,7 @@
 * Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Fix Openlayers 7 incompatibility in print rotation control
+* Fix: CSRF-Tokens added in various places throughout the application 
 
 ## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database
