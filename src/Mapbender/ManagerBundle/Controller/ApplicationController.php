@@ -242,6 +242,11 @@ class ApplicationController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
 
+        if (!$this->isCsrfTokenValid('application_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
+
         try {
             $em = $this->getEntityManager();
             $em->beginTransaction();

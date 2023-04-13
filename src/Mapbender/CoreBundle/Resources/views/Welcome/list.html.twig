@@ -78,6 +78,7 @@
                 <span class="btn btn-default -fn-delete"
                       title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
+                      data-token="{{ csrf_token('application_delete') }}"
                       data-slug="{{ application.slug }}"
                 ><i class="fa fa-trash-o far fa-trash-alt"></i></span>
               {% endif %}

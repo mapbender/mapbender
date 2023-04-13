@@ -116,8 +116,9 @@
             this.element.on('click', '.-fn-delete', function() {
                 var $row = $(this).closest('tr');
                 var rowId = $row.attr('data-id');
+                const csrfToken = $row.attr('data-token');
                 self._confirm($row, self.deleteConfirmationContent).then(function() {
-                    self._delete(rowId).then(function() {
+                    self._delete(rowId, csrfToken).then(function() {
                         $row.remove();
                         self._updatePlaceholder();
                     });
@@ -211,8 +212,8 @@
                 self._flash($(newRow), '#88ff88');
             });
         },
-        _delete: function(id) {
-            var params = {id: id};
+        _delete: function(id, csrfToken) {
+            var params = {id: id, _token: csrfToken};
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE'
             });
