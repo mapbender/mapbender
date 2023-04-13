@@ -8,6 +8,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class LayersetController extends ApplicationControllerBase
 {
@@ -77,6 +78,10 @@ class LayersetController extends ApplicationControllerBase
                 'layerset' => $layerset,
             ));
         } else {
+            if (!$this->isCsrfTokenValid('layerset_delete', $request->request->get('token'))) {
+                throw new BadRequestHttpException();
+            }
+
             $em = $this->getEntityManager();
             $em->remove($layerset);
             $application->setUpdated(new \DateTime('now'));
@@ -100,6 +105,11 @@ class LayersetController extends ApplicationControllerBase
     {
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
         $layerset->setSelected($request->request->getBoolean('enabled'));
         $application->setUpdated(new \DateTime('now'));

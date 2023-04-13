@@ -69,6 +69,7 @@
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
                 <span class="btn btn-default -fn-toggle-flag {{ application.published ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
                     data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
+                    data-token="{{ csrf_token('application_edit') }}"
                     data-toggle-flag-icons="fa-eye-slash:fa-eye">
                     <i class="fa fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                 </span>

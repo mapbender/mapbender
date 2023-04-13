@@ -54,14 +54,17 @@ $(function() {
         items: "tr:not(.dummy)",
         distance: 20,
         stop: function(event, ui) {
-            $(ui.item).parent().find("tr.element").each(function(idx, elm) {
-                if ($(elm).attr("data-href") === $(ui.item).attr("data-href")) {
+            const $item = $(ui.item);
+            console.log($item);
+            $item.parent().find("tr.element").each(function(idx, elm) {
+                if ($(elm).attr("data-href") === $item.attr("data-href")) {
                     $.ajax({
-                        url: $(ui.item).attr("data-href"),
+                        url: $item.attr("data-href"),
                         type: "POST",
                         data: {
                             number: idx,
-                            region: $(ui.item).closest('table').attr("data-region")
+                            region: $item.closest('table').attr("data-region"),
+                            token: $item.attr("data-token"),
                         },
                         success: function(data) {
                             if (data.error && data.error !== '') {
@@ -103,7 +106,8 @@ $(function() {
                 type: "POST",
                 data: {
                     number: $siblings.index($item),
-                    new_layersetId: $item.closest('table.layersetTable[data-id]').attr("data-id")
+                    new_layersetId: $item.closest('table.layersetTable[data-id]').attr("data-id"),
+                    token: $item.attr('data-token'),
                 }
             });
         }

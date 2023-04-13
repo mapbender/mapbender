@@ -353,7 +353,8 @@ $(function() {
         $.ajax($group.attr('data-url'), {
             method: 'POST',
             data: {
-                screenType: newScreenType
+                screenType: newScreenType,
+                token: $group.attr('data-token'),
             }
         }).then(function() {
             $other.removeClass('disabled');
@@ -375,7 +376,8 @@ $(function() {
             dataType: 'json',
             data: {
                 // Send string "true" or string "false"
-                enabled: "" + enabled
+                enabled: "" + enabled,
+                token: $this.attr('data-token'),
             }
         }).then(function() {
             $icon
@@ -391,7 +393,8 @@ $(function() {
             dataType: 'json',
             data: {
                 // Send string "true" or string "false"
-                enabled: "" + $this.prop('checked')
+                enabled: "" + $this.prop('checked'),
+                token: $this.attr('data-token'),
             }
         })
     });

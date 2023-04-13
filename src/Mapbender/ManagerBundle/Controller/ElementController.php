@@ -16,6 +16,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
@@ -114,6 +115,9 @@ class ElementController extends ApplicationControllerBase
         $region = $request->query->get('region');
 
         $element = $this->factory->newEntity($class, $region, $application);
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
         $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
@@ -125,7 +129,6 @@ class ElementController extends ApplicationControllerBase
             $newWeight = $regionSiblings->count();
             $element->setWeight($newWeight);
 
-            $application = $element->getApplication();
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getEntityManager();
             $em->persist($application);
@@ -158,6 +161,10 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
+
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
         $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
         $form = $formInfo['form'];
@@ -165,7 +172,6 @@ class ElementController extends ApplicationControllerBase
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getEntityManager();
-            $application = $element->getApplication();
             $em->persist($application->setUpdated(new \DateTime('now')));
             $em->persist($element);
             $em->flush();
@@ -209,6 +215,8 @@ class ElementController extends ApplicationControllerBase
         $entityManager->clear(Element::class); // prevent element from being stored with default config/stored again
 
         $application = $this->requireDbApplication($slug);
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
             'label' => false,
         ));
@@ -251,7 +259,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $id
      * @return Response
      */
-    public function deleteAction($slug, $id)
+    public function deleteAction(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -261,6 +269,11 @@ class ElementController extends ApplicationControllerBase
                 . $id . '" does not exist.');
         }
         $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('element_delete', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
 
         $em = $this->getEntityManager();
         $higherWeightCriteria = Criteria::create()
@@ -299,6 +312,14 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
+
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $number = intval($request->get("number"));
         $targetRegionName = $request->get("region");
         if ($number === $element->getWeight() && $element->getRegion() === $targetRegionName) {
@@ -356,6 +377,12 @@ class ElementController extends ApplicationControllerBase
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
 
         if (!$element) {
             throw $this->createNotFoundException();
@@ -382,6 +409,11 @@ class ElementController extends ApplicationControllerBase
     {
         $application = $element->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $newValue = $request->request->get('screenType');
         $em = $this->getEntityManager();
         $em->persist($element);
