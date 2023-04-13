@@ -146,7 +146,7 @@ class GroupController extends AbstractController
      * @param string $id
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(Request  $request, $id)
     {
         /** @var Group|null $group */
         $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
@@ -156,6 +156,13 @@ class GroupController extends AbstractController
         }
         // ACL access check
         $this->denyAccessUnlessGranted('DELETE', $group);
+
+        if (!$this->isCsrfTokenValid('group_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
+
+
         /** @var EntityManagerInterface $em $em */
         $em = $this->getDoctrine()->getManagerForClass(Group::class);
         $em->beginTransaction();

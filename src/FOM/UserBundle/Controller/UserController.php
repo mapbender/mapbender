@@ -195,7 +195,7 @@ class UserController extends UserControllerBase
      * @param string $id
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $user = $this->getUserRepository()->find($id);
 
@@ -208,6 +208,11 @@ class UserController extends UserControllerBase
         }
 
         $this->denyAccessUnlessGranted('DELETE', $user);
+
+        if (!$this->isCsrfTokenValid('user_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
 
         $em = $this->getEntityManager();
         $em->beginTransaction();
