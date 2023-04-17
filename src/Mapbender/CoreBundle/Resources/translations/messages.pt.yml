@@ -300,9 +300,6 @@ mb:
         polygon: Polígono
         rectangle: Retângulo
         circle: Circulo
-        text: Texto
-      error:
-        notext: ~
       geometry:
         action:
           remove: 'Tirar geometria'

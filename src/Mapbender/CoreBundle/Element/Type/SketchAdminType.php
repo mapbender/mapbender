@@ -33,7 +33,6 @@ class SketchAdminType extends AbstractType
                     'mb.core.sketch.geometrytype.polygon' => 'polygon',
                     'mb.core.sketch.geometrytype.rectangle' => 'rectangle',
                     'mb.core.sketch.geometrytype.circle' => 'circle',
-                    'mb.core.sketch.geometrytype.text' => 'text',
                 ),
             ))
             ->add('colors', TextType::class, array(

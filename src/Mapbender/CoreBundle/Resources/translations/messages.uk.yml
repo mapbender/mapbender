@@ -381,12 +381,9 @@ mb:
         polygon: Полігон
         rectangle: Прямокутник
         circle: Коло
-        text: Текст
       inputs:
         label: Мітка
         radius: Радіус
-      error:
-        notext: 'Потрібний текст'
       geometry:
         action:
           remove: 'Видалити геометрію'

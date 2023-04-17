@@ -424,12 +424,9 @@ mb:
         polygon: Polygon
         rectangle: Rechteck
         circle: Kreis
-        text: Text
       inputs:
         label: Beschriftung
         radius: Radius
-      error:
-        notext: 'Kein Text eingetragen'
       geometry:
         action:
           remove: 'Entfernen der Geometrie'

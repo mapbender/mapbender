@@ -293,9 +293,6 @@ mb:
         polygon: Poligono
         rectangle: Rettangolo
         circle: Cerchio
-        text: Testo
-      error:
-        notext: 'Testo necessario'
       geometry:
         action:
           remove: 'Rimuovi la geometria'

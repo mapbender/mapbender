@@ -13,6 +13,7 @@
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/issues/1446))
 * [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([#1453](https://github.com/mapbender/mapbender/issues/1453))
+* [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))
 * Fix: Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
 * Fix WMS and WMTS loading errors with PostgreSQL default database (correction) ([PR#1448](https://github.com/mapbender/mapbender/pull/1448))
 * Fix: Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
