@@ -20,6 +20,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Twig;
 
 class ViewManagerHttpHandler implements ElementHttpHandlerInterface
@@ -30,12 +32,14 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected $em;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
+    protected CsrfTokenManagerInterface $csrfTokenManager;
 
-    public function __construct(Twig\Environment $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
+    public function __construct(Twig\Environment $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage, CsrfTokenManagerInterface  $csrfTokenManager)
     {
         $this->templating = $templating;
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
     /**
@@ -114,6 +118,11 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 
     protected function getSaveResponse(Entity\Element $element, Request $request)
     {
+        $token = new CsrfToken('view_manager', $request->request->get('token'));
+        if (!$this->csrfTokenManager->isTokenValid($token)) {
+            throw new BadRequestHttpException();
+        }
+
         if ($id = $request->query->get('id')) {
             // Update existing record
             /** @var ViewManagerState|null $record */
@@ -153,6 +162,11 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 
     protected function getDeleteResponse(Entity\Element $element, Request $request)
     {
+        $token = new CsrfToken('view_manager', $request->request->get('token'));
+        if (!$this->csrfTokenManager->isTokenValid($token)) {
+            throw new BadRequestHttpException();
+        }
+
         $id = $request->query->get('id');
         if (!$id) {
             throw new BadRequestHttpException("Missing id");

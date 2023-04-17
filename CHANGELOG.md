@@ -1,26 +1,41 @@
 ## v3.3.4-RC1
+Manual changes required during upgrade:
+* In `app/config/security.yml` add the following line at `security.firewalls.secured_area.form_login`: 
+```yml
+csrf_token_generator: security.csrf.token_manager
+```
+
+Security:
+* Added CSRF protection tokens in various places throughout the application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458))
+* Users without edit rights were able to delete and hide elements within an application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/c384839bda6b9e07b29cd986e08aae8d8f957e3f))
+
+Features:
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
 * Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
-* Add responsive awareness for dialog elements with `autoOpen` enabled
+* Add responsive awareness for dialog elements with `autoOpen` enabled 
 * Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
 * Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
-* [SearchRouter] fix no result filtering on "0" value
 * [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
-* [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
-* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/issues/1446))
-* [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([#1453](https://github.com/mapbender/mapbender/issues/1453))
-* [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))
+* [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([PR#1453](https://github.com/mapbender/mapbender/pull/1453))
+* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/pull/1446))
+
+Bugfixes:
 * Fix: Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
-* Fix WMS and WMTS loading errors with PostgreSQL default database (correction) ([PR#1448](https://github.com/mapbender/mapbender/pull/1448))
-* Fix: Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
-* Fix: Show elements that can be floatable but don't need to as button targets ([PR#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
-* Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
-* Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
-* Fix Openlayers 7 incompatibility in print rotation control
+* WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
+* Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
+* Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
+* inconsistent labelling for open (dialog) automatically vs activate automatically settings
+* mouse cursor behaviour on misc interactions on "Layersets" backend page
+* Openlayers 7 incompatibility in print rotation control 
+* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/2452f9d1d30a2f4b55691d76b9c73729fb6777b4))
+* [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
+* [SearchRouter] fix no result filtering on "0" value
+* [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))
+
 
 ## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database

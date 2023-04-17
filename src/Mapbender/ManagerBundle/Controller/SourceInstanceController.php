@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class SourceInstanceController extends ApplicationControllerBase
@@ -112,10 +113,34 @@ class SourceInstanceController extends ApplicationControllerBase
         /** @todo: specify / implement proper grants */
         $oid = new ObjectIdentity('class', Source::class);
         $this->denyAccessUnlessGranted('DELETE', $oid);
+
+        // Use an empty form to help client code follow the final redirect properly
+        // See Resources/public/confirm-delete.js
+        $dummyForm = $this->createForm(FormType::class, null, array(
+            'method' => 'DELETE',
+            'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
+                'instance' => $instance,
+            )),
+        ));
+        $dummyForm->handleRequest($request);
+
         if (!$request->isMethod(Request::METHOD_GET)) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($instance);
-            $em->flush();
+            if ($request->request->has('token')) {
+                // Source instance within an application
+                $csrfValid = $this->isCsrfTokenValid('layerset', $request->request->get('token'));
+            } else {
+                // Free Instance (from sources tab)
+                $csrfValid = $dummyForm->isSubmitted() && $dummyForm->isValid();
+            }
+
+            if (!$csrfValid) {
+                $this->addFlash('error', 'Invalid CSRF token.');
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($instance);
+                $em->flush();
+            }
+
             if ($returnUrl = $request->query->get('return')) {
                 return $this->redirect($returnUrl);
             } else {
@@ -124,14 +149,6 @@ class SourceInstanceController extends ApplicationControllerBase
                 ));
             }
         } else {
-            // Use an empty form to help client code follow the final redirect properly
-            // See Resources/public/confirm-delete.js
-            $dummyForm = $this->createForm(FormType::class, null, array(
-                'method' => 'DELETE',
-                'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
-                    'instance' => $instance,
-                )),
-            ));
             $viewData = $this->getApplicationRelationViewData($instance) + array(
                 'form' => $dummyForm->createView(),
                 'instance' => $instance,
@@ -297,6 +314,11 @@ class SourceInstanceController extends ApplicationControllerBase
         }
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
         $newEnabled = $request->request->get('enabled') === 'true';
         $assignment->setEnabled($newEnabled);
@@ -362,6 +384,13 @@ class SourceInstanceController extends ApplicationControllerBase
 
         $assignments = $layerset->getCombinedInstanceAssignments();
         $targetLayerset = $this->requireLayerset($targetLayersetId);
+
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
 
         if ($layerset === $targetLayerset) {
             if (intval($newWeight) === $assignment->getWeight()) {

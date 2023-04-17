@@ -23,6 +23,7 @@
               title="{{"fom.user.group.index.delete_group"|trans}} {{ group.title }}"
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
+              data-token="{{ csrf_token('group_delete') }}"
             ><i class="fa fas fa-trash-o"></i></span>
             {% endif %}
         </td>

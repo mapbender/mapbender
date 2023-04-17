@@ -1,12 +1,61 @@
-{% extends "MapbenderCoreBundle:Login:form_box.html.twig" %}
+{% extends "MapbenderCoreBundle:Login:info_box.html.twig" %}
 {%- set title = 'fom.user.login.login.title' | trans -%}
 {%- set submit_text = 'fom.user.login.login.login' -%}
 
+{% block box_content_main %}
+    {% if error %}
+        <div class="alert alert-danger">
+            <ul class="list-unstyled">
+                <li>
+                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{ error.messageKey|trans(error.messageData, 'security') }}
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+
+
+    <form name="login" method="post" action="login/check">
+        <div class="form-wrapper">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+            <div id="login">
+                <div class="form-group no-gutters">
+                    <label class="labelInput required" for="username">
+                        {{ 'fom.user.login.login.username' | trans }}
+                    </label>
+                    <div class="inputWrapper">
+                        <input type="text" id="username" name="_username" required="required" autofocus="autofocus"
+                               class="input" value="{{ last_username }}">
+                    </div>
+                </div>
+                <div class="form-group no-gutters">
+                    <label class="labelInput required" for="password">
+                        {{ 'fom.user.login.login.password' | trans }}
+                    </label>
+                    <div class="inputWrapper">
+                        <input type="password" id="password" name="_password" required="required" class="input">
+                    </div>
+                </div>
+            </div>
+
+            {{ parent() }}
+
+            <div class="text-center">
+                <input type="submit" class="btn btn-primary btn-lg login-button"
+                       value="{{ (submit_text | default('mb.actions.save')) | trans }}"/>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+
+
 {% block extra_links %}
-{% if selfregister == true %}
-<a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans}}</a>
-{% endif %}
-{% if reset_password == true %}
-<a class="linkButton" href="{{ path('fom_user_password_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans}}?</a>
-{% endif %}
+    {% if selfregister == true %}
+        <a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans }}
+        </a>
+    {% endif %}
+    {% if reset_password == true %}
+        <a class="linkButton" href="{{ path('fom_user_password_form') }}"><i
+                class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans }}?</a>
+    {% endif %}
 {% endblock %}

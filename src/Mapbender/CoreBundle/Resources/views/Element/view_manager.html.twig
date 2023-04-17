@@ -1,5 +1,6 @@
     {%- if grants.savePublic or grants.savePrivate -%}
     <div>
+        <form data-token="{{ csrf_token('view_manager') }}">
         <div class="form-group">
             <div class="input-group">
                 <input type="text" name="title" class="form-control" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
@@ -12,6 +13,7 @@
         <div class="form-group checkbox">
             <label><input name="save-as-public" type="checkbox">{{ 'mb.core.viewManager.saveAsPublic' | trans }}</label>
         </div>
+        </form>
         {%- endif -%}
     </div>
     {%- endif -%}

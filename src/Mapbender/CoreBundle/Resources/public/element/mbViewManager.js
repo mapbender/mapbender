@@ -18,6 +18,7 @@
         useDialog_: null,
         popup_: null,
         recordPopup_: null,
+        csrfToken: null,
 
 
         _create: function() {
@@ -43,6 +44,12 @@
             $('.-fn-update', $infoContent).remove();
             this.updateContent = $updateInfoCommon.html();
             this.infoContent = $infoContent.html();
+            const $form = this.element.find('form');
+            $form.on('submit', function(e) {
+                e.preventDefault();
+                this._saveNew();
+            }.bind(this));
+            this.csrfToken = $form.attr('data-token');
             this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
@@ -117,7 +124,7 @@
                 var $row = $(this).closest('tr');
                 var rowId = $row.attr('data-id');
                 self._confirm($row, self.deleteConfirmationContent).then(function() {
-                    self._delete(rowId).then(function() {
+                    self._delete(rowId, self.csrfToken).then(function() {
                         $row.remove();
                         self._updatePlaceholder();
                     });
@@ -211,10 +218,11 @@
                 self._flash($(newRow), '#88ff88');
             });
         },
-        _delete: function(id) {
+        _delete: function(id, csrfToken) {
             var params = {id: id};
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
-                method: 'DELETE'
+                method: 'DELETE',
+                data: {token: csrfToken}
             });
         },
         _getSavePublic: function() {
@@ -234,7 +242,8 @@
             return {
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
                 layersetsDiff: diff.layersets,
-                sourcesDiff: diff.sources
+                sourcesDiff: diff.sources,
+                token: this.csrfToken,
             };
         },
         _openUpdateOrInfo: function($row, recordId) {

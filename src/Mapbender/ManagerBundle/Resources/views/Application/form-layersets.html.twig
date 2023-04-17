@@ -36,6 +36,7 @@
                 <span>
                   <input id="toggle-layerset-selected-{{ layerset.id }}" type="checkbox"
                      class="-fn-toggle-flag checkbox-icon-toggled"
+                     data-token="{{ csrf_token('layerset') }}"
                      data-url="{{ path('mapbender_manager_layerset_setselected', {layerset: layerset}) }}"
                      {{- layerset.selected ? ' checked' : '' -}}>
                   <label for="toggle-layerset-selected-{{ layerset.id }}"
@@ -49,6 +50,7 @@
                 </span>
                 <a href="#" class="-fn-delete-layerset hover-highlight-effect"
                    title="{{ "mb.manager.admin.layerset.delete.title" | trans }} {{layerset.title}}"
+                   data-token="{{ csrf_token('layerset_delete') }}"
                    data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}">
                     <i class="fa fa-trash-o far fa-trash-alt"></i>
                 </a>
@@ -86,7 +88,7 @@
                   ? path("mapbender_manager_repository_instanceassignmentenabled", {"assignmentId": assignment.id})
                   : path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': assignment.instance.id})
             } -%}
-              <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}">
+              <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}" data-token="{{ csrf_token('layerset') }}">
                 <td class="text-right">{{ instance.id }}</td>
                 <td>{{ instance.title }}</td>
                 <td class="sourceColumn"><a href="{{ path('mapbender_manager_repository_view', {sourceId: instance.source.id}) }}">#{{ instance.source.id }} {{ instance.source.title }}</a></td>
@@ -102,6 +104,7 @@
                   <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"
+                       data-token="{{ csrf_token('layerset') }}"
                        data-url="{{ _toggle_url }}">
                     <i class="fa fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </a>
@@ -111,6 +114,7 @@
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
                      title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}"
+                     data-token="{{ csrf_token('layerset') }}"
                      data-url="{{ _delete_url }}">
                     <i class="fa fa-trash-o far fa-trash-alt"></i>
                   </a>
@@ -118,12 +122,11 @@
                 </td>
               </tr>
             {%- endwith -%}{%- endwith -%}
-            {% else %}
-              <tr class="dummy">
-                <td></td>
-                <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
-              </tr>
             {% endfor %}
+            <tr class="dummy"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
+              <td></td>
+              <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
+            </tr>
           </tbody>
         </table>
       </li>

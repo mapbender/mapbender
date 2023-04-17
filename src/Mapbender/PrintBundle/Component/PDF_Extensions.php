@@ -23,7 +23,7 @@ class PDF_Extensions extends Fpdi
         return $this->w;
     }
 
-    
+
     function TextWithDirection($x, $y, $txt, $direction='R')
     {
         if ($direction=='R')

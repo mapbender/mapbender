@@ -4,6 +4,7 @@
     window.Mapbender.Manager.confirmDelete = function($el, deleteUrl, strings, popupContent) {
         var defaultContent = $el && ($('<div/>').text($el.attr('title') + '?').html());
         var deleteUrl_ = deleteUrl || ($el && ($el.attr('data-url') || $el.attr('href')));
+        var csrfToken = $el && $el.attr('data-token');
         var deferred = $.Deferred();
         var popupOptions = {
             title: Mapbender.trans(strings.title),
@@ -34,6 +35,7 @@
             if (deleteUrl_) {
                 $.ajax({
                     url: deleteUrl_,
+                    data: {token: csrfToken},
                     type: 'POST'
                 }).then(function() {
                     deferred.resolve(arguments);

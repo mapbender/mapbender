@@ -22,6 +22,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -220,6 +221,10 @@ class ApplicationController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
+        if (!$this->isCsrfTokenValid('application_edit', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
 
         $requestedState = $request->request->get("enabled") === "true";
@@ -241,6 +246,11 @@ class ApplicationController extends ApplicationControllerBase
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
+
+        if (!$this->isCsrfTokenValid('application_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
 
         try {
             $em = $this->getEntityManager();
@@ -393,7 +403,7 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @throws \Exception
      */
-    public function deleteInstanceAction($slug, $layersetId, $instanceId)
+    public function deleteInstanceAction(Request $request, $slug, $layersetId, $instanceId)
     {
         $em = $this->getEntityManager();
         $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
@@ -402,6 +412,11 @@ class ApplicationController extends ApplicationControllerBase
         if ($application) {
             $this->denyAccessUnlessGranted('EDIT', $application);
         }
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $layerset = $this->requireLayerset($layersetId, $application);
         $instanceCriteria = new Criteria(Criteria::expr()->eq('id', $instanceId));
         $instance = $layerset->getInstances()->matching($instanceCriteria)->first();
@@ -431,7 +446,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $assignmentId
      * @return Response
      */
-    public function detachinstanceAction(Layerset $layerset, $assignmentId)
+    public function detachinstanceAction(Request $request, Layerset $layerset, $assignmentId)
     {
         $application = $layerset->getApplication();
         $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
@@ -442,6 +457,11 @@ class ApplicationController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
         $layerset->getReusableInstanceAssignments()->removeElement($assignment);
         $em->remove($assignment);

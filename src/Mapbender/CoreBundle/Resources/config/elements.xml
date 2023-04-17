@@ -62,6 +62,7 @@
             <tag name="mapbender.element" />
             <argument type="service" id="doctrine" />
             <argument type="service" id="form.factory" />
+            <argument type="service" id="security.csrf.token_manager" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
         <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
@@ -88,6 +89,7 @@
             <argument type="service" id="twig" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.csrf.token_manager" />
         </service>
         <service id="mapbender.element.ApplicationSwitcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
             <tag name="mapbender.element" />
