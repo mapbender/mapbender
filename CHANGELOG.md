@@ -19,12 +19,14 @@ Features:
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
 * Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
+* [LayerTree] Sorting layers is now also possible on mobile devices ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
 * [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
 * [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([PR#1453](https://github.com/mapbender/mapbender/pull/1453))
 * [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/pull/1446))
 
 Bugfixes:
-* Fix: Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
+* Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
+* Reordering layers in layertree element was not possible on devices with touch support ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
 * WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
 * Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
 * Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
@@ -32,6 +34,8 @@ Bugfixes:
 * mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Openlayers 7 incompatibility in print rotation control 
 * Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/2452f9d1d30a2f4b55691d76b9c73729fb6777b4))
+* On Mac (all browsers) and on Firefox (all platforms) the layer tree hamburger menu was unusable when the area is scrolling ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
+* When the layer tree was used in a mobile pane the pane was closed on each checkbox toggle ([#1404](https://github.com/mapbender/mapbender/issues/1404))
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SearchRouter] fix no result filtering on "0" value
 * [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))

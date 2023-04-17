@@ -16,11 +16,9 @@
         popup: null,
         _mobilePane: null,
         useDialog_: false,
-        isTouch_: false,
 
         _create: function() {
             // see https://stackoverflow.com/a/4819886
-            this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
             this.useDialog_ = this.checkDialogMode();
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
@@ -46,6 +44,12 @@
             }
             this._createEvents();
             this._trigger('ready');
+
+            const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
+            if (hasNonPersistentScrollbars && this.element.closest('.sideContent').length) {
+                this.element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
+                this.element.closest('.accordion-cell').css('padding-right', '15px');
+            }
         },
         _createTree: function() {
             var sources = this.model.getSources();
@@ -74,17 +78,16 @@
             this._reset();
         },
         _reset: function() {
-            // Prevent initializing sortable on touch devices, as it breaks touch clicks on folder toggle
-            if (this.options.allowReorder && !this.isTouch_) {
+            if (this.options.allowReorder) {
                 this._createSortable();
             }
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', $.proxy(self._toggleSelected, self));
-            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
+            this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
+            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
             });
@@ -376,9 +379,7 @@
                     this.model.setSourceVisibility(source, newState);
                 }
             }
-            if (this._mobilePane) {
-                $('#mobilePaneClose', this._mobilePane).click();
-            }
+
             return false;
         },
         _toggleInfo: function(e) {
