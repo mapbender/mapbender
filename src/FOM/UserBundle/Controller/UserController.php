@@ -6,6 +6,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Service\FixAceOrderService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,9 +34,12 @@ class UserController extends UserControllerBase
     protected $profileEntityClass;
     protected $profileTemplate;
 
+    private FixAceOrderService $fixAceOrderService;
+
     public function __construct(MutableAclProviderInterface $aclProvider,
                                 UserHelperService $userHelper,
                                 AclManager $aclManager,
+                                FixAceOrderService $fixAceOrderService,
                                 $userEntityClass,
                                 $profileEntityClass,
                                 $profileTemplate)
@@ -44,6 +48,7 @@ class UserController extends UserControllerBase
         $this->aclProvider = $aclProvider;
         $this->userHelper = $userHelper;
         $this->aclManager = $aclManager;
+        $this->fixAceOrderService = $fixAceOrderService;
         $this->profileEntityClass = $profileEntityClass;
         $this->profileTemplate = $profileTemplate;
     }
@@ -189,8 +194,6 @@ class UserController extends UserControllerBase
      * @ManagerRoute("/user/{id}/delete", methods={"POST"})
      * @param string $id
      * @return Response
-     *
-     * @todo : Delete ACEs for given user
      */
     public function deleteAction($id)
     {
@@ -223,6 +226,7 @@ class UserController extends UserControllerBase
             }
             $em->flush();
             $em->commit();
+            $this->fixAceOrderService->fixAceOrder();
             $this->addFlash('success', 'The user has been deleted.');
         } catch (\Exception $e) {
             $em->rollback();

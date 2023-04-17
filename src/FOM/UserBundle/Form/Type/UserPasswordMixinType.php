@@ -64,6 +64,7 @@ class UserPasswordMixinType extends AbstractType
                 'second_options' => array(
                     'label' => 'fom.user.registration.form.confirm_password',
                 ),
+                'options' => ['attr' => ['autocomplete' => 'new-password']],
                 'constraints' => $constraints,
             ))
         ;

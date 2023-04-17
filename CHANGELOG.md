@@ -1,4 +1,4 @@
-## dev-master @ df7481c88
+## v3.3.4-RC1
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
@@ -11,11 +11,12 @@
 * [SearchRouter] fix no result filtering on "0" value
 * [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
-* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([#1446](https://github.com/mapbender/mapbender/issues/1446))
+* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/issues/1446))
 * [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([#1453](https://github.com/mapbender/mapbender/issues/1453))
-* Fix WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
+* Fix: Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
+* Fix WMS and WMTS loading errors with PostgreSQL default database (correction) ([PR#1448](https://github.com/mapbender/mapbender/pull/1448))
 * Fix: Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
-* Fix: Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
+* Fix: Show elements that can be floatable but don't need to as button targets ([PR#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
 * Fix inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * Fix mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Fix Openlayers 7 incompatibility in print rotation control

@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Service\FixAceOrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,9 +27,15 @@ class GroupController extends AbstractController
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
 
-    public function __construct(MutableAclProviderInterface $aclProvider)
+    private FixAceOrderService $fixAceOrderService;
+
+    public function __construct(
+        MutableAclProviderInterface $aclProvider,
+        FixAceOrderService $fixAceOrderService
+    )
     {
         $this->aclProvider = $aclProvider;
+        $this->fixAceOrderService = $fixAceOrderService;
     }
 
     /**
@@ -166,6 +173,7 @@ class GroupController extends AbstractController
 
             $em->flush();
             $em->commit();
+            $this->fixAceOrderService->fixAceOrder();
         } catch(\Exception $e) {
             $em->rollback();
             $this->addFlash('error', "The group couldn't be deleted.");
