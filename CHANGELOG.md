@@ -4,6 +4,7 @@ Manual changes required during upgrade:
 ```yml
 csrf_token_generator: security.csrf.token_manager
 ```
+* OpenLayers was upgraded. See their [Upgrade notice](https://github.com/openlayers/openlayers/releases/tag/v7.0.0) for potential non-backward-compatible changes
 
 Security:
 * Added CSRF protection tokens in various places throughout the application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458))
@@ -12,6 +13,7 @@ Security:
 Features:
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
+* Update OpenLayers to 7.3 ([PR#1460](https://github.com/mapbender/mapbender/pull/1460))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
 * Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
 * Add responsive awareness for dialog elements with `autoOpen` enabled 
@@ -33,9 +35,10 @@ Bugfixes:
 * inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Openlayers 7 incompatibility in print rotation control 
-* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/2452f9d1d30a2f4b55691d76b9c73729fb6777b4))
+* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/5be2cc8baeab33cf6b7278bd2370c56601f2699f))
 * On Mac (all browsers) and on Firefox (all platforms) the layer tree hamburger menu was unusable when the area is scrolling ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
 * When the layer tree was used in a mobile pane the pane was closed on each checkbox toggle ([#1404](https://github.com/mapbender/mapbender/issues/1404))
+* Fix style cannot be unserialized when updating from mapbender <3.2.5 versions in PHP >= 8.2 ([PR#1461](https://github.com/mapbender/mapbender/pull/1461))
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SearchRouter] fix no result filtering on "0" value
 * [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))
