@@ -22,6 +22,13 @@ class Style implements MutableUrlTarget
     /** @var LegendUrl|null */
     public $legendUrl;
 
+    public function __unserialize(array $array)
+    {
+        foreach (['name', 'title', 'abstract', 'legendUrl'] as $key) {
+            if (array_key_exists($key, $array)) $this->$key = $array[$key];
+        }
+    }
+
     /**
      * Set name
      *
@@ -37,7 +44,7 @@ class Style implements MutableUrlTarget
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -59,7 +66,7 @@ class Style implements MutableUrlTarget
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -81,7 +88,7 @@ class Style implements MutableUrlTarget
     /**
      * Get abstract
      *
-     * @return string 
+     * @return string
      */
     public function getAbstract()
     {
