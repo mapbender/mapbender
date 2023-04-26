@@ -616,6 +616,7 @@
                 }
             }
             this._reset();
+            this.notifyWidgetActivated();
         },
         getPopupOptions: function() {
             return {
@@ -649,6 +650,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
         updateIconVisual_: function($el, active, enabled) {
             $el.toggleClass('active', !!active);

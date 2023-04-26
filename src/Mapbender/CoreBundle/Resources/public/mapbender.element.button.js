@@ -148,7 +148,9 @@
                     self._initializeHighlightState();
                 });
                 $(document).on('mapbender.elementactivated mapbender.elementdeactivated', function (e, data) {
-                    if (data.sender !== self && data.widget === self._initializeTarget()) {
+                    const widgetId = data.widget && data.widget.element && parseInt(data.widget.element.attr("id"));
+                    self._initializeTarget();
+                    if (data.sender !== self && widgetId === self.options.target) {
                         // Our target element has been activated or deactivated, but not by us
                         // Remember new target state and update our own highlighting
                         self._setActive(data.active);
@@ -275,7 +277,8 @@
                     || targetOptions.auto_activate // Sketch / Redlining style
                 ;
                 if (state) {
-                    var isDialog = !!this.targetWidget.element.closest('.contentPane').length;
+                    var isDialog = this.targetWidget.element.closest('.contentPane').length
+                        || this.targetWidget.element.closest('.popup').length;
                     state = state && isDialog;
                 }
                 this._setActive(!!state);

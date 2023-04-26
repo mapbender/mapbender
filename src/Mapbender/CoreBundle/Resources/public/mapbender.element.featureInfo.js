@@ -86,6 +86,12 @@
             this.callback = callback;
             this.mbMap.element.addClass('mb-feature-info-active');
             this.isActive = true;
+
+            $(this.element).trigger('mapbender.elementactivated', {
+                widget: this,
+                sender: this,
+                active: true
+            });
         },
         deactivate: function() {
             this.mbMap.element.removeClass('mb-feature-info-active');
@@ -99,6 +105,11 @@
                 (this.callback)();
                 this.callback = null;
             }
+            $(this.element).trigger('mapbender.elementdeactivated', {
+                widget: this,
+                sender: this,
+                active: false
+            });
         },
         /**
          * Trigger the Feature Info call for each layer.

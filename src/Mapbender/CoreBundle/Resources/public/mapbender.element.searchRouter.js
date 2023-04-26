@@ -117,6 +117,7 @@
                     this.popup.focus();
                 }
             }
+            this.notifyWidgetActivated();
         },
 
         /**
@@ -130,6 +131,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
 
         /**
