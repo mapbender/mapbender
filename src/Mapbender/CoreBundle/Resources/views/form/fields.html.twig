@@ -196,9 +196,11 @@
     {% if allowCollapse %}
       {# get index of item within parent for initial collapse state #}
       {% set index = -1 %}
-      {% for child in form.parent.children %}
-          {% if child == form %}
+      {% set break = false %}
+      {% for child in form.parent.children if not break %}
+          {% if not child.isRendered %}
               {% set index = loop.index %}
+              {% set break = true %}
           {% endif %}
       {% endfor %}
       <div class="panel panel-default collectionItem clear">
