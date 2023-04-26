@@ -15,8 +15,7 @@ Features:
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
 * Update OpenLayers to 7.3 ([PR#1460](https://github.com/mapbender/mapbender/pull/1460))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
-* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
-* Add responsive awareness for dialog elements with `autoOpen` enabled 
+* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447)) 
 * Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
@@ -33,6 +32,7 @@ Bugfixes:
 * Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
 * Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
 * inconsistent labelling for open (dialog) automatically vs activate automatically settings
+* Only auto-open elements when they are visible in the current responsive configuration ([see commit](https://github.com/mapbender/mapbender/commit/1ee41db0e84a87bfdb23ca9f16e85a695721716b))
 * mouse cursor behaviour on misc interactions on "Layersets" backend page
 * Openlayers 7 incompatibility in print rotation control 
 * Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/5be2cc8baeab33cf6b7278bd2370c56601f2699f))
