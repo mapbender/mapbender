@@ -33,7 +33,7 @@ Bugfixes:
 * Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
 * inconsistent labelling for open (dialog) automatically vs activate automatically settings
 * Only auto-open elements when they are visible in the current responsive configuration ([see commit](https://github.com/mapbender/mapbender/commit/1ee41db0e84a87bfdb23ca9f16e85a695721716b))
-* mouse cursor behaviour on misc interactions on "Layersets" backend page
+* Make mouse cursor behaviour consistent on misc interactions on "Layersets" backend page ([see commit](https://github.com/mapbender/mapbender/commit/f3102825ce0c5b28bc7c98d0d1f926bdb3f5b3ed))
 * Openlayers 7 incompatibility in print rotation control 
 * Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/5be2cc8baeab33cf6b7278bd2370c56601f2699f))
 * On Mac (all browsers) and on Firefox (all platforms) the layer tree hamburger menu was unusable when the area is scrolling ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
