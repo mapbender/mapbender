@@ -138,6 +138,9 @@
   th.sourceColumn {
     width: 30%;
   }
+  th:first-child {
+      max-width: 5em;
+  }
   td.sourceColumn {
     text-overflow: ellipsis;
   }
