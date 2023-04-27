@@ -21,7 +21,7 @@
         active: false,
         $toolBarItem: null,
 
-        _create: function() {
+        _create: function () {
             this.$toolBarItem = $(this.element).closest('.toolBarItem');
             $(this.element)
                 .on('click', $.proxy(this._onClick, this))
@@ -44,7 +44,7 @@
                 if (this.options.group) {
                     var $others = $('.mb-button[data-group="' + this.options.group + '"]')
                         .not(this);
-                    $others.each(function() {
+                    $others.each(function () {
                         try {
                             $(this).trigger('mbButtonDeactivate');
                         } catch (e) {
@@ -59,14 +59,14 @@
          * Turns on highlight, remembers active state for next click.
          * Override this if you need more stuff to happen
          */
-        activate: function() {
+        activate: function () {
             this._setActive(true);
         },
         /**
          * Turns off highlight, remembers inactive state for next click.
          * Override this if you need more stuff to happen
          */
-        deactivate: function() {
+        deactivate: function () {
             this._setActive(false);
         },
         /**
@@ -87,7 +87,7 @@
          * @param isActive
          * @private
          */
-        _setActive: function(isActive) {
+        _setActive: function (isActive) {
             this.active = !!isActive;
             this.$toolBarItem.toggleClass("toolBarItemActive", this.active);
         },
@@ -97,7 +97,7 @@
          *
          * @return {boolean}
          */
-        isActive: function() {
+        isActive: function () {
             return this.active;
         }
     });
@@ -127,7 +127,12 @@
             click: undefined
         },
 
+        // null = not yet initialised
+        // false = no target configured or target not found
         targetWidget: null,
+        // when target is found, allow one retry, it might be possible that, depending on order,
+        // the button widget is created before the target widget
+        allowRetryFindingTarget: true,
         actionMethods: null,
 
         _create: function () {
@@ -139,11 +144,13 @@
             }
             var self = this;
             if (this.options.target) {
-                $(document).on('mapbender.setupfinished', function() {
+                $(document).on('mapbender.setupfinished', function () {
                     self._initializeHighlightState();
                 });
-                $(document).on('mapbender.elementactivated mapbender.elementdeactivated', function(e, data) {
-                    if (data.sender !== self && data.widget === self._initializeTarget()) {
+                $(document).on('mapbender.elementactivated mapbender.elementdeactivated', function (e, data) {
+                    const widgetId = data.widget && data.widget.element && parseInt(data.widget.element.attr("id"));
+                    self._initializeTarget();
+                    if (data.sender !== self && widgetId === self.options.target) {
                         // Our target element has been activated or deactivated, but not by us
                         // Remember new target state and update our own highlighting
                         self._setActive(data.active);
@@ -162,11 +169,11 @@
          * @return {Array<function>}
          * @private
          */
-        _extractCallableMethods: function(object, names) {
-            return names.map(function(name) {
+        _extractCallableMethods: function (object, names) {
+            return names.map(function (name) {
                 var method = name && object[name];
-                return typeof method === 'function' ? method: null;
-            }).filter(function(x) {
+                return typeof method === 'function' ? method : null;
+            }).filter(function (x) {
                 // throw out anything emptyish (including the nulls just produced)
                 return !!x;
             });
@@ -177,7 +184,7 @@
          * @return {{activate: function|null, deactivate: function|null}}
          * @private
          */
-        _extractActionMethods: function(targetWidget) {
+        _extractActionMethods: function (targetWidget) {
             var methodPair = {
                 activate: null,
                 deactivate: null
@@ -193,16 +200,16 @@
                     .bind(targetWidget, this.reset.bind(this));
             } else {
                 console.error("Target widget", targetWidget,
-                              "does not seem to have any potential activation method.",
-                              "Tried: ",  activateCandidateNames);
+                    "does not seem to have any potential activation method.",
+                    "Tried: ", activateCandidateNames);
             }
             if (deactivateCandidates.length) {
                 methodPair.deactivate = deactivateCandidates[0]
                     .bind(targetWidget, this.reset.bind(this));
             } else {
                 console.error("Target widget", targetWidget,
-                              "does not seem to have any potential deactivation method.",
-                              "Tried: ",  deactivateCandidateNames);
+                    "does not seem to have any potential deactivation method.",
+                    "Tried: ", deactivateCandidateNames);
             }
             return methodPair;
         },
@@ -210,7 +217,7 @@
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
          * @private
          */
-        _initializeTarget: function() {
+        _initializeTarget: function () {
             // Initialize only once, remember the result forever.
             // This makes elements work that move around in / completely out of the DOM, either
             // by themselves, or because they let certain popups mangle their DOM nodes.
@@ -236,15 +243,19 @@
                     this.targetWidget = $target.data(dataKey);
                 }
                 if (!this.targetWidget) {
-                    console.warn("Could not identify target element", this.options.target, targetInit);
-                    // Avoid attempting this again
-                    // null: target widget not initialized; false: looked for target widget but got nothing
-                    this.targetWidget = false;
+                    if (this.allowRetryFindingTarget) {
+                        this.targetWidget = null;
+                        this.allowRetryFindingTarget = false;
+                    } else {
+                        console.warn("Could not identify target element", this.options.target, targetInit);
+                        // Avoid attempting this again
+                        this.targetWidget = false;
+                    }
                 }
             }
             return this.targetWidget || null;
         },
-        _initializeActionMethods: function() {
+        _initializeActionMethods: function () {
             if (this.actionMethods === null) {
                 if (this._initializeTarget()) {
                     this.actionMethods = this._extractActionMethods(this.targetWidget);
@@ -253,7 +264,7 @@
                 }
             }
         },
-        _initializeHighlightState: function() {
+        _initializeHighlightState: function () {
             // skip logic if already active
             if (this.active) {
                 return;
@@ -261,12 +272,13 @@
             if (this._initializeTarget() && this.targetWidget.options) {
                 var targetOptions = this.targetWidget.options;
                 var state = targetOptions.autoActivate   // FeatureInfo style
-                         || targetOptions.autoStart     // GpsPosition style
-                         || targetOptions.autoOpen      // Copyright / Legend / Layertree / WmsLoader style
-                         || targetOptions.auto_activate // Sketch / Redlining style
+                    || targetOptions.autoStart     // GpsPosition style
+                    || targetOptions.autoOpen      // Copyright / Legend / Layertree / WmsLoader style
+                    || targetOptions.auto_activate // Sketch / Redlining style
                 ;
                 if (state) {
-                    var isDialog = !!this.targetWidget.element.closest('.contentPane').length;
+                    var isDialog = this.targetWidget.element.closest('.contentPane').length
+                        || this.targetWidget.element.closest('.popup').length;
                     state = state && isDialog;
                 }
                 this._setActive(!!state);
@@ -302,7 +314,7 @@
             }
             this._super();
         },
-        reset: function() {
+        reset: function () {
             var targetWidget = this._initializeTarget();
             var rv = this._superApply(arguments);
             if (targetWidget) {
@@ -310,7 +322,7 @@
             }
             return rv;
         },
-        notifyActivation_: function(targetWidget, state) {
+        notifyActivation_: function (targetWidget, state) {
             var name = state ? 'mapbender.elementactivated' : 'mapbender.elementdeactivated';
             $(document).trigger(name, {
                 widget: targetWidget,

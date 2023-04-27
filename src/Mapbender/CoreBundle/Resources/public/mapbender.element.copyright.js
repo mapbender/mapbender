@@ -39,6 +39,8 @@
             this.popup.$element.one('close', function() {
                 self.close();
             });
+
+            this.notifyWidgetActivated();
         },
         close: function(){
             if (this.popup) {
@@ -48,7 +50,7 @@
                 (this.callback)();
                 this.callback = null;
             }
-            $(document).trigger('mapbender.elementdeactivated', {widget: this, sender: this, active: false});
+            this.notifyWidgetDeactivated();
         },
         _destroy: $.noop
     });

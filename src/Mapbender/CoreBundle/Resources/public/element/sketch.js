@@ -141,6 +141,7 @@
                 this._open();
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
+            this.notifyWidgetActivated();
         },
         deactivate: function() {
             this._deactivateControl();
@@ -154,6 +155,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
         // sidepane interaction, safe to use activate / deactivate unchanged
         reveal: function() {
@@ -163,7 +165,7 @@
             this.deactivate();
         },
         /**
-         * deprecated
+         * @deprecated
          * @param {array} callback
          */
         open: function(callback){

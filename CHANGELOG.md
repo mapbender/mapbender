@@ -4,6 +4,7 @@ Manual changes required during upgrade:
 ```yml
 csrf_token_generator: security.csrf.token_manager
 ```
+* OpenLayers was upgraded. See their [Upgrade notice](https://github.com/openlayers/openlayers/releases/tag/v7.0.0) for potential non-backward-compatible changes
 
 Security:
 * Added CSRF protection tokens in various places throughout the application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458))
@@ -12,9 +13,9 @@ Security:
 Features:
 * Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
 * Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
+* Update OpenLayers to 7.3 ([PR#1460](https://github.com/mapbender/mapbender/pull/1460))
 * Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
-* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447))
-* Add responsive awareness for dialog elements with `autoOpen` enabled 
+* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447)) 
 * Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
@@ -31,11 +32,13 @@ Bugfixes:
 * Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
 * Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
 * inconsistent labelling for open (dialog) automatically vs activate automatically settings
-* mouse cursor behaviour on misc interactions on "Layersets" backend page
+* Only auto-open elements when they are visible in the current responsive configuration ([see commit](https://github.com/mapbender/mapbender/commit/1ee41db0e84a87bfdb23ca9f16e85a695721716b))
+* Make mouse cursor behaviour consistent on misc interactions on "Layersets" backend page ([see commit](https://github.com/mapbender/mapbender/commit/f3102825ce0c5b28bc7c98d0d1f926bdb3f5b3ed))
 * Openlayers 7 incompatibility in print rotation control 
-* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/2452f9d1d30a2f4b55691d76b9c73729fb6777b4))
+* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/5be2cc8baeab33cf6b7278bd2370c56601f2699f))
 * On Mac (all browsers) and on Firefox (all platforms) the layer tree hamburger menu was unusable when the area is scrolling ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
 * When the layer tree was used in a mobile pane the pane was closed on each checkbox toggle ([#1404](https://github.com/mapbender/mapbender/issues/1404))
+* Fix style cannot be unserialized when updating from mapbender <3.2.5 versions in PHP >= 8.2 ([PR#1461](https://github.com/mapbender/mapbender/pull/1461))
 * [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
 * [SearchRouter] fix no result filtering on "0" value
 * [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))

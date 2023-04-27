@@ -48,6 +48,20 @@
         checkResponsiveVisibility: function(element) {
             return Mapbender.ElementUtil.checkResponsiveVisibility(element || this.element);
         },
+        notifyWidgetDeactivated: function() {
+            $(this.element).trigger('mapbender.elementdeactivated', {
+                widget: this,
+                sender: this,
+                active: false
+            });
+        },
+        notifyWidgetActivated: function() {
+            $(this.element).trigger('mapbender.elementactivated', {
+                widget: this,
+                sender: this,
+                active: true
+            });
+        },
         __dummy__: null
     });
 }(jQuery));

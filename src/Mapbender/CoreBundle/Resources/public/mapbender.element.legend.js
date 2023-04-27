@@ -1,13 +1,13 @@
-(function($) {
+(function ($) {
 
     $.widget("mapbender.mbLegend", $.mapbender.mbDialogElement, {
         options: {
-            showSourceTitle:          true,
-            showLayerTitle:           true,
+            showSourceTitle: true,
+            showLayerTitle: true,
             showGroupedLayerTitle: true
         },
 
-        callback:       null,
+        callback: null,
         mbMap: null,
 
         /**
@@ -15,12 +15,12 @@
          *
          * @private
          */
-        _create: function() {
+        _create: function () {
             this.useDialog_ = !this.element.closest('.sideContent, .mobilePane').length;
             var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self._setup(mbMap);
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget("mbLegend");
             });
         },
@@ -30,7 +30,7 @@
          *
          * @private
          */
-        _setup: function(mbMap) {
+        _setup: function (mbMap) {
             this.mbMap = mbMap;
             this.onMapLoaded();
             this._trigger('ready');
@@ -41,16 +41,10 @@
          *
          * @param e
          */
-        onMapLoaded: function(e) {
+        onMapLoaded: function (e) {
             this.onMapLayerChanges();
             if (this.checkAutoOpen()) {
                 this.open();
-                // Notify controlling button, if any
-                $(this.element).trigger('mapbender.elementactivated', {
-                    widget: this,
-                    sender: this,
-                    active: true
-                });
             }
             var rerenderOn = [
                 'mbmapsourceadded',
@@ -68,7 +62,7 @@
          *
          * @param e
          */
-        onMapLayerChanges: function(e) {
+        onMapLayerChanges: function (e) {
             var html = this.render();
 
             this.element.html(html);
@@ -79,12 +73,12 @@
          * @return {Array}
          * @private
          */
-        _getSources: function() {
+        _getSources: function () {
             var sourceDataList = [];
             var sources = this.mbMap.getModel().getSources();
             for (var i = 0; i < sources.length; ++i) {
                 var rootLayer = sources[i].configuration.children[0];
-                if (rootLayer.state.visibility) {
+                if (rootLayer.state.visibility && (!rootLayer.source || !rootLayer.source.layerset || rootLayer.source.layerset.selected)) {
                     // display in reverse map order
                     sourceDataList.unshift(this._getLayerData(sources[i], rootLayer, 1));
                 }
@@ -97,7 +91,7 @@
          * @param layer
          * @return {*}
          */
-        getLegendUrl: function(layer) {
+        getLegendUrl: function (layer) {
             if (layer.options.legend) {
                 return layer.options.legend.url || null;
             }
@@ -112,11 +106,11 @@
          * @return {*}
          * @private
          */
-        _getLayerData: function(source, layer, level) {
+        _getLayerData: function (source, layer, level) {
             var layerData = {
-                id:       layer.options.id,
-                title:    layer.options.title,
-                level:    level,
+                id: layer.options.id,
+                title: layer.options.title,
+                level: level,
                 legend: this.getLegendUrl(layer),
                 children: []
             };
@@ -142,7 +136,7 @@
          * @param layer
          * @private
          */
-        createSourceTitle: function(layer) {
+        createSourceTitle: function (layer) {
             return $("<li/>")
                 .text(layer.title)
                 .addClass('ebene' + layer.level)
@@ -154,11 +148,11 @@
          * @param layer
          * @private
          */
-        createTitle: function(layer) {
+        createTitle: function (layer) {
             return $("<div/>")
                 .text(layer.title)
                 .addClass('subTitle')
-            ;
+                ;
         },
         /**
          * Create Image
@@ -166,7 +160,7 @@
          * @param layer
          * @private
          */
-        createImage: function(layer) {
+        createImage: function (layer) {
             return $('<img/>')
                 .attr('src', layer.legend);
         },
@@ -175,10 +169,10 @@
          * Create Legend Container
          * @param layer
          */
-        createLegendContainer: function(layer) {
+        createLegendContainer: function (layer) {
             return $(document.createElement('ul')).addClass('list-unstyled');
         },
-        _createSourceHtml: function(sourceData) {
+        _createSourceHtml: function (sourceData) {
             var visibleChildLayers = sourceData.children;
             var ul = this.createLegendContainer(sourceData);
 
@@ -196,7 +190,7 @@
 
             return ul;
         },
-        _createLayerHtml: function(layer) {
+        _createLayerHtml: function (layer) {
             var widget = this;
             var options = widget.options;
             var $li = $('<li/>').addClass('ebene' + layer.level);
@@ -224,7 +218,7 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback) {
+        defaultAction: function (callback) {
             this.open(callback);
         },
 
@@ -233,11 +227,11 @@
          *
          * @return strgin HTML jQuery object
          */
-        render: function() {
+        render: function () {
             var widget = this;
             var sources = widget._getSources();
             var html = $('<ul/>');
-            _.each(sources, function(source) {
+            _.each(sources, function (source) {
                 html.append(widget._createSourceHtml(source));
             });
             // strip top-level dummy <ul>
@@ -247,7 +241,7 @@
         /**
          * On open handler
          */
-        open: function(callback) {
+        open: function (callback) {
             this.callback = callback;
 
             if (this.useDialog_) {
@@ -258,12 +252,17 @@
                     this.popupWindow.open();
                 }
             }
+
+            this.notifyWidgetActivated();
+
         },
 
         /**
          * On close
          */
-        close: function() {
+        close: function () {
+            this.notifyWidgetDeactivated();
+
             if (this.popupWindow) {
                 this.popupWindow.destroy();
                 this.popupWindow = null;
@@ -273,7 +272,7 @@
                 this.callback = null;
             }
         },
-        getPopupOptions: function() {
+        getPopupOptions: function () {
             return {
                 title: this.element.attr('data-title'),
                 draggable: true,

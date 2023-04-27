@@ -82,6 +82,8 @@
                 this.popup.$element.removeClass('hidden');
                 this.popup.focus();
             }
+
+            this.notifyWidgetActivated();
         },
         close: function(){
             if (this.popup && this.popup.$element) {
@@ -91,6 +93,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
         loadDeclarativeWms: function(elm){
             var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];
