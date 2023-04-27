@@ -65,7 +65,8 @@ class Ruler extends AbstractElementService
     {
         return array(
             'type' => 'line',
-            'help' => 'mb.core.ruler.help'
+            'help' => 'mb.core.ruler.help',
+            'precision' => 'auto',
         );
     }
 
