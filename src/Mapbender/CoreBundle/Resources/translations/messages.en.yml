@@ -380,6 +380,8 @@ mb:
           strokeColor: Stroke color
           opacity_pct: Opacity (%)
           stroke_width_px: Stroke width (pixels)
+          fontColor: Font color
+          fontSize: Font size
       printclient:
         label:
           rotatable: Rotatable

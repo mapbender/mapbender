@@ -386,6 +386,8 @@ mb:
           strokeColor: Strichfarbe
           opacity_pct: Deckkraft (%)
           stroke_width_px: Linienstärke (Pixel)
+          fontColor: Schriftfarbe
+          fontSize: Schriftgröße
       printclient:
         label:
           rotatable: Drehbar
