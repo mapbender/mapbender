@@ -102,6 +102,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.ruler_admin" class="Mapbender\CoreBundle\Element\Type\RulerAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />

@@ -164,6 +164,11 @@ mb:
         line: Linie
         area: Fläche
         measure: Messen
+      help: Doppelklicken zum Beenden
+      admin:
+        type: Geometrie
+        help: Hilfetext
+        help_help: Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers
     printclient:
       label:
         template: Vorlage

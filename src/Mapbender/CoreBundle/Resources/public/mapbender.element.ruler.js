@@ -3,6 +3,7 @@
     $.widget("mapbender.mbRuler", {
         options: {
             type: 'line',
+            help: '',
             precision: 2
         },
         control: null,
@@ -141,13 +142,16 @@
                 this.control = this._createControl4();
             }
             this.container = $('<div/>');
+            this.help = $('<p/>').text(Mapbender.trans(this.options.help));
             this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
             this.segments = $('<ul/>');
+            this.segments.append()
+            if (this.options.help) this.container.append(this.help);
             this.container.append(this.total);
             this.container.append(this.segments);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
-            
+
             this._trigger('ready');
         },
         /**

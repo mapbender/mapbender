@@ -163,6 +163,7 @@ mb:
         line: line
         area: area
         measure: measure
+      help: Double-click to end drawing
     printclient:
       label:
         template: Template
