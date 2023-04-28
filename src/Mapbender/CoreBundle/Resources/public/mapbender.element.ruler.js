@@ -7,7 +7,7 @@
             precision: 'auto',
             fillColor: 'rgba(255,255,255,0.2)',
             strokeColor: '#3399CC',
-            strokeWidth: 1,
+            strokeWidth: 2,
             strokeWidthWhileDrawing: 3,
             fontColor: '#000000',
             fontSize: 12,
@@ -74,6 +74,7 @@
             const control = new ol.interaction.Draw({
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source,
+                stopClick: true,
                 style: this._getStyle.bind(this),
             });
             control.on('drawstart', function (event) {
