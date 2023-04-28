@@ -20,6 +20,8 @@ Features:
 * Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
 * Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
 * Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
+* [FeatureInfo] Redesigned highlight color selection: Opacity is now part of the color selection. Stroke and fill opacity can be selected independently ([PR#1463](https://github.com/mapbender/mapbender/pull/1463))  
+* [Ruler] Added optional help text. All colors and the font size are now configurable ([PR#1463](https://github.com/mapbender/mapbender/pull/1463))  
 * [LayerTree] Sorting layers is now also possible on mobile devices ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
 * [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
 * [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([PR#1453](https://github.com/mapbender/mapbender/pull/1453))

@@ -10,6 +10,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints;
 
+/**
+ * Add the following snippet in the admin template when using this type:
+ <script type="text/javascript">
+    !(function($) {
+        $('#{{ form.vars.attr.id }} .-js-init-colorpicker').colorpicker({format: 'rgba'});
+    }(jQuery));
+</script>
+ */
 
 class PaintType extends AbstractType
 {

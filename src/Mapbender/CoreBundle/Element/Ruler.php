@@ -67,6 +67,12 @@ class Ruler extends AbstractElementService
             'type' => 'line',
             'help' => 'mb.core.ruler.help',
             'precision' => 'auto',
+            'fillColor' => 'rgba(255,255,255,0.2)',
+            'strokeColor' => '#3399CC',
+            'strokeWidth' => 1,
+            'strokeWidthWhileDrawing' => 3,
+            'fontColor' => '#000000',
+            'fontSize' => 12,
         );
     }
 

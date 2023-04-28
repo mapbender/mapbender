@@ -164,6 +164,11 @@ mb:
         area: area
         measure: measure
       help: Double-click to end drawing
+      admin:
+        type: Geometry
+        help: Helptext
+        help_help: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user's language
+        stroke_width_while_drawing: Line width while drawing
     printclient:
       label:
         template: Template

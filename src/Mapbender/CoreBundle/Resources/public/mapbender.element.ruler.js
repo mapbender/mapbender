@@ -4,7 +4,13 @@
         options: {
             type: 'line',
             help: '',
-            precision: 'auto'
+            precision: 'auto',
+            fillColor: 'rgba(255,255,255,0.2)',
+            strokeColor: '#3399CC',
+            strokeWidth: 1,
+            strokeWidthWhileDrawing: 3,
+            fontColor: '#000000',
+            fontSize: 12,
         },
         control: null,
         segments: null,
@@ -26,29 +32,50 @@
             });
         },
         _createControl4: function () {
-            var source = this.layer.getNativeLayer().getSource();
-            var defaultStyleFn;
-            if (ol.interaction.Draw.getDefaultStyleFunction) {
-                defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
-            } else {
-                // Openlayers 6 special
-                var editingStyles = ol.style.Style.createEditingStyle();
-                defaultStyleFn = function (feature) {
-                    return editingStyles[feature.getGeometry().getType()];
-                };
-            }
+            const source = this.layer.getNativeLayer().getSource();
+            const self = this;
 
-            var self = this;
-            var controlOptions = {
+            this.drawStyle = new ol.style.Style({
+                text: new ol.style.Text({
+                    font: this.options.fontSize + 'px sans-serif',
+                    stroke: new ol.style.Stroke({
+                        color: this.options.fontColor
+                    }),
+                }),
+                stroke: new ol.style.Stroke({
+                    width: this.options.strokeWidthWhileDrawing,
+                    color: this.options.strokeColor,
+                }),
+                image: new ol.style.Circle({
+                    radius: this.options.strokeWidthWhileDrawing * 2,
+                    stroke: new ol.style.Stroke({
+                        width: this.options.strokeWidthWhileDrawing / 2,
+                        color: '#FFFFFF',
+                    }),
+                    fill: new ol.style.Fill({
+                        color: this.options.strokeColor,
+                    }),
+                }),
+                fill: new ol.style.Fill({
+                    color: this.options.fillColor,
+                })
+            });
+
+            this.drawCompleteStyle = this.drawStyle.clone();
+            this.drawCompleteStyle.setStroke(new ol.style.Stroke({
+                width: this.options.strokeWidth,
+                color: this.options.strokeColor,
+            }));
+
+            this.layer.getNativeLayer().setStyle(function(feature) {
+                return this._getStyle(feature, true);
+            }.bind(this));
+
+            const control = new ol.interaction.Draw({
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source,
-                stopClick: true,
-                style: function (feature, resolution) {
-                    var style = defaultStyleFn(feature, resolution);
-                    return self._extendStyles(style, feature);
-                }
-            };
-            var control = new ol.interaction.Draw(controlOptions);
+                style: this._getStyle.bind(this),
+            });
             control.on('drawstart', function (event) {
                 self._reset();
                 source.clear();
@@ -72,6 +99,14 @@
                 self._handleFinal({feature: event.feature});
             });
             return control;
+        },
+        _getStyle(feature, useFinishedStyle) {
+            const style = useFinishedStyle === true ? this.drawCompleteStyle : this.drawStyle;
+            if (this.options.type === 'area') {
+                const measure = this._getMeasureFromEvent({feature: feature});
+                style.getText().setText(measure);
+            }
+            return style;
         },
         _createControl: function () {
             var nVertices = 1;
@@ -131,14 +166,6 @@
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.control = this._createControl();
             } else {
-                /** @var {ol.layer.Vector} nativeLayer */
-                var nativeLayer = this.layer.getNativeLayer();
-                var defaultStyleFn = nativeLayer.getStyleFunction() || ol.style.Style.defaultFunction;
-                var customStyleFn = function (feature, resolution) {
-                    var styles = defaultStyleFn(feature, resolution);
-                    return self._extendStyles(styles, feature);
-                };
-                nativeLayer.setStyle(customStyleFn);
                 this.control = this._createControl4();
             }
             this.container = $('<div/>');
@@ -316,27 +343,9 @@
             if (Mapbender.mapEngine.code === 'ol2') {
                 feature.attributes['area'] = text;
                 feature.layer.redraw();
-            } else {
-                feature.set('area', text);
             }
         },
-        /**
-         * Openlayers 4 only
-         * @param {Array<ol.style.Style>} styles
-         * @param {ol.Feature} feature
-         * @private
-         */
-        _extendStyles: function (styles, feature) {
-            var label = feature.get('area') || '';
-            return styles.map(function (original) {
-                var style = original.clone();
-                if (!style.getText()) {
-                    style.setText(new ol.style.Text());
-                }
-                style.getText().setText(label);
-                return style;
-            });
-        },
+
         _formatMeasure: function (value) {
             if (!value || value < 0.00001) return '';
 
