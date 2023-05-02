@@ -8,8 +8,8 @@
             printResult: false,
             onlyValid: false,
             highlighting: false,
-            fillColorDefault: '#ffa500',
-            fillColorHover: 'ff0000',
+            fillColorDefault: 'rgba(255,165,0,0.4)',
+            fillColorHover: 'rgba(255,0,0,0.7)',
             maxCount: 100,
             width: 700,
             height: 500
@@ -371,16 +371,12 @@
             var settingsDefault = {
                 fill: this.options.fillColorDefault,
                 stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
-                opacity: this.options.opacityDefault,
                 strokeWidth: this.options.strokeWidthDefault,
-                fallbackOpacity: 0.7
             };
             var settingsHover = {
                 fill: this.options.fillColorHover || settingsDefault.fill,
                 stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
-                opacity: this.options.opacityHover,
                 strokeWidth: this.options.strokeWidthHover,
-                fallbackOpacity: 0.4
             };
             var defaultStyle = this.processStyle_(settingsDefault, false);
             var hoverStyle = this.processStyle_(settingsHover, true);
@@ -390,27 +386,17 @@
             }
         },
         processStyle_: function(settings, hover) {
-            var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
-            var strokeRgb = Mapbender.StyleUtil.parseCssColor(settings.stroke).slice(0, 3);
-            var opacityFloat = parseFloat(settings.opacity);
-            if (!isNaN(opacityFloat)) {
-                if (!(opacityFloat >= 0.0 && opacityFloat < 1.0)) {
-                    // Percentage to [0;1]
-                    opacityFloat /= 100.0;
-                }
-                opacityFloat = Math.min(Math.max(opacityFloat, 0.0), 1.0);
-            } else {
-                opacityFloat = settings.fallbackOpacity;
-            }
-            var strokeOpacity = hover && 1.0 || Math.sqrt(opacityFloat);
+            var fillRgba = Mapbender.StyleUtil.parseCssColor(settings.fill);
+            var strokeRgba = Mapbender.StyleUtil.parseCssColor(settings.stroke);
             var strokeWidth = parseInt(settings.strokeWidth);
+
             strokeWidth = isNaN(strokeWidth) && (hover && 3 || 1) || strokeWidth;
             return new ol.style.Style({
                 fill: new ol.style.Fill({
-                    color: fillRgb.concat(opacityFloat)
+                    color: fillRgba,
                 }),
                 stroke: strokeWidth && new ol.style.Stroke({
-                    color: strokeRgb.concat(strokeOpacity),
+                    color: strokeRgba,
                     width: strokeWidth
                 })
             });

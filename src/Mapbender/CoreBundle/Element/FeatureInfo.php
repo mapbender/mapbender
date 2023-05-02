@@ -69,12 +69,10 @@ class FeatureInfo extends AbstractElementService
             "height" => 500,
             "maxCount" => 100,
             'highlighting' => false,
-            'fillColorDefault' => '#ffa500',
-            'fillColorHover' => '#ff0000',
-            'strokeColorDefault' => '#ff4466',
-            'strokeColorHover' => '#ff0000',
-            'opacityDefault' => 40,
-            'opacityHover' => 70,
+            'fillColorDefault' => 'rgba(255,165,0,0.4)',
+            'fillColorHover' => 'rgba(255,0,0,0.7)',
+            'strokeColorDefault' => 'rgba(255,68,102,0.4)',
+            'strokeColorHover' => 'rgba(255,0,0,0.7)',
             'strokeWidthDefault' => 1,
             'strokeWidthHover' => 3,
         );
@@ -149,6 +147,41 @@ class FeatureInfo extends AbstractElementService
         }
         unset($config['featureColorDefault']);
         unset($config['featureColorHover']);
+        if (!empty($config['opacityDefault'])) {
+            $config['fillColorDefault'] = self::addOpacityToColor($config, 'fillColorDefault', 'opacityDefault');
+            $config['strokeColorDefault'] = self::addOpacityToColor($config, 'strokeColorDefault', 'opacityDefault');
+        }
+        if (!empty($config['opacityHover'])) {
+            $config['fillColorHover'] = self::addOpacityToColor($config, 'fillColorHover', 'opacityHover');
+            $config['strokeColorHover'] = self::addOpacityToColor($config, 'strokeColorHover', 'opacityHover');
+        }
         $entity->setConfiguration($config);
+    }
+
+    public static function addOpacityToColor(array $config, string $keyColor, string $keyOpacity, int $maxOpacity = 100): ?string
+    {
+        if (empty($config[$keyColor])) return null;
+        $color = trim($config[$keyColor]);
+        // 8-digit rgba hex string or rgba => just return the color, no need to include the opacity into it
+        if (preg_match("/^#[0-9A-Fa-f]{8}$/", $color)) return $color;
+        if (substr($color, 0, 4) === 'rgba') return $color;
+
+        $opacity = floatval($config[$keyOpacity] / $maxOpacity);
+        if ($opacity < 0) $opacity = 0;
+        if ($opacity > 1) $opacity = 1;
+
+        // rgb hex? convert to rgba
+        if (preg_match("/^#[0-9A-Fa-f]{6}$/", $color)) {
+            $r = hexdec(substr($color, 1, 2));
+            $g = hexdec(substr($color, 3, 2));
+            $b = hexdec(substr($color, 5, 2));
+            return "rgba($r, $g, $b, $opacity)";
+        }
+
+        if (substr($color, 0, 3) === 'rgb') {
+            return 'rgba' . substr($color, 3, -1) . ', ' . $opacity . ')';
+        }
+
+        return $config[$keyColor];
     }
 }

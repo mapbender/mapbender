@@ -1,9 +1,16 @@
-(function($){
+(function ($) {
 
     $.widget("mapbender.mbRuler", {
         options: {
             type: 'line',
-            precision: 2
+            help: '',
+            precision: 'auto',
+            fillColor: 'rgba(255,255,255,0.2)',
+            strokeColor: '#3399CC',
+            strokeWidth: 2,
+            strokeWidthWhileDrawing: 3,
+            fontColor: '#000000',
+            fontSize: 12,
         },
         control: null,
         segments: null,
@@ -13,49 +20,74 @@
         layer: null,
         mapModel: null,
 
-        _create: function(){
+        _create: function () {
             var self = this;
-            if(this.options.type !== 'line' && this.options.type !== 'area'){
+            if (this.options.type !== 'line' && this.options.type !== 'area') {
                 throw Mapbender.trans("mb.core.ruler.create_error");
             }
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self._setup(mbMap);
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget('mbRuler');
             });
         },
-        _createControl4: function() {
-            var source = this.layer.getNativeLayer().getSource();
-            var defaultStyleFn;
-            if (ol.interaction.Draw.getDefaultStyleFunction) {
-                defaultStyleFn = ol.interaction.Draw.getDefaultStyleFunction();
-            } else {
-                // Openlayers 6 special
-                var editingStyles = ol.style.Style.createEditingStyle();
-                defaultStyleFn = function(feature) {
-                    return editingStyles[feature.getGeometry().getType()];
-                };
-            }
+        _createControl4: function () {
+            const source = this.layer.getNativeLayer().getSource();
+            const self = this;
 
-            var self = this;
-            var controlOptions = {
+            this.drawStyle = new ol.style.Style({
+                text: new ol.style.Text({
+                    font: this.options.fontSize + 'px sans-serif',
+                    stroke: new ol.style.Stroke({
+                        color: this.options.fontColor
+                    }),
+                    fill: new ol.style.Fill({
+                        color: this.options.fontColor
+                    }),
+                }),
+                stroke: new ol.style.Stroke({
+                    width: this.options.strokeWidthWhileDrawing,
+                    color: this.options.strokeColor,
+                }),
+                image: new ol.style.Circle({
+                    radius: this.options.strokeWidthWhileDrawing * 2,
+                    stroke: new ol.style.Stroke({
+                        width: this.options.strokeWidthWhileDrawing / 2,
+                        color: '#FFFFFF',
+                    }),
+                    fill: new ol.style.Fill({
+                        color: this.options.strokeColor,
+                    }),
+                }),
+                fill: new ol.style.Fill({
+                    color: this.options.fillColor,
+                })
+            });
+
+            this.drawCompleteStyle = this.drawStyle.clone();
+            this.drawCompleteStyle.setStroke(new ol.style.Stroke({
+                width: this.options.strokeWidth,
+                color: this.options.strokeColor,
+            }));
+
+            this.layer.getNativeLayer().setStyle(function(feature) {
+                return this._getStyle(feature, true);
+            }.bind(this));
+
+            const control = new ol.interaction.Draw({
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source,
                 stopClick: true,
-                style: function(feature, resolution) {
-                    var style = defaultStyleFn(feature, resolution);
-                    return self._extendStyles(style, feature);
-                }
-            };
-            var control = new ol.interaction.Draw(controlOptions);
-            control.on('drawstart', function(event) {
+                style: this._getStyle.bind(this),
+            });
+            control.on('drawstart', function (event) {
                 self._reset();
                 source.clear();
                 /** @var {ol.Feature} */
                 var feature = event.feature;
                 var geometry = feature.getGeometry();
                 var nVertices = geometry.getFlatCoordinates().length;
-                geometry.on('change', function() {
+                geometry.on('change', function () {
                     var nVerticesNow = geometry.getFlatCoordinates().length;
                     if (nVerticesNow === nVertices) {
                         // geometry change event does not have a .feature attribute like drawend, shim it
@@ -67,25 +99,33 @@
                     }
                 });
             });
-            control.on('drawend', function(event) {
+            control.on('drawend', function (event) {
                 self._handleFinal({feature: event.feature});
             });
             return control;
         },
-        _createControl: function() {
+        _getStyle(feature, useFinishedStyle) {
+            const style = useFinishedStyle === true ? this.drawCompleteStyle : this.drawStyle;
+            if (this.options.type === 'area') {
+                const measure = this._getMeasureFromEvent({feature: feature});
+                style.getText().setText(measure);
+            }
+            return style;
+        },
+        _createControl: function () {
             var nVertices = 1;
             var self = this;
             var handlerClass, validateEventGeometry;
             if (this.options.type === 'area') {
                 handlerClass = OpenLayers.Handler.Polygon;
-                validateEventGeometry = function(event) {
+                validateEventGeometry = function (event) {
                     // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
                     // small) area for them. Ignore these cases.
                     return event.geometry.components[0].components.length >= 4;
                 }
             } else {
                 handlerClass = OpenLayers.Handler.Path;
-                validateEventGeometry = function(event) {
+                validateEventGeometry = function (event) {
                     return event.geometry.components.length >= 2;
                 }
             }
@@ -101,10 +141,10 @@
 
             control.events.on({
                 'scope': this,
-                'measure': function(event) {
+                'measure': function (event) {
                     self._handleFinal(event);
                 },
-                'measurepartial': function(event) {
+                'measurepartial': function (event) {
                     if (!validateEventGeometry(event)) {
                         return;
                     }
@@ -123,40 +163,35 @@
 
             return control;
         },
-        _setup: function(mbMap) {
+        _setup: function (mbMap) {
             var self = this;
             this.mapModel = mbMap.getModel();
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (Mapbender.mapEngine.code === 'ol2') {
                 this.control = this._createControl();
             } else {
-                /** @var {ol.layer.Vector} nativeLayer */
-                var nativeLayer = this.layer.getNativeLayer();
-                var defaultStyleFn = nativeLayer.getStyleFunction() || ol.style.Style.defaultFunction;
-                var customStyleFn = function(feature, resolution) {
-                    var styles = defaultStyleFn(feature, resolution);
-                    return self._extendStyles(styles, feature);
-                };
-                nativeLayer.setStyle(customStyleFn);
                 this.control = this._createControl4();
             }
             this.container = $('<div/>');
+            this.help = $('<p/>').text(Mapbender.trans(this.options.help));
             this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
             this.segments = $('<ul/>');
+            this.segments.append()
+            if (this.options.help) this.container.append(this.help);
             this.container.append(this.total);
             this.container.append(this.segments);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
-            
+
             this._trigger('ready');
         },
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback){
+        defaultAction: function (callback) {
             this.activate(callback);
         },
-        _toggleControl: function(state) {
+        _toggleControl: function (state) {
             if (Mapbender.mapEngine.code === 'ol2') {
                 if (state) {
                     this.mapModel.olMap.addControl(this.control);
@@ -165,7 +200,7 @@
                         fontSize: 9,
                         labelAlign: 'cm',
                         labelXOffset: 10,
-                        label: function(feature) {
+                        label: function (feature) {
                             return feature.attributes['area'];
                         }
                     });
@@ -187,13 +222,13 @@
                 }
             }
         },
-        activate: function(callback){
+        activate: function (callback) {
             this.callback = callback ? callback : null;
             var self = this;
             this._toggleControl(true);
 
             this._reset();
-            if(!this.popup || !this.popup.$element){
+            if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
                     title: this.element.attr('data-title'),
                     modal: false,
@@ -212,14 +247,14 @@
                     ]
                 });
                 this.popup.$element.on('close', $.proxy(this.deactivate, this));
-            }else{
+            } else {
                 this.popup.open();
             }
         },
-        deactivate: function(){
+        deactivate: function () {
             this.container.detach();
             this._toggleControl(false);
-            if(this.popup && this.popup.$element){
+            if (this.popup && this.popup.$element) {
                 this.popup.destroy();
             }
             this.popup = null;
@@ -228,16 +263,16 @@
                 this.callback = null;
             }
         },
-        _mapSrsChanged: function(event, srs){
+        _mapSrsChanged: function (event, srs) {
             if (this.control) {
                 this._reset();
             }
         },
-        _reset: function() {
+        _reset: function () {
             $('>li', this.segments).remove();
             this.total.text('');
         },
-        _handleModify: function(event){
+        _handleModify: function (event) {
             var measure = this._getMeasureFromEvent(event);
             this._updateTotal(measure, event);
             // Reveal the previously hidden segment measure if it's now different from total
@@ -246,7 +281,7 @@
                 $previous.show();
             }
         },
-        _handlePartial: function(event) {
+        _handlePartial: function (event) {
             if (this.options.type === 'area') {
                 this._handleFinal(event);
                 return;
@@ -262,18 +297,18 @@
             measureElement.hide();
             this.segments.prepend(measureElement);
         },
-        _handleFinal: function(event){
+        _handleFinal: function (event) {
             var measure = this._getMeasureFromEvent(event);
             this._updateTotal(measure, event);
         },
-        _updateTotal: function(measure, event) {
-            this.total.text(measure || '');
+        _updateTotal: function (measure, event) {
+            this.total.text(measure);
             if (measure && this.options.type === 'area') {
                 var feature = event.feature || event.object.handler.polygon;
                 this._updateAreaLabel(feature, measure || '');
             }
         },
-        _getMeasureFromEvent: function(event) {
+        _getMeasureFromEvent: function (event) {
             var measure;
             if (!event.measure && event.feature) {
                 measure = this._calculateFeatureSizeOl4(event.feature, this.options.type);
@@ -281,11 +316,11 @@
                 measure = event.measure;
             }
             if (!measure) {
-                return null;
+                return '';
             }
             return this._formatMeasure(measure);
         },
-        _calculateFeatureSizeOl4: function(feature, type) {
+        _calculateFeatureSizeOl4: function (feature, type) {
             /** @type {ol.geom.Geometry} */
             var geometry = feature.getGeometry();
             var calcOptions = {
@@ -298,7 +333,7 @@
                     return sphereNamespace.getLength(geometry, calcOptions);
                 default:
                     console.warn("Unsupported geometry type in measure calculation", type, feature);
-                    // fall through to area
+                // fall through to area
                 case 'area':
                     return sphereNamespace.getArea(geometry, calcOptions);
             }
@@ -308,32 +343,16 @@
          * @param {String} text
          * @private
          */
-        _updateAreaLabel: function(feature, text) {
+        _updateAreaLabel: function (feature, text) {
             if (Mapbender.mapEngine.code === 'ol2') {
                 feature.attributes['area'] = text;
                 feature.layer.redraw();
-            } else {
-                feature.set('area', text);
             }
         },
-        /**
-         * Openlayers 4 only
-         * @param {Array<ol.style.Style>} styles
-         * @param {ol.Feature} feature
-         * @private
-         */
-        _extendStyles: function(styles, feature) {
-            var label = feature.get('area') || '';
-            return styles.map(function(original) {
-                var style = original.clone();
-                if (!style.getText()) {
-                    style.setText(new ol.style.Text());
-                }
-                style.getText().setText(label);
-                return style;
-            });
-        },
-        _formatMeasure: function(value) {
+
+        _formatMeasure: function (value) {
+            if (!value || value < 0.00001) return '';
+
             var scale = 1;
             var unit;
             if (this.options.type === 'area') {
@@ -351,7 +370,20 @@
                     unit = 'm';
                 }
             }
-            return [(value / scale).toFixed(this.options.precision), unit].join('');
+            let precision = parseInt(this.options.precision);
+
+            if (this.options.precision === 'auto') {
+                precision = 3;
+                if (value / scale > 10) precision = 2;
+                if (value / scale > 100) precision = 1;
+                if (value / scale > 1000) precision = 0;
+            }
+
+            const localeString = (value / scale).toLocaleString(undefined, {
+                minimumFractionDigits: precision,
+                maximumFractionDigits: precision
+            });
+            return localeString + ' ' + unit;
         }
     });
 

@@ -164,6 +164,12 @@ mb:
         line: Linie
         area: Fläche
         measure: Messen
+      help: Doppelklicken zum Beenden
+      admin:
+        type: Geometrie
+        help: Hilfetext
+        help_help: Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers
+        stroke_width_while_drawing: Linienstärke während des Zeichnens
     printclient:
       label:
         template: Vorlage
@@ -381,6 +387,8 @@ mb:
           strokeColor: Strichfarbe
           opacity_pct: Deckkraft (%)
           stroke_width_px: Linienstärke (Pixel)
+          fontColor: Schriftfarbe
+          fontSize: Schriftgröße
       printclient:
         label:
           rotatable: Drehbar

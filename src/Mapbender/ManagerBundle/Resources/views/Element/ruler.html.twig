@@ -1,2 +1,7 @@
-    {{ form_row(form.title) }}
-    {{ form_rest(form.configuration) }}
+{{ form_row(form.title) }}
+{{ form_rest(form.configuration) }}
+<script type="text/javascript">
+    !(function($) {
+        $('#{{ form.vars.attr.id }} .-js-init-colorpicker').colorpicker({format: 'rgba'});
+    }(jQuery));
+</script>
