@@ -211,24 +211,6 @@ Object.assign(Mapbender.MapModelOl2.prototype, {
         }
     },
     /**
-     * @param {string} srscode
-     * @param {boolean} [strict] to throw errors (legacy default false)
-     * @return {OpenLayers.Projection}
-     */
-    getProj: function(srscode, strict) {
-        if (Proj4js.defs[srscode]) {
-            var proj = new OpenLayers.Projection(srscode);
-            if (!proj.proj.units) {
-                proj.proj.units = 'degrees';
-            }
-            return proj;
-        }
-        if (strict) {
-            throw new Error("Unsupported projection " + srscode.toString());
-        }
-        return null;
-    },
-    /**
      * Get gedesic units per meter at given point. UPMs are returned separately
      * for vertical and horizontal axes.
      *
