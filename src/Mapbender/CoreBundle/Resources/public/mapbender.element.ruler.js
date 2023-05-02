@@ -41,6 +41,9 @@
                     stroke: new ol.style.Stroke({
                         color: this.options.fontColor
                     }),
+                    fill: new ol.style.Fill({
+                        color: this.options.fontColor
+                    }),
                 }),
                 stroke: new ol.style.Stroke({
                     width: this.options.strokeWidthWhileDrawing,
