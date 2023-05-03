@@ -10,13 +10,6 @@ use Symfony\Component\Validator\Constraints;
 
 class ApplicationType extends AbstractType
 {
-    protected $forcedMapEngine;
-
-    public function __construct($forcedMapEngine)
-    {
-        $this->forcedMapEngine = $forcedMapEngine;
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

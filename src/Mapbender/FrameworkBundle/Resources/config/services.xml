@@ -5,7 +5,6 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mapbender.automatic_locale">true</parameter>
-        <parameter key="mapbender.force_engine">null</parameter>
         <parameter key="mapbender.application_template.fallback">null</parameter>
         <parameter key="mapbender.user_info_provider.class">Mapbender\FrameworkBundle\Component\UserInfoProvider</parameter>
     </parameters>
@@ -90,7 +89,6 @@
                  entity="Mapbender\CoreBundle\Entity\Application"
                  event="postLoad" method="postLoad"
                  lazy="true" />
-            <argument>%mapbender.force_engine%</argument>
         </service>
     </services>
 </container>
