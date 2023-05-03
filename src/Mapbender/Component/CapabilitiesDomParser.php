@@ -45,8 +45,7 @@ class CapabilitiesDomParser
         $matches = static::getChildNodesByTagName($parent, $localName);
         return count($matches) && ($matches[0] instanceof \DOMElement)
             ? $matches[0]
-            : null
-        ;
+            : null;
     }
 
     /**
@@ -65,7 +64,8 @@ class CapabilitiesDomParser
     public static function getFirstChildNodeText(\DOMElement $parent, $localName, $default = null)
     {
         $node = static::getFirstChildNode($parent, $localName);
-        return $node ? ($node->textContent ?: $default) : $default;
+        if (!$node || $node->textContent === '' || $node->textContent === null) return $default;
+        return $node->textContent;
     }
 
     /**
