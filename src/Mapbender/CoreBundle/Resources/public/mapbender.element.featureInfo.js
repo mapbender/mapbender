@@ -366,6 +366,10 @@
             $(document).on('mbmapclick', function (event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
+
+            $(document).on('mbmapsourcechanged', function(event, data) {
+                this._removeFeaturesBySourceId(data.source.id);
+            }.bind(this));
         },
         _createLayerStyle: function () {
             var settingsDefault = {

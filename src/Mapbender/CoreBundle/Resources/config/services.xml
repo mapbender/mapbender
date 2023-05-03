@@ -107,6 +107,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.paint" class="Mapbender\CoreBundle\Element\Type\PaintType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
