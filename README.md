@@ -1,5 +1,8 @@
 # Mapbender module
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5887014.svg)](https://doi.org/10.5281/zenodo.5887014)
+![Packagist License](https://img.shields.io/packagist/l/mapbender/mapbender)
+
 This is the Mapbender module, the main-component of the [Mapbender application](https://mapbender.org).
 
 This module works like a library and can not run for itself. It has to be integrated in the [Mapbender-Starter](https://github.com/mapbender/mapbender-starter), which is the starting-environment for building Mapbender. The module is loaded via Composer in the [composer.json of Mapbender-Starter](https://github.com/mapbender/mapbender-starter/blob/HEAD/application/composer.json).

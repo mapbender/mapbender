@@ -1,4 +1,4 @@
-## v3.3.4-RC1
+## v3.3.4
 Manual changes required during upgrade:
 * In `app/config/security.yml` add the following line at `security.firewalls.secured_area.form_login`: 
 ```yml
