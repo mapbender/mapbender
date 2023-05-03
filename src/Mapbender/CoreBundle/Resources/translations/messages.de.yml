@@ -170,7 +170,7 @@ mb:
         help: Hilfetext
         help_help: Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers
         stroke_width_while_drawing: Linienstärke während des Zeichnens
-        only_for_area: nur relevant, wenn <i>Fläche</i> als Geomtrie ausgewählt ist
+        only_for_area: nur relevant, wenn <i>Fläche</i> als Geometrie ausgewählt ist
     printclient:
       label:
         template: Vorlage
