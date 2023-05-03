@@ -65,14 +65,12 @@
                       title="{{ 'mb.manager.admin.element.show_hide' | trans }}">
                     <i class="fa fas {{ element.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </span>
-                  {% if allow_screentypes %}
                   <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}"
                     data-token="{{ csrf_token('element_edit') }}">
                     {%- set _element_screentype = element.getScreenType() -%}
                     <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
                     <i data-screentype="desktop" class="screentype-icon fa fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
                   </span>
-                  {% endif %}
                   <span class="editElement hover-highlight-effect clickable"
                         title="{{ 'mb.actions.edit' | trans }}"
                         data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
