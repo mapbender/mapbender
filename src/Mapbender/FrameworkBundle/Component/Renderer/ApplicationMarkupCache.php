@@ -78,7 +78,6 @@ class ApplicationMarkupCache
         $parts = array(
             $application->getSlug(),
             $this->localeProvider->getLocale(),
-            $application->getMapEngineCode(),
         );
 
         // Output also depends on user (granted elements may vary)
