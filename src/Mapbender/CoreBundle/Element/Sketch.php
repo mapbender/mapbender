@@ -97,7 +97,7 @@ class Sketch extends AbstractElementService
     {
         return array_replace($element->getConfiguration(), array(
             'title' => $element->getTitle(),
-            'radiusEditing' => $this->getRadiusEditing($element),
+            'radiusEditing' => true,
         ));
     }
 
@@ -106,21 +106,11 @@ class Sketch extends AbstractElementService
         $view = new TemplateView('MapbenderCoreBundle:Element:sketch.html.twig');
         $view->attributes['class'] = 'mb-element-sketch';
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
-        $view->variables['radiusEditing'] = $this->getRadiusEditing($element);
+        $view->variables['radiusEditing'] = true;
         $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
         $view->variables['colors'] = $element->getConfiguration()['colors'];
         $view->variables['allow_custom_color'] = $element->getConfiguration()['allow_custom_color'];
         return $view;
-    }
-
-    /**
-     * @param Element $element
-     * @return bool
-     */
-    protected function getRadiusEditing(Element $element)
-    {
-        $config = $element->getConfiguration() + $this->getDefaultConfiguration();
-        return $element->getApplication()->getMapEngineCode() !== 'ol2' && \in_array('circle', $config['geometrytypes']);
     }
 
     public static function updateEntityConfig(Element $entity)

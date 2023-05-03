@@ -35,11 +35,11 @@
     </div>
 
     <div class="row">
-        <div class="form-group{{- (radiusEditing and dialogMode) ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
+        <div class="form-group{{- dialogMode ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
             <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>
             <input name="label-text" type="text" class="form-control" disabled="disabled">
         </div>
-        {%- if radiusEditing and dialogMode -%}
+        {%- if dialogMode -%}
         <div class="form-group col-5 col-xs-5">
             <label for="label-text" class="labelInput">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
             <div class="input-group">
@@ -70,7 +70,6 @@
                 <label for="label-text" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
                 <div class="col-8 col-xs-8"><input type="text" name="label-text" class="form-control"></div>
             </div>
-            {%- if radiusEditing -%}
             <div class="form-group" data-toolnames="circle">
                 <label for="radius" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
                 <div class="col-8 col-xs-8">
@@ -79,7 +78,6 @@
                     </div>
                 </div>
             </div>
-            {%- endif -%}
         </div>
         <div class="text-nowrap text-right">
             <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
