@@ -58,7 +58,10 @@ class RulerAdminType extends AbstractType
                 'label_attr' => ['style' => 'display: none'],
                 'inherit_data' => true,
                 'required' => false,
-                'hasFont' => true
+                'hasFont' => true,
+                'fontColorHelp' => 'mb.core.ruler.admin.only_for_area',
+                'fontSizeHelp' => 'mb.core.ruler.admin.only_for_area',
+                'fillColorHelp' => 'mb.core.ruler.admin.only_for_area',
             ))
         ;;
     }
