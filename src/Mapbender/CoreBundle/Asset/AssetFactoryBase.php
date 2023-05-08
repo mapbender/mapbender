@@ -60,13 +60,34 @@ class AssetFactoryBase
         return implode("\n", $parts);
     }
 
+    public function createMap($inputs): string
+    {
+        $bundler = new SourceMapBundler();
+        $uniqueRefs = array();
+        $migratedRefMapping = $this->getMigratedReferencesMapping();
+
+        foreach ($inputs as $input) {
+            if ($input instanceof StringAsset) {
+                $input->load();
+                $bundler->skip($input->getContent());
+            } else {
+                $files = $this->loadFileReference($input, $migratedRefMapping, $uniqueRefs, true);
+                foreach($files as $file) {
+                    $bundler->addScript($file);
+                }
+            }
+        }
+        return $bundler->build();
+    }
+
     /**
      * @param string|FileAsset $input
      * @param array $migratedRefMapping
      * @param string[] $uniqueRefs
-     * @return string
+     * @param bool $namesOnly
+     * @return string|array the contents of the provides files or an array of their paths in the filesystem if $namesOnly is set to true
      */
-    protected function loadFileReference($input, $migratedRefMapping, &$uniqueRefs)
+    protected function loadFileReference($input, $migratedRefMapping, &$uniqueRefs, bool $namesOnly = false)
     {
         $parts = array();
         $normalizedReferenceBeforeRemap = $this->normalizeReference($input);
@@ -81,13 +102,13 @@ class AssetFactoryBase
             if (empty($uniqueRefs[$normalizedReference])) {
                 $realAssetPath = $this->locateAssetFile($normalizedReference);
                 if ($realAssetPath) {
-                    $parts[] = file_get_contents($realAssetPath);
+                    $parts[] = $namesOnly ? $realAssetPath : file_get_contents($realAssetPath);
                 }
                 $uniqueRefs[$normalizedReference] = true;
             }
         }
         $uniqueRefs[$normalizedReferenceBeforeRemap] = true;
-        return implode("\n", $parts);
+        return $namesOnly ? $parts : implode("\n", $parts);
     }
 
     /**

@@ -6,25 +6,15 @@ class SourceMapBundler
 {
     private array $files = [];
     private array $mappings = [];
-    private string $outFilename;
 
-    /** @var resource */
-    private $outFile;
     private int $offset = 0;
-
-    public function __construct(string $sourceMapFilename)
-    {
-        $this->outFile = fopen($sourceMapFilename, 'w');
-        $this->outFilename = $sourceMapFilename;
-    }
 
     public function addScript(string $path): self
     {
         $index = count($this->files);
-        $this->files[] = $path;
+        $this->files[] = "file://" . $path;
 
         $data = file_get_contents($path);
-        fwrite($this->outFile, $data . "\n");
 
         $lines = explode("\n", $data);
         for ($i = 0; $i < count($lines); ++$i) {
@@ -39,6 +29,13 @@ class SourceMapBundler
         return $this;
     }
 
+    public function skip(string $text): self
+    {
+        $lines = explode("\n", $text);
+        $this->offset += count($lines);
+        return $this;
+    }
+
     /**
      * creates the source map
      * Write the output to a file and link to it in the generated source file:
@@ -46,14 +43,8 @@ class SourceMapBundler
      */
     public function build(): string
     {
-        return $this->buildMap($this->outFilename);
-    }
-
-    private function buildMap(string $mapFile): string
-    {
         return json_encode(array(
             "version" => 3,
-            "file" => $mapFile,
             "sourceRoot" => "",
             "sources" => $this->files,
             "names" => array(),

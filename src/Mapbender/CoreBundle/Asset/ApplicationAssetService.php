@@ -65,15 +65,10 @@ class ApplicationAssetService
     /**
      * @return string[]
      */
-    public function getValidAssetTypes()
+    public function getValidAssetTypes(bool $sourceMap = false)
     {
-        return array(
-            'js',
-            'css',
-            'trans',
-            'map.js',
-            'map.css'
-        );
+        if ($sourceMap) return ['js', 'css'];
+        return ['js', 'css', 'trans'];
     }
 
     /**
@@ -81,13 +76,14 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getAssetContent(Application $application, $type, ?string $sourceMapRoute)
+    public function getAssetContent(Application $application, string $type, bool $sourceMap, ?string $sourceMapRoute)
     {
-        if (!in_array($type, $this->getValidAssetTypes(), true)) {
+        if (!in_array($type, $this->getValidAssetTypes($sourceMap), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent(null, $refs, $type, $sourceMapRoute);
+        $assetType = $sourceMap ? 'map.' . $type : $type;
+        return $this->compileAssetContent(null, $refs, $assetType, $sourceMapRoute);
     }
 
     /**
@@ -97,7 +93,7 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, $type, ?string $sourceMapRoute)
+    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, string $type, bool $sourceMap, ?string $sourceMapRoute)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -108,7 +104,8 @@ class ApplicationAssetService
             $source->getLateAssets($type),
         );
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
-        return $this->compileAssetContent(null, $references, $type, $sourceMapRoute);
+        $assetType = $sourceMap ? 'map.' . $type : $type;
+        return $this->compileAssetContent(null, $references, $assetType, $sourceMapRoute);
     }
 
     /**
@@ -169,11 +166,11 @@ class ApplicationAssetService
             case 'css':
                 return $this->cssCompiler->compile($refs);
             case 'map.css':
-                return $this->debug ? $this->cssCompiler->compileMap($refs) : "";
+                return $this->debug ? $this->cssCompiler->createMap($refs) : "";
             case 'js':
                 return $this->jsCompiler->compile($refs, $configSlug, $this->debug, $sourceMapRoute);
             case 'map.js':
-                return $this->debug ? $this->jsCompiler->compileMap($refs, $configSlug) : "";
+                return $this->debug ? $this->jsCompiler->createMap($refs) : "";
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
                 return $this->translationCompiler->compile($refs);

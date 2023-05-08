@@ -44,13 +44,16 @@ class AssetsController extends YamlApplicationAwareController
     /**
      * @Route("/application/{slug}/assets/{type}",
      *     name="mapbender_core_application_assets",
-     *     requirements={"type" = "js|css|trans|map.js|map.css"})
+     *     requirements={"type" = "js|css|trans"})
+     * @Route("/application/{slug}/sourcemap/{type}",
+     *     name="mapbender_core_application_sourcemap",
+     *     requirements={"type" = "js|css|trans"})
      * @param Request $request
      * @param string $slug of Application
      * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
-    public function assetsAction(Request $request, $slug, $type)
+    public function assetsAction(Request $request, $slug, $type, $_route)
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
@@ -78,12 +81,15 @@ class AssetsController extends YamlApplicationAwareController
             return $response;
         }
 
-        $sourceMapRoute = $this->getSourceMapRoute($type, $slug);
+        $sourceMap = $_route === 'mapbender_core_application_sourcemap';
+        $sourceMapRoute = $this->generateUrl('mapbender_core_application_sourcemap', [
+            'slug' => $slug, 'type' => $type
+        ]);
 
         if ($source instanceof Application) {
-            $content = $this->assetService->getAssetContent($source, $type, $sourceMapRoute);
+            $content = $this->assetService->getAssetContent($source, $type, $sourceMap,$sourceMapRoute);
         } else {
-            $content = $this->assetService->getBackendAssetContent($source, $type, $sourceMapRoute);
+            $content = $this->assetService->getBackendAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         }
 
         if (!$this->isDebug) {
@@ -148,20 +154,5 @@ class AssetsController extends YamlApplicationAwareController
                 // Uh-oh
                 return null;
         }
-    }
-
-    private function getSourceMapRoute(string $type, string $slug): ?string
-    {
-        if ($type === 'js') {
-            return $this->generateUrl('mapbender_core_application_assets',
-                ['slug' => $slug, 'type' => 'map.js']
-            );
-        }
-        if ($type === 'css') {
-            return $this->generateUrl('mapbender_core_application_assets',
-                ['slug' => $slug, 'type' => 'map.css']
-            );
-        }
-        return null;
     }
 }

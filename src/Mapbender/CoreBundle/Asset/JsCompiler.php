@@ -27,11 +27,6 @@ class JsCompiler extends AssetFactoryBase
         return $this->concatenateContents($inputs, $debug ? $sourceMapRoute : null);
     }
 
-    public function compileMap($inputs)
-    {
-        return $this->createMap($inputs);
-    }
-
     protected function getMigratedReferencesMapping()
     {
         return array(
