@@ -71,6 +71,8 @@ class ApplicationAssetService
             'js',
             'css',
             'trans',
+            'map.js',
+            'map.css'
         );
     }
 
@@ -79,13 +81,13 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getAssetContent(Application $application, $type)
+    public function getAssetContent(Application $application, $type, ?string $sourceMapRoute)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent(null, $refs, $type);
+        return $this->compileAssetContent(null, $refs, $type, $sourceMapRoute);
     }
 
     /**
@@ -95,7 +97,7 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, $type)
+    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, $type, ?string $sourceMapRoute)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -106,7 +108,7 @@ class ApplicationAssetService
             $source->getLateAssets($type),
         );
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
-        return $this->compileAssetContent(null, $references, $type);
+        return $this->compileAssetContent(null, $references, $type, $sourceMapRoute);
     }
 
     /**
@@ -157,17 +159,21 @@ class ApplicationAssetService
 
     /**
      * @param string $configSlug
-     * @param string[] $refs
+     * @param string[]|StringAsset[] $refs
      * @param string $type
      * @return string
      */
-    protected function compileAssetContent($configSlug, $refs, $type)
+    protected function compileAssetContent($configSlug, $refs, $type, ?string $sourceMapRoute)
     {
         switch ($type) {
             case 'css':
-                return $this->cssCompiler->compile($refs, $this->debug);
+                return $this->cssCompiler->compile($refs);
+            case 'map.css':
+                return $this->debug ? $this->cssCompiler->compileMap($refs) : "";
             case 'js':
-                return $this->jsCompiler->compile($refs, $configSlug, $this->debug);
+                return $this->jsCompiler->compile($refs, $configSlug, $this->debug, $sourceMapRoute);
+            case 'map.js':
+                return $this->debug ? $this->jsCompiler->compileMap($refs, $configSlug) : "";
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
                 return $this->translationCompiler->compile($refs);

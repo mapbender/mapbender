@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
+use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
 use Symfony\Component\Config\FileLocatorInterface;
 
@@ -35,11 +36,11 @@ class AssetFactoryBase
     /**
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
-     * @param (FileAsset|StringAsset)[] $inputs
-     * @param bool $debug to enable file input markers
+     * @param (FileAsset|StringAsset|string)[] $inputs
+     * @param ?string $sourceMapRoute
      * @return string
      */
-    protected function concatenateContents($inputs, $debug)
+    protected function concatenateContents($inputs, $sourceMapRoute)
     {
         $parts = array();
         $uniqueRefs = array();
@@ -48,57 +49,41 @@ class AssetFactoryBase
         foreach ($inputs as $input) {
             if ($input instanceof StringAsset) {
                 $input->load();
-                if ($debug) {
-                    $parts[] = "/** !!! Emitting StringAsset content */";
-                }
                 $parts[] = $input->getContent();
             } else {
-                $parts[] = $this->loadFileReference($input, $debug, $migratedRefMapping, $uniqueRefs);
+                $parts[] = $this->loadFileReference($input, $migratedRefMapping, $uniqueRefs);
             }
+        }
+        if ($sourceMapRoute !== null) {
+            $parts[] = "\n//# sourceMappingURL=" . $sourceMapRoute;
         }
         return implode("\n", $parts);
     }
 
     /**
-     * @param string $input
-     * @param bool $debug
+     * @param string|FileAsset $input
      * @param array $migratedRefMapping
      * @param string[] $uniqueRefs
      * @return string
      */
-    protected function loadFileReference($input, $debug, $migratedRefMapping, &$uniqueRefs)
+    protected function loadFileReference($input, $migratedRefMapping, &$uniqueRefs)
     {
         $parts = array();
         $normalizedReferenceBeforeRemap = $this->normalizeReference($input);
 
         if (!empty($uniqueRefs[$normalizedReferenceBeforeRemap])) {
-            if ($debug) {
-                $parts[] = "/** !!! Skipping duplicate handling of {$normalizedReferenceBeforeRemap} (from original reference {$input}) */";
-            }
             $normalizedReferences = array();
         } else {
-            if ($debug) {
-                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $parts);
-            } else {
-                $dummy = array();   // Let's all thank PHP for its sane reference passing semantics
-                $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping, $dummy);
-            }
+            $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping);
         }
 
         foreach ($normalizedReferences as $normalizedReference) {
             if (empty($uniqueRefs[$normalizedReference])) {
                 $realAssetPath = $this->locateAssetFile($normalizedReference);
                 if ($realAssetPath) {
-                    if ($debug) {
-                        $parts[] = $this->getDebugHeader($realAssetPath, $input);
-                    }
                     $parts[] = file_get_contents($realAssetPath);
-                } elseif ($debug) {
-                    $parts[] = "/** !!! Ignoring reference to missing file {$normalizedReference} ((from original reference {$input}) */";
                 }
                 $uniqueRefs[$normalizedReference] = true;
-            } elseif ($debug) {
-                $parts[] = "/** !!! Skipping duplicate emission of {$normalizedReference} (from original reference {$input}) */";
             }
         }
         $uniqueRefs[$normalizedReferenceBeforeRemap] = true;
@@ -108,24 +93,18 @@ class AssetFactoryBase
     /**
      * @param string $normalizedReference
      * @param array $migratedRefMapping
-     * @param string[] &$debugOutput
      * @return string[]
      */
-    protected function rewriteReference($normalizedReference, $migratedRefMapping, &$debugOutput)
+    protected function rewriteReference($normalizedReference, $migratedRefMapping)
     {
         $refsOut = array();
         if (isset($migratedRefMapping[$normalizedReference])) {
             $replacements = (array)$migratedRefMapping[$normalizedReference];
-            if (!$replacements) {
-                $debugOutput[] = "/** !!! Emitting no content for {$normalizedReference} */";
-            } else {
-                $debugOutput[] = "/** !!! Replaced asset reference to {$normalizedReference} with " . implode(', ', $replacements) . " */";
-            }
             foreach ($replacements as $replacement) {
                 if ($replacement === $normalizedReference) {
                     $refsOut[] = $replacement;
                 } else {
-                    foreach ($this->rewriteReference($replacement, $migratedRefMapping, $debugOutput) as $refOut) {
+                    foreach ($this->rewriteReference($replacement, $migratedRefMapping) as $refOut) {
                         $refsOut[] = $refOut;
                     }
                 }
@@ -152,16 +131,6 @@ class AssetFactoryBase
             $nameMap[$publishedPath] = $bundleName;
         }
         return $nameMap;
-    }
-
-    protected function getDebugHeader($finalPath, $originalRef)
-    {
-        return "\n"
-            . "/** \n"
-            . "  * BEGIN NEW ASSET INPUT -- {$finalPath}\n"
-            . "  * (original reference: {$originalRef})\n"
-            . "  */\n"
-        ;
     }
 
     /**
