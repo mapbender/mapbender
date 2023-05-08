@@ -9,6 +9,7 @@
         "ext-dom": "*",
         "ext-gd": "*",
         "ext-curl": "*",
+        "ext-json": "*",
         "symfony/symfony": "^4.3",
         "symfony/security-acl": "~2.8 || ~3.0",
         "symfony/acl-bundle": "^1 || ^2",
