@@ -1,4 +1,5 @@
 ## Upcoming Bugfix-Release
+* [SearchRouter] Fix highlighting was reset after hovering over another item ([PR#1469](https://github.com/mapbender/mapbender/pull/1469))
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 
 

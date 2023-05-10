@@ -372,7 +372,7 @@
                 })
                 .on('mouseleave', 'tbody tr', function() {
                     var feature = $(this).data('feature');
-                    var styleName = feature === this.currentFeature ? 'select' : 'default';
+                    var styleName = feature === self.currentFeature ? 'select' : 'default';
                     self._highlightFeature(feature, styleName);
                 })
             ;
