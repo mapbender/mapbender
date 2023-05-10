@@ -4,6 +4,9 @@
 namespace Mapbender\CoreBundle\Asset;
 
 
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\StringAsset;
+
 /**
  * Locates and merges JavaScript assets for applications.
  * Default implementation for service mapbender.asset_compiler.js
@@ -19,9 +22,9 @@ class JsCompiler extends AssetFactoryBase
      * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compile($inputs, $configSlug, $debug)
+    public function compile($inputs, $configSlug, bool $debug, ?string $sourceMapRoute)
     {
-        return $this->concatenateContents($inputs, $debug);
+        return $this->concatenateContents($inputs, $debug ? $sourceMapRoute : null);
     }
 
     protected function getMigratedReferencesMapping()

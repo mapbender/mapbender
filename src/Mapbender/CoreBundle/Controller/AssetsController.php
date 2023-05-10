@@ -26,12 +26,12 @@ class AssetsController extends YamlApplicationAwareController
     protected $cacheDir;
     protected $isDebug;
 
-    public function __construct(TranslatorInterface $translator,
-                                ApplicationYAMLMapper $yamlRepository,
+    public function __construct(TranslatorInterface     $translator,
+                                ApplicationYAMLMapper   $yamlRepository,
                                 ApplicationAssetService $assetService,
-                                $containerTimestamp,
-                                $cacheDir,
-                                $isDebug)
+                                                        $containerTimestamp,
+                                                        $cacheDir,
+                                                        $isDebug)
     {
         $this->translator = $translator;
         parent::__construct($yamlRepository);
@@ -45,17 +45,20 @@ class AssetsController extends YamlApplicationAwareController
      * @Route("/application/{slug}/assets/{type}",
      *     name="mapbender_core_application_assets",
      *     requirements={"type" = "js|css|trans"})
+     * @Route("/application/{slug}/sourcemap/{type}",
+     *     name="mapbender_core_application_sourcemap",
+     *     requirements={"type" = "js|css|trans"})
      * @param Request $request
      * @param string $slug of Application
      * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
-    public function assetsAction(Request $request, $slug, $type)
+    public function assetsAction(Request $request, $slug, $type, $_route)
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
             // @todo: TBD more reasonable criteria of backend / login asset cachability
-            $appModificationTs =$this->containerTimestamp;
+            $appModificationTs = $this->containerTimestamp;
         } else {
             $source = $this->getApplicationEntity($slug);
             if ($type === 'css' || $type === 'js') {
@@ -77,10 +80,16 @@ class AssetsController extends YamlApplicationAwareController
             $response->isNotModified($request);
             return $response;
         }
+
+        $sourceMap = $_route === 'mapbender_core_application_sourcemap';
+        $sourceMapRoute = $this->generateUrl('mapbender_core_application_sourcemap', [
+            'slug' => $slug, 'type' => $type
+        ]);
+
         if ($source instanceof Application) {
-            $content = $this->assetService->getAssetContent($source, $type);
+            $content = $this->assetService->getAssetContent($source, $type, $sourceMap,$sourceMapRoute);
         } else {
-            $content = $this->assetService->getBackendAssetContent($source, $type);
+            $content = $this->assetService->getBackendAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         }
 
         if (!$this->isDebug) {
@@ -108,7 +117,7 @@ class AssetsController extends YamlApplicationAwareController
             // Output depends on base url of incoming request => bake into cache key
             // 16 bits of entropy should be enough to distinguish '', 'app.php' and 'app_dev.php'
             $baseUrlHash = substr(md5($request->getBaseUrl()), 0, 4);
-            $path .=  '.' . $baseUrlHash;
+            $path .= '.' . $baseUrlHash;
         }
         return $path;
     }
