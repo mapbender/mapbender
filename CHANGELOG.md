@@ -1,4 +1,5 @@
 ## Upcoming Bugfix-Release
+* [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
 * [SearchRouter] Fix highlighting was reset after hovering over another item ([PR#1469](https://github.com/mapbender/mapbender/pull/1469))
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 

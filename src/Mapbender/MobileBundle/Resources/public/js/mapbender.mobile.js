@@ -14,7 +14,7 @@ $(function(){
         var button = $button.data('mapbenderMbButton');
         var targetId = ((button || {}).options || {}).target;
         var target = targetId && document.getElementById(targetId);
-        if (!target || !$(target).closest('.mobilePane').length) {
+        if (!target || !$(target).closest('.mobilePane').length || ($(target).data('open-mobilepane') === false)) {
             return;
         }
         e.stopImmediatePropagation();

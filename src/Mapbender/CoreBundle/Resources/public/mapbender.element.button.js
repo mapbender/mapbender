@@ -278,7 +278,8 @@
                 ;
                 if (state) {
                     var isDialog = this.targetWidget.element.closest('.contentPane').length
-                        || this.targetWidget.element.closest('.popup').length;
+                        || this.targetWidget.element.closest('.popup').length
+                        || this.targetWidget.element.closest('.mobilePane').length;
                     state = state && isDialog;
                 }
                 this._setActive(!!state);
