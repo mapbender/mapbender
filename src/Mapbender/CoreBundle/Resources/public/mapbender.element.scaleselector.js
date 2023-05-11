@@ -1,9 +1,8 @@
-(function($) {
+(function ($) {
 
     $.widget("mapbender.mbScaleSelector", {
 
-        options: {
-        },
+        options: {},
 
         /**
          * Mapbender map widget
@@ -16,18 +15,18 @@
          *
          * @private
          */
-        _create: function() {
+        _create: function () {
             var self = this;
             this.$select = $("select", this.element);
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget('mbScaleSelector');
             });
         },
 
-        _setup: function() {
+        _setup: function () {
             var self = this;
             this.$select.change($.proxy(this._zoomToScale, this));
 
@@ -36,7 +35,7 @@
             // Do it again after initDropdown (which clears the value display if the current text is not also an option text)
             this._updateScale();
 
-            $(document).on('mbmapzoomchanged', function(e, data) {
+            $(document).on('mbmapzoomchanged', function (e, data) {
                 if (data.mbMap === self.mbMap) {
                     self._updateScale();
                 }
@@ -49,7 +48,7 @@
          * Zoom to scale event handler
          * @private
          */
-        _zoomToScale: function() {
+        _zoomToScale: function (e) {
             var scale = this.$select.val();
             var model = this.mbMap.getModel();
             var zoom = model.pickZoomForScale(scale);
@@ -61,21 +60,15 @@
          *
          * @private
          */
-        _updateScale: function() {
+        _updateScale: function () {
             var scale = this.mbMap.getModel().getCurrentScale(false);
             this.$select.val(scale);
-            if (!this.$select.val()) {
-                // unconfigured fractional scale
-                const $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
-                const scaleText = Math.round(scale).toLocaleString();
-                $displayArea.text(scaleText);
-            } else {
-                this.$select.trigger('change');
-            }
+            const $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
+            const scaleText = Math.round(scale).toLocaleString();
+            $displayArea.text(scaleText);
         },
 
         _destroy: $.noop
     });
 
 })(jQuery);
-
