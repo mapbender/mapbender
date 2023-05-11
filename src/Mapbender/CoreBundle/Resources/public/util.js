@@ -470,8 +470,12 @@ Mapbender.ElementUtil = {
      * @returns boolean
      */
     checkResponsiveVisibility: function(element) {
+        const $element = $(element);
+        // Only check for responsive visibility if the element has one of the hide classes
+        if (!$element.hasClass('hide-screentype-desktop') && !$element.hasClass('hide-screentype-mobile')) return true;
+
         // Use (non-cascaded!) applied CSS visibility rule
         // Mapbender responsive controls use display: none
-        return $(element).css('display') !== 'none';
+        return $element.css('display') !== 'none';
     }
 };
