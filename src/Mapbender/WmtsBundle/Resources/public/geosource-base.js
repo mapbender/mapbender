@@ -136,7 +136,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             compatibleLayer.options.treeOptions.allow.selected = true;
             fakeRootLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
             compatibleLayer.state.visibility = fakeRootLayer.options.treeOptions.selected;
-            var olLayer = this._initializeSingleCompatibleLayer(compatibleLayer, srsName);
+            var olLayer = this._layerFactory(compatibleLayer, srsName);
             return [olLayer];
         },
         updateEngine: function() {
@@ -150,25 +150,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 return;
             }
             engine.setLayerVisibility(olLayer, targetVisibility);
-        },
-        _getNativeLayerBaseOptions: function(layer, srsName) {
-            var matrixSet = layer.selectMatrixSet(srsName);
-            var self = this;
-
-            var baseOptions = {
-                isBaseLayer: false,
-                opacity: this.configuration.options.opacity,
-                name: layer.options.title,
-                url: layer.options.tileUrls,
-                serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
-                    return self._getMatrixResolution(tileMatrix, srsName);
-                })
-            };
-            var bounds = layer.getBounds(srsName, true);
-            if (bounds) {
-                baseOptions.tileFullExtent = bounds;
-            }
-            return baseOptions;
         },
         _getEnabledLayers: function() {
             return this.configuration.layers.filter(function(l) {

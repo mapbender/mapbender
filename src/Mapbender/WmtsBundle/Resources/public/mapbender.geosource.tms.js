@@ -7,28 +7,6 @@ window.Mapbender.TmsSource = (function() {
     Mapbender.Source.typeMap['tms'] = TmsSource;
     Object.assign(TmsSource.prototype, {
         constructor: TmsSource,
-        _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
-            switch (Mapbender.mapEngine.code) {
-                default:
-                    return this._layerFactory(compatibleLayer, srsName);
-                case 'ol2':
-                    return this._layerFactoryOl2(compatibleLayer, srsName);
-            }
-        },
-        _layerFactoryOl2: function(compatibleLayer, srsName) {
-            var matrixSet = compatibleLayer.selectMatrixSet(srsName);
-            var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
-            Object.assign(options, {
-                type: compatibleLayer.options.extension,
-                layername: compatibleLayer.options.identifier,
-                serviceVersion: this.configuration.version,
-                tileSize: new OpenLayers.Size(matrixSet.tileSize[0], matrixSet.tileSize[1])
-            });
-            if (matrixSet.origin && matrixSet.origin.length) {
-                options.tileOrigin = new OpenLayers.LonLat(matrixSet.origin[0], matrixSet.origin[1]);
-            }
-            return new OpenLayers.Layer.TMS(compatibleLayer.options.title, compatibleLayer.options.tileUrls, options);
-        },
         _layerFactory: function(layer, srsName) {
             var matrixSet = layer.selectMatrixSet(srsName);
             var self = this;
