@@ -2,7 +2,7 @@
 Bugfixes:
 * Zoom in application did not work when fixed zoom steps were active ([#1466](https://github.com/mapbender/mapbender/issues/1466), [PR#1472](https://github.com/mapbender/mapbender/pull/1472))
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
-* [SearchRouter] Fix sarch failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
+* [SearchRouter] Fix search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
 * [SearchRouter] Fix highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 
