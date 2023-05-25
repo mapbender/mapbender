@@ -14,9 +14,9 @@
         "symfony/security-acl": "~3.0",
         "symfony/acl-bundle": "^2",
         "twig/twig": "^3.6",
-        "doctrine/orm": "^2.10",
-        "doctrine/dbal": "^2.11 || ^3",
-        "doctrine/doctrine-bundle": "^1.12 || ^2",
+        "doctrine/orm": "^2.15",
+        "doctrine/dbal": "^3",
+        "doctrine/doctrine-bundle": "^2",
         "sensio/framework-extra-bundle": "^3 || ^4 || ^5 || ^6",
         "shuchkin/simplexlsxgen": "^1.3",
 
