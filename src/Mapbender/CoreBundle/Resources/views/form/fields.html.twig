@@ -73,7 +73,7 @@
 {%- endblock choice_widget -%}
 
 {% block choice_widget_expanded_sortable %}
-  {% spaceless %}
+  {% apply spaceless %}
   <div {{ block('widget_container_attributes') }}>
     {% for child in form %}
       <div class="sortableItem">
@@ -82,7 +82,7 @@
       </div>
     {% endfor %}
   </div>
-  {% endspaceless %}
+  {% endapply %}
 {% endblock choice_widget_expanded_sortable %}
 
 {%- block choice_widget_collapsed_selected_value -%}
@@ -197,8 +197,8 @@
       {# get index of item within parent for initial collapse state #}
       {% set index = -1 %}
       {% set break = false %}
-      {% for child in form.parent.children if not break %}
-          {% if not child.isRendered %}
+      {% for child in form.parent.children %}
+          {% if (not break) and (not child.isRendered) %}
               {% set index = loop.index %}
               {% set break = true %}
           {% endif %}
@@ -263,17 +263,17 @@
 {# Misc #}
 
 {% block form_rest %}
-  {% spaceless %}
+  {% apply spaceless %}
     {% for child in form %}
       {% if not child.rendered %}
         {{ form_row(child) }}
       {% endif %}
     {% endfor %}
-  {% endspaceless %}
+  {% endapply %}
 {% endblock form_rest %}
 
 {% block acl_widget %}
-  {% spaceless %}
+  {% apply spaceless %}
   <div class="ace-collection" {{ block('widget_container_attributes') }}>
     {%- if form.vars.allow_add -%}
     <div class="form-group text-right">
@@ -310,16 +310,16 @@
       <p id="permissionsDescription">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
     {% endif %}
   </div>
-  {% endspaceless %}
+  {% endapply %}
 {% endblock %}
 
 {% block tagbox_widget %}
-  {% spaceless %}
+  {% apply spaceless %}
     <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
       {{- form.vars.attr.class -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
-  {% endspaceless %}
+  {% endapply %}
 {% endblock tagbox_widget %}
 
 {% block ace_widget %}
@@ -332,10 +332,12 @@
           {{ form_row(form.sid) }}
       </td>
 
-      {%- for child in form if child != (form.sid) -%}
-        <td>
+      {%- for child in form -%}
+        {% if child != (form.sid) %}
+          <td>
             {{ form_widget(child) }}
         </td>
+        {% endif %}
       {%- endfor -%}
       <td class="iconColumn">
         <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
