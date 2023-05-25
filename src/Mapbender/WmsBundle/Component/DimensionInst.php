@@ -7,14 +7,21 @@ namespace Mapbender\WmsBundle\Component;
  */
 class DimensionInst extends Dimension
 {
-    const TYPE_SINGLE           = 'single';
-    const TYPE_INTERVAL         = 'interval';
-    const TYPE_MULTIPLE         = 'multiple';
+    const TYPE_SINGLE = 'single';
+    const TYPE_INTERVAL = 'interval';
+    const TYPE_MULTIPLE = 'multiple';
     const TYPE_MULTIPLEINTERVAL = 'multipleinterval';
 
     public $active;
     public $type;
     public $id;
+
+    public function __unserialize(array $array)
+    {
+        foreach (['active', 'type', 'id', 'name', 'units', 'unitSymbol', 'default', 'multipleValues', 'nearestValue', 'current', 'extent'] as $key) {
+            if (array_key_exists($key, $array)) $this->$key = $array[$key];
+        }
+    }
 
     public function getActive()
     {
@@ -63,7 +70,7 @@ class DimensionInst extends Dimension
     public static function getData($extent)
     {
         $array = is_string($extent) ? explode(",", $extent) : $extent;
-        $res   = array();
+        $res = array();
 
         if (!$extent) {
             return $res;
