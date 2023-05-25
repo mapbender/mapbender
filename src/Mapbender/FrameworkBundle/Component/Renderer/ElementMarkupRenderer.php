@@ -118,7 +118,8 @@ class ElementMarkupRenderer
                 throw $e;
             } else {
                 return "<!-- "
-                    . "element #{$element->getId()} failed to render with " . \htmlspecialchars($e->getMessage())
+                    . "element #{$element->getId()} failed to render"
+                    . ($e->getMessage() ? (" with " . \htmlspecialchars($e->getMessage())) : '')
                     . " -->"
                 ;
             }
@@ -219,7 +220,7 @@ class ElementMarkupRenderer
         if ($tagName) {
             $renderedAttributes = array();
             foreach ($attributes as $name => $value) {
-                $renderedAttributes[] = $name . '="' . \htmlspecialchars($value) . '"';
+                $renderedAttributes[] = $name . '=' . ($value ? ('"' . htmlspecialchars($value) . '"') : '""');
             }
             return
                 "<$tagName" . \rtrim(' ' . implode(' ', $renderedAttributes)) . '>'
