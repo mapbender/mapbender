@@ -7,6 +7,9 @@ namespace FOM\UserBundle\Controller;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -15,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AbstractEmailProcessController extends UserControllerBase
 {
-    /** @var \Swift_Mailer */
+    /** @var MailerInterface */
     protected $mailer;
     /** @var TranslatorInterface */
     protected $translator;
@@ -24,7 +27,7 @@ abstract class AbstractEmailProcessController extends UserControllerBase
     protected $emailFromName;
     protected $isDebug;
 
-    public function __construct(\Swift_Mailer $mailer,
+    public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
                                 $userEntityClass,
                                 $emailFromAddress,
@@ -73,15 +76,13 @@ abstract class AbstractEmailProcessController extends UserControllerBase
 
     protected function sendEmail($mailTo, $subject, $bodyText, $bodyHtml = null)
     {
-        $message = new \Swift_Message();
-        $message->setSubject($subject);
-        $message->setFrom(array(
-            $this->emailFromAddress => $this->emailFromName,
-        ));
-        $message->setTo($mailTo);
+        $message = new Email();
+        $message->subject($subject);
+        $message->from("$this->emailFromName <$this->emailFromAddress>");
+        $message->to($mailTo);
         $message->setBody($bodyText);
         if ($bodyHtml) {
-            $message->addPart($bodyHtml, 'text/html');
+            $message->attachPart(new DataPart($bodyHtml, null, 'text/html'));
         }
         $this->mailer->send($message);
     }

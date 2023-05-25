@@ -5,6 +5,7 @@ use FOM\UserBundle\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -41,7 +42,7 @@ class PasswordController extends AbstractEmailProcessController
     protected $enableReset;
     protected $maxTokenAge;
 
-    public function __construct(\Swift_Mailer $mailer,
+    public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
                                 LoggerInterface $logger,
                                 $userEntityClass,

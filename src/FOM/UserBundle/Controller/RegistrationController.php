@@ -7,6 +7,7 @@ use FOM\UserBundle\Entity\Group;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,7 +27,7 @@ class RegistrationController extends AbstractEmailProcessController
     protected $maxTokenAge;
     protected $groupTitles;
 
-    public function __construct(\Swift_Mailer $mailer,
+    public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
                                 UserHelperService $userHelper,
                                 $userEntityClass,
