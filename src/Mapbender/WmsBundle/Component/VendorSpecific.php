@@ -15,6 +15,13 @@ class VendorSpecific extends CustomParameter
 
     public $vstype;
 
+    public function __unserialize(array $array)
+    {
+        if (array_key_exists('vstype', $array)) $this->vstype = $array['vstype'];
+        parent::__unserialize($array);
+    }
+
+
     /**
      * @return string|null
      */

@@ -10,6 +10,13 @@ class CustomParameter
     public $default;
     public $hidden = false;
 
+    public function __unserialize(array $array)
+    {
+        foreach (['name', 'default', 'hidden'] as $key) {
+            if (array_key_exists($key, $array)) $this->$key = $array[$key];
+        }
+    }
+
     /**
      * Set name
      *
