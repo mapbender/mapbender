@@ -64,7 +64,7 @@ class SQLSearchEngine
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
-                if (!\strlen($properties[$otherProp] ?? null)) {
+                if (strlen($properties[$otherProp] ?? null)) {
                     $qb->andWhere($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
                     $logger->warn('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
