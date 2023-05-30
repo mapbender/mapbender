@@ -1,5 +1,5 @@
 {% if (users|length > 0) or (groups|length > 0) %}
-  {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroupsAndUsers'} %}
+  {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroupsAndUsers'} %}
 
   <table id="listFilterGroupsAndUsers" class="table table-outlined">
     <thead>

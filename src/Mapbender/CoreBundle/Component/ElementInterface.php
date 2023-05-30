@@ -79,7 +79,7 @@ interface ElementInterface extends IAssetDependent, EditableInterface
      *
      * The 'trans' sub-array should contain exclusively twig-style asset references (with ':' separators)
      *      to json.twig files. E.g.
-     *     'MapbenderPrintBundle:Element:imageexport.json.twig'
+     *     '@MapbenderPrint/Element/imageexport.json.twig'
      *
      * @return string[][] grouped asset references
      */

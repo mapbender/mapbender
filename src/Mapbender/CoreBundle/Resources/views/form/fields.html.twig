@@ -287,7 +287,7 @@
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
-            {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterPermission'} %}
+            {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterPermission'} %}
           </th>
           {% for child in form.vars.prototype %}
             {% if child.vars.attr.class is defined %}

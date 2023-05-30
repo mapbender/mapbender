@@ -1,6 +1,6 @@
-{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{% extends "@MapbenderManager/layouts/tabbed_form.html.twig" %}
 {%- set title = title | trans -%}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block js %}
   {{parent()}}
@@ -40,7 +40,7 @@
     {%- if form.groups is defined -%}
     <div{{ tab_macros.tab_content_attributes('Groups') }}>{#- #containerGroups -#}
         {%- if form.groups|length -%}
-            {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
+            {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroups'} %}
             <table id="listFilterGroups" class="table">
               <thead>
                 <tr class="doNotFilter">

@@ -10,7 +10,7 @@ abstract class ButtonLike extends AbstractElementService
 {
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:button.html.twig';
+        return '@MapbenderManager/Element/button.html.twig';
     }
 
     public static function getDefaultConfiguration()

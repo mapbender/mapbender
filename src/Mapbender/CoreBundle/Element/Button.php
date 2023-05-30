@@ -67,6 +67,6 @@ class Button extends BaseButton
 
     public function getFrontendTemplatePath($suffix = '.html.twig')
     {
-        return "MapbenderCoreBundle:Element:button{$suffix}";
+        return "@MapbenderCore/Element/button{$suffix}";
     }
 }

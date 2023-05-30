@@ -39,7 +39,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         return array(
             "tooltip" => "",
             'dimensionsets' => array()
-            
+
         );
     }
 
@@ -80,7 +80,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderWmsBundle:ElementAdmin:dimensionshandler.html.twig';
+        return '@MapbenderWms/ElementAdmin/dimensionshandler.html.twig';
     }
 
     public function getView(Element $element)
@@ -91,10 +91,10 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         }
 
         if (preg_match('#(toolbar|footer)#', $element->getRegion())) {
-            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.toolbar.html.twig');
+            $view = new TemplateView('@MapbenderWms/Element/dimensionshandler.toolbar.html.twig');
             $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
         } else {
-            $view = new TemplateView('MapbenderWmsBundle:Element:dimensionshandler.html.twig');
+            $view = new TemplateView('@MapbenderWms/Element/dimensionshandler.html.twig');
         }
         $view->attributes['class'] = 'mb-element-dimensionshandler';
         $view->variables['dimensionsets'] = $dimensionsets;

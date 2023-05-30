@@ -66,7 +66,7 @@ class ViewManager extends AbstractElementService
 
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:view_manager.html.twig';
+        return '@MapbenderCore/ElementAdmin/view_manager.html.twig';
     }
 
     public static function getDefaultConfiguration()
@@ -91,7 +91,7 @@ class ViewManager extends AbstractElementService
             }
         }
 
-        $view = new TemplateView('MapbenderCoreBundle:Element:view_manager.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/view_manager.html.twig');
         $view->attributes['class'] = 'mb-element-viewmanager';
         $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();   // For popup
         $view->variables['grants'] = $this->httpHandler->getGrantsVariables($config);

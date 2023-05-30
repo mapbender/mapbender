@@ -44,7 +44,7 @@ class Fullscreen extends Template
             default:
                 return parent::getRegionTemplate($application, $regionName);
             case 'toolbar':
-                return 'MapbenderCoreBundle:Template:fullscreen/toolbar.html.twig';
+                return '@MapbenderCore/Template/fullscreen/toolbar.html.twig';
         }
     }
 
@@ -107,7 +107,7 @@ class Fullscreen extends Template
 
     public function getTwigTemplate()
     {
-        return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
+        return '@MapbenderCore/Template/fullscreen.html.twig';
     }
 
     public function getBodyClass(Application $application)

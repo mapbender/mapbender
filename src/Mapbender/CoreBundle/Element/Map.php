@@ -169,7 +169,7 @@ class Map extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:map.html.twig';
+        return '@MapbenderManager/Element/map.html.twig';
     }
 
     /**

@@ -1,6 +1,6 @@
-{% extends 'MapbenderManagerBundle::layouts/tabbed.html.twig' %}
+{% extends '@MapbenderManager/layouts/tabbed.html.twig' %}
 {%- set title = 'mb.manager.admin.sources' | trans -%}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block js %}
   {{parent()}}
@@ -30,20 +30,20 @@
                 </div>
                 {%- if items -%}
                     <div class="col-sm-7 col-xs-12 col-12">
-                    {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                    {% include "@MapbenderManager/fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
                     </div>
                 {%- endif -%}
             </div>
         </div>
 
-        {% embed 'MapbenderManagerBundle::fragments/blocklist.html.twig' %}
+        {% embed '@MapbenderManager/fragments/blocklist.html.twig' %}
             {%- block boxlist_item_content -%}
                 {%- set source = item -%}
                 {{- parent() -}}
             {%- endblock -%}
 
             {%- block item_content_main -%}
-                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
+                {%- import '@MapbenderManager/macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item) -}}
             {%- endblock -%}
 
@@ -82,12 +82,12 @@
                 </div>
                 {%- if items -%}
                     <div class="col-sm-7 col-xs-12 col-12">
-                    {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                    {% include "@MapbenderManager/fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
                     </div>
                 {%- endif -%}
             </div>
         </div>
-        {% embed 'MapbenderManagerBundle::fragments/blocklist.html.twig' %}
+        {% embed '@MapbenderManager/fragments/blocklist.html.twig' %}
             {%- block item_interactions -%}
                 <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                   ><i class="fa fa-desktop"></i></a>
@@ -107,7 +107,7 @@
             {%- endblock -%}
 
             {%- block item_content_main -%}
-                {%- import 'MapbenderManagerBundle::macros/source.html.twig' as source_macros -%}
+                {%- import '@MapbenderManager/macros/source.html.twig' as source_macros -%}
                 {{- source_macros.source_meta(item.source) -}}
             {%- endblock -%}
 

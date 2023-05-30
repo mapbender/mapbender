@@ -83,7 +83,7 @@ class ApplicationSwitcher extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:application_switcher.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/application_switcher.html.twig');
         $view->attributes['class'] = 'mb-element-applicationswitcher';
         $view->variables['form'] = $this->buildChoiceForm($element)->createView();
         return $view;

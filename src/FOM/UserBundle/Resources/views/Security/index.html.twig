@@ -1,6 +1,6 @@
-{% extends 'MapbenderManagerBundle::layouts/tabbed.html.twig' %}
+{% extends '@MapbenderManager/layouts/tabbed.html.twig' %}
 {%- set title = 'mb.terms.security' | trans -%}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block js %}
   {{parent()}}
@@ -22,17 +22,17 @@
 {% block tab_containers %}
   {%- if grants.users -%}
       <div{{ tab_macros.tab_content_attributes('Users', 'active', false) }}>
-          {%- include 'FOMUserBundle:User:list-tab.html.twig' with {show_groups: is_granted('VIEW', oids.group)} -%}
+          {%- include '@FOMUser/User/list-tab.html.twig' with {show_groups: is_granted('VIEW', oids.group)} -%}
       </div>
   {%- endif -%}
   {%- if grants.groups -%}
       <div{{ tab_macros.tab_content_attributes('Groups', not grants.users ? 'active' : '', false) }}>
-          {%- include 'FOMUserBundle:Group:list-tab.html.twig' -%}
+          {%- include '@FOMUser/Group/list-tab.html.twig' -%}
       </div>
   {%- endif -%}
   {%- if grants.acl -%}
       <div{{ tab_macros.tab_content_attributes('Acl', not (grants.users or grants.groups) ? 'active' : '', true) }}>
-          {%- include 'FOMUserBundle:ACL:list.html.twig' with {classes: acl_classes} -%}
+          {%- include '@FOMUser/ACL/list.html.twig' with {classes: acl_classes} -%}
       </div>
   {%- endif -%}
 {% endblock %}

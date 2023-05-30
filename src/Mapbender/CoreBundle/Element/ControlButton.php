@@ -49,7 +49,7 @@ class ControlButton extends ButtonLike
 
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:control_button.html.twig';
+        return '@MapbenderManager/Element/control_button.html.twig';
     }
 
     public static function getDefaultConfiguration()
@@ -67,7 +67,7 @@ class ControlButton extends ButtonLike
             return false;
         }
 
-        $view = new TemplateView('MapbenderCoreBundle:Element:control_button.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/control_button.html.twig');
         $this->initializeView($view, $element);
 
         $config = $element->getConfiguration();

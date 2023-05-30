@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{% extends "@MapbenderManager/layouts/filtered_list.html.twig" %}
 {%- set list_id = 'listFilterGroups' -%}
 {% block js %}
   {{parent()}}
@@ -20,6 +20,6 @@
   {%- set items = groups -%}
   {{- parent() -}}
 <div class="content-box content-box-lg">
-  {%- include 'FOMUserBundle:Group:list.html.twig' -%}
+  {%- include '@FOMUser/Group:list.html.twig' -%}
 </div>
 {% endblock %}

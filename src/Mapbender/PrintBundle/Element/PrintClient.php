@@ -192,7 +192,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderPrintBundle:ElementAdmin:printclient.html.twig';
+        return '@MapbenderPrint/ElementAdmin/printclient.html.twig';
     }
 
     /**
@@ -217,9 +217,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         $queueMode = $this->enableQueue && !empty($config['renderMode']) && $config['renderMode'] === 'queued';
 
         if ($queueMode) {
-            $template = 'MapbenderPrintBundle:Element:printclient-queued.html.twig';
+            $template = '@MapbenderPrint/Element/printclient-queued.html.twig';
         } else {
-            $template = 'MapbenderPrintBundle:Element:printclient.html.twig';
+            $template = '@MapbenderPrint/Element/printclient.html.twig';
         }
         $view = new TemplateView($template);
         $view->attributes['class'] = 'mb-element-printclient';
@@ -262,7 +262,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
 
     protected function getSettingsTemplate()
     {
-        return 'MapbenderPrintBundle:Element:printclient-settings.html.twig';
+        return '@MapbenderPrint/Element/printclient-settings.html.twig';
     }
 
     protected function getSettingsFormType()

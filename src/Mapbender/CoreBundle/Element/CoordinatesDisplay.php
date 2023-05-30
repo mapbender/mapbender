@@ -81,7 +81,7 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/coordinatesdisplay.html.twig');
         $view->attributes['class'] = 'mb-element-coordsdisplay';
         $config = $element->getConfiguration();
         $view->variables['label'] = $config['label']
@@ -96,7 +96,7 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:coordinatesdisplay.html.twig';
+        return '@MapbenderManager/Element/coordinatesdisplay.html.twig';
     }
 
 }

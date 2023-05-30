@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle:Repository:instance.html.twig" %}
+{% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('components/jquery-ui/themes/base/jquery-ui.min.css') }}" type="text/javascript" />
@@ -30,7 +30,7 @@
         </div>
         <div class="content-toggle-target">
           {% for dim in form.dimensions %}
-              {%- include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim} -%}
+              {%- include "@MapbenderWms/Repository/dimension-form.html.twig"  with {'dim': dim} -%}
           {% endfor %}
         </div>
       </div>
@@ -94,7 +94,7 @@
         </tr>
       </thead>
       <tbody>
-        {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer, 'level': 0 }%}
+        {% include "@MapbenderWms/Repository/instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer, 'level': 0 }%}
         <tr class="dummy">
           <td colspan="20"></td>
         </tr>

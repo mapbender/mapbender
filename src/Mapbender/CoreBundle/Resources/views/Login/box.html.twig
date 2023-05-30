@@ -1,4 +1,4 @@
-{% extends 'MapbenderCoreBundle::index.html.twig' %}
+{% extends '@MapbenderCore/index.html.twig' %}
 {%- set title = title | default(fom.server_name) -%}
 {%- set pagetitle = pagetitle | default(fom.server_name ~ ': ' ~ title) -%}
 {% block mobilejs %}

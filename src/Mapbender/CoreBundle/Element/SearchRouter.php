@@ -65,7 +65,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
+        return '@MapbenderCore/ElementAdmin/search_router.html.twig';
     }
 
     public function getWidgetName(Element $element)
@@ -139,7 +139,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:search_router.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/search_router.html.twig');
         $view->attributes['class'] = 'mb-element-searchrouter';
         $view->attributes['data-title'] = $element->getTitle();
 

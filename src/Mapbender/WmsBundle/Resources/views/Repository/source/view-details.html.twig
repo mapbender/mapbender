@@ -1,5 +1,5 @@
-{% extends 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
-{% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation %}
+{% extends '@MapbenderManager/Repository/source/view-details-common.html.twig' %}
+{% from "@MapbenderWms/Repository/macros.html.twig" import requestinformation %}
 {%- block source_details_rows -%}
   {{- parent() -}}
 {% if source.getCapabilities is not empty %}

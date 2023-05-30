@@ -119,12 +119,12 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderWmsBundle:ElementAdmin:wmsloader.html.twig';
+        return '@MapbenderWms/ElementAdmin/wmsloader.html.twig';
     }
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderWmsBundle:Element:wmsloader.html.twig');
+        $view = new TemplateView('@MapbenderWms/Element/wmsloader.html.twig');
         $view->attributes['class'] = 'mb-element-wmsloader';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['example_url'] = $this->exampleUrl;

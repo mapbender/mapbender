@@ -89,7 +89,7 @@ class Overview extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:overview.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/overview.html.twig');
         $view->attributes['class'] = 'mb-element-overview';
         $config = $element->getConfiguration();
         switch ($config['visibility']) {
@@ -118,7 +118,7 @@ class Overview extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:overview.html.twig';
+        return '@MapbenderManager/Element/overview.html.twig';
     }
 
     public function onImport(Element $element, Mapper $mapper)

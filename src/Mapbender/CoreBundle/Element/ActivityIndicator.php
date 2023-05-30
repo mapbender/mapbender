@@ -89,7 +89,7 @@ class ActivityIndicator extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:activityindicator.html.twig';
+        return '@MapbenderManager/Element/activityindicator.html.twig';
     }
 
 }

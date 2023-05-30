@@ -56,7 +56,7 @@ class POI extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:poi.html.twig';
+        return '@MapbenderCore/ElementAdmin/poi.html.twig';
     }
 
     /**
@@ -91,7 +91,7 @@ class POI extends AbstractElementService
      */
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:poi.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/poi.html.twig');
         $view->attributes['class'] = 'mb-element-poi';
         /** @todo: respect configured title! */
         $view->attributes['data-title'] = 'mb.core.poi.sharepoi';   // Used as popup title

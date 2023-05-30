@@ -10,9 +10,9 @@ use Mapbender\Utils\ApplicationUtil;
 
 /**
  * A ScaleSelector
- * 
+ *
  * Displays and changes a map scale.
- * 
+ *
  * @author Paul Schmidt
  */
 class ScaleSelector extends AbstractElementService
@@ -81,7 +81,7 @@ class ScaleSelector extends AbstractElementService
         $config = $element->getConfiguration() ?: array();
         $defaults = $this->getDefaultConfiguration();
         $title = $element->getTitle() ?: $this->getClassTitle();
-        $view = new TemplateView('MapbenderCoreBundle:Element:scaleselector.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/scaleselector.html.twig');
         $view->attributes['class'] = 'mb-element-scaleselector';
         $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
         $map = ApplicationUtil::getMapElement($element->getApplication());
@@ -106,7 +106,7 @@ class ScaleSelector extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:scaleselector.html.twig';
+        return '@MapbenderManager/Element/scaleselector.html.twig';
     }
 
 }

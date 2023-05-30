@@ -1,7 +1,7 @@
-{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{% extends "@MapbenderManager/layouts/tabbed_form.html.twig" %}
 {%- set return_url = path('fom_user_security_index', {_fragment: 'tabGroups'}) -%}
 {%- set title = title | trans -%}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block js %}
   {{parent()}}
@@ -19,7 +19,7 @@
     </div>
     <div{{ tab_macros.tab_content_attributes('Users') }}>{#- #containerUsers -#}
         {% if form.users|length %}
-          {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
+          {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
           <table id="listFilterUsers" class="table">
             <thead>
               <tr class="doNotFilter">

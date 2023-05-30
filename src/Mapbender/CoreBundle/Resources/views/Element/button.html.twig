@@ -1,5 +1,5 @@
 {% if configuration.click is defined and configuration.click  %}
-  {%- include 'MapbenderCoreBundle:Element:link_button.html.twig' -%}
+  {%- include '@MapbenderCore/Element/link_button.html.twig' -%}
 {% else %}
-  {%- include 'MapbenderCoreBundle:Element:control_button.html.twig' -%}
+  {%- include '@MapbenderCore/Element/control_button.html.twig' -%}
 {% endif %}

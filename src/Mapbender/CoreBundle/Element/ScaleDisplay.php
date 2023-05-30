@@ -63,7 +63,7 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:scaledisplay.html.twig';
+        return '@MapbenderCore/ElementAdmin/scaledisplay.html.twig';
     }
 
     /**
@@ -86,7 +86,7 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
      */
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:scaledisplay.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/scaledisplay.html.twig');
         $view->attributes['class'] = 'mb-element-scaledisplay';
         $config = $element->getConfiguration() ?: array();
         $view->variables['scalePrefix'] = ArrayUtil::getDefault($config, 'scalePrefix', $this->getDefaultConfiguration()['scalePrefix']);

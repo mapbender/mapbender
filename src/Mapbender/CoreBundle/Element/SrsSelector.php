@@ -8,9 +8,9 @@ use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * Spatial reference system selector
- * 
+ *
  * Changes the map spatial reference system
- * 
+ *
  * @author Paul Schmidt
  */
 class SrsSelector extends AbstractElementService
@@ -76,7 +76,7 @@ class SrsSelector extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:srsselector.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/srsselector.html.twig');
         $config = $element->getConfiguration();
         $view->attributes = array(
             'class' => 'mb-element-srsselector',
@@ -93,7 +93,7 @@ class SrsSelector extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:srsselector.html.twig';
+        return '@MapbenderManager/Element/srsselector.html.twig';
     }
 
 }

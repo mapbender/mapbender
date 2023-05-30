@@ -77,7 +77,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             'grants' => $this->getGrantsVariables($config),
             'row_template' => $this->getRowTemplate(),
         );
-        $content = $this->templating->render('MapbenderCoreBundle:Element:view_manager-listing.html.twig', $vars);
+        $content = $this->templating->render('@MapbenderCore/Element/view_manager-listing.html.twig', $vars);
         return new Response($content);
     }
 
@@ -277,6 +277,6 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 
     protected function getRowTemplate()
     {
-        return 'MapbenderCoreBundle:Element:view_manager-listing-row.html.twig';
+        return '@MapbenderCore/Element/view_manager-listing-row.html.twig';
     }
 }

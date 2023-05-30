@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::layouts/filtered_list.html.twig" %}
+{% extends "@MapbenderManager/layouts/filtered_list.html.twig" %}
 {%- set list_id = 'listFilterUsers' -%}
 
 {% block js %}
@@ -21,7 +21,7 @@
   {%- set items = users -%}
   {{- parent() -}}
 <div class="content-box content-box-lg">
-    {%- include 'FOMUserBundle:User:list.html.twig' with {show_groups: is_granted('VIEW', group_oid) } -%}
+    {%- include '@FOMUser/User/list.html.twig' with {show_groups: is_granted('VIEW', group_oid) } -%}
 </div>
 {% endblock %}
 
