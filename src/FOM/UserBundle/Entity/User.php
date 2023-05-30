@@ -35,6 +35,7 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     protected $email;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $registrationTime;
@@ -45,6 +46,7 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     protected $registrationToken;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $resetTime;
@@ -97,7 +99,7 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     }
 
     /**
-     * @param string $registrationTime
+     * @param \DateTime|null $registrationTime
      */
     public function setRegistrationTime($registrationTime)
     {
@@ -131,7 +133,7 @@ class User extends AbstractUser implements AdvancedUserInterface, EquatableInter
     /**
      * Set resetTime
      *
-     * @param string $resetTime
+     * @param \DateTime|null $resetTime
      */
     public function setResetTime($resetTime)
     {

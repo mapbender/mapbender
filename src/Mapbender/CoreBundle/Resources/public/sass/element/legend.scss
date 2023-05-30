@@ -1,4 +1,11 @@
-.mb-element-legend img {
-  max-width: 100%;
-  margin-bottom: 0.5em;
+.mb-element-legend {
+  .subTitle {
+    font-size: 90%;
+  }
+  img {
+    max-width: 100%;
+  }
+  .title, .subTitle, img {
+    margin-bottom: 0.5em;
+  }
 }

@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Trascinabile
       overview:
-        maximize: Massimizza
         fix: Fissa
       layerset:
         add: 'Aggiungi layerset'
@@ -62,7 +61,6 @@ mb:
         delete:
           title: 'Elimina layerset'
           confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id sotto forma di SourceId / InstanceId '
         id: Id
       instance:
         add: 'Aggiungi istanza'
@@ -152,7 +150,9 @@ mb:
           content: 'Cancellare davvero %userGroup%?'
     import:
       application:
-        failed: 'L''applicazione non può essere importata.'
+        failed: 'L''applicazione non può essere importata'
+    xml_invalid: Il documento non è valido
+    xml_malformed: Il documento non è valido  # @todo: supply distinct message
   core:
     admin:
       button:

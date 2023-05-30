@@ -2,10 +2,12 @@
 {% from "MapbenderWmtsBundle:Repository:macros.html.twig" import requestinformation %}
 {%- block source_details_rows -%}
 {{- parent() -}}
+{%- if source.type == 'WMTS' -%}
 {% if source.getTile is not empty %}
 {{ requestinformation(source.getTile, "GetMap") }}
 {% endif %}
 {% if source.getFeatureinfo is not empty %}
 {{ requestinformation(source.getFeatureinfo, "GetFeatureinfo") }}
+{% endif %}
 {% endif %}
 {%- endblock -%}

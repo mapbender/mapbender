@@ -5,12 +5,8 @@ namespace FOM\UserBundle\Component;
 
 
 use FOM\UserBundle\Entity\Group;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
-use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controls which security identities will be listed when picking security identities to add to an Acl.
@@ -44,13 +40,12 @@ class AssignableSecurityIdentityFilter
 
     /**
      * @param IdentitiesProviderInterface $provider
-     * @param TranslatorInterface $translator
      * @param bool $showUsers
      * @param bool $showGroups
      * @param bool $showAuthenticated
      * @param bool $showAnonymous
      */
-    public function __construct(IdentitiesProviderInterface $provider, TranslatorInterface $translator,
+    public function __construct(IdentitiesProviderInterface $provider,
                                 $showUsers, $showGroups, $showAuthenticated, $showAnonymous)
     {
         $this->provider = $provider;
@@ -58,8 +53,8 @@ class AssignableSecurityIdentityFilter
         $this->allowGroups = $showGroups;
         $this->allowAuthenticated = $showAuthenticated;
         $this->allowAnonymous = $showAnonymous;
-        $this->anonGroup = new DummyGroup('IS_AUTHENTICATED_ANONYMOUSLY', $translator->trans('fom.acl.group_label.anonymous'));
-        $this->authenticatedGroup = new DummyGroup('ROLE_USER', $translator->trans('fom.acl.group_label.authenticated'));
+        $this->anonGroup = new DummyGroup('IS_AUTHENTICATED_ANONYMOUSLY', 'fom.acl.group_label.anonymous');
+        $this->authenticatedGroup = new DummyGroup('ROLE_USER', 'fom.acl.group_label.authenticated');
     }
 
     /**
@@ -105,53 +100,51 @@ class AssignableSecurityIdentityFilter
 
     /**
      * @param mixed $value
-     * @return Group
+     * @return DummyGroup
      * @throws \InvalidArgumentException
      */
     protected function normalizeGroup($value)
     {
-        if (is_object($value)) {
-            if ($value instanceof Group) {
-                return $value;
-            }
-            if ($value instanceof Role) {
-                // no warning. Convert to unpersisted group for template compatibility (getAsRole)
-                $group = new Group();
-                $group->setTitle(preg_replace('#^ROLE_(GROUP_)?#', '', $value->getRole()));
-                return $group;
-            }
-            $cls = get_class($value);
-            $this->warnOnce("Group identities should be Group or RoleInterface, not {$cls} objects", "group:{$cls}");
-            if ($value instanceof RoleSecurityIdentity) {
-                // exact same treatment as RoleInterface, but AFTER emitting the appropriate warning
-                return $this->normalizeGroup(new Role($value->getRole()));
-            } elseif ($value instanceof \stdClass) {
-                $values = $this->extractStdClass($value);
-                foreach (array('title', 'getTitle') as $titleCandidate) {
-                    if (!empty($values[$titleCandidate])) {
-                        $group = new Group();
-                        $group->setTitle($values[$titleCandidate]);
-                        return $group;
-                    }
+        $title = null;
+        $role = null;
+        if (\is_string($value)) {
+            $role = $value;
+        } elseif (\is_object($value) && !($value instanceof \stdClass)) {
+            foreach (array('getRole', 'getAsRole', '__toString') as $roleMethodCandidate) {
+                if (\method_exists($value, $roleMethodCandidate)) {
+                    $role = $value->{$roleMethodCandidate}();
+                    break;
                 }
-                foreach (array('role', 'getRole', 'getAsRole') as $roleCandidate) {
-                    if (!empty($values[$roleCandidate])) {
-                        return $this->normalizeGroup(new Role($values[$roleCandidate]));
-                    }
-                }
-                throw new \InvalidArgumentException("Don't know how to transform stdClass group input with keys " . implode(',', array_keys($values)) . " to Group");
-            } elseif (\method_exists($value, '__toString') && !($value instanceof SecurityIdentityInterface)) {
-                return $this->normalizeGroup(strval($value));
-            } else {
-                throw new \InvalidArgumentException("Don't know how to transform {$cls} group input to Group");
             }
-        } elseif (\is_string($value)) {
-            $this->warnOnce("Group identities should be RoleSecurityIdentity objects, not strings", "group:string");
-            // strip leading 'r:'
-            return $this->normalizeGroup(new Role(preg_replace('#^r:#', '', $value)));
+            if (!$role) {
+                throw new \InvalidArgumentException("Group object " . \get_class($value) . " doesn't have a role getter");
+            }
+            if (\method_exists($value, 'getTitle')) {
+                $title = $value->getTitle();
+            }
+        } elseif (\is_object($value)) {
+            $values = $this->extractStdClass($value);
+            $role = '';
+            foreach (array('role', 'getRole', 'getAsRole') as $roleCandidate) {
+                if (!empty($values[$roleCandidate])) {
+                    $role = $values[$roleCandidate];
+                    break;
+                }
+            }
+            if (!$role) {
+                throw new \InvalidArgumentException("StdClass group object doesn't have a role getter");
+            }
+            foreach (array('title', 'getTitle') as $titleCandidate) {
+                if (!empty($values[$titleCandidate])) {
+                    $title = $values[$titleCandidate];
+                    break;
+                }
+            }
         } else {
-            throw new \InvalidArgumentException("Don't know how to transform " . gettype($value) . " group input to Group");
+            throw new \InvalidArgumentException("Don't know how to extract role from " . gettype($value) . " group input");
         }
+        $title = $title ?: \preg_replace('#^ROLE_(GROUP_)?#', '', $role);
+        return new DummyGroup($role, $title);
     }
 
     /**

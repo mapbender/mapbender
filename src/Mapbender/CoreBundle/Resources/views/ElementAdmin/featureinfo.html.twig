@@ -6,18 +6,26 @@
         {{ form_widget(form.configuration.onlyValid, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
-    {{ form_row(form.configuration.target) }}
     {{ form_row(form.configuration.displayType) }}
     {{ form_row(form.configuration.maxCount) }}
     {{ form_row(form.configuration.width) }}
     {{ form_row(form.configuration.height) }}
     <h3>{{ 'mb.core.admin.featureinfo.label.highlighting_group' | trans }}</h3>
     {{ form_row(form.configuration.highlighting) }}
-    {{ form_rest(form.configuration) }}
+    <div class="row">
+        <fieldset class="col-12 col-xs-12 col-md-6">
+            <legend>{{- form.configuration.defaultStyle.vars.label | trans -}}</legend>
+            {{- form_widget(form.configuration.defaultStyle) -}}
+        </fieldset>
+        <fieldset class="col-12 col-xs-12 col-md-6">
+            <legend>{{- form.configuration.hoverStyle.vars.label | trans -}}</legend>
+            {{- form_widget(form.configuration.hoverStyle) -}}
+        </fieldset>
+        {{- form_rest(form.configuration) -}}
+    </div>
 </div>
 <script type="text/javascript">
     !(function($) {
-        var $pickers = $('#{{ form.configuration.featureColorDefault.vars.id | raw }},#{{ form.configuration.featureColorHover.vars.id | raw}}');
-        $pickers.colorpicker({format: 'hex'});
+        $('#{{ form.vars.attr.id }} .-js-init-colorpicker').colorpicker({format: 'hex'});
     }(jQuery));
 </script>

@@ -65,11 +65,6 @@ mb:
         geometry:
           missing: ~
     searchrouter:
-      popup:
-        btn:
-          ok: Procurar
-          cancel: Fechar
-          reset: Postergar
       no_results: 'Sua pesquisa não encontrou resultados'
       result_counter: 'Resultados: %count%'
       class:
@@ -82,10 +77,6 @@ mb:
       sharepoi: 'Combinar ponto de encontro'
       text:
         snippet: 'Você pode mandar o link seguinte num e-mail. O link abre a aplicação e mostra o ponto de encontro. '
-      popup:
-        btn:
-          ok: Fechar
-          cancel: Cancelar
       class:
         title: 'Ponto de encontro (POI)'
         description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
@@ -100,9 +91,6 @@ mb:
       form:
         mesage: 'Segundo plano não existe.'
     legend:
-      popup:
-        btn:
-          ok: Fechar
       class:
         title: Legenda
         description: 'Mostra a leganda sobre os temas ativos. '
@@ -139,8 +127,6 @@ mb:
     metadata:
       popup:
         title: Metadados
-        btn:
-          ok: Fechar
     gpsposition:
       error:
         notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
@@ -154,9 +140,6 @@ mb:
         position: Posição
         button: Button
     layertree:
-      popup:
-        btn:
-          ok: Fechar
       const:
         outofscale: 'Camada fora de escala'
         outofbounds: 'Camada fora de BoundingBox'

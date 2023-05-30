@@ -73,25 +73,17 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
             var defaultFn = ol.style.Style.defaultFunction;
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
-            var baseFill = new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'fillColor', 'fillOpacity')});
-            var baseStroke = new ol.style.Stroke({
-                color: Mapbender.StyleUtil.svgToCssColorRule(svgWithDefaults, 'strokeColor', 'strokeOpacity'),
-                width: svgWithDefaults.strokeWidth
-            });
-            defaultStyle.setFill(baseFill);
-            defaultStyle.setStroke(baseStroke);
+            var callables = this.detectCallables_(svgWithDefaults);
+            if (!(callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity)) {
+                this.applyFillAndStroke_(defaultStyle, svgWithDefaults);
+            }
             var textCallbacks = this._prepareTextStyleCallbacks(styles);
-
             var textStyle = textCallbacks['setText'] && this._prepareTextStyle(svgWithDefaults);
             // we know that the default style function does not populate a text style, so we do not need to merge anything
             if (textStyle) {
                 defaultStyle.setText(textStyle);
             }
-            var pointImageStyle = new ol.style.Circle({
-                radius: svgWithDefaults.pointRadius,
-                fill: baseFill,
-                stroke: baseStroke
-            });
+            var self = this;
             var customFeatureStyleFn = function(feature, resolution) {
                 var style = defaultStyle.clone();
                 var setterNames = Object.keys(textCallbacks);
@@ -103,13 +95,29 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     textStyle[setterName](value);
                 }
                 style.setText(textStyle);
-                style.setImage(pointImageStyle);
-                return style;
+                if (callables.fillColor || callables.fillOpacity || callables.strokeColor || callables.strokeOpacity) {
+                    var resolved = self.resolveCallables_(svgWithDefaults, callables, feature);
+                    self.applyFillAndStroke_(style, resolved);
+                }
+                return [style];
             };
-            var customLayerStyleFn = function(feature, resolution) {
-                return [customFeatureStyleFn(feature, resolution)];
-            };
-            this.wrappedLayer_.setStyle(customLayerStyleFn);
+            this.wrappedLayer_.setStyle(customFeatureStyleFn);
+        },
+        applyFillAndStroke_: function(style, svgRules) {
+            var fillColor = Mapbender.StyleUtil.parseSvgColor(svgRules, 'fillColor', 'fillOpacity');
+            var strokeColor = Mapbender.StyleUtil.parseSvgColor(svgRules, 'strokeColor', 'strokeOpacity');
+            style.setFill(new ol.style.Fill({
+                color: fillColor
+            }));
+            style.setStroke(new ol.style.Stroke({
+                color: strokeColor,
+                width: svgRules.strokeWidth
+            }));
+            style.setImage(new ol.style.Circle({
+                radius: svgRules.pointRadius,
+                fill: style.getFill(),
+                stroke: style.getStroke()
+            }));
         },
         getMarkerFeature_: function(lon, lat, nativeStyle) {
             var feature = new ol.Feature({
@@ -143,27 +151,32 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 case 'point':
                     return new ol.interaction.Draw({
                         type: 'Point',
+                        stopClick: true,
                         source: source
                     });
                 case 'line':
                     return new ol.interaction.Draw({
                         type: 'LineString',
+                        stopClick: true,
                         source: source
                     });
                 case 'polygon':
                     return new ol.interaction.Draw({
                         type: 'Polygon',
+                        stopClick: true,
                         source: source
                     });
                 case 'circle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
+                        stopClick: true,
                         source: source
                     });
                 case 'rectangle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
                         geometryFunction: ol.interaction.Draw.createBox(),
+                        stopClick: true,
                         source: source
                     });
                 default:
@@ -273,6 +286,26 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 offsetX: svgStyles.labelXOffset,
                 offsetY: svgStyles.labelYOffset
             });
+        },
+        detectCallables_: function(o) {
+            var callables = {};
+            Object.keys(o).forEach(function(propname) {
+                if (typeof o[propname] === 'function') {
+                    callables[propname] = o[propname];
+                }
+            });
+            return callables;
+        },
+        resolveCallables_: function(baseRules, callables, feature) {
+            if (!Object.keys(callables).length) {
+                return baseRules;
+            } else {
+                var resolved = Object.assign({}, baseRules);
+                Object.keys(callables).forEach(function(propName) {
+                    resolved[propName] = callables[propName](feature);
+                });
+                return resolved;
+            }
         },
         dummy_: null
     });

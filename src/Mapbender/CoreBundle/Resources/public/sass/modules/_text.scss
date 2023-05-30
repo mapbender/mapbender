@@ -11,27 +11,20 @@ h2, .h2 {
 h3, .h3 {
   font-size: 1.48rem;
 }
-h4, .h4, .bigText {
+h4, .h4 {
   font-size: 1.35rem;
 }
 .smallText {
   font-size: .85rem;
 }
-.smallerText {
-  font-size: .7rem;
-}
-
-.subTitle{
-  font-size: 1rem;
-}
-.labelInput, .labelText, .labelCheck {
+.labelInput {
   user-select: none;
 }
 .labelInput {
-  line-height: 2;
-  .form-horizontal & {
-    line-height: $inputHeight;
+  .form-horizontal .no-gutters & {
     margin-right: $space/2;
+  }
+  .form-horizontal & {
     vertical-align: top;
     &, &+.inputWrapper, &+.dropdown {
       margin-bottom: $space/2;
@@ -48,8 +41,4 @@ h4, .h4, .bigText {
     content: '*';
     color:$errorColor;
   }
-}
-/** a.labelText appears in certain FOM templates (User listing). Must respecify rule to defeat global a { color:inherit } */
-.labelText, a.labelText {
-  color: $ciColor;
 }

@@ -42,21 +42,11 @@ class WmsSourceService extends SourceService
         $this->defaultLayerOrder = $defaultLayerOrder;
     }
 
-    public function getTypeCode()
-    {
-        return strtolower(Source::TYPE_WMS);
-    }
-
-    public function getTypeLabel()
-    {
-        return 'OGC WMS';
-    }
-
     public function isInstanceEnabled(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */
         $rootLayer = $sourceInstance->getRootlayer();
-        return parent::isInstanceEnabled($sourceInstance) && $rootLayer && $rootLayer->getActive();
+        return parent::isInstanceEnabled($sourceInstance) && $rootLayer;
     }
 
     public function canDeactivateLayer(SourceInstanceItem $layer)
@@ -69,10 +59,13 @@ class WmsSourceService extends SourceService
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */
-        return parent::getInnerConfiguration($sourceInstance) + array(
+        $configuration =  parent::getInnerConfiguration($sourceInstance) + array(
             'options' => $this->getOptionsConfiguration($sourceInstance),
-            'children' => array($this->getRootLayerConfig($sourceInstance)),
+            'children' => array(
+                $this->getLayerConfiguration($sourceInstance->getRootlayer()),
+            ),
         );
+        return $this->postProcessUrls($sourceInstance, $configuration);
     }
 
     public function getOptionsConfiguration(WmsInstance $sourceInstance)
@@ -99,33 +92,6 @@ class WmsSourceService extends SourceService
             'ratio' => $ratio,
             'layerOrder' => $sourceInstance->getLayerOrder(),
         );
-    }
-
-    public function postProcessInnerConfiguration(SourceInstance $sourceInstance, $configuration)
-    {
-        /** @var WmsInstance $sourceInstance */
-        $configuration = parent::postProcessInnerConfiguration($sourceInstance, $configuration);
-        // upstream may return null if validation fails...
-        if ($configuration) {
-            $configuration = $this->postProcessUrls($sourceInstance, $configuration);
-        }
-        return $configuration;
-    }
-
-    /**
-     * NOTE: only WmsInstances have a root layer. SourceInstance does not define this.
-     *
-     * @param WmsInstance $sourceInstance
-     * @return array
-     */
-    public function getRootLayerConfig(WmsInstance $sourceInstance)
-    {
-        $rootlayer = $sourceInstance->getRootlayer();
-        if ($rootlayer->getActive()) {
-            return $this->getLayerConfiguration($rootlayer);
-        } else {
-            return array();
-        }
     }
 
     protected function getLayerConfiguration(WmsInstanceLayer $instanceLayer)
@@ -164,10 +130,12 @@ class WmsSourceService extends SourceService
     public function getConfiguration(SourceInstance $sourceInstance)
     {
         $config = parent::getConfiguration($sourceInstance);
+
         $root = $sourceInstance->getRootlayer();
-        if ($root) {
-            $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
+        if (!$root) {
+            throw new \RuntimeException("Cannot process Wms instance #{$sourceInstance->getId()} with no root layer");
         }
+        $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
         return $config;
     }
 
@@ -439,16 +407,31 @@ class WmsSourceService extends SourceService
         }
     }
 
-    public function getAssets(Application $application, $type)
+    /**
+     * Extend all URLs in the layer to run over owsproxy
+     * @todo: this should and can be part of the initial generation
+     *
+     * @param mixed[] $layerConfig
+     * @return mixed[]
+     */
+    protected function proxifyLayerUrls($layerConfig)
     {
-        switch ($type) {
-            case 'js':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                    '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
-                );
-            default:
-                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
+        if (isset($layerConfig['children'])) {
+            foreach ($layerConfig['children'] as $ix => $childConfig) {
+                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig);
+            }
         }
+        if (!empty($layerConfig['options']['legend']['url'])) {
+            $layerConfig['options']['legend']['url'] = $this->urlProcessor->proxifyUrl($layerConfig['options']['legend']['url']);
+        }
+        return $layerConfig;
+    }
+
+    public function getScriptAssets(Application $application)
+    {
+        return array(
+            '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+            '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
+        );
     }
 }

@@ -7,7 +7,7 @@
                  class="Mapbender\ManagerBundle\Controller\ApplicationController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.application_template_registry" />
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.elements%</argument>
@@ -20,7 +20,6 @@
         <service id="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
                  class="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
                  public="true">
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
@@ -28,7 +27,6 @@
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
                  class="Mapbender\ManagerBundle\Controller\ElementController"
                  public="true">
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
@@ -38,13 +36,11 @@
                  class="Mapbender\ManagerBundle\Controller\RepositoryController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
         <service id="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  class="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  public="true">
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
     </services>

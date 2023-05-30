@@ -1,0 +1,6 @@
+.mb-element-scaledisplay {
+  .anchored-element-wrap & {
+    // Avoid eating mouse interactions on map
+    pointer-events: none;
+  }
+}

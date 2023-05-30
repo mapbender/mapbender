@@ -102,11 +102,9 @@ class InstanceTunnelService
      * Returns the URL base the Browser / JS client should use to access the tunnel.
      *
      * @param Endpoint $endpoint
-     * @param int $referenceType one of the UrlGeneratorInterface consts; defaults to absolute url
-     * @see UrlGeneratorInterface::generate
      * @return string
      */
-    public function getPublicBaseUrl(Endpoint $endpoint, $referenceType = UrlGeneratorInterface::ABSOLUTE_URL)
+    public function getPublicBaseUrl(Endpoint $endpoint)
     {
         $vsHandler = new VendorSpecificHandler();
         $vsParams = $vsHandler->getPublicParams($endpoint->getSourceInstance(), $this->tokenStorage->getToken());
@@ -114,7 +112,7 @@ class InstanceTunnelService
             'instanceId' => $endpoint->getSourceInstance()->getId(),
         ));
 
-        return $this->router->generate($this->tunnelRouteName, $params, $referenceType);
+        return $this->router->generate($this->tunnelRouteName, $params);
     }
 
     /**
@@ -123,12 +121,10 @@ class InstanceTunnelService
      *
      * @param Endpoint $endpoint
      * @param string $url NOTE: scheme/host/path completely ignored, only query string is relevant
-     * @param int $referenceType one of the UrlGeneratorInterface consts; defaults to absolute url
-     * @see UrlGeneratorInterface::generate
      * @return string
      * @throws \RuntimeException if no REQUEST=... in given $url
      */
-    public function generatePublicUrl(Endpoint $endpoint, $url, $referenceType = UrlGeneratorInterface::ABSOLUTE_URL)
+    public function generatePublicUrl(Endpoint $endpoint, $url)
     {
         // require a "request" param, the tunnel action doesn't function without it
         $params = array();
@@ -138,7 +134,7 @@ class InstanceTunnelService
                 // @todo: validate if request value is in our supported set (GetMap, GetLegendGraphic, GetFeatureInfo)?
                 $fullQueryString = strstr($url, '?', false);
                 // forward ALL GET parameters in input url
-                return $this->getPublicBaseUrl($endpoint, $referenceType) . $fullQueryString;
+                return $this->getPublicBaseUrl($endpoint) . $fullQueryString;
             }
         }
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));

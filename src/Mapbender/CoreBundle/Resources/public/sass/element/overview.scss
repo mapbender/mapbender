@@ -1,19 +1,30 @@
+$panelBorderColor: #888 !default;
+
 .mb-element-overview {
   user-select: none;
+  position: relative; // For .toggleOverview absolute
 
   .toggleOverview {
-    padding: 0 6px;
-    cursor: pointer;
-    border-radius: $radius;
-    font-size: 0.85rem;
+    position: absolute;
+    padding: 3px;
+    border-radius: 3px;
   }
 
   .olMap, .ol-overviewmap-map {
     background-color: white;
     @include transition(all .2s linear);
     .ol-viewport, .olMapViewport {
-      border: 1px solid $thirdColor;
+      border: 1px solid $panelBorderColor;
     }
+    .olMapViewport {
+      > div {
+        // Overrule inline style z-index to prevent overview punching through sidepane
+        z-index: 0 !important;
+      }
+    }
+  }
+  .ol-overviewmap, .ol-overviewmap-map {
+    height: 100%;
   }
   .ol-overviewmap {
     button {
@@ -32,29 +43,25 @@
   &.closed {
     .olMap, .ol-overviewmap-map {
       width: 0 !important;
-      height: 0;
       opacity: 0;
       border: 0;
     }
   }
-  .toggleOverview {
-    position: absolute;
-  }
   .anchored-element-wrap-rt  & .toggleOverview {
     top: 0;
-    left: -25px;
+    left: -2.25em;
   }
   .anchored-element-wrap-lt & .toggleOverview {
     top: 0;
-    right: -25px;
+    right: -2.25em;
   }
   .anchored-element-wrap-rb & .toggleOverview {
     bottom: 0;
-    left: -25px;
+    left: -2.25em;
   }
   .anchored-element-wrap-lb & .toggleOverview {
     bottom: 0;
-    right: -25px;
+    right: -2.25em;
   }
   .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
     vertical-align: bottom;

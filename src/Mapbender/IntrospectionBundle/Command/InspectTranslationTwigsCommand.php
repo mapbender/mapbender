@@ -6,17 +6,16 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Template\LoginTemplate;
 use Mapbender\ManagerBundle\Template\ManagerTemplate;
-use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Twig\Loader\FilesystemLoader;
 
 class InspectTranslationTwigsCommand extends Command
 {
@@ -26,17 +25,18 @@ class InspectTranslationTwigsCommand extends Command
     protected $inventory;
     /** @var ElementEntityFactory */
     protected $entityFactory;
-    protected $bundles;
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
 
     public function __construct(FilesystemLoader $twigLoader,
                                 ElementInventoryService $inventory,
                                 ElementEntityFactory $entityFactory,
-                                $bundles)
+                                ApplicationTemplateRegistry $templateRegistry)
     {
         $this->twigLoader = $twigLoader;
         $this->inventory = $inventory;
         $this->entityFactory = $entityFactory;
-        $this->bundles = $bundles;
+        $this->templateRegistry = $templateRegistry;
         parent::__construct(null);
     }
 
@@ -134,19 +134,7 @@ class InspectTranslationTwigsCommand extends Command
 
     protected function collectTemplateResourcePaths()
     {
-        $templateClasses = array();
-        foreach ($this->bundles as $bundleClassName) {
-            if (\is_a($bundleClassName, 'Mapbender\CoreBundle\Component\MapbenderBundle', true)) {
-                /** @var MapbenderBundle $bundle */
-                $bundle = new $bundleClassName();
-                $templateClasses = array_merge($templateClasses, array_values($bundle->getTemplates()));
-            }
-        }
-        $templateInstances = array();
-        foreach ($templateClasses as $className) {
-            /** @var Template|string $className */
-            $templateInstances[] = new $className();
-        }
+        $templateInstances = $this->templateRegistry->getAll();
         return $this->extractTemplateTranslationDependencies($templateInstances);
     }
 

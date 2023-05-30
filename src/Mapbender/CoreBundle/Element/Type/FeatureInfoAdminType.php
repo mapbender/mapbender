@@ -32,7 +32,6 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.onlyvalid',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
             ))
@@ -49,13 +48,21 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.highlighting',
             ))
-            ->add('featureColorDefault', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
-                'label' => 'mb.core.admin.featureinfo.label.featureColorDefault',
+            ->add('defaultStyle', FeatureInfoStyleType::class, array(
+                'label' => 'mb.core.admin.featureinfo.label.default_group',
+                'inherit_data' => true,
+                'fieldNameFillColor' => 'fillColorDefault',
+                'fieldNameStrokeColor' => 'strokeColorDefault',
+                'fieldNameOpacity' => 'opacityDefault',
+                'fieldNameStrokeWidth' => 'strokeWidthDefault',
             ))
-            ->add('featureColorHover', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'required' => true,
-                'label' => 'mb.core.admin.featureinfo.label.featureColorHover',
+            ->add('hoverStyle', FeatureInfoStyleType::class, array(
+                'label' => 'mb.core.admin.featureinfo.label.hover_group',
+                'inherit_data' => true,
+                'fieldNameFillColor' => 'fillColorHover',
+                'fieldNameStrokeColor' => 'strokeColorHover',
+                'fieldNameOpacity' => 'opacityHover',
+                'fieldNameStrokeWidth' => 'strokeWidthHover',
             ))
         ;
     }

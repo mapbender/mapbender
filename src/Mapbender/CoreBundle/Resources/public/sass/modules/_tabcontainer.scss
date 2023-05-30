@@ -1,35 +1,50 @@
 /** Frontend only */
+/**
+  Amend potentially undefined variables, if included directly from older template that doesn't define them.
+  See libs/_variables.scss for full set.
+ */
+
+$accordionFontSize: 100% !default;
+$accordionBackgroundColor: $buttonFirstColor !default;
+$accordionTextColor: $lightFontColor !default;
+$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%) !default;
+$accordionActiveTextColor: $lightFontColor !default;
+$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%) !default;
+
+$sidepaneButtonFontSize: 100% !default;
+$sidepaneButtonTextColor: $lightFontColor !default;
+$sidepaneButtonBackgroundColor: $buttonFirstColor !default;
+$sidepaneButtonBorderColor: darken($buttonSecondColor, 5%) !default;
+$sidepaneButtonHoverColor: darken($buttonFirstColor, 5%) !default;
+$sidepaneButtonActiveTextColor: $lightFontColor !default;
+$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
+
+$panelBorderColor: #888 !default;
+
+$hoverEffects: true !default;
+
 .tabContainer{
-  .tabs {
-    // Guarantee enough space so our tab.active can move up without clipping
-    padding-top: 1px;
+  .tab, .container {
+    border: 1px solid $panelBorderColor;
   }
   .tab{
+    background-color: #fff;   // Must be opaque
     margin-right: -1px;
-    color: $darkFontColor;
-    background-color:$contentColor;
     cursor:pointer;
-    line-height: 3;
     position: relative; // for z-index
-    z-index:10;
-    border:{
-      left:solid 1px $thirdColor;
-      top:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-    }
+    border-bottom: none;
     float:left;
-    padding: 0 0.75em;;
-    @extend .smallText;
+    padding: 0.75em;
     user-select: none;
+    // Cover container border
+    margin-bottom: -3px;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    opacity: 0.6;
 
     &.active {
-      // Stretch up
-      padding-top: 1px;
-      margin-top: -1px;
-      // Stretch down to cover container border
-      padding-bottom: 3px;
-      margin-bottom: -3px;
-      z-index: 30;
+      z-index: 2;
+      opacity: 1;
     }
     &:hover, &:focus {
       outline: none;
@@ -38,28 +53,34 @@
   .container{
     clear:left;
     display:none;
-    padding:$space;
+    padding: 10px;
     position:relative;
-    z-index:20;
-    background-color:$contentColor;
-    border:{
-      top:solid 3px $thirdColor;
-      left:solid 1px $thirdColor;
-      right:solid 1px $thirdColor;
-      bottom:solid 1px $thirdColor;
-    }
+    z-index: 1;
+    border-top-width: 3px;
     &.active{display:block;}
   }
 }
 
-.tabContainerAlt, .accordionContainer {
+.tabContainerAlt,
+.accordionContainer,
+.popup .tabContainer,
+.mobileContent .tabContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 }
-.tabContainerAlt > .tabs, .accordionContainer > .accordion {
+.tabContainerAlt > .tabs,
+.accordionContainer > .accordion,
+.popup .tabContainer > .tabs,
+.mobileContent .tabContainer > .tabs {
   flex: 0 0 auto; // fixed size
+}
+.tabContainerAlt >.container,
+.accordionContainer > .container-accordion,
+.popup .tabContainer > .container,
+.mobileContent .tabContainer > .container {
+  flex: 1 1 auto; // grow and shrink
 }
 
 .tabContainerAlt >.container,
@@ -67,7 +88,6 @@
   &:not(.active) {
     display: none;
   }
-  flex: 1 1 auto; // grow and shrink
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -87,22 +107,31 @@
 }
 
 .tabContainerAlt{
-  position: relative;
   > .tabs {
     list-style: none;
-    border-bottom: dashed 1px $thirdColor;
+    border-bottom: dashed 1px $panelBorderColor;
     padding-bottom: $space;
     margin-bottom: $space;
   }
   .tab {
+    @extend .buttonCore;
     display: inline-block;
-    @extend .button;
+    font-size: $sidepaneButtonFontSize;
+    padding: 0.25em 10px;
     margin: 0 0.25em 0.25em 0;
+    color: $sidepaneButtonTextColor;
+    background-color: $sidepaneButtonBackgroundColor;
+    border: 1px solid $sidepaneButtonBorderColor;
 
     &.active{
       cursor:default;
-      background-color:darken($buttonFirstColor, 10%);
-      color:$lightFontColor;
+      color: $sidepaneButtonActiveTextColor;
+      background-color: $sidepaneButtonActiveBackgroundColor;
+    }
+    @if $hoverEffects {
+      &:hover:not(.active) {
+        background-color: $sidepaneButtonHoverColor;
+      }
     }
   }
   .container {
@@ -114,18 +143,25 @@
 }
 
 .tabContainer .container, .tabContainerAlt .container {
-  width: auto;  // overrule Bootstrap .container (which has varying width depending on screen size)
+  width: 100%;  // overrule Bootstrap .container (which has varying width depending on screen size)
 }
 
 .accordionContainer {
   .accordion{
     user-select: none;
     cursor: pointer;
-    @extend .buttonColors;
-    padding-left: 0.5em;
-    &.active{
-      background-color:darken($buttonFirstColor, 10%);
-      color:$lightFontColor;
+    padding: 5px 0.5em;
+    font-size: $accordionFontSize;
+    color: $accordionTextColor;
+    background-color: $accordionBackgroundColor;
+    &.active {
+      color: $accordionActiveTextColor;
+      background-color: $accordionActiveBackgroundColor;
+    }
+    @if $hoverEffects {
+      &:hover:not(.active) {
+        background-color: $accordionHoverBackgroundColor;
+      }
     }
   }
   .container-accordion {

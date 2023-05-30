@@ -1,12 +1,157 @@
-## dev-master @ a4db1d12b
-* Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
+## v3.3.2
+* [FeatureInfo] Add configurable stroke widths for highlight geometries (use `strokeWidthDefault` and `strokeWidthHover` in Yaml applications)
+* [FeatureInfo] Add min / max range validation for backend form opacity settings
+* [FeatureInfo] Fix highlighting behaviour of multiple spatially nested features
+* [Export / Print] Fix visibility of grouped vector layers
+* [Export / Print] Fix errors printing with active Wmts source
+* [Print] Fix mouse rotation interaction offered even if `rotatable` config flag is false
+* [Layertree] Fix errors when dragging Wmts source to a new position
+* [Layertree] Fix theme folder not visually closing on click
+* [BaseSourceSwitcher] Support usage as floating map overlay when placed in content (set `anchor` to one of `left-top` ... `right-bottom`)
+* [BaseSourceSwitcher] add `data-title` attributes for id independent custom css matching
+* [WmsLoader] Fix broken layout when using larger font size
+* [ActivityIndicator] Fix inidicator not turning off if a Wms GetMap returns an http error
+* [HTMLElement] Fix errors validating content if it uses twig variables `entity` or `application` ([#1438](https://github.com/mapbender/mapbender/issues/1438))
+* [HTMLElement] Fix errors validating pure whitespace content
+* [Copyright] Enable twig + html validation
+* [Map] Use default tile size instead of minimum tile size if set to empty ([#1433]((https://github.com/mapbender/mapbender/issues/1433))
+* Fix obscured map area detection during feature zoom for very wide sidepanes (>= half screen width)
+* Fix Wmts locked to single CRS, even if it supports several
+* Fix password creation in user registration process ([#1430](https://github.com/mapbender/mapbender/issues/1430))
+* Fix password reset process leaking user account status information ([#1397](https://github.com/mapbender/mapbender/issues/1397))
+* Fix inability to reset expired registration token
+* Fix missing link back to login on password reset process end landing page
+* Fix sizing of Digitizer table pagination buttons
+* Fix errors with WMS 1.1.1 sources that declare an empty `<SRS>` tag on layers (source reload required)
+* Fix error loading any WMTS that defines keywords
+* Fix incomplete / erroneous parsing of Wmts contact information
+* Fix height collapse of choice with empty label in custom dropdown
+* [Mobile Template] Fix inability to close mobile pane via click on currently active control button
+* [Framework] Add client-side `refresh` method on Source objects
+* [Framework] Add client-side user information (see [PR#1436](https://github.com/mapbender/mapbender/pull/1436))
+* [Framework] Add server-side events `mb.before_application_config` and `mb.after_application_config`
+* [Framework] Add extensible icon packages for button assignments ([PR#1434](https://github.com/mapbender/mapbender/pull/1434))
+* [Backend] Fix document download prompt appearing instead of page refresh when saving Element form in some Chrome versions with Symfony >= 4.4.44
+* [Backend] Fix visibility of text inputs in sortable collections (instance table, print templates etc) vs dragging highlight effect
+* [Backend] Fix mouse cursor on collection item add / remove interactions
+* [Backend] Fix German-only error messages when loading Wmts source
+* [Backend] Fix inability to reload Wmts source
+* [Backend] Add interaction menu (reload, create shared instance, delete) to source view
+* [Backend] Add source (with link to source view) into a distinct column in application layersets view
+* [Backend] Improve error messages when loading sources
+* [Backend] Show supported CRS for Wmts layers in instance editing details popover
+* [Backend] Misc other styling fixes
+
+## v3.3.2-RC1
+* Fix misc errors reformatting validation error messages when saving invalid application custom css
+* Fix Application custom css validation message not displayed
+* Fix wide modal popups (e.g. Copyright element) clipping over screen edge
+* Fix Openlayers 6 frontend / export / print not requesting WMS with configured "transparent" param
+* Fix Openlayers 6 frontend temporarily displaying Wms with previous layer combination when reactivating with changed layer selection
+* Fix reloaded Wms sources containing more layers than advertised in capabilities in some cases
+* Fix missing auto-detection of `nl` locale (see [PR#1425](https://github.com/mapbender/mapbender/pull/1425))
+* Fix empty / not helpful exception messages on incompatible / missing legacy element class
+* Fix infinite pileup of application frontend html cache entry files (see [PR#1423](https://github.com/mapbender/mapbender/pull/1423))
+* Fix toolbar item padding when using centered items
+* Fix mobile template broken position of overlay elements in the bottom left / bottom right corners
+* Fix mobile template panel obscuring toolbar when opened
+* Fix frontend text flow (line height always relative to font size)
+* Fix font size scalability of form inputs and sliders
+* Fix styling mismatches of DimensionsHandler slider vs Layertree context menu sliders
+* Fix layertree font size not matching anything else in frontend
+* Fix input sizing / misc element font sizes in mobile template
+* Fix missing element form discard confirmation after adding to / removing from collections
+* Fix broken Wms instance dimension settings form initialization for year-granular time dimension
+* Support reordering collection items in element backend forms (BaseSourceSwitcher / DimensionsHandler / SearchRouter entries, PrintClient templates)
+* [Export / Print] fix errors if a named template region (e.g. 'date') repeats
+* [Export / Print] reduce line feature label placement mismatches vs Openlayers 6 frontend
+* [Export / Print] improve reproduction of customized feature label sizes
+* [Export / Print] fix z ordering mismatch of feature geometries in export / print vs Openlayers 6 map view
+* [Export / Print] improve reproduction of customized Openlayers 6 line patterns
+* [Print] Fix Openlayers 6 print scale calculations not respecting geodesic distortions at printout location
+* [Print] Fix errors after globally disabling queue mode via `mapbender.print.queueable` if queue mode was previously enabled on the element
+* [BaseSourceSwitcher] Fix BaseSourceSwitcher backend form offering disabled shared instances ([#1417](https://github.com/mapbender/mapbender/issues/1417))
+* [FeatureInfo] Add configurability for stroke colors and opacities on extracted features (see [PR#1323](https://github.com/mapbender/mapbender/pull/1323))
+* [FeatureInfo] disable while measuring tool / POI / Sketch drawing tools are active
+* [FeatureInfo] disable blue notify announcements for empty responses
+* [FeatureInfo] add direct links to response(s) to tab / accordion headers
+* [FeatureInfo] Fix unpredictable display order of responses from multiple sources
+* [FeatureInfo] Fix encoding errors rendering plain text response
+* [FeatureInfo] Fix tab / accordion reuse not working as intended with multiple FeatureInfo elements in one application
+* [FeatureInfo] Fix tab container vertically overflowing popup
+* [FeatureInfo] Fix tab container vertically overflowing bottom toolbar dropdowns / autocomplete suggestions in mobile template
+* [FeatureInfo] Fix tab container sizing in mobile template
+* [GpsPosition] Fix error on click when placed in mobile template footer
+* [Layertree] Fix non-functional folder toggle icon rendering on layer groups that have toggling disabled
+* [Layertree] Fix layout of layer menu, if enabled, and layer metadata popup in mobile template
+* [Layertree] Show nested WMS layers in mobile (use `allowtoggle` instance layer setting to controls this, just like in desktop template)
+* [Legend] add `.legend-dialog` for CSS customizability
+* [Copyright] Fix dialog not opening on second interaction with targetting button
+* [Copyright] Support automatic popup height (leave `height` configuration value empty)
+* [Copyright] Support twig in content
+* [Overview] Support configuring to be permanently open (no toggle button; use `visibility: open-permanent`)
+* [Overview] Fix initial flash of close icon on toggle button even if initially closed
+* [Overview] Fix layout changes on toggle (vs other elements positioned in the same map corner)
+* [SimpleSearch] Add `placeholder` configuration option (string; placeholder text shown in search input)
+* [SimpleSearch] Support usage as a floating map overlay element
+* [SimpleSearch] Improve layout in mobile template
+* [Sketch] Add manual circle radius editing via input field ([PR#1420](https://github.com/mapbender/mapbender/pull/1420))
+* [Sketch] Add configurable multi-color pallette and user customizable color (see [PR#1422](https://github.com/mapbender/mapbender/pull/1422))
+* [Sketch] Fix initial visible content flash of empty table placeholder row
+* [Skecth] Misc user interface improvements
+* [DimensionsHandler] Fix garbled display of acronyms in dimension titles
+* [DimensionsHandler] Fix current value display in toolbar overlapping long dimension title
+* Support replacement of shipping Application template PHP classes via `mapbender.application_template` tagged servics (see [PR#1424](https://github.com/mapbender/mapbender/pull/1424))
+* Support template CSS references containing StringAsset objects (instead of file names)
+* Support setting Scss variables in application custom css
+* Improve customizability of misc widget CSS (require files separately instead of `@import`)
+* Extract Scss variables for customizability
+  * `$textColor` and `$backgroundColor` for default content and popups
+  * `$panelBorderColor` for popups, tab container headings and misc popover menus (e.g. layertree layer context menu)
+  * `$buttonTextColor`, `$buttonBorderColor`, `$buttonHoverColor`, `$buttonHoverTextColor` for legacy custom "success" button border (submit / confirm etc in popups)
+  * `$buttonCriticalTextColor`, `$buttonCriticalBorderColor`, `$buttonCriticalHoverColor`, `$buttonCriticalHoverTextColor` for legacy custom "danger" button border (cancel / close / delete etc in popups)
+  * `$buttonActiveTextColor` (~Digitizer table headings selected for sorting / current pagination button; complements background given in `$buttonFirstActiveColor`)
+  * `$inputBorderColor`, `$inputFocusBorderColor` (form field borders in frontend default + focus)
+  * `$sidepaneBorderColor`, `$popupBorderColor` for misc layout element borders
+  * `$toolBarBackground`, `$toolBarBorderColor`, `$toolBarTopBackground`, `$toolBarBottomBackground` for top / bottom toolbars styling
+  * `$accordionTextColor`, `$accordionBackgroundColor`, `$accordionFontSize` for initial accordion header colors and typography in sidepane / FeatureInfo / Source metadata display
+  * `$accordionActiveTextColor`, `accordionActiveBackgroundColor` for coloring the currently selected accorion header
+  * `$accordionHoverBackgroundColor` for accordion header mouseover effect
+  * `$sidepaneButtonTextColor`, `$sidepaneButtonFontSize`, `$sidepaneButtonBackgroundColor`, `$sidepaneButtonBorderColor` for "buttons"-mode sidepane header buttons (default button state)
+  * `$sidepaneButtonActiveTextColor`, `$sidepaneButtonActiveBackgroundColor` for currently selected header button in "buttons"-mode sidepane
+  * `$sidepaneButtonHoverColor` for "buttons"-mode sidepane header mouseover effect
+  * `$sliderHandleTextColor`, `$sliderHandleBorderColor` for layertree and dimensionhandler slider widgets, complementing previously available `$sliderHandleBackgroundColor`
+  * `$desktopBreakpointWidth` for controlling responsive switch between mobile / desktop element and container visibility
+  * `$hoverEffects` to globally enable / disable misc hover effects
+* Extract twig blocks `backdrop_markup`, `inside_backdrop` for login page customizability
+* [Backend] Re-add display of ids in source / shared instance lists for searchability
+* Resolve misc Twig deprecations
+* Resolve misc Symfony Acl / grants checks deprecations
+* Resolve PHP zip method deprecations
+* Misc performance tweaks
+  * use minified Proj4js asset in production
+  * use minified Openlayers 6 asset in production (requires update to [Rollup-based OL6 build](https://github.com/mapbender/openlayers6-es5/releases/tag/0.4.3.2))
+  * reduce service initialization overhead on common frontend requests
+
+## v3.3.1
+* Fix server error saving HTMLELement content ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
+* Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
 * Fix broken resizable popup styling for projects using jqueryui css
 * Fix window starting to scroll when dragging popups over screen edges
 * Fix local login not available via menu navigation for SSO users
 * Fix print selection interactions running on clicked non-print features while print is open ([#1412](https://github.com/mapbender/mapbender/issues/1412))
 * Fix image export / print line labels not rendering at all or rendering with wrong color if combined with icon markers
+* Fix popup z index coordination (e.g. print dialog vs legend dialog vs native jqueryui dialogs)
+* Fix element (de)activation event not triggered for elements in sidepane
+* Fix element deactivation event not triggered for externally button-controlled element dialog closed with popup button
+* Fix Openlayers 2 overview map visually punching through sidepane
+* Fix server error when submitting application import with no file chosen
+* Fix BaseSourceSwitcher losing instances on application import / duplication
+* [ViewManager] support popup operation (place in content, trigger with an additional button element)
+* [ViewManager] fix layout overflow for very long record titles
+* [ViewManager] respect `showDate` configuration when showing / editing record
 * Improve image export / print reproduction of feature label font sizes and weights
 * Improve image export / print reproduction of line dash patterns
 * Improve image export / print polygon label placement (calculate exterior ring centroid instead of average coordinate)
@@ -14,6 +159,13 @@
 * Improve image export / print line label placement (more closely match Openlayers 6 strategy)
 * Support `tagName` option in popup widget (previously hardcoded to generate div)
 * Support passing DOM Elements into popup widget `buttons` option
+* Support localizing application region names (shown in backend); supply translations for fullscreen template regions
+* Add copyright icon to button icon choices ([PR#1376](https://github.com/mapbender/mapbender/pull/1376))
+* Support overriding map engine choice for all applications via config (see [PR#1413](https://github.com/mapbender/mapbender/pull/1413))
+* Further reduce floating elements interfering with map mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
+* Extract new sass variables for easier (separate) customization of button / accordion / sidepane button colors and text sizes (see [_variables.scss](https://github.com/mapbender/mapbender/blob/e65f202eb1f75ae2988deec545b0aae5f83c8dc8/src/Mapbender/CoreBundle/Resources/public/sass/libs/_variables.scss#L53) for full list)
+* Update default style of header buttons in "buttons"-type sidepane
+* Update default style of queued print job list (decouple from Digitizer table CSS)
 
 ## v3.3.0
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)
@@ -68,15 +220,25 @@
 
 NOTE: the minimum compatible PHP version is now 7.2.
 
-## dev-release/3.2 @ 53898c220
+## v3.2.10
 * Fix Twig 2 incompatibility in HTML content validator ([#1410](https://github.com/mapbender/mapbender/issues/1410))
 * Fix false-positive html validation error if input is empty
+* Fix download links in FeatureInfo html blocked by sandbox ([#1377](https://github.com/mapbender/mapbender/issues/1377), [PR#1387](https://github.com/mapbender/mapbender/pull/1387))
 * Fix excessive clipping and scolling of misc popvers in "Unstyled" sidepane
 * Fix broken resizable popup styling for projects using jqueryui css
 * Fix window starting to scroll when dragging popups over screen edges
 * Fix local login not available via menu navigation for SSO users
-* Fix print selection interactions running on clicked non-print features while print is open
+* Fix print selection interactions running on clicked non-print features while print is open ([#1412](https://github.com/mapbender/mapbender/issues/1412))
 * Fix image export / print line labels not rendering at all or rendering with wrong color if combined with icon markers
+* Fix popup z index coordination (e.g. print dialog vs legend dialog vs native jqueryui dialogs)
+* Fix element (de)activation event not triggered for elements in sidepane
+* Fix element deactivation event not triggered for externally button-controlled element dialog closed with popup button
+* Fix Openlayers 2 overview map visually punching through sidepane
+* Fix server error when submitting application import with no file chosen
+* Fix BaseSourceSwitcher losing instances on application import / duplication
+* [ViewManager] support popup operation (place in content, trigger with an additional button element)
+* [ViewManager] fix layout overflow for very long record titles
+* [ViewManager] respect `showDate` configuration when showing / editing record
 * Improve image export / print reproduction of feature label font sizes and weights
 * Improve image export / print reproduction of line dash patterns
 * Improve image export / print polygon label placement (calculate exterior ring centroid instead of average coordinate)
@@ -84,6 +246,13 @@ NOTE: the minimum compatible PHP version is now 7.2.
 * Improve image export / print line label placement (more closely match Openlayers 6 strategy)
 * Support `tagName` option in popup widget (previously hardcoded to generate div)
 * Support passing DOM Elements into popup widget `buttons` option
+* Support localizing application region names (shown in backend); supply translations for fullscreen template regions
+* Add copyright icon to button icon choices ([PR#1376](https://github.com/mapbender/mapbender/pull/1376))
+* Support overriding map engine choice for all applications via config (see [PR#1413](https://github.com/mapbender/mapbender/pull/1413))
+* Further reduce floating elements interfering with map mouse interactions ([#1401](https://github.com/mapbender/mapbender/issues/1401))
+* Extract new sass variables for easier (separate) customization of button / accordion / sidepane button colors and text sizes (see [_variables.scss](https://github.com/mapbender/mapbender/blob/e65f202eb1f75ae2988deec545b0aae5f83c8dc8/src/Mapbender/CoreBundle/Resources/public/sass/libs/_variables.scss#L53) for full list)
+* Update default style of header buttons in "buttons"-type sidepane
+* Update default style of queued print job list (decouple from Digitizer table CSS)
 
 ## v3.2.9
 * Allow passing custom WMS GetMap parameters for sources added via `mb-action` links (see [PR#1408](https://github.com/mapbender/mapbender/pull/1408) for details)

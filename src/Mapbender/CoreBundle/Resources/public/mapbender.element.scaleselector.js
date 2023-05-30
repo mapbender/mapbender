@@ -3,10 +3,6 @@
     $.widget("mapbender.mbScaleSelector", {
 
         options: {
-            /**
-             * Target widget id string
-             */
-            target: null
         },
 
         /**
@@ -23,11 +19,11 @@
         _create: function() {
             var self = this;
             this.$select = $("select", this.element);
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbScaleSelector", self.options.target)
+                Mapbender.checkTarget('mbScaleSelector');
             });
         },
 

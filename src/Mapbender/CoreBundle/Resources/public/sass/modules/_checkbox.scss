@@ -1,14 +1,4 @@
-/** Frontend only */
+/** Frontend only legacy remnant; use plain html checkboxes or Bootstrap checkboxes */
 .checkWrapper {
-  cursor:pointer;
   display: inline-block;
-  &.checkboxDisabled {
-    opacity: .4;
-  }
-  input[type="checkbox"] {
-    display: none;
-  }
-  & + .labelCheck {
-    margin-left: 0.5em;
-  }
 }

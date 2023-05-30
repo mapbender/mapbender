@@ -77,10 +77,6 @@ mb:
       sharepoi: 'Compartir POI'
       text:
         snippet: 'Puedes usar el siguiente fragmento en un email para enviar el POI'
-      popup:
-        btn:
-          ok: Aceptar
-          cancel: Cancelar
       class:
         title: POI
         description: 'Crear un POI para compartir'
@@ -95,9 +91,6 @@ mb:
       form:
         mesage: 'No fuentebase seteada esta definida.'
     legend:
-      popup:
-        btn:
-          ok: Cerrar
       class:
         title: Leyenda
         description: 'La leyenda muestra la leyenda de las capas del mapa'
@@ -134,8 +127,6 @@ mb:
     metadata:
       popup:
         title: Metadata
-        btn:
-          ok: Close
     gpsposition:
       error:
         notsupported: Los servicios de geolocalización no son soportados por su navegador.
@@ -149,9 +140,6 @@ mb:
         position: posición
         button: botón
     layertree:
-      popup:
-        btn:
-          ok: Cerrar
       const:
         outofscale: 'Capa fuera de la escala'
         outofbounds: 'Capa fuera de límites'

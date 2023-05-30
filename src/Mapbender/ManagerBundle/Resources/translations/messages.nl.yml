@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Versleepbaar
       overview:
-        maximize: Maximaliseer
         fix: Repareer
       layerset:
         add: 'Voeg een lagenset toe'
@@ -62,7 +61,6 @@ mb:
         delete:
           title: 'Verwijder lagenset'
           confirm: 'Wilt u werkelijk de lagenset getiteld <span class="italic">%layerset_title%</span> verwijderen?'
-        id_description: 'Identificatie in formaat BronId/InstantieId'
         id: Id
       instance:
         add: 'Voeg instantie toe'
@@ -153,6 +151,8 @@ mb:
     import:
       application:
         failed: 'Applicatie kan niet geimporteerd'
+    xml_invalid: Ongeldig document
+    xml_malformed: Ongeldig document # @todo: supply distinct message
   core:
     admin:
       button:

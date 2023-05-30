@@ -13,17 +13,15 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_source")
  * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\DiscriminatorColumn(name="discr", type="string", length=15)
+ * @ORM\DiscriminatorMap({
+ *     "wmssource"="\Mapbender\WmsBundle\Entity\WmsSource",
+ *     "wmtssource"="\Mapbender\WmtsBundle\Entity\WmtsSource"
+ * })
  * @ORM\HasLifecycleCallbacks()
  */
 abstract class Source implements MutableHttpOriginInterface
 {
-
-    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
-    const STATUS_OK = 'OK';
-    /** @deprecated only relevant client-side, and it doesn't even use the same string values there */
-    const STATUS_UNREACHABLE = 'UNREACHABLE';
-
     const TYPE_WMS = "WMS";
     const TYPE_WMTS = "WMTS";
     const TYPE_TMS = "TMS";
@@ -58,7 +56,7 @@ abstract class Source implements MutableHttpOriginInterface
      * @ORM\Column(type="string",nullable=true)
      */
     protected $type;
-    
+
     public function __construct()
     {
     }
@@ -178,18 +176,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * Source status is a client-side runtime concept helping to visualize live network response errors.
-     * It's meaningless server-side.
-     *
-     * @return string
-     * @deprecated
-     */
-    final public function getStatus()
-    {
-        return self::STATUS_OK;
-    }
-
-    /**
      * Returns a Source as String
      *
      * @return String Source as String
@@ -200,8 +186,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * Returns a source type
-     *
      * @return string
      */
     public function getType()

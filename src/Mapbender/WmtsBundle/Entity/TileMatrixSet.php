@@ -57,16 +57,12 @@ class TileMatrixSet implements MutableUrlTarget
      */
     protected $tilematrices;
 
-    /**
-     * Create an instance of TileMatrixSet
-     */
     public function __construct()
     {
         $this->tilematrices = array();
     }
     
     /**
-     * Get id
      * @return integer TileMatrixSet id
      */
     public function getId()
@@ -76,7 +72,7 @@ class TileMatrixSet implements MutableUrlTarget
 
     /**
      *
-     * @return WmtsSource
+     * @return HttpTileSource
      */
     public function getSource()
     {
@@ -85,17 +81,16 @@ class TileMatrixSet implements MutableUrlTarget
 
     /**
      *
-     * @param WmtsSource $wmtssource
+     * @param HttpTileSource $wmtssource
      * @return TileMatrixSet
      */
-    public function setSource(WmtsSource $wmtssource)
+    public function setSource(HttpTileSource $wmtssource)
     {
         $this->source = $wmtssource;
         return $this;
     }
 
     /**
-     * Get supportedCrs
      * @return string supportedCrs
      */
     public function getSupportedCrs()
@@ -154,7 +149,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Set identifier
      * @param string $value
      */
     public function setIdentifier($value)
@@ -163,7 +157,6 @@ class TileMatrixSet implements MutableUrlTarget
     }
 
     /**
-     * Get tilematrices
      * @return TileMatrix[]
      */
     public function getTilematrices()

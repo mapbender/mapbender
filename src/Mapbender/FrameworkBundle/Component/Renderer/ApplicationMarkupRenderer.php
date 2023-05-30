@@ -6,36 +6,62 @@ namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 use Mapbender\Component\Application\ElementDistribution;
 use Mapbender\Component\Enumeration\ScreenTypes;
-use Mapbender\CoreBundle\Component\Template;
+use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Twig;
 
 class ApplicationMarkupRenderer
 {
+    /** @var Twig\Environment */
+    protected $templatingEngine;
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
     /** @var ElementFilter */
     protected $elementFilter;
     /** @var ElementMarkupRenderer */
     protected $elementRenderer;
-    /** @var EngineInterface */
-    protected $templatingEngine;
+    /** @var UploadsManager */
+    protected $uploadsManager;
     /** @var bool */
     protected $allowResponsiveContainers;
 
     /** @var ElementDistribution[] */
     protected $distributions = array();
 
-    public function __construct(ElementFilter $elementFilter,
+    public function __construct(Twig\Environment $templatingEngine,
+                                ApplicationTemplateRegistry $templateRegistry,
+                                ElementFilter $elementFilter,
                                 ElementMarkupRenderer $elementRenderer,
-                                EngineInterface $templatingEngine,
+                                UploadsManager $uploadsManager,
                                 $allowResponsiveContainers)
     {
+        $this->templatingEngine = $templatingEngine;
+        $this->templateRegistry = $templateRegistry;
         $this->elementFilter = $elementFilter;
         $this->elementRenderer = $elementRenderer;
-        $this->templatingEngine = $templatingEngine;
+        $this->uploadsManager = $uploadsManager;
         $this->allowResponsiveContainers = $allowResponsiveContainers;
+    }
+
+    /**
+     * @param Application $application
+     * @return string
+     */
+    public function renderApplication(Application $application)
+    {
+        $templateObj = $this->templateRegistry->getApplicationTemplate($application);
+        $twigTemplate = $templateObj->getTwigTemplate();
+        $vars = array_replace($templateObj->getTemplateVars($application), array(
+            'application' => $application,
+            'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
+            'body_class' => $templateObj->getBodyClass($application),
+        ));
+        return $this->templatingEngine->render($twigTemplate, $vars);
     }
 
     /**
@@ -49,7 +75,7 @@ class ApplicationMarkupRenderer
         $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
         $elements = $elementBucket ? $elementBucket->getElements() : array();
         if ($elements || !$suppressEmptyRegion) {
-            $template = $this->getTemplateDescriptor($application);
+            $template = $this->templateRegistry->getApplicationTemplate($application);
             $skin = $template->getRegionTemplate($application, $regionName);
             return $this->templatingEngine->render($skin, $this->getRegionTemplateVars($application, $regionName, $elements));
         } else {
@@ -123,7 +149,7 @@ class ApplicationMarkupRenderer
      */
     protected function getRegionTemplateVars(Application $application, $regionName, $elements)
     {
-        $template = $this->getTemplateDescriptor($application);
+        $template = $this->templateRegistry->getApplicationTemplate($application);
         $props = $this->extractRegionProperties($application, $regionName);
         $props += $template->getRegionPropertiesDefaults($regionName);
         $classes = $template->getRegionClasses($application, $regionName);
@@ -154,22 +180,6 @@ class ApplicationMarkupRenderer
             'region_class' => implode(' ', $classes),
             'region_props' => $props,
         ));
-    }
-
-    /**
-     * @param Application $application
-     * @return Template
-     */
-    protected static function getTemplateDescriptor(Application $application)
-    {
-        /** @var string|Template $templateCls */
-        $templateCls = $application->getTemplate();
-        /** @var Template $templateObj */
-        $templateObj = new $templateCls();
-        if (!($templateObj instanceof Template)) {
-            throw new \LogicException("Invalid template class " . get_class($templateObj));
-        }
-        return $templateObj;
     }
 
     /**
@@ -227,5 +237,20 @@ class ApplicationMarkupRenderer
             $elements = \array_filter($elements, $filter);
         }
         return $elements;
+    }
+
+    /**
+     * @param Application $application
+     * @return string|null
+     */
+    protected function getPublicUploadsBaseUrl(Application $application)
+    {
+        $slug = $application->getSlug();
+        try {
+            $this->uploadsManager->getSubdirectoryPath($slug, true);
+            return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
+        } catch (IOException $e) {
+            return null;
+        }
     }
 }

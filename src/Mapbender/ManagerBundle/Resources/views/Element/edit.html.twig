@@ -1,7 +1,7 @@
-    {{ form_start(form, {'attr': {
+    {{ form_start(form, {'attr': form.vars.attr | default({}) | merge({
         'class': ((form.vars.attr.class | default('')) ~ ' elementForm') | trim,
-        novalidate: 'novalidate', id: 'elementForm'
-    }}) }}
+        novalidate: 'novalidate'
+    })}) }}
 
     {% block form_fields %}
         {% block form_fields_common %}

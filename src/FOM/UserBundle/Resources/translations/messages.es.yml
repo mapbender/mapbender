@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'No están definidos grupos y usuarios.'
     password:
       email_body_html: "&lt;p&gt;Hola %user_username%,&lt;/p&gt;&lt;p&gt;Has solicitado una nueva clave.\n&lt;br /&gt;Favor clic &lt;a href=\"%url%\"&gt;aqui&lt;/a&gt;."
-      request_error_no_user: 'Usuario no puede ser encontrado.'
       done:
         password_reset: 'Reiniciar Clave'
         congratulations: Felicitaciones!
@@ -119,8 +118,6 @@ fom:
         title: 'Reiniciar Clave'
         email_been_sent: 'Un email con su codigo de reinicio y enlace ha sido enviado a la dirección proveída.'
         back_to_login: 'Regresar al login'
-      request:
-        user_inactive: 'Este usuario esta inactivo. Favor activelo primero.'
       email_body_text: 'Hola %user_username%, Has solicitado una nueva clave. Llama en tu navegado al link "%url%".'
     userbundle:
       user_control: 'Control de usuario'

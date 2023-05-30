@@ -19,7 +19,7 @@
         <div class="list-head">
             <div class="row">
                 <div class="col-sm-5 col-xs-12 col-12">
-                    {%- if create_permission -%}
+                    {%- if grants.create -%}
                     <div class="content-box content-box-md">
                         <a href="{{ path('mapbender_manager_repository_new') }}">
                           <i class="fa fas fa-plus fa-lg"></i>
@@ -49,10 +49,10 @@
 
             {%- block item_interactions -%}
                             <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fa fas fa-desktop"></i></a>
-                            {% if item.id in reloadableIds %}
+                            {%- if grants.edit -%}
                               <a class="btn btn-default" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ item.title }}"><i class="fa fas fa-refresh fa-sync-alt"></i></a>
                             {% endif %}
-                            {% if is_granted('DELETE', oid) %}
+                            {%- if grants.delete -%}
                               <a href="#" class="btn btn-default -fn-delete"
                                           title="{{"mb.manager.admin.source.delete"|trans}} {{ item.title }}"
                                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":item.id}) }}"
@@ -61,7 +61,7 @@
             {%- endblock -%}
 
             {%- block item_title -%}
-                      <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}">{{ item.title }}</a> <sup>{{ item.alias }}</sup>
+              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}">{{ item.title }}</a> <sup>{{ item.alias }}&nbsp;#{{ item.id }}</sup>
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}
@@ -91,7 +91,7 @@
             {%- block item_interactions -%}
                 <a class="btn btn-default" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                   ><i class="fa fa-desktop"></i></a>
-                {%- if edit_shared_instances -%}
+                {%- if grants.edit -%}
                           <a class="btn btn-default" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                             ><i class="fa fa-cog"></i></a>
                           <a class="btn btn-default -fn-delete" href="#"
@@ -112,7 +112,7 @@
             {%- endblock -%}
 
             {%- block item_title -%}
-              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}">{{ item.title | default(item.source.title) }}</a>
+              <a href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}">{{ item.title | default(item.source.title) }}</a>&nbsp;<sup>#{{ item.id }}</sup>
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}

@@ -38,16 +38,4 @@ mb:
             layerrefs: Layerrefs
         instance:
           label:
-            tilemartixset: TileMartixSet
             style: Style
-        instancelayerform:
-          label:
-            layer_matrixsets: Verfügbare MatrixSets
-            layer_styles: Verfügbare Styles
-    repository:
-      parser:
-        couldnotparse: Das XML Dokument kann nicht geparst werden.
-        not_supported_document: Das XML Dokument ist nicht unterstützt.
-        not_supported_version: Die WMTS Version ist nicht unterstützt.
-        not_valid_dtd: Das XML Dokument ist nicht valid (DTD).
-        not_valid_xsd: Das XML Dokument ist nicht valid (XSD).

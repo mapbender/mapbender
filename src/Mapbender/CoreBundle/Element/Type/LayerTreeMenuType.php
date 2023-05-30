@@ -9,36 +9,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LayerTreeMenuType extends AbstractType
 {
-    protected $exposedChoices = array();
-
-    public function __construct($legacyDummy = null)
-    {
-        $this->exposedChoices = array(
-            "Remove layer" => "layerremove",
-            "Opacity" => "opacity",
-            "Zoom to layer" => "zoomtolayer",
-            "Metadata" => "metadata",
-            "Dimension" => "dimension",
-        );
-    }
-
     /**
      * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $choices = array(
+            'Remove layer' => 'layerremove',
+            'Opacity' => 'opacity',
+            'Zoom to layer' => 'zoomtolayer',
+            'Metadata' => 'metadata',
+            'Dimension' => 'dimension',
+        );
         $resolver->setDefaults(array(
-            'choices' => $this->exposedChoices,
+            'choices' => $choices,
             'multiple' => true,
             'attr' => array(
-                'size' => count($this->exposedChoices),
+                'size' => count($choices),
             ),
         ));
     }
 
-    /**
-     * @return null|string|\Symfony\Component\Form\FormTypeInterface
-     */
     public function getParent()
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';

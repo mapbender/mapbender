@@ -10,11 +10,11 @@
          */
         _create: function() {
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbScalebar", self.options.target);
+                Mapbender.checkTarget("mbScalebar");
             });
         },
 

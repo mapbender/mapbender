@@ -4,9 +4,11 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 
 class Sketch extends AbstractElementService
+    implements ConfigMigrationInterface
 {
 
     /**
@@ -41,7 +43,6 @@ class Sketch extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/element/sketch.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/element/sketch.scss',
@@ -58,7 +59,6 @@ class Sketch extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             "auto_activate" => false,
             "deactivate_on_close" => true,
             "geometrytypes" => array(
@@ -68,6 +68,12 @@ class Sketch extends AbstractElementService
                 "rectangle",
                 "circle",
             ),
+            'colors' => array(
+                '#ff3333',
+                '#3333ff',
+                '#44ee44',
+            ),
+            'allow_custom_color' => true,
         );
     }
 
@@ -91,6 +97,7 @@ class Sketch extends AbstractElementService
     {
         return array_replace($element->getConfiguration(), array(
             'title' => $element->getTitle(),
+            'radiusEditing' => $this->getRadiusEditing($element),
         ));
     }
 
@@ -99,6 +106,31 @@ class Sketch extends AbstractElementService
         $view = new TemplateView('MapbenderCoreBundle:Element:sketch.html.twig');
         $view->attributes['class'] = 'mb-element-sketch';
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
+        $view->variables['radiusEditing'] = $this->getRadiusEditing($element);
+        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
+        $view->variables['colors'] = $element->getConfiguration()['colors'];
+        $view->variables['allow_custom_color'] = $element->getConfiguration()['allow_custom_color'];
         return $view;
+    }
+
+    /**
+     * @param Element $element
+     * @return bool
+     */
+    protected function getRadiusEditing(Element $element)
+    {
+        $config = $element->getConfiguration() + $this->getDefaultConfiguration();
+        return $element->getApplication()->getMapEngineCode() !== 'ol2' && \in_array('circle', $config['geometrytypes']);
+    }
+
+    public static function updateEntityConfig(Element $entity)
+    {
+        // Bridge undocumented legacy "paintstyles" to "colors"
+        $config = $entity->getConfiguration();
+        if (!empty($config['paintstyles']['fillColor'])) {
+            $config += array('colors' => array($config['paintstyles']['fillColor']));
+        }
+        unset($config['paintstyles']);
+        $entity->setConfiguration($config);
     }
 }

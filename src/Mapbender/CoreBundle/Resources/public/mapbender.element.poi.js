@@ -2,7 +2,6 @@
 
     $.widget('mapbender.mbPOI', {
         options: {
-            target: undefined,
             useMailto: false,
             gps: undefined
         },
@@ -18,13 +17,12 @@
 
         _create: function() {
             var self = this;
-            var target = this.options.target;
-            Mapbender.elementRegistry.waitReady(target).then(
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(
                 function(mbMap) {
                     self._setup(mbMap);
                 },
                 function() {
-                    Mapbender.checkTarget("mbPOI", target);
+                    Mapbender.checkTarget("mbPOI");
                 }
             );
         },
@@ -82,6 +80,8 @@
             if (this.clickActive) {
                 this._updatePoi(data.coordinate[0], data.coordinate[1]);
                 this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
+                // Stop further handlers
+                return false;
             }
         },
         _updatePoi: function(lon, lat) {
@@ -117,18 +117,15 @@
                 content: $('.input', this.element).first().html(),
                 buttons: [
                     {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
+                        label: Mapbender.trans('mb.actions.accept'),
                         cssClass: 'button',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
-                        label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
-                        cssClass: 'button buttonCancel critical',
-                        callback: function () {
-                            this.close();
-                        }
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'popupClose button critical'
                     }
                 ]
             };

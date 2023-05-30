@@ -37,7 +37,6 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     {
         return array(
             'title' => 'Scale Bar',
-            'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
             'units' => "km",

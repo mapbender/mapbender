@@ -8,7 +8,7 @@
 
 {% block checkbox_row %}
     {% if form.parent and form.parent.parent and 'source_instance_layer_collection' in form.parent.parent.vars.block_prefixes %}
-        {% set _columnClass = ('checkboxColumn ' ~ (form.vars.columnClass | default(''))) | trim %}
+        {%- set _columnClass = ['checkboxColumn', (columnClass | default(''))] | filter(notempty => notempty) | join(' ') -%}
         {% set _tagName = tagName | default('td') %}
         <{{ _tagName }} class="{{_columnClass}}" data-check-identifier="{{ form.vars.checkbox_group }}" title="{{ form.vars.label | trans }}">
             {{- form_widget(form, {'label': false}) -}}
@@ -77,7 +77,7 @@
           {{- block('form_buttons') -}}
       </div>
     </div>
-    <div class="row">
+    <div class="row form-group">
       {% block form_main %}
       <div class="col-md-6 col-xs-12">
         {% block form_main1 %}

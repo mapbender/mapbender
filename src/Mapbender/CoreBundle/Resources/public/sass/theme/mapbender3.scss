@@ -1,3 +1,17 @@
+$backgroundColor: #fff !default;
+$sidepaneBackground: $backgroundColor !default;
+$sidepaneBorderColor: #ccc !default;
+$sidepaneTextColor: inherit !default;
+
+$toolBarBackgroundColor: #eee !default;
+$toolBarOpacity: 1.0 !default;
+$toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
+$toolBarTopBackground: $toolBarBackground !default;
+$toolBarBottomBackground: $toolBarBackground !default;
+$toolBarBorderColor: $sidepaneBorderColor !default;
+$desktopBreakpointWidth: 1200px !default;
+$hoverEffects: true !default;
+
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";
@@ -8,9 +22,6 @@
 @import "modules/checkbox";
 @import "modules/dropdown";
 @import "modules/dateselector";
-@import "modules/popup_dialog";
-@import "modules/tab_navigator";
-@import "modules/result_table";
 
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
@@ -22,20 +33,6 @@
   border-bottom:dashed 1px darken(#fff, 30%);
 }
 
-.title {
-  font-size: 1.35rem;
-}
-.labelInput, .inputWrapper, .dropdown:not(.bs-dropdown) {
-  font-size: 0.85rem;
-}
-
-.labelInput, .labelCheck {
-  color: $middleFontColor;
-}
-
-.linkButton, .button, .buttonCore {
-  font-size: 0.85rem;
-}
 .linkButton {
   &:hover, &:active{color:$ciColor;};
 }
@@ -48,18 +45,20 @@
 
 .toolbar-button-hover-effect {
   opacity: $toolBarButtonDefaultOpacity;
-  &:hover {
-    opacity: $toolBarButtonHoverOpacity;
+  @if $hoverEffects {
+    &:hover {
+      opacity: $toolBarButtonHoverOpacity;
+    }
   }
-}
-
-.labelInput, .labelCheck {
-  font-size: 0.85rem;
 }
 
 .iconBig {
   font-size: 160%;
-  vertical-align: middle;   // for proper vertical align of following inline element, if any
+  line-height: 1;
+  &, &+* {
+    // Keep following inline element centered vertically despite resizing
+    vertical-align: middle;
+  }
   &:before {
     display: inline-block;
   }
@@ -74,81 +73,58 @@ ul.toolBar, .toolBar > ul {
   margin: 0;
 }
 
+.toolBarItem {
+  white-space: nowrap;
+  vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
+  padding: 5px;
+  display: inline-block;
+}
+
+.toolBarItemActive {
+  // Invert background and foreground
+  background-color: $toolBarFontColor;
+  color: $toolBarBackgroundColor;
+}
+
+.toolBarItem + .toolBarItem {
+  margin-left: 0.5rem;
+}
+
 .toolBar {
-  opacity: $toolBarOpacity;
   z-index: 4;
   user-select: none;
-  .toolBarItem {
-    white-space: nowrap;
-    vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
-  }
-  >ul .toolBarItem {
-    padding:5px;
-    display: inline-block;
-    > span {
-      // amenity for buttons with ".iconBig" icons + labels
-      // inline does not get enough height to wrap contents vertically, inline-block does
-      display: inline-block;
-    }
-    .mb-element {
-      vertical-align: inherit;
-      display: inline-block;
-    }
-    @include border-radius($radius);
-    // spacing between icon and label for buttons and similar elements
-    [class^="icon"], [class*=" icon"] {
-      & +* {
-        margin-left: 0.4em;
-      }
-    }
-  }
-  .mb-button {
-    opacity: $toolBarButtonDefaultOpacity;
-    &:hover {
-      opacity: $toolBarButtonHoverOpacity;
-    }
-  }
-  .toolBarItemActive {
-    // Invert background and foreground
-    background-color: $toolBarFontColor;
-    color: $toolBarBackgroundColor;
-    .mb-button {
-      opacity: $toolBarButtonActiveOpacity;
-    }
-  }
+
   padding:$space/4 $space/2 $space/4 $space/2;
-  border-color: darken($contentColor, 20%);
+  border-color: $toolBarBorderColor;
 
   &.top {
+    background: $toolBarTopBackground;
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
+    background: $toolBarBottomBackground;
     .dropdownList{
-      bottom:0;   // to "drop up"
-      margin-bottom: $inputHeight;
+      bottom: 100%;   // to "drop up"
     }
   }
 
   .itemsRight {
     text-align:right;
-    .toolBarItem{padding-left:$space/4;}
-    .dropdown:not(.numeric) {
-      text-align: left;
+    .mb-element {
+      text-align: initial;
     }
   }
   .itemsCenter {
     text-align:center;
-    .toolBarItem{padding-right:$space/2;}
+    .mb-element {
+      text-align: initial;
+    }
   }
-  // Undo fixed-pixel line height on body
   line-height: 1;
   // Undo Bootstrap global label margin
   label {
     margin-bottom: 0;
-  }
-  a.mb-button:hover {
-    text-decoration: none;
   }
   .menu-wrapper {
     .dropdown-menu {
@@ -167,8 +143,10 @@ ul.toolBar, .toolBar > ul {
     .toolBarItem {
       margin: 0.25em;
       padding: 0.25em;
+      display: block;
       .iconBig {
         // emulate ~.fa-fw for neat text alignment
+        display: inline-block;
         width: 1.25em;
         text-align: center;
       }
@@ -182,11 +160,12 @@ ul.toolBar, .toolBar > ul {
 
 // Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
 .toolBarItem {
+  // Restore normal line height (vs 1 on .toolBar)
+  line-height: 1.42857143;
   label, .labelInput {
     display: inline-block;
     margin-right: 0.5em;
     vertical-align: inherit;
-    line-height: $inputHeight;
   }
   .dropdown:not(.bs-dropdown) {
     width: auto;
@@ -202,28 +181,26 @@ ul.toolBar, .toolBar > ul {
     // undo historical float classes
     float: none;
   }
+  color: $sidepaneTextColor;
+  background: $sidepaneBackground;
   height: 100%;
   overflow: visible;
-  background-color: $contentColor;
   width: 350px;
+  position: absolute;
 
-  border-bottom:1px solid darken(white, 30%);
+  border-bottom: 1px solid $sidepaneBorderColor;
   .toggleSideBar {
     font-size: 1.5rem;
-    display: inline-block;
     padding: 5px;
-    border-top-right-radius: $radius;
-    border-bottom-right-radius: $radius;
+    position: absolute;
+    top: 0;
+    border-radius: $radius;
   }
 
-  // style for the left side pane
   &.left {
-    position: absolute;
     left: 0;
-    border-right:1px solid darken(white, 30%);
+    border-right: 1px solid $sidepaneBorderColor;
     .toggleSideBar {
-      position: absolute;
-      top: 0;
       left: 0;
       margin-left: 100%;
     }
@@ -231,12 +208,9 @@ ul.toolBar, .toolBar > ul {
 
   // style for the right side pane
   &.right {
-    position: absolute;
     right: 0;
-    border-left:1px solid darken(white, 30%);
+    border-left: 1px solid $sidepaneBorderColor;
     .toggleSideBar {
-      position: absolute;
-      top: 0;
       right: 0;
       margin-right: 100%;
     }
@@ -302,29 +276,29 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     word-wrap: break-word;
 }
 
-.mapbender-popup, .fom-popup {
+.popup, .sidePane {
   label {
-    margin-bottom: 0;
     font-weight: normal;
-    line-height: inherit;
   }
 }
 
 .collapse-toggle {
+  $buttonTextColor: $lightFontColor !default;
   background: $buttonFirstColor;
-  color: $lightFontColor;
+  color: $buttonTextColor;
+  cursor: pointer;
 }
 
 // Filter Element visibility by "screenType"
 // @see Mapbender/CoreBundle/Extension/ElementMarkupExtension.php
 // @todo: eventually we may need to make the breaking pixel width configurable
-@media screen and (max-width: 1119px) {
+@media screen and (max-width: #{$desktopBreakpointWidth - 1px}) {
   .hide-screentype-mobile {
     display: none !important; // Overrule misc display: inline-block and such with !important
   }
 }
 
-@media screen and (min-width: 1120px) {
+@media screen and (min-width: $desktopBreakpointWidth) {
   .hide-screentype-desktop {
     display: none !important; // Overrule misc display: inline-block and such with !important
   }
@@ -403,33 +377,12 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .ui-autocomplete {
-  background-color: #fff;
-  border: solid 1px lighten($thirdColor, 15%);   // same as .input
-  position: absolute; // do not expand DOM size when showing items
-  z-index: 20000; // ~replacement for .ui-front
-
-  line-height: 1.5;
-  li {
-    padding: 5px 5px;
-    cursor: pointer;
-    display: block;
-    opacity: 0.8;
-    &:hover {
-      opacity: 1;
-      background-color: $contentColor;
-    }
-  }
-  .toolBar & {
+  .toolBar &, .anchored-element-wrap & {
     max-height: 250px;
     overflow-y: hidden;
     text-align: left;
   }
   .sidePane & {
     max-width: 100%;
-  }
-  .mobilePane & {
-    li {
-      padding: $space / 2;
-    }
   }
 }

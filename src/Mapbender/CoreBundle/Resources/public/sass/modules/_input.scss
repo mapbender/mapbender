@@ -1,19 +1,19 @@
-.input, .dropdown:not(.bs-dropdown) {
+$thirdColor: #a2a2a2 !default;
+$inputBorderColor: lighten($thirdColor, 15%) !default;
+$inputFocusBorderColor: lighten($ciColor, 20%) !default;
+
+.input,
+.dropdown:not(.bs-dropdown) .dropdownValue,
+.dropdownList {
   color: $inputForegroundColor;
-  border:solid 1px lighten($thirdColor, 15%);
   background-color: $inputBackgroundColor;
-}
-.input, .inputWrapper select {
-  padding-left: 5px;
-  padding-right: 5px;
+  border:solid 1px $inputBorderColor;
 }
 
-.input:not(textarea), .dropdown:not(.bs-dropdown) {
-  height: $inputHeight;
+.input, .inputWrapper select {
+  padding: 5px;
 }
-.dropdown:not(.bs-dropdown) {
-  line-height: #{$inputHeight - 2px}; /** 2px for border top + bottom */
-}
+
 .input {
   &[disabled] {
     background: darken($inputBackgroundColor, 10%)
@@ -30,7 +30,7 @@ textarea.input {
 .input, .inputWrapper select {
   &:focus{
     outline:none;
-    border:1px solid lighten($ciColor, 20%);
+    border-color: $inputFocusBorderColor;
   }
 }
 
@@ -38,9 +38,6 @@ textarea.input {
   display: inline-block;
   width: 100%;
   position: relative;
-}
-textarea.input {
-   min-height: 150px;
 }
 
 .inputWrapper{
@@ -57,4 +54,12 @@ textarea.input {
 table .checkbox {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.checkbox label, .radio label {
+  > input {
+    // Defeat Chrome user agent stylesheet resetting checkbox
+    // cursor to "default"
+    cursor: inherit;
+  }
 }

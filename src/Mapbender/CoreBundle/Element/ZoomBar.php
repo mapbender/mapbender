@@ -6,10 +6,9 @@ use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\Utils\ApplicationUtil;
 
 /**
- * Mapbender Zoombar
- *
  * The Zoombar element provides a control to pan and zoom, similar to the
  * OpenLayers PanZoomBar control. This element though is easier to use when
  * custom styling is needed.
@@ -56,7 +55,6 @@ class ZoomBar extends AbstractElementService implements FloatingElement
     public static function getDefaultConfiguration()
     {
         return array(
-            'target' => null,
             'components' => array(
                 "rotation",
                 "zoom_max",
@@ -80,16 +78,17 @@ class ZoomBar extends AbstractElementService implements FloatingElement
 
     public function getView(Element $element)
     {
+        $mapElement = ApplicationUtil::getMapElement($element->getApplication());
+        if (!$mapElement) {
+            return false;
+        }
         $view = new TemplateView('MapbenderCoreBundle:Element:zoombar.html.twig');
         $view->attributes['class'] = 'mb-element-zoombar';
-        $target = $element->getTargetElement('target');
         $scales = array();
-        if ($target) {
-            $mapConfig = $target->getConfiguration();
-            if (!empty($mapConfig['scales'])) {
-                $scales = $mapConfig['scales'];
-                asort($scales, SORT_NUMERIC | SORT_REGULAR);
-            }
+        $mapConfig = $mapElement->getConfiguration();
+        if (!empty($mapConfig['scales'])) {
+            $scales = $mapConfig['scales'];
+            asort($scales, SORT_NUMERIC | SORT_REGULAR);
         }
         $withDefaults = $element->getConfiguration() + $this->getDefaultConfiguration();
         $view->variables = array(

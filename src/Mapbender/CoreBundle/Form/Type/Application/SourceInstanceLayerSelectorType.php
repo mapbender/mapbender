@@ -58,7 +58,8 @@ class SourceInstanceLayerSelectorType extends AbstractType
                 $groupName = "{$lsTitle}: {$instTitle}";
                 $groupMembers = array();
                 foreach ($instance->getRootlayer()->getSublayer() as $layer) {
-                    $groupMembers[$layer->getTitle()] = $layer->getId();;
+                    $title = $layer->getTitle() ?: $layer->getSourceItem()->getTitle();
+                    $groupMembers[$title] = $layer->getId();;
                 }
                 asort($groupMembers);
                 $groups[$groupName] = $groupMembers;

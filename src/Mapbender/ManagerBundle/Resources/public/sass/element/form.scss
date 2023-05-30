@@ -11,37 +11,21 @@
     resize: none;
   }
   .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + $space});
-  }
-  .choiceExpandedSortable {
-    &.input {
-      // undo fixed pixel height on .input
-      // @todo: .input should not have any height rule
-      height: auto;
-    }
-    .sortableItem {
-      cursor: move;
-      label {
-        cursor: inherit;
-      }
-      &:hover {
-        background-color: darken($inputBackgroundColor, 10%);
-      }
-    }
+    width: calc(100% - #{$labelWidth + 20px});
   }
   .left .checkbox {
     display: inline-block;
-    margin-right: $space;
+    margin-right: 20px;
   }
 }
 
 .extraWideLabelForm {
-  $label: 120px;
+  $labelWidth: 120px;
   .labelInput {
     width: 120px;
   }
   .inputWrapper, .dropdown {
-    width: calc(100% - #{$label + $space});
+    width: calc(100% - #{$labelWidth + 20px});
   }
 }
 
@@ -50,11 +34,15 @@
   textarea {
     min-height: 100px;
   }
+  margin-bottom: 20px;
+  .form-group &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .collectionRemove {
-  line-height: $inputHeight;
   position: absolute;
-  right: -1em;
+  right: -0.75em;
+  line-height: 2;
   z-index: 1;
 }

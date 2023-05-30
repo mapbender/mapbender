@@ -16,13 +16,6 @@
         template: null,
         menuTemplate: null,
         popup: null,
-        consts: {
-            source: "source",
-            theme: "theme",
-            root: "root",
-            group: "group",
-            simple: "simple"
-        },
         _mobilePane: null,
         useDialog_: false,
         isTouch_: false,
@@ -58,7 +51,8 @@
         },
         _createTree: function() {
             var sources = this.model.getSources();
-            $('ul.layers:first', this.element).empty();
+            var $rootList = $('ul.layers:first', this.element);
+            $rootList.empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
                     var source = sources[i];
@@ -68,16 +62,17 @@
                         var $themeNode = this._findThemeNode(source.layerset);
                         if (!$themeNode.length) {
                             $themeNode = this._createThemeNode(source.layerset, themeOptions);
-                            $('ul.layers:first', this.element).append($themeNode);
+                            $rootList.append($themeNode);
                         }
                         $('ul.layers:first', $themeNode).append($sourceNode);
                     } else {
-                        $("ul.layers:first", this.element).append($sourceNode);
+                        $rootList.append($sourceNode);
                     }
                     this._resetSourceAtTree(sources[i]);
                 }
             }
 
+            this.reIndent_($rootList, false);
             this._reset();
         },
         _reset: function() {
@@ -88,10 +83,9 @@
         },
         _createEvents: function() {
             var self = this;
-            this.element.on('click', '.-fn-toggle-theme', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '.-fn-toggle-layer:not(.disabled)', $.proxy(self._toggleSelected, self));
+            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', $.proxy(self._toggleSelected, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
             this.element.on('click', '.layer-menu .exit-button', function() {
                 $(this).closest('.layer-menu').remove();
@@ -118,7 +112,7 @@
             });
             if (this._mobilePane) {
                 $(this.element).on('click', '.leaveContainer', function() {
-                    $('.-fn-toggle-layer', this).click();
+                    $('.-fn-toggle-selected', this).click();
                 });
             }
         },
@@ -133,7 +127,7 @@
             // all layers in the source container in DOM order
             var sourceId = $sourceContainer.attr('data-sourceid');
             var layerIdOrder = [];
-            $('li.leave[data-type="simple"]', $sourceContainer).each(function() {
+            $('.-js-leafnode', $sourceContainer).each(function() {
                 var $t = $(this);
                 var layerId = $t.attr('data-id');
                 if (typeof layerId !== "undefined") {
@@ -148,7 +142,7 @@
          * @private
          */
         _updateSourceOrder: function() {
-            var $roots = $('ul.layers li[data-type="root"]', this.element);
+            var $roots = $('.serviceContainer[data-sourceid]', this.element);
             var sourceIds = $roots.map(function() {
                 return $(this).attr('data-sourceid');
             }).get().reverse();
@@ -157,20 +151,10 @@
         _createSortable: function() {
             var self = this;
             var onUpdate = function(event, ui) {
-                var $elm = $(ui.item);
-                var type = $elm.attr('data-type');
-                switch (type) {
-                    case 'theme':
-                    case 'root':
-                        self._updateSourceOrder();
-                        break;
-                    case 'simple':
-                    case 'group':
-                        self._updateSource($elm.closest('.serviceContainer'));
-                        break;
-                    default:
-                        console.warn("Warning: unhandled element in layertree sorting", type, $elm);
-                        break;
+                if (ui.item.is('.themeContainer,.serviceContainer')) {
+                    self._updateSourceOrder();
+                } else {
+                    self._updateSource(ui.item.closest('.serviceContainer'));
                 }
             };
 
@@ -186,20 +170,15 @@
         },
         _createThemeNode: function(layerset, options) {
             var $li = this.themeTemplate.clone();
-            $li.attr('data-type', this.consts.theme);
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('.-fn-toggle-children', $li).toggleClass('iconFolderActive', options.opened);
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
             this._updateThemeNode(layerset, $li);
             return $li;
         },
         _updateThemeNode: function(layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
-            var $themeControl = $('> .leaveContainer .-fn-toggle-theme', $node_);
-            if ($themeControl.length > 1) {
-                console.log("Multiple themes?!", $themeControl.get());
-            }
+            var $themeControl = $('> .leaveContainer .-fn-toggle-selected', $node_);
             var newState = layerset.getSelected();
             this.updateIconVisual_($themeControl, newState, true);
         },
@@ -223,7 +202,7 @@
 
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
-            var nodeType;
+
             var $childList = $('ul.layers', $li);
             if (this.options.hideInfo || (layer.children && layer.children.length)) {
                 $('.-fn-toggle-info', $li).remove();
@@ -231,29 +210,30 @@
             if (!this._filterMenu(layer).length) {
                 $('.layer-menu-btn', $li).remove();
             }
-            if (layer.children && layer.children.length) {
-                if (layer.getParent()) {
-                    $li.addClass("groupContainer");
-                    nodeType = this.consts.group;
-                } else {
-                    $li.addClass("serviceContainer");
-                    nodeType = this.consts.root;
-                }
-                $li.toggleClass('showLeaves', treeOptions.toggle);
-                var $folder = $('.-fn-toggle-children', $li);
-                $folder.toggleClass('iconFolderActive', treeOptions.toggle);
+            if (!layer.getParent()) {
+                $li.addClass("serviceContainer");
+            }
+            $li.toggleClass('-js-leafnode', !layer.children || !layer.children.length);
+            $li.toggleClass('showLeaves', treeOptions.toggle);
+
+            if (layer.children && layer.children.length && treeOptions.allow.toggle) {
+                $('.-fn-toggle-children > i', $li)
+                    .toggleClass('fa-folder-open', treeOptions.toggle)
+                    .toggleClass('fa-folder', !treeOptions.toggle)
+                ;
+            } else {
+                $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
+            }
+            if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
                 if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
-                    $('.-fn-toggle-layer', $li).remove();
+                    $('.-fn-toggle-selected', $li).remove();
                 }
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }
             } else {
-                $('.-fn-toggle-children', $li).remove();
-                nodeType = this.consts.simple;
                 $childList.remove();
             }
-            $li.attr('data-type', nodeType);
             this._updateLayerDisplay($li, layer);
             $li.find('.layer-title:first')
                 .attr('title', layer.options.title)
@@ -271,9 +251,11 @@
             if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            var li_s = this._createSourceTree(source);
+            var $sourceTree = this._createSourceTree(source);
+            var $rootList = $('ul.layers:first', this.element);
             // Insert on top
-            $('ul.layers:first', this.element).prepend(li_s);
+            $rootList.prepend($sourceTree);
+            this.indent_($rootList, false);
             this._reset();
         },
         _onSourceChanged: function(event, data) {
@@ -326,23 +308,23 @@
         },
         _updateLayerCheckboxes: function($scope, treeOptions) {
             var allow = treeOptions.allow || {};
-            var $layerControl = $('.-fn-toggle-layer', $scope);
+            var $layerControl = $('.-fn-toggle-selected', $scope);
             var $infoControl = $('.-fn-toggle-info', $scope);
             this.updateIconVisual_($layerControl, treeOptions.selected, allow.selected);
             this.updateIconVisual_($infoControl, treeOptions.info, allow.info);
         },
         _onSourceRemoved: function(event, removed) {
             if (removed && removed.source && removed.source.id) {
-                var $source = $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element);
-                var $theme = $source.parents('.themeContainer:first');
-                $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
-                if ($theme.length && $theme.find('.serviceContainer').length === 0){
+                var $source = this._getSourceNode(removed.source.id);
+                var $theme = $source.closest('.themeContainer', this.element);
+                $source.remove();
+                if (!$('.serviceContainer', $theme).length) {
                     $theme.remove();
                 }
             }
         },
         _getSourceNode: function(sourceId) {
-            return $('li[data-sourceid="' + sourceId + '"][data-type="root"]', this.element);
+            return $('.serviceContainer[data-sourceid="' + sourceId + '"]', this.element);
         },
         _onSourceLoadStart: function(event, options) {
             var sourceId = options.source && options.source.id;
@@ -364,42 +346,37 @@
             $sourceEl.removeClass('state-loading').addClass('state-error');
         },
         _toggleFolder: function(e) {
-            var $me = $(e.target);
-            var layer = $(e.target).closest('li.leave').data('layer');
+            var $me = $(e.currentTarget);
+            var layer = $me.closest('li.leave').data('layer');
             if (layer && (!layer.children || !layer.options.treeOptions.allow.toggle)) {
                 return false;
             }
             var $node = $me.closest('.leave,.themeContainer');
-            var active = $node.hasClass('showLeaves');
-            $node.toggleClass('showLeaves', !active);
-            $me.toggleClass('iconFolderActive', !active);
-            return false;
-        },
-        _toggleSourceVisibility: function(e) {
-            var $themeControl = $(e.target);
-            var newState = !$themeControl.hasClass('active');
-            this.updateIconVisual_($themeControl, newState, true);
-            var $themeNode = $themeControl.closest('.themeContainer');
-            var themeId = $themeNode.attr('data-layersetid');
-            var theme = Mapbender.layersets.filter(function(x) {
-                return x.id === themeId;
-            })[0];
-            this.model.controlTheme(theme, newState);
-            if (this._mobilePane) {
-                $('#mobilePaneClose', this._mobilePane).click();
-            }
+            var active = $node.toggleClass('showLeaves').hasClass('showLeaves');
+            $('>i', $me)
+                .toggleClass('fa-folder-open', active)
+                .toggleClass('fa-folder', !active)
+            ;
             return false;
         },
         _toggleSelected: function(e) {
-            var $target = $(e.target);
-            var newState = !$target.hasClass('active');
+            var $target = $(e.currentTarget);
+            var newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
-            if (layer.parent) {
-                this.model.controlLayer(layer, newState);
+            var themeId = !source && $target.closest('.themeContainer').attr('data-layersetid');
+            if (themeId) {
+                var theme = Mapbender.layersets.filter(function(x) {
+                    return x.id === themeId;
+                })[0];
+                this.model.controlTheme(theme, newState);
             } else {
-                this.model.setSourceVisibility(source, newState);
+               if (layer.parent) {
+                    this.model.controlLayer(layer, newState);
+                } else {
+                    this.model.setSourceVisibility(source, newState);
+                }
             }
             if (this._mobilePane) {
                 $('#mobilePaneClose', this._mobilePane).click();
@@ -407,10 +384,9 @@
             return false;
         },
         _toggleInfo: function(e) {
-            var $target = $(e.target);
-            var newState = !$target.hasClass('active');
-            $target.toggleClass('iconInfoActive active', newState);
-            $target.toggleClass('iconInfo', !newState);
+            var $target = $(e.currentTarget);
+            var newState = $target.toggleClass('active').hasClass('active');
+            this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
@@ -592,24 +568,22 @@
         _showMetadata: function(e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var url = layer.options.metadataUrl;
+            var useModal = !!this._mobilePane;
             $.ajax(url)
                 .then(function(response) {
                     var metadataPopup = new Mapbender.Popup2({
                         title: Mapbender.trans("mb.core.metadata.popup.title"),
                         cssClass: 'metadataDialog',
-                        modal: false,
-                        resizable: true,
-                        draggable: true,
+                        modal: useModal,
+                        resizable: !useModal,
+                        draggable: !useModal,
                         content: $(response),
                         destroyOnClose: true,
-                        width: 850,
-                        height: 600,
+                        width: !useModal && 850 || '100%',
+                        height: !useModal && 600 || null,
                         buttons: [{
-                            label: Mapbender.trans('mb.core.metadata.popup.btn.ok'),
-                            cssClass: 'button buttonCancel critical right',
-                            callback: function() {
-                                this.close();
-                            }
+                            label: Mapbender.trans('mb.actions.close'),
+                            cssClass: 'button popupClose critical'
                         }]
                     });
                     if (initTabContainer) {
@@ -632,29 +606,11 @@
         open: function(callback) {
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
-                var self = this;
                 if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('data-title'),
-                        modal: false,
-                        resizable: true,
-                        draggable: true,
-                        closeOnESC: false,
-                        detachOnClose: false,
-                        content: [self.element.show()],
-                        width: 350,
-                        height: 500,
-                        cssClass: 'customLayertree',
-                        buttons: {
-                            'ok': {
-                                label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
-                                cssClass: 'button right',
-                                callback: function() {
-                                    self.close();
-                                }
-                            }
-                        }
+                    var popupOptions = Object.assign(this.getPopupOptions(), {
+                        content: [this.element.show()]
                     });
+                    this.popup = new Mapbender.Popup2(popupOptions);
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popup.$element.show();
@@ -662,7 +618,25 @@
             }
             this._reset();
         },
-
+        getPopupOptions: function() {
+            return {
+                title: this.element.attr('data-title'),
+                modal: false,
+                resizable: true,
+                draggable: true,
+                closeOnESC: false,
+                detachOnClose: false,
+                width: 350,
+                height: 500,
+                cssClass: 'layertree-dialog customLayertree',
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'button popupClose'
+                    }
+                ]
+            };
+        },
         /**
          * Closes the popup dialog
          */
@@ -678,19 +652,38 @@
             }
         },
         updateIconVisual_: function($el, active, enabled) {
-            if (active !== null && (typeof active !== 'undefined')) {
-                $el.toggleClass(['active', $el.attr('data-icon-on')].join(' '), !!active);
-                $el.toggleClass($el.attr('data-icon-off'), !active);
+            $el.toggleClass('active', !!active);
+            var icons;
+            if ($el.is('.-fn-toggle-info')) {
+                icons = ['fa-info', 'fa-info-circle'];
+            } else {
+                icons = ['fa-square', 'fa-check-square'];
             }
+            $('>i', $el)
+                .toggleClass(icons[1], !!active)
+                .toggleClass(icons[0], !active)
+            ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
             }
         },
-        _destroy: $.noop,
-
-
-
-
+        reIndent_: function($lists, recursive) {
+            for (var l = 0; l < $lists.length; ++l) {
+                var list = $lists[l];
+                var $folderToggles = $('>li >.leaveContainer .-fn-toggle-children', list);
+                // If all folder toggles on this level of the tree are placeholders,
+                // "unindent" the whole list.
+                if ($folderToggles.filter('.disabled-placeholder').length === $folderToggles.length) {
+                    $folderToggles.addClass('hidden');
+                } else {
+                    $folderToggles.removeClass('hidden');
+                }
+                if (recursive) {
+                    this.reIndent_($('>li > .layers', list), recursive);
+                }
+            }
+        },
+        _destroy: $.noop
     });
 
 })(jQuery);

@@ -127,7 +127,8 @@ $(function() {
                     callback: function() {
                         elementFormSubmit(this.$element, formUrl)
                             .then(function(data) {
-                                if (data.length > 0) {
+                                // NOTE: data is undefined in a HTTP 204 response
+                                if (data && data.length > 0) {
                                     // Form rendered back with validation error messages
                                     var wasDirty = $form.data('dirty');
                                     var $newForm = $(data).filter('form');
@@ -153,7 +154,11 @@ $(function() {
                 }
             ])
         });
-        $form.on('change', function() {
+        $('.collection[data-sortable]', $form).sortable({
+            axis: 'y',
+            items: '>.collectionItem'
+        });
+        $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);
             $form.data('discard', false);
         });

@@ -2,19 +2,16 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\ButtonLike;
-use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Twig;
 
-class AboutDialog extends ButtonLike implements ElementHttpHandlerInterface
+class AboutDialog extends ButtonLike
 {
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templateEngine;
 
-    public function __construct(EngineInterface $templateEngine)
+    public function __construct(Twig\Environment $templateEngine)
     {
         $this->templateEngine = $templateEngine;
     }
@@ -82,22 +79,20 @@ class AboutDialog extends ButtonLike implements ElementHttpHandlerInterface
         $view = new TemplateView('MapbenderCoreBundle:Element:about_dialog.html.twig');
         $this->initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-aboutButton';
+        $templateName = $this->getContentTemplateName($element);
+        $template = $this->templateEngine->getLoader()->getSourceContext($templateName);
+        $templateContent = $template->getCode();
+        // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
+        if (false !== strpos($templateContent, '{')) {
+            $view->cacheable = false;
+        }
+        $view->variables['content'] = $this->templateEngine->render($template->getName());
+
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    protected function getContentTemplateName(Element $element)
     {
-        return $this; // :)
-    }
-
-    public function handleRequest(Element $element, Request $request)
-    {
-        $action = $request->attributes->get('action');
-        switch ($action) {
-            case 'content':
-                return $this->templateEngine->renderResponse('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
-            default:
-                throw new BadRequestHttpException("Unsupported action {$action}");
-        }
+        return 'MapbenderCoreBundle:Element:about_dialog_content.html.twig';
     }
 }

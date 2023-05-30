@@ -1,3 +1,36 @@
-.sideContent .mb-button {
-  @extend .button;
+$hoverEffects: true !default;
+
+.mb-button {
+  cursor: pointer;
+  .toolBar & {
+    border-radius: 2 * $radius;
+    opacity: $toolBarButtonDefaultOpacity;
+    @if $hoverEffects {
+      &:hover {
+        opacity: $toolBarButtonHoverOpacity;
+      }
+    }
+    &.toolBarItemActive {
+      opacity: $toolBarButtonActiveOpacity;
+    }
+    .iconBig + * {
+      margin-left: 0.25em;
+    }
+  }
+  .sideContent & {
+    @extend .button;
+  }
+  .tabContainerAlt > .container > & {
+    // Avoid getting the tab panel treatment (stretched to 100% / 100%)
+    width: auto;
+    height: auto;
+    position: static;
+  }
+  a, a:focus {
+    outline: none;
+  }
+}
+
+a.mb-buttton:hover {
+  text-decoration: none;
 }

@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Перетаскиваемый
       overview:
-        maximize: Максимизировать
         fix: Закрепить
       layerset:
         add: 'Добавить слои'
@@ -62,7 +61,6 @@ mb:
         delete:
           title: 'Удалить слои'
           confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id в форме SourceId/InstanceId'
         id: Id
       instance:
         add: 'Добавить образец'
@@ -152,7 +150,9 @@ mb:
           content: 'Действительно удалить%userGroup%?'
     import:
       application:
-        failed: 'Приложение не может быть импортировано.'
+        failed: 'Приложение не может быть импортировано'
+    xml_invalid: Документ не действует
+    xml_malformed: Документ не действует  # @todo: supply distinct message
   core:
     admin:
       button:

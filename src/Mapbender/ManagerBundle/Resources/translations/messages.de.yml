@@ -24,7 +24,10 @@ mb:
       create:
         success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
   manager:
+    automatic: Automatisch
     confirm_form_discard: Änderungen verwerfen?
+    popup_height: Dialog-Höhe
+    popup_width: Dialog-Breite
     screentype:
       label: Bildschirmtyp
       choice:
@@ -40,6 +43,7 @@ mb:
           center: Zentriert
       generate_button_menu: Schaltflächen zu Menü zusammenfassen
       menu_label: Menütitel
+    visibility: Sichtbarkeit
     element:
       screentype:
         mobile: Auf Mobilgeräten anzeigen
@@ -97,7 +101,6 @@ mb:
       zoombar:
         draggable: Verschiebbar
       overview:
-        maximize: Maximieren
         fix: Fixieren
       layerset:
         add: 'Layerset hinzufügen'
@@ -107,7 +110,6 @@ mb:
         delete:
           title: 'Layerset löschen'
           confirm: 'Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?'
-        id_description: 'Id in Form: SourceId/InstanceId'
         id: Id
       instance:
         add: 'Instanz hinzufügen'
@@ -200,7 +202,11 @@ mb:
           content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
     import:
       application:
-        failed: 'Anwendung kann nicht importiert werden.'
+        failed: 'Anwendung kann nicht importiert werden'
+    http_connection_error: Verbindungsaufbau fehlgeschlagen
+    http_error_response: Der kontaktierte Dienst hat eine Fehlermeldung gesendet
+    xml_invalid: Das XML Dokument ist nicht valide
+    xml_malformed: Kein XML oder ungültige XML-Struktur
   core:
     admin:
       button:

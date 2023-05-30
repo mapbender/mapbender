@@ -1,148 +1,74 @@
+$backgroundColor: #fff !default;
+$panelBorderColor: #888 !default;
+$toolBarBorderColor: rgba($ciColor, 0.6) !default;
+
 @import "libs/mixins";
 @import "libs/normalize";
-@import "libs/icons";
 @import "theme/mapbender3";
 
-/* ------------------------------------------------------------------- BUTTON */
-.button{
-  @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                      inset 0 -10px 10px $buttonSecondColor);
-  &:hover{
-    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                        inset 0 -10px 10px darken($buttonSecondColor, 4%));
-  }
-  &.critical{
-    @include border-radius($radius);
-    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                        inset 0 -10px 10px $buttonCriticalSecondColor);
-    &:hover{
-      @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                          inset 0 -10px 10px darken($buttonCriticalSecondColor, 4%));
-    }
-  }
-}
-/* ----------------------------------------------------------------- DROPDOWN */
-.dropdown {
-  .dropdownList{
-    @include box-shadow(0px 0px 2px rgba(0, 0, 0, 0.1),
-                      inset 0px 0px 2px #fff);
-  }
-  @include border-radius($radius);
-}
 /* ------------------------------------------------------------- TABCONTAINER */
-.tabContainer{
-  .tab{
-    @include box-shadow(1px 0px 2px rgba(0, 0, 0, 0.1),
-                        inset 1px 0px 2px #fff);
-    @include transition(all 0.2s ease-in-out);
-
-    &:first-child{@include border-top-left-radius($radius);}
-
-    &:hover{
-      background-color:#fff;
-    }
-
-    &.active{
-      @include box-shadow(1px 0px 1px rgba(0, 0, 0, 0.1));
-      // Undo container border overlapping hack on active tab (our container has no border)
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-  }
-  .container {
-    padding:0;
-    border:none;
-    @include border-bottom-radius($radius);
-    @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
-
+.tabContainer {
+  font-size: 75%;
+  height: 100%;
+  .mobilePane & >.container {
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    margin-right: 1em;
   }
 }
-.tabContainerAlt{
-  .tab{
-    &.active{
-      background-color:darken(#6fb536, 10%);
-      @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                        inset 0 -10px 10px darken(#5fa229, 8%));
-    }
-  }
-}
-
-
-
-
-
-
-
-
-
 
 /* ------------------------------------------------------------------ TOOLBAR */
 .toolBar {
-  font-size: 19px;
+  .iconBig {
+    font-size: 200%;
+  }
 
   &.bottom {
-    border-top: 3px solid $ciColor2;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    border-top: 3px solid $toolBarBorderColor;
   }
 }
 /* --------------------------------------------------------------- MOBILEPANE */
-.mobilePane{
-  background-color: $ciColor4;
-  color: $darkFontColor;
-  z-index:10;
+.mobilePane {
+  font-size: 153%;
+  background-color: #fff;
   height: 100%;
-  min-height: 100%;
-  opacity: 0;
-  @include absolute(100% 0 0 0);
-  @include transition(all .3s ease-in-out);
-  @include transform(translateY(0));
   padding: $space $space 0 $space;
-  .contentTitle{
-    margin-top: 0;
-    color: $ciColor3;
+  .panel-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .contentTitle {
+    flex: 0;
+    font-size: 142%;
     border-bottom: solid 5px $ciColor;
   }
-  .contentTitle, .mobileClose {
-    font-size: 2rem;
-  }
-  // @todo: it's called .active
-  &[data-state="opened"]{
+  position: relative;
+  @include transition(all .3s ease-in-out);
+  opacity: 0;
+  bottom: -100%;
+  &[data-state="opened"] {
     opacity: 1;
-    @include transform(translateY(-100%));
+    bottom: 0;
   }
 }
-.mobileContent{
-  height: 100%;
-  min-height: 100%;
-  overflow:auto;
+.mobileContent {
+  flex: 1;
+  overflow: auto;
   -webkit-overflow-scrolling: touch;
-  overflow-y: scroll;
-  clear: both;
 }
-.mobileClose{
-  float: right;
-}
-/* ------------------------------------------------------------------ CONTENT */
-.templateWrapper{
-  margin:0 auto;
-  overflow: hidden;
-  @include absolute(0 0 0 0);
-}
-.contentPane{@include absolute(0 0 0 0);}
-
 /* ------------------------------------------------------------ MOBILE SPLASH */
 .splashScreenWrapper {
-  background-color: rgba($ciColor4, .7);
-  z-index: 12;
+  background-color: rgba(255, 255, 255, .7);
+  z-index: 2;
   @include absolute(0 0 0 0);
 }
 .splashScreen{
   margin:0 auto;
   padding: $space;
-  border: solid 2px $ciColor2;
-  background-color: $ciColor4;
+  border: solid 2px $panelBorderColor;
+  background-color: $backgroundColor;
   @include absolute(50% '' '' 50%);
   @include transform(translate(-50%, -50%));
   max-width: 100%;
@@ -154,7 +80,6 @@
   }
   .app-title {
     text-align: center;
-    line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
   }
   .app-title:last-child {
     margin-bottom: 0;
@@ -165,50 +90,30 @@
 }
 
 
-// Misc element checkbox coloring
-.mb-element-layertree .selectedWrapper, .mb-element-basesourceswitcher .state-check {
-  color: lighten($ciColor3, 5%);
-}
-
-// Nice big fonts in layer selection
 body.mobile-template {
-  .mb-element-layertree, .mb-element-basesourceswitcher {
-    font-size: 2rem;
-    line-height: 2.2;
+  .mb-element-layertree .leaveContainer, .mb-element-basesourceswithcer > .basesourcesetswitch {
+    // Pad out rows to not look weird against potential even / odd background coloring
+    padding-left: 0.5em;
+    padding-right: 0.5em;
   }
 }
-.mb-element-zoombar{
-  z-index: 4;
-  &.right-top{@include absolute($space $space '' '');}
-  &.left-top{@include absolute($space '' '' $space);}
-  &.left-bottom{@include absolute('' '' $space*4 $space/2);}
-  &.right-bottom{@include absolute('' $space/2 $space*4 '');}
-}
+
 /* ---------------------------------------------------------------- LAYERTREE */
-.mb-element-layertree{
-  .layers{
-    .serviceContainer {
-      &:nth-child(2n) {
-        background-color: lighten($ciColor2, 15%);
-      }
-    }
+.mb-element-layertree {
+  .layer-menu {
+    right: 0.75em;
+    top: 1.8em;
   }
-  .selectedWrapper {
-    // indent away from edge of background
-    margin-left: 0.5em;
+  .layer-slider-handle {
+    font-size: 65%;
   }
 
-  .iconRemove, .iconFolder, .featureInfoWrapper {
+  .-fn-toggle-info {
     display:none;
   }
-  .serviceContainer, .groupContainer{
-    .layers{display:none;}
-  }
-}
-/* ------------------------------------------------------------ SIMPLE SEARCH */
-.mb-element-simplesearch {
-  .autocompleteList li {
-    &:nth-child(2n){background-color: lighten($ciColor2, 15%);}
-  }
 }
 
+.input {
+  height: auto;
+  line-height: 1.5;
+}

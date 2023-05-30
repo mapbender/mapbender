@@ -36,7 +36,6 @@
             var element = widget.element;
 
             var routeSelect = $('select#search_routes_route', element);
-            var routeCount;
 
             element.on('submit', '.search-forms form', function(evt) {
                 evt.preventDefault();
@@ -53,13 +52,6 @@
 
             // Listen to changes of search select (switching and forms resetting)
             routeSelect.on('change', $.proxy(this._selectSearch, this));
-            routeCount = Object.keys(this.options.routes).length;
-            // But if there's only one search, we actually don't need the select
-            if(routeCount === 1){
-                $('#search_routes_route_control_group').hide()
-                    .next('hr').hide();
-            }
-
             element.on('click', '.search-action-buttons [data-action]', function() {
                 switch($(this).attr('data-action')) {
                     case ('reset'):
@@ -78,6 +70,7 @@
             if (this.options.autoOpen) {
                 this.open();
             }
+            this.initTableEvents_();
             routeSelect.trigger('change');
         },
 
@@ -100,27 +93,29 @@
                         width: this.options.width ? this.options.width : 450,
                         resizable: true,
                         height: this.options.height ? this.options.height : 500,
-                        buttons: {
-                            'cancel': {
-                                label: Mapbender.trans('mb.actions.cancel'),
-                                cssClass: 'button buttonCancel critical right',
-                                callback: $.proxy(this.close, this)
+                        detachOnClose: false,
+                        buttons: [
+                            {
+                                label: Mapbender.trans("mb.actions.search"),
+                                cssClass: 'button',
+                                callback: $.proxy(this._search, this)
                             },
-                            'reset': {
+                            {
                                 label: Mapbender.trans('mb.actions.reset'),
-                                cssClass: 'button right',
+                                cssClass: 'button',
                                 callback: $.proxy(this._reset, this)
                             },
-                            'ok': {
-                                label: Mapbender.trans("mb.actions.search"),
-                                cssClass: 'button right',
-                                callback: $.proxy(this._search, this)
+                            {
+                                label: Mapbender.trans('mb.actions.close'),
+                                cssClass: 'popupClose button critical'
                             }
-                        }
+                        ]
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
+                } else {
+                    this.popup.$element.removeClass('hidden');
+                    this.popup.focus();
                 }
-                this.element.show();
             }
         },
 
@@ -128,12 +123,8 @@
          * Closes popup dialog.
          */
         close: function(){
-            if (this.popup) {
-                if (this.popup.$element) {
-                    this.element.hide().appendTo($('body'));
-                    this.popup.destroy();
-                }
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.addClass('hidden');
             }
             if (this.callback) {
                 (this.callback)();
@@ -185,17 +176,16 @@
         _setupAutocomplete: function(idx, input){
             var self = this;
             var $input = $(input);
-
+            $input.parent().addClass('autocompleteWrapper');
             $input.autocomplete({
-                appendTo: $input.closest('.form-group'),
+                appendTo: $input.parent().get(0),
                 delay: $input.data('autocomplete-delay') || 500,
                 minLength: $input.data('autocomplete-minlength') || 3,
-                search: function(event) {
-                    self._autocompleteSearch(event);
-                    $input.autocomplete("close");
+                position: {
+                    of: false
                 },
-                open: function(event, ui, t) {
-                    $(event.target).data("uiAutocomplete").menu.element.outerWidth($input.outerWidth());
+                classes: {
+                    'ui-autocomplete': 'dropdownList'
                 },
                 source: function(request, response){
                     self._autocompleteSource($input).then(function(data) {
@@ -238,22 +228,6 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             });
-        },
-
-        /**
-         * Autocomplete search handler.
-         *
-         * Checks if enough time has been passed since the last search. Basically
-         * this prevents an autocomplete poping up when a search is triggered by
-         * keyboard.
-         *
-         * @param  jQuery.Event event search event
-         * @param  Object       ui    n/a
-         */
-        _autocompleteSearch: function(event, ui,t){
-            var input = $(event.target);
-            var autoCompleteMenu = $(input.data("uiAutocomplete").menu.element);
-            autoCompleteMenu.addClass("search-router");
         },
 
         /**
@@ -343,10 +317,10 @@
             var currentRoute = this.getCurrentRoute();
             var headers = currentRoute.results.headers,
                 table = $('.search-results table', this.element),
-                tbody = $('<tbody></tbody>'),
-                self = this;
+                $tbody = $('tbody', table)
+            ;
 
-            $('tbody', table).remove();
+            $tbody.empty();
             this.removeLastResults();
 
             if (features.length > 0) $('.no-results', this.element).hide();
@@ -356,7 +330,6 @@
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
-                row.addClass(i % 2 ? "even" : "odd");
                 row.data('feature', feature);
                 var props = Mapbender.mapEngine.getFeatureProperties(feature);
                 Object.keys(headers).map(function(header) {
@@ -364,23 +337,23 @@
                     row.append($('<td>' + (d || '') + '</td>'));
                 });
 
-                tbody.append(row);
+                $tbody.append(row);
                 this._highlightFeature(feature, 'default');
             }
-
-            table.append(tbody);
-
-            $('.search-results tbody tr')
-                .on('click', function () {
+        },
+        initTableEvents_: function() {
+            var self = this;
+            $('.search-results', this.element)
+                .on('click', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
                 })
-                .on('mouseenter', function () {
+                .on('mouseenter', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'temporary');
                 })
-                .on('mouseleave', function () {
+                .on('mouseleave', 'tbody tr', function() {
                     var feature = $(this).data('feature');
                     var styleName = feature === this.currentFeature ? 'select' : 'default';
                     self._highlightFeature(feature, styleName);
@@ -471,11 +444,10 @@
         /**
          * Set up result callback (zoom on click for example)
          */
-        _setupResultCallback: function(){
-            var routeNames = Object.keys(this.options.routes);
+        _setupResultCallback: function() {
             var uniqueEventNames = [];
-            for (var i = 0; i < routeNames.length; ++i) {
-                var routeConfig = this.options.routes[routeNames[i]];
+            for (var i = 0; i < this.options.routes.length; ++i) {
+                var routeConfig = this.options.routes[i];
                 var callbackConf = routeConfig.results && routeConfig.results.callback;
                 var routeEventName = callbackConf && callbackConf.event;
                 if (routeEventName && uniqueEventNames.indexOf(routeEventName) === -1) {
@@ -530,15 +502,6 @@
         _hideMobile: function() {
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
-
-        /**
-         * Get current form
-         *
-         * @returns {*|HTMLElement}
-         */
-        getCurrentForm: function() {
-            var widget = this;
-            return $('form[name="' + widget.selected + '"]', widget.element);
-        }
+        __dummy__: null
     });
 })(jQuery);

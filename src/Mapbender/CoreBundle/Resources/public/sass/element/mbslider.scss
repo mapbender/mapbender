@@ -1,28 +1,50 @@
+$darkFontColor: #3f3f3f !default;
+$textColor: $darkFontColor !default;
+$lightFontColor: #fff !default;
+$middleFontColor: #707070 !default;
+$sliderHandleBackgroundColor: lighten($middleFontColor, 20%) !default;
+$sliderHandleTextColor: $lightFontColor !default;
+$sliderHandleBorderColor: $middleFontColor !default;
 
-/* UI Mapbender slider */
-.mb-slider.ui-slider{
+// .ui-slider with some color / font scalability customization
+.mb-slider.ui-slider, .layer-slider-bar {
     position: relative;
-    border: 1px solid $ciColor;
-    height: 12px;
-    > .ui-slider-range{
+    box-sizing: border-box;
+    border: 1px solid rgba($textColor, 0.6);
+    height: 6px;
+    margin: 0.5em 0;
+    cursor: pointer;
+    border-radius: 1em;
+
+    .ui-slider-range{
        position: absolute;
        display: block;
        height: 100%;
-       background-color: lighten($ciColor, 40%);
        top: 0;
+       z-index: 1;
     }
-    > .ui-slider-handle{
+    .ui-slider-handle, .layer-slider-handle {
        position: absolute;
-       display: block;
-       height: 200%;
-       width: 12px;
-       border: 1px solid $ciColor;
-       background-color: lighten($ciColor, 40%);
-       top: -5px;
-       margin-left: -6px;
-    }
-    > .ui-slider-handle.ui-state-hover,.ui-slider-handle.ui-state-activ,.ui-slider-handle.ui-state-focus{
-      border-color: $ciColor;
-      background-color: $ciColor;
+       display: inline-block;
+       box-sizing: content-box;
+       line-height: 1.2;
+       height: 1.2em;
+       // NOTE: .ui-slider-handle in base theme has fixed width
+       //       we use min-width because some handles (layertree opacity)
+       //       will contain text
+       min-width: 1em;
+       text-align: center;
+       border: 1px solid $sliderHandleBorderColor;
+       background-color: $sliderHandleBackgroundColor;
+       color: $sliderHandleTextColor;
+       border-radius: 0.35em;
+       top: 0;
+       z-index: 2;
+       // - half handle height + one border width - rounding nudge
+       margin-top: calc(-0.6em + 0.9px);
+       margin-left: -1px; // compensate for handle border width
+       &:focus {
+         outline: none;
+       }
     }
 }

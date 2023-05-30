@@ -13,18 +13,16 @@
         _layerOptionsOff: {options: {treeOptions: {selected: false}}},
         _create: function() {
             var self = this;
-            if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
-                return;
-            }
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
                 self._trigger('ready');
+            }, function() {
+                Mapbender.checkTarget('mbWmsloader');
             });
         },
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.element.hide();
             var queryParams = Mapbender.Util.getUrlQueryParams(window.location.href);
             Mapbender.declarative = Mapbender.declarative || {};
             Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
@@ -48,27 +46,18 @@
             this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
-                this.element.show();
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: self.element.attr('data-title'),
                     draggable: true,
                     modal: false,
-                    closeOnESC: false,
+                    closeOnESC: true,
                     content: self.element,
-                    destroyOnClose: true,
+                    detachOnClose: false,
                     width: 500,
-                    height: 325,
-                    buttons: {
-                        'cancel': {
-                            label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'button buttonCancel critical right',
-                            callback: function(){
-                                self.close();
-                            }
-                        },
-                        'ok': {
+                    buttons: [
+                        {
                             label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'button right',
+                            cssClass: 'button',
                             callback: function(){
                                 var url = $('input[name="loadWmsUrl"]', self.element).val();
                                 if(url === ''){
@@ -79,23 +68,24 @@
                                 urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
                                 urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
                                 self.loadWms(urlObj.asString());
-                                self.element.hide().appendTo($('body'));
                                 self.close();
                             }
+                        },
+                        {
+                            label: Mapbender.trans('mb.actions.cancel'),
+                            cssClass: 'button popupClose critical'
                         }
-                    }
+                    ]
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-            }else{
-                this.popup.open();
+            } else {
+                this.popup.$element.removeClass('hidden');
+                this.popup.focus();
             }
         },
         close: function(){
-            if(this.popup){
-                this.element.hide().appendTo($('body'));
-                if(this.popup.$element)
-                    this.popup.destroy();
-                this.popup = null;
+            if (this.popup && this.popup.$element) {
+                this.popup.$element.addClass('hidden');
             }
             if (this.callback) {
                 (this.callback)();

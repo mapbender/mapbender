@@ -13,8 +13,8 @@ use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig;
 
 
 /**
@@ -24,7 +24,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ElementMarkupRenderer
 {
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templatingEngine;
     /** @var TranslatorInterface */
     protected $translator;
@@ -35,7 +35,7 @@ class ElementMarkupRenderer
     /** @var bool */
     protected $debug;
 
-    public function __construct(EngineInterface $templatingEngine,
+    public function __construct(Twig\Environment $templatingEngine,
                                 TranslatorInterface $translator,
                                 ElementInventoryService $inventory,
                                 $allowResponsiveElements,
@@ -133,6 +133,10 @@ class ElementMarkupRenderer
      */
     protected function renderView(ElementView $view, $wrapperTag, $baseAttributes)
     {
+        if (!$view->cacheable) {
+            $baseAttributes += array('class' => '');
+            $baseAttributes['class'] = ltrim($baseAttributes['class'] . ' -js-reload-uncacheable');
+        }
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
         if ($view instanceof TemplateView) {
             $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);

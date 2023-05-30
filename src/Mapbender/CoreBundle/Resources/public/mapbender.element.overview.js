@@ -17,7 +17,7 @@
          * Creates the overview
          */
         _create: function(){
-            this._updateToggleIcon(this.options.maximized);
+            this._updateToggleIcon();
             var lsId = this.options.layerset;
             var layerset = Mapbender.layersets.filter(function(x) {
                 return ('' + lsId) === ('' + x.id);
@@ -100,7 +100,6 @@
             mainMapModel.olMap.addControl(this.overview);
             $('.ol-overviewmap-map', $viewport)
                 .width(this.options.width)
-                .height(this.options.height)
             ;
 
             var self = this;
@@ -166,7 +165,7 @@
             var self = this;
             this.element.toggleClass('closed')
             var newState = !this.element.hasClass('closed');
-            this._updateToggleIcon(newState);
+            this._updateToggleIcon();
             if (newState) {
                 window.setTimeout(function() {
                     if (!self.overview) {
@@ -179,10 +178,11 @@
                 }, 300);
             }
         },
-        _updateToggleIcon: function(newState) {
+        _updateToggleIcon: function() {
+            var state = !this.element.hasClass('closed');
             var $icon = $('.toggleOverview i.fa', this.element);
-            $icon.toggleClass('fa-plus', !newState);
-            $icon.toggleClass('fa-minus', newState);
+            $icon.toggleClass('fa-plus', !state);
+            $icon.toggleClass('fa-minus', state);
         },
         _onMbMapSrsChanged: function(event, data) {
             try {

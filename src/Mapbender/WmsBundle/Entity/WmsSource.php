@@ -7,28 +7,22 @@ use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
-use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * A WmsSource entity presents an OGC WMS.
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmssource")
  */
-class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
+class WmsSource extends HttpParsedSource
+    implements ContainingKeyword, MutableUrlTarget
 {
-    /**
-     * @var string An origin WMS URL
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank()
-     * @Assert\Url()
-     */
-    protected $originUrl = "";
-
     /**
      * @var string A WMS name
      * @ORM\Column(type="string", nullable=true)
@@ -168,18 +162,6 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     protected $putStyles = null;
 
     /**
-     * @var string a user name
-     * @ORM\Column(type="string", nullable=true);
-     */
-    protected $username = null;
-
-    /**
-     * @var string a user password
-     * @ORM\Column(type="string", nullable=true);
-     */
-    protected $password = null;
-
-    /**
      * @var WmsLayerSource[]|ArrayCollection A list of WMS layers
      * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"persist", "remove"})
      * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
@@ -205,34 +187,12 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     public function __construct()
     {
         parent::__construct();
-        $this->setType(Source::TYPE_WMS);
+        $this->setType(self::TYPE_WMS);
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
         $this->contact = new Contact();
-    }
-
-    /**
-     * Set originUrl
-     *
-     * @param string $originUrl
-     * @return $this
-     */
-    public function setOriginUrl($originUrl)
-    {
-        $this->originUrl = $originUrl;
-        return $this;
-    }
-
-    /**
-     * Get originUrl
-     *
-     * 
-     */
-    public function getOriginUrl()
-    {
-        return $this->originUrl;
     }
 
     /**
@@ -302,9 +262,7 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set contact
-     *
-     * @param string $contact
+     * @param Contact $contact
      * @return $this
      */
     public function setContact($contact)
@@ -754,50 +712,6 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Set username
-     *
-     * @param string $username
-     * @return $this
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-        return $this;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return $this
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
      * Set layers
      *
      * @param array $layers
@@ -859,8 +773,6 @@ class WmsSource extends Source implements ContainingKeyword, MutableUrlTarget
     }
 
     /**
-     * Get keywords
-     *
      * @return ArrayCollection
      */
     public function getKeywords()

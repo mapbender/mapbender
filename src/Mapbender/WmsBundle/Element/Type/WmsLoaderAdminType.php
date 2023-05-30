@@ -17,7 +17,6 @@ class WmsLoaderAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('defaultFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 "choices" => array(
                     "image/png" => "image/png",

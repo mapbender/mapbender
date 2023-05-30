@@ -1,0 +1,10 @@
+{% extends "MapbenderWmtsBundle:Repository:instance-layer-form.html.twig" %}
+{%- block layer_checkbox_cells -%}
+    {{- parent() -}}
+    {{- form_row(form.allowinfo) -}}
+    {{- form_row(form.info) -}}
+{%- endblock -%}
+{%- block layer_details_content -%}
+    {{- parent() -}}
+    {{- form_row(form.style) -}}
+{%- endblock -%}

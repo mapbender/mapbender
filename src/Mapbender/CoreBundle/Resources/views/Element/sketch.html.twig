@@ -21,17 +21,70 @@
         </div>
         <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-default -fn-tool-off"><i class="fa fas fa-stop"></i></button>
     </div>
-    <div class="form-group">
-        <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>
-        <input name="label-text" type="text" class="form-control" disabled="disabled">
+    <div class="form-group -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
+        <div class="btn-toolbar">
+            <div class="btn-group btn-group-sm btn-group-sm-square">
+                {%- for color in colors -%}
+                    <button type="button" class="btn btn-default color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
+                {%- endfor -%}
+            </div>
+            {%- if allow_custom_color -%}
+            <div class="btn-group btn-group-sm btn-group-sm-square">
+                <button type="button" class="btn btn-default color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
+                <button type="button" class="-fn-color-customize btn btn-default"><i class="fa fas fa-fw fa-caret-down"></i></button>
+            </div>
+            {%- endif -%}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group{{- (radiusEditing and dialogMode) ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
+            <label for="label-text" class="labelInput">{{ "mb.core.sketch.inputs.label"|trans}}</label>
+            <input name="label-text" type="text" class="form-control" disabled="disabled">
+        </div>
+        {%- if radiusEditing and dialogMode -%}
+        <div class="form-group col-5 col-xs-5">
+            <label for="label-text" class="labelInput">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
+            <div class="input-group">
+                <input name="radius" type="text" class="form-control" disabled="disabled">
+                <div class="input-group-addon">m</div>
+            </div>
+        </div>
+        {%- endif -%}
     </div>
     <table class="table table-striped geometry-table">
-        <tr class="geometry-item" data-id="">
+        <tr class="geometry-item hidden" data-id="">
+            <td class="compact row-marker">
+                <i class="fa fas fa-fw fa-angle-double-right"></i>
+            </td>
             <td class="geometry-name"></td>
-            <td class="geometry-actions">
+            <td class="geometry-actions compact text-nowrap">
                 <i class="geometry-remove fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.remove" | trans }}"></i>
-                <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}"></i>
+                <span class="static-popover-wrap -js-edit-content-anchor">
+                    <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}"></i>
+                </span>
                 <i class="geometry-zoom fa fas fa-search-plus clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.zoom" | trans }}"></i>
             </td>
         </tr>
     </table>
+    <div class="hidden -js-edit-content">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="label-text" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
+                <div class="col-8 col-xs-8"><input type="text" name="label-text" class="form-control"></div>
+            </div>
+            {%- if radiusEditing -%}
+            <div class="form-group" data-toolnames="circle">
+                <label for="radius" class="control-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
+                <div class="col-8 col-xs-8">
+                    <div class="input-group">
+                        <input type="text" name="radius" class="form-control"><div class="input-group-addon">m</div>
+                    </div>
+                </div>
+            </div>
+            {%- endif -%}
+        </div>
+        <div class="text-nowrap text-right">
+            <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
+        </div>
+    </div>

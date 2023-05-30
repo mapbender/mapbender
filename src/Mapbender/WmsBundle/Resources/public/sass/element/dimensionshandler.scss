@@ -1,11 +1,4 @@
 .mb-element-dimensionshandler{
-  .dimensionset {
-    line-height: 19px;
-  }
-  .mb-slider {
-    display: inline-block;
-    width: 100%;
-  }
   /*
      This is the original Bootstrap 4 declaration for a gutter-less grid.
      See https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
@@ -23,7 +16,10 @@
     }
   }
   .slider-wrap, .no-gutters .slider-wrap {
-    padding: 0 1em;
+    padding: 0;
+  }
+  .dimensionset-value {
+    text-align: right;
   }
 }
 
@@ -31,24 +27,8 @@
   width: 140px;
   /** @todo: reevaluate global padding for all .toolBarItem (only desirable for .mb-button) */
   padding: 0 5px; // maintain some horizontal padding (slider handle can overlap left / right edges)
+
   .dimensionset {
-    font-size: 11px;
-    line-height: 11px;
-    .mb-slider.ui-slider {
-      border: 2px solid lighten($middleFontColor, 20%) !important;
-      height: 8px;
-      .ui-slider-handle{
-        border: 2px solid $middleFontColor !important;
-        background-color: lighten($middleFontColor, 20%) !important;
-        height:14px;
-        top: -5px;
-      }
-    }
-    .dimensionset-title {
-      text-align: left; // counter text-align right inherited from toolbar list item
-    }
-    .slider-wrap {
-      padding: 0;
-    }
+    font-size: 85%;
   }
 }

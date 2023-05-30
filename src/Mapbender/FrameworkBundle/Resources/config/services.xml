@@ -5,6 +5,9 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="mapbender.automatic_locale">true</parameter>
+        <parameter key="mapbender.force_engine">null</parameter>
+        <parameter key="mapbender.application_template.fallback">null</parameter>
+        <parameter key="mapbender.user_info_provider.class">Mapbender\FrameworkBundle\Component\UserInfoProvider</parameter>
     </parameters>
     <services>
         <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
@@ -13,18 +16,32 @@
             <tag name="kernel.event_listener" event="kernel.request" priority="120" />
             <argument>%mapbender.automatic_locale%</argument>
         </service>
-        <service id="mapbender.renderer.element_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer">
-            <argument type="service" id="templating" />
+        <service id="mapbender.renderer.element_markup"
+                 class="Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer"
+                 lazy="true">
+            <argument type="service" id="twig" />
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument>%mapbender.responsive.elements%</argument>
             <argument>%kernel.debug%</argument>
         </service>
-        <service id="mapbender.renderer.application_markup" class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer">
+        <service id="mapbender.renderer.application_markup"
+                 class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer"
+                 lazy="true">
+            <argument type="service" id="twig" />
+            <argument type="service" id="mapbender.application_template_registry" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
-            <argument type="service" id="templating" />
+            <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.containers%</argument>
+        </service>
+        <service id="mapbender.cache.application_markup"
+                 class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache"
+                 lazy="true">
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.access.decision_manager" />
+            <argument type="service" id="translator" />
+            <argument>%kernel.cache_dir%</argument>
         </service>
         <service id="mapbender.element_filter" class="Mapbender\FrameworkBundle\Component\ElementFilter">
             <argument type="service" id="mapbender.element_inventory.service" />
@@ -34,10 +51,41 @@
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="translator" />
         </service>
+        <service id="mapbender.application_template_registry" class="Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry">
+            <!-- NOTE: argument populated by RegisterApplicationTemplatesPass -->
+            <argument type="collection" />
+            <argument>%mapbender.application_template.fallback%</argument>
+        </service>
+        <service id="mapbender.user_info_provider"
+                 class="%mapbender.user_info_provider.class%"
+                 lazy="true">
+            <argument type="service" id="security.token_storage" />
+        </service>
+        <service id="mapbender.icon_index"
+                 class="Mapbender\FrameworkBundle\Component\IconIndex"
+                 lazy="true">
+            <!-- initialized by compiler pass -->
+            <!-- will contain all services tagged with "mapbender.icon_package", sorted by priority -->
+            <argument type="collection" />
+        </service>
+        <service id="mapbender.twig.icon_markup"
+                 class="Mapbender\FrameworkBundle\Component\IconExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="twig.extension.assets" />
+            <argument type="service" id="mapbender.icon_index" />
+        </service>
         <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
             <argument type="service" id="mapbender.element_shim_factory.container" />
         </service>
         <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
         <service id="mapbender.element_shim_factory.container" alias="service_container" />
+        <service id="mapbender.application_engine_listener"
+                 class="Mapbender\FrameworkBundle\Listener\ApplicationEngineListener">
+            <tag name="doctrine.orm.entity_listener"
+                 entity="Mapbender\CoreBundle\Entity\Application"
+                 event="postLoad" method="postLoad"
+                 lazy="true" />
+            <argument>%mapbender.force_engine%</argument>
+        </service>
     </services>
 </container>

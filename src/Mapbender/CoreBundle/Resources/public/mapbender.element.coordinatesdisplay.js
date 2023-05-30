@@ -3,7 +3,6 @@
 
     $.widget("mapbender.mbCoordinatesDisplay", {
         options: {
-            target: null,
             empty: 'x= -<br>y= -',
             prefix: 'x= ',
             separator: '<br/>y= ',
@@ -16,20 +15,21 @@
         mbMap: null,
 
         _create: function () {
-            if (!Mapbender.checkTarget("mbCoordinatesDisplay", this.options.target)) {
-                return;
-            }
             this.options.numDigits = Math.max(0, parseInt(this.options.numDigits) || 0);
             this.options.empty = this.options.empty || '';
             this.options.prefix = this.options.prefix || '';
             this.options.separator = this.options.separator || ' ';
             this.options.suffix = this.options.suffix || '';
 
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            var self = this;
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.mbMap = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbCoordinatesDisplay");
+            });
         },
-
         _setup: function () {
-            this.mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             $(document).on('mbmapsrschanged', $.proxy(this._reset, this));
             this._reset();
         },

@@ -26,9 +26,7 @@
         geolocationProvider_: null,
 
         _create: function () {
-            if (!Mapbender.checkTarget("mbGpsPosition", this.options.target)) {
-                return;
-            }
+            var self = this;
             this.geolocationProvider_ = navigator.geolocation || null;
             // Uncomment to use mock data
             // this.geolocationProvider_ = window.Mapbender.GeolocationMock;
@@ -37,13 +35,16 @@
                 throw new Error("No geolocation support");
             }
 
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self.map = mbMap;
+                self._setup();
+            }, function() {
+                Mapbender.checkTarget("mbGpsPosition");
+            });
             this.options.average = Math.max(1, parseInt(this.options.average) || 1);
             this.element.on('click', $.proxy(this.toggleTracking, this));
         },
-
         _setup: function () {
-            this.map = $('#' + this.options.target).data('mapbenderMbMap');
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (this.options.autoStart === true) {
                 this.activate();

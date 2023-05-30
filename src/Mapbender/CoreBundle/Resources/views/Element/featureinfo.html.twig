@@ -1,16 +1,15 @@
 {% if displayType | default('tabs') == 'tabs' %}
     <div class="tabContainer js-content-parent">
-        <ul class="tabs js-header-parent">
-            <li class="tab js-header js-header-content" data-idname="tab"></li>
+        <ul class="tabs js-header-parent ui-helper-clearfix">
+            <li class="tab js-header"></li>
         </ul>
-        <div class="container js-content js-content-content" data-idname="container"></div>
+        <div class="container js-content js-content-content"></div>
     </div>
 {% else %}
     <div class="accordionContainer js-header-parent js-content-parent">
-        <div class="accordion js-header" data-idname="accordion">
-            <div class="js-header-content"></div>
+        <div class="accordion js-header">
         </div>
-        <div class="container-accordion js-content" data-idname="container">
+        <div class="container-accordion js-content">
             <div class="accordion-cell js-content-content"></div>
        </div>
     </div>

@@ -121,9 +121,6 @@ mb:
             toggletoc: 'Toggle at TOC'
             allowreordertoc: 'Allow Reorder at TOC'
             moreinfo: More information
-            id:
-              title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Layer''s Name'
             style: Style
       class:
@@ -138,8 +135,6 @@ mb:
         couldnotparse: 'Could not parse CapabilitiesDocument'
         not_supported_document: 'Not supported CapabilitiesDocument'
         not_supported_version: 'The WMS version is not supported'
-        not_valid_dtd: 'A WMS document is not valid (DTD).'
-        not_valid_xsd: 'A WMS document is not valid (XSD).'
     metadata:
       section:
         common:

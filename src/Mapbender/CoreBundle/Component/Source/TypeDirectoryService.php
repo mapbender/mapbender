@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
-use Mapbender\Component\Loader\RefreshableSourceLoader;
+use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\Component\SourceInstanceFactory;
 use Mapbender\Component\SourceLoader;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
@@ -28,7 +28,7 @@ use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePas
  */
 class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInformationInterface
 {
-    /** @var SourceService[] */
+    /** @var SourceInstanceConfigGenerator[] */
     protected $configServices = array();
     /** @var SourceInstanceFactory[] */
     protected $instanceFactories = array();
@@ -42,21 +42,30 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
     public function getTypeLabels()
     {
         $labelMap = array();
-        foreach ($this->configServices as $configService) {
-            $labelMap[$configService->getTypeCode()] = $configService->getTypeLabel();
+        foreach ($this->loaders as $loader) {
+            $labelMap[$loader->getTypeCode()] = $loader->getTypeLabel();
         }
         return $labelMap;
     }
 
     /**
-     * Get the appropriate service to deal with the given SourceInstance child class.
-     *
-     * To extend the list of available source instance handling services, @see getSourceServices
-     *
      * @param SourceInstance $sourceInstance
-     * @return SourceService|null
+     * @return SourceInstanceConfigGenerator
+     * @deprecated for unspecific wording; use getConfigGenerator
      */
     public function getSourceService(SourceInstance $sourceInstance)
+    {
+        return $this->getConfigGenerator($sourceInstance);
+    }
+
+    /**
+     * Get the appropriate service to handle configuration generation
+     * for the given source instance.
+     *
+     * @param SourceInstance $sourceInstance
+     * @return SourceInstanceConfigGenerator
+     */
+    public function getConfigGenerator(SourceInstance $sourceInstance)
     {
         $key = strtolower($sourceInstance->getType());
         if (!array_key_exists($key, $this->configServices)) {
@@ -104,25 +113,6 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
     }
 
     /**
-     * @param string $type
-     * @return bool
-     */
-    public function getRefreshSupprtByType($type)
-    {
-        $loader = $this->getSourceLoaderByType($type);
-        return ($loader instanceof RefreshableSourceLoader);
-    }
-
-    /**
-     * @param Source $source
-     * @return bool
-     */
-    public function getRefreshSupport(Source $source)
-    {
-        return $this->getRefreshSupprtByType($source->getType());
-    }
-
-    /**
      * @param Source $source
      * @return SourceInstance
      */
@@ -167,7 +157,7 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
             throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
         }
         $key = strtolower($instanceType);
-        if (!($configService instanceof SourceService)) {
+        if (!($configService instanceof SourceInstanceConfigGenerator)) {
             $type = is_object($configService) ? get_class($configService) : gettype($configService);
             throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceService");
         }
@@ -188,14 +178,13 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
      * Returns list of assets of given type required for source instances to work on the client.
      *
      * @param Application $application
-     * @param string $type must be 'js'
      * @return string[]
      */
-    public function getAssets(Application $application, $type)
+    public function getScriptAssets(Application $application)
     {
         $refs = array();
         foreach ($this->configServices as $subTypeService) {
-            $typeRefs = $subTypeService->getAssets($application, $type);
+            $typeRefs = $subTypeService->getScriptAssets($application);
             if ($typeRefs) {
                 $refs = array_merge($refs, $typeRefs);
             }
@@ -215,11 +204,11 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
 
     public function isInstanceEnabled(SourceInstance $sourceInstance)
     {
-        return $this->getSourceService($sourceInstance)->isInstanceEnabled($sourceInstance);
+        return $this->getConfigGenerator($sourceInstance)->isInstanceEnabled($sourceInstance);
     }
 
     public function canDeactivateLayer(SourceInstanceItem $layer)
     {
-        return $this->getSourceService($layer->getSourceInstance())->canDeactivateLayer($layer);
+        return $this->getConfigGenerator($layer->getSourceInstance())->canDeactivateLayer($layer);
     }
 }

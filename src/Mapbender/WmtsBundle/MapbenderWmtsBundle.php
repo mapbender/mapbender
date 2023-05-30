@@ -9,9 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * MapbenderWmtsBundle
- */
 class MapbenderWmtsBundle extends Bundle
 {
 

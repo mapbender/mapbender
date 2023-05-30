@@ -9,10 +9,10 @@
         "ext-dom": "*",
         "ext-gd": "*",
         "ext-curl": "*",
-        "symfony/symfony": "^3 || ^4",
+        "symfony/symfony": "^4.2",
         "symfony/security-acl": "~2.8 || ~3.0",
         "symfony/acl-bundle": "^1 || ^2",
-        "twig/twig": "^1.43 || ^2.13",
+        "twig/twig": "^2.13",
         "doctrine/orm": "^2.5.2",
         "doctrine/doctrine-bundle": "^1.12 || ^2",
         "symfony/swiftmailer-bundle": "^2.3 || ^3",
@@ -38,7 +38,7 @@
         "components/bootstrap": "^3 || ^4",
         "components/jqueryui": "^1",
 
-        "mapbender/openlayers6-es5": "~0.3 || ^1",
+        "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2",
         "mapbender/mapquery": "1.x",
         "shuchkin/simplexlsxgen": "^1.2"
     },

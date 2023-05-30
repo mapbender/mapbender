@@ -58,21 +58,26 @@ class OdgParser
     private function readOdgFile($template, $file)
     {
         $odgPath = $this->getTemplateFilePath($template, 'odg');
-        $xml = null;
+        $xml = '';
 
         if(!is_file($odgPath)){
             throw new Exception("Print template '$template' doesn't exists.");
         }
-
-        $open = zip_open($odgPath);
-        while ($zip_entry = zip_read($open)) {
-            if (zip_entry_name($zip_entry) == $file) {
-                zip_entry_open($open, $zip_entry);
-                $xml = zip_entry_read($zip_entry, 204800);
+        $zip = new \ZipArchive();
+        $zip->open($odgPath, 16 /** =\ZipArchive::RDONLY PHP >=7.4.3 */);
+        $index = 0;
+        while ($stat = $zip->statIndex($index)) {
+            if ($stat['name'] === $file) {
+                $handle = $zip->getStream($stat['name']);
+                while (!\feof($handle)) {
+                    $xml .= fread($handle, 1 << 20);
+                }
+                fclose($handle);
                 break;
             }
+            ++$index;
         }
-        zip_close($open);
+        $zip->close();
         return $xml;
     }
 
@@ -121,6 +126,13 @@ class OdgParser
         $doc->loadXML($this->readOdgFile($templateName, 'content.xml'));
 
         $xPath        = new \DOMXPath($doc);
+        $this->parseCustomShapes($templateObject, $xPath);
+        $this->parseTextFields($templateObject, $xPath);
+        return $templateObject;
+    }
+
+    protected function parseCustomShapes(Template $templateObject, \DOMXPath $xPath)
+    {
         $customShapes = $xPath->query("//draw:custom-shape");
         foreach ($customShapes as $customShape) {
             $shapeName = $customShape->getAttribute('draw:name');
@@ -133,8 +145,11 @@ class OdgParser
             $templateRegion->setFontStyle(FontStyle::defaultFactory());
             $templateObject->addRegion($templateRegion);
         }
+    }
 
-        foreach ($xPath->query("draw:page/draw:frame", $doc->getElementsByTagName('drawing')->item(0)) as $node) {
+    protected function parseTextFields(Template $templateObject, \DOMXPath $xPath)
+    {
+        foreach ($xPath->query("draw:page/draw:frame", $xPath->document->getElementsByTagName('drawing')->item(0)) as $node) {
             $name      = $node->getAttribute('draw:name');
 
             if (empty($name)) {

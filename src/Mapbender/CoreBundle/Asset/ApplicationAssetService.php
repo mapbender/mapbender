@@ -9,10 +9,10 @@ use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\Utils\AssetReferenceUtil;
 
@@ -34,6 +34,8 @@ class ApplicationAssetService
     protected $inventory;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
+    /** @var ApplicationTemplateRegistry */
+    protected $templateRegistry;
     /** @var bool */
     protected $debug;
     /** @var bool */
@@ -45,6 +47,7 @@ class ApplicationAssetService
                                 ElementFilter $elementFilter,
                                 ElementInventoryService $inventory,
                                 TypeDirectoryService $sourceTypeDirectory,
+                                ApplicationTemplateRegistry $templateRegistry,
                                 $debug=false,
                                 $strict=false)
     {
@@ -54,6 +57,7 @@ class ApplicationAssetService
         $this->elementFilter = $elementFilter;
         $this->inventory = $inventory;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
+        $this->templateRegistry = $templateRegistry;
         $this->debug = $debug;
         $this->strict = $strict;
     }
@@ -114,15 +118,22 @@ class ApplicationAssetService
     {
         $referenceLists = array();
         if ($type === 'css') {
-            $template = $this->getDummyTemplateComponent($application);
-            $referenceLists[] = $template->getSassVariablesAssets($application);
+            $template = $this->templateRegistry->getApplicationTemplate($application);
+            $variables = $template->getSassVariablesAssets($application);
+
+            $customVariables = $this->extractSassVariables($application->getCustomCss() ?: '');
+            if ($customVariables) {
+                $variables[] = new StringAsset($customVariables . "\n");
+            }
+            $referenceLists[] = $variables;
         }
         $referenceLists[] = $this->getBaseAssetReferences($type);
+        $referenceLists[] = $this->getFrontendBaseAssets($type);
         if ($type === 'js') {
             $referenceLists[] = array(
                 '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                 '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
             );
         }
         $referenceLists = array_merge($referenceLists, array(
@@ -132,7 +143,7 @@ class ApplicationAssetService
             $this->getTemplateLateAssetReferences($application, $type),
         ));
         $references = call_user_func_array('\array_merge', $referenceLists);
-        $references = array_unique($references);
+        $references = AssetReferenceUtil::deduplicate($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
         $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
@@ -205,12 +216,7 @@ class ApplicationAssetService
                 break;
             case 'ol4-js':  // legacy identifier
             case Application::MAP_ENGINE_CURRENT . '-js':
-                // AVOID using OpenLayers 4 minified build. Any method not marked as @api is missing
-                // Currently known missing:
-                // * ol.proj.getTransformFromProjections
-                // * ol.style.Style.defaultFunction
-                // @todo performance: minified version seems to work with the Webpack-based Openlayers 6 build but needs verification
-                if (false || !$this->debug) {
+                if (!$this->debug) {
                     $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
                 } else {
@@ -260,21 +266,10 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/polyfills.js',
                     '@MapbenderCoreBundle/Resources/public/stubs.js',
                     '@MapbenderCoreBundle/Resources/public/util.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/underscore/underscore-min.js',
                     '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-                    '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                    // form-theme specific widget auto-initialization
                     '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
                 );
                 break;
             case 'trans':
@@ -287,6 +282,24 @@ class ApplicationAssetService
         }
     }
 
+    protected function getFrontendBaseAssets($type)
+    {
+        switch ($type) {
+            default:
+                return array();
+            case 'js':
+                return array(
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
+                    '/components/datatables/media/js/jquery.dataTables.min.js',
+                );
+        }
+    }
+
     /**
      * @param Application $application
      * @param string $type
@@ -294,7 +307,7 @@ class ApplicationAssetService
      */
     public function getTemplateBaseAssetReferences(Application $application, $type)
     {
-        $templateComponent = $this->getDummyTemplateComponent($application);
+        $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         $refs = $templateComponent->getAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
     }
@@ -349,7 +362,7 @@ class ApplicationAssetService
     {
         switch ($type) {
             case 'js':
-                return $this->sourceTypeDirectory->getAssets($application, $type);
+                return $this->sourceTypeDirectory->getScriptAssets($application);
             case 'trans':
             case 'css':
                 return array();
@@ -365,21 +378,9 @@ class ApplicationAssetService
      */
     public function getTemplateLateAssetReferences(Application $application, $type)
     {
-        $templateComponent = $this->getDummyTemplateComponent($application);
+        $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         $refs = $templateComponent->getLateAssets($type);
         return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
-    }
-
-    /**
-     * @param Application $application
-     * @return Template
-     */
-    protected function getDummyTemplateComponent(Application $application)
-    {
-        $templateClassName = $application->getTemplate();
-        /** @var Template $instance */
-        $instance = new $templateClassName();
-        return $instance;
     }
 
     /**
@@ -401,5 +402,26 @@ class ApplicationAssetService
         } else {
             return AssetReferenceUtil::qualifyBulk($scopeObject, $references, $this->strict);
         }
+    }
+
+    /**
+     * @param string $customCss
+     * @return string
+     */
+    protected function extractSassVariables($customCss)
+    {
+        // Strip multiline comments (including unclosed at the end)
+        $customCss = \preg_replace('#/\*.*?(\*/|$)#Ds', '', $customCss);
+        // Strip single-line comments
+        $customCss = \preg_replace('#//[^\n]*$#', '', $customCss);
+        // Strip leading whitespace
+        $customCss = \preg_replace('#^\s+#', '', $customCss);
+        $variableLines = array();
+        foreach (\explode("\n", $customCss) as $line) {
+            if (\trim($line) && \preg_match('#^\s*\$.*?:#', $line)) {
+                $variableLines[] = $line;
+            }
+        }
+        return \implode("\n", $variableLines);
     }
 }

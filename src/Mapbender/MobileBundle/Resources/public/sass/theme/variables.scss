@@ -1,13 +1,37 @@
+$backgroundColor: #fff;
+$textColor: #333 !default;
+$panelBorderColor: #ccc;
+$hoverEffects: false;
+
 // the holy colors
 $ciColor:#0066BA; // blue
-$ciColor2:#CCC; // gray
-$ciColor3:#134271 ; // blue
-$ciColor4:#fff ; // white
 $toolBarFontColor: #0066BA;
 $toolBarBackgroundColor: #fff;
-$toolBarOpacity: 1.0;
+$toolBarBackground: $toolBarBackgroundColor;
+$toolBarBorderColor: rgba($ciColor, 0.6);
+$fontSize: 14px;
 
 // Invert button hover opacity behavior (opaque when NOT hovered, lighter when hovered)
 $toolBarButtonDefaultOpacity: 1.0;
 $toolBarButtonHoverOpacity: 0.7;
 $toolBarButtonActiveOpacity: 1.0;
+
+$accordionTextColor: $toolBarBackgroundColor;
+$accordionBackgroundColor: mix($toolBarBackgroundColor, $toolBarFontColor, 10%);
+$accordionActiveBackgroundColor: $toolBarFontColor;
+
+$buttonTextColor: $toolBarFontColor;
+$buttonFirstColor: $toolBarBackgroundColor;
+$buttonBorderColor: $toolBarFontColor;
+$buttonCriticalTextColor: $buttonTextColor;
+$buttonCriticalFirstColor: $buttonFirstColor;
+$buttonCriticalBorderColor: $buttonBorderColor;
+
+$sliderHandleBackgroundColor: #fff;
+$sliderHandleBorderColor: $buttonBorderColor;
+$sliderHandleTextColor: $textColor;
+
+// Legacy
+$ciColor3: #134271; // Doesn't do anything
+$ciColor2: #CCC; // Doesn't do anything; (re)define $panelBorderColor instead
+$ciColor4: #fff; // Doesn't do anything; (re)define $backgroundColor instead

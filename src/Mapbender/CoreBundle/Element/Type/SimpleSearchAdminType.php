@@ -4,27 +4,20 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Mapbender\CoreBundle\Element\SimpleSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints;
 
 
 class SimpleSearchAdminType extends AbstractType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'application' => null,
-        ));
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $defaults = SimpleSearch::getDefaultConfiguration();
 
         $builder
+            ->add('placeholder', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'label' => 'mb.core.simplesearch.admin.placeholder',
+                'required' => false,
+            ))
             ->add('query_url', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'label' => 'Query URL',
                 'required' => true,

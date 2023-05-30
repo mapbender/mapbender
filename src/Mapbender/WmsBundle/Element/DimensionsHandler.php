@@ -38,7 +38,6 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     {
         return array(
             "tooltip" => "",
-            "target" => null,
             'dimensionsets' => array()
             
         );
@@ -64,7 +63,6 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss',
             ),
         );
     }
@@ -87,7 +85,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
 
     public function getView(Element $element)
     {
-        $dimensionsets = $this->formatDimensionLabels($element);
+        $dimensionsets = $this->normalizeDimensionsets($element);
         if (!$dimensionsets) {
             return false;
         }
@@ -103,21 +101,27 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         return $view;
     }
 
-    protected function formatDimensionLabels(Element $element)
+    protected function normalizeDimensionsets(Element $element)
     {
         $dimensionsets = array();
-        foreach ($element->getConfiguration()['dimensionsets'] as $setId => $setConfig) {
-            if (!empty($setConfig['title'])) {
-                $dimensionsets[$setId] = $setConfig['title'];
-            } else {
-                $dimensionsets[$setId] = null;  // Uh-oh!
-                foreach ($setConfig['group'] as $targetDimension) {
-                    $dimensionsets[$setId] = \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
-                    break;
+        foreach ($element->getConfiguration()['dimensionsets'] as $setConfig) {
+            if (!empty($setConfig['group'])) {
+                if (empty($setConfig['title'])) {
+                    $setConfig['title'] = $this->generateDimensionLabel($setConfig);
                 }
+                $dimensionsets[] = $setConfig;
             }
         }
         return $dimensionsets;
+    }
+
+    protected function generateDimensionLabel(array $setConfig)
+    {
+        foreach ($setConfig['group'] as $targetDimension) {
+            return \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
+        }
+        // Uh-oh!
+        return '';
     }
 
     public static function updateEntityConfig(Element $entity)

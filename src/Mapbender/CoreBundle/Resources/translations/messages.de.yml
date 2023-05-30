@@ -74,13 +74,9 @@ mb:
         geometry:
           missing: Der ausgewählte Eintrag enthält keine Geometrie.
       admin:
+        placeholder: Platzhalter
         sourceSrs: Quell-SRS
     searchrouter:
-      popup:
-        btn:
-          ok: Suchen
-          cancel: Schließen
-          reset: Zurücksetzen
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
       class:
@@ -95,8 +91,6 @@ mb:
         snippet: 'Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.'
       popup:
         btn:
-          ok: Ok
-          cancel: Abbrechen
           position: Positionierung
       class:
         title: 'MeetingPoint (POI)'
@@ -112,9 +106,6 @@ mb:
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
     legend:
-      popup:
-        btn:
-          ok: Schließen
       class:
         title: Legende
         description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
@@ -148,11 +139,13 @@ mb:
       tag:
         overview: Übersicht
         map: 'Karte (overview)'
+      admin:
+        visibility.closed_initially: Initial geschlossen
+        visibility.open_initially: Initial offen
+        visibility.open_permanent: Dauerhaft offen
     metadata:
       popup:
         title: Metadaten
-        btn:
-          ok: Schließen
     gpsposition:
       error:
         notsupported: Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.
@@ -166,9 +159,6 @@ mb:
         position: Position
         button: Button
     layertree:
-      popup:
-        btn:
-          ok: Schließen
       const:
         outofscale: 'Ebene außerhalb des Maßstabs'
         outofbounds: 'Ebene außerhalb der BoundingBox'
@@ -336,8 +326,12 @@ mb:
           onlyvalid: 'Nur valide zeigen'
           highlighting_group: 'Highlighting'
           highlighting: Highlighting aktiv
-          featureColorDefault: Grundfarbe
-          featureColorHover: Hover-Farbe
+          default_group: Standard
+          hover_group: Hover
+          fillColor: Füllfarbe
+          strokeColor: Strichfarbe
+          opacity_pct: Deckkraft (%)
+          stroke_width_px: Linienstärke (Pixel)
       printclient:
         label:
           autoopen: 'Automatisches Öffnen'
@@ -389,6 +383,7 @@ mb:
         text: Text
       inputs:
         label: Beschriftung
+        radius: Radius
       error:
         notext: 'Kein Text eingetragen'
       geometry:
@@ -403,6 +398,8 @@ mb:
       admin:
         auto_activate: 'Automatisches Aktivieren'
         deactivate_on_close: 'Beim Schließen deaktivieren'
+        colors: Farben
+        allow_custom_color: Farbanpassung erlauben
     # (imported) Yaml application amenity
     redlining:
       class:

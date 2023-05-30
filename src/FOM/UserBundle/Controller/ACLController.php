@@ -8,6 +8,7 @@ use FOM\ManagerBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class ACLController extends AbstractController
@@ -41,8 +42,8 @@ class ACLController extends AbstractController
 
         $class = $request->query->get('class');
 
-        if(!array_key_exists($class, $this->aclClasses)) {
-            throw $this->createNotFoundException('No manageable class given.');
+        if (!array_key_exists($class, $this->aclClasses)) {
+            throw new NotFoundHttpException();
         }
         $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
             'label' => false,

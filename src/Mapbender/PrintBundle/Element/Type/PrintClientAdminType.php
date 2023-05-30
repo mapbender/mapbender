@@ -3,6 +3,7 @@ namespace Mapbender\PrintBundle\Element\Type;
 
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
+use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -35,7 +36,6 @@ class PrintClientAdminType extends AbstractType
         $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
         if ($this->queueable) {
             $builder->add('renderMode', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
@@ -43,7 +43,6 @@ class PrintClientAdminType extends AbstractType
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
             $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'required' => false,            // FOM form theme fails to translate preselected label with required = true
                 'choices' => array(
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
@@ -79,7 +78,7 @@ class PrintClientAdminType extends AbstractType
             ->add('replace_pattern', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
             ))
-            ->add('templates', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('templates', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,

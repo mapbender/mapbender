@@ -1,6 +1,13 @@
-.popup .popupHead {
-  font-size: 1.2rem;
-  border-bottom:dashed 1px darken(#fff, 30%);
+$panelBorderColor: #888 !default;
+$popupBorderColor: $panelBorderColor !default;
+$backgroundColor: #fff !default;
+$popupBackgroundColor: $backgroundColor !default;
+
+.popupHead {
+  .popupTitle {
+    font-size: 1.2rem;  // @todo: do this in project template CSS, not here
+  }
+  border-bottom:dashed 1px $popupBorderColor;
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
@@ -10,6 +17,7 @@
 }
 
 .popup .popupButtons {
+  text-align: right;
   .button, .btn {
     margin-left: 0.5em;
   }
@@ -19,11 +27,6 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-  }
-}
-.mapbender-popup {
-  .popupButtons {
-    text-align: right;
   }
 }
 .mapbender-popup {
@@ -91,14 +94,10 @@
     width: $popupModalWidth;
     padding-bottom:$space;
   }
-  z-index:9999;
-  background-color:#f4f4f4;
-  border: {
-      top: solid 1px $secondColor;
-      left: solid 1px $thirdColor;
-      right: solid 1px $thirdColor;
-      bottom: solid 5px $thirdColor;
-  }
+  z-index: 100; // Same as .ui-front
+  background-color: $popupBackgroundColor;
+  border: 1px solid $popupBorderColor;
+  border-bottom-width: 5px;
 }
 
 .popupContainer.modal {
@@ -107,6 +106,7 @@
     .popup {
       margin: 0 auto;
       max-height: 100%;
+      max-width: 100%;
       &.fom-popup {
         // .fom-popup buttons are styled with position: absolute; forcing max height on the poopup prevents them from
         // leaking into content or going off-screen
@@ -130,6 +130,7 @@
   right: -.135em;
   bottom: -0.32em;
   cursor: se-resize;
+  line-height: 1;
 
   &:before{
     @include transform(rotate(45deg));
@@ -145,8 +146,6 @@
   background: none;
   width: auto;
   height: auto;
-  // Overrule global fixed-pixel line height :\
-  line-height: 1;
 }
 .popupScroll{
   overflow: auto;

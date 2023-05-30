@@ -86,6 +86,7 @@
             var controlOptions = {
                 type: this.options.type === 'line' ? 'LineString' : 'Polygon',
                 source: source,
+                stopClick: true,
                 style: function(feature, resolution) {
                     var style = defaultStyleFn(feature, resolution);
                     return self._extendStyles(style, feature);
@@ -260,19 +261,16 @@
                     content: self.container,
                     width: 300,
                     height: 300,
-                    buttons: {
-                        'ok': {
+                    buttons: [
+                        {
                             label: Mapbender.trans("mb.actions.close"),
-                            cssClass: 'button right',
-                            callback: function(){
-                                self.deactivate();
-                            }
+                            cssClass: 'button popupClose'
                         }
-                    }
+                    ]
                 });
                 this.popup.$element.on('close', $.proxy(this.deactivate, this));
             }else{
-                this.popup.open("");
+                this.popup.open();
             }
         },
         deactivate: function(){

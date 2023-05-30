@@ -82,11 +82,13 @@ class Fullscreen extends Template
             case 'css':
                 return array(
                     '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_popup_dialog.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_tab_navigator.scss',
+                    '@MapbenderCoreBundle/Resources/public/sass/modules/_result_table.scss',
                 );
             case 'js':
                 return array(
                     '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                    '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
                 );
             case 'trans':
@@ -143,6 +145,7 @@ class Fullscreen extends Template
                 return array(
                     'name' => 'accordion',
                     'align' => 'left',
+                    'closed' => false,
                 );
             default:
                 return parent::getRegionPropertiesDefaults($regionName);

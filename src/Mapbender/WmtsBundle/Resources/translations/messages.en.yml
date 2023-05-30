@@ -23,12 +23,7 @@ mb:
             layerrefs: Layerrefs
         instance:
           label:
-            tilemartixset: Tilemartixset
             style: Style
-        instancelayerform:
-          label:
-            layer_matrixsets: available Matrixsets
-            layer_styles: available Styles
         layer:
           label:
             identifier: Identifier

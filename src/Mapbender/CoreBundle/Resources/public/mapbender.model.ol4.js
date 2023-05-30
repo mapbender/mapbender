@@ -354,6 +354,28 @@ window.Mapbender.MapModelOl4 = (function() {
         }
     },
     /**
+     * Get gedesic units per meter at given point. UPMs are returned separately
+     * for vertical and horizontal axes.
+     *
+     * @param {Array<Number>} point
+     * @param {String} [srsName]
+     * @returns {{v: number, h: number}}
+     */
+    getUnitsPerMeterAt: function(point, srsName) {
+        var xform84 = proj4(srsName || this.getCurrentProjectionCode(), 'EPSG:4326').forward;
+        var left84 = xform84([point[0] - 0.5, point[1]]);
+        var right84 = xform84([point[0] + 0.5, point[1]]);
+        var bottom84 = xform84([point[0], point[1] - 0.5]);
+        var top84 = xform84([point[0], point[1] + 0.5]);
+
+        var distanceH = ol.sphere.getDistance(left84, right84);
+        var distanceV = ol.sphere.getDistance(bottom84, top84);
+        return {
+            h: 1.0 / distanceH,
+            v: 1.0 / distanceV
+        };
+    },
+    /**
      * Parses a single (E)WKT feature from text. Returns the engine-native feature.
      *
      * @param {String} text
@@ -819,26 +841,26 @@ window.Mapbender.MapModelOl4 = (function() {
             // Padding order is top, right, bottom, left, compatible with ol.View fit method
             /** @see https://github.com/openlayers/openlayers/blob/main/src/ol/View.js#L83 */
             var padding = [0, 0, 0, 0];
-            var others = $('.sidePane, .toolBar').get();
-            for (var i = 0; i < others.length; ++i) {
-                var otherRect = others[i].getBoundingClientRect();
-                if (otherRect.width >= 0.5 * viewRect.width) {
-                    if (otherRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
-                        // Top
-                        padding[0] = Math.max(otherRect.bottom - viewRect.top, padding[0], 0);
-                    } else {
-                        // Bottom
-                        padding[2] = Math.max(viewRect.bottom - otherRect.top, padding[2], 0);
-                    }
+            var sidepane = $('.sidePane').get(0);
+            var toolbars = $('.toolBar').get();
+            for (var i = 0; i < toolbars.length; ++i) {
+                var toolbarRect = toolbars[i].getBoundingClientRect();
+                if (toolbarRect.bottom <= viewRect.top + 0.5 * viewRect.height) {
+                    // Top
+                    padding[0] = Math.max(toolbarRect.bottom - viewRect.top, padding[0], 0);
+                } else {
+                    // Bottom
+                    padding[2] = Math.max(viewRect.bottom - toolbarRect.top, padding[2], 0);
                 }
-                if (otherRect.height >= 0.5 * viewRect.height) {
-                    if (otherRect.left <= viewRect.left + 0.5 * viewRect.width) {
-                        // Left
-                        padding[3] = Math.max(otherRect.right - viewRect.left, padding[3], 0);
-                    } else {
-                        // Right
-                        padding[1] = Math.max(viewRect.right - otherRect.left, padding[1], 0);
-                    }
+            }
+            var sidepaneRect = sidepane && sidepane.getBoundingClientRect();
+            if (sidepaneRect) {
+                if (sidepaneRect.left <= viewRect.left + 0.5 * viewRect.width) {
+                    // Left
+                    padding[3] = Math.max(sidepaneRect.right - viewRect.left, padding[3], 0);
+                } else {
+                    // Right
+                    padding[1] = Math.max(viewRect.right - sidepaneRect.left, padding[1], 0);
                 }
             }
             return padding;

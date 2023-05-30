@@ -1,4 +1,7 @@
 .mb-element-printclient {
+  overflow: visible;
+  // Reduce vertical size of potentially very long form
+  font-size: 11px;
 
   .button.active {
     background-color: #538e24;
@@ -9,11 +12,15 @@
     table {
       td.interface {
         text-align: right;
-        .btn, .loading {
-          margin-right: 0.25em;
+        white-space: nowrap;
+        .btn-group {
+          vertical-align: inherit;
+          .btn {
+            float: none;
+          }
         }
-        :last-child {
-          margin-right: 0;
+        .loading {
+          margin-right: 0.25em;
         }
       }
     }

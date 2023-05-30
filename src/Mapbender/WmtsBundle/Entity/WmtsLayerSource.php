@@ -2,11 +2,13 @@
 
 namespace Mapbender\WmtsBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\SourceItem;
+use Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorCommon;
 use Mapbender\WmtsBundle\Component\Style;
 use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
 use Mapbender\WmtsBundle\Component\UrlTemplateType;
@@ -65,6 +67,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     protected $tilematrixSetlinks;
 
     /**
+     * @var UrlTemplateType[]
      * @ORM\Column(type="array", nullable=true)
      */
     protected $resourceUrl;
@@ -79,8 +82,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set title
-     *
      * @param string $title
      */
     public function setTitle($title)
@@ -89,8 +90,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get title
-     *
      * @return string $title
      */
     public function getTitle()
@@ -99,8 +98,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set identifier
-     *
      * @param string $identifier
      */
     public function setIdentifier($identifier)
@@ -109,8 +106,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get identifier
-     *
      * @return string $identifier
      */
     public function getIdentifier()
@@ -119,8 +114,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set abstract
-     *
      * @param string $abstract
      */
     public function setAbstract($abstract)
@@ -129,8 +122,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get abstract
-     *
      * @return string $abstract
      */
     public function getAbstract()
@@ -139,9 +130,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set latlonBounds
-     *
-     * @param BoundingBox $latlonBounds
+     * @param BoundingBox|null $latlonBounds
      * @return $this
      */
     public function setLatlonBounds(BoundingBox $latlonBounds = NULL)
@@ -151,8 +140,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get latlonBounds
-     *
      * @return BoundingBox
      */
     public function getLatlonBounds()
@@ -161,8 +148,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add boundingBox
-     *
      * @param BoundingBox $boundingBoxes
      * @return $this
      */
@@ -173,20 +158,14 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set boundingBoxes
-     *
-     * @param array $boundingBoxes
-     * @return $this
+     * @param BoundingBox[] $boundingBoxes
      */
     public function setBoundingBoxes($boundingBoxes)
     {
-        $this->boundingBoxes = $boundingBoxes ? $boundingBoxes : array();
-        return $this;
+        $this->boundingBoxes = $boundingBoxes ?: array();
     }
 
     /**
-     * Get boundingBoxes
-     *
      * @return BoundingBox[]
      */
     public function getBoundingBoxes()
@@ -195,7 +174,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set styles
      * @param array $styles
      * @return $this
      */
@@ -206,7 +184,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add style
      * @param Style $style
      * @return $this
      */
@@ -217,8 +194,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get styles
-     *
      * @return Style[]
      */
     public function getStyles()
@@ -228,8 +203,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 
 
     /**
-     * Set infoformats
-     *
      * @param array $infoformats
      * @return $this
      */
@@ -240,8 +213,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add infoformat
-     *
      * @param string $infoformat
      * @return $this
      */
@@ -252,9 +223,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get infoformats
-     *
-     * @return array
+     * @return string[]
      */
     public function getInfoformats()
     {
@@ -262,7 +231,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     *Gets tilematrixSetlinks.
      * @return TileMatrixSetLink[]
      */
     public function getTilematrixSetlinks()
@@ -271,7 +239,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Sets tilematrixSetlinks
      * @param TileMatrixSetLink[] $tilematrixSetlinks
      * @return $this
      */
@@ -282,7 +249,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Adds TileMatrixSetLink.
      * @param TileMatrixSetLink $tilematrixSetlink
      * @return $this
      */
@@ -293,7 +259,30 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Set resourceUrl
+     * @return TileMatrixSet[]
+     */
+    public function getMatrixSets()
+    {
+        $identifiers = array();
+        foreach ($this->getTilematrixSetlinks() as $tmsl) {
+            $identifiers[] = $tmsl->getTileMatrixSet();
+        }
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->in('identifier', $identifiers))
+        ;
+        return $this->getSource()->getTilematrixsets()->matching($criteria)->getValues();
+    }
+
+    public function getSupportedCrsNames()
+    {
+        $names = array();
+        foreach ($this->getMatrixSets() as $matrixSet) {
+            $names[] = ConfigGeneratorCommon::urnToSrsCode($matrixSet->getSupportedCrs());
+        }
+        return $names;
+    }
+
+    /**
      * @param UrlTemplateType[] $resourceUrls
      * @return $this
      */
@@ -304,7 +293,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Add resourceUrl
      * @param UrlTemplateType $resourceUrl
      * @return $this
      */
@@ -315,8 +303,6 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Get resourceUrl
-     *
      * @return UrlTemplateType[]
      */
     public function getResourceUrl()
@@ -325,19 +311,17 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
-     * This is used in frontend config generation.
-     *
-     * @return BoundingBox[]
+     * @return UrlTemplateType[]
      */
-    public function getMergedBoundingBoxes()
+    public function getTileResources()
     {
-        $bboxes = array();
-        $latLonBounds = $this->getLatlonBounds();
-        if ($latLonBounds) {
-            $bboxes[] = $latLonBounds;
+        $matches = array();
+        foreach ($this->resourceUrl as $ru) {
+            if ($ru->getResourceType() === 'tile') {
+                $matches[] = $ru;
+            }
         }
-        return array_merge($bboxes, $this->getBoundingBoxes());
+        return $matches;
     }
 
     /**
@@ -346,11 +330,8 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function getUniqueTileFormats()
     {
         $formats = array();
-        foreach ($this->getResourceUrl() as $resourceUrl) {
-            $resourceType = $resourceUrl->getResourceType() ?: 'tile';
-            if ($resourceType === 'tile') {
-                $formats[] = $resourceUrl->getFormat();
-            }
+        foreach ($this->getTileResources() as $resourceUrl) {
+            $formats[] = $resourceUrl->getFormat();
         }
         return array_unique($formats);
     }

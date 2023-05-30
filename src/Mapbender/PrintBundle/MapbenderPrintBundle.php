@@ -1,18 +1,18 @@
 <?php
 namespace Mapbender\PrintBundle;
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\PrintBundle\DependencyInjection\Compiler\AddBasePrintPluginsPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * PrintBundle.
  *
  * @author Stefan Winkelmann
  */
-class MapbenderPrintBundle extends MapbenderBundle
+class MapbenderPrintBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
@@ -25,15 +25,5 @@ class MapbenderPrintBundle extends MapbenderBundle
         $container->addCompilerPass(new AddBasePrintPluginsPass());
         parent::build($container);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getElements()
-    {
-        return array(
-        );
-    }
-
 }
 

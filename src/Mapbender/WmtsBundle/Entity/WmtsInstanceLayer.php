@@ -64,12 +64,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
      */
     protected $style = "";
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $tileMatrixSet = "";
-
-
     public function __clone()
     {
         if ($this->id) {
@@ -78,8 +72,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set infoformat
-     *
      * @param string $infoformat
      * @return $this
      */
@@ -90,8 +82,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get infoformat
-     *
      * @return string
      */
     public function getInfoformat()
@@ -100,8 +90,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set active
-     *
      * @param boolean $active
      * @return $this
      */
@@ -112,8 +100,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get active
-     *
      * @return boolean
      */
     public function getActive()
@@ -122,8 +108,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set allowselected
-     *
      * @param boolean $allowselected
      * @return $this
      */
@@ -134,8 +118,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get allowselected
-     *
      * @return boolean
      */
     public function getAllowselected()
@@ -144,8 +126,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set selected
-     *
      * @param boolean $selected
      * @return $this
      */
@@ -156,8 +136,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get selected
-     *
      * @return boolean
      */
     public function getSelected()
@@ -166,8 +144,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set info
-     *
      * @param boolean $info
      * @return $this
      */
@@ -178,8 +154,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get info
-     *
      * @return boolean
      */
     public function getInfo()
@@ -188,8 +162,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set allowinfo
-     *
      * @param boolean $allowinfo
      * @return $this
      */
@@ -200,8 +172,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get allowinfo
-     *
      * @return boolean
      */
     public function getAllowinfo()
@@ -210,8 +180,6 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Set style
-     *
      * @param string $style
      * @return $this
      */
@@ -222,33 +190,11 @@ class WmtsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * Get style
-     *
      * @return string
      */
     public function getStyle()
     {
         return $this->style;
-    }
-
-    /**
-     * Sets a tileMatrixSetLink
-     * @param string $tileMatrixSet
-     * @return $this
-     */
-    public function setTileMatrixSet($tileMatrixSet)
-    {
-        $this->tileMatrixSet = $tileMatrixSet;
-        return $this;
-    }
-
-    /**
-     * Gets a tileMatrixSetLink
-     * @return string
-     */
-    public function getTileMatrixSet()
-    {
-        return $this->tileMatrixSet;
     }
 
     public function __toString()

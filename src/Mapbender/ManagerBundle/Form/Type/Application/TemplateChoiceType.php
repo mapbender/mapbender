@@ -4,8 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type\Application;
 
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
-use Mapbender\CoreBundle\Component\Template;
+use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,19 +12,10 @@ class TemplateChoiceType extends AbstractType
 {
     protected $choices = array();
 
-    public function __construct($bundleClassNames)
+    public function __construct(ApplicationTemplateRegistry $registry)
     {
-        foreach ($bundleClassNames as $bundleClassName) {
-            if (\is_a($bundleClassName, 'Mapbender\CoreBundle\Component\MapbenderBundle', true)) {
-                /** @var MapbenderBundle $bundle */
-                $bundle = new $bundleClassName();
-                $bundleTemplateClasses = $bundle->getTemplates();
-                foreach ($bundleTemplateClasses as $templateClass) {
-                    /** @var string|Template $templateClass */
-                    $title = $templateClass::getTitle();
-                    $this->choices[$title] = $templateClass;
-                }
-            }
+        foreach ($registry->getAll() as $template) {
+            $this->choices[$template->getTitle()] = \get_class($template);
         }
         ksort($this->choices);
     }

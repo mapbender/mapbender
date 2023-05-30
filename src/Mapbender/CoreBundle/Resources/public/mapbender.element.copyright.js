@@ -2,10 +2,11 @@
 
     $.widget("mapbender.mbCopyright", {
         options: {},
-        elementUrl: null,
         popup: null,
+        content_: null,
+
         _create: function() {
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.content_ = $('.-js-popup-content', this.element).remove().removeClass('hidden');
             if(this.options.autoOpen){
                 let key = Mapbender.Model.getLocalStoragePersistenceKey_('hide_copyright_popup_'+this.getContentHash());
                 let item = window.localStorage.getItem(key);
@@ -19,28 +20,23 @@
         },
 
         open: function(callback) {
-            var widget = this;
-            var options = widget.options;
-            var element = widget.element;
-            var width = options.popupWidth ? options.popupWidth : 350;
-            var height = options.popupHeight ? options.popupHeight : 350;
             this.callback = callback ? callback : null;
             if (!this.popup) {
-                $.ajax({url: this.elementUrl + 'content'}).then(function(response) {
-                    widget.popup = new Mapbender.Popup2({
-                        title: element.attr('data-title'),
-                        modal:               true,
-                        detachOnClose: false,
-                        closeOnOutsideClick: true,
-                        content: response,
-                        width:               width,
-                        height:              height,
-                        buttons:             {
-                            'ok': {
+                this.popup = new Mapbender.Popup({
+                    title: this.element.attr('data-title'),
+                    modal: true,
+                    detachOnClose: false,
+                    closeOnOutsideClick: true,
+                    content: this.content_,
+                    width: this.options.popupWidth || 350,
+                    height: this.options.popupHeight || null,
+                    cssClass: 'copyright-dialog',
+                        buttons: [
+                            {
                                 label: 'OK, ich habe verstanden',
                                 cssClass: 'button right popupClose'
                             },
-                            'ok_2': {
+                            {
                                 label: 'OK, diese Meldung nicht mehr anzeigen',
                                 cssClass: 'button right popupClose',
                                 callback: function() {
@@ -49,15 +45,15 @@
                                     this.close();
                                 }
                             }
-                        }
-                    });
-                    widget.popup.$element.on('close', function() {
-                        widget.close();
-                    });
+                        ]
                 });
             } else {
-                this.popup.$element.show();
+                this.popup.open();
             }
+            var self = this;
+            this.popup.$element.one('close', function() {
+                self.close();
+            });
         },
 
         getContentHash() {
@@ -71,8 +67,8 @@
           return stringHashCode(this.options.content);
         },
         close: function(){
-            if(this.popup){
-                this.popup.$element.hide();
+            if (this.popup) {
+                this.popup.close();
             }
             if (this.callback) {
                 (this.callback)();

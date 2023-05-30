@@ -103,7 +103,6 @@ fom:
         no_goups_users: 'Keine Gruppen/Benutzer definiert.'
     password:
       email_body_html: '<p>Hallo %user_username%,</p><p>Sie haben ein neues Mapbender Passwort angefordert. <p>Klicken Sie bitte <a href="%url%">hier</a>, um Ihr Passwort zu ändern.</p>'
-      request_error_no_user: 'Der Benutzer wurde nicht gefunden.'
       done:
         password_reset: 'Passwort zurücksetzen'
         congratulations: 'Herzlichen Glückwunsch!'
@@ -123,8 +122,6 @@ fom:
         title: 'Passwort zurücksetzen'
         email_been_sent: 'Eine E-Mail mit Ihrem zurückgesetzten Code und Link ist Ihnen zu Ihrer bereitgestellten Adresse gesendet worden.'
         back_to_login: 'Zurück zur Anmeldung'
-      request:
-        user_inactive: 'Dieser Benutzer ist inaktiv. Bitte aktivieren Sie ihn zuerst.'
       email_body_text: 'Hallo %user_username%, Sie haben ein neues Passwort angefordert. Rufen Sie in Ihrem Browser folgenden Link auf "%url%"'
     userbundle:
       user_control: Benutzerverwaltung

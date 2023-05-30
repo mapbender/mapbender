@@ -290,13 +290,22 @@
             };
         },
         _collectGeometryLayers4: function() {
-            var layersFlat = [];
-            this.map.model.olMap.getLayers().getArray().forEach(function (olLayer) {
-                olLayer.getLayersArray(layersFlat);
-            });
-            var vectorLayers = layersFlat.filter(function (olLayer) {
-                return (olLayer instanceof ol.layer.Vector) && olLayer.getVisible();
-            });
+            var vectorLayers = [];
+            // For (nested) group layers, visibility must be checked at
+            // each level.
+            function processLayer(layer) {
+                if (layer.getVisible() && layer.getOpacity()) {
+                    if (layer instanceof ol.layer.Group) {
+                        layer.getLayersArray().forEach(function(layer) {
+                            processLayer(layer);
+                        });
+                    } else if (layer instanceof ol.layer.Vector) {
+                        vectorLayers.push(layer);
+                    }
+                }
+            }
+
+            this.map.model.olMap.getLayers().getArray().forEach(processLayer);
             var dataOut = [];
             for (var li = 0; li < vectorLayers.length; ++li) {
                 var layer = vectorLayers[li];

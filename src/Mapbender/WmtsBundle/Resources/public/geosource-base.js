@@ -21,7 +21,7 @@
 /**
  * @typedef {Object} WmtsLayerConfig
  * @property {Object} options
- * @property {string} options.tilematrixset
+ * @property {Array<string>} options.matrixLinks
  * @property {Array<String>} options.tileUrls
  */
 
@@ -61,6 +61,19 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
         destroyLayers: function(olMap) {
             Mapbender.Source.prototype.destroyLayers.call(this, olMap);
             this.currentActiveLayer = null;
+        },
+        refresh: function() {
+            this.nativeLayers.forEach(function(layer) {
+                if (typeof (layer.getSource) !== 'function') {
+                    console.warn("No Openlayers 2 implementation for tile service refresh");
+                    return;
+                }
+                var source = layer.getSource();
+                if (source.tileCache) {
+                    source.tileCache.clear();
+                    source.changed();
+                }
+            });
         },
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return true;
@@ -139,7 +152,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             engine.setLayerVisibility(olLayer, targetVisibility);
         },
         _getNativeLayerBaseOptions: function(layer, srsName) {
-            var matrixSet = layer.getMatrixSet();
+            var matrixSet = layer.selectMatrixSet(srsName);
             var self = this;
 
             var baseOptions = {
@@ -147,8 +160,6 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 opacity: this.configuration.options.opacity,
                 name: layer.options.title,
                 url: layer.options.tileUrls,
-                format: layer.options.format,
-                style: layer.options.style,
                 serverResolutions: matrixSet.tilematrices.map(function(tileMatrix) {
                     return self._getMatrixResolution(tileMatrix, srsName);
                 })
@@ -164,29 +175,21 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
                 return l.options.treeOptions.allow.selected && l.options.treeOptions.selected;
             });
         },
+        selectCompatibleMatrixSets: function(srsName) {
+            return this.configuration.tilematrixsets.filter(function(matrixSet) {
+                return -1 !== matrixSet.supportedCrs.indexOf(srsName);
+            });
+        },
         _selectCompatibleLayer: function(projectionCode) {
             var layers = this._getEnabledLayers();
+
             for (var i = 0; i < layers.length; i++) {
                 var layer = layers[i];
                 if (!layer.options.treeOptions.allow.selected) {
                     continue;
                 }
-                var tileMatrixSet = layer.getMatrixSet();
-                if (tileMatrixSet.supportedCrs.indexOf(projectionCode) !== -1) {
+                if (layer.selectMatrixSet(projectionCode)) {
                     return layers[i];
-                }
-            }
-            return null;
-        },
-        /**
-         * @param {string} identifier
-         * @return {WmtsTileMatrixSet|null}
-         */
-        getMatrixSetByIdent: function(identifier) {
-            var matrixSets = this.configuration.tilematrixsets;
-            for (var i = 0; i < matrixSets.length; i++){
-                if (matrixSets[i].identifier === identifier) {
-                    return matrixSets[i];
                 }
             }
             return null;
@@ -211,7 +214,7 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
             var commonOptions = this._getPrintBaseOptions();
             return [
                 Object.assign({}, commonOptions, {
-                    url: Mapbender.Util.removeProxy(this.getPrintBaseUrl(layerDef)),
+                    url: Mapbender.Util.removeProxy(layerDef.getPrintBaseUrl(srsName)),
                     matrix: Object.assign({}, matrix),
                     resolution: this._getMatrixResolution(matrix, srsName)
                 })
@@ -252,9 +255,8 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
          * @return {WmtsTileMatrix}
          */
         _getMatrix: function(layer, scale, srsName) {
-            var units = Mapbender.mapEngine.getProjectionUnits(srsName);
-            var resolution = OpenLayers.Util.getResolutionFromScale(scale, units);
-            var matrixSet = layer.getMatrixSet();
+            var resolution = Mapbender.Model.scaleToResolution(scale, undefined, srsName);
+            var matrixSet = layer.selectMatrixSet(srsName);
             var scaleDelta = Number.POSITIVE_INFINITY;
             var closestMatrix = null;
             for (var i = 0; i < matrixSet.tilematrices.length; ++i) {
@@ -280,8 +282,16 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
     WmtsTmsBaseSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
     Object.assign(WmtsTmsBaseSourceLayer.prototype, {
         constructor: WmtsTmsBaseSourceLayer,
-        getMatrixSet: function() {
-            return this.source.getMatrixSetByIdent(this.options.tilematrixset);
+        /**
+         * @param {String} srsName
+         * @return {WmtsTileMatrixSet|null}
+         */
+        selectMatrixSet: function(srsName) {
+            var matrixLinks = this.options.matrixLinks;
+            var matches = this.source.selectCompatibleMatrixSets(srsName).filter(function(matrixSet) {
+                return -1 !== matrixLinks.indexOf(matrixSet.identifier);
+            });
+            return matches[0] || null;
         },
         getSelected: function() {
             var rootLayer = this.source.getRootLayer();
@@ -312,8 +322,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function() {
             return Mapbender.Util.extentsIntersect(bounds, extent_);
         }
     });
-    Mapbender.SourceLayer.typeMap['wmts'] = WmtsTmsBaseSourceLayer;
-    Mapbender.SourceLayer.typeMap['tms'] = WmtsTmsBaseSourceLayer;
+    return WmtsTmsBaseSourceLayer;
 }());
 
 

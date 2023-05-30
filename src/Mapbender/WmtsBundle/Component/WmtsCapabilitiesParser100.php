@@ -1,10 +1,12 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace Mapbender\WmtsBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\LegendUrl;
 use Mapbender\WmtsBundle\Entity\Theme;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
@@ -13,161 +15,140 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 /**
- * @package Mapbender
  * @author Paul Schmidt
  */
-class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
+class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
 {
-
     /**
-     * Creates an instance
-     * @param \DOMDocument $doc
-     */
-    public function __construct(\DOMDocument $doc)
-    {
-        parent::__construct($doc);
-
-        foreach ($this->xpath->query('namespace::*', $this->doc->documentElement) as $node) {
-            $nsPrefix = $node->prefix;
-            $nsUri    = $node->nodeValue;
-            if ($nsPrefix == "" && $nsUri == "http://www.opengis.net/wmts/1.0") {
-                $nsPrefix = "wmts";
-            }
-            $this->xpath->registerNamespace($nsPrefix, $nsUri);
-        }
-    }
-
-    /**
-     * Parses the GetCapabilities document
      * @return WmtsSource
      */
-    public function parse()
+    public function parse(\DOMDocument $doc)
     {
-        $wmtssource = new WmtsSource();
-        $wmtssource->setType(WmtsSource::TYPE_WMTS);
-        $root       = $this->doc->documentElement;
+        $version = $doc->documentElement->getAttribute("version");
+        if ('1.0.0' !== $version) {
+            // @todo: Show the user the incompatible version number
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+        }
 
-        $wmtssource->setVersion($this->getValue("./@version"));
-        $serviceIdentEl = $this->getValue("./ows:ServiceIdentification");
+        $source = HttpTileSource::wmtsFactory();
+        /** @var \DOMElement $root */
+        $root = $doc->documentElement;
+
+        $source->setVersion($root->getAttribute('version'));
+        $serviceIdentEl = $this->getFirstChildNode($root, 'ServiceIdentification');
         if ($serviceIdentEl) {
-            $this->parseServiceIdentification($wmtssource, $serviceIdentEl);
+            $this->parseServiceIdentification($source, $serviceIdentEl);
         }
-        $serverProviderEl = $this->getValue("./ows:ServiceProvider");
+        $serverProviderEl = $this->getFirstChildNode($root, 'ServiceProvider');
         if ($serverProviderEl) {
-            $this->parseServiceProvider($wmtssource, $serverProviderEl);
+            $this->parseServiceProvider($source, $serverProviderEl);
         }
-        $operationsMetadata = $this->getValue("./ows:OperationsMetadata");
+        $operationsMetadata = $this->getFirstChildNode($root, 'OperationsMetadata');
         if ($operationsMetadata) {
-            $this->parseCapabilityRequest($wmtssource, $this->getValue("./ows:OperationsMetadata"));
+            $this->parseOperationsMetadata($source, $operationsMetadata);
         }
 
-        $layerElms = $this->xpath->query("./wmts:Contents/wmts:Layer");
-        foreach ($layerElms as $layerEl) {
-            $layer = new WmtsLayerSource();
-            $layer->setSource($wmtssource);
-            $wmtssource->addLayer($layer);
-            $this->parseLayer($layer, $layerEl);
+        foreach ($this->getChildNodesByTagName($root, 'Contents') as $contentsEl) {
+            foreach ($this->getChildNodesByTagName($contentsEl, 'Layer') as $layerEl) {
+                $layer = $this->parseLayer($layerEl);
+                $source->addLayer($layer);
+            }
+            foreach ($this->getChildNodesByTagName($contentsEl, 'TileMatrixSet') as $matrixsetEl) {
+                $matrixset = $this->parseTilematrixset($matrixsetEl);
+                $matrixset->setSource($source);
+                $source->addTilematrixset($matrixset);
+            }
         }
-        $matrixsetElms = $this->xpath->query("./wmts:Contents/wmts:TileMatrixSet", $root);
-        foreach ($matrixsetElms as $matrixsetElm) {
-            $matrixset = new TileMatrixSet();
-            $matrixset->setSource($wmtssource);
-            $wmtssource->addTilematrixset($matrixset);
-            $this->parseTilematrixset($matrixset, $matrixsetElm);
+        foreach ($this->getChildNodesByTagName($root, 'Themes') as $themesEl) {
+            foreach ($this->getChildNodesByTagName($themesEl, 'Theme') as $themeEl) {
+                $theme = $this->parseTheme($themeEl);
+                $theme->setSource($source);
+                $source->addTheme($theme);
+            }
         }
-        $themesElms = $this->xpath->query("./wmts:Themes/wmts:Theme", $root);
-        foreach ($themesElms as $themeElm) {
-            $theme = new Theme();
-            $theme->setSource($wmtssource);
-            $wmtssource->addTheme($theme);
-            $this->parseTheme($theme, $themeElm);
-        }
-        return $wmtssource;
+        return $source;
     }
 
     /**
      * Parses the ServiceIdentification section of the GetCapabilities document
-     * @param WmtsSource $wmts
+     * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceIdentification(WmtsSource $wmts, \DOMElement $contextElm)
+    private function parseServiceIdentification(WmtsSource $source, \DOMElement $contextElm)
     {
-        $wmts->setTitle($this->getValue("./ows:Title/text()", $contextElm));
-        $wmts->setDescription($this->getValue("./ows:Abstract/text()", $contextElm));
+        $source->setTitle($this->getFirstChildNodeText($contextElm, 'Title'));
+        $source->setDescription($this->getFirstChildNodeText($contextElm, 'Abstract'));
 
-        $keywordElList = $this->xpath->query("./ows:KeywordList/ows:Keyword", $contextElm);
-        $keywords      = new ArrayCollection();
-        foreach ($keywordElList as $keywordEl) {
-            $keyword = new WmtsSourceKeyword();
-            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setReferenceObject($wmts);
-            $keywords->add($keyword);
+        $keywordWrap = $this->getFirstChildNode($contextElm, 'Keywords');
+        $keywordElements = $keywordWrap ? $this->getChildNodesByTagName($keywordWrap, 'Keyword') : array();
+        foreach ($keywordElements as $keywordElement) {
+            $text = \trim($keywordElement->textContent);
+            if ($text) {
+                $keyword = new WmtsSourceKeyword();
+                $keyword->setValue($text);
+                $keyword->setReferenceObject($source);
+                $source->addKeyword($keyword);
+            }
         }
-        $wmts->setFees($this->getValue("./ows:Fees/text()", $contextElm));
-        $wmts->setAccessConstraints($this->getValue("./ows:AccessConstraints/text()", $contextElm));
+        $source->setFees($this->getFirstChildNodeText($contextElm, 'Fees'));
+        $source->setAccessConstraints($this->getFirstChildNodeText($contextElm, 'AccessConstraints'));
     }
 
     /**
      * Parses the ServiceProvider section of the GetCapabilities document
-     * @param WmtsSource $wmts
+     * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceProvider(WmtsSource $wmts, \DOMElement $contextElm)
+    private function parseServiceProvider(WmtsSource $source, \DOMElement $contextElm)
     {
-        $wmts->setServiceProviderSite($this->getValue("./wmts:OnlineResource/@xlink:href", $contextElm));
         $contact = new Contact();
-        $contact->setOrganization($this->getValue("./ows:ProviderName/text()", $contextElm));
-        $contact->setPerson($this->getValue("./ows:ServiceContact/ows:IndividualName/text()", $contextElm));
-        $contact->setPosition($this->getValue("./ows:ServiceContact/ows:PositionName/text()", $contextElm));
-        $contact->setVoiceTelephone(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Phone/ows:Voice/text()", $contextElm)
-        );
-        $contact->setFacsimileTelephone(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Phone/ows:Facsimile/text()", $contextElm)
-        );
-        $contact->setAddress(
-            $this->getValue("./wmts:ContactInformation/wmts:ContactAddress/wmts:Address/text()", $contextElm)
-        );
-        $contact->setAddressCity(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:DeliveryPoint/text()", $contextElm)
-        );
-        $contact->setAddressStateOrProvince(
-            $this->getValue(
-                "./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:AdministrativeArea/text()",
-                $contextElm
-            )
-        );
-        $contact->setAddressPostCode(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:PostalCode/text()", $contextElm)
-        );
-        $contact->setAddressCountry(
-            $this->getValue("./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:Country/text()", $contextElm)
-        );
-        $contact->setElectronicMailAddress(
-            $this->getValue(
-                "./ows:ServiceContact/ows:ContactInfo/ows:Address/ows:ElectronicMailAddress/text()",
-                $contextElm
-            )
-        );
-        $wmts->setContact($contact);
+        $providerName = $this->getFirstChildNodeText($contextElm, 'ProviderName');
+        $source->setServiceProviderName($providerName);
+        $contact->setOrganization($providerName);
+        $serviceContactEl = $this->getFirstChildNode($contextElm, 'ServiceContact');
+        $providerSiteEl = $this->getFirstChildNode($contextElm, 'ProviderSite');
+        if ($providerSiteEl) {
+            $source->setServiceProviderSite($providerSiteEl->getAttribute('xlink:href'));
+        }
+        $contactInfoEl = $serviceContactEl ? $this->getFirstChildNode($serviceContactEl, 'ContactInfo') : null;
+        $addressEl = $contactInfoEl ? $this->getFirstChildNode($contactInfoEl, 'Address') : null;
+        $phoneEl = $contactInfoEl ? $this->getFirstChildNode($contactInfoEl, 'Phone') : null;
+
+        if ($serviceContactEl) {
+            $contact->setPerson($this->getFirstChildNodeText($serviceContactEl, 'IndividualName'));
+            $contact->setPosition($this->getFirstChildNodeText($serviceContactEl, 'PositionName'));
+        }
+        if ($phoneEl) {
+            $contact->setVoiceTelephone($this->getFirstChildNodeText($phoneEl, 'Voice'));
+            $contact->setFacsimileTelephone($this->getFirstChildNodeText($phoneEl, 'Facsimile'));
+        }
+        if ($addressEl) {
+            $contact->setAddressCity($this->getFirstChildNodeText($addressEl, 'City'));
+            $contact->setAddressStateOrProvince($this->getFirstChildNodeText($addressEl, 'AdministrativeArea'));
+            $contact->setAddressPostCode($this->getFirstChildNodeText($addressEl, 'PostalCode'));
+            $contact->setAddressCountry($this->getFirstChildNodeText($addressEl, 'Country'));
+            $contact->setElectronicMailAddress($this->getFirstChildNodeText($addressEl, 'ElectronicMailAddress'));
+        }
+        $source->setContact($contact);
     }
 
     /**
-     * Parses the Capabilities Request section of the GetCapabilities document
-     * @param WmtsSource $wmts
-     * @param \DOMElement $contextElm
+     * @param WmtsSource $source
+     * @param \DOMElement $element
      */
-    private function parseCapabilityRequest(WmtsSource $wmts, \DOMElement $contextElm)
+    protected function parseOperationsMetadata(WmtsSource $source, \DOMElement $element)
     {
-        $operations = $this->xpath->query("./*", $contextElm);
-        foreach ($operations as $operation) {
-            $name = $this->getValue("./@name", $operation);
-            if ($name === "GetTile") {
-                $getTile = $this->parseOperationRequestInformation($operation);
-                $wmts->setGetTile($getTile);
-            } elseif ($name === "GetFeatureInfo") {
-                $getFeatureInfo = $this->parseOperationRequestInformation($operation);
-                $wmts->setGetFeatureInfo($getFeatureInfo);
+        foreach ($this->getChildNodesByTagName($element, 'Operation') as $operation) {
+            switch ($operation->getAttribute('name')) {
+                default:
+                    // Do nothing
+                    break;
+                case 'GetTile':
+                    $source->setGetTile($this->parseOperationRequestInformation($operation));
+                    break;
+                case 'GetFeatureInfo':
+                    $source->setGetFeatureInfo($this->parseOperationRequestInformation($operation));
+                    break;
             }
         }
     }
@@ -175,167 +156,202 @@ class WmtsCapabilitiesParser100 extends WmtsCapabilitiesParser
     /**
      * Parses the Operation Request Information section of the GetCapabilities
      * document.
-     * @param \DOMElement $contextElm
-     * @return RequestInformation
+     * @param \DOMElement $element
+     * @return RequestInformation|null
      */
-    private function parseOperationRequestInformation(\DOMElement $contextElm)
+    private function parseOperationRequestInformation(\DOMElement $element)
     {
-        $ri       = new RequestInformation();
-        $ri->setHttpGetRestful(
-            $this->getValue(
-                "./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href",
-                $contextElm
-            )
-        );
-        $ri->setHttpGetKvp(
-            $this->getValue(
-                "./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='KVP']/@xlink:href",
-                $contextElm
-            )
-        );
-        // check if only simple href is defined
-        if (!$ri->getHttpGetRestful() && !$ri->getHttpGetKvp()) {
-            $ri->setHttpGetKvp($this->getValue("./ows:DCP/ows:HTTP/ows:Get/@xlink:href", $contextElm));
-        }
-        return $ri;
-    }
+        $dcp = $this->getFirstChildNode($element, 'DCP');
+        $http = $dcp ? $this->getFirstChildNode($dcp, 'HTTP') : null;
+        $httpGetEls = $http ? $this->getChildNodesByTagName($http, 'Get') : null;
 
-    /**
-     * Parses a WMTS Layer
-     * @param WmtsLayerSource $wmtslayer
-     * @param \DOMElement $contextElm
-     */
-    private function parseLayer(WmtsLayerSource $wmtslayer, \DOMElement $contextElm)
-    {
-        $wmtslayer->setTitle($this->getValue("./ows:Title/text()", $contextElm));
-        $wmtslayer->setAbstract($this->getValue("./ows:Abstract/text()", $contextElm));
+        $getRestful = null;
+        $getKvp = null;
 
-        $latlonbboxEl = $this->getValue("./ows:WGS84BoundingBox", $contextElm);
-        if ($latlonbboxEl !== null) {
-            $latlonBounds = new BoundingBox();
-            $bounds       = explode(
-                " ",
-                $this->getValue("./ows:LowerCorner/text()", $latlonbboxEl)
-                . " " . $this->getValue("./ows:UpperCorner/text()", $latlonbboxEl)
-            );
-            $latlonBounds->setSrs("EPSG:4326");
-            $latlonBounds
-                ->setMinx($bounds[0])
-                ->setMiny($bounds[1])
-                ->setMaxx($bounds[2])
-                ->setMaxy($bounds[3]);
-            $wmtslayer->setLatlonBounds($latlonBounds);
-        }
-
-        $bboxEls = $this->xpath->query("./ows:BoundingBox", $contextElm);
-        foreach ($bboxEls as $bboxEl) {
-            $bbox = new BoundingBox();
-            $bounds       = explode(
-                " ",
-                $this->getValue("./ows:LowerCorner/text()", $bboxEl)
-                . " " . $this->getValue("./ows:UpperCorner/text()", $bboxEl)
-            );
-            $bbox->setSrs($this->getValue("./@crs", $bboxEl))
-                ->setMinx($bounds[0])
-                ->setMiny($bounds[1])
-                ->setMaxx($bounds[2])
-                ->setMaxy($bounds[3]);
-            $wmtslayer->addBoundingBox($bbox);
-        }
-
-        $wmtslayer->setIdentifier($this->getValue("./ows:Identifier/text()", $contextElm));
-
-        $stylesEl = $this->xpath->query("./wmts:Style", $contextElm);
-        foreach ($stylesEl as $styleEl) {
-            $style     = new Style();
-            $style
-                ->setTitle($this->getValue("./ows:Title/text()", $styleEl))
-                ->setAbstract($this->getValue("./ows:Abstract/text()", $styleEl))
-                ->setIdentifier($this->getValue("./ows:Identifier/text()", $styleEl))
-                ->setIsDefault($this->getValue("./@isDefault", $styleEl));
-            $legendurl = new LegendUrl();
-            $legendurl->setFormat($this->getValue("./wmts:LegendURL/@format", $styleEl))
-                ->setHref($this->getValue("./wmts:LegendURL/@xlink:href", $styleEl));
-            if ($legendurl->getHref()) {
-                $style->setLegendurl($legendurl);
+        foreach ($httpGetEls as $httpGetEl) {
+            /** @var \DOMElement $httpGetEl */
+            $allowedEncodings = $this->parseAllowedEncodings($httpGetEl);
+            if (!$getRestful && \in_array('RESTful', $allowedEncodings)) {
+                $getRestful = $httpGetEl->getAttribute('xlink:href');
             }
-            $wmtslayer->addStyle($style);
+            if (!$getKvp && \in_array('KVP', $allowedEncodings)) {
+                $getKvp = $httpGetEl->getAttribute('xlink:href');
+            }
         }
-
-        $formatsFiEls = $this->xpath->query("./wmts:InfoFormat", $contextElm);
-        foreach ($formatsFiEls as $formatEl) {
-            $wmtslayer->addInfoformat($this->getValue("./text()", $formatEl));
+        if (!$getRestful && !$getKvp && $httpGetEls) {
+            // Uh-oh!
+            $getKvp = $httpGetEls[0]->getAttribute('xlink:href');
         }
-
-        $tmslsEls = $this->xpath->query("./wmts:TileMatrixSetLink", $contextElm);
-        foreach ($tmslsEls as $tmslEl) {
-            $tmsl = new TileMatrixSetLink();
-            $tmsl->setTileMatrixSet($this->getValue("./wmts:TileMatrixSet/text()", $tmslEl))
-                ->setTileMatrixSetLimits($this->getValue("./wmts:TileMatrixSetLimits/text()", $tmslEl));
-            $wmtslayer->addTilematrixSetlinks($tmsl);
-        }
-
-        $resourceUrlElms = $this->xpath->query("./wmts:ResourceURL", $contextElm);
-        foreach ($resourceUrlElms as $resourceUrlElm) {
-            $resourceUrl = new UrlTemplateType();
-            $wmtslayer->addResourceUrl(
-                $resourceUrl
-                    ->setFormat($this->getValue("./@format", $resourceUrlElm))
-                    ->setResourceType($this->getValue("./@resourceType", $resourceUrlElm))
-                    ->setTemplate($this->getValue("./@template", $resourceUrlElm))
-            );
+        if ($getRestful || $getKvp) {
+            $ri = new RequestInformation();
+            $ri->setHttpGetRestful($getRestful);
+            $ri->setHttpGetKvp($getKvp);
+            return $ri;
+        } else {
+            return null;
         }
     }
 
-    /**
-     * Parses a TileMatrixSet
-     * @param TileMatrixSet $tilematrixset
-     * @param \DOMElement $contextElm
-     */
-    private function parseTilematrixset(TileMatrixSet $tilematrixset, \DOMElement $contextElm)
+    protected function parseAllowedEncodings(\DOMElement $element)
     {
-        $tilematrixset->setIdentifier($this->getValue("./ows:Identifier/text()", $contextElm));
-        $tilematrixset->setTitle($this->getValue("./ows:Title/text()", $contextElm));
-        $tilematrixset->setAbstract($this->getValue("./ows:Abstract/text()", $contextElm));
-        $tilematrixset->setSupportedCrs($this->getValue("./ows:SupportedCRS/text()", $contextElm));
-        $tileMatrixEls = $this->xpath->query("./wmts:TileMatrix", $contextElm);
-        foreach ($tileMatrixEls as $tileMatrixEl) {
+        $values = array();
+        foreach ($this->getChildNodesByTagName($element, 'Constraint') as $constraintEl) {
+            if ($constraintEl->getAttribute('name') === 'GetEncoding') {
+                $allowedValuesEl = $this->getFirstChildNode($constraintEl, 'AllowedValues');
+                $allowedValueEls = $allowedValuesEl ? $this->getChildNodesByTagName($allowedValuesEl, 'Value') : array();
+                foreach ($allowedValueEls as $allowedValueEl) {
+                    $values[] = $allowedValueEl->textContent;
+                }
+                break;
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return WmtsLayerSource
+     */
+    private function parseLayer(\DOMElement $element)
+    {
+        $layer = new WmtsLayerSource();
+
+        $layer->setTitle($this->getFirstChildNodeText($element, 'Title'));
+        $layer->setAbstract($this->getFirstChildNodeText($element, 'Abstract'));
+        $layer->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'));
+
+        foreach ($this->getChildNodesByTagName($element, 'WGS84BoundingBox') as $bboxElm) {
+            $bbox = $this->parseBoundingBox($bboxElm);
+            $bbox->setSrs('EPSG:4326');
+            $layer->setLatlonBounds($bbox);
+            break;
+        }
+        foreach ($this->getChildNodesByTagName($element, 'BoundingBox') as $bboxElm) {
+            $layer->addBoundingBox($this->parseBoundingBox($bboxElm));
+        }
+
+        foreach ($this->getChildNodesByTagName($element, 'Style') as $styleEl) {
+            $layer->addStyle($this->parseStyle($styleEl));
+        }
+        foreach ($this->getChildNodesByTagName($element, 'InfoFormat') as $infoFormatEl) {
+            $layer->addInfoformat($infoFormatEl->textContent);
+        }
+
+        foreach ($this->getChildNodesByTagName($element, 'TileMatrixSetLink') as $tilematrixsetEl) {
+            $layer->addTilematrixSetlinks($this->parseTileMatrixSetLink($tilematrixsetEl));
+        }
+
+        foreach ($this->getChildNodesByTagName($element, 'ResourceURL') as $resourceUrlEl) {
+            $layer->addResourceUrl($this->parseLayerResourceUrl($resourceUrlEl));
+        }
+        return $layer;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return Style
+     */
+    protected function parseStyle(\DOMElement $element)
+    {
+        $style = new Style();
+        $style
+            ->setTitle($this->getFirstChildNodeText($element, 'Title'))
+            ->setAbstract($this->getFirstChildNodeText($element, 'Abstract'))
+            ->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'))
+            ->setIsDefault($element->getAttribute('isDefault') === 'true')
+        ;
+        $legendUrlEl = $this->getFirstChildNode($element, 'LegendURL');
+        $legendHref = $legendUrlEl ? $legendUrlEl->getAttribute('xlink:href') : null;
+        if ($legendHref) {
+            $legendUrl = new LegendUrl();
+            $legendUrl->setHref($legendHref);
+            $legendUrl->setFormat($legendUrlEl->getAttribute('format'));
+            $style->setLegendurl($legendUrl);
+        }
+        return $style;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return TileMatrixSetLink
+     */
+    protected function parseTileMatrixSetLink(\DOMElement $element)
+    {
+        $link = new TileMatrixSetLink();
+        $link
+            ->setTileMatrixSet($this->getFirstChildNodeText($element, 'TileMatrixSet'))
+            ->setTileMatrixSetLimits($this->getFirstChildNodeText($element, 'TileMatrixSetLimits'))
+        ;
+        return $link;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return UrlTemplateType
+     */
+    protected function parseLayerResourceUrl(\DOMElement $element)
+    {
+        $resourceUrl = new UrlTemplateType();
+        $resourceUrl
+            ->setFormat($element->getAttribute('format'))
+            ->setResourceType($element->getAttribute('resourceType'))
+            ->setTemplate($element->getAttribute('template'))
+        ;
+        return $resourceUrl;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return TileMatrixSet
+     */
+    private function parseTilematrixset(\DOMElement $element)
+    {
+        $tilematrixset = new TileMatrixSet();
+        $tilematrixset->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'));
+        $tilematrixset->setTitle($this->getFirstChildNodeText($element, 'Title'));
+        $tilematrixset->setAbstract($this->getFirstChildNodeText($element, 'Abstract'));
+        $tilematrixset->setSupportedCrs($this->getFirstChildNodeText($element, 'SupportedCRS'));
+        foreach ($this->getChildNodesByTagName($element, 'TileMatrix') as $tileMatrixEl) {
             $tileMatrix = new TileMatrix();
-            $tileMatrix->setIdentifier($this->getValue("./ows:Identifier/text()", $tileMatrixEl));
-            $tileMatrix
-                ->setScaledenominator(floatval($this->getValue("./wmts:ScaleDenominator/text()", $tileMatrixEl)));
-            $topleft = array_map('\floatval', explode(' ', $this->getValue("./wmts:TopLeftCorner/text()", $tileMatrixEl)));
+            $tileMatrix->setIdentifier($this->getFirstChildNodeText($tileMatrixEl, 'Identifier'));
+            $tileMatrix->setScaledenominator(floatval($this->getFirstChildNodeText($tileMatrixEl, 'ScaleDenominator')));
+            $topleft = array_map('\floatval', explode(' ', $this->getFirstChildNodeText($tileMatrixEl, 'TopLeftCorner')));
             $tileMatrix->setTopleftcorner($topleft);
-            $tileMatrix->setMatrixwidth(intval($this->getValue("./wmts:MatrixWidth/text()", $tileMatrixEl)));
-            $tileMatrix->setMatrixheight(intval($this->getValue("./wmts:MatrixHeight/text()", $tileMatrixEl)));
-            $tileMatrix->setTilewidth(intval($this->getValue("./wmts:TileWidth/text()", $tileMatrixEl)));
-            $tileMatrix->setTileheight(intval($this->getValue("./wmts:TileHeight/text()", $tileMatrixEl)));
+            $tileMatrix->setMatrixwidth(intval($this->getFirstChildNodeText($tileMatrixEl, 'MatrixWidth')));
+            $tileMatrix->setMatrixheight(intval($this->getFirstChildNodeText($tileMatrixEl, 'MatrixHeight')));
+            $tileMatrix->setTilewidth(intval($this->getFirstChildNodeText($tileMatrixEl, 'TileWidth')));
+            $tileMatrix->setTileheight(intval($this->getFirstChildNodeText($tileMatrixEl, 'TileHeight')));
             $tilematrixset->addTilematrix($tileMatrix);
         }
+        return $tilematrixset;
     }
 
     /**
-     * Parses a Theme
-     * @param Theme $theme
-     * @param \DOMElement $contextElm
+     * @param \DOMElement $element
+     * @return Theme
      */
-    private function parseTheme(Theme $theme, \DOMElement $contextElm)
+    private function parseTheme(\DOMElement $element)
     {
-        $theme->setIdentifier($this->getValue("./ows:Identifier/text()", $contextElm));
-        $theme->setTitle($this->getValue("./ows:Title/text()", $contextElm));
-        $theme->setAbstract($this->getValue("./ows:Abstract/text()", $contextElm));
-//        $tilematrixset->setSupportedCrs($this->getValue("./ows:SupportedCRS/text()", $contextElm));
-        $layerRefsEls = $this->xpath->query("./wmts:LayerRef", $contextElm);
-        foreach ($layerRefsEls as $layerRefEl) {
-            $theme->addLayerRef($this->getValue("./text()", $layerRefEl));
+        $theme = new Theme();
+        $theme->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'));
+        $theme->setTitle($this->getFirstChildNodeText($element, 'Title'));
+        $theme->setAbstract($this->getFirstChildNodeText($element, 'Abstract'));
+        foreach ($this->getChildNodesByTagName($element, 'LayerRef') as $layerRefEl) {
+            $theme->addLayerRef($layerRefEl->textContent);
         }
-        $themeEls = $this->xpath->query("./wmts:Theme", $contextElm);
-        foreach ($themeEls as $themeEl) {
-            $theme_ = new Theme();
-//            $theme_->setSource($theme->getSource());
-            $theme->addTheme($theme_);
-            $theme_->setParent($theme);
-            $this->parseTheme($theme_, $themeEl);
+        foreach ($this->getChildNodesByTagName($element, 'Theme') as $themeEl) {
+            $childTheme = $this->parseTheme($themeEl);
+            $theme->addTheme($childTheme);
+            $childTheme->setParent($theme);
         }
+        return $theme;
+    }
+
+    protected function parseBoundingBox(\DOMElement $element)
+    {
+        $crs = $element->getAttribute('crs') ?: null;
+        $lowerCorner = \explode(' ', $this->getFirstChildNodeText($element, 'LowerCorner'));
+        $upperCorner = \explode(' ', $this->getFirstChildNodeText($element, 'UpperCorner'));
+        return new BoundingBox($crs, $lowerCorner[0], $lowerCorner[1], $upperCorner[0], $upperCorner[1]);
     }
 }

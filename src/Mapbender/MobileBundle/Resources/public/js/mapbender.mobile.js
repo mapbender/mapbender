@@ -1,5 +1,7 @@
 $(function(){
     var $mobilePane = $('#mobilePane');
+    var $activeButton = null;
+    var $activeElement = null;
     $('.mb-element', $mobilePane).addClass('hidden');
     $(document).on('mobilepane.switch-to-element', function(e, data) {
         switchToElement_(data.element);
@@ -8,21 +10,27 @@ $(function(){
 
     $('.toolBar').on('click', '.mb-button', function(e) {
         var $button = $(this);
+        // This element may actually not be a control button, but a Gps Button or anything else
         var button = $button.data('mapbenderMbButton');
-        var buttonOptions = button.options;
-        var target = $('#' + buttonOptions.target);
-        var pane = target.closest('.mobilePane');
-        if (!(target && target.length && pane && pane.length)) {
+        var targetId = ((button || {}).options || {}).target;
+        var target = targetId && document.getElementById(targetId);
+        if (!target || !$(target).closest('.mobilePane').length) {
             return;
         }
-        // HACK: prevent button from ever gaining a visual highlight
-        $button.removeClass('toolBarItemActive');
-
         e.stopImmediatePropagation();
+        if ($activeButton) {
+            $activeButton.removeClass('toolBarItemActive');
+        }
+        if (($activeButton && $activeButton.get(0)) === $button.get(0)) {
+            toggle_(false);
+        } else {
+            $button.addClass('toolBarItemActive');
 
-        // supply button tooltip as emergency fallback if target element has no title
-        switchToElement_(target, $button.attr('title'));
-        toggle_(true);
+            // supply button tooltip as emergency fallback if target element has no title
+            switchToElement_($(target), $button.attr('title'));
+            $activeButton = $button;
+            toggle_(true);
+        }
 
         return false;
     });
@@ -34,13 +42,18 @@ $(function(){
         if (!headerText || /^\w+(\.\w+)+$/.test(headerText)) {
             headerText = titleFallback || headerText || 'undefined';
         }
-        $('.contentTitle', $mobilePane).text(headerText);
+        $('.-js-element-title', $mobilePane).text(headerText);
     }
     function toggle_(state) {
         if (state) {
             $mobilePane.attr('data-state', 'opened')
         } else {
             $mobilePane.removeAttr('data-state');
+        }
+        if (!state && $activeButton) {
+            $activeButton.removeClass('toolBarItemActive');
+            $activeButton = null;
+            $activeElement = null;
         }
     }
     $('#mobilePaneClose').on('click', function() {

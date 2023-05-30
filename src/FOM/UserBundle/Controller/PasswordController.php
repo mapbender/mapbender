@@ -2,10 +2,11 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\Form\FormError;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Password reset controller.
@@ -35,10 +36,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordController extends AbstractEmailProcessController
 {
+    /** @var LoggerInterface */
+    protected $logger;
     protected $enableReset;
     protected $maxTokenAge;
 
     public function __construct(\Swift_Mailer $mailer,
+                                TranslatorInterface $translator,
+                                LoggerInterface $logger,
                                 $userEntityClass,
                                 $emailFromName,
                                 $emailFromAddress,
@@ -46,7 +51,8 @@ class PasswordController extends AbstractEmailProcessController
                                 $maxTokenAge,
                                 $isDebug)
     {
-        parent::__construct($mailer, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        $this->logger = $logger;
+        parent::__construct($mailer, $translator, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
         if (!$this->enableReset) {
@@ -89,17 +95,19 @@ class PasswordController extends AbstractEmailProcessController
                     'email' => $searchValue,
                 ));
             }
-            if (!$user || $user->getRegistrationToken()) {
-                if ($user) {
-                    $message = $this->renderView('FOMUserBundle:Password:request-error-userinactive.html.twig');
-                } else {
-                    $message = $this->renderView('FOMUserBundle:Password:request-error-nosuchuser.html.twig');
-                }
-                $form->addError(new FormError($message));
-            } else {
+            if ($user) {
+                $em = $this->getEntityManager();
+                $em->persist($user);
                 $this->setResetToken($user);
-                return $this->redirectToRoute('fom_user_password_send');
+                if (!$user->isEnabled()) {
+                    $this->logger->warning("Sending password reset link to currently inactive user {$user->getEmail()} ({$user->getUsername()})");
+                }
+                $this->sendResetTokenMail($user);
+                $em->flush();
+            } else {
+                $this->logger->info("NOT sending password reset link to user '{$searchValue}'. No such user exists.");
             }
+            return $this->redirectToRoute('fom_user_password_send');
         }
 
         return $this->render('@FOMUser/Password/form.html.twig', array(
@@ -110,20 +118,25 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 4a: Reset the reset token
      *
-     * @Route("/user/reset/reset", methods={"POST"})
+     * @Route("/user/reset/reset")
      * @param Request $request
      * @return Response
      */
     public function tokenResetAction(Request $request)
     {
-        $user = $this->getUserFromResetToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromResetToken($token);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
             ));
         }
 
+        $em = $this->getEntityManager();
+        $em->persist($user);
         $this->setResetToken($user);
+        $this->sendResetTokenMail($user);
+        $em->flush();
 
         return $this->redirectToRoute('fom_user_password_send');
     }
@@ -137,7 +150,8 @@ class PasswordController extends AbstractEmailProcessController
      */
     public function resetAction(Request $request)
     {
-        $user = $this->getUserFromResetToken($request);
+        $token = $request->query->get('token');
+        $user = $this->getUserFromResetToken($token);
         if (!$user) {
             return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
                 'site_email' => $this->emailFromAddress,
@@ -145,7 +159,11 @@ class PasswordController extends AbstractEmailProcessController
         }
 
         if (!$this->checkTimeInterval($user->getResetTime(), $this->maxTokenAge)) {
-            return $this->tokenExpired($user);
+            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+                'url' => $this->generateUrl('fom_user_password_tokenreset', array(
+                    'token' => $user->getResetToken(),
+                )),
+            ));
         }
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserResetPassType', $user);
@@ -185,33 +203,22 @@ class PasswordController extends AbstractEmailProcessController
     {
         $user->setResetToken(hash("sha1", rand()));
         $user->setResetTime(new \DateTime());
+    }
 
-        //send email
-        $mailFrom = array($this->emailFromAddress => $this->emailFromName);
-
+    protected function sendResetTokenMail(User $user)
+    {
         $text = $this->renderView('@FOMUser/Password/email-body.text.twig', array("user" => $user));
         $html = $this->renderView('@FOMUser/Password/email-body.html.twig', array("user" => $user));
-        $message = new \Swift_Message();
-        $message
-            ->setSubject($this->renderView('@FOMUser/Password/email-subject.text.twig'))
-            ->setFrom($mailFrom)
-            ->setTo($user->getEmail())
-            ->setBody($text)
-            ->addPart($html, 'text/html')
-        ;
-        $this->mailer->send($message);
-
-        $em = $this->getEntityManager();
-        $em->flush();
+        $subject = $this->translator->trans('fom.user.password.email_subject');
+        $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }
 
     /**
-     * @param Request $request
+     * @param string $token
      * @return User|null
      */
-    protected function getUserFromResetToken(Request $request)
+    protected function getUserFromResetToken($token)
     {
-        $token = $request->get('token');
         if ($token) {
             /** @var User|null $user */
             $user = $this->getUserRepository()->findOneBy(array(

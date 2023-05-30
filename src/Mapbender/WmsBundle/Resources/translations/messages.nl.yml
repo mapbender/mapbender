@@ -118,9 +118,6 @@ mb:
             toggletoc: 'Toggle op TOC'
             allowreordertoc: 'Sta herorder bij TOC toe'
             moreinfo: 'Meer informatie'
-            id:
-              title: ID
-              description: 'Instantie Laag Id in de vorm: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Laag naam'
             style: Stijl
       class:
@@ -135,8 +132,6 @@ mb:
         couldnotparse: 'Kon Capabilities Document niet parsen'
         not_supported_document: 'Niet-ondersteund Capabilities Document'
         not_supported_version: 'De WMS version wordt niet ondersteund'
-        not_valid_dtd: 'Ongeldig WMS document (DTD).'
-        not_valid_xsd: 'Ongeldig WMS document (XSD).'
     metadata:
       section:
         common:

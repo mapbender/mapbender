@@ -183,8 +183,12 @@ class LayerRendererWms extends LayerRenderer
         $serviceParams = array(
             'SERVICE' => 'WMS',
             'REQUEST' => 'GetMap',
-            'TRANSPARENT' => 'true',
         );
+        if (false === stripos($layerDef['url'], 'TRANSPARENT=')) {
+            $serviceParams += array(
+                'TRANSPARENT' => 'TRUE',
+            );
+        }
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
         $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
         $url = UrlUtil::validateUrl($layerDef['url'], $params + $serviceParams);

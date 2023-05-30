@@ -4,13 +4,13 @@
 namespace FOM\UserBundle\Component;
 
 
-use Symfony\Component\Security\Core\Role\Role;
-
 /**
- * Unpersisted display-only version of Group entity
+ * Rendering facade for Group entities and other group identities
  */
-class DummyGroup extends Role
+class DummyGroup
 {
+    /** @var string */
+    protected $role;
     /** @var string */
     protected $title;
 
@@ -20,7 +20,7 @@ class DummyGroup extends Role
      */
     public function __construct($role, $title)
     {
-        parent::__construct($role);
+        $this->role = $role;
         $this->title = $title;
     }
 
@@ -30,6 +30,11 @@ class DummyGroup extends Role
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function getRole()
+    {
+        return $this->role;
     }
 
     /**

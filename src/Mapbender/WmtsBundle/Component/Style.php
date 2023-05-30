@@ -53,12 +53,11 @@ class Style
      */
     public function setIsDefault($isDefault)
     {
-        $this->isDefault = $isDefault ? true : false;
+        $this->isDefault = $isDefault;
         return $this;
     }
 
     /**
-     * Get title
      * @return string
      */
     public function getTitle()
@@ -67,7 +66,6 @@ class Style
     }
 
     /**
-     * Set title
      * @param string $title
      * @return $this
      */
@@ -96,7 +94,6 @@ class Style
     }
 
     /**
-     * Get identfier.
      * @return string
      */
     public function getIdentifier()
@@ -105,7 +102,6 @@ class Style
     }
 
     /**
-     * Set identifier
      * @param string $identifier
      * @return $this
      */

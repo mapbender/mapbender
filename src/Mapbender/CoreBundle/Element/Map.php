@@ -145,7 +145,13 @@ class Map extends AbstractElementService
      */
     public function getClientConfiguration(Element $element)
     {
-        $conf = $element->getConfiguration();
+        // Remove nulls, readd defaults
+        // @todo: prevent saving invalid empty values via form constraints
+        $conf = \array_filter($element->getConfiguration(), function($v) {
+            return $v !== null;
+        });
+        $conf += static::getDefaultConfiguration();
+
         $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
         $conf = $this->buildSrsConfigs($element) + $conf;
         return $conf;

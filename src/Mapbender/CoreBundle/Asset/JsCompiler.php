@@ -3,8 +3,6 @@
 
 namespace Mapbender\CoreBundle\Asset;
 
-use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Locates and merges JavaScript assets for applications.
@@ -13,15 +11,6 @@ use Symfony\Component\Templating\EngineInterface;
  */
 class JsCompiler extends AssetFactoryBase
 {
-    /** @var EngineInterface */
-    protected $templateEngine;
-
-    public function __construct(EngineInterface $templateEngine, FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
-    {
-        parent::__construct($fileLocator, $webDir, $bundleClassMap);
-        $this->templateEngine = $templateEngine;
-    }
-
     /**
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
@@ -38,16 +27,11 @@ class JsCompiler extends AssetFactoryBase
     protected function getMigratedReferencesMapping()
     {
         return array(
-            '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => array(
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-            ),
-            '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js' => array(
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
-            ),
+            '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
+            '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
             '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-            '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+            '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
             '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
             '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
             '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',

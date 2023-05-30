@@ -5,6 +5,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Transport\HttpTransportInterface;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -15,7 +16,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @author Christian Wygoda
  */
-class SimpleSearch extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
+class SimpleSearch extends AbstractElementService
+    implements ConfigMigrationInterface, ElementHttpHandlerInterface, FloatableElement
 {
     /** @var HttpTransportInterface */
     protected $httpTransport;
@@ -56,6 +58,7 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
     public static function getDefaultConfiguration()
     {
         return array(
+            'placeholder' => null,
             'query_url'       => 'http://',
             'query_key'       => 'q',
             'query_format'    => '%s',
@@ -86,6 +89,7 @@ class SimpleSearch extends AbstractElementService implements ConfigMigrationInte
             $view->attributes['title'] = $element->getTitle();
         }
         $view->variables['delay'] = $config['delay'];
+        $view->variables['placeholder'] = $config['placeholder'] ?: $element->getTitle();
         return $view;
     }
 

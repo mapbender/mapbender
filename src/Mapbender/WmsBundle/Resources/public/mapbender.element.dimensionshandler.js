@@ -6,35 +6,36 @@
         model: null,
         _create: function () {
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbDimensionsHandler", self.options.target);
+                Mapbender.checkTarget('mbDimensionsHandler');
             });
         },
         _setup: function (mbMap) {
             this.model = mbMap.getModel();
-            var dimensionUuids = Object.keys(this.options.dimensionsets);
-            for (var i = 0; i < dimensionUuids.length; ++i) {
-                var key = dimensionUuids[i];
-                var groupConfig = this.options.dimensionsets[dimensionUuids[i]];
-                var targetDimensions = (groupConfig.group || []).map(function(compoundId) {
+            var $sets = $('.dimensionset[data-group][data-extent]', this.element);
+            for (var i = 0; i < $sets.length; ++i) {
+                var $set = $sets.eq(i);
+                var group = $set.attr('data-group').split('#');
+                var extent = $set.attr('data-extent');
+                var targetDimensions = (group || []).map(function(compoundId) {
                     return {
                         sourceId: compoundId.replace(/-.*$/, ''),
                         dimensionName: compoundId.replace(/^.*-(\w+)-\w*$/, '$1')
                     };
                 });
-                this._preconfigureSources(targetDimensions, groupConfig.extent);
-                var dimHandler = this._setupGroup(key, targetDimensions);
+                this._preconfigureSources(targetDimensions, extent);
+                var dimHandler = this._setupGroup(targetDimensions);
                 if (dimHandler) {
-                    this._initializeSlider(key, dimHandler, targetDimensions);
+                    this._initializeSlider($set, dimHandler, targetDimensions);
                 } else {
                     console.error("Target dimension not found! Source deactivated or removed?", targetDimensions, groupConfig);
                 }
             }
             this._trigger('ready');
         },
-        _setupGroup: function(key, targetDimensions) {
+        _setupGroup: function(targetDimensions) {
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
                 var source = this.model.getSourceById(targetDimension.sourceId);
@@ -46,16 +47,16 @@
             return null;
         },
         /**
-         * @param {string} id
+         * @param {jQuery} $set
          * @param dimension
          * @param targetDimensions
          * @private
          */
-        _initializeSlider: function(id, dimension, targetDimensions) {
+        _initializeSlider: function($set, dimension, targetDimensions) {
             var self = this;
-            var valarea = $('#' + id + ' .dimensionset-value', this.element);
+            var valarea = $('.dimensionset-value', $set);
             valarea.text(dimension.getDefault());
-            $('#' + id + ' .mb-slider', this.element).slider({
+            $('.mb-slider', $set).slider({
                 min: 0,
                 max: dimension.getStepsNum(),
                 value: dimension.getStep(dimension.getDefault()),

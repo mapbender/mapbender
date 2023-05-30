@@ -57,7 +57,7 @@
 
 {% block form_layers %}
     {% set root = instance.source.getRootlayer() %}
-    <table id="instanceTable" class="table table-condensed table-bordered instanceTable">
+    <table id="instanceTable" class="table table-condensed table-outlined instanceTable">
       <thead>
       {% set _proto = form.layers.vars.prototype %}
         <tr>
@@ -66,19 +66,19 @@
           <th>{{"mb.wms.wmsloader.repo.instance.label.minsc"|trans}}</th>
           <th>{{"mb.wms.wmsloader.repo.instance.label.maxsc"|trans}}</th>
           <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.active"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
+          <th class="checkboxColumn group-start group-end" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
           <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.toggle"|trans}}</th>
+          <th class="checkboxColumn group-start group-end" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.toggle"|trans}}</th>
           <th></th>
         </tr>
         <tr>
           <th colspan="5"></th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="checkboxColumn smallText group-start">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="checkboxColumn smallText group-end">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="checkboxColumn smallText group-start">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="checkboxColumn smallText group-end">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
           <th></th>
         </tr>
         <tr>

@@ -13,7 +13,6 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
             ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
                 'multiple' => true,

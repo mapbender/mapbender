@@ -103,7 +103,6 @@ fom:
         no_goups_users: 'No groups and users defined.'
     password:
       email_body_html: '<p>Hello %user_username%,</p><p>You have requested a new password for your Mapbender3 account. Please click <a href="%url%"> here to change it.</p>'
-      request_error_no_user: 'No such user can be found.'
       done:
         password_reset: 'Password reset'
         congratulations: Congratulations!
@@ -123,8 +122,6 @@ fom:
         title: 'Password Reset'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Back to login'
-      request:
-        user_inactive: 'This user is inactive. Please activate first.'
       email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender3 account. Please follow this link to change it: "%url%".'
     userbundle:
       user_control: 'User control'

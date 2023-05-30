@@ -47,6 +47,12 @@
             this.onMapLayerChanges();
             if (this.useDialog_ && this.options.autoOpen) {
                 this.open();
+                // Notify controlling button, if any
+                $(this.element).trigger('mapbender.elementactivated', {
+                    widget: this,
+                    sender: this,
+                    active: true
+                });
             }
             var rerenderOn = [
                 'mbmapsourceadded',
@@ -270,7 +276,6 @@
             }
         },
         getPopupOptions: function() {
-            var self = this;
             return {
                 title: this.element.attr('data-title'),
                 draggable: true,
@@ -279,15 +284,13 @@
                 closeOnESC: false,
                 detachOnClose: true,
                 content: [this.element],
+                cssClass: 'legend-dialog',
                 width: 350,
                 height: 500,
                 buttons: [
                     {
-                        label:    Mapbender.trans('mb.core.legend.popup.btn.ok'),
-                        cssClass: 'button right',
-                        callback: function() {
-                            self.close();
-                        }
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'button popupClose'
                     }
                 ]
             };

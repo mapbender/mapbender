@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\CoreBundle;
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\AutodetectSasscBinaryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
@@ -14,11 +13,13 @@ use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
 
 /**
  * @author Christian Wygoda
  */
-class MapbenderCoreBundle extends MapbenderBundle
+class MapbenderCoreBundle extends Bundle
 {
 
     /**
@@ -45,38 +46,6 @@ class MapbenderCoreBundle extends MapbenderBundle
         $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTemplates()
-    {
-        return array
-            (
-                'Mapbender\CoreBundle\Template\Fullscreen',
-                'Mapbender\CoreBundle\Template\FullscreenAlternative',
-            );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getElements()
-    {
-        return array(
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getACLClasses()
-    {
-        return array(
-            'Mapbender\CoreBundle\Entity\Application' => 'mb.terms.application.plural',
-            'Mapbender\CoreBundle\Entity\Source' => 'mb.terms.source.plural',
-        );
     }
 
     protected function loadConfigs(ContainerBuilder $container)
@@ -108,8 +77,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'commands.xml',
             'mapbender.yml',
             'constraints.yml',
-            'formTypes.yml',
             'elements.xml',
+            'templates.xml',
         );
     }
 

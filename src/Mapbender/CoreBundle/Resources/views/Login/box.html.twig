@@ -22,8 +22,9 @@
   <div class="authWrapper">
     {%- set backdrop = asset(login_backdrop_asset()) -%}
     {%- set hq_backdrop = login_backdrop_asset_hq() ? asset(login_backdrop_asset_hq()) : null -%}
-    <div class="container-login-img">
-    </div>
+    {%- block backdrop_markup -%}
+    <div class="container-login-img">{%- block inside_backdrop -%}{%- endblock -%}</div>
+    {%- endblock -%}
     <style>
       .container-login-img {
         background-image: url("{{ asset(login_backdrop_asset())}}");
@@ -40,18 +41,22 @@
     <div class="login-wrapper">
       {% set sitelinks = get_sitelinks() %}
       {% if sitelinks %}
-      <ul class="sitelinks list-inline">
-        {% for sitelink in sitelinks %}
-          <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      <div class="logoContainer">
-        <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
-                                                                 src="{{ asset(fom.server_logo) }}"></a>
+      <div>{# NOTE: need any display: block outer element for working float: right #}
+        <ul class="sitelinks list-inline list-unstyled pull-right">
+          {% for sitelink in sitelinks %}
+            <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+          {% endfor %}
+        </ul>
       </div>
-      <div class="loginBox">
-      {% block box_content %}{% endblock %}
+      {% endif %}
+      <div class="justify-v">
+        <div class="logoContainer">
+          <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+                                                                   src="{{ asset(fom.server_logo) }}"></a>
+        </div>
+        <div class="loginBox">
+        {% block box_content %}{% endblock %}
+        </div>
       </div>
     </div>
   </div>

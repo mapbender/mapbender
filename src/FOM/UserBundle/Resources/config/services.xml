@@ -33,7 +33,13 @@
         <!-- internal; automatically replaced with value extracted from 'security' extension config
              see ForwardUserEntityClassPass -->
         <parameter key="fom.user_entity">null</parameter>
-        <parameter key="fom.user.acl_classes" type="collection" />
+        <parameter key="fom.user.acl_classes" type="collection">
+            <parameter key="Mapbender\CoreBundle\Entity\Application">mb.terms.application.plural</parameter>
+            <parameter key="Mapbender\CoreBundle\Entity\Source">mb.terms.source.plural</parameter>
+            <parameter key="Symfony\Component\Security\Acl\Domain\Acl">fom.user.userbundle.classes.acls</parameter>
+            <parameter key="FOM\UserBundle\Entity\User">fom.user.userbundle.classes.users</parameter>
+            <parameter key="FOM\UserBundle\Entity\Group">fom.user.userbundle.classes.groups</parameter>
+        </parameter>
     </parameters>
     <services>
         <service id="fom.user_helper.service" class="%fom.user_helper.service.class%">
@@ -98,7 +104,6 @@
         </service>
         <service id="fom.acl_assignment_filter" class="FOM\UserBundle\Component\AssignableSecurityIdentityFilter">
             <argument type="service" id="fom.identities.provider" />
-            <argument type="service" id="translator" />
             <argument>%fom.acl_assignment.show_users%</argument>
             <argument>%fom.acl_assignment.show_groups%</argument>
             <argument>%fom.acl_assignment.show_authenticated%</argument>

@@ -3,9 +3,12 @@
 namespace Mapbender\WmtsBundle\Form\Type;
 
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Mapbender\WmtsBundle\Form\EventListener\FieldSubscriber;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -13,11 +16,12 @@ use Symfony\Component\Form\FormView;
  * @author Paul Schmidt
  */
 class WmtsInstanceLayerType extends AbstractType
+    implements EventSubscriberInterface
 {
 
     public function getParent()
     {
-        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
+        return TileInstanceLayerType::class;
     }
 
     /**
@@ -25,8 +29,7 @@ class WmtsInstanceLayerType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new FieldSubscriber();
-        $builder->addEventSubscriber($subscriber);
+        $builder->addEventSubscriber($this);
         $builder
             ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -49,13 +52,44 @@ class WmtsInstanceLayerType extends AbstractType
         } else {
             $isQueryable = false;
         }
-        $view['info']->vars['disabled'] = !$isQueryable;
         $view['allowinfo']->vars['disabled'] = !$isQueryable;
+        $view['allowinfo']->vars['columnClass'] = 'group-start';
+        $view['info']->vars['disabled'] = !$isQueryable;
+        $view['info']->vars['columnClass'] = 'group-end';
         if (!$isQueryable) {
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }
         $view['info']->vars['checkbox_group'] = 'checkInfoOn';
         $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            FormEvents::PRE_SET_DATA => 'preSetData',
+        );
+    }
+
+    public function preSetData(FormEvent $event)
+    {
+        if ($event->getData()) {
+            $this->reconfigureFields($event->getForm(), $event->getData());
+        }
+    }
+
+    protected function reconfigureFields(FormInterface $form, WmtsInstanceLayer $data)
+    {
+        $choices = array();
+        foreach ($data->getSourceItem()->getStyles() as $style) {
+            $label = $style->getTitle() ?: $style->getIdentifier();
+            $choices[$label] = $style->getIdentifier();
+        }
+        $form->add('style', ChoiceType::class, array(
+            'label' => 'mb.wmts.wmtsloader.repo.instance.label.style',
+            'choices' => $choices,
+            "required" => false,
+            'placeholder' => false,
+        ));
     }
 }

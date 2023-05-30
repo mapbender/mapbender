@@ -19,7 +19,6 @@ class ScaleSelectorAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.button.show_label',
             ))
-            ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\MapTargetType')
         ;
     }
 

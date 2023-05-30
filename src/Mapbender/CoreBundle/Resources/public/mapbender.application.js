@@ -105,8 +105,20 @@ Mapbender.ElementRegistry = (function($){
         this.addTrackingByClass_(bundle, node);
         // register one-time listener for ready event, which will trigger promise
         // resolution
+        var self = this;
         if (readyEventName) {
-            $(node).one(readyEventName, this.markReady.bind(this, nodeId));
+            // Listen on parent. For uncacheable elements, original node may be replaced with
+            // new content, losing directly bound listeners.
+            $(node).parent().one(readyEventName, (function(nodeId) {
+                return function(evt) {
+                    if (evt.target && evt.target.id === nodeId) {
+                        self.markReady(nodeId);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                };
+            }(nodeId)));
         }
     };
     /**
@@ -294,24 +306,24 @@ $.extend(Mapbender, (function($) {
      * @return {*}
      */
     function initElement(id, data) {
-        var selector = '#' + id;
-        if (!$(selector).length) {
-            throw new Error("No DOM match for element selector " + selector);
-        }
         var instance;
+        var $node = $(document.getElementById(id));
+        if (!$node.length) {
+            throw new Error('Element #' + id + ' not found in DOM');
+        }
         if (data.init) {
             var initInfo = _getElementInitInfo(data.init);
             if (!initInfo.initMethod) {
                 Mapbender.elementRegistry.markFailed(id);
                 throw new Error("No such widget " + data.init);
             }
-            instance = (initInfo.initMethod)(data.configuration, selector);
+            instance = (initInfo.initMethod)(data.configuration, $node);
             Mapbender.elementRegistry.markCreated(id, instance);
         } else {
             // no widget constructor, do a little thing that at least has the element property in the
             // same place as a jquery ui widget
             instance = {
-                element: $(selector)
+                element: $node
             };
             Mapbender.elementRegistry.markCreated(id, instance);
             Mapbender.elementRegistry.markReady(id);
@@ -332,31 +344,57 @@ $.extend(Mapbender, (function($) {
             }
         }
     }
-    function _initElements(config, debug) {
+    function _initElements(config) {
         var elementIds = Object.keys(config);
+        var uncacheable = {};
+        var node;
         for (var i = 0; i < elementIds.length; ++i) {
             var elementId = elementIds[i];
             // Note: config may reference Elements that have been suppressed in markup (grants)
-            if (!document.getElementById(elementId)) {
+            node = document.getElementById(elementId);
+            if (!node) {
                 continue;
             }
             var elementData = config[elementId];
-            try {
-                initElement(elementId, elementData);
-            } catch(e) {
-                Mapbender.elementRegistry.markFailed(elementId);
-                // NOTE: console.error produces a NEW stack trace that ends right here, and as such
-                //       won't point to the origin of the Error at all.
-                console.error("Element " + elementId + " failed to initialize:", e.message, elementData);
-                if (debug) {
-                    // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
-                    console.log(e.stack);
-                }
-                $.notify('Your element with id ' + elementId + ' (widget ' + elementData.init + ') failed to initialize properly.', 'error');
+            if ($(node).hasClass('-js-reload-uncacheable')) {
+                uncacheable[elementId] = elementData;
+            } else {
+                _initElement(elementId, elementData);
             }
         }
+        var uncacheableIds = Object.keys(uncacheable);
+        if (uncacheableIds.length) {
+            var reloadUrl = ['.', Mapbender.configuration.application.slug, 'elements'].join('/');
+            $.getJSON(reloadUrl, {
+                ids: uncacheableIds.join(',')
+            }).then(function(response) {
+                var selectors = Object.keys(response);
+                for (var s = 0; s < selectors.length; ++s) {
+                    var selector = selectors[s];
+                    $(selectors[s]).replaceWith(response[selector]);
+                }
+                for (i = 0; i < uncacheableIds.length; ++i) {
+                    var id = uncacheableIds[i];
+                    _initElement(id, uncacheable[id]);
+                }
+            });
+        }
     }
-
+    function _initElement(id, elementData) {
+        try {
+            initElement(id, elementData);
+        } catch(e) {
+            Mapbender.elementRegistry.markFailed(id);
+            // NOTE: console.error produces a NEW stack trace that ends right here, and as such
+            //       won't point to the origin of the Error at all.
+            console.error("Element " + id + " failed to initialize:", e.message, elementData);
+            if (window.Mapbender.configuration.application.debug) {
+                // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
+                console.log(e.stack);
+            }
+            $.notify('Your element with id ' + id + ' (widget ' + elementData.init + ') failed to initialize properly.', 'error');
+        }
+    }
 
     function setup() {
         // Disable ~"functional" a href="#" links from opening new tab / breaking fragment-based navigation history
@@ -379,7 +417,7 @@ $.extend(Mapbender, (function($) {
         var defaultStackTraceLimit = Error.stackTraceLimit;
         // NOTE: do not set undefined; undefined captures NO STACK TRACE AT ALL in some browsers
         Error.stackTraceLimit = 100;
-        _initElements(Mapbender.configuration.elements, Mapbender.configuration.application.debug || false);
+        _initElements(Mapbender.configuration.elements);
 
         Error.stackTraceLimit = defaultStackTraceLimit;
 
@@ -391,7 +429,25 @@ $.extend(Mapbender, (function($) {
     return {
         source: {},
         initElement: initElement,
-        setup: setup
+        setup: setup,
+        /**
+         * @typedef {Object} mbUserInfo
+         * @property {String|null} name
+         * @property {boolean} isAnonymous
+         * @property {Array<String>} roles
+         */
+        /**
+         * @returns {Promise<mbUserInfo>}
+         * @since v3.2.2
+         */
+        loadUserInfo: (function() {
+            // Fetch once, reuse response
+            var promise = null;
+            return function() {
+                promise = promise || $.getJSON('../userinfo.json').promise();
+                return promise;
+            }
+        }())
     }
 }(jQuery)));
 

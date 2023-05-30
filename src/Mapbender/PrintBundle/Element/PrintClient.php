@@ -98,7 +98,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
                 '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
@@ -218,7 +217,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $queueMode = !empty($config['renderMode']) && $config['renderMode'] === 'queued';
+        $queueMode = $this->enableQueue && !empty($config['renderMode']) && $config['renderMode'] === 'queued';
 
         if ($queueMode) {
             $template = 'MapbenderPrintBundle:Element:printclient-queued.html.twig';

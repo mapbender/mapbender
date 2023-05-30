@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Deslocar
       overview:
-        maximize: Maximizar
         fix: Fixar
       layerset:
         add: 'Adicionar conjunto de camadas'
@@ -62,7 +61,6 @@ mb:
         delete:
           title: 'Remover conjunto de camadas'
           confirm: 'Realmente remover conjunto de camadas <span class="italic">%layerset_title%</span> ?'
-        id_description: SourceId/InstanceId
         id: Id
       instance:
         add: 'Adicionar instância'
@@ -153,6 +151,8 @@ mb:
     import:
       application:
         failed: 'Não pode importar aplicação'
+    xml_invalid: O documento não é válido
+    xml_malformed: O documento não é válido # @todo: supply distinct message
   core:
     admin:
       button:

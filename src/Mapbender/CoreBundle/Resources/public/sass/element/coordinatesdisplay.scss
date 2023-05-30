@@ -6,17 +6,14 @@
   div.inline {
     display: inline;
   }
-}
-
-.contentPane{
-  .mb-element-coordsdisplay{
-    z-index: 20;
-    @include absolute('' $space $space*2 '');
+  .anchored-element-wrap & {
+    // Avoid eating map mouse interactions
+    pointer-events: none;
   }
 }
+
 .toolBar {
   .mb-element-coordsdisplay {
-    text-align: left;
     min-width: 15em;
   }
 }

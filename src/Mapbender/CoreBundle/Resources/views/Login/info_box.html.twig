@@ -1,7 +1,7 @@
 {% extends "MapbenderCoreBundle:Login:box.html.twig" %}
 
 {% block box_content %}
-    <h1 class="contentTitle">{{ title | trans }}</h1>
+    <h1>{{ title | trans }}</h1>
     {% block box_content_main %}
     {% block extra_links %}
     <a class="linkButton" href="{{ path('mapbender_core_login_login') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ "fom.user.password.done.back_to_login"|trans}}</a>

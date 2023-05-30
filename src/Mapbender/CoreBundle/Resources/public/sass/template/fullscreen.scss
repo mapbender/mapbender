@@ -1,5 +1,4 @@
 @import "libs/mixins";
-@import "libs/icons";
 @import "theme/mapbender3";
 
 .form-control-feedback {
@@ -94,11 +93,6 @@ body {
 .notifyjs-container {
   border-radius: 8px;
   box-shadow: -2px 2px 16px 0px rgba(0, 0, 0, 0.75);
-  font-size: $uiFontSize;
-
-  .notifyjs-bootstrap-base {
-    padding: 6px 6px 4px 25px;
-  }
 }
 
 .logoContainer {
@@ -113,39 +107,13 @@ body {
 
 
 .toolBar {
-  opacity: 1; // avoid applying opacity twice (gradient + $toolBarOpacity)
   &.top {
-    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.9), rgba($toolBarBackgroundColor, 0.7));
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    // scale button icons and text all to the same size, undoing .iconBig
-    font-size: 1.6rem;
-    .toolBarItem {
-      .iconBig {
-        vertical-align: initial;
-        font-size: inherit;
-      }
-    }
   }
   &.bottom {
-    background: linear-gradient(0deg, rgba($toolBarBackgroundColor, 0.7), rgba($toolBarBackgroundColor, 0.9));
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
 }
-.toolBar.top {
-
-  >ul .toolBarItem {
-    border-radius: 2 * $radius;
-    &.logoContainer {
-      border-radius: 0;
-      padding: 0; // use padding pixels for more of the logo
-    }
-  }
-  >ul .toolBarItem + .toolBarItem {
-    margin-left: 0.5rem;
-  }
-}
-
-
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
@@ -154,33 +122,21 @@ body {
   background: #ccc;
 }
 
+.accordionContainer .accordion {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .sidePane {
-  &:after {
-    clear: both;
-  }
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
-  color: #222;
+  font-size: 14px;
 }
 
-html .accordionContainer .accordion {
-  background-color: #777;
-  color: #ddd;
-  font-size: 1.6rem;
-  line-height: 1.5; // @todo: undo global fixed-pixel-unit line height!
-  &.active {
-    color: #fff;
-    &:hover {
-      background-color: #888;
-    }
+.autocompleteWrapper {
+  .form-control, .input-group-addon {
+    font-size: inherit;
   }
-  &:hover {
-    background-color: #888;
+  .form-control {
+    padding: 5px;
+    height: auto;
   }
-  &.active, &:hover, &.active:hover {
-    background-color: #888;
-  }
-}
-
-.mb-element-layertree, .mb-element-basesourceswitcher {
-  font-size: 1.1rem;
 }

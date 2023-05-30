@@ -34,8 +34,10 @@
             <tag name="twig.extension"/>
             <argument type="service" id="security.acl.provider" />
         </service>
+
         <service id="mapbender.twig.manager.application_region_title" class="Mapbender\ManagerBundle\Extension\Twig\ApplicationRegionTitleExtension">
             <tag name="twig.extension"/>
+            <argument type="service" id="mapbender.application_template_registry" />
         </service>
         <service id="mapbender.form_type.application" class="Mapbender\ManagerBundle\Form\Type\ApplicationType">
             <tag name="form.type" />
@@ -43,7 +45,11 @@
         </service>
         <service id="mapbender.form_type.application_template_choice" class="Mapbender\ManagerBundle\Form\Type\Application\TemplateChoiceType">
             <tag name="form.type" />
-            <argument>%kernel.bundles%</argument>
+            <argument type="service" id="mapbender.application_template_registry" />
+        </service>
+        <service id="mapbender.form_type.application.region_properties" class="Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType">
+            <tag name="form.type" />
+            <argument type="service" id="mapbender.application_template_registry" />
         </service>
         <service id="mabender.form_type.source_instance_item" class="Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType">
             <tag name="form.type" />
@@ -63,6 +69,11 @@
             <tag name="form.type" />
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.element_filter" />
+        </service>
+        <service id="mapbender.form_type.button_icon" class="Mapbender\CoreBundle\Element\Type\IconClassType"
+            lazy="true">
+                <tag name="form.type" />
+            <argument type="service" id="mapbender.icon_index" />
         </service>
     </services>
 </container>

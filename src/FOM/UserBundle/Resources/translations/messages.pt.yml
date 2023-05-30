@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'Não definia grupos e usuários'
     password:
       email_body_html: "&lt;p&gt;Olá %user_username%,&lt;/p&gt;&lt;p&gt;Você solicitou uma nova senha.\n&lt;br /&gt;Por Favor, clique &lt;a href=\"%url%\"&gt;aqui&lt;/a&gt;."
-      request_error_no_user: 'Usuário não foi encontrado'
       done:
         password_reset: 'Nova senha'
         congratulations: Parabéns!
@@ -119,8 +118,6 @@ fom:
         title: 'Nova senha'
         email_been_sent: 'O link para redefinir a sua password foi enviado para o endereço de e-mail desta conta.'
         back_to_login: 'Voltar à login'
-      request:
-        user_inactive: 'O usuário é inactivo. Por favor activar primeiro.'
       email_body_text: 'Olá %user_username%, você solicitou uma nova senha. Clique no link ao seu browser "%url%".'
     userbundle:
       user_control: 'Controle de usuários'

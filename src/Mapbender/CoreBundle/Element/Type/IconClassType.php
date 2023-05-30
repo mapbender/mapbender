@@ -1,12 +1,25 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\FrameworkBundle\Component\IconIndex;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IconClassType extends AbstractType
+class IconClassType extends AbstractType implements EventSubscriberInterface
 {
+    /** @var IconIndex */
+    protected $iconIndex;
+
+    public function __construct(IconIndex $iconIndex)
+    {
+        $this->iconIndex = $iconIndex;
+    }
+
     public function getParent()
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
@@ -14,45 +27,8 @@ class IconClassType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $icons = array(
-
-            // Mapbender Icons
-            'icon-layer-tree'   => 'Layer tree',
-            'icon-feature-info' => 'Feature Info',
-            'icon-area-ruler'   => 'Area ruler',
-            'icon-polygon'      => 'Polygon',
-            'icon-line-ruler'   => 'Line ruler',
-            'icon-image-export' => 'Image Export',
-            'icon-legend'       => 'Legend',
-            'icon-about'        => 'About',
-
-
-            // DBImm Maps
-            'iconBorisInfo'     => 'BORISInfo',
-
-            // FontAwesome
-            'iconAbout'         => 'About (FontAwesome)',
-            'iconAreaRuler'     => 'Area ruler (FontAwesome)',
-            'iconInfoActive'    => 'Feature info (FontAwesome)',
-            'iconIVL'           => 'IVL Steuerung (FontAwesome)',
-            'iconGps'           => 'GPS (FontAwesome)',
-            'iconLegend'        => 'Legend (FontAwesome)',
-            'iconPrint'         => 'Print (FontAwesome)',
-            'iconSearch'        => 'Search (FontAwesome)',
-            'iconLayertree'     => 'Layer tree (FontAwesome)',
-            'iconWms'           => 'WMS (FontAwesome)',
-            'iconHelp'          => 'Help (FontAwesome)',
-            'iconWmcEditor'     => 'WMC Editor (FontAwesome)',
-            'iconWmcLoader'     => 'WMC Loader (FontAwesome)',
-            'iconCoordinates'   => 'Coordinates (FontAwesome)',
-            'iconCoord'         => 'Koordinaten (FontAwesome)',
-            'iconGpsTarget'     => 'Gps Target (FontAwesome)',
-            'iconPoi'           => 'POI (FontAwesome)',
-            'iconImageExport'   => 'Image Export (FontAwesome)',
-            'iconRedo'          => 'Neu Laden (FontAwesome)',
-            'iconSketch'        => 'Sketch (FontAwesome)');
-
-        asort($icons);
+        $choices = $this->iconIndex->getChoices();
+        ksort($choices);
 
         $resolver->setDefaults(array(
             'placeholder' => function(Options $options) {
@@ -62,7 +38,27 @@ class IconClassType extends AbstractType
                     return 'mb.form.choice_optional';
                 }
             },
-            'choices' => array_flip($icons),
+            'choices' => $choices,
         ));
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventSubscriber($this);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            FormEvents::PRE_SET_DATA => 'preSetData',
+        );
+    }
+    
+    public function preSetData(FormEvent $evt)
+    {
+        $value = $evt->getData();
+        if ($value) {
+            $evt->setData($this->iconIndex->normalizeAlias($value));
+        }
     }
 }

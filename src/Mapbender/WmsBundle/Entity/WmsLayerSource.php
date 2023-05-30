@@ -435,8 +435,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     }
 
     /**
-     * Add boundingBox
-     *
      * @param BoundingBox $boundingBoxes
      * @return $this
      */
@@ -447,20 +445,16 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     }
 
     /**
-     * Set boundingBoxes
-     *
+     * Non-EPSG:4326 bounds. Only used in view template.
      * @param BoundingBox[] $boundingBoxes
-     * @return $this
      */
     public function setBoundingBoxes($boundingBoxes)
     {
-        $this->boundingBoxes = $boundingBoxes ? $boundingBoxes : array();
-        return $this;
+        $this->boundingBoxes = $boundingBoxes ?: array();
     }
 
     /**
-     * Get boundingBoxes
-     *
+     * Non-EPSG:4326 bounds. Only used in view template.
      * @return BoundingBox[]
      */
     public function getBoundingBoxes()
@@ -882,22 +876,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * Returns a merged array of the latlon bounds (if set) and other bounding boxes.
-     * This is used in frontend config generation.
-     *
-     * @return BoundingBox[]
-     */
-    public function getMergedBoundingBoxes()
-    {
-        $bboxes = array();
-        $latLonBounds = $this->getLatlonBounds();
-        if ($latLonBounds) {
-            $bboxes[] = $latLonBounds;
-        }
-        return array_merge($bboxes, $this->getBoundingBoxes());
     }
 
     public function mutateUrls(OneWayTransformer $transformer)

@@ -74,13 +74,9 @@ mb:
         geometry:
           missing: The selected entry does not contain a geometry.
       admin:
+        placeholder: Placeholder
         sourceSrs: Source SRS
     searchrouter:
-      popup:
-        btn:
-          ok: Search
-          cancel: Close
-          reset: Reset
       no_results: 'No results found.'
       result_counter: 'Results: %count%'
       class:
@@ -95,8 +91,6 @@ mb:
         snippet: 'You can use the following snippet in an email to send the POI'
       popup:
         btn:
-          ok: Ok
-          cancel: Cancel
           position: Positioning
       class:
         title: POI
@@ -112,9 +106,6 @@ mb:
       form:
         mesage: 'No basesource set is defined.'
     legend:
-      popup:
-        btn:
-          ok: Close
       class:
         title: Legend
         description: 'The legend shows the legend of the map''s layers'
@@ -148,11 +139,13 @@ mb:
       tag:
         overview: overview
         map: map
+      admin:
+        visibility.closed_initially: Initially closed
+        visibility.open_initially: Initially open
+        visibility.open_permanent: Permanently open
     metadata:
       popup:
         title: Metadata
-        btn:
-          ok: Close
     gpsposition:
       error:
         notsupported: Geolocation services are not supported by your browser.
@@ -166,9 +159,6 @@ mb:
         position: position
         button: button
     layertree:
-      popup:
-        btn:
-          ok: Close
       const:
         outofscale: 'Layer out of scale'
         outofbounds: 'Layer out of bounds'
@@ -335,8 +325,12 @@ mb:
           onlyvalid: 'Only valid'
           highlighting_group: 'Highlighting'
           highlighting: 'Highlighting enabled'
-          featureColorDefault: Default color
-          featureColorHover: Hover color
+          default_group: Default
+          hover_group: On hover
+          fillColor: Fill color
+          strokeColor: Stroke color
+          opacity_pct: Opacity (%)
+          stroke_width_px: Stroke width (pixels)
       printclient:
         label:
           autoopen: Auto-open
@@ -388,6 +382,7 @@ mb:
         text: Text
       inputs:
         label: Label
+        radius: Radius
       error:
         notext: 'Text required'
       geometry:
@@ -402,6 +397,8 @@ mb:
       admin:
         auto_activate: Auto activate
         deactivate_on_close: Deactivate on close
+        colors: Colors
+        allow_custom_color: Allow custom color
     # (imported) Yaml application amenity
     redlining:
       class:
@@ -421,7 +418,7 @@ mb:
   template:
     toolbar_menu_tooltip: Toggle menu
     region:
-      toolbar: Obere Werkzeugleiste
-      footer: Fußzeile
+      toolbar: Top toolbar
+      footer: Footer
       sidepane: Sidepane
-      content: Kartenbereich
+      content: Map area

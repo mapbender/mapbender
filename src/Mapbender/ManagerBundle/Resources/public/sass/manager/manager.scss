@@ -1,4 +1,5 @@
 /* Backend styles include used by main backend and login */
+$textColor: #333 !default;
 
 @import "modules/base";
 @import "modules/text";
@@ -7,10 +8,8 @@
 @import "modules/input";
 @import "modules/dropdown";
 @import "modules/table";
-@import "element/mbslider";
 
 body {
-  background-color: #e8e8e8;
   font-weight: 300;
 }
 // Use lighter 400 font-weight by default for implicitly "bold" elements
@@ -35,15 +34,8 @@ h4, .h4, .tabContainer > ul {
   .nav {
     font-weight: bold;
   }
-  .navbar-nav>li>a {
-    color: lighten($darkFontColor, 30%);
-    background-color: transparent;
-  }
   .navbar-toggle {
-    border-color: lighten($darkFontColor, 30%);
-    .icon-bar {
-      background-color: lighten($darkFontColor, 30%);
-    }
+    border-color: #ccc;
   }
   .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
     color: inherit;
@@ -115,10 +107,6 @@ div.contentTitle {
   position:relative;
 }
 
-.notifyjs-corner {
-  z-index: 100000 !important;
-}
-
 // -------------------------------------------------------------------- PAGE TOP
 .head {
   margin-bottom: 4rem;
@@ -142,26 +130,8 @@ div.contentTitle {
   }
 }
 
-a.button, button, div.dropdown:not(.bs-dropdown) {
-  border-radius: $elementBorderRadius;
-}
-textarea, input[type=text], input[type=number], input[type=password] {
+textarea, input[type=text], input[type=number], input[type=password], .dropdownValue, .dropdownList {
   border-radius: 8px;
-}
-.input, .dropdown:not(.bs-dropdown) {
-  border-color: transparent;
-}
-
-a.button{
-  color: $firstColor;
-  &:hover{
-    color: $lightFontColor;
-  }
-}
-ul.dropdownList{
-  border-bottom-left-radius: $elementBorderRadius;
-  border-bottom-right-radius: $elementBorderRadius;
-  margin-top: -3px;
 }
 
 .tabContainer {
@@ -183,10 +153,8 @@ ul.dropdownList{
     padding-right: 30px;
 
     font-weight: bold;
-    color: lighten($darkFontColor, 30%);
-
-    &.active {
-      color: $darkFontColor;
+    &:not(.active) {
+      opacity: 0.7;
     }
     &.active > a {
       // Trade bottom-padding for border to maintain height
@@ -195,13 +163,6 @@ ul.dropdownList{
     }
   }
 }
-
-.blueTabUnderline {
-  max-width: 67px;
-  height: 3px;
-  background-color: #079ee0;
-}
-
 
 .contentPane {
   width: 90%;
@@ -221,7 +182,7 @@ ul.dropdownList{
 
     .button-group {
       text-align: right;
-      margin: $space 0;
+      margin: 20px 0;
     }
   }
 }
@@ -289,7 +250,7 @@ ul.dropdownList{
     padding: 3px .5em;
     margin: 0 .25em;
     user-select: none;
-    border-radius: $radius;
+    border-radius: 5px;
     input {
       display: none;
     }
@@ -335,12 +296,6 @@ ul.dropdownList{
   background-color: white;
 }
 
-.tagbox, .checkWrapper {
-  input {
-    display: none;
-  }
-}
-
 .content-box {
   background: white;
   border-radius: 15px;
@@ -366,7 +321,6 @@ ul.dropdownList{
 .flashBox{
   $width:280px;
 
-  padding: ($space/4) ($space/2);
   text-align: center;
   width: $width;
   margin-left: -$width/2;
@@ -394,4 +348,15 @@ footer {
   i + * {
     margin-left: 0.5em;
   }
+}
+
+.ui-sortable-handle {
+  cursor: move;
+  &:hover, &.ui-sortable-helper {
+    background-color: #fafafa;
+  }
+}
+
+.ui-slider .ui-slider-range {
+  background: #c2e5a4;
 }

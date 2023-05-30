@@ -16,10 +16,11 @@ window.Mapbender.WmtsSource = (function() {
             }
         },
         _layerFactoryOl2: function(compatibleLayer, srsName) {
-            var matrixSet = compatibleLayer.getMatrixSet();
+            var matrixSet = compatibleLayer.selectMatrixSet(srsName);
             var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
             Object.assign(options, {
                 requestEncoding: 'REST',
+                style: false,
                 layer: compatibleLayer.options.identifier,
                 matrixSet: matrixSet.identifier,
                 matrixIds: matrixSet.tilematrices.map(function(matrix) {
@@ -36,7 +37,7 @@ window.Mapbender.WmtsSource = (function() {
             return olLayer;
         },
         _layerFactory: function(layer, srsName) {
-            var matrixSet = layer.getMatrixSet();
+            var matrixSet = layer.selectMatrixSet(srsName);
             var self = this;
             var gridOpts = {
                 origin: matrixSet.origin,
@@ -55,8 +56,6 @@ window.Mapbender.WmtsSource = (function() {
                 urls: layer.options.tileUrls.map(function(tileUrlTemplate) {
                     return tileUrlTemplate.replace('{TileMatrixSet}', matrixSet.identifier);
                 }),
-                format: layer.options.format,
-                style: layer.options.style,
                 projection: srsName,
                 tileGrid: new ol.tilegrid.WMTS(gridOpts)
             };
@@ -80,19 +79,30 @@ window.Mapbender.WmtsSource = (function() {
             var unitsPerPixel = 0.00028 / metersPerUnit;
             return tileMatrix.scaleDenominator * unitsPerPixel;
         },
-        /**
-         * @param {WmtsLayerConfig} layerDef
-         * @return {string}
-         */
-        getPrintBaseUrl: function(layerDef) {
-            var template = layerDef.options.tileUrls[0];
-            return template
-                .replace('{Style}', layerDef.options.style)
-                // NOTE: casing of '{Style}' placeholder unspecified, emulate OpenLayers dual-casing support quirk
-                .replace('{style}', layerDef.options.style)
-                .replace('{TileMatrixSet}', layerDef.options.tilematrixset)
-            ;
-        }
+        __dummy__: null
     });
     return WmtsSource;
+}());
+window.Mapbender.WmtsLayer = (function() {
+    function WmtsLayer(definition) {
+        Mapbender.WmtsTmsBaseSourceLayer.apply(this, arguments);
+    }
+    WmtsLayer.prototype = Object.create(Mapbender.WmtsTmsBaseSourceLayer.prototype);
+    Object.assign(WmtsLayer.prototype, {
+        constructor: WmtsLayer,
+        /**
+         * @param {String} srsName
+         * @return {string}
+         */
+        getPrintBaseUrl: function(srsName) {
+            var tileMatrixSet = this.selectMatrixSet(srsName);
+            var template = this.options.tileUrls[0];
+            return template
+                .replace('{TileMatrixSet}', tileMatrixSet.identifier)
+            ;
+        },
+        __dummy__: null
+    });
+    Mapbender.SourceLayer.typeMap['wmts'] = WmtsLayer;
+    return WmtsLayer;
 }());

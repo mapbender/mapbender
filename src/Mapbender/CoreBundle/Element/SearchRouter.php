@@ -148,7 +148,6 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         return array(
             'js'    => array(
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
             ),
             'css'   => array(
@@ -175,7 +174,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $categoryId = $actionParts[0];
         $action = $actionParts[1];
 
-        $routeConfigs = $element->getConfiguration()['routes'];
+        $routeConfigs = \array_values($element->getConfiguration()['routes']);
         if (empty($routeConfigs[$categoryId])) {
             throw new NotFoundHttpException();
         }
@@ -225,9 +224,9 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $defaultTitle = $this->getDefaultRouteConfiguration()['title'];
         $routeConfigs = $element->getConfiguration()['routes'];
         $choices = array();
-        foreach ($routeConfigs as $value => $routeConfig) {
+        foreach (\array_values($routeConfigs) as $i => $routeConfig) {
             $title = (!empty($routeConfig['title'])) ? $routeConfig['title'] : $defaultTitle;
-            $choices[$title] = $value;
+            $choices[$title] = $i;
         }
         return $this->formFactory->createNamed('search_routes_route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', null, array(
             'choices' => $choices,
@@ -254,9 +253,10 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         $formViews = array();
         $routeDefaults = $this->getDefaultRouteConfiguration();
-        foreach ($element->getConfiguration()['routes'] as $name => $conf) {
+        $routeConfigs = \array_values($element->getConfiguration()['routes']);
+        foreach ($routeConfigs as $i => $conf) {
             $conf = array_replace_recursive($routeDefaults, $conf);
-            $formViews[] = $this->getForm($conf, $name)->createView();
+            $formViews[] = $this->getForm($conf, $i)->createView();
         }
         return $formViews;
     }
@@ -281,6 +281,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         foreach ($config['routes'] as $key => $routeConfig) {
             $config['routes'][$key] = array_replace_recursive($routeDefaults, $routeConfig);
         }
+        $config['routes'] = \array_values($config['routes']);
         return $config;
     }
 

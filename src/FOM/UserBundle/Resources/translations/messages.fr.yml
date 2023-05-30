@@ -99,7 +99,6 @@ fom:
         no_goups_users: 'No groups and users defined.'
     password:
       email_body_html: '<p>Bonjour %user_username%,</p><p>Une requête a été fait afin de réinitialiser votre mot de passe dans une instance de Mapbender3. Cliquez sur le lien suivant pour réinitialiser votre mot de passe: <a href="%url%"> </p>'
-      request_error_no_user: 'Cet utilisateur est introuvable.'
       done:
         password_reset: 'Réinitialiser le mot de passe'
         congratulations: Félicitations!
@@ -119,8 +118,6 @@ fom:
         title: 'Réinitialiser le mot de passe'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Retour à la connexion'
-      request:
-        user_inactive: 'This user is inactive. Please activate first.'
       email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender3 account. Please follow this link to change it: "%url%".'
     userbundle:
       user_control: 'Contrôle des utilisateurs'

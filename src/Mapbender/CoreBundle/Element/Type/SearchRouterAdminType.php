@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -12,7 +13,7 @@ class SearchRouterAdminType extends AbstractType
         $builder
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType')
-            ->add('routes', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('routes', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,

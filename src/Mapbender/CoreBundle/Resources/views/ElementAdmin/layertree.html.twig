@@ -2,7 +2,7 @@
 {%- if false %}{# predefine blocks without immediately rendering them #}
     {% block _form_configuration_themes_widget %}
         <div class="inputWrapper">
-            <table class="table table-bordered" id="{{form.vars.id}}">
+            <table class="table table-outlined" id="{{form.vars.id}}">
             {% for theme in form.children %}
                 {{ form_row(theme) }}
             {% endfor %}
@@ -10,7 +10,7 @@
         </div>
     {% endblock %}
     {% block _form_configuration_themes_entry_opened_row %}
-        <span class="item-opened" title="{{ form.vars.attr.title | trans }}">
+        <span class="item-opened clickable" title="{{ form.vars.attr.title | trans }}">
             <i class="fa fas fa-fw {{ form.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
             <span class="hidden">{{ form_widget(form) }}</span>
         </span>
@@ -34,7 +34,7 @@
         {{ form_widget(form.configuration.autoOpen, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
-    {{ form_row(form.configuration.target) }}
+    {%- if form.configuration.target is defined -%}{{- form_row(form.configuration.target) -}}{%- endif -%}
     {{ form_row(form.configuration.menu) }}
     <div class="form-group no-gutters">
         {{ form_widget(form.configuration.hideSelect, {'label_attr': {'class': 'checkbox-inline'}}) }}

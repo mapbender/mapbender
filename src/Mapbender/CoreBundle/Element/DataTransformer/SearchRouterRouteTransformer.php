@@ -12,7 +12,7 @@ class SearchRouterRouteTransformer implements DataTransformerInterface
         if (!$configuration) {
             return array();
         }
-        $title = $configuration['title'];
+        $title = !empty($configuration['title']) ? $configuration['title'] : '';
         unset($configuration['title']);
         return array(
             'title' => $title,
@@ -26,7 +26,7 @@ class SearchRouterRouteTransformer implements DataTransformerInterface
             return array();
         }
         return ($data['configuration'] ?: array()) + array(
-            'title' => $data['title'],
+            'title' => $data['title'] ?: '',
         );
     }
 }

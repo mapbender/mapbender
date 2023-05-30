@@ -1,8 +1,11 @@
 /* Amended variables for backend area; applied on top of libs/_variables.scss from core bundle */
+$textColor: #333;
+$backgroundColor: #e8e8e8;
 
 /* Black on white for maximum contrast and decent placeholder contrast */
 $inputForegroundColor: #000;
 $inputBackgroundColor: #f0f0f0;
 $fontSize: 14px;
 $fontFamily: "Ubuntu", $fontFamily;
-$darkFontColor: #121212;
+$inputBorderColor: transparent;
+$inputFocusBorderColor: #8dce55;

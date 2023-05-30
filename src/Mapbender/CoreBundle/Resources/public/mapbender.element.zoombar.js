@@ -2,7 +2,6 @@
 
 $.widget("mapbender.mbZoomBar", {
     options: {
-        target: null,
         draggable: true,
         zoomHomeRestoresLayers: false
     },
@@ -12,13 +11,12 @@ $.widget("mapbender.mbZoomBar", {
     configuredMapSettings: null,
 
     _create: function() {
-        if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
-            return;
-        }
         var self = this;
-        Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+        Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
             self.mbMap = mbMap;
             self._setup();
+        }, function() {
+            Mapbender.checkTarget('mbZoomBar');
         });
     },
 
@@ -111,8 +109,13 @@ $.widget("mapbender.mbZoomBar", {
     _zoom2Slider: function() {
         var zoomLevel = this.mbMap.getModel().getCurrentZoomLevel();
         var $activeItem = $('[data-zoom="' + zoomLevel + '"]', this.zoomslider);
-        $('li', this.zoomslider).not($activeItem).removeClass('iconZoomLevelSelected');
-        $activeItem.addClass('iconZoomLevelSelected');
+        $('li', this.zoomslider).each(function() {
+            var isActive = $activeItem.is(this);
+            $('>i', this)
+                .toggleClass('fas', isActive)
+                .toggleClass('far', !isActive)
+            ;
+        });
     }
 });
 

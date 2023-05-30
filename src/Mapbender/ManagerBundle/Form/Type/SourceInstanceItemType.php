@@ -48,15 +48,6 @@ class SourceInstanceItemType extends AbstractType
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
             ))
-            ->add('displayId', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-                'mapped' => false,
-                'required' => false,
-                'attr' => array(
-                    'readonly' => 'readonly',
-                    'title' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.description',
-                ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.title',
-            ))
             ->add('displayName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'mapped' => false,
                 'required' => false,
@@ -101,9 +92,9 @@ class SourceInstanceItemType extends AbstractType
             );
         }
         $view['active']->vars['checkbox_group'] = 'checkActive';
-        $view['selected']->vars['checkbox_group'] = 'checkSelectOn';
-        $view['selected']->vars['columnClass'] = 'odd';
         $view['allowselected']->vars['checkbox_group'] = 'checkSelectAllow';
-        $view['allowselected']->vars['columnClass'] = 'odd';
+        $view['allowselected']->vars['columnClass'] = 'group-start';
+        $view['selected']->vars['checkbox_group'] = 'checkSelectOn';
+        $view['selected']->vars['columnClass'] = 'group-end';
     }
 }

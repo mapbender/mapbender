@@ -36,7 +36,6 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
     {
         return array(
             'title' => 'Scale Display',
-            'target' => null,
             'unitPrefix' => false,
             /** @todo: fix this default value (1: nobody wants the '='; 2: translation) */
             'scalePrefix' => 'Scale = ',

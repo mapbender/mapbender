@@ -1,4 +1,7 @@
 <div class="extraWideLabelForm">
     {{ form_row(form.title) }}
+    {%- if form.configuration.anchor is defined -%}
+    {{- form_row(form.configuration.anchor) -}}
+    {%- endif -%}
     {{ form_rest(form.configuration) }}
 </div>

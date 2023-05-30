@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class ElementController
@@ -32,8 +31,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ElementController extends ApplicationControllerBase
 {
-    /** @var TranslatorInterface */
-    protected $translator;
     /** @var ElementInventoryService */
     protected $inventory;
     /** @var ElementEntityFactory */
@@ -43,13 +40,11 @@ class ElementController extends ApplicationControllerBase
     /** @var AclManager */
     protected $aclManager;
 
-    public function __construct(TranslatorInterface $translator,
-                                ElementInventoryService $inventory,
+    public function __construct(ElementInventoryService $inventory,
                                 ElementEntityFactory $factory,
                                 ElementFormFactory $elementFormFactory,
                                 AclManager $aclManager)
     {
-        $this->translator = $translator;
         $this->inventory = $inventory;
         $this->factory = $factory;
         $this->elementFormFactory = $elementFormFactory;
@@ -78,16 +73,13 @@ class ElementController extends ApplicationControllerBase
             if (!$this->checkRegionCompatibility($elementClassName, $region)) {
                 continue;
             }
-            // Translate before sorting for properly localized order
-            $title = $this->translator->trans($elementClassName::getClassTitle());
-            $elements[$title] = array(
+            $elements[] = array(
                 'class' => $elementClassName,
-                'title' => $title,
-                'description' => $this->translator->trans($elementClassName::getClassDescription()),
+                'title' => $elementClassName::getClassTitle(),
+                'description' => $elementClassName::getClassDescription(),
             );
         }
 
-        ksort($elements, SORT_LOCALE_STRING);
         return $this->render('@MapbenderManager/Element/select.html.twig', array(
             'elements' => $elements,
             'region' => $region,
@@ -179,8 +171,13 @@ class ElementController extends ApplicationControllerBase
             $em->flush();
 
             $this->addFlash('success', 'Your element has been saved.');
-
-            return new Response('', 205);
+            // NOTE: On Symfony >=4.4.44 (4.4.43 is fine), Chromium / Chrome will not receive Response headers
+            //       when it immediately calls window.location.reload after a HTTP 205 "Reset Content".
+            //       This will trigger a client-side "Save as" prompt (undefined content type) instead of
+            //       rerendering the refreshed HTML page.
+            //       => Prefer HTTP 204 "No Content" as a workaround
+            # return new Response('', 205);
+            return new Response('', Response::HTTP_NO_CONTENT);
         }
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
             'form' => $form->createView(),

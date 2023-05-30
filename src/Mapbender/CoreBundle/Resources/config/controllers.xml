@@ -6,12 +6,9 @@
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
                  class="Mapbender\CoreBundle\Controller\ApplicationController"
                  public="true">
-            <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
-            <argument type="service" id="mapbender.element_inventory.service" />
-            <argument type="service" id="mapbender.uploads_manager.service" />
-            <argument>%kernel.cache_dir%</argument>
-            <argument>%mapbender.force_engine%</argument>
+            <argument type="service" id="mapbender.renderer.application_markup" />
+            <argument type="service" id="mapbender.cache.application_markup" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
@@ -23,8 +20,9 @@
         <service id="Mapbender\CoreBundle\Controller\LoginController"
                  class="Mapbender\CoreBundle\Controller\LoginController"
                  public="true">
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="twig" />
             <argument type="service" id="security.authentication_utils" />
-            <argument type="service" id="translator" />
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>
         </service>
@@ -44,13 +42,21 @@
                  public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
+            <argument type="service" id="mapbender.renderer.element_markup" />
+        </service>
+        <service id="Mapbender\CoreBundle\Controller\UserInfoController"
+                 class="Mapbender\CoreBundle\Controller\UserInfoController"
+                 public="true"
+                 lazy="true">
+            <argument type="service" id="mapbender.user_info_provider" />
         </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
                  class="Mapbender\CoreBundle\Controller\ConfigController"
-                 public="true">
+                 public="true"
+                 lazy="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
-            <argument>%mapbender.force_engine%</argument>
+            <argument type="service" id="mapbender.presenter.application.cache" />
             <argument>%cachable.mapbender.application.config%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\AssetsController"
@@ -61,8 +67,12 @@
             <argument type="service" id="mapbender.application_asset.service" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
-            <argument>%mapbender.force_engine%</argument>
             <argument>%kernel.debug%</argument>
+        </service>
+        <service id="Mapbender\CoreBundle\Controller\SourceMetaDataController"
+                 class="Mapbender\CoreBundle\Controller\SourceMetaDataController"
+                 public="true" lazy="true">
+            <argument type="service" id="twig" />
         </service>
     </services>
 </container>

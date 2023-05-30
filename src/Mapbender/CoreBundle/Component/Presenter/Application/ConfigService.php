@@ -2,10 +2,11 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
-use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
+use Mapbender\Component\Event\ApplicationConfigEvent;
+use Mapbender\Component\Event\ApplicationEvent;
+use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -13,9 +14,9 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -25,10 +26,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConfigService
 {
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
     /** @var ElementFilter */
     protected $elementFilter;
-    /** @var ApplicationDataService */
-    protected $cacheService;
     /** @var TypeDirectoryService */
     protected $sourceTypeDirectory;
     /** @var UrlProcessor */
@@ -36,29 +37,25 @@ class ConfigService
 
     /** @var UrlGeneratorInterface */
     protected $router;
-    /** @var LoggerInterface */
-    protected $logger;
     /** @var bool */
     protected $debug;
     /** @var string */
     protected $assetBaseUrl;
 
 
-    public function __construct(ElementFilter $elementFilter,
-                                ApplicationDataService $cacheService,
+    public function __construct(EventDispatcherInterface $eventDispatcher,
+                                ElementFilter $elementFilter,
                                 TypeDirectoryService $sourceTypeDirectory,
                                 UrlProcessor $urlProcessor,
                                 UrlGeneratorInterface $router,
-                                LoggerInterface $logger,
                                 PackageInterface $baseUrlPackage,
                                 $debug)
     {
+        $this->eventDispatcher = $eventDispatcher;
         $this->elementFilter = $elementFilter;
-        $this->cacheService = $cacheService;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
         $this->router = $router;
-        $this->logger = $logger;
         $this->assetBaseUrl = $baseUrlPackage->getUrl(null);
         $this->debug = $debug;
     }
@@ -69,13 +66,20 @@ class ConfigService
      */
     public function getConfiguration(Application $entity)
     {
-        /** @todo Performance: drop config mutation support to make config caching and grants check skipping safe */
         $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
+
+        $this->eventDispatcher->dispatch(new ApplicationEvent($entity), ApplicationEvent::EVTNAME_BEFORE_CONFIG);
+
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
+
+        $evt = new ApplicationConfigEvent($entity, $configuration);
+        $this->eventDispatcher->dispatch($evt, ApplicationConfigEvent::EVTNAME_AFTER_CONFIG);
+        $configuration = $evt->getConfiguration();
+
         return $configuration;
     }
 
@@ -141,21 +145,10 @@ class ConfigService
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
             $sourceService = $this->getSourceService($assignment->getInstance());
-            if (!$sourceService) {
-                // @todo: throw?
-                continue;
-            }
-            // @todo: move check into prefilter (get service twice?)
             if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $conf = $sourceService->getConfiguration($assignment->getInstance());
-            if (!$conf) {
-                // @todo: throw?
-                continue;
-            }
-
-            $configs[] = $conf;
+            $configs[] = $sourceService->getConfiguration($assignment->getInstance());
         }
         return $configs;
     }
@@ -190,12 +183,12 @@ class ConfigService
      * Get the concrete service that deals with the concrete SourceInstance type.
      *
      * @param SourceInstance $sourceInstance
-     * @return SourceService|null
+     * @return SourceInstanceConfigGenerator
      */
     protected function getSourceService(SourceInstance $sourceInstance)
     {
         // delegate to directory
-        return $this->sourceTypeDirectory->getSourceService($sourceInstance);
+        return $this->sourceTypeDirectory->getConfigGenerator($sourceInstance);
     }
 
     /**
@@ -214,13 +207,5 @@ class ConfigService
             }
         }
         return $active;
-    }
-
-    /**
-     * @return ApplicationDataService
-     */
-    public function getCacheService()
-    {
-        return $this->cacheService;
     }
 }

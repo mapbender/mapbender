@@ -1,35 +1,22 @@
-//--------------------------------------------------------------patterns
-$rootPath:  "bundles/mapbendercore/"; // !default;
-$imageBasePath: $rootPath + "image";
-$iconBasePath: $rootPath + "fonts";
-
 //------------------------------------------------------------------font
 $fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 $fontSize:13px;
-$uiFontSize: 11px;
+
+// Colors applied on body / normal content containers (sidepane, popups, mobile pane)
+$textColor: #333;
+$backgroundColor: #fff;
+$panelBorderColor: #888;
 
 //-----------------------------------------------------------------other
-$lineHeight:21px;
 $space: 20px;
 $radius: 3px;
 $popupModalWidth: 600px;
-$popupMaxHeight:370px;
-$inputHeight:28px;
+$desktopBreakpointWidth: 1200px;
 
-$elementPopupWidth: $popupModalWidth;
-$elementPopupBodyWidth: $elementPopupWidth - ($space * 3);
 //----------------------------------------------------------------colors
 $firstColor:#404040; // dark gray
-$secondColor:#858585; // middle gray
-$thirdColor:#a2a2a2;  // light gray
-$contentColor:#f9f9f9; // very light gray
 $errorColor:#aa2323; // red
-$hintColor:#2375a8; // blue
-$noticeColor:#22a522; // green
-$warningColor:#cece2a; // yellow
 
-$darkFontColor:#3f3f3f; // darker gray
-$middleFontColor:#707070; // lighter gray
 $lightFontColor:#fff; // white
 
 // Toolbar colors (frontend)
@@ -43,26 +30,70 @@ $toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity;
 
 // the holy colors
 $ciColor:#5b932a; // green
-$ciColor2:#4899ba; // blue
 
 // Button colors
 $buttonCriticalFirstColor: #d36565;
 $buttonCriticalSecondColor: #b23a3a;
 $buttonFirstColor: #6fb536;
 $buttonSecondColor: #5fa229;
-$buttonFirstActiveColor: #47791f;
+$buttonTextColor: $lightFontColor;
+$buttonBorderColor: #538e24;
+$buttonHoverColor: #63a130;
+$buttonHoverTextColor: $buttonTextColor;
+$buttonFirstActiveColor: #578e2a;
+$buttonActiveTextColor: $buttonTextColor;
+$buttonCriticalTextColor: $lightFontColor;
+$buttonCriticalHoverTextColor: $buttonCriticalTextColor;
+$buttonCriticalBorderColor: #9f3434;
+$buttonCriticalHoverColor: #cd5151;
+// Button sizing
+$buttonFontSize: 100%;
 
 // Form inputs
-$inputBackgroundColor: $contentColor;
-$inputForegroundColor: $secondColor;
+$inputBackgroundColor: #f9f9f9;
+$inputForegroundColor: #858585;
 
-$selectColor: #F7F79A;
-//$mandatoryColor: #E49FA7;
-$mandatoryColor: #DCAF18;
-$warnFontColor: #B4AD2D;
-$errorFontColor: #E12F2F;
+$sliderHandleBackgroundColor: #a3a3a3;
 
-$containerBorderRadius: 5px !default;
-$elementBorderRadius: $containerBorderRadius - 2px;
+$accordionFontSize: 100%;
+$accordionBackgroundColor: $buttonFirstColor;
+$accordionTextColor: $lightFontColor;
+$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%);
+$accordionActiveTextColor: $accordionTextColor;
+$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%);
 
-$sliderHandleBackgroundColor: $ciColor;
+// Header buttons in type "buttons" sidepane
+$sidepaneButtonFontSize: $buttonFontSize;
+$sidepaneButtonTextColor: $buttonTextColor;
+$sidepaneButtonBackgroundColor: $buttonFirstColor;
+$sidepaneButtonBorderColor: $buttonBorderColor;
+$sidepaneButtonHoverColor: $buttonHoverColor;
+$sidepaneButtonActiveTextColor: $buttonTextColor;
+$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor;
+
+
+// Legacy variables
+$lineHeight: 21px;  // Doesn't do anything
+$uiFontSize: 11px;  // Doesn't do anything
+$elementPopupWidth: $popupModalWidth; // Doesn't do anything
+$elementPopupBodyWidth: $elementPopupWidth - ($space * 3); // Doesn't do anything
+$popupMaxHeight:370px;  // Doesn't do anything
+$inputHeight:28px;  // Doesn't do anything
+$contentColor:#f9f9f9; // Doesn't do anything
+$secondColor:#858585; // Doesn't do anything
+$middleFontColor:#707070; // Doesn't do anything
+$thirdColor:#a2a2a2;  // Doesn't do anything
+$selectColor: #F7F79A;  // Doesn't do anything
+$mandatoryColor: #DCAF18;  // Doesn't do anything
+$warnFontColor: #B4AD2D;  // Doesn't do anything
+$errorFontColor: #E12F2F;  // Doesn't do anything
+$hintColor: #2375a8; // Doesn't do anything
+$noticeColor: #22a522; // Doesn't do anything
+$warningColor: #cece2a; // Doesn't do anything
+$containerBorderRadius: 5px !default;  // Doesn't do anything
+$elementBorderRadius: $containerBorderRadius - 2px; // Doesn't do anything
+$rootPath:  "bundles/mapbendercore/"; // Doesn't do anything
+$imageBasePath: $rootPath + "image"; // Doesn't do anything
+$iconBasePath: $rootPath + "fonts"; // Doesn't do anything
+$darkFontColor: #3f3f3f; // Doesn't do anything; (re)define $textColor instead
+$ciColor2: #4899ba; // Doesn't do anything

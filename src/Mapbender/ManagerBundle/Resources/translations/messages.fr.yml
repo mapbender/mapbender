@@ -52,7 +52,6 @@ mb:
       zoombar:
         draggable: Déplaçable
       overview:
-        maximize: Aggrandir
         fix: Fixer
       layerset:
         add: 'Ajouter un ensemble de couches'
@@ -62,7 +61,6 @@ mb:
         delete:
           title: 'Supprimer l''ensemble de couches'
           confirm: 'Voulez-vous vraiment supprimer l''ensemble de couches  <span class="italic">%layerset_title%</span>?'
-        id_description: 'Id sous la forme de SourceId/InstanceId'
         id: Id
       instance:
         add: 'Ajouter une instance'
@@ -152,7 +150,9 @@ mb:
           content: 'Voulez-vous vraiment supprimer %userGroup%?'
     import:
       application:
-        failed: 'Impossible d''importer l''application.'
+        failed: 'Impossible d''importer l''application'
+    xml_invalid: Le document est invalide
+    xml_malformed: Le document est invalide  # @todo: supply distinct message
   core:
     admin:
       button:

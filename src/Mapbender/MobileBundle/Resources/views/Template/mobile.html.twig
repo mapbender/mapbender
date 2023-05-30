@@ -28,16 +28,20 @@
             <div class="anchored-element-wrap anchored-element-wrap-rt">{{ anchored_content_elements(application, 'right-top') | raw }}</div>
             <div class="anchored-element-wrap anchored-element-wrap-lb">{{ anchored_content_elements(application, 'left-bottom') | raw }}</div>
             <div class="anchored-element-wrap anchored-element-wrap-rb">{{ anchored_content_elements(application, 'right-bottom') | raw }}</div>
+            <div id="mobilePane" class="mobilePane" data-state="">
+                <div class="panel-content">
+                  <h2 class="contentTitle ui-helper-clearfix">
+                      <span class="-js-element-title"></span>
+                      <i id="mobilePaneClose" class="mobileClose fa fas fa-times pull-right"></i>
+                  </h2>
+                  <div class="mobileContent">
+                      {{ region_content(application, 'mobilePane') | raw }}
+                  </div>
+              </div>
+            </div>
           </div>
+            {{ region_markup(application, 'footer', true) | raw }}
         </div>
-      </div>
-      {{ region_markup(application, 'footer', true) | raw }}
-      <div id="mobilePane" class="mobilePane" data-state="">
-          <i id="mobilePaneClose" class="mobileClose fa fas fa-times"></i>
-          <h2 class="contentTitle"></h2>
-          <div class="mobileContent">
-              {{ region_content(application, 'mobilePane') | raw }}
-          </div>
       </div>
   </div>
 {% endblock %}

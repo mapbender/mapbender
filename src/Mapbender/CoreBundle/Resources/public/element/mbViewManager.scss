@@ -37,4 +37,16 @@
   .name-cell {
     cursor: pointer;
   }
+  // In sidepane, slightly space out interface column to avoid popover borders clipping against the sidepane padding
+  .sideContent & {
+    td:last-child > :last-child {
+      margin-right: 0.125em;
+    }
+  }
+}
+.popup.mbViewManager-dialog {
+  height: 500px;
+  max-height: 95vh;
+  width: 400px;
+  min-width: 400px;
 }

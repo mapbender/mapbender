@@ -12,6 +12,8 @@
                  class="FOM\UserBundle\Controller\PasswordController"
                  public="true">
             <argument type="service" id="mailer" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="logger" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
             <argument>%fom_user.mail_from_name%</argument>
@@ -21,7 +23,10 @@
         </service>
         <service id="FOM\UserBundle\Controller\SecurityController"
                  class="FOM\UserBundle\Controller\SecurityController"
-                 public="true">
+                 public="true" lazy="true">
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="twig" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom.user.acl_classes%</argument>
         </service>
@@ -46,6 +51,7 @@
                  class="FOM\UserBundle\Controller\RegistrationController"
                  public="true">
             <argument type="service" id="mailer" />
+            <argument type="service" id="translator" />
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>

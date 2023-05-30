@@ -4,4 +4,61 @@
       text-align:right;
     }
   }
+  .static-popover-wrap {
+    position: relative; // for anchoring of absolute-positioned .popover
+    .popover {
+      font-size: inherit;
+      min-width: 20em;
+      display: initial;
+      padding: 1em;
+      left: initial;
+      right: -2.5ch;
+
+      .arrow {
+        right: 2ch;
+        left: initial;
+      }
+
+      &.bottom {
+        top: 2ex;
+      }
+      .form-horizontal {
+        min-width: 17em;
+      }
+      .form-horizontal, .form-group {
+        margin-bottom: 0.75em;
+      }
+    }
+  }
+  .form-horizontal .control-label {
+    // Undo Bootstrap default right-aligned labels
+    text-align: left;
+  }
+  table {
+    td.compact, th.compact {
+      width: 1%;
+    }
+    >tbody>tr>td.geometry-name, >tbody>tr>td.row-marker {
+      padding-left: 0;
+    }
+    .row-marker {
+      opacity: 0;
+    }
+    .current-row .row-marker {
+      opacity: 1;
+    }
+  }
+
+  .btn.btn-sm-square, .btn-group-sm-square > .btn {
+    // Squarify button padding on .btn-sm (default: 5px 10px)
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .btn .color-preview {
+    display: inline-block;
+    min-width: 1.5em;
+  }
+}
+.popup.sketch-dialog {
+  min-height: 380px;
 }

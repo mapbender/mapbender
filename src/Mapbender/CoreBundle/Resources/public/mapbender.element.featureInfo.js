@@ -2,24 +2,20 @@
 
     $.widget("mapbender.mbFeatureInfo", {
         options: {
-            target: null,
             autoActivate: false,
             deactivateOnClose: true,
             displayType: 'tabs',
             printResult: false,
             onlyValid: false,
             highlighting: false,
-            featureColorDefault: '#ffa500',
-            featureColorHover: 'ff0000',
+            fillColorDefault: '#ffa500',
+            fillColorHover: 'ff0000',
             maxCount: 100,
             width: 700,
             height: 500
         },
-        target: null,
-        model: null,
+        mbMap: null,
         popup: null,
-        context: null,
-        contentManager: null,
         mobilePane: null,
         isActive: false,
         highlightLayer: null,
@@ -29,6 +25,7 @@
             content: null
         },
         iframeScriptContent_: '',
+        headerIdPrefix_: '',
 
         _create: function() {
             this.iframeScriptContent_ = $('.-js-iframe-script-template[data-script]', this.element).remove().attr('data-script');
@@ -37,40 +34,40 @@
                 header: $('.js-header', this.element).remove(),
                 content: $('.js-content', this.element).remove()
             };
+            if (this.options.displayType === 'tabs') {
+                this.headerIdPrefix_ = 'tab';
+            } else {
+                this.headerIdPrefix_ = 'accordion';
+            }
+            // Avoid shared access to prototype values on non-scalar properties
+            this.showingSources = [];
+            initTabContainer(this.element);
 
             var self = this;
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             }, function() {
-                Mapbender.checkTarget("mbFeatureInfo", self.options.target);
+                Mapbender.checkTarget("mbFeatureInfo");
             });
-
         },
 
 
         _setup: function(mbMap) {
             var widget = this;
             var options = widget.options;
-            this.target = mbMap;
+            this.mbMap = mbMap;
             this._setupMapClickHandler();
             if (options.autoActivate || options.autoOpen) { // autoOpen old configuration
                 widget.activate();
             }
 
             if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
-
-                this._createLayerStyle();
-
                 this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
-                    name: 'featureInfo',
-                    style: widget.featureInfoStyle,
-                    visible: true,
-                    minResolution: Mapbender.Model.scaleToResolution(0),
-                    maxResolution: Mapbender.Model.scaleToResolution(Infinity)
+                    style: this._createLayerStyle()
                 });
 
-                this.target.map.olMap.addLayer(this.highlightLayer);
+                this.mbMap.getModel().olMap.addLayer(this.highlightLayer);
                 window.addEventListener("message", function(message) {
                     widget._postMessage(message);
                 });
@@ -87,11 +84,11 @@
         },
         activate: function(callback) {
             this.callback = callback;
-            this.target.element.addClass('mb-feature-info-active');
+            this.mbMap.element.addClass('mb-feature-info-active');
             this.isActive = true;
         },
         deactivate: function() {
-            this.target.element.removeClass('mb-feature-info-active');
+            this.mbMap.element.removeClass('mb-feature-info-active');
             this.isActive = false;
             this.clearAll();
 
@@ -112,19 +109,24 @@
                 return;
             }
             var self = this, i;
-            var model = this.target.getModel();
+            var model = this.mbMap.getModel();
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
-            var sourceUrlPairs = model.getSources().map(function(source) {
-                var url = model.getPointFeatureInfoUrl(source, x, y, self.options.maxCount);
-                return url && {
-                    source: source,
-                    url: url
-                };
-            }).filter(function(x) { return !!x; });
-            var validSources = sourceUrlPairs.map(function(sourceUrlEntry) {
-                return sourceUrlEntry.source;
-            });
+            var sources = model.getSources();
+            var sourceUrlPairs = [];
+            var validSources = [];
+            // Iterate in reverse to match layertree display order
+            for (var s = sources.length - 1; s >= 0; --s) {
+                var url = model.getPointFeatureInfoUrl(sources[s], x, y, this.options.maxCount);
+                if (url) {
+                    validSources.push(sources[s]);
+                    sourceUrlPairs.push({
+                        source: sources[s],
+                        url: url
+                    });
+                    this.addDisplayStub_(sources[s], url);
+                }
+            }
             for (i = 0; i < showingPreviously.length; ++i) {
                 if (-1 === validSources.indexOf(showingPreviously[i])) {
                     this._removeContent(showingPreviously[i]);
@@ -137,9 +139,10 @@
             sourceUrlPairs.forEach(function(entry) {
                 var source = entry.source;
                 var url = entry.url;
-                self._setInfo(source, url).then(function(success) {
-                    if (success) {
+                self._setInfo(source, url).then(function(content) {
+                    if (content) {
                         self.showingSources.push(source);
+                        self.showResponseContent_(source, content);
                         self._open();
                     } else {
                         self._removeContent(source);
@@ -158,7 +161,6 @@
         },
         _setInfo: function(source, url) {
             var self = this;
-            var layerTitle = source.getTitle();
             var ajaxOptions = {
                 url: url
             };
@@ -175,18 +177,11 @@
                 var data_ = data;
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
                 data_ = $.trim(data_);
-                if (!data_.length || (self.options.onlyValid && !self._isDataValid(data_, mimetype))) {
-                    Mapbender.info(layerTitle + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
-                    return false;
-                } else {
-                    self._showOriginal(source, layerTitle, data_, mimetype);
-                    // Bind original url for print interaction
-                    var $documentNode = self._getDocumentNode(source.id);
-                    $documentNode.attr('data-url', url);
-                    return true;
+                if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
+                    return self.formatResponse_(source, data_, mimetype);
                 }
             }, function (jqXHR, textStatus, errorThrown) {
-                Mapbender.error(layerTitle + ' GetFeatureInfo: ' + errorThrown);
+                Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
             });
             return request;
         },
@@ -200,39 +195,15 @@
                     return true;
             }
         },
-        _showOriginal: function(source, layerTitle, data, mimetype) {
-            var self = this;
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    var script = self._getInjectionScript(source.id);
-                    var iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox">');
-                    iframe.attr("srcdoc",script+data);
-                    self._addContent(source, layerTitle, iframe);
-                    break;
-                case 'text/plain':
-                default:
-                    this._addContent(source, layerTitle, '<pre>' + data + '</pre>');
-                    break;
+        formatResponse_: function(source, data, mimetype) {
+            if (mimetype.toLowerCase() === 'text/html') {
+                var script = this._getInjectionScript(source.id);
+                var $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
+                $iframe.attr("srcdoc", [script, data].join(''));
+                return $iframe.get();
+            } else {
+                return $(document.createElement('pre')).text(data).get();
             }
-        },
-        _getContentManager: function() {
-            if (!this.contentManager) {
-                this.contentManager = {
-                    $headerParent: $('.js-header-parent', this.element),
-                    $header: this.template.header,
-                    headerContentSel: '.js-header-content',
-                    headerId: function (id) {
-                        return this.$header.attr('data-idname') + id
-                    },
-                    $contentParent: $('.js-content-parent', this.element),
-                    $content: this.template.content,
-                    contentContentSel: '.js-content-content',
-                    contentId: function (id) {
-                        return this.$content.attr('data-idname') + id
-                    }
-                };
-            }
-            return this.contentManager;
         },
         _open: function() {
             $(document).trigger('mobilepane.switch-to-element', {
@@ -287,18 +258,14 @@
         _getPopupButtonOptions: function() {
             var buttons = [{
                 label: Mapbender.trans('mb.actions.close'),
-                cssClass: 'button buttonCancel critical right',
-                callback: function () {
-                    /** @this Mapbender.Popup2 */
-                    this.close();
-                }
+                cssClass: 'button critical popupClose'
             }];
             if (this.options.printResult) {
                 var self = this;
-                buttons.push({
+                buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
-                    cssClass: 'button right',
+                    cssClass: 'button',
                     callback: function () {
                         self._printContent();
                     }
@@ -306,22 +273,17 @@
             }
             return buttons;
         },
-        _selectorSelfAndSub: function(idStr, classSel) {
-            return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
-        },
         _removeContent: function(source) {
-            $('[data-source-id="' + source.id + '"]', this.element).remove();
+            $('[data-source-id="' + source.id + '"]', this.element).addClass('hidden');
+            $('.js-content-content[data-source-id="' + source.id + '"]', this.element).empty();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
             var $container = $('.tabContainer,.accordionContainer', this.element);
-            if (!$('.active', $container).length) {
-                $('>.tabs .tab, >.accordion', $container).first().click();
+            if (!$('.active', $container).not('.hidden').length) {
+                $('>.tabs .tab, >.accordion', $container).not('hidden').first().click();
             }
          },
         clearAll: function() {
-            // Must call getContentManager at least once to "save" template markup
-            // @todo: get rid of contentManager to fix all remaining DOM state races
-            this._getContentManager();
             if (this.highlightLayer) {
                 this.highlightLayer.getSource().clear();
             }
@@ -330,97 +292,130 @@
             $('>.tabContainer > :not(.tabs)', this.element).remove();
             this.showingSources.splice(0);
         },
-        _getDocumentNode: function(sourceId) {
-            // @todo: get rid of the content manager
-            return $('#' + this._getContentManager().contentId(sourceId), this.element);
+        _getContentId: function(source) {
+            return ['container', source.id].join('-');
         },
-        _addContent: function(source, layerTitle, content) {
-            var manager = this._getContentManager();
-            var headerId = manager.headerId(source.id);
-            var contentId = manager.contentId(source.id);
+        _getHeaderId: function(source) {
+            return [this.headerIdPrefix_, source.id].join('-');
+        },
+        addDisplayStub_: function(source, url) {
+            var headerId = this._getHeaderId(source);
             var $header = $('#' + headerId, this.element);
             if ($header.length === 0) {
-                $header = manager.$header.clone();
+                $header = this.template.header.clone();
                 $header.attr('id', headerId);
                 $header.attr('data-source-id', source.id);
-                manager.$headerParent.append($header);
+                $header.addClass('hidden');
+                $('.js-header-parent', this.element).append($header);
             }
-            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).length) {
-                $header.addClass('active');
-            }
-            $(this._selectorSelfAndSub(headerId, manager.headerContentSel), this.element).text(layerTitle);
+            $header.text(source.getTitle());
+            $('a', $header).remove();
+            $header.append($(document.createElement('a'))
+                .attr('href', url)
+                .attr('target', '_blank')
+                .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
+            );
+            var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
-                $content = manager.$content.clone();
+                $content = this.template.content.clone();
                 $content.attr('id', contentId);
                 $content.attr('data-source-id', source.id);
-                manager.$contentParent.append($content);
+                $content.addClass('hidden');
+                $('.js-content-parent', this.element).append($content);
             }
-            $content.toggleClass('active', $header.hasClass('active'));
-            $(this._selectorSelfAndSub(contentId, manager.contentContentSel), this.element)
-                .empty().append(content);
-            initTabContainer(this.element);
+            // For print interaction
+            $content.attr('data-url', url);
+        },
+        showResponseContent_: function(source, content) {
+            var headerId = this._getHeaderId(source);
+            var $header = $('#' + headerId, this.element);
+            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
+                $header.addClass('active');
+            }
+            var contentId = this._getContentId(source);
+            var $content = $('#' + contentId, this.element);
+            $content.toggleClass('active', $('#' + this._getHeaderId(source), this.element).hasClass('active'));
+
+            var $appendTo = $content.hasClass('js-content-content') && $content || $('.js-content-content', $content);
+            $appendTo.empty().append(content);
+            $header.removeClass('hidden');
+            $content.removeClass('hidden');
         },
         _printContent: function() {
             var $documentNode = $('.js-content.active', this.element);
             var url = $documentNode.attr('data-url');
             // Always use proxy. Calling window.print on a cross-origin window is not allowed.
             var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
-            var w = window.open(proxifiedUrl, 'title', "attributes,scrollbars=yes,menubar=yes");
+            var w = window.open(proxifiedUrl);
             w.print();
         },
         _setupMapClickHandler: function () {
             var self = this;
-            self.target.element.on('mbmapclick', function (event, data) {
+            $(document).on('mbmapclick', function (event, data) {
                 self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
         },
-
         _createLayerStyle: function () {
-            var strokeStyle = new ol.style.Stroke({
-                color: '#ff00ff', //rgba(255, 255, 255, 1)',
-                lineCap: 'round',
-                width: 1
-            });
-            var defaultColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorDefault).slice(0, 3).concat(0.4);
-            var hoverColorComponents = Mapbender.StyleUtil.parseCssColor(this.options.featureColorHover).slice(0, 3).concat(0.7);
-            this.featureInfoStyle = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: defaultColorComponents
-                    })
-                });
+            var settingsDefault = {
+                fill: this.options.fillColorDefault,
+                stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
+                opacity: this.options.opacityDefault,
+                strokeWidth: this.options.strokeWidthDefault,
+                fallbackOpacity: 0.7
             };
-
-            this.featureInfoStyle_hover = function (feature) {
-                return new ol.style.Style({
-                    stroke: strokeStyle,
-                    fill: new ol.style.Fill({
-                        color: hoverColorComponents
-                    }),
-                    zIndex: 1000
-                });
+            var settingsHover = {
+                fill: this.options.fillColorHover || settingsDefault.fill,
+                stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
+                opacity: this.options.opacityHover,
+                strokeWidth: this.options.strokeWidthHover,
+                fallbackOpacity: 0.4
+            };
+            var defaultStyle = this.processStyle_(settingsDefault, false);
+            var hoverStyle = this.processStyle_(settingsHover, true);
+            hoverStyle.setZIndex(1);
+            return function(feature) {
+                return [feature.get('hover') && hoverStyle || defaultStyle];
             }
         },
-
+        processStyle_: function(settings, hover) {
+            var fillRgb = Mapbender.StyleUtil.parseCssColor(settings.fill).slice(0, 3);
+            var strokeRgb = Mapbender.StyleUtil.parseCssColor(settings.stroke).slice(0, 3);
+            var opacityFloat = parseFloat(settings.opacity);
+            if (!isNaN(opacityFloat)) {
+                if (!(opacityFloat >= 0.0 && opacityFloat < 1.0)) {
+                    // Percentage to [0;1]
+                    opacityFloat /= 100.0;
+                }
+                opacityFloat = Math.min(Math.max(opacityFloat, 0.0), 1.0);
+            } else {
+                opacityFloat = settings.fallbackOpacity;
+            }
+            var strokeOpacity = hover && 1.0 || Math.sqrt(opacityFloat);
+            var strokeWidth = parseInt(settings.strokeWidth);
+            strokeWidth = isNaN(strokeWidth) && (hover && 3 || 1) || strokeWidth;
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: fillRgb.concat(opacityFloat)
+                }),
+                stroke: strokeWidth && new ol.style.Stroke({
+                    color: strokeRgb.concat(strokeOpacity),
+                    width: strokeWidth
+                })
+            });
+        },
         _postMessage: function(message) {
-            var widget = this;
             var data = message.data;
             if (data.elementId !== this.element.attr('id')) {
                 return;
             }
             if (this.isActive && this.highlightLayer && data.command === 'features') {
-                widget._populateFeatureInfoLayer(data);
+                this._populateFeatureInfoLayer(data);
             }
             if (this.isActive && this.highlightLayer && data.command === 'hover') {
                 var feature = this.highlightLayer.getSource().getFeatureById(data.id);
                 if (feature) {
-                    if (data.state) {
-                        feature.setStyle(this.featureInfoStyle_hover);
-                    } else {
-                        feature.setStyle(null);
-                    }
+                    feature.set('hover', !!data.state);
                 }
             }
         },
@@ -447,26 +442,36 @@
             }
         },
         _createHighlightControl: function() {
-
-            var widget = this;
-            var map = this.target.map.olMap;
-
             var highlightControl = new ol.interaction.Select({
                 condition: ol.events.condition.pointerMove,
                 layers: [this.highlightLayer],
+                style: null,
                 multi: true
             });
+            var featureStack = [];
 
             highlightControl.on('select', function (e) {
+                // Avoid highlighting multiple geometrically nested features
+                // simultaneously. Re-highlight "outer" features when the mouse
+                // leaves the "inner" feature.
+                featureStack = featureStack.filter(function(feature) {
+                    return -1 === e.deselected.indexOf(feature);
+                });
                 e.deselected.forEach(function (feature) {
-                    feature.setStyle(null);
+                    feature.set('hover', false);
                 });
                 e.selected.forEach(function (feature) {
-                    feature.setStyle(widget.featureInfoStyle_hover);
+                    featureStack.forEach(function(feature) {
+                        feature.set('hover', false);
+                    });
+                    featureStack.push(feature);
                 });
+                if (featureStack.length) {
+                    featureStack[featureStack.length - 1].set('hover', true);
+                }
             });
 
-            map.addInteraction(highlightControl);
+            this.mbMap.getModel().olMap.addInteraction(highlightControl);
             highlightControl.setActive(true);
         },
         _getInjectionScript: function(sourceId) {

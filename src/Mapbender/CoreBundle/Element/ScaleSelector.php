@@ -6,6 +6,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\Utils\ApplicationUtil;
 
 /**
  * A ScaleSelector
@@ -41,8 +42,6 @@ class ScaleSelector extends AbstractElementService
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.js',
-                /** @todo: upate legacy asset reference */
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.scss',
@@ -64,7 +63,6 @@ class ScaleSelector extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
             'label' => false,
             "tooltip" => static::getClassTitle(),
         );
@@ -86,10 +84,10 @@ class ScaleSelector extends AbstractElementService
         $view = new TemplateView('MapbenderCoreBundle:Element:scaleselector.html.twig');
         $view->attributes['class'] = 'mb-element-scaleselector';
         $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
-        $target = $element->getTargetElement('target');
+        $map = ApplicationUtil::getMapElement($element->getApplication());
         $scales = array();
-        if ($target) {
-            $mapConfig = $target->getConfiguration();
+        if ($map) {
+            $mapConfig = $map->getConfiguration();
             if (!empty($mapConfig['scales'])) {
                 $scales = $mapConfig['scales'];
                 asort($scales, SORT_NUMERIC | SORT_REGULAR);

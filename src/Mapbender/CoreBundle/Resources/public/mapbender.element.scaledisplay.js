@@ -4,8 +4,7 @@
     $.widget("mapbender.mbScaledisplay", {
         options: {
             scalePrefix: null,
-            unitPrefix: false,
-            target: null
+            unitPrefix: false
         },
         mbMap: null,
 
@@ -17,11 +16,11 @@
             if (typeof this.options.unitPrefix === 'undefined') {
                 this.options.unitPrefix = false;
             }
-            Mapbender.elementRegistry.waitReady(this.options.target).then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget("mbScaledisplay", self.options.target);
+                Mapbender.checkTarget('mbScaledisplay');
             });
         },
 

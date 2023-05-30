@@ -93,6 +93,7 @@ class ViewManager extends AbstractElementService
 
         $view = new TemplateView('MapbenderCoreBundle:Element:view_manager.html.twig');
         $view->attributes['class'] = 'mb-element-viewmanager';
+        $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();   // For popup
         $view->variables['grants'] = $this->httpHandler->getGrantsVariables($config);
         $view->variables['showDate'] = $config['showDate'];
         $view->variables['showPublicPrivateState'] = !empty($config['privateEntries']);

@@ -1,6 +1,5 @@
 /* Main backend styles */
 @import "libs/mixins";
-@import "libs/icons";
 
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 @import 'bundles/mapbendermanager/sass/blocklist.scss';
@@ -98,15 +97,6 @@
   thead>tr>th:first-child {
     padding-left: 0;
   }
-  tr.ui-sortable-handle {
-    cursor: move;
-    &:hover{
-      background-color:darken($contentColor, 3%);
-    }
-    &.ui-sortable-helper {
-      background-color:darken($contentColor, 4.8%);
-    }
-  }
   // Element region / Layerset titles use embedded h3 tags
   thead h3 {
     font-size: 140%;
@@ -132,19 +122,20 @@
 // cells to have forced expansion
 .elementsTable {
   .typeColumn, .titleColumn {width: 49%;}
-
-  .placeholderRow{height:$space;}
   .screentype-icon.disabled {
     opacity: 0.3;
   }
 }
 
-.layersetTable{
-  .titleColumn {
-    width: 89%;
+.layersetTable {
+  th.titleColumn {
+    width: 60%;
   }
-  .typeColumn {
-    width: 10%;
+  th.sourceColumn {
+    width: 30%;
+  }
+  td.sourceColumn {
+    text-overflow: ellipsis;
   }
 }
 

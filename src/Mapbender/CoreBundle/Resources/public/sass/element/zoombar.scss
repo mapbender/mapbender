@@ -1,4 +1,17 @@
 .mb-element-zoombar {
+  line-height: 1.25;
+  .anchored-element-wrap & {
+    // Avoid eating mouse interactions on map
+    // ZoomBar has multiple sub-blocks with different widths that
+    // need mouse events, but the outer box is quite a bit larger
+    // and contains transparent gaps where we want mouse events
+    // to fall through to the map canvas.
+    pointer-events: none;
+    .move-icon-wrap, .toolPane, .rotation {
+      pointer-events: initial;
+    }
+  }
+
   text-align: center; // support automatic centering of children
   .component + .component {
     margin-top: 0.7rem;
@@ -20,12 +33,6 @@
     display: inline-block; // for automatic width and centering
     padding:5px;
     @include border-radius($radius);
-
-    > li,
-    .zoomSlider > span,
-    .zoomSlider > ul {
-      margin:3px 0;
-    }
   }
   .toolPane {
     font-size: 1.6rem;
@@ -45,6 +52,18 @@
     .zoom-level-gap {
       opacity: $toolBarButtonDefaultOpacity;
       margin-bottom: -1px;
+    }
+    li[data-zoom] > i.far:before {
+      /** @todo FA5: remove this hack
+          Both filled and unfilled circle icons
+          use the same codepoint \f111, but a different font
+          (.fas vs .far).
+          \f111 on FA4 is the filled circle (fa-circle-o)
+          .fa-circle-o is not defined on FA5
+          There is no forward compatible CSS solution for FA5
+          that would still work on FA4.
+      */
+      content: "\f10c";   // = FA4 fa-circle-o
     }
   }
 
@@ -92,5 +111,9 @@
     .rotate-cw, .rotate-ccw {
       display: none;
     }
+  }
+  // If draggable = true
+  .move-icon-wrap {
+    cursor: move;
   }
 }

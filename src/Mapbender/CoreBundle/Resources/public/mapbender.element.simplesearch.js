@@ -21,11 +21,10 @@ $.widget('mapbender.mbSimpleSearch', {
     layer: null,
     mbMap: null,
     iconUrl_: null,
-    acPosition_: undefined,
 
     _create: function() {
         this.iconUrl_ = this.options.result_icon_url || null;
-        this.acPosition_ = this.initializeAutocompletePosition_()
+        this.initializeAutocompletePosition_()
         if (this.options.result_icon_url && !/^(\w+:)?\/\//.test(this.options.result_icon_url)) {
             // Local, asset-relative
             var parts = [
@@ -42,9 +41,9 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     initializeAutocompletePosition_: function() {
         /** @see https://api.jqueryui.com/autocomplete/#option-position */
-        var vertical = this.element.closest('.toolBar.bottom').length ? 'up' : 'down';
+        var vertical = this.element.closest('.toolBar.bottom,.anchored-element-wrap-lb,.anchored-element-wrap-rb').length ? 'up' : 'down';
         var horizontal = 'right';
-        if (this.element.closest('.toolBar').length) {
+        if (this.element.closest('.toolBar,.anchored-element-wrap').length) {
             var windowWidth = $('html').get(0).clientWidth;
             var node = this.element.get(0);
             var ownWidth = node.clientWidth;
@@ -60,18 +59,8 @@ $.widget('mapbender.mbSimpleSearch', {
                 horizontal = 'left';
             }
         }
-
-        switch ([horizontal, vertical].join('-')) {
-            default:
-            case 'right-down':
-                return undefined;
-            case 'right-up':
-                return {my: 'left bottom', at: 'left top', collision: 'none'};
-            case 'left-down':
-                return {my: 'right top', at: 'right bottom', collision: 'none'};
-            case 'left-up':
-                return {my: 'right bottom', at: 'right top', collision: 'none'};
-        }
+        // Adds .left-up / .left-down / .right-up / .right-down
+        $('.autocompleteWrapper', this.element).addClass([horizontal, vertical].join('-'));
     },
     _setup: function() {
         var self = this;
@@ -89,7 +78,7 @@ $.widget('mapbender.mbSimpleSearch', {
         var minLength = 2;
 
         searchInput.autocomplete({
-            appendTo: searchInput.parent().get(0),
+            appendTo: searchInput.closest('.autocompleteWrapper').get(0),
             delay: self.options.delay,
             minLength: minLength,
             /** @see https://api.jqueryui.com/autocomplete/#option-source */
@@ -119,10 +108,14 @@ $.widget('mapbender.mbSimpleSearch', {
                     })
                 ;
             },
-            position: this.acPosition_,
+            position: {
+                of: false
+            },
+            classes: {
+                'ui-autocomplete': 'dropdownList'
+            },
             select: function(event, ui) {
-                // Adapt data format
-                self._onAutocompleteSelected(event, {data: ui.item});
+                self._onAutocompleteSelected(ui.item);
             }
         });
         // On manual submit (enter key, submit button), trigger autocomplete manually
@@ -130,12 +123,12 @@ $.widget('mapbender.mbSimpleSearch', {
             evt.preventDefault();
             searchInput.autocomplete("search");
         });
+        this.element.on('click', '.-fn-search', function() {
+            searchInput.autocomplete('search');
+        });
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
         });
-
-        // On item selection in autocomplete, parse data and set map bbox
-        searchInput.on('mbautocomplete.selected', $.proxy(this._onAutocompleteSelected, this));
     },
     _parseFeature: function(doc) {
         switch ((this.options.geom_format || '').toUpperCase()) {
@@ -193,8 +186,8 @@ $.widget('mapbender.mbSimpleSearch', {
             return this._extractAttribute(doc, this.options.label_attribute);
         }
     },
-    _onAutocompleteSelected: function(evt, evtData) {
-        var feature = this._parseFeature(evtData.data[this.options.geom_attribute]);
+    _onAutocompleteSelected: function(item) {
+        var feature = this._parseFeature(item[this.options.geom_attribute]);
 
         var zoomToFeatureOptions = {
             maxScale: parseInt(this.options.result_maxscale) || null,

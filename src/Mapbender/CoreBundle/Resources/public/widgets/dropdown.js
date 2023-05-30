@@ -6,9 +6,9 @@ $(function () {
     function isMbDropdown(element) {
         var $element = $(element);
         if ($element.is('select')) {
-            return $element.is('.hiddenDropdown') && $element.parent('.dropdown').length;
+            return $element.parent().is('.dropdown');
         } else {
-            return $element.is('.dropdown') && $('> select.hiddenDropdown', $element).length;
+            return $element.is('.dropdown') && $('> select', $element).length;
         }
     }
     function fixOptions(scope) {
@@ -85,61 +85,43 @@ $(function () {
     // init dropdown list --------------------------------------------------------------------
 
     function toggleList() {
-        var opts = $('.hiddenDropdown', this);
-        if (!opts.length) {
-            // Not a redecorated select, probably a Bootstrap dropdown
-            return;
+        if (isMbDropdown(this)) {
+            fixOptions(this);
+            var $list = $('.dropdownList', this);
+            $list.toggle();
+            if ($list.is(':visible')) {
+                $(document).one("click", function (evt) {
+                    // List may have already been hidden by click on choice
+                    if ($list.is(':visible')) {
+                        evt.stopImmediatePropagation();
+                        $list.hide();
+                        return false;
+                    }
+                });
+            }
+            return false;
         }
-        var list = $('.dropdownList', this);
-        fixOptions(this);
-        var me = $(this);
-        if (list.css("display") === "block") {
-            list.hide();
-        } else {
-            list.one('click', 'li.choice', function (event) {
-                var $target = $(this);
-                var val = $target.attr('data-value');
-                event.stopPropagation();
-                var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', opts);
-                me.find(".dropdownValue").text(opt.text());
-                opts.val(opt.val());
-                opts.trigger('change');
-                list.hide();
-            });
-            list.show();
-        }
-
-        $(document).one("click", function () {
-            list.hide().find("li").off("click", 'li.choice');
-        });
+    }
+    function handleChoiceClick() {
+        var $choice = $(this);
+        var $list = $choice.closest('.dropdownList');
+        var $dropdown = $list.closest('.dropdown');
+        var $select = $('>select', $dropdown);
+        var val = $choice.attr('data-value');
+        var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', $select);
+        $('>.dropdownValue', $dropdown).text(opt.text());
+        $select.val(opt.val());
+        $select.trigger('change');
+        $list.hide();
         return false;
     }
     $('.dropdown').each(function () {
         initDropdown.call(this);
     });
-    $(document).on('change, dropdown.changevisual', '.dropdown > select.hiddenDropdown', function() {
+    $(document).on('change dropdown.changevisual', '.dropdown > select', function() {
         updateValueDisplay($(this).parent('.dropdown'));
     });
     window.initDropdown = initDropdown;
     $(document).on("click", ".dropdown", toggleList);
-    $(document).on('mousewheel scroll DOMMouseScroll', '.dropdownList', function(e) {
-        var delta = e.originalEvent.detail;
-        var atTop = this.scrollTop === 0;
-        var atBottom = this.scrollTop === this.scrollTopMax;
-
-        if (!this.scrollTopMax) {
-            atBottom = this.scrollHeight === this.clientHeight + this.scrollTop;
-        }
-        if (e.originalEvent.deltaY) {
-            delta = e.originalEvent.deltaY;
-        }
-        if (e.originalEvent.wheelDelta) {
-            delta = -e.originalEvent.wheelDelta;
-        }
-        if (atTop && delta < 0 || atBottom && delta > 0) {
-            return false;
-        }
-        return undefined;
-    });
-
+    $(document).on('click', '.dropdown > .dropdownList .choice', handleChoiceClick);
 });

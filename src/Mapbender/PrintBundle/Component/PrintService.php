@@ -391,7 +391,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function addTextFields($pdf, $template, $jobData)
     {
-        foreach ($template->getTextFields() as $fieldName => $region) {
+        foreach ($template->getTextFields() as $region) {
+            $fieldName = $region->getName();
             // skip extent fields, see special handling in addCoordinates method
             if (preg_match("/^extent/", $fieldName)) {
                 continue;

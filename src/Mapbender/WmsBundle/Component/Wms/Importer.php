@@ -2,13 +2,14 @@
 
 namespace Mapbender\WmsBundle\Component\Wms;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Mapbender\Component\Loader\RefreshableSourceLoader;
+use Mapbender\Component\SourceLoader;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
@@ -17,7 +18,8 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
+use Mapbender\WmsBundle\Component\WmsCapabilitiesParser111;
+use Mapbender\WmsBundle\Component\WmsCapabilitiesParser130;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -34,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
-class Importer extends RefreshableSourceLoader
+class Importer extends SourceLoader
 {
     /** @var XmlValidatorService */
     protected $validator;
@@ -55,6 +57,16 @@ class Importer extends RefreshableSourceLoader
         $this->validator = $validator;
     }
 
+    public function getTypeCode()
+    {
+        return strtolower(Source::TYPE_WMS);
+    }
+
+    public function getTypeLabel()
+    {
+        return 'OGC WMS';
+    }
+
     /**
      * @inheritdoc
      * @throws InvalidUrlException
@@ -67,8 +79,26 @@ class Importer extends RefreshableSourceLoader
 
     public function parseResponseContent($content)
     {
-        $document = WmsCapabilitiesParser::createDocument($content);
-        $parser = WmsCapabilitiesParser::getParser($document);
+        $document = $this->xmlToDom($content);
+        switch ($document->documentElement->tagName) {
+            // @todo: DI, handlers, prechecks
+            default:
+                // @todo: use a different exception to indicate lack of support
+                throw new XmlParseException('mb.wms.repository.parser.not_supported_document');
+            case 'WMS_Capabilities':
+            case 'WMT_MS_Capabilities':
+                break;
+        }
+        switch ($document->documentElement->getAttribute('version')) {
+            default:
+                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+            case '1.1.1':
+                $parser = new WmsCapabilitiesParser111();
+                break;
+            case '1.3.0':
+                $parser = new WmsCapabilitiesParser130();
+                break;
+        }
         $source = $parser->parse($document);
         $this->assignLayerPriorities($source->getRootlayer(), 0);
         return $source;
@@ -76,8 +106,7 @@ class Importer extends RefreshableSourceLoader
 
     public function validateResponseContent($content)
     {
-        $document = WmsCapabilitiesParser::createDocument($content);
-        $this->validator->validateDocument($document);
+        $this->validator->validateDocument($this->xmlToDom($content));
     }
 
     /**
@@ -87,7 +116,6 @@ class Importer extends RefreshableSourceLoader
      */
     public function updateSource(Source $target, Source $reloaded)
     {
-        $this->beforeSourceUpdate($target, $reloaded);
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
@@ -121,12 +149,12 @@ class Importer extends RefreshableSourceLoader
      */
     public function getRefreshUrl(Source $target)
     {
-        /** @var WmsSource $target */
-        $persistedUrl = $target->getOriginUrl();
+        $persistedUrl = parent::getRefreshUrl($target);
         $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($persistedUrl, 'version', null);
         if ($detectedVersion) {
             return $persistedUrl;
         } else {
+            /** @var WmsSource $target */
             return  UrlUtil::validateUrl($persistedUrl, array(
                 'VERSION' => $target->getVersion(),
             ));

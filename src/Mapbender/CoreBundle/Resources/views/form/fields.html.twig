@@ -13,6 +13,7 @@
 {% use "form_div_layout.html.twig" with form_label as div_form_label %}
 
 {%- block form_errors -%}
+  {%- set errors = (errors | default([])) | map((error) => {message: error.message | trans}) -%}
   {{- block('bs3_errors') -}}
 {%- endblock form_errors -%}
 
@@ -28,22 +29,21 @@
 {%- endblock form_widget_simple -%}
 
 {% block collection_widget %}
-  {% spaceless %}
-    {% if prototype is defined %}
-      {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
-    {% endif %}
-    {% if allow_delete %}
-      {% set attr = attr|merge({'data-allow-delete': 1 }) %}
-    {% endif %}
+  {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
+  {%- if sortable is defined -%}
+    {%- set attr = attr | merge({'data-sortable': '1'}) -%}
+  {%- endif -%}
+    {%- if prototype is defined -%}
+      {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {%- endif -%}
     <div {{ block('widget_container_attributes') }}>
-      {% if prototype is defined and form.vars.allow_add is not empty %}
-        <span class="collectionAdd hover-highlight-effect"><i class="fa fas fa-plus"></i></span>
-      {% endif %}
+      {%- if prototype is defined and form.vars.allow_add is not empty -%}
+        <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
+      {%- endif -%}
       {%- for child in form -%}
         {{- form_row(child) -}}
       {%- endfor -%}
     </div>
-  {% endspaceless %}
 {% endblock collection_widget %}
 
 {% block textarea_widget %}
@@ -101,14 +101,20 @@
 {%- block hiddendropdown_option_display -%}
   {% for group_label, choice in options %}
     {%- if choice is iterable and choice.nogroup is not defined -%}
-    <li><label class="group-label">{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}</label>
+    <li class="nested-group"><label class="group-label">{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}</label>
       <ul class="group">
         {% set options = choice %}
         {{- block('hiddendropdown_option_display') }}
       </ul>
     </li>
     {%- else -%}
-    <li class="choice" data-value="{{ choice.value }}">{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}</li>
+    <li class="choice" data-value="{{ choice.value }}">
+      {%- if choice.label -%}
+        {{- choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) -}}
+      {%- else -%}
+        &nbsp; {#- maintain height / prevent vertical collapse -#}
+      {%- endif -%}
+    </li>
     {%- endif -%}
   {% endfor %}
 {%- endblock %}
@@ -168,7 +174,7 @@
   {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
     <div class="collectionItem clear">
       {%- if form.parent.vars.allow_delete -%}
-        <span class="collectionRemove hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></span>
+        <a href="#" class="collectionRemove clickable hover-highlight-effect"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i></a>
       {%- endif -%}
       {# No label for collection item #}
       {{ form_widget(form) }}
@@ -205,7 +211,7 @@
     </div>
     {%- endif -%}
     {% set prototype = form_widget(form.vars.prototype) %}
-    <table id="listFilterPermission" class="permissionsTable table table-bordered {% if not (form | length) %}hidden{% endif %}">
+    <table id="listFilterPermission" class="permissionsTable table table-outlined {% if not (form | length) %}hidden{% endif %}">
       <thead data-prototype="{{ prototype }}">
         <tr class="doNotFilter">
           <th>
@@ -237,8 +243,7 @@
 
 {% block tagbox_widget %}
   {% spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="checkWrapper tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}"
-         data-icon-on="active" data-icon-off="" >
+    <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
       {{- form.vars.attr.class -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>

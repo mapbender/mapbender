@@ -4,9 +4,9 @@
 namespace Mapbender\CoreBundle\Asset;
 
 
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig;
 
 /**
  * Compiles application translations for frontend consumption.
@@ -19,7 +19,7 @@ class TranslationCompiler
 {
     /** @var TranslatorInterface|TranslatorBagInterface */
     protected $translator;
-    /** @var EngineInterface */
+    /** @var Twig\Environment */
     protected $templateEngine;
     /** @var string[]|null */
     protected $allMessages;
@@ -28,9 +28,9 @@ class TranslationCompiler
 
     /**
      * @param TranslatorInterface $translator
-     * @param EngineInterface $templateEngine
+     * @param Twig\Environment $templateEngine
      */
-    public function __construct(TranslatorInterface $translator, EngineInterface $templateEngine)
+    public function __construct(TranslatorInterface $translator, Twig\Environment $templateEngine)
     {
         if (!($translator instanceof TranslatorBagInterface)) {
             throw new \InvalidArgumentException("Given translator does not implement required TranslatorBagInterface");
