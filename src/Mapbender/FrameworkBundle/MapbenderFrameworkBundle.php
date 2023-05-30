@@ -10,6 +10,7 @@ use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterIconPackagesP
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -34,7 +35,7 @@ class MapbenderFrameworkBundle extends Bundle
         $container->addCompilerPass(new RegisterIconPackagesPass('mapbender.icon_index'));
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return null;
     }
