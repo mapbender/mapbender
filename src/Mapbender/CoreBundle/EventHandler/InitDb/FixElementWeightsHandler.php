@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\EventHandler\InitDb;
 
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Event\AbstractInitDbHandler;
 use Mapbender\Component\Event\InitDbEvent;
@@ -87,7 +86,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
                  . ' FROM ' . $connection->quoteIdentifier($tn)
                  . ' GROUP BY application_id, region'
         ;
-        $results = $connection->query($scanSql)->fetchAll(FetchMode::ASSOCIATIVE);
+        $results = $connection->fetchAllAssociative($scanSql);
         $applicationMap = array();
         foreach ($results as $row) {
             $needReorder = $row['c1'] != $row['c0'];

@@ -24,13 +24,16 @@
             <argument type="service" id="security.user_checker"/>
         </service>
 
+        <service id="fom.security.authentication_listener.account_status" class="FOM\UserBundle\Security\Authentication\AccountStatusCheckSubscriber">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="fom.security.failed_login_listener" on-invalid="null" />
+        </service>
         <service id="fom.security.failed_login_listener" class="%fom_user.failed_login_listener.class%">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument>%fom_user.login_attempts_before_delay%</argument>
             <argument>%fom_user.login_delay_after_fail%</argument>
             <argument>%fom_user.login_check_log_time%</argument>
-            <tag name="kernel.event_listener" event="security.authentication.failure" method="onLoginFailure" />
-            <tag name="kernel.event_listener" event="security.authentication.success" method="onLoginSuccess" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="fom.user_profile_listener" class="%fom_user.user_profile_listener.class%">

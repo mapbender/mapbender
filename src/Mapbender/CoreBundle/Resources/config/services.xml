@@ -10,7 +10,6 @@
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
         <parameter key="mapbender.presenter.application.cache.class">Mapbender\CoreBundle\Component\Cache\ApplicationDataService</parameter>
-        <parameter key="mapbender.presenter.application.cache.backend.class">Mapbender\CoreBundle\Component\Cache\Backend\File</parameter>
         <!-- Application config caching disabled because we have identified some parts of the configuration may depend on current user
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
@@ -208,9 +207,8 @@
             <argument type="service" id="mapbender.presenter.application.cache.backend" />
             <argument>%container.compilation_timestamp_float%</argument>
         </service>
-        <service id="mapbender.presenter.application.cache.backend" class="%mapbender.presenter.application.cache.backend.class%">
-            <argument>%kernel.cache_dir%</argument>
-        </service>
+        <service id="mapbender.presenter.application.cache.backend"
+                 alias="mapbender.cache.backend" />
         <service id="mapbender.asset_compiler.css"
                  class="%mapbender.asset_compiler.css.class%"
                  lazy="true">

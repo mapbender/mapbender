@@ -22,15 +22,8 @@ class Configuration implements ConfigurationInterface {
     {
         $rootName = 'fom_manager';
         $treeBuilder = new TreeBuilder($rootName);
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            // Symfony >= 4.1+
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // Deprecated on Symfony 4, error on Symfony 5
-            $rootNode = $treeBuilder->root($rootName);
-        }
 
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('route_prefix')
                     ->defaultValue('manager')

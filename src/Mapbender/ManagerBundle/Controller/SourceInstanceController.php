@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,17 +30,6 @@ class SourceInstanceController extends ApplicationControllerBase
     public function __construct(TypeDirectoryService $typeDirectory)
     {
         $this->typeDirectory = $typeDirectory;
-    }
-
-    /**
-     * @Route("/instance/{instance}", methods={"GET"})
-     * @param SourceInstance $instance
-     * @return Response
-     */
-    public function viewAction(SourceInstance $instance)
-    {
-        $viewData = $this->getApplicationRelationViewData($instance);
-        return $this->render('@MapbenderManager/SourceInstance/applications.html.twig', $viewData);
     }
 
     /**
@@ -112,7 +102,7 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/{instance}/delete", methods={"GET", "POST"})
+     * @Route("/instance/{instance}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param SourceInstance $instance
      * @return Response
@@ -122,7 +112,7 @@ class SourceInstanceController extends ApplicationControllerBase
         /** @todo: specify / implement proper grants */
         $oid = new ObjectIdentity('class', Source::class);
         $this->denyAccessUnlessGranted('DELETE', $oid);
-        if ($request->isMethod(Request::METHOD_POST)) {
+        if (!$request->isMethod(Request::METHOD_GET)) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($instance);
             $em->flush();
@@ -130,11 +120,23 @@ class SourceInstanceController extends ApplicationControllerBase
                 return $this->redirect($returnUrl);
             } else {
                 return $this->redirectToRoute('mapbender_manager_repository_index', array(
-                    '_framgent' => 'tabSharedInstances',
+                    '_fragment' => 'tabSharedInstances',
                 ));
             }
         } else {
-            return $this->viewAction($instance);
+            // Use an empty form to help client code follow the final redirect properly
+            // See Resources/public/confirm-delete.js
+            $dummyForm = $this->createForm(FormType::class, null, array(
+                'method' => 'DELETE',
+                'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
+                    'instance' => $instance,
+                )),
+            ));
+            $viewData = $this->getApplicationRelationViewData($instance) + array(
+                'form' => $dummyForm->createView(),
+                'instance' => $instance,
+            );
+            return $this->render('@MapbenderManager/SourceInstance/confirmdelete.html.twig', $viewData);
         }
     }
 
@@ -403,7 +405,6 @@ class SourceInstanceController extends ApplicationControllerBase
             })->getValues();
             if (!$relatedLayersets) {
                 throw new \LogicException("Instance => Application lookup error; should contain instance #{$instance->getId()}, but doesn't");
-                continue;
             }
             $appViewData = array(
                 'application' => $application,
@@ -412,7 +413,6 @@ class SourceInstanceController extends ApplicationControllerBase
             foreach ($relatedLayersets as $ls) {
                 $layersetViewData = array(
                     'layerset' => $ls,
-                    'instance_assignments' => array(),
                 );
                 $assignments = $ls->getCombinedInstanceAssignments()->filter(function ($a) use ($instance) {
                     /** @var SourceInstanceAssignment $a */

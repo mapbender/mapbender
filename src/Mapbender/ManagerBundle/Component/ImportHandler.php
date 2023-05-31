@@ -4,7 +4,7 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -22,7 +22,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
-use Symfony\Component\Security\Acl\Model\EntryInterface;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -228,7 +227,6 @@ class ImportHandler extends ExchangeHandler
      * Imports sources.
      * @param ImportState $state
      * @param array $data data to import
-     * @throws ORMException
      */
     private function importSources(ImportState $state, $data)
     {
@@ -249,7 +247,6 @@ class ImportHandler extends ExchangeHandler
      * @param ImportState $state
      * @param array $data data to import
      * @return Application[]
-     * @throws ORMException
      */
     private function importApplicationEntities(ImportState $state, $data)
     {
@@ -330,7 +327,6 @@ class ImportHandler extends ExchangeHandler
         }
 
         foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
-            /** @var EntryInterface $sourceEntry */
             $entryIdentity = $sourceEntry->getSecurityIdentity();
             $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
         }
@@ -414,7 +410,6 @@ class ImportHandler extends ExchangeHandler
      * @param ImportState $state
      * @param mixed $data
      * @return array|null|number|string|object
-     * @throws \Doctrine\ORM\ORMException
      */
     protected function handleData(ImportState $state, $data)
     {
@@ -470,7 +465,6 @@ class ImportHandler extends ExchangeHandler
      * @param EntityHelper $entityInfo
      * @param array $data
      * @return object|null
-     * @throws ORMException
      */
     protected function handleEntity(ImportState $state, EntityHelper $entityInfo, array $data)
     {
@@ -519,7 +513,6 @@ class ImportHandler extends ExchangeHandler
      * @param AbstractObjectHelper $classInfo
      * @param array $data
      * @return object
-     * @throws ORMException
      */
     protected function handleClass(ImportState $state, AbstractObjectHelper $classInfo, array $data)
     {

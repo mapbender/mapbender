@@ -189,7 +189,7 @@ window.Mapbender.WmsSource = (function() {
                 if (paramsChanged && visibilityChanged) {
                     // Prevent Openlayers 6 from reusing the previous image contents while
                     // still fetching from modified url
-                    if (olLayer.getRenderer() && olLayer.getRenderer().getImage()) {
+                    if (olLayer.getRenderer && olLayer.getRenderer().getImage()) {
                         olLayer.getRenderer().image_ = null;
                     }
                 }

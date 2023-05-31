@@ -5,6 +5,8 @@ namespace FOM\UserBundle\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\UserLogEntry;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
 
@@ -14,7 +16,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
  * @author Christian Wygoda
  * @author Andriy Oblivantsev
  */
-class FailedLoginListener
+class FailedLoginListener implements EventSubscriberInterface
 {
     /** @var EntityManagerInterface */
     protected $entityManager;
@@ -38,6 +40,14 @@ class FailedLoginListener
         $this->maxAttempts = $maxAttempts;
         $this->delayTime = $delayTime;
         $this->checkInterval = $checkInterval;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onLoginSuccess',
+            AuthenticationEvents::AUTHENTICATION_FAILURE => 'onLoginFailure',
+        );
     }
 
     /**

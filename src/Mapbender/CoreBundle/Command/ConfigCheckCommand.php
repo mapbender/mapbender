@@ -145,14 +145,21 @@ class ConfigCheckCommand extends Command
         $headers = ['Folder', 'User', 'Group','Permissions'];
         $rows=[];
         $success = true;
+
         $folders= array('app/logs/','app/cache/','web/uploads/','web/xmlschemas/','web/');
         foreach ($folders as $folder){
             $filename = $this->rootDir . '/../' . $folder;
-            $permission= substr(sprintf('%o',fileperms($filename)), -4);
-            $stat = stat($filename);
-            $ownername=posix_getpwuid($stat['uid'])['name'];
-            $grpname=posix_getpwuid($stat['gid'])['name'];
-            $rows[]=[$folder,$ownername,$grpname,$permission];
+            $info = new \SplFileInfo($filename);
+            $permission= substr(sprintf('%o', $info->getPerms()), -4);
+            $owner = $info->getOwner();
+            $group = $info->getGroup();
+            if (function_exists('\posix_getpwuid')) {
+                $ownerInfo = posix_getpwuid($owner);
+                $groupInfo = posix_getpwuid($group);
+                $owner = $ownerInfo ? $ownerInfo['name'] : $owner;
+                $group = $groupInfo ? $groupInfo['name'] : $group;
+            }
+            $rows[] = [$folder, $owner, $group, $permission];
         }
         $output->table($headers,$rows);
         return $success;

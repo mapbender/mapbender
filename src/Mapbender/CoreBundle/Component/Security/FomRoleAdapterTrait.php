@@ -25,14 +25,11 @@ trait FomRoleAdapterTrait
     /**
      * @param TokenInterface $token
      * @return string[]
+     * @deprecated use $token->getRoleNames directly (Symfony >= 4.3)
      */
     protected function getStandardRoleNamesFromToken(TokenInterface $token)
     {
-        $names = array();
-        foreach ($token->getRoles() as $tokenRole) {
-            $names[] = $tokenRole->getRole();
-        }
-        return $names;
+        return $token->getRoleNames();
     }
 
     /**

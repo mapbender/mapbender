@@ -50,6 +50,9 @@ abstract class BaseKernel extends Kernel
      * @param BundleInterface[] $bundles   Bundle array link
      * @param string            $nameSpace Name space prefix as string
      * @return BundleInterface[] Bundle array
+     *
+     * @deprecated explicitly register your desired bundles in the kernel
+     * @todo v3.4: remove
      */
     public function addNameSpaceBundles(array &$bundles, $nameSpace)
     {
@@ -131,6 +134,14 @@ abstract class BaseKernel extends Kernel
         // intersect instances with deduped keys => instances of same class gone, order preserved
         $keptBundleInstances = array_intersect_key($bundles, $keptBundleClasses);
         return $keptBundleInstances;
+    }
+
+    public function boot()
+    {
+        parent::boot();
+        if ($this->isDebug() && \class_exists('Doctrine\Deprecations\Deprecation')) {
+            \Doctrine\Deprecations\Deprecation::enableWithTriggerError();
+        }
     }
 
     protected function buildContainer()

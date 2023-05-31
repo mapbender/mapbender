@@ -18,15 +18,8 @@ class Configuration implements ConfigurationInterface
     {
         $rootName = 'ows_proxy3_core';
         $treeBuilder = new TreeBuilder($rootName);
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            // Symfony >= 4.2
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // Deprecated on Symfony 4, error on Symfony 5
-            $rootNode = $treeBuilder->root($rootName);
-        }
 
-        $rootNode
+        $rootNode = $treeBuilder->getRootNode()
             ->canBeUnset()->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('logging')
