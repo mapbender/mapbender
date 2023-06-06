@@ -540,11 +540,13 @@ window.Mapbender.MapModelBase = (function() {
             var layersetNames = this.mbMap.options.layersets.slice().reverse();
             var sources = [];
             for (var i = 0; i < layersetNames.length; ++i) {
-                var theme = this.getLayersetById(layersetNames[i]);
+                const layersetId = layersetNames[i];
+                var theme = this.getLayersetById(layersetId);
                 if (!theme) {
-                    throw new Error("No layerset with id " + layersetId);
+                    console.log("No layerset with id " + layersetId + ". Edit and save the map element if you just removed a layerset or layer.");
+                } else {
+                    sources = sources.concat.apply(sources, theme.children.slice().reverse());
                 }
-                sources = sources.concat.apply(sources, theme.children.slice().reverse());
             }
             return sources;
         },
