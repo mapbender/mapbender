@@ -239,43 +239,20 @@
             select.val(scale).trigger('dropdown.changevisual');
         },
         _getPrintBounds: function(centerX, centerY, scale) {
-            if (Mapbender.mapEngine.code !== 'ol2') {
-                // OpenLayers >= 4
-                var pupm = this.map.getModel().getUnitsPerMeterAt([centerX, centerY]);
+            var pupm = this.map.getModel().getUnitsPerMeterAt([centerX, centerY]);
 
-                // Compromise mode: match scale on longitude axis, allow distortions
-                // to remain on latitude.
-                // Otherwise e.g. EPSG:4326 would stop "looking like" EPSG:4326 completely in printout.
-                // This is also slightly less (though still somewhat) broken when using rotation.
-                var projectedWidth = this.width * scale * pupm.h;
-                var projectedHeight = this.height * scale * pupm.h; // This is deliberately not pupm.v!
+            // Compromise mode: match scale on longitude axis, allow distortions
+            // to remain on latitude.
+            // Otherwise e.g. EPSG:4326 would stop "looking like" EPSG:4326 completely in printout.
+            // This is also slightly less (though still somewhat) broken when using rotation.
+            var projectedWidth = this.width * scale * pupm.h;
+            var projectedHeight = this.height * scale * pupm.h; // This is deliberately not pupm.v!
 
-                return {
-                    left: centerX - .5 * projectedWidth,
-                    right: centerX + .5 * projectedWidth,
-                    bottom: centerY - .5 * projectedHeight,
-                    top: centerY + .5 * projectedHeight
-                };
-            }
-            // adjust for geodesic pixel aspect ratio so
-            // a) our print region selection rectangle appears with ~the same visual aspect ratio as
-            //    the main map region in the template, for any projection
-            // b) any pixel aspect distortion on geodesic projections is matched WYSIWIG in generated printout
-            var centerPixel = this.map.map.olMap.getPixelFromLonLat({lon: centerX, lat: centerY});
-            var kmPerPixel = this.map.map.olMap.getGeodesicPixelSize(centerPixel);
-            var pixelHeight = this.height * scale / (kmPerPixel.h * 1000);
-            var pixelAspectRatio = kmPerPixel.w / kmPerPixel.h;
-            var pixelWidth = this.width * scale * pixelAspectRatio / (kmPerPixel.w * 1000);
-
-            var pxBottomLeft = centerPixel.add(-0.5 * pixelWidth, -0.5 * pixelHeight);
-            var pxTopRight = centerPixel.add(0.5 * pixelWidth, 0.5 * pixelHeight);
-            var llBottomLeft = this.map.map.olMap.getLonLatFromPixel(pxBottomLeft);
-            var llTopRight = this.map.map.olMap.getLonLatFromPixel(pxTopRight);
             return {
-                left: llBottomLeft.lon,
-                right: llTopRight.lon,
-                bottom: llBottomLeft.lat,
-                top: llTopRight.lat
+                left: centerX - .5 * projectedWidth,
+                right: centerX + .5 * projectedWidth,
+                bottom: centerY - .5 * projectedHeight,
+                top: centerY + .5 * projectedHeight
             };
         },
         _printBoundsFromFeature: function(feature, scale) {
@@ -301,14 +278,8 @@
          */
         _createFeature: function(scale, center, rotation) {
             var bounds = this._getPrintBounds(center[0], center[1], scale);
-            var feature;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                var geometry = OpenLayers.Bounds.prototype.toGeometry.call(bounds);
-                feature = new OpenLayers.Feature.Vector(geometry);
-            } else {
-                var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
-                feature = new ol.Feature(geom);
-            }
+            var geom = ol.geom.Polygon.fromExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+            var feature = new ol.Feature(geom);
             this.map.getModel().rotateFeature(feature, -rotation || 0);
             this.selectionFeatures_.push({
                 feature: feature,
@@ -331,55 +302,7 @@
          * @return {OpenLayers.Layer.Vector|ol.layer.Vector}
          */
         _initializeSelectionLayer: function() {
-            var layer = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer();
-            if (Mapbender.mapEngine.code === 'ol2') {
-                var self = this;
-                layer.styleMap = new OpenLayers.StyleMap({
-                        'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style),
-                        'transform': new OpenLayers.Style({
-                            display: '${getDisplay}',
-                            cursor: 'all-scroll',
-                            pointRadius: 0,
-                            fillColor: 'none',
-                            fillOpacity: 0,
-                            strokeColor: '#000'
-                        }, {
-                            context: {
-                                getDisplay: function(feature) {
-                                    // hide the resize handle at the se corner
-                                    return feature.attributes.role === 'se-resize' ? 'none' : '';
-                                }
-                            }
-                        }),
-                        'rotate': new OpenLayers.Style({
-                            display: '${getDisplay}',
-                            cursor: 'pointer',
-                            pointRadius: "${getPointRadius}",
-                            fillColor: '#ddd',
-                            fillOpacity: 1,
-                            strokeColor: '#000'
-                        }, {
-                            context: {
-                                getPointRadius: function(feature) {
-                                    var mapScale = self.map.getModel().getCurrentScale();
-                                    var printScale = self._getPrintScale();
-                                    // Make the point smaller for high ratios of mapScale / printScale
-                                    // so it doesn't start to obscure the print rectangle.
-                                    // This is not an accurate measure of relative size. The rect size
-                                    // depends on tempalte choice as well. It's just easier than calculating
-                                    // a pixel size from the feature.
-                                    // noinspection JSCheckFunctionSignatures
-                                    return parseInt(Math.max(3, Math.min(15, Math.sqrt(1000 * printScale / mapScale))));
-                                },
-                                getDisplay: function(feature) {
-                                    // only display rotate handle at the se corner
-                                    return self.options.rotatable && feature.attributes.role === 'se-rotate' ? '' : 'none';
-                                }
-                            }
-                        })
-                });
-            }
-            return layer;
+            return Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer();
         },
         /**
          * @param {Number} degrees
@@ -405,74 +328,27 @@
          * @param {(OpenLayers.Feature.Vector|ol.Feature)} feature
          */
         _startDrag: function(feature) {
-            // Neither ol2 nor ol4 controls do not properly support outside feature updates.
+            // OpenLayers controls do not properly support outside feature updates.
             // They have APIs for this, but they are buggy in different ways
             // => for both engines, always dispose and recreate
             this._endDrag();
-            if (Mapbender.mapEngine.code === 'ol2') {
-                if (this.control) {
-                    // dispose
-                    this.map.map.olMap.removeControl(this.control);
-                }
-                // create and activate
-                this.control = this._createDragRotateControlOl2();
-                var entry = this._getFeatureEntry(feature);
-                this.map.map.olMap.addControl(this.control);
-                this.control.setFeature(feature, {rotation: -entry.rotationBias});
-                this.control.activate();
-            } else {
-                if (this.control) {
-                    // dispose
-                    this.map.getModel().olMap.removeInteraction(this.control);
-                    this.control.dispose();
-                }
-                // create and activate
-                this.control = this._createDragRotateControlOl4();
-                this.map.getModel().olMap.addInteraction(this.control);
-                this.control.setActive(true);
-                this.control.select(feature);
+            if (this.control) {
+                // dispose
+                this.map.getModel().olMap.removeInteraction(this.control);
+                this.control.dispose();
             }
+            // create and activate
+            this.control = this._createDragRotateControl();
+            this.map.getModel().olMap.addInteraction(this.control);
+            this.control.setActive(true);
+            this.control.select(feature);
         },
         _endDrag: function() {
             if (this.control) {
-                if (Mapbender.mapEngine.code === 'ol2') {
-                    // Call twice to work around incomplete unsetFeature cleanup when
-                    // control is still active
-                    this.control.unsetFeature();
-                    this.control.unsetFeature();
-                    this.control.deactivate();
-                } else {
-                    this.control.setActive(false);
-                }
+                this.control.setActive(false);
             }
         },
-        _createDragRotateControlOl2: function() {
-            var self = this;
-            var control = new OpenLayers.Control.TransformFeature(this.layer, {
-                renderIntent: 'transform',
-                rotationHandleSymbolizer: 'rotate',
-                rotate: this.options.rotatable,
-                layer: this.layer
-            });
-            control.events.on({
-                'transform': function(data) {
-                    /** @this {OpenLayers.Control.TransformFeature} */
-                    var entry = self._getFeatureEntry(this.feature);
-                    if (data.rotation) {
-                        // per-event rotation is INCREMENTAL (delta on top of previous event)
-                        self._handleControlRotation(entry.tempRotation - data.rotation);
-                    }
-                },
-                'transformcomplete': function() {
-                    /** @this {OpenLayers.Control.TransformFeature} */
-                    var entry = self._getFeatureEntry(this.feature);
-                    entry.rotationBias += entry.tempRotation;
-                    entry.tempRotation = 0;
-                }
-            });
-            return control;
-        },
-        _createDragRotateControlOl4: function() {
+        _createDragRotateControl: function() {
             var self = this;
             var interaction = new ol.interaction.Transform({
                 translate: true,
@@ -634,29 +510,13 @@
             // when we submit both
             delete jobData['rotation'];
             var overview = this._collectOverview();
-            var extentFeature;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                extentFeature = this.feature.geometry.components[0].components.map(function(component) {
-                    return {
-                        x: component.x,
-                        y: component.y
-                    };
+            var flatCoords = this.feature.getGeometry().getFlatCoordinates();
+            var extentFeature = [];
+            for (var c = 0; c < flatCoords.length; c += 2) {
+                extentFeature.push({
+                    x: flatCoords[c],
+                    y: flatCoords[c + 1]
                 });
-                // Extracted extent feature is orderer top left => top right => bottom right => bottom left
-                // Adjust to print backend expected order bottom left => top left etc (used for coordinates display in certain templates)
-                // see https://github.com/mapbender/mapbender/issues/1280
-                extentFeature.pop();    // remove duplicated "finishing coordinate"
-                extentFeature.splice(0, 0, extentFeature.pop());    // reorder to start with bottom left
-                extentFeature.push(extentFeature[0]);   // re-add "finishing coordinate" duplicate
-            } else {
-                var flatCoords = this.feature.getGeometry().getFlatCoordinates();
-                extentFeature = [];
-                for (var c = 0; c < flatCoords.length; c += 2) {
-                    extentFeature.push({
-                        x: flatCoords[c],
-                        y: flatCoords[c + 1]
-                    });
-                }
             }
             var mapDpi = (this.map.options || {}).dpi || 72;
             _.assign(jobData, {

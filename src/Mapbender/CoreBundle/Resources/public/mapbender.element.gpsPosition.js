@@ -50,7 +50,7 @@
                 this.activate();
             }
         },
-        _getMarkerFeatures4: function (position, accuracy) {
+        _getMarkerFeatures: function (position, accuracy) {
             var model = this.map.model,
                 upm = model.getProjectionUnitsPerMeter()
             ;
@@ -88,11 +88,7 @@
         _showLocation: function (position, accuracy) {
             var olmap = this.map.map.olMap;
             var features;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                features = this._getMarkerFeatures(position, accuracy);
-            } else {
-                features = this._getMarkerFeatures4(position, accuracy);
-            }
+            features = this._getMarkerFeatures(position, accuracy);
             this.layer.clear();
             this.layer.addNativeFeatures([features.point]);
             if (features.circle) {
@@ -109,45 +105,6 @@
                 }
             }
             this.firstPosition = false;
-        },
-        /**
-         *
-         * @param {OpenLayers.LonLat} position
-         * @param {number} accuracy in meters
-         * @return {Object<String, OpenLayers.Feature.Vector>}
-         * @private
-         */
-        _getMarkerFeatures: function(position, accuracy) {
-            var centerPoint = new OpenLayers.Geometry.Point(position.lon, position.lat);
-            var features = {
-                point: new OpenLayers.Feature.Vector(centerPoint, null, {
-                    strokeColor:   "#ff0000",
-                    strokeWidth:   3,
-                    strokeOpacity: 1,
-                    fillOpacity:   0,
-                    pointRadius:   10
-                })
-            };
-            if (accuracy) {
-                var metricProjection = new OpenLayers.Projection('EPSG:900913');
-                var currentProj = this.map.map.olMap.getProjectionObject();
-                var metricOrigin = centerPoint.clone().transform(currentProj, metricProjection);
-                var circleGeom = OpenLayers.Geometry.Polygon.createRegularPolygon(
-                    metricOrigin,
-                    accuracy / 2,
-                    40,
-                    0
-                );
-                circleGeom = circleGeom.transform(metricProjection, currentProj);
-
-                features.circle = new OpenLayers.Feature.Vector(circleGeom, null, {
-                    fillColor: '#FFF',
-                    fillOpacity: 0.5,
-                    strokeWidth: 1,
-                    strokeColor: '#FFF'
-                });
-            }
-            return features;
         },
         /**
          * Toggle GPS positioning

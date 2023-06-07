@@ -51,17 +51,10 @@
                 return false;
             }
 
-            switch (Mapbender.mapEngine.code) {
-                default:
-                    this._initAsOl4Control(layers);
-                    break;
-                case 'ol2':
-                    this._initAsOl2Control(layers);
-                    break;
-            }
+            this._initAsControl(layers);
             $(this.mbMap.element).bind('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
         },
-        _initAsOl4Control: function(layers) {
+        _initAsControl: function(layers) {
             var viewportId = 'mb-overview-' + this.element.attr('id') + '-viewport';
             var $viewport = $('.overviewContainer', this.element);
             $('.toggleOverview', this.element).on('click', function() {
@@ -108,12 +101,6 @@
                 self.overview.render();
             });
         },
-        _initAsOl2Control: function(layers) {
-            this.overview = this._createOverviewControl(layers);
-            if (this.overview) {
-                this.mbMap.map.olMap.addControl(this.overview);
-            }
-        },
         _createOverviewControl: function(layers) {
             var projection = this.mbMap.getModel().getCurrentProjectionCode();
             var maxExtent = this.mbMap.map.olMap.maxExtent;
@@ -125,7 +112,7 @@
                 layers: layers,
                 div: $('.overviewContainer', this.element).get(0),
                 size: new OpenLayers.Size(this.options.width, this.options.height),
-                // OL2 concatenates the given class with prefix "olControlOverviewMap"
+                // OL concatenates the given class with prefix "olControlOverviewMap"
                 // When using icon class alone, must lead with a space
                 minRectDisplayClass: 'RectReplacement fa fas fa-crosshairs',
                 mapOptions: {
@@ -186,14 +173,15 @@
         },
         _onMbMapSrsChanged: function(event, data) {
             try {
-                switch (Mapbender.mapEngine.code) {
-                    default:
-                        this._changeSrs4(event, data);
-                        break;
-                    case 'ol2':
-                        this._changeSrs2(event, data);
-                        break;
-                }
+                var ovMap = this.overview.getOverviewMap();
+                var properties = ovMap.getProperties();
+                properties.view = new ol.View({
+                  projection: data.to,
+                  center: this.mbMap.model.olMap.getView().getCenter(),
+                  extent: this.mbMap.model.getMaxExtent(),
+                  resolution: this.mbMap.model.olMap.getView().getResolution()
+                });
+                ovMap.setProperties(properties);
             } catch (e) {
                 console.error("Overview srs change failed", e);
             }
@@ -204,18 +192,12 @@
                 changeAxis: false
             };
             var center, height;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                var centerLl = this.overview.ovmap.getCenter();
-                printData.center = {x: centerLl.lon, y: centerLl.lat};
-                printData.height = Math.abs(this.overview.ovmap.getExtent().getHeight())
-            } else {
-                var extentArray = this.overview.getOverviewMap().getView().calculateExtent();
-                printData.center = {
-                    x: 0.5 * (extentArray[0] + extentArray[2]),
-                    y: 0.5 * (extentArray[1] + extentArray[3])
-                };
-                printData.height = Math.abs(extentArray[3] - extentArray[1]);
-            }
+            var extentArray = this.overview.getOverviewMap().getView().calculateExtent();
+            printData.center = {
+                x: 0.5 * (extentArray[0] + extentArray[2]),
+                y: 0.5 * (extentArray[1] + extentArray[3])
+            };
+            printData.height = Math.abs(extentArray[3] - extentArray[1]);
             var extent = {
                 bottom: printData.center.y - 0.5 * printData.height,
                 top: printData.center.y + 0.5 * printData.height,
@@ -241,63 +223,6 @@
             }
             return printData.layers.length && printData || null;
         },
-        _changeSrs2: function(event, data) {
-            /**
-             * @type {null|OpenLayers.Map}
-             */
-            var ovMap = this.overview.ovmap;
-            var oldProj = ovMap.getProjectionObject();
-            var newCenter = ovMap.getCenter().clone().transform(oldProj, data.to);
-            // NOTE: this extent is already transformed
-            var newMaxExtent = this.mbMap.model.map.olMap.maxExtent || null;
-            if (newMaxExtent) {
-                newMaxExtent = newMaxExtent.clone();
-            }
-
-            var baseLayer = ovMap.layers[0];
-            var layerUpdateOrder = ovMap.layers.filter(function(l) {
-                return ovMap.baseLayer !== l;
-            }).concat(ovMap.layers.filter(function(l) {
-                if (ovMap.baseLayer === l) {
-                    baseLayer = l;
-                    return true;
-                } else {
-                    return false;
-                }
-            }));
-            var layerOptions = {
-                projection: data.to
-            };
-            if (newMaxExtent) {
-                layerOptions.maxExtent = newMaxExtent;
-            }
-            try {
-                for (var lix = 0; lix < layerUpdateOrder.length; ++lix) {
-                    var layer = layerUpdateOrder[lix];
-                    layer.addOptions(layerOptions);
-                }
-                ovMap.displayProjection = baseLayer.projection;
-                ovMap.projection = baseLayer.projection;
-                ovMap.maxExtent = baseLayer.maxExtent;
-                ovMap.units = baseLayer.units;
-                ovMap.setCenter(newCenter, null, false, true);
-                this.overview.update();
-            } catch (e) {
-                console.error("Overview srs change failed", e);
-            }
-        }
-        ,
-        _changeSrs4: function(event, data) {
-            var ovMap = this.overview.getOverviewMap();
-            var properties = ovMap.getProperties();
-            properties.view = new ol.View({
-              projection: data.to,
-              center: this.mbMap.model.olMap.getView().getCenter(),
-              extent: this.mbMap.model.getMaxExtent(),
-              resolution: this.mbMap.model.olMap.getView().getResolution()
-            });
-            ovMap.setProperties(properties);
-        }
     });
 
 })(jQuery);

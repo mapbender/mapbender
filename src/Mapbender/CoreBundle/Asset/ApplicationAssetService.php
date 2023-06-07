@@ -211,7 +211,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
-                    "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
+                    "@MapbenderCoreBundle/Resources/public/mapbender.model.js",
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',

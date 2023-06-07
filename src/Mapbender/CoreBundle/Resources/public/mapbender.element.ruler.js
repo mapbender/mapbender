@@ -31,7 +31,7 @@
                 Mapbender.checkTarget('mbRuler');
             });
         },
-        _createControl4: function () {
+        _createControl: function () {
             const source = this.layer.getNativeLayer().getSource();
             const self = this;
 
@@ -112,66 +112,11 @@
             }
             return style;
         },
-        _createControl: function () {
-            var nVertices = 1;
-            var self = this;
-            var handlerClass, validateEventGeometry;
-            if (this.options.type === 'area') {
-                handlerClass = OpenLayers.Handler.Polygon;
-                validateEventGeometry = function (event) {
-                    // OpenLayers 2 Polygon Handler can create degenerate linear rings with too few components, and calculate a (very
-                    // small) area for them. Ignore these cases.
-                    return event.geometry.components[0].components.length >= 4;
-                }
-            } else {
-                handlerClass = OpenLayers.Handler.Path;
-                validateEventGeometry = function (event) {
-                    return event.geometry.components.length >= 2;
-                }
-            }
-
-            var control = new OpenLayers.Control.Measure(handlerClass, {
-                persist: true,
-                immediate: true,
-                displaySystemUnits: {
-                    metric: ['m']
-                },
-                geodesic: true
-            });
-
-            control.events.on({
-                'scope': this,
-                'measure': function (event) {
-                    self._handleFinal(event);
-                },
-                'measurepartial': function (event) {
-                    if (!validateEventGeometry(event)) {
-                        return;
-                    }
-                    var nVerticesNow = event.geometry.components.length;
-                    if (nVerticesNow <= 2) {
-                        self._reset();
-                    }
-                    if (nVerticesNow !== nVertices) {
-                        nVertices = nVerticesNow;
-                        return self._handlePartial(event);
-                    } else {
-                        return self._handleModify(event);
-                    }
-                }
-            });
-
-            return control;
-        },
         _setup: function (mbMap) {
             var self = this;
             this.mapModel = mbMap.getModel();
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            if (Mapbender.mapEngine.code === 'ol2') {
-                this.control = this._createControl();
-            } else {
-                this.control = this._createControl4();
-            }
+            this.control = this._createControl();
             this.container = $('<div/>');
             this.help = $('<p/>').text(Mapbender.trans(this.options.help));
             this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
@@ -192,34 +137,15 @@
             this.activate(callback);
         },
         _toggleControl: function (state) {
-            if (Mapbender.mapEngine.code === 'ol2') {
-                if (state) {
-                    this.mapModel.olMap.addControl(this.control);
-                    this.control.activate();
-                    this.layer.customizeStyle({
-                        fontSize: 9,
-                        labelAlign: 'cm',
-                        labelXOffset: 10,
-                        label: function (feature) {
-                            return feature.attributes['area'];
-                        }
-                    });
-                    this.control.handler.layer.styleMap = this.layer.getNativeLayer().styleMap;
-                } else {
-                    this.control.deactivate();
-                    this.mapModel.olMap.removeControl(this.control);
-                }
+            if (state) {
+                this.mapModel.olMap.addInteraction(this.control);
+                this.control.setActive(true);
+                this.layer.clear();
+                this.layer.show();
             } else {
-                if (state) {
-                    this.mapModel.olMap.addInteraction(this.control);
-                    this.control.setActive(true);
-                    this.layer.clear();
-                    this.layer.show();
-                } else {
-                    this.control.setActive(false);
-                    this.mapModel.olMap.removeInteraction(this.control);
-                    this.layer.hide();
-                }
+                this.control.setActive(false);
+                this.mapModel.olMap.removeInteraction(this.control);
+                this.layer.hide();
             }
         },
         activate: function (callback) {
@@ -305,13 +231,12 @@
             this.total.text(measure);
             if (measure && this.options.type === 'area') {
                 var feature = event.feature || event.object.handler.polygon;
-                this._updateAreaLabel(feature, measure || '');
             }
         },
         _getMeasureFromEvent: function (event) {
             var measure;
             if (!event.measure && event.feature) {
-                measure = this._calculateFeatureSizeOl4(event.feature, this.options.type);
+                measure = this._calculateFeatureSize(event.feature, this.options.type);
             } else {
                 measure = event.measure;
             }
@@ -320,7 +245,7 @@
             }
             return this._formatMeasure(measure);
         },
-        _calculateFeatureSizeOl4: function (feature, type) {
+        _calculateFeatureSize: function (feature, type) {
             /** @type {ol.geom.Geometry} */
             var geometry = feature.getGeometry();
             var calcOptions = {
@@ -336,17 +261,6 @@
                 // fall through to area
                 case 'area':
                     return sphereNamespace.getArea(geometry, calcOptions);
-            }
-        },
-        /**
-         * @param {(ol.Feature|OpenLayers.Feature.Vector)} feature
-         * @param {String} text
-         * @private
-         */
-        _updateAreaLabel: function (feature, text) {
-            if (Mapbender.mapEngine.code === 'ol2') {
-                feature.attributes['area'] = text;
-                feature.layer.redraw();
             }
         },
 

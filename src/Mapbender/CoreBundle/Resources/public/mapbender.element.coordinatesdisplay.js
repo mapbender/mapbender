@@ -41,44 +41,7 @@
             if (isDeg) {
                 numDigits += 5;
             }
-            switch (Mapbender.mapEngine.code) {
-                default:
-                    this._resetOl4(numDigits);
-                    break;
-                case 'ol2':
-                    this._resetOl2(numDigits);
-                    break;
-            }
-        },
-        _resetOl2: function(numDigits) {
-            var controlOptions = {
-                emptyString: this.options.empty,
-                numDigits: numDigits,
-                prefix: this.options.prefix,
-                separator: this.options.separator,
-                suffix: this.options.suffix
-            };
-            if (this.options.formatoutput && this.options.displaystring) {
-                // Undocumented / unassignable legacy option combination doing ~template replacement
-                var template = this.options.displaystring;
-                controlOptions.element = this.element.get(0);
-                // Monkey-patch formatOutput
-                // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Control/MousePosition.js#L208
-                controlOptions.formatOutput = function (pos) {
-                    return template
-                        .replace("$lon$", pos.lon.toFixed(numDigits))
-                        .replace("$lat$", pos.lat.toFixed(numDigits))
-                    ;
-                };
-            } else {
-                controlOptions.element = $('.display-area', this.element).get(0);
-            }
-            if (this.control) {
-                this.mbMap.map.olMap.removeControl(this.control);
-                this.control = null;
-            }
-            this.control = new OpenLayers.Control.MousePosition(controlOptions);
-            this.mbMap.map.olMap.addControl(this.control);
+            this._resetOl4(numDigits);
         },
         _resetOl4: function(numDigits) {
             var model = this.mbMap.getModel();

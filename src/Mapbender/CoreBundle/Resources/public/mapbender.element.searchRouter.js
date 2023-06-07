@@ -167,11 +167,7 @@
 
             $('.search-results', this.element).empty();
             var route = this.getCurrentRoute();
-            if (Mapbender.mapEngine.code === 'ol2') {
-                this.highlightLayer.getNativeLayer().styleMap = this._createStyleMap(route.results.styleMap);
-            } else {
-                this.featureStyles = this._createStyleMap4(route.results.styleMap);
-            }
+            this.featureStyles = this._createStyleMap(route.results.styleMap);
         },
 
         /**
@@ -397,14 +393,7 @@
                 }
                 this.currentFeature = feature;
             }
-            if (Mapbender.mapEngine.code === 'ol2') {
-                if (feature.layer) {
-                    // use built-in named "renderIntent" mechanism
-                    feature.layer.drawFeature(feature, style);
-                }
-            } else {
-                feature.setStyle(this.featureStyles[style]);
-            }
+            feature.setStyle(this.featureStyles[style]);
         },
         _showResultState: function (results) {
             var widget = this;
@@ -427,7 +416,7 @@
                 counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
         },
-        _createStyleMap4: function (styles) {
+        _createStyleMap: function (styles) {
             function _createSingleStyle(options) {
                 var fill = new ol.style.Fill({
                     color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
@@ -452,15 +441,6 @@
                 select: _createSingleStyle(styles.select),
                 temporary: _createSingleStyle(styles.temporary)
             }
-        },
-        _createStyleMap: function (styles) {
-            var s = styles || OpenLayers.Feature.Vector.style;
-
-            _.defaults(s['default'], OpenLayers.Feature.Vector.style['default']);
-
-            return new OpenLayers.StyleMap(s, {
-                extendDefault: true
-            });
         },
 
         /**

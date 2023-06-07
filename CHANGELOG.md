@@ -1,7 +1,7 @@
 ## next major release
 Breaking changes (for details on migration process see UPGRADING.md):
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
-  automatically use the recent OpenLayers 7 implementation 
+  automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 
 ## next bugfix release
 Bugfixes:

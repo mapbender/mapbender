@@ -4,8 +4,22 @@ OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now remove
 already, you should not expect breaking changes. You can now safely remove all version checks for `Mapbender.mapEngine.code` 
 (frontend widgets) and `$application->getMapEngineCode()` (backend). The property/method still exist, but will always return `current`.
 
-If you were still using OpenLayers 2, update your elements to be compatible with them. Refer to the 
+If you were still using OpenLayers 2, update your elements to be compatible with the current OpenLayers version. Refer to the 
 [OpenLayers upgrade notes](https://github.com/openlayers/openlayers/blob/main/changelog/upgrade-notes.md) for support.
+
+The following methods have been renamed (only relevant if you overwrite or call them in a custom element extending from it):
+- **`mapbender.element.gpsPosition`**: `_getMarkerFeatures4` => `_getMarkerFeatures`
+- **`mapbender.element.overview`**: `_initAsOl4Control` => `_initAsControl`
+- **`mapbender.element.overview`**: `_changeSrs4` integrated in `_onMbMapSrsChanged`
+- **`mapbender.element.ruler`**: `_createControl4` => `_createControl`
+- **`mapbender.element.ruler`**: `_calculateFeatureSizeOl4` => `_calculateFeatureSize`
+- **`mapbender.element.scalebar`**: `_setupOl4` integrated in `_setup`
+- **`mapbender.element.imageExport`**: `_collectGeometryLayers4` => `_collectGeometryLayers`
+- **`mapbender.element.printClient`**: `_createDragRotateControlOl4` => `_createDragRotateControl`
+- **`mapbender.element.searchRouter`**: `_createStyleMap4` => `_createStyleMap`
+
+The following files have been renamed:
+- `mapbender.model.ol4.js` => `mapbender.model.js` 
 
 ## v3.3.x
 ### Removed Component\Application
