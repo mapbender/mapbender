@@ -55,7 +55,6 @@
         "doctrine/orm": "^2.15",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2",
-        "sensio/framework-extra-bundle": "^6",
         "shuchkin/simplexlsxgen": "^1.3",
 
         "setasign/fpdf": "^1.8",
