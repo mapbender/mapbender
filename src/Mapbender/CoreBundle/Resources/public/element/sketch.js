@@ -104,18 +104,7 @@
                 }
             });
 
-            if (Mapbender.mapEngine.code === 'ol2') {
-                // OpenLayers 2: keep reusing single edit control
-                this.editControl = this._createEditControl(this.layer.getNativeLayer());
-                // Native "sketchcomplete" event is OpenLayers 2 only
-                this.layer.getNativeLayer().events.on({
-                    afterfeaturemodified: function() {
-                        self.editing_ = null;
-                    }
-                });
-            } else {
-                this.editControl = null;
-            }
+            this.editControl = null;
             this.setupMapEventListeners();
             this._trigger('ready');
             if (this.checkAutoOpen()) {
@@ -129,11 +118,6 @@
         },
         defaultAction: function(callback){
             this.activate(callback);
-        },
-        _createEditControl: function(olLayer) {
-            var control = new OpenLayers.Control.ModifyFeature(olLayer, {standalone: true, active: false});
-            olLayer.map.addControl(control);
-            return control;
         },
         activate: function(callback){
             this.callback = callback ? callback : null;
@@ -272,17 +256,12 @@
             $row.addClass('current-row');
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var formScope;
-            if (Mapbender.mapEngine.code === 'ol2') {
-                this.editControl.selectFeature(feature);
-                this.editControl.activate();
-            } else {
-                // OpenLayer 4 edit control does not support re-selecting a single feature
-                // => Always create a new one
-                this.editControl = new ol.interaction.Modify({
-                    features: new ol.Collection([feature])
-                });
-                this.mbMap.getModel().olMap.addInteraction(this.editControl);
-            }
+            // OpenLayer 4 edit control does not support re-selecting a single feature
+            // => Always create a new one
+            this.editControl = new ol.interaction.Modify({
+                features: new ol.Collection([feature])
+            });
+            this.mbMap.getModel().olMap.addInteraction(this.editControl);
             if (this.useDialog_) {
                 formScope = this.element;
             } else {
@@ -321,13 +300,9 @@
         },
         _endEdit: function() {
             if (this.editControl) {
-                if (Mapbender.mapEngine.code === 'ol2') {
-                    this.editControl.deactivate();
-                } else {
-                    this.mbMap.getModel().olMap.removeInteraction(this.editControl);
-                    this.editControl.dispose();
-                    this.editControl = null;
-                }
+                this.mbMap.getModel().olMap.removeInteraction(this.editControl);
+                this.editControl.dispose();
+                this.editControl = null;
             }
             $('.geometry-item', this.element).removeClass('current-row');
             this.editing_ = null;
@@ -419,11 +394,7 @@
          * engine-specific
          */
         _getFeatureAttribute: function(feature, name) {
-            if (Mapbender.mapEngine.code === 'ol2') {
-                return feature.attributes[name];
-            } else {
-                return feature.get(name);
-            }
+            return feature.get(name);
         },
         /**
          * @param {*} feature
@@ -433,11 +404,7 @@
          * engine-specific
          */
         _setFeatureAttribute: function(feature, name, value) {
-            if (Mapbender.mapEngine.code === 'ol2') {
-                feature.attributes[name] = value;
-            } else {
-                feature.set(name, value);
-            }
+            feature.set(name, value);
         },
         _onSrsChange: function(event, data) {
             this._endEdit();

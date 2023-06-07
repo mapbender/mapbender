@@ -116,18 +116,7 @@ class ZoomBar extends AbstractElementService implements FloatingElement
 
     protected static function getComponentBlacklist(Element $element)
     {
-        $blackList = array();
-        $application = $element->getApplication();
-        if ($application) {
-            switch ($application->getMapEngineCode()) {
-                case Application::MAP_ENGINE_OL2:
-                    $blackList[] = 'rotation';
-                    break;
-                default:
-                    break;
-            }
-        }
-        return $blackList;
+        return array();
     }
 
     /**

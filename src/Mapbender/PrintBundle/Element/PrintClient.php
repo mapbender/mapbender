@@ -93,8 +93,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     public function getRequiredAssets(Element $element)
     {
-        $assets = array(
+        return array(
             'js' => array(
+                '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js',
                 '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
                 '@MapbenderPrintBundle/Resources/public/element/printclient.js',
@@ -108,10 +109,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 'mb.print.imageexport.info.*',
             ),
         );
-        if ($element->getApplication()->getMapEngineCode() !== Application::MAP_ENGINE_OL2) {
-            array_unshift($assets['js'], '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js');
-        }
-        return $assets;
     }
 
     /**

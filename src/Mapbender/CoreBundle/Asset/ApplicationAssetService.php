@@ -186,32 +186,10 @@ class ApplicationAssetService
      */
     public function getMapEngineAssetReferences(Application $application, $type)
     {
-        $engineCode = $application->getMapEngineCode();
-        switch ("{$engineCode}-{$type}") {
-            case 'ol2-js':
-                $commonAssets = array(
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
-                    '@MapbenderCoreBundle/Resources/public/proj4js/proj4js-compressed.js',
-                    '@MapbenderCoreBundle/Resources/public/init/projection.js',
-                    '/../vendor/mapbender/mapquery/lib/openlayers/OpenLayers.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl2.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl2.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl2.js',
-                );
-                break;
+        switch ($type) {
             default:
-                $commonAssets = array();
-                break;
-            case 'ol4-js':  // legacy identifier
-            case Application::MAP_ENGINE_CURRENT . '-js':
+                return array();
+            case 'js':
                 if (!$this->debug) {
                     $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
@@ -233,19 +211,17 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
-                    "@MapbenderCoreBundle/Resources/public/mapbender.model.ol4.js",
+                    "@MapbenderCoreBundle/Resources/public/mapbender.model.js",
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
                 );
                 break;
-            case 'ol4-css':
-            case Application::MAP_ENGINE_CURRENT . '-css':
+            case 'css':
                 return array(
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
                 );
-                break;
         }
         return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
     }

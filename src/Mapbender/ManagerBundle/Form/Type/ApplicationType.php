@@ -10,13 +10,6 @@ use Symfony\Component\Validator\Constraints;
 
 class ApplicationType extends AbstractType
 {
-    protected $forcedMapEngine;
-
-    public function __construct($forcedMapEngine)
-    {
-        $this->forcedMapEngine = $forcedMapEngine;
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -82,23 +75,6 @@ class ApplicationType extends AbstractType
             ->add('removeScreenShot', 'Symfony\Component\Form\Extension\Core\Type\HiddenType',array(
                 'mapped' => false,
             ))
-        ;
-        if ($this->forcedMapEngine) {
-            $builder->add('map_engine_code', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
-                'empty_data' => $this->forcedMapEngine,
-            ));
-        } else {
-            $builder->add('map_engine_code', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'choices' => array(
-                    'mb.manager.admin.application.map_engine_code.current' => Application::MAP_ENGINE_CURRENT,
-                    'mb.manager.admin.application.map_engine_code.ol2' => Application::MAP_ENGINE_OL2,
-                ),
-                'label' => 'mb.manager.admin.application.map_engine_code',
-                'required' => true,
-                'empty_data' => Application::MAP_ENGINE_OL2,
-            ));
-        }
-        $builder
             ->add('persistentView', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.application.persistentView',

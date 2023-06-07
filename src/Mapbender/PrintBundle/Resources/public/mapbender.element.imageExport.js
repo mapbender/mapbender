@@ -96,15 +96,7 @@
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
-            var geometryLayers;
-            switch (Mapbender.mapEngine.code) {
-                default:
-                    geometryLayers = this._collectGeometryLayers4();
-                    break;
-                case 'ol2':
-                    geometryLayers = this._collectGeometryAndMarkerLayers();
-                    break;
-            }
+            var geometryLayers = this._collectGeometryLayers();
             return {
                 layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.width,
@@ -196,10 +188,7 @@
         _filterFeature: function(feature) {
             // onScreen throws an error if geometry is not populated, see
             // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
-            if (!feature.geometry || !feature.onScreen(true)) {
-                return false;
-            }
-            return true;
+            return feature.geometry && feature.onScreen(true);
         },
         /**
          * Extracts and preprocesses the geometry from a feature for export backend consumption.
@@ -267,7 +256,7 @@
                 geometries: geometries.filter(postFilter)
             };
         },
-        _collectGeometryLayers4: function() {
+        _collectGeometryLayers: function() {
             var vectorLayers = [];
             // For (nested) group layers, visibility must be checked at
             // each level.
@@ -344,20 +333,6 @@
                 opacity: layer.opacity,
                 markers: markerData
             };
-        },
-        _collectGeometryAndMarkerLayers: function() {
-            // Iterating over all vector layers, not only the ones known to MapQuery
-            var allOlLayers = this.map.map.olMap.layers;
-            var layerDataOut = [];
-            for (var i = 0; i < allOlLayers.length; ++i) {
-                var olLayer = allOlLayers[i];
-                if (this._filterGeometryLayer(olLayer)) {
-                    layerDataOut.push(this._extractGeometryLayerData(olLayer));
-                } else if (this._filterMarkerLayer(olLayer)) {
-                    layerDataOut.push(this._extractMarkerLayerData(olLayer));
-                }
-            }
-            return layerDataOut;
         },
         /**
          * Convert potentially absolute URL to web-local url pointing somewhere into bundles/

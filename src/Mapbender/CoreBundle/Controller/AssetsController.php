@@ -61,9 +61,6 @@ class AssetsController extends YamlApplicationAwareController
             $appModificationTs = $this->containerTimestamp;
         } else {
             $source = $this->getApplicationEntity($slug);
-            if ($type === 'css' || $type === 'js') {
-                $cacheFile .= ".{$source->getMapEngineCode()}";
-            }
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
         $cacheFile .= ".{$type}";

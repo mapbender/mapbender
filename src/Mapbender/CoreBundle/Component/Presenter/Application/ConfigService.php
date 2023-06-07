@@ -91,7 +91,7 @@ class ConfigService
             'publicOptions' => $entity->getPublicOptions(),
             'slug'          => $entity->getSlug(),
             'debug' => $this->debug,
-            'mapEngineCode' => $entity->getMapEngineCode(),
+            'mapEngineCode' => 'current',
             'persistentView' => $entity->getPersistentView(),
         );
     }

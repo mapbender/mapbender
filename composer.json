@@ -40,8 +40,7 @@
         "components/bootstrap": "^3 || ^4",
         "components/jqueryui": "^1",
 
-        "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7",
-        "mapbender/mapquery": "1.x"
+        "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7"
     },
     "provide": {
         "mapbender/fom": "3.3",

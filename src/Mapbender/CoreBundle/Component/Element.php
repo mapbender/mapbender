@@ -339,7 +339,7 @@ abstract class Element extends MinimalBound
     }
 
     /**
-     * Return map engine code ('ol4' or 'mq-ol2'). Convenience getter.
+     * Return map engine code (currently only 'current')
      *
      * @return string
      */

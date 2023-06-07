@@ -1,3 +1,8 @@
+## next major release
+Breaking changes (for details on migration process see UPGRADING.md):
+* Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
+  automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
+
 ## next bugfix release
 Bugfixes:
 * Zoom in application did not work when fixed zoom steps were active ([#1466](https://github.com/mapbender/mapbender/issues/1466), [PR#1472](https://github.com/mapbender/mapbender/pull/1472))

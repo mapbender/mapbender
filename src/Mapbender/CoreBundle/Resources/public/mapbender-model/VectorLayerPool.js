@@ -8,7 +8,7 @@ window.Mapbender.VectorLayerPool = (function() {
     /**
      * @param {MapEngine} engine
      * @param {(OpenLayers.Map|{ol.PluggableMap})} nativeMap
-     * @return {(VectorLayerPoolOl2|VectorLayerPoolOl4)}
+     * @return {(VectorLayerPoolOl4)}
      */
     VectorLayerPool.factory = function(engine, nativeMap) {
         var typeMap = VectorLayerPool.typeMap;

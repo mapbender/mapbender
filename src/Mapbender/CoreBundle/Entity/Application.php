@@ -33,7 +33,6 @@ class Application
     /** Databased application type */
     const SOURCE_DB = 2;
 
-    const MAP_ENGINE_OL2 = 'ol2';
     /** @deprecated; use MAP_ENGINE_CURRENT */
     const MAP_ENGINE_OL4 = 'ol4';
     const MAP_ENGINE_CURRENT = 'current';
@@ -78,7 +77,7 @@ class Application
     protected $template;
 
     /**
-     * @ORM\Column(type="string", length=15, nullable=false, options={"default": "ol2"})
+     * @ORM\Column(type="string", length=15, nullable=false, options={"default": "current"})
      * @var string|null
      */
     protected $map_engine_code = self::MAP_ENGINE_CURRENT;
@@ -644,9 +643,7 @@ class Application
     }
 
     /**
-     * Get the map engine code as a string. Currently only 'ol2'...
-     * ... 'ol4' work in progress
-     *
+     * Get the map engine code as a string.
      * @return string
      */
     public function getMapEngineCode()
@@ -676,7 +673,7 @@ class Application
      */
     public function setMapEngineCode($mapEngineCode)
     {
-        if ($mapEngineCode === 'ol4') {
+        if ($mapEngineCode === self::MAP_ENGINE_OL4) {
             $mapEngineCode = Application::MAP_ENGINE_CURRENT;
             @trigger_error("Engine code 'ol4' is deprecated, use {$mapEngineCode} instead", E_USER_DEPRECATED);
         }

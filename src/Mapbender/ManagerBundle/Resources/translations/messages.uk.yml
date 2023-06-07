@@ -165,9 +165,6 @@ mb:
           title: 'Назва URL'
         description: Опис
         template: Шаблон
-        map_engine_code: Механізм мапи
-        map_engine_code.ol2: OpenLayers 2 (legacy)
-        map_engine_code.current: OpenLayers 6
     source:
       serviceurl: 'Service URL-адреса сервісу'
       username: Ім''я користувача

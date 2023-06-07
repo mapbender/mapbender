@@ -28,8 +28,8 @@ $panelBorderColor: #888 !default;
   }
   .ol-overviewmap {
     button {
-      // OL4: renders a toggle button, which we delegate to for visibility
-      //      toggling, but we don't want to show it
+      // Open Layers renders a toggle button which we delegate to for visibility
+      // toggling, but we don't want to show it
       width: 0;
       padding: 0;
       border: 0;

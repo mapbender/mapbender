@@ -64,7 +64,7 @@
                 widget.activate();
             }
 
-            if (Mapbender.mapEngine.code !== 'ol2' && options.highlighting) {
+            if (options.highlighting) {
                 this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
                     style: this._createLayerStyle()

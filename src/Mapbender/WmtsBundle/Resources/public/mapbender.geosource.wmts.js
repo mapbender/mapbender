@@ -7,35 +7,6 @@ window.Mapbender.WmtsSource = (function() {
     WmtsSource.prototype = Object.create(Mapbender.WmtsTmsBaseSource.prototype);
     Object.assign(WmtsSource.prototype, {
         constructor: WmtsSource,
-        _initializeSingleCompatibleLayer: function(compatibleLayer, srsName) {
-            switch (Mapbender.mapEngine.code) {
-                default:
-                    return this._layerFactory(compatibleLayer, srsName);
-                case 'ol2':
-                    return this._layerFactoryOl2(compatibleLayer, srsName);
-            }
-        },
-        _layerFactoryOl2: function(compatibleLayer, srsName) {
-            var matrixSet = compatibleLayer.selectMatrixSet(srsName);
-            var options = this._getNativeLayerBaseOptions(compatibleLayer, srsName);
-            Object.assign(options, {
-                requestEncoding: 'REST',
-                style: false,
-                layer: compatibleLayer.options.identifier,
-                matrixSet: matrixSet.identifier,
-                matrixIds: matrixSet.tilematrices.map(function(matrix) {
-                    if (matrix.topLeftCorner) {
-                        return $.extend({}, matrix, {
-                            topLeftCorner: OpenLayers.LonLat.fromArray(matrix.topLeftCorner)
-                        });
-                    } else {
-                        return $.extend({}, matrix);
-                    }
-                })
-            });
-            var olLayer = new OpenLayers.Layer.WMTS(options);
-            return olLayer;
-        },
         _layerFactory: function(layer, srsName) {
             var matrixSet = layer.selectMatrixSet(srsName);
             var self = this;

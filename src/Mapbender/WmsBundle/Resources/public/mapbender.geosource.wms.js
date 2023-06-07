@@ -313,19 +313,3 @@ window.Mapbender.WmsSource = (function() {
     });
     return WmsSource;
 }());
-
-if(window.OpenLayers) {
-    /**
-     * This suppresses broken requests from MapQuery layers that get stuck with a
-     * constantly empty LAYERS=... param.
-     *
-     * @return {boolean} Whether the layer is in range or not
-     */
-    OpenLayers.Layer.WMS.prototype.calculateInRange = function(){
-        if(!this.params.LAYERS || !this.params.LAYERS.length) {
-            return false;
-        }
-        return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
-    }
-}
-
