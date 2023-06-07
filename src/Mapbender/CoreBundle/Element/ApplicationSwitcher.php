@@ -9,6 +9,7 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -109,7 +110,7 @@ class ApplicationSwitcher extends AbstractElementService
     protected function getApplicationChoices(Element $element)
     {
         // @todo: provide a combined yaml+db repository for Application entities
-        $dbRepository = $this->managerRegistry->getRepository('Mapbender\CoreBundle\Entity\Application');
+        $dbRepository = $this->managerRegistry->getRepository(Application::class);
 
         $currentApplication = $element->getApplication();
         $choices = array();

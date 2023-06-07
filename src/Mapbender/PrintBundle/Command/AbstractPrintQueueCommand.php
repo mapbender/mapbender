@@ -38,7 +38,7 @@ abstract class AbstractPrintQueueCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         parent::initialize($input, $output);
-        $this->repository = $this->managerRegistry->getRepository('MapbenderPrintBundle:QueuedPrintJob');
+        $this->repository = $this->managerRegistry->getRepository(QueuedPrintJob::class);
         $this->entityManager = $this->managerRegistry->getManager();
     }
 

@@ -79,7 +79,7 @@ class RegistrationController extends AbstractEmailProcessController
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
 
-            $groupRepository = $this->getDoctrine()->getRepository('FOMUserBundle:Group');
+            $groupRepository = $this->getDoctrine()->getRepository(Group::class);
             foreach ($this->groupTitles as $groupTitle) {
                 /** @var Group|null $group */
                 $group = $groupRepository->findOneBy(array(

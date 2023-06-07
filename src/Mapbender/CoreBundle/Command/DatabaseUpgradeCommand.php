@@ -62,7 +62,7 @@ class DatabaseUpgradeCommand extends Command
 
         /** @var EntityManager $em */
         $em = $this->managerRegistry->getManager();
-        $maps = $this->managerRegistry->getRepository('MapbenderCoreBundle:Element')->findBy(array(
+        $maps = $this->managerRegistry->getRepository(Element::class)->findBy(array(
             'class'=>'Mapbender\CoreBundle\Element\Map',
         ));
         $output->writeln('Updating map element configs');

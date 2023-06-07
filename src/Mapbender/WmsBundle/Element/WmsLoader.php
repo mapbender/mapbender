@@ -46,7 +46,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
                                 Importer $sourceImporter,
                                 $exampleUrl)
     {
-        $this->instanceRepository = $managerRegistry->getRepository('Mapbender\CoreBundle\Entity\SourceInstance');
+        $this->instanceRepository = $managerRegistry->getRepository(SourceInstance::class);
         $this->authorizationChecker = $authorizationChecker;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->sourceImporter = $sourceImporter;

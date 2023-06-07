@@ -28,7 +28,7 @@ class Map extends AbstractElementService
 
     public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+        $this->srsRepository = $managerRegistry->getRepository(SRS::class);
     }
 
     /**
