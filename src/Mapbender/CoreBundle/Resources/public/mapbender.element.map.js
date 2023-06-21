@@ -9,7 +9,8 @@
                 yoffset: -38
             },
             srsDefs: [],
-            layersets: []
+            layersets: [],
+            baseDpi: 96,
         },
         elementUrl: null,
         model: null,
@@ -109,11 +110,12 @@
         detectDpi_: function() {
             // Auto-calculate dpi from device pixel ratio, to maintain reasonable canvas quality
             // see https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio
-            // Avoid calculating dpi >= 1.5*96dpi to avoid pushing (Mapproxy) caches into a resolution
+            // Avoid calculating dpi >= 1.5* (baseDpi) dpi to avoid pushing (Mapproxy) caches into a resolution
             // with too low label font size.
-            // Also avoid calculating less than 96dpi, to never perform client-side upscaling of Wms images
-            var dpr = window.devicePixelRatio || 1;
-            return 96. * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
+            // Also avoid calculating less than (baseDpi) dpi, to never perform client-side upscaling of Wms images
+            const dpr = window.devicePixelRatio || 1;
+            const baseDpi = this.options.base_dpi || 96;
+            return baseDpi * Math.max(1, dpr / (1 +  Math.floor(dpr - 0.75)));
         },
         _comma_dangle_dummy: null
     });

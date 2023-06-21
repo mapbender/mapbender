@@ -4,6 +4,7 @@ Bugfixes:
 * Fix WMS configuration cannot be unserialized when updating from mapbender <3.2.4 versions in PHP >= 8.2 ([PR#1477](https://github.com/mapbender/mapbender/pull/1477))
 * Do not crash application after a layerset has been removed and the map element has not yet been saved ([PR#1482](https://github.com/mapbender/mapbender/pull/1482))
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
+* [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1485](https://github.com/mapbender/mapbender/pull/1485))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
 * [SearchRouter] Fix search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
 * [SearchRouter] Fix highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
