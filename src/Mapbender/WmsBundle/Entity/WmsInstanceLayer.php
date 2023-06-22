@@ -101,6 +101,13 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $priority;
 
     /**
+     * if set to true, info is not just disabled, but not available. If this is set to true, setting info to
+     * true is prevented. This is required for the case when the info was previously activated but not available
+     * anymore after a WMS update. The info status should then be resetted.
+     */
+    private ?bool $infoUnavailable = false;
+
+    /**
      * WmsInstanceLayer constructor.
      */
     public function __construct(SourceLoaderSettings $settings = null)
@@ -275,9 +282,14 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $info
      * @return WmsInstanceLayer
      */
-    public function setInfo($info)
+    public function setInfo($info, bool $force = false)
     {
-        $this->info = (bool) $info;
+        if ($this->infoUnavailable === true) {
+            $this->info = false;
+        } else {
+            $this->info = (bool) $info;
+            if ($force && !$info) $this->infoUnavailable = true;
+        }
         return $this;
     }
 
@@ -321,7 +333,12 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowinfo($allowinfo)
     {
-        $this->allowinfo = (bool) $allowinfo;
+        if ($this->infoUnavailable === true) {
+            $this->allowinfo = false;
+        } else {
+            $this->allowinfo = (bool) $allowinfo;
+        }
+
         return $this;
     }
 
@@ -521,7 +538,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         $this->setPriority($layerSource->getPriority());
 
         $queryable = !!$layerSource->getQueryable();
-        $this->setInfo($queryable);
+        $this->setInfo($queryable, true);
         $this->setAllowinfo($queryable);
         $instance->addLayer($this);
         if ($layerSource->getSublayer()->count() > 0) {
