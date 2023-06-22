@@ -146,7 +146,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             return proj.getUnits() || 'degrees';
         },
         getProjectionUnitsPerMeter: function(srsName) {
-            var proj = ol.proj.get(srsName);
+            var proj = this._getProj(srsName);
             return 1.0 / proj.getMetersPerUnit();
         },
         /**
@@ -267,8 +267,12 @@ window.Mapbender.MapEngineOl4 = (function() {
         _getProj: function(projOrSrsName, strict) {
             // ol.proj.get will happily accept an ol.proj instance :)
             var proj = ol.proj.get(projOrSrsName);
-            if (!proj && strict) {
-                throw new Error("Unsupported projection " + projOrSrsName.toString());
+            if (!proj) {
+                if (strict && !this.hasShownProjectionError) {
+                    this.hasShownProjectionError = true;
+                    Mapbender.error("Unsupported projection " + projOrSrsName.toString() + ", falling back to EPSG:4326. Check configuration of map element.");
+                }
+                proj = ol.proj.get("EPSG:4326");
             }
             if (proj && !proj.units_) {
                 proj.units_ = 'degrees';
