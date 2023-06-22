@@ -2,6 +2,7 @@
 namespace FOM\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Response;
+use Shuchkin\SimpleXLSXGen;
 
 /**
  * @author    Andriy Oblivantsev <eslider@gmail.com>
@@ -26,6 +27,9 @@ class ExportResponse extends Response
 
     /** Excel export type */
     const TYPE_XLS = 'xls';
+
+      /** Excel export type */
+    const TYPE_XLSX = 'xlsx';
 
     /** CSV export type */
     const TYPE_CSV = 'csv';
@@ -73,6 +77,13 @@ class ExportResponse extends Response
                     $this->setXls($data);
                 }
                 break;
+            
+            case self::TYPE_XLSX:
+                $this->setFileName($fileName.".xlsx");
+                if ($data) {
+                    $this->setXlsx($data);
+                }
+                break;
         }
 
         if($enableDownload){
@@ -108,6 +119,17 @@ class ExportResponse extends Response
     public function setXls(array &$data){
         $output = self::genXLS($data);
         $this->setData($output);
+    }
+
+     /**
+     *
+     * @param array $data
+     * @return void
+     */
+
+    public function setXlsx(array &$data){
+        $xlsx = SimpleXLSXGen::fromArray( $data );
+        $this->setData($xlsx);
     }
 
     /**
@@ -159,6 +181,9 @@ class ExportResponse extends Response
                 break;
             case self::TYPE_XLS:
                 $this->headers->add(array("Content-Type" => "application/vnd.ms-excel"));
+                break;
+            case self::TYPE_XLSX:
+                $this->headers->add(array("Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
                 break;
         }
         $this->type = $type;
