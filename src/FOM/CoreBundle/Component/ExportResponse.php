@@ -2,6 +2,7 @@
 namespace FOM\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Response;
+use Shuchkin\SimpleXLSXGen;
 
 /**
  * @author    Andriy Oblivantsev <eslider@gmail.com>
@@ -179,8 +180,10 @@ class ExportResponse extends Response
                 $this->headers->add(array('Content-Type' => 'text/csv;charset=' . self::UTF_16_LE));
                 break;
             case self::TYPE_XLS:
-            case self::TYPE_XLSX:
                 $this->headers->add(array("Content-Type" => "application/vnd.ms-excel"));
+                break;
+            case self::TYPE_XLSX:
+                $this->headers->add(array("Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
                 break;
         }
         $this->type = $type;
