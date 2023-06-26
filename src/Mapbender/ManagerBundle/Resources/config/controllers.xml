@@ -46,6 +46,7 @@
                  class="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  public="true">
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="translator" />
         </service>
     </services>
 </container>

@@ -69,6 +69,7 @@ mb:
     application:
       persistentView: Kartenzustand merken
     admin:
+      csrf_token_invalid: 'CSRF-Token ungültig.'
       sources: Datenquellen
       source:
         add: 'Datenquelle hinzufügen'
@@ -126,6 +127,9 @@ mb:
           confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'
         no_instance_added: 'Keine Instanz vorhanden'
         no_layer_added: 'Keine Ebene hinzugefügt'
+        max_input_vars_exceeded: 'PHP-Einstellung max_input_vars zu niedrig für die Anzahl an Layern in dieser Instanz.'
+        update_successful: 'Die Instanz wurde aktualisiert'
+        converted_to_shared: Die Instanz wurde zu einer freien Instanz umgewandelt
       template: Vorlage
       application:
         view: Anzeigen

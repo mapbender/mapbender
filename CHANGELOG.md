@@ -17,6 +17,7 @@ Bugfixes:
 * [SearchRouter] Search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
 * [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
 * [SearchRouter] Additional search properties were ignored ([#1474](https://github.com/mapbender/mapbender/issues/1474), [PR#1476](https://github.com/mapbender/mapbender/pull/1476))
+* [Manager] Show message indicating too low max_input_vars value when editing instance layers ([PR#1491](https://github.com/mapbender/mapbender/pull/1491))
 
 
 ## v3.3.4
