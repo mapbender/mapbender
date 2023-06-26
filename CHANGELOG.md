@@ -13,6 +13,7 @@ Bugfixes:
 * [Application Markup Cache] Added parameter `mapbender.markup_cache.include_session_id` (default false). For details see PR description. ([PR#1481](https://github.com/mapbender/mapbender/pull/1481))
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 * [FOM] Add support for xlsx file creation ([PR#1487] (https://github.com/mapbender/mapbender/pull/1487))
+* Add Multipoint Geometry to LayoutRendererGeoJson in PrintBundle ([PR#1490] (https://github.com/mapbender/mapbender/pull/1490))
 
 
 ## v3.3.4
