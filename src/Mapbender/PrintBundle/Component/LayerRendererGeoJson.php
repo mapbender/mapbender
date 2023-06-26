@@ -299,7 +299,7 @@ class LayerRendererGeoJson extends LayerRenderer
      */
     protected function drawPoint($canvas, $geometry)
     {
-        // promote to single-item MultiLineString and delegate
+        // promote to single-item MultiPoint and delegate
         $mPoint = array_replace($geometry, array(
             'type' => 'MultiPoint',
             'coordinates' => array($geometry['coordinates']),
