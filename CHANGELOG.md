@@ -3,6 +3,7 @@ Bugfixes:
 * Zoom in application did not work when fixed zoom steps were active ([#1466](https://github.com/mapbender/mapbender/issues/1466), [PR#1472](https://github.com/mapbender/mapbender/pull/1472))
 * Fix WMS configuration cannot be unserialized when updating from mapbender <3.2.4 versions in PHP >= 8.2 ([PR#1477](https://github.com/mapbender/mapbender/pull/1477))
 * Do not crash application after a layerset has been removed and the map element has not yet been saved ([PR#1482](https://github.com/mapbender/mapbender/pull/1482))
+* Correctly handle removal of GetFeatureInfo capability when refreshing sources ([#1480](https://github.com/mapbender/mapbender/issues/1480), [PR#1488](https://github.com/mapbender/mapbender/pull/1488))
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
 * [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
