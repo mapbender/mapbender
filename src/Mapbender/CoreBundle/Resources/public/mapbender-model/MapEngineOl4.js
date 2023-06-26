@@ -4,6 +4,8 @@ window.Mapbender.MapEngineOl4 = (function() {
         Mapbender.MapEngine.apply(this, arguments);
     }
     MapEngineOl4.prototype = Object.create(Mapbender.MapEngine.prototype);
+    MapEngineOl4.fallbackProjection = 'EPSG:4326';
+
     Object.assign(MapEngineOl4.prototype, {
         constructor: MapEngineOl4,
         mapModelFactory: function(mbMap) {
@@ -270,9 +272,9 @@ window.Mapbender.MapEngineOl4 = (function() {
             if (!proj) {
                 if (strict && !this.hasShownProjectionError) {
                     this.hasShownProjectionError = true;
-                    Mapbender.error("Unsupported projection " + projOrSrsName.toString() + ", falling back to EPSG:4326. Check configuration of map element.");
+                    Mapbender.error("Unsupported projection " + projOrSrsName.toString() + ", falling back to " + MapEngineOl4.fallbackProjection + ". Check configuration of map element.");
                 }
-                proj = ol.proj.get("EPSG:4326");
+                proj = ol.proj.get(MapEngineOl4.fallbackProjection);
             }
             if (proj && !proj.units_) {
                 proj.units_ = 'degrees';
