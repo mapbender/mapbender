@@ -88,6 +88,8 @@ mb:
       map:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
+        base_dpi: Default Resolution [dpi]
+        base_dpi.help: The resolution adapts to the screen resolution based on the configured value
       element:
         title: Title
         type: Type

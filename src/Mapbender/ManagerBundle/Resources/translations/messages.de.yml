@@ -86,8 +86,12 @@ mb:
           unreachable: 'Die Datenquelle ist nicht erreichbar'
         embedded_in_applications: '{0} Diese Datenquelle wird von keiner Anwendung genutzt|{1} Diese Datenquelle wird von einer Anwendung genutzt|]1,Inf[ Diese Datenquelle wird in %count% Anwendungen genutzt'
       map:
-        max_extent: 'Max. Extent'
-        start_extent: 'Start Extent'
+        max_extent: 'Max. Karten­ausdehnung'
+        max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
+        start_extent: 'Initiale Karten­ausdehnung'
+        start_extent.help: 'Bounding Box mit min/max x/y, die den Kartenausschnitt markiert, in dem die Karte startet. Bei Klick auf das Haus in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
+        base_dpi: Standard-Auflösung [dpi]
+        base_dpi.help: Die Auflösung passt sich auf Basis dieses Wertes an die Auflösung des verwendeten Gerätes an.
       element:
         title: Titel
         type: Typ
