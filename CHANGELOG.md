@@ -1,4 +1,4 @@
-## v3.3.5-RC2
+## v3.3.5-RC3
 Features:
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 * [FOM] Add support for xlsx file creation ([PR#1487](https://github.com/mapbender/mapbender/pull/1487))
