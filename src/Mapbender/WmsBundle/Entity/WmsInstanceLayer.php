@@ -284,7 +284,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setInfo($info, bool $force = false)
     {
-        if ($this->infoUnavailable === true) {
+        if ($this->infoUnavailable === true && !$force) {
             $this->info = false;
         } else {
             $this->info = (bool) $info;
