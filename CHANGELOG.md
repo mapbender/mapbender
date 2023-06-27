@@ -18,6 +18,7 @@ Bugfixes:
 * [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
 * [SearchRouter] Additional search properties were ignored ([#1474](https://github.com/mapbender/mapbender/issues/1474), [PR#1476](https://github.com/mapbender/mapbender/pull/1476))
 * [Manager] Show message indicating too low max_input_vars value when editing instance layers ([PR#1491](https://github.com/mapbender/mapbender/pull/1491))
+* [BaseSourceSwitcher] Element behaved incorrectly when "allow selected" was not set in the WMS instance ([PR#1492](https://github.com/mapbender/mapbender/pull/1492))
 
 
 ## v3.3.4

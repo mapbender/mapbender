@@ -117,13 +117,13 @@
             var i, self = this;
             this._highlight($menuItem, true);
             for (i = 0; i < sourcesOn.length; ++i) {
-                this.mbMap.model.setSourceVisibility(sourcesOn[i], true);
+                this.mbMap.model.setSourceVisibility(sourcesOn[i], true, true);
             }
             $others.each(function() {
                 self._highlight($(this), false);
             });
             for (i = 0; i < sourcesOff.length; ++i) {
-                this.mbMap.model.setSourceVisibility(sourcesOff[i], false);
+                this.mbMap.model.setSourceVisibility(sourcesOff[i], false, true);
             }
             this._hideMobile();
         },
