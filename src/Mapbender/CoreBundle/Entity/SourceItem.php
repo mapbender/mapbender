@@ -54,10 +54,10 @@ abstract class SourceItem
     }
 
     /**
-     * @param Source $source
+     * @param ?Source $source
      * @return $this
      */
-    public function setSource(Source $source)
+    public function setSource(?Source $source)
     {
         $this->source = $source;
         return $this;

@@ -24,6 +24,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use PHPUnit\Util\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -65,6 +66,21 @@ class Importer extends SourceLoader
     public function getTypeLabel()
     {
         return 'OGC WMS';
+    }
+
+    /**
+     * @param $reloaded
+     * @param $target
+     * @return void
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
+    public function replaceContactByClone($reloaded, $target): void
+    {
+        $contact = clone $reloaded->getContact();
+        if ($target->getContact()) {
+            $this->entityManager->remove($target->getContact());
+        }
+        $target->setContact($contact);
     }
 
     /**
@@ -121,13 +137,10 @@ class Importer extends SourceLoader
         $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
         EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
-        $contact = clone $reloaded->getContact();
-        if ($target->getContact()) {
-            $this->entityManager->remove($target->getContact());
-        }
-        $target->setContact($contact);
+        $this->replaceContactByClone($reloaded, $target);
+        $this->replaceContactByClone($reloaded, $target);
 
-        $this->replaceSourceLayers($target, $reloaded);
+        $this->updateSourceLayers($target, $reloaded);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
         /** @var ApplicationRepository $applicationRepository */
@@ -190,6 +203,7 @@ class Importer extends SourceLoader
         $this->setLayerSourceRecursive($target->getRootlayer(), $target);
     }
 
+
     /**
      * @param WmsLayerSource $layer
      * @param WmsSource $source
@@ -203,6 +217,52 @@ class Importer extends SourceLoader
         foreach ($layer->getSublayer() as $child) {
             $this->setLayerSourceRecursive($child, $source);
         }
+    }
+
+
+    private function updateSourceLayers(WmsSource $target, WmsSource $source)
+    {
+        $this->updateLayerSourceRecursive($target->getRootlayer(),$source->getRootlayer());
+    }
+
+    private function updateLayerSourceRecursive(WmsLayerSource $target, WmsLayerSource $source, $path = [])
+    {
+        static $classMeta;
+        if (!isset($classMeta)) {
+            $classMeta = $this->entityManager->getClassMetadata(WmsLayerSource::class);
+        }
+        if ($target->getName() == $source->getName()) {
+            EntityUtil::copyEntityFields($target, $source, $classMeta, false);
+        }
+        $targetChildrenThatMustBeDeleted = $target->getSublayer()->toArray();
+
+        foreach ($source->getSublayer() as $sourceChild) {
+            $newPath = array_merge($path, [$sourceChild->getName()]);
+
+            $correspondingTargetChildren = array_filter($target->getSublayer()->toArray(), function($targetChild) use ($sourceChild) {
+                return $sourceChild->getName() == $targetChild->getName();
+            });
+            if (count($correspondingTargetChildren) >= 1) {
+                // if there are coincidentally more than one hits, do the same as if there were only one
+                $nextTargetChild = reset($correspondingTargetChildren);
+                $index = array_search($nextTargetChild, $targetChildrenThatMustBeDeleted);
+                if ($index !== false) {
+                    unset($targetChildrenThatMustBeDeleted[$index]);
+                }
+                $this->updateLayerSourceRecursive($nextTargetChild,$sourceChild,$newPath);
+            } else if (count($correspondingTargetChildren) == 0) {
+                $target->addSublayer($sourceChild);
+                $this->setLayerSourceRecursive($sourceChild,$target->getSource());
+            }
+        }
+
+        foreach($targetChildrenThatMustBeDeleted as $deleteCandidate) {
+            // detach the layer from the source
+            $deleteCandidate->setSource(null);
+            $target->getSublayer()->removeElement($deleteCandidate);
+        }
+
+
     }
 
     private function updateInstance(WmsInstance $instance)
