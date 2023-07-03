@@ -24,15 +24,19 @@ class ApplicationMarkupCache
     protected $basePath;
     protected $isDebug;
 
-    public function __construct(TokenStorageInterface $tokenStorage,
+    protected bool $includeSessionId = false;
+
+    public function __construct(TokenStorageInterface          $tokenStorage,
                                 AccessDecisionManagerInterface $accessDecisionManager,
-                                LocaleAwareInterface $localeProvider,
-                                $basePath)
+                                LocaleAwareInterface           $localeProvider,
+                                                               $basePath,
+                                bool                           $includeSessionId)
     {
         $this->accessDecisionManager = $accessDecisionManager;
         $this->tokenStorage = $tokenStorage;
         $this->localeProvider = $localeProvider;
         $this->basePath = $basePath;
+        $this->includeSessionId = $includeSessionId;
     }
 
     /**
@@ -103,6 +107,10 @@ class ApplicationMarkupCache
                 }
             }
             $parts[] = \md5(implode(';', $hashParts));
+
+            if ($this->includeSessionId) {
+                $parts[] = $request->getSession()->getId();
+            }
         }
         $name = \implode('.', $parts) . '.html';
         return $this->basePath . "/{$name}";

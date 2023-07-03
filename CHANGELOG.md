@@ -3,17 +3,26 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 
-## next bugfix release
+Features:
+* [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
+* [FOM] Add support for xlsx file creation ([PR#1487](https://github.com/mapbender/mapbender/pull/1487))
+* [Application Markup Cache] Added parameter `mapbender.markup_cache.include_session_id` (default false). For details see PR description. ([PR#1481](https://github.com/mapbender/mapbender/pull/1481))
+* Add Multipoint Geometry to LayoutRendererGeoJson in PrintBundle ([PR#1490](https://github.com/mapbender/mapbender/pull/1490))
+
 Bugfixes:
 * Zoom in application did not work when fixed zoom steps were active ([#1466](https://github.com/mapbender/mapbender/issues/1466), [PR#1472](https://github.com/mapbender/mapbender/pull/1472))
 * Fix WMS configuration cannot be unserialized when updating from mapbender <3.2.4 versions in PHP >= 8.2 ([PR#1477](https://github.com/mapbender/mapbender/pull/1477))
 * Do not crash application after a layerset has been removed and the map element has not yet been saved ([PR#1482](https://github.com/mapbender/mapbender/pull/1482))
+* Correctly handle removal of GetFeatureInfo capability when refreshing sources ([#1480](https://github.com/mapbender/mapbender/issues/1480), [PR#1488](https://github.com/mapbender/mapbender/pull/1488))
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
+* [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
-* [SearchRouter] Fix search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
-* [SearchRouter] Fix highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
-* [SearchRouter] Fix additional search properties were ignored ([#1474](https://github.com/mapbender/mapbender/issues/1474), [PR#1476](https://github.com/mapbender/mapbender/pull/1476))
-* [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
+* [Map element] Handle incorrect EPSG codes ([PR#1489](https://github.com/mapbender/mapbender/pull/1489))
+* [SearchRouter] Search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
+* [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
+* [SearchRouter] Additional search properties were ignored ([#1474](https://github.com/mapbender/mapbender/issues/1474), [PR#1476](https://github.com/mapbender/mapbender/pull/1476))
+* [Manager] Show message indicating too low max_input_vars value when editing instance layers ([PR#1491](https://github.com/mapbender/mapbender/pull/1491))
+* [BaseSourceSwitcher] Element behaved incorrectly when "allow selected" was not set in the WMS instance ([PR#1492](https://github.com/mapbender/mapbender/pull/1492))
 
 
 ## v3.3.4
