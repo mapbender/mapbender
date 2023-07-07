@@ -138,12 +138,13 @@ class Importer extends SourceLoader
         EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
         $this->replaceContactByClone($reloaded, $target);
-        $this->replaceContactByClone($reloaded, $target);
 
         $this->updateSourceLayers($target, $reloaded);
 
         $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
-        /** @var ApplicationRepository $applicationRepository */
+        /** @var
+         * Repository $applicationRepository
+         */
         $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
         foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
             $application->setUpdated(new \DateTime('now'));
@@ -220,7 +221,7 @@ class Importer extends SourceLoader
     }
 
 
-    private function updateSourceLayers(WmsSource $target, WmsSource $source)
+    public function updateSourceLayers(WmsSource $target, WmsSource $source)
     {
         $this->updateLayerSourceRecursive($target->getRootlayer(),$source->getRootlayer());
     }

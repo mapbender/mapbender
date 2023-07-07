@@ -13,7 +13,7 @@
         <parameter key="wms.default_layer_order">null</parameter>
     </parameters>
     <services>
-        <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%">
+        <service id="mapbender.importer.source.wms.service" class="%mapbender.importer.source.wms.service.class%" public="true">
             <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.xmlvalidator.service" />

@@ -215,6 +215,18 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         return $this;
     }
 
+    public function removeSublayer(string $name)
+    {
+        $newSublayers = new ArrayCollection();
+        foreach($this->sublayer as $sublayer) {
+            if ($sublayer->getName() != $name) {
+                $newSublayers->add($sublayer);
+            }
+        }
+        // Reindexing
+        $this->sublayer = new ArrayCollection(array_values($newSublayers->toArray()));
+    }
+
     /**
      * Set name
      *
@@ -892,5 +904,44 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         }
         $this->setStyles($stylesNew);
         $this->setAuthority($authoritiesNew);
+    }
+
+    /**
+     * @param WmsLayerSource $other
+     * @return bool
+     *
+     * Compares two layer structures whether they have the same name and their sublayers are equal as well concerning name and sublayers
+     */
+    public function equivalent(WmsLayerSource $other)
+    {
+        if ($this === $other) {
+            return true;
+        }
+
+        if ($this->name !== $other->getName()) {
+            return false;
+        }
+
+        if ($this->sublayer->count() !== $other->getSublayer()->count()) {
+            return false;
+        }
+
+        foreach ($this->sublayer as $sublayer) {
+            $otherSublayer = $other->getSublayer()->filter(function($otherSublayer) use ($sublayer) {
+                return $otherSublayer->getName() === $sublayer->getName();
+            });
+
+            // Make sure there is a sublayer with the same name.
+            if (count($otherSublayer) !== 1) {
+                return false;
+            }
+
+            // Make sure the sublayers with the same name are equivalent.
+            if (!$sublayer->equivalent($otherSublayer->first())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
