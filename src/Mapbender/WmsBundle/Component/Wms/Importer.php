@@ -245,7 +245,9 @@ class Importer extends SourceLoader
             if (count($correspondingTargetChildren) >= 1) {
                 // if there are coincidentally more than one hits, do the same as if there were only one
                 $nextTargetChild = reset($correspondingTargetChildren);
-                $index = array_search($nextTargetChild, $targetChildrenThatMustBeDeleted);
+                $index = array_search($nextTargetChild->getName(), array_map(function($item) {
+                    return $item->getName();
+                }, $targetChildrenThatMustBeDeleted));
                 if ($index !== false) {
                     unset($targetChildrenThatMustBeDeleted[$index]);
                 }
