@@ -102,10 +102,12 @@ window.Mapbender.WmsSource = (function() {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
             if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
                 Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
-                    if (-1 !== (diff.activate || []).indexOf(layer.getId())) {
+                    let activated_ids = (diff.activate || []).map(l=>l.options.id);
+                    let deactivated_ids = (diff.deactivate || []).map(l=>l.options.id);
+                    if (-1 !== (activated_ids).indexOf(layer.getId())) {
                         layer.setSelected(true);
                     }
-                    if (-1 !== (diff.deactivate || []).indexOf(layer.getId())) {
+                    if (-1 !== (deactivated_ids).indexOf(layer.getId())) {
                         layer.setSelected(false);
                     }
                 });

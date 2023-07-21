@@ -13,8 +13,8 @@
 /**
  * @typedef {Object} SourceSettingsDiff
  * @property {Number} [opacity]
- * @property {Array<String>} [activate]
- * @property {Array<String>} [deactivate]
+ * @property {Array<Object>} [activate]
+ * @property {Array<Object>} [deactivate]
  */
 
 window.Mapbender = Mapbender || {};
