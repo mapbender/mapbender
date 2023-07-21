@@ -103,47 +103,55 @@ window.Mapbender.WmsSource = (function() {
          */
         applySettingsDiff: function(diff) {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
-            if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
-                Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
-                    let find_by_id_or_name = (l) => {
-                        let found_by_id = l.options.id == layer.getId();
-                        let found_by_name = l.options.name == layer.getName();
-                        if (!found_by_id && found_by_name) {
-                            console.warn("Sources have been updated on the server, but are still detected by name. This message disappears on reselection of this source in the layer tree");
-                        }
-                        return found_by_id || found_by_name;
-                    };
 
-                    let activate_hit = (diff.activate || []).filter(find_by_id_or_name);
-                    if (activate_hit.length >= 1) {
-                        activate_hit[0].found = true;
-                        layer.setSelected(true);
-                        if (activate_hit.length > 1) {
-                            let name = layer.getName();
-                            $.notify("Layer '"+name+"': There seems to be a misconception in the underlying map service of this layer. ");
-                        }
-                    }
-                    let deactivate_hit = (diff.deactivate || []).filter(find_by_id_or_name);
-                    if (deactivate_hit.length >= 1) {
-                        deactivate_hit[0].found = true;
-                        layer.setSelected(true);
-                        if (deactivate_hit.length > 1) {
-                            let name = layer.getName();
-                            $.notify("Layer '"+name+"': There seems to be a misconception in the underlying map service of this layer. ");
-                        }
-                    }
-                });
+            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
+            if (!isDiffValid) return;
 
-                let found_activate = (diff.activate || []).filter(l=>!l.found);
-                if (found_activate.length > 0) {
-                    console.error("Invalid activate ids left",found_activate);
-                }
-                let found_deactivate = (diff.deactivate || []).filter(l=>!l.found);
-                if (found_deactivate.length > 0) {
-                    console.error("Invalid activate ids left",found_deactivate);
+            const notifyWarning = (layer, hits) => {
+                if (hits.length > 1) {
+                    const name = layer.getName();
+                    $.notify(`Layer '${name}': There seems to be a misconception in the underlying map service of this layer. The layer is at least twice defined`);
                 }
             }
+
+            const filterAction = (layer, action, parents) => {
+                return action.filter(l => {
+                    const foundById = l.options.id == layer.getId();
+                    const foundByName = l.options.name == layer.getName();
+                    if (!foundById && foundByName) {
+                        const name = parents.reverse().map(parent => parent.getName()).join("/")+"/"+layer.getName();
+                        console.warn(`Layer '${name}': Sources have been updated on the server, but are still detected by name. This message disappears on reselection of this source in the layer tree`);
+                    }
+                    return foundById || foundByName;
+                });
+            };
+
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer, index, parents) {
+                let activateHits = filterAction(layer, diff.activate || [], parents);
+                if (activateHits.length >= 1) {
+                    activateHits[0].found = true;
+                    layer.setSelected(true);
+                    notifyWarning(layer, activateHits);
+                }
+                let deactivateHits = filterAction(layer, diff.deactivate || []);
+                if (deactivateHits.length >= 1) {
+                    deactivateHits[0].found = true;
+                    layer.setSelected(false);
+                    notifyWarning(layer, deactivateHits);
+                }
+            });
+
+            const checkInvalidActions = (action, actionName) => {
+                let foundActions = action.filter(l => !l.found);
+                if (foundActions.length > 0) {
+                    console.error(`Invalid ${actionName} ids left`, foundActions);
+                }
+            }
+
+            checkInvalidActions(diff.activate || [], 'activate');
+            checkInvalidActions(diff.deactivate || [], 'deactivate');
         },
+
         getSelected: function() {
             // delegate to root layer
             return this.configuration.children[0].getSelected();
