@@ -1094,7 +1094,7 @@ window.Mapbender.MapModelBase = (function() {
                     // Source not present in target settings => deactivate all layers
                     diff.sources.push({
                         id: fromSourceSettings.id,
-                        deactivate: fromSourceSettings.selectedIds.slice(),
+                        deactivate: fromSourceSettings.selectedLayers.slice(),
                         activate: []
                     });
                 }
