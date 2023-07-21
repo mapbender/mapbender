@@ -197,12 +197,13 @@ window.Mapbender.Source = (function() {
          * @return {SourceSettingsDiff|null}
          */
         diffSettings: function(from, to) {
-            var toIds = to.selectedLayers.map(l => l.options.id);
-            var fromIds = from.selectedLayers.map(l => l.options.id);
-
             var diff = {
-                activate: toIds.filter(id => !fromIds.includes(id)),
-                deactivate: fromIds.filter(id => !toIds.includes(id)),
+                activate: to.selectedLayers.filter(function(layer) {
+                    return -1 === from.selectedLayers.findIndex(fromLayer => fromLayer.options.id === layer.options.id);
+                }),
+                deactivate: from.selectedLayers.filter(function(layer) {
+                    return -1 === to.selectedLayers.findIndex(toLayer => toLayer.options.id === layer.options.id);
+                })
             };
             if (to.opacity !== from.opacity) {
                 diff.opacity = to.opacity
@@ -226,11 +227,13 @@ window.Mapbender.Source = (function() {
             if (typeof (diff.opacity) !== 'undefined') {
                 settings.opacity = diff.opacity;
             }
-            settings.selectedLayers = settings.selectedLayers.filter(layer =>
-                ((diff || {}).deactivate || []).findIndex(diffLayer => diffLayer.options.id === layer.options.id) === -1);
+            settings.selectedLayers = settings.selectedLayers.filter(function(layer) {
+                return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => diffLayer.options.id === layer.options.id);
+            });
             settings.selectedLayers = settings.selectedLayers.concat((diff || {}).activate || []);
             return settings;
         },
+
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;
         },
