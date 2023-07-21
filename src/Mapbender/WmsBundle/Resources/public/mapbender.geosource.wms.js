@@ -11,6 +11,9 @@ window.Mapbender.WmsSourceLayer = (function() {
         getId: function() {
             return this.options.id;
         },
+        getName: function() {
+            return this.options.name;
+        },
         getSelected: function() {
             return this.options.treeOptions.selected;
         },
@@ -101,28 +104,43 @@ window.Mapbender.WmsSource = (function() {
         applySettingsDiff: function(diff) {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
             if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
-                let activated_ids = (diff.activate || []).map(l=>l.options.id);
-                let deactivated_ids = (diff.deactivate || []).map(l=>l.options.id);
-
                 Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
+                    let find_by_id_or_name = (l) => {
+                        let found_by_id = l.options.id == layer.getId();
+                        let found_by_name = l.options.name == layer.getName();
+                        if (!found_by_id && found_by_name) {
+                            console.warn("Sources have been updated on the server, but are still detected by name. This message disappears on reselection of this source in the layer tree");
+                        }
+                        return found_by_id || found_by_name;
+                    };
 
-                    let index_activated = activated_ids.indexOf(layer.getId());
-                    if (-1 !== index_activated) {
-                        activated_ids.splice(index_activated,1);
+                    let activate_hit = (diff.activate || []).filter(find_by_id_or_name);
+                    if (activate_hit.length >= 1) {
+                        activate_hit[0].found = true;
                         layer.setSelected(true);
+                        if (activate_hit.length > 1) {
+                            let name = layer.getName();
+                            $.notify("Layer '"+name+"': There seems to be a misconception in the underlying map service of this layer. ");
+                        }
                     }
-                    let index_deactivated = deactivated_ids.indexOf(layer.getId());
-                    if (-1 !== index_deactivated) {
-                        deactivated_ids.splice(index_deactivated,1);
-                        layer.setSelected(false);
+                    let deactivate_hit = (diff.deactivate || []).filter(find_by_id_or_name);
+                    if (deactivate_hit.length >= 1) {
+                        deactivate_hit[0].found = true;
+                        layer.setSelected(true);
+                        if (deactivate_hit.length > 1) {
+                            let name = layer.getName();
+                            $.notify("Layer '"+name+"': There seems to be a misconception in the underlying map service of this layer. ");
+                        }
                     }
                 });
 
-                if (activated_ids.length > 0) {
-                    console.error("Invalid activate ids left",activated_ids);
+                let found_activate = (diff.activate || []).filter(l=>!l.found);
+                if (found_activate.length > 0) {
+                    console.error("Invalid activate ids left",found_activate);
                 }
-                if (deactivated_ids.length > 0) {
-                    console.error("Invalid deactivate ids left",deactivated_ids);
+                let found_deactivate = (diff.deactivate || []).filter(l=>!l.found);
+                if (found_deactivate.length > 0) {
+                    console.error("Invalid activate ids left",found_deactivate);
                 }
             }
         },
