@@ -75,6 +75,7 @@ window.Mapbender.MapModelBase = (function() {
                 }
             } catch (e) {
                 console.error("Restoration of local storage source selection settings failed, ignoring");
+                throw e;
             }
         }
     }
