@@ -8,7 +8,7 @@
 /**
  * @typedef {Object} SourceSettings
  * @property {Number} opacity
- * @property {Array<String>} selectedIds
+ * @property {Array<String>} selectedLayers
  */
 /**
  * @typedef {Object} SourceSettingsDiff
@@ -198,11 +198,11 @@ window.Mapbender.Source = (function() {
          */
         diffSettings: function(from, to) {
             var diff = {
-                activate: to.selectedIds.filter(function(id) {
-                    return -1 === from.selectedIds.indexOf(id);
+                activate: to.selectedLayers.filter(function(layer) {
+                    return -1 === from.selectedLayers.findIndex(fromLayer => fromLayer.options.id === layer.options.id);
                 }),
-                deactivate: from.selectedIds.filter(function(id) {
-                    return -1 === to.selectedIds.indexOf(id);
+                deactivate: from.selectedLayers.filter(function(layer) {
+                    return -1 === to.selectedLayers.findIndex(toLayer => toLayer.options.id === layer.options.id);
                 })
             };
             if (to.opacity !== from.opacity) {
@@ -227,12 +227,13 @@ window.Mapbender.Source = (function() {
             if (typeof (diff.opacity) !== 'undefined') {
                 settings.opacity = diff.opacity;
             }
-            settings.selectedIds = settings.selectedIds.filter(function(id) {
-                return -1 === ((diff || {}).deactivate || []).indexOf(id);
+            settings.selectedLayers = settings.selectedLayers.filter(function(layer) {
+                return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => diffLayer.options.id === layer.options.id);
             });
-            settings.selectedIds = settings.selectedIds.concat((diff || {}).activate || []);
+            settings.selectedLayers = settings.selectedLayers.concat((diff || {}).activate || []);
             return settings;
         },
+
         checkRecreateOnSrsSwitch: function(oldProj, newProj) {
             return this.recreateOnSrsSwitch;
         },

@@ -91,11 +91,8 @@ window.Mapbender.WmsSource = (function() {
          */
         getSettings: function() {
             var selectedLayers = this.configuration.children[0].getSelectedList();
-            var selectedIds = selectedLayers.map(function(layer) {
-                return layer.getId();
-            });
             return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
-                selectedIds: selectedIds
+                selectedLayers: selectedLayers
             });
         },
         /**

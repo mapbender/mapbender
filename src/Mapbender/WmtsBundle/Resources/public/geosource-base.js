@@ -83,11 +83,11 @@ window.Mapbender.WmtsTmsBaseSource = (function() {
          */
         getSettings: function() {
             var diff = Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
-                selectedIds: []
+                selectedLayers: []
             });
             // Use a (single-item) layer id list
             if (this.getSelected()) {
-                diff.selectedIds.push(this.id);
+                diff.selectedLayers.push(this);
             }
             return diff;
         },
