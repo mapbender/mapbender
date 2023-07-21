@@ -101,16 +101,29 @@ window.Mapbender.WmsSource = (function() {
         applySettingsDiff: function(diff) {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
             if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
+                let activated_ids = (diff.activate || []).map(l=>l.options.id);
+                let deactivated_ids = (diff.deactivate || []).map(l=>l.options.id);
+
                 Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
-                    let activated_ids = (diff.activate || []).map(l=>l.options.id);
-                    let deactivated_ids = (diff.deactivate || []).map(l=>l.options.id);
-                    if (-1 !== (activated_ids).indexOf(layer.getId())) {
+
+                    let index_activated = activated_ids.indexOf(layer.getId());
+                    if (-1 !== index_activated) {
+                        activated_ids.splice(index_activated,1);
                         layer.setSelected(true);
                     }
-                    if (-1 !== (deactivated_ids).indexOf(layer.getId())) {
+                    let index_deactivated = deactivated_ids.indexOf(layer.getId());
+                    if (-1 !== index_deactivated) {
+                        deactivated_ids.splice(index_deactivated,1);
                         layer.setSelected(false);
                     }
                 });
+
+                if (activated_ids.length > 0) {
+                    console.error("Invalid activate ids left",activated_ids);
+                }
+                if (deactivated_ids.length > 0) {
+                    console.error("Invalid deactivate ids left",deactivated_ids);
+                }
             }
         },
         getSelected: function() {
