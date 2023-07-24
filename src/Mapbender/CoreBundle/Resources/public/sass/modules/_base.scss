@@ -118,3 +118,11 @@ body.mobile-template .desktop-only {
 i.mb-glyphicon {
   font-style: normal;
 }
+
+tr.sourceinst {
+    td.iconColumn {
+        span {
+            cursor: pointer;
+        }
+    }
+}
