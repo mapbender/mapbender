@@ -107,13 +107,8 @@ window.Mapbender.WmsSource = (function() {
             const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
             if (!isDiffValid) return;
 
-            const notifyWarning = (layer) => {
-                const name = layer.getName();
-                $.notify(`Layer '${name}': There seems to be a misconception in the underlying map service of this layer. The layer is at least twice defined`);
-            }
-
             const findAction = (layer, action, parents) => {
-                return action.find(l => {
+                let found = action.filter(l => {
                     const foundById = l.options.id == layer.getId();
                     const foundByName = l.options.name == layer.getName();
                     if (!foundById && foundByName) {
@@ -122,6 +117,18 @@ window.Mapbender.WmsSource = (function() {
                     }
                     return foundById || foundByName;
                 });
+                if (found.length == 0) {
+                    return null;
+                } else
+                if (found.length == 1) {
+                    return found[0];
+                } else {
+                    const name = parents.reverse().map(parent => parent.getName()).join("/")+"/"+layer.getName();
+                    $.notify(`Layer '${name}': There seems to be a misconception in the underlying map service of this layer. The layer is at least twice defined`);
+                    return found[0];
+                }
+
+
             };
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer, index, parents) {
@@ -129,13 +136,11 @@ window.Mapbender.WmsSource = (function() {
                 if (activateHit) {
                     activateHit.found = true;
                     layer.setSelected(true);
-                    notifyWarning(layer);
                 }
                 let deactivateHit = findAction(layer, diff.deactivate || [], parents);
                 if (deactivateHit) {
                     deactivateHit.found = true;
                     layer.setSelected(false);
-                    notifyWarning(layer);
                 }
             });
 
