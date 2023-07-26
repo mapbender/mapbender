@@ -107,15 +107,13 @@ window.Mapbender.WmsSource = (function() {
             const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
             if (!isDiffValid) return;
 
-            const notifyWarning = (layer, hits) => {
-                if (hits.length > 1) {
-                    const name = layer.getName();
-                    $.notify(`Layer '${name}': There seems to be a misconception in the underlying map service of this layer. The layer is at least twice defined`);
-                }
+            const notifyWarning = (layer) => {
+                const name = layer.getName();
+                $.notify(`Layer '${name}': There seems to be a misconception in the underlying map service of this layer. The layer is at least twice defined`);
             }
 
-            const filterAction = (layer, action, parents) => {
-                return action.filter(l => {
+            const findAction = (layer, action, parents) => {
+                return action.find(l => {
                     const foundById = l.options.id == layer.getId();
                     const foundByName = l.options.name == layer.getName();
                     if (!foundById && foundByName) {
@@ -127,17 +125,17 @@ window.Mapbender.WmsSource = (function() {
             };
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer, index, parents) {
-                let activateHits = filterAction(layer, diff.activate || [], parents);
-                if (activateHits.length >= 1) {
-                    activateHits[0].found = true;
+                let activateHit = findAction(layer, diff.activate || [], parents);
+                if (activateHit) {
+                    activateHit.found = true;
                     layer.setSelected(true);
-                    notifyWarning(layer, activateHits);
+                    notifyWarning(layer);
                 }
-                let deactivateHits = filterAction(layer, diff.deactivate || [], parents);
-                if (deactivateHits.length >= 1) {
-                    deactivateHits[0].found = true;
+                let deactivateHit = findAction(layer, diff.deactivate || [], parents);
+                if (deactivateHit) {
+                    deactivateHit.found = true;
                     layer.setSelected(false);
-                    notifyWarning(layer, deactivateHits);
+                    notifyWarning(layer);
                 }
             });
 
