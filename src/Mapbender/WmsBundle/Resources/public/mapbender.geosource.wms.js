@@ -133,7 +133,7 @@ window.Mapbender.WmsSource = (function() {
                     layer.setSelected(true);
                     notifyWarning(layer, activateHits);
                 }
-                let deactivateHits = filterAction(layer, diff.deactivate || []);
+                let deactivateHits = filterAction(layer, diff.deactivate || [], parents);
                 if (deactivateHits.length >= 1) {
                     deactivateHits[0].found = true;
                     layer.setSelected(false);
