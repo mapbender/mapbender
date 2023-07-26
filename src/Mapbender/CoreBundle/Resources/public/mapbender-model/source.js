@@ -199,10 +199,17 @@ window.Mapbender.Source = (function() {
         diffSettings: function(from, to) {
             var diff = {
                 activate: (to.selectedLayers || []).filter(function(layer) {
-                    return -1 === (from.selectedLayers || []).findIndex(fromLayer => fromLayer.options.id === layer.options.id);
+                    return (from.selectedLayers || []).findIndex(fromLayer =>
+                        fromLayer.options.id === layer.options.id ||
+                        fromLayer.options.name === layer.options.name
+                    ) === -1;
                 }),
+
                 deactivate: (from.selectedLayers || []).filter(function(layer) {
-                    return -1 === (to.selectedLayers || []).findIndex(toLayer => toLayer.options.id === layer.options.id);
+                    return (to.selectedLayers || []).findIndex(toLayer =>
+                        toLayer.options.id === layer.options.id ||
+                        toLayer.options.name === layer.options.name
+                    ) === -1;
                 })
             };
             if (to.opacity !== from.opacity) {
