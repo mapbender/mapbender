@@ -154,7 +154,7 @@ $.widget("mapbender.mbPrintClientJobList", {
         ;
         if (row.downloadUrl) {
             var $a = $('<a />')
-                .addClass('btn btn-default')
+                .addClass('btn btn-light')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
@@ -173,7 +173,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             ;
             var $deleteSpan = $('<span />')
                 .addClass('-fn-delete')
-                .addClass('btn btn-default')
+                .addClass('btn btn-light')
                 .attr('data-url', row.deleteUrl)
                 .attr('data-id', row.id)
                 .attr('title', Mapbender.trans(deleteTitle))

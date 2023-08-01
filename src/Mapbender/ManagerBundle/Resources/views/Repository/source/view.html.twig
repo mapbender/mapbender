@@ -9,7 +9,7 @@
 {% block heading %}
     {%- if grants is not empty -%}
         <div class="dropdown bs-dropdown pull-right">
-            <button type="button" class="btn btn-default" data-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
+            <button type="button" class="btn btn-light" data-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
             <ul class="dropdown-menu">
                 {%- if grants.edit | default(false) -%}
                 <li><a href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}"

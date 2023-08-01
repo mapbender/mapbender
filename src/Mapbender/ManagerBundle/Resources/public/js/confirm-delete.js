@@ -16,7 +16,7 @@
                 },
                 {
                     label: Mapbender.trans(strings.cancel),
-                    cssClass: 'btn btn-default btn-sm popupClose'
+                    cssClass: 'btn btn-light btn-sm popupClose'
                 }
             ]
         };

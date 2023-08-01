@@ -165,7 +165,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                    cssClass: 'btn btn-default btn-sm popupClose'
+                    cssClass: 'btn btn-light btn-sm popupClose'
                 }
             ])
         });
@@ -210,7 +210,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });
@@ -291,7 +291,7 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });
@@ -326,7 +326,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });

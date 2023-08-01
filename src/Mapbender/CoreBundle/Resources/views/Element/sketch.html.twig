@@ -1,34 +1,34 @@
     <div class="form-group">
         <div class="btn-group btn-group-sm">
         {% if 'point' in geometrytypes %}
-            <button type="button" data-tool-name="point" title="{{ "mb.core.sketch.geometrytype.point"|trans }}" class="btn btn-default"><i class="icon-draw-point"></i></button>
+            <button type="button" data-tool-name="point" title="{{ "mb.core.sketch.geometrytype.point"|trans }}" class="btn btn-light"><i class="icon-draw-point"></i></button>
         {% endif %}
         {% if 'line' in geometrytypes %}
-            <button type="button" data-tool-name="line" title="{{ "mb.core.sketch.geometrytype.line"|trans }}" class="btn btn-default"><i class="icon-draw-line"></i></button>
+            <button type="button" data-tool-name="line" title="{{ "mb.core.sketch.geometrytype.line"|trans }}" class="btn btn-light"><i class="icon-draw-line"></i></button>
         {% endif %}
         {% if 'polygon' in geometrytypes %}
-            <button type="button" data-tool-name="polygon" title="{{ "mb.core.sketch.geometrytype.polygon"|trans }}" class="btn btn-default"><i class="icon-draw-polygon"></i></button>
+            <button type="button" data-tool-name="polygon" title="{{ "mb.core.sketch.geometrytype.polygon"|trans }}" class="btn btn-light"><i class="icon-draw-polygon"></i></button>
         {% endif %}
         {% if 'rectangle' in geometrytypes %}
-            <button type="button" data-tool-name="rectangle" title="{{ "mb.core.sketch.geometrytype.rectangle"|trans }}" class="btn btn-default"><i class="icon-draw-rectangle"></i></button>
+            <button type="button" data-tool-name="rectangle" title="{{ "mb.core.sketch.geometrytype.rectangle"|trans }}" class="btn btn-light"><i class="icon-draw-rectangle"></i></button>
         {% endif %}
         {% if 'circle' in geometrytypes %}
-            <button type="button" data-tool-name="circle" title="{{ "mb.core.sketch.geometrytype.circle"|trans }}" class="btn btn-default"><i class="icon-draw-circle"></i></button>
+            <button type="button" data-tool-name="circle" title="{{ "mb.core.sketch.geometrytype.circle"|trans }}" class="btn btn-light"><i class="icon-draw-circle"></i></button>
         {% endif %}
         </div>
-        <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-default -fn-tool-off"><i class="fa fas fa-stop"></i></button>
+        <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-light -fn-tool-off"><i class="fa fas fa-stop"></i></button>
     </div>
     <div class="form-group -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
         <div class="btn-toolbar">
             <div class="btn-group btn-group-sm btn-group-sm-square">
                 {%- for color in colors -%}
-                    <button type="button" class="btn btn-default color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
+                    <button type="button" class="btn btn-light color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
                 {%- endfor -%}
             </div>
             {%- if allow_custom_color -%}
             <div class="btn-group btn-group-sm btn-group-sm-square">
-                <button type="button" class="btn btn-default color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
-                <button type="button" class="-fn-color-customize btn btn-default"><i class="fa fas fa-fw fa-caret-down"></i></button>
+                <button type="button" class="btn btn-light color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
+                <button type="button" class="-fn-color-customize btn btn-light"><i class="fa fas fa-fw fa-caret-down"></i></button>
             </div>
             {%- endif -%}
         </div>
@@ -80,6 +80,6 @@
             </div>
         </div>
         <div class="text-nowrap text-right">
-            <button type="button" class="btn btn-sm btn-default -fn-close">{{ 'mb.actions.close' | trans }}</button>
+            <button type="button" class="btn btn-sm btn-light -fn-close">{{ 'mb.actions.close' | trans }}</button>
         </div>
     </div>
