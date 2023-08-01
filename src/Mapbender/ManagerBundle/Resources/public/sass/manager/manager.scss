@@ -115,16 +115,18 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       padding-left: 0;  // Remove Bootstrap 3 default 15px left / right for underline sizing
       padding-right: 0;
       padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
+      color: black;
+      cursor: pointer;
     }
     // Pad enclosing li instead of >a for underline sizing; redistribute entire padding right
     padding-left: 0;
     padding-right: 30px;
 
     font-weight: bold;
-    &:not(.active) {
+    a:not(.active) {
       opacity: 0.7;
     }
-    &.active > a {
+    a.active {
       // Trade bottom-padding for border to maintain height
       padding-bottom: 7px;
       border-bottom: solid #079ee0 3px;
