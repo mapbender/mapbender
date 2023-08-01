@@ -31,49 +31,17 @@ h4, .h4, .tabContainer > ul {
 }
 
 .navigationBar {
-  .nav {
-    font-weight: bold;
-  }
-  .navbar-toggle {
-    border-color: #ccc;
-  }
-  .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
-    color: inherit;
-    background-color: #eee;
-  }
-  &, & .dropdown-menu {
-    background-color: rgba(255, 255, 255, 1);
-    border-color: #e7e7e7;
-  }
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
-  .dropdown-menu>li>a, .dropdown-menu>.active>a {
-    color: inherit;
-  }
-
-  .navbar-brand {
-    // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
-    padding-top: 5px;
-    padding-bottom: 5px;
-    // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
-    // see https://stackoverflow.com/a/7310398
-    &:before {
-      content: "";
-      display: inline-block;
-      vertical-align: middle;
-      height: 100%;
-    }
-  }
   .logo {
-    max-width: 120px;
+    max-width: 30px;
     max-height: 100%;
-  }
-  .navbar-brand>img.logo, .navbar-brand-name {
-    display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
   }
   .navbar-brand-name {
     font-weight: 400;
-    vertical-align: middle;
     margin-left: 0.25em;
+  }
+  .dropdown-menu {
+      margin-top: 0px;
   }
 }
 
