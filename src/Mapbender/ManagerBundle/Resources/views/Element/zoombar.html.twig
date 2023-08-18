@@ -1,14 +1,15 @@
-    {{ form_row(form.configuration.draggable) }}
-    {{ form_row(form.title) }}
-    {{ form_rest(form.configuration) }}
-    <script type="text/javascript">
-        (function($) {
-            var componentsInput = document.getElementById({{ form.configuration.components.vars.id | json_encode | raw }});
-            var zoomHomeRestoresLayersInput = document.getElementById({{ form.configuration.zoomHomeRestoresLayers.vars.id | json_encode | raw }});
-            var updateCb = function() {
-                $(zoomHomeRestoresLayersInput).prop('disabled', -1 === $(this).val().indexOf('zoom_home'));
-            };
-            updateCb.call(componentsInput);
-            $(componentsInput).on('change', updateCb);
-        }(jQuery));
-    </script>
+{% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
+{{ form_row(form.configuration.draggable) }}
+{{ form_row(form.title) }}
+{{ form_rest(form.configuration) }}
+<script type="text/javascript">
+    (function($) {
+        var componentsInput = document.getElementById({{ form.configuration.components.vars.id | json_encode | raw }});
+        var zoomHomeRestoresLayersInput = document.getElementById({{ form.configuration.zoomHomeRestoresLayers.vars.id | json_encode | raw }});
+        var updateCb = function() {
+            $(zoomHomeRestoresLayersInput).prop('disabled', -1 === $(this).val().indexOf('zoom_home'));
+        };
+        updateCb.call(componentsInput);
+        $(componentsInput).on('change', updateCb);
+    }(jQuery));
+</script>

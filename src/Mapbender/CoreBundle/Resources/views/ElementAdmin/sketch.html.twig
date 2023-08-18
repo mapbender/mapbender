@@ -1,4 +1,5 @@
-    {{ form_row(form.configuration.autoOpen) }}
-    {{ form_row(form.configuration.deactivate_on_close) }}
-    {{ form_row(form.title) }}
-    {{ form_rest(form.configuration) }}
+{% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
+{{ form_row(form.configuration.autoOpen) }}
+{{ form_row(form.configuration.deactivate_on_close) }}
+{{ form_row(form.title) }}
+{{ form_rest(form.configuration) }}

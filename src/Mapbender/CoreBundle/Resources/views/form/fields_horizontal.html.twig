@@ -1,0 +1,32 @@
+{# Mapbender form theme for horizontal forms #}
+{% use "bootstrap_4_horizontal_layout.html.twig" %}
+
+{% block form_label -%}
+    {%- if label is same as(false) -%}
+        <div class="{{ block('form_label_class') }}"></div>
+    {%- else -%}
+        {%- if expanded is not defined or not expanded -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' col-form-label')|trim}) -%}
+        {%- endif -%}
+        {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ block('form_label_class'))|trim}) -%}
+        {{- parent() -}}
+    {%- endif -%}
+{%- endblock form_label %}
+
+{% block form_row -%}
+    {%- if expanded is defined and expanded -%}
+        {{ block('fieldset_form_row') }}
+    {%- else -%}
+        {%- set widget_attr = {} -%}
+        {%- if help is not empty -%}
+            {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+        {%- endif -%}
+        <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' mb-3 row' ~ ((not compound or force_error|default(false)) and not valid ? ' is-invalid'))|trim})} %}{{ block('attributes') }}{% endwith %}>
+            {{- form_label(form) -}}
+            <div class="{{ block('form_group_class') }}">
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_help(form) -}}
+            </div>
+            {##}</div>
+    {%- endif -%}
+{%- endblock form_row %}
