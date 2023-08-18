@@ -56,7 +56,7 @@ class ElementFormFactory
         // Add class and element id data attributes for functional test support
         $options = array(
             'attr' => array(
-                'class' => '-ft-element-form form-horizontal',
+                'class' => '-ft-element-form',
             ),
         );
         if ($element->getId()) {
