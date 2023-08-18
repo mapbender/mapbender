@@ -194,6 +194,7 @@ $(function() {
                 });
             }
         });
+        $modal.modal('show');
     }
 
     function startElementChooser(regionName, listUrl) {
@@ -239,6 +240,7 @@ $(function() {
                 ]);
                 return false;
             });
+            $modal.modal('show');
         });
     }
 
@@ -281,7 +283,7 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            Mapbender.bootstrapModal(nodes, {
+            var $modal = Mapbender.bootstrapModal(nodes, {
                 title: Mapbender.trans(popupTitle),
                 buttons: [
                     {
@@ -295,6 +297,7 @@ $(function() {
                     }
                 ]
             });
+            $modal.modal('show');
         });
     });
 
@@ -319,7 +322,7 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            Mapbender.bootstrapModal($.parseHTML(response), {
+            var $modal = Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
                 subTitle: layersetTitle,
                 cssClass: 'modal-lg',
@@ -330,6 +333,7 @@ $(function() {
                     }
                 ]
             });
+            $modal.modal('show');
         });
         return false;
     });

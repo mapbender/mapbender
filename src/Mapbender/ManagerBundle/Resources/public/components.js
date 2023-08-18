@@ -191,6 +191,7 @@ $(function() {
                         }
                     ]
                 });
+                $modal.modal('show');
             });
         }
 
@@ -329,6 +330,7 @@ $(function() {
             $('.buttonRemove', $modal).data('target-row', $row);
             $(".buttonRemove,.buttonBack", $modal).removeClass('hidden');
         });
+        $modal.modal('show');
     }
 
     $(".secureElement").on("click", function() {

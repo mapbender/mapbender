@@ -53,6 +53,7 @@
             $modal.modal('hide');
             deferred.reject();
         });
+        $modal.modal('show');
         return deferred.promise();
     };
 })(jQuery));

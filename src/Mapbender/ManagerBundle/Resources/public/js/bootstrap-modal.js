@@ -31,25 +31,11 @@ window.Mapbender.bootstrapModal = (function ($) {
         if (!options.closeButton) {
             $('.close', $contentStructure).remove();
         }
-        var $modalContent;
-
-        if ($content.is('form')) {
-            var $formContent = $content.children().remove();
-            var $header = $('.modal-header', $contentStructure).remove();
-            $content.first()
-                .addClass('modal-content')
-                .prepend($header)
-                .append($contentStructure)
-            ;
-            $modalContent = $content;
-            $('.modal-body', $modalContent).append($formContent);
-        } else {
-            $modalContent = $(document.createElement('div'))
-                .addClass('modal-content')
-                .append($contentStructure)
-            ;
-            $('.modal-body', $modalContent).append($content);
-        }
+        var $modalContent = $(document.createElement('div'))
+            .addClass('modal-content')
+            .append($contentStructure)
+        ;
+        $('.modal-body', $modalContent).append($content);
         $('.modal-dialog', $element).append($modalContent);
         $('.modal-title', $element).text(options.title).after(options.subTitle || '');
 
@@ -61,7 +47,7 @@ window.Mapbender.bootstrapModal = (function ($) {
                 .text(buttonOptions.label)
             ;
             if (/popupClose/.test(buttonOptions.cssClass)) {
-                $b.attr('data-dismiss', 'modal');
+                $b.attr('data-bs-dismiss', 'modal');
             } else if (buttonOptions.callback) {
                 $b.on('click', buttonOptions.callback.bind($b.get(0)));
             }
