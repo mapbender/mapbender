@@ -82,22 +82,6 @@
   thead h3 {
     font-size: 140%;
   }
-  thead .regionProperties {
-    .popover {
-      width: 22em;
-      min-width: 22em;
-      left: auto;
-    }
-  }
-  .regionProperties .form-horizontal {
-    .labelInput {
-      width: 45%;
-      margin-right: 4%;
-    }
-    .inputWrapper, .dropdown {
-      width: 50%;
-    }
-  }
 }
 // To prevent horizontal collapsse in drag-and-drop transit, .layersetTable and .elementsTable both need certain
 // cells to have forced expansion
@@ -124,17 +108,36 @@
 }
 
 .static-popover-wrap {
-  position: relative; // for anchoring of absolute-positioned .popover
-  .popover {
-    display: initial;
-    &.left {
-      right: 2em;
+  .popover-inner-wrap {
+    display: none;
+    position: absolute;
+    &.display {
+      display: block;
     }
-    &.left, &.right {
-      top: -1em;
-      .arrow {
-        top: 1em;
-        margin-top: 0;
+    .popover {
+      position: relative;
+      width: 305px;
+      right: 315px;
+      top: -35px;
+      .popover-arrow {
+        top: 0px;
+        transform: translate(304px, 19px);
+      }
+      .popover-body {
+        .col-sm-2 {
+          width: 41.6%;
+        }
+        .col-sm-10 {
+          width: 58.33333333%;
+        }
+        .form-group {
+          .col-sm-2 {
+            width: 0;
+          }
+          .col-sm-10 {
+            width: 100%;
+          }
+        }
       }
     }
   }

@@ -458,6 +458,7 @@ $(function() {
         });
     })(jQuery);
     $('.regionProperties [data-toggle-target]').on('click', function() {
-        $($(this).attr('data-toggle-target')).toggleClass('hidden');
+        $($(this).attr('data-toggle-target')).parent().toggleClass('display');
+        $($(this).attr('data-toggle-target')).toggleClass('show');
     });
 });
