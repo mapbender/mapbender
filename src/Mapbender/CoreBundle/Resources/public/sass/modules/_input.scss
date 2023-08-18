@@ -6,8 +6,8 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 .dropdown:not(.bs-dropdown) .dropdownValue,
 .dropdownList {
   color: $inputForegroundColor;
-  background-color: $inputBackgroundColor;
-  border:solid 1px $inputBorderColor;
+  background-color: #fff;
+  border:solid 1px #EEE9E9;;
 }
 
 .input, .inputWrapper select {

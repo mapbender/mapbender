@@ -30,3 +30,29 @@
             {##}</div>
     {%- endif -%}
 {%- endblock form_row %}
+
+{%- block choice_widget_collapsed -%}
+    {%- if multiple -%}
+        {{- block('symfony_choice_widget_collapsed') -}}
+    {%- else -%}
+        <div class="dropdown"{%- if attr.title is defined -%} title="{{ translation_domain is same as(false) ? attr.title : attr.title|trans({}, translation_domain) }}"{%- endif -%}{% if dropdown_elements_html is defined %} data-html="true"{% endif %}>
+            {%- set attr = attr | merge({'class': ('hiddenDropdown ' ~ (attr.class | default (''))) | trim}) -%}
+            {{- block('symfony_choice_widget_collapsed') -}}
+            <div class="dropdownValue iconDown">
+                {{ block('choice_widget_collapsed_selected_value') }}
+            </div>
+            <ul class="dropdownList">
+                {%- if placeholder is not none -%}
+                    {%- set options = [{'value': '', 'label': placeholder, 'nogroup': 1}] -%}
+                    {{- block('hiddendropdown_option_display') -}}
+                {%- endif -%}
+                {%- if preferred_choices|length > 0 -%}
+                    {% set options = preferred_choices %}
+                    {{- block('hiddendropdown_option_display') -}}
+                {%- endif -%}
+                {%- set options = choices -%}
+                {{- block('hiddendropdown_option_display') -}}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock choice_widget_collapsed -%}
