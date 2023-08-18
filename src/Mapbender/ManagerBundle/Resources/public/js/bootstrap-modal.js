@@ -7,8 +7,8 @@ window.Mapbender.bootstrapModal = (function ($) {
     ].join('');
     var contentTemplate = [
         '<div class="modal-header">',
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>',
         '<h2 class="modal-title"></h2>',
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
         '</div>',
         '<div class="modal-body"></div>',
         '<div class="modal-footer"></div>'
@@ -29,7 +29,7 @@ window.Mapbender.bootstrapModal = (function ($) {
         $('.modal-dialog', $element).addClass(options.cssClass || '');
         var $contentStructure = $mContent.clone();
         if (!options.closeButton) {
-            $('.close', $contentStructure).remove();
+            $('.btn-close', $contentStructure).remove();
         }
         var $modalContent = $(document.createElement('div'))
             .addClass('modal-content')
@@ -37,7 +37,9 @@ window.Mapbender.bootstrapModal = (function ($) {
         ;
         $('.modal-body', $modalContent).append($content);
         $('.modal-dialog', $element).append($modalContent);
-        $('.modal-title', $element).text(options.title).after(options.subTitle || '');
+        var modalSubTitle = (options.subTitle) ? '<br><small class="fs-6">' + options.subTitle + '</small>' : '';
+        var modalTitle = options.title + modalSubTitle;
+        $('.modal-title', $element).html(modalTitle);
 
         var buttons_ = options.buttons || [];
         for (var b = 0; b < buttons_.length; ++b) {
