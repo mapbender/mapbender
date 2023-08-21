@@ -17,28 +17,8 @@ h4, .h4 {
 .smallText {
   font-size: .85rem;
 }
-.labelInput {
-  user-select: none;
-}
-.labelInput {
-  .form-horizontal .no-gutters & {
-    margin-right: $space/2;
-  }
-  .form-horizontal & {
-    vertical-align: top;
-    &, &+.inputWrapper, &+.dropdown {
-      margin-bottom: $space/2;
-    }
-  }
-  .form-horizontal .form-group & {
-    &, &+.inputWrapper, &+.dropdown {
-      margin-bottom: 0;
-    }
-  }
-
-  &.required:after {
-    margin-left: 0.25em;
-    content: '*';
-    color:$errorColor;
-  }
+.form-label.required:after,
+.col-form-label.required:after {
+  content: "*";
+  color: #aa2323;;
 }
