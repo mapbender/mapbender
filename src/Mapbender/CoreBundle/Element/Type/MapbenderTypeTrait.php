@@ -16,12 +16,11 @@ trait MapbenderTypeTrait
     public function createInlineHelpText(array $typeConfiguration, TranslatorInterface $trans): array
     {
         if (empty($typeConfiguration['help'])) return $typeConfiguration;
-        $typeConfiguration['help'] = '<i class="fa fa-question-circle"  data-toggle="popover" data-content="'
+        $typeConfiguration['help'] = '<i class="fa fa-question-circle" data-bs-toggle="popover" data-bs-content="'
             . htmlspecialchars( $trans->trans($typeConfiguration['help']))
             . '"></i>';
         $typeConfiguration['help_html'] = true;
         $helpAttr = array_key_exists('help_attr', $typeConfiguration) ? $typeConfiguration['help_attr'] : [];
-        $helpAttr['class'] = array_key_exists('class', $helpAttr) ? $helpAttr['class'] . ' help-text-inline' : 'help-text-inline';
         $typeConfiguration['help_attr'] = $helpAttr;
         return $typeConfiguration;
     }

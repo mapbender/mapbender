@@ -4,33 +4,46 @@
     {{ form_row(form.configuration.layersets) }}
     {{ form_row(form.configuration.tileSize) }}
     {{ form_row(form.configuration.srs) }}
-    <div>
+    <div class="row">
         {{ form_label(form.configuration.extent_max) }}
-        <div class="inputWrapper">
-            <div class="row no-gutters singleRow">
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.0) }}</div>
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.1) }}</div>
+        <div class="col-sm-9">
+            <div class="row singleRow">
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_max.0) }}</div>
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_max.1) }}</div>
             </div>
-            <div class="row no-gutters singleRow">
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.2) }}</div>
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_max.3) }}</div>
+            <div class="row singleRow">
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_max.2) }}</div>
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_max.3) }}</div>
             </div>
         </div>
-        {{ form_help(form.configuration.extent_start) }}
+        <div class="col-sm-1">
+            {{ form_help(form.configuration.extent_start) }}
+        </div>
     </div>
-    <div>
+    <div class="row">
         {{ form_label(form.configuration.extent_start) }}
-        <div class="inputWrapper">
-            <div class="row no-gutters singleRow">
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.0) }}</div>
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.1) }}</div>
+        <div class="col-sm-9">
+            <div class="row singleRow">
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_start.0) }}</div>
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_start.1) }}</div>
             </div>
-            <div class="row no-gutters singleRow">
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.2) }}</div>
-                <div class="col-xs-6">{{ form_row(form.configuration.extent_start.3) }}</div>
+            <div class="row singleRow">
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_start.2) }}</div>
+                <div class="col-sm-6">{{ form_row(form.configuration.extent_start.3) }}</div>
             </div>
         </div>
-        {{ form_help(form.configuration.extent_start) }}
+        <div class="col-sm-1">
+            {{ form_help(form.configuration.extent_start) }}
+        </div>
+    </div>
+    <div class="row">
+        {{ form_label(form.configuration.base_dpi) }}
+        <div class="col-sm-9">
+            {{ form_widget(form.configuration.base_dpi) }}
+        </div>
+        <div class="col-sm-1">
+            {{ form_help(form.configuration.base_dpi) }}
+        </div>
     </div>
     {{ form_rest(form.configuration) }}
 </div>
