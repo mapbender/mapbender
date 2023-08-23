@@ -1,57 +1,54 @@
-{% form_theme form _self %}
-{%- if false %}{# predefine blocks without immediately rendering them #}
-    {% block _form_configuration_themes_widget %}
-        <div class="inputWrapper">
-            <table class="table table-outlined" id="{{form.vars.id}}">
-            {% for theme in form.children %}
-                {{ form_row(theme) }}
-            {% endfor %}
-            </table>
-        </div>
-    {% endblock %}
-    {% block _form_configuration_themes_entry_opened_row %}
-        <span class="item-opened clickable" title="{{ form.vars.attr.title | trans }}">
-            <i class="fa fas fa-fw {{ form.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
-            <span class="hidden">{{ form_widget(form) }}</span>
-        </span>
-    {% endblock %}
-    {% block _form_configuration_themes_entry_row %}
-        <tr>
-            <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
-                {{ form.vars.data.title }}
-            </td>
-            <td class="theme-settings text-nowrap text-right">
-                {{- form_row(form.useTheme) -}}
-                {{- form_row(form.opened) -}}
-            </td>
-        </tr>
-    {% endblock %}
-{%- endif -%}
-
+{% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
 <div class="elementFormLayerTree">
-    <div class="form-group no-gutters">
-        {{ form_widget(form.configuration.showBaseSource, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    <div class="mb-3">
         {{ form_widget(form.configuration.autoOpen, {'label_attr': {'class': 'checkbox-inline'}}) }}
+        {{ form_widget(form.configuration.showBaseSource, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {{ form_row(form.title) }}
     {%- if form.configuration.target is defined -%}{{- form_row(form.configuration.target) -}}{%- endif -%}
     {{ form_row(form.configuration.menu) }}
-    <div class="form-group no-gutters">
+    <div class="mb-3">
         {{ form_widget(form.configuration.hideSelect, {'label_attr': {'class': 'checkbox-inline'}}) }}
         {{ form_widget(form.configuration.hideInfo, {'label_attr': {'class': 'checkbox-inline'}}) }}
-        {{ form_row(form.configuration.useTheme) }}
+    </div>
+    <div class="mb-3">
+        {{ form_widget(form.configuration.useTheme, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {% if form.configuration.themes is defined %}
-        {{ form_row(form.configuration.themes) }}
-        <script type="text/javascript">
-            $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
-                var $cb = $('input[type="checkbox"]', this);
-                var $icon = $('>i', this);
-                $cb.prop('checked', !$cb.prop('checked'));
-                $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
-                $icon.toggleClass('fa-folder', !$cb.prop('checked'));
-            });
-        </script>
+    <div class="row mb-3">
+        <div class="col-sm-2">
+            <label>{{ 'mb.core.admin.layertree.label.themes'|trans }}</label>
+        </div>
+        <div class="col-sm-10">
+            <table class="table table-outlined" id="{{form.configuration.themes.vars.id}}">
+                {% for theme in form.configuration.themes %}
+                <tr>
+                    <td title="{{"mb.core.admin.layertree.label.theme.label"|trans}}">
+                        {{ theme.vars.data.title }}
+                    </td>
+                    <td class="theme-settings text-nowrap text-end">
+                        {{- form_widget(theme.useTheme, {'label_attr': {'class': 'checkbox-inline'}}) -}}
+                        <span class="item-opened clickable" title="{{ theme.opened.vars.attr.title | trans }}">
+                            <i class="fa fas fa-fw {{ theme.opened.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
+                            <span class="hidden">{{ form_widget(theme.opened) }}</span>
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
     {% endif %}
-    {{ form_rest(form.configuration) }}
+    <div class="mb-3">
+        {{ form_widget(form.configuration.allowReorder, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    </div>
 </div>
+<script type="text/javascript">
+    $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
+        var $cb = $('input[type="checkbox"]', this);
+        var $icon = $('>i', this);
+        $cb.prop('checked', !$cb.prop('checked'));
+        $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
+        $icon.toggleClass('fa-folder', !$cb.prop('checked'));
+    });
+</script>
