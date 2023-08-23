@@ -90,6 +90,7 @@ mb:
         Description: 'Cambia la risorsa dello sfondo'
       form:
         mesage: 'Nessun set per la risorsa di base è definito.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legenda

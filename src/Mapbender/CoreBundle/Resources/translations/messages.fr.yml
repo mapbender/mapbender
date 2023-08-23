@@ -90,6 +90,7 @@ mb:
         Description: 'Permet de sélectionner la couche de fond de la carte.'
       form:
         mesage: 'Aucun fond de carte n''est défini.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Légende

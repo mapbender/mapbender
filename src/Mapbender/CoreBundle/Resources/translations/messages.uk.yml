@@ -105,6 +105,7 @@ mb:
         Description: 'Змінити фонові джерела мапи.'
       form:
         mesage: 'Базовий набір джерел не визначено.'
+        instancesets: 'Набори екземплярів'
     legend:
       class:
         title: Легенда

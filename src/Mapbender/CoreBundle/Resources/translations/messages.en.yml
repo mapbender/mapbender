@@ -150,6 +150,7 @@ mb:
         Description: 'Change the map''s background sources.'
       form:
         mesage: 'No basesource set is defined.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legend

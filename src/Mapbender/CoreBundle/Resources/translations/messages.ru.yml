@@ -90,6 +90,7 @@ mb:
         Description: 'Изменить фоновые источники  карты '
       form:
         mesage: 'Нет исходного набора.'
+        instancesets: 'Наборы экземпляров'
     legend:
       class:
         title: Легенда

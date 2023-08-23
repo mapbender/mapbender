@@ -151,6 +151,7 @@ mb:
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legende
