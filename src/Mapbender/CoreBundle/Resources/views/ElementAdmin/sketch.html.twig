@@ -1,5 +1,13 @@
 {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
-{{ form_row(form.configuration.autoOpen) }}
-{{ form_row(form.configuration.deactivate_on_close) }}
+<div class="mb-3">
+    {{ form_widget(form.configuration.autoOpen, {'label_attr': {'class': 'checkbox-inline'}}) }}
+</div>
+<div class="mb-3">
+    {{ form_widget(form.configuration.deactivate_on_close, {'label_attr': {'class': 'checkbox-inline'}}) }}
+</div>
 {{ form_row(form.title) }}
-{{ form_rest(form.configuration) }}
+{{ form_row(form.configuration.geometrytypes) }}
+{{ form_row(form.configuration.colors) }}
+<div class="mb-3">
+    {{ form_widget(form.configuration.allow_custom_color, {'label_attr': {'class': 'checkbox-inline'}}) }}
+</div>
