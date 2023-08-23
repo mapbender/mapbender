@@ -1,3 +1,8 @@
 {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
 {{ form_row(form.title) }}
-{{ form_rest(form.configuration) }}
+{{ form_row(form.configuration.width) }}
+{{ form_row(form.configuration.height) }}
+<div class="row mb-3">
+    <label class="form-label required">Routes</label>
+    {{ form_widget(form.configuration.routes) }}
+</div>

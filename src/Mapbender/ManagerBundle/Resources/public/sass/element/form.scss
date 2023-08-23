@@ -10,9 +10,6 @@
   textarea {
     resize: none;
   }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + 20px});
-  }
   .left .checkbox {
     display: inline-block;
     margin-right: 20px;
@@ -57,6 +54,20 @@
 .collectionItem {
   position: relative;
   margin-bottom: 20px;
+
+  legend {
+    display: none;
+  }
+
+  .col-sm-10 {
+    width: 95%;
+    .col-sm-2 {
+      width: 25%;
+    }
+    .col-sm-10 {
+      width: 75%;
+    }
+  }
 
   textarea {
     min-height: 100px;
