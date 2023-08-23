@@ -195,6 +195,10 @@ $(function() {
             }
         });
         $modal.modal('show');
+        // Hack to get <script> tags working, returned by ajax response
+        $modal.find('script').each(function (index, element) {
+            eval(element.innerHTML);
+        });
     }
 
     function startElementChooser(regionName, listUrl) {
@@ -465,4 +469,7 @@ $(function() {
         $($(this).attr('data-toggle-target')).parent().toggleClass('display');
         $($(this).attr('data-toggle-target')).toggleClass('show');
     });
+    // enable Bootstrap Popover:
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 });

@@ -48,7 +48,8 @@
     {{ form_rest(form.configuration) }}
 </div>
 <script type="text/javascript">
-$('.elementFormMap .choiceExpandedSortable').sortable({
-axis: "y"
-});
+    $('.elementFormMap .choiceExpandedSortable').sortable({axis: "y"});
+    // enable Bootstrap Popover:
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 </script>
