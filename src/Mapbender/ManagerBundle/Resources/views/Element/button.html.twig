@@ -1,4 +1,6 @@
 {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
-{{ form_row(form.configuration.label) }}
+<div class="mb-3">
+    {{ form_widget(form.configuration.label, {'label_attr': {'class': 'checkbox-inline'}}) }}
+</div>
 {{ form_row(form.title) }}
 {{ form_rest(form.configuration) }}
