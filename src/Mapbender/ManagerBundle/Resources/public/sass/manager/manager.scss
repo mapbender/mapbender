@@ -215,11 +215,6 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 .popover {
   font-size: inherit;
 }
-.popover, .panel-body {
-  .form-group:last-child, .collectionItem:last-child {
-    margin-bottom: 0;
-  }
-}
 
 .popup .table {
   background-color: white;

@@ -83,8 +83,8 @@
 
   .panel-buttons {
     position: absolute;
-    right: 15px;
-    top: 50%;
+    right: 0;
+    margin-top: -8px;
     transform: translateY(-50%);
 
     a {
@@ -97,6 +97,20 @@
     right: -0.75em;
     line-height: 2;
     z-index: 1;
+  }
+}
+
+.card.collectionItem {
+  .col-sm-2 {
+    width: 20%;
+  }
+  .col-sm-10 {
+    width: 80%;
+  }
+  .help-text {
+    position: absolute;
+    right: 3px;
+    margin-top: -25px;
   }
 }
 
