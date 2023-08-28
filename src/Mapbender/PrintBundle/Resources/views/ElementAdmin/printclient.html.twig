@@ -17,14 +17,14 @@
         {{ form_label(form.configuration.quality_levels) }}
     </div>
     {% for level in form.configuration.quality_levels %}
-        <div class="row no-gutters quality-grid">
-            <div class="col-xs-6">
+    <div class="mb-3 row">
+            <div class="col-sm-6">
                 {{ form_row(level.dpi) }}
             </div>
-            <div class="col-xs-6">
+            <div class="col-sm-6">
                 {{ form_row(level.label) }}
             </div>
-        </div>
+    </div>
     {% endfor %}
     <hr>
     {{ form_row(form.configuration.templates) }}

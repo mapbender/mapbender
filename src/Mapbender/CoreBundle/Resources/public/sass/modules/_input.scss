@@ -24,7 +24,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
     opacity: 0.55;
   }
 }
-textarea.input {
+textarea.form-control {
    min-height: 150px;
 }
 .input, .inputWrapper select {
