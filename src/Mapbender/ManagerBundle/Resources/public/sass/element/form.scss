@@ -42,9 +42,6 @@
   .labelInput {
     width: 120px;
   }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + 20px});
-  }
 }
 
 .collectionItem {
