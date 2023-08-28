@@ -1,12 +1,6 @@
 {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
 {{ form_row(form.title) }}
-{{ form_row(form.configuration.tooltip) }}
-<div class="row mb-3">
-    <label class="form-label required">
-        {{ 'mb.core.basesourceswitcher.form.instancesets'| trans }}
-    </label>
-    {{ form_widget(form.configuration.instancesets) }}
-</div>
+{{ form_rest(form.configuration) }}
 {% if form.configuration.instancesets is not defined %}
 <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
 {% endif %}

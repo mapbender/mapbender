@@ -4,12 +4,7 @@
     {%- if form.configuration.anchor is defined -%}
     {{- form_row(form.configuration.anchor) -}}
     {%- endif -%}
-    <div class="row mb-3">
-        <label class="form-label required">
-            {{ 'mb.core.simplesearch.admin.configurations'| trans }}
-        </label>
-        {{ form_widget(form.configuration.configurations) }}
-    </div>
+    {{ form_rest(form.configuration) }}
 </div>
 <script type="text/javascript">
     // enable Bootstrap Popover:
