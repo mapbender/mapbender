@@ -153,3 +153,7 @@ $popupBackgroundColor: $backgroundColor !default;
 .fom-popup .popupScroll {
   @include absolute(70px 0 $space*3 0);
 }
+
+.modal-dialog {
+    max-width: 600px;
+}
