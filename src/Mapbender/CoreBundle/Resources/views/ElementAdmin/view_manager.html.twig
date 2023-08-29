@@ -1,6 +1,7 @@
-{% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
+
 <div class="extraWideLabelForm">
-    {{ form_rest(form) }}
+    {{ form_row(form.title) }}
+    {{ form_rest(form.configuration) }}
     <div class="alert alert-info">{{ 'mb.core.viewManager.admin.adminDeleteHint' | trans }}.</div>
     <script type="text/javascript">
         (function($) {
