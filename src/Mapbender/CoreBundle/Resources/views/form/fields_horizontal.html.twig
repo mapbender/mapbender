@@ -78,11 +78,16 @@
             {%- endif -%}
             <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' mb-3 row' ~ ((not compound or force_error|default(false)) and not valid ? ' is-invalid'))|trim})} %}{{ block('attributes') }}{% endwith %}>
                 {{- form_label(form) -}}
-                <div class="{{ block('form_group_class') }}">
+                {% set attrClass = (form.vars.help is not null) ? 'col-sm-9' : block('form_group_class') %}
+                <div class="{{ attrClass }}">
                     {{- form_widget(form, widget_attr) -}}
-                    {{- form_help(form) -}}
                     {{- form_errors(form) -}}
                 </div>
+                {% if form.vars.help is not null %}
+                    <div class="col-sm-1">
+                        {{- form_help(form) -}}
+                    </div>
+                {%- endif -%}
             </div>
         {%- endif -%}
     {%- endif -%}
@@ -90,11 +95,16 @@
 
 {% block checkbox_row -%}
     <div{% with {attr: row_attr|merge({class: (row_attr.class|default('mb-3') ~ ' row')|trim})} %}{{ block('attributes') }}{% endwith %}>{#--#}
-        <div class="{{ block('form_group_class') }}">
+        {% set attrClass = (form.vars.help is not null) ? 'col-sm-11' : block('form_group_class') %}
+        <div class="{{ attrClass }}">
             {{- form_widget(form) -}}
-            {{- form_help(form) -}}
             {{- form_errors(form) -}}
         </div>{#--#}
+        {% if form.vars.help is not null %}
+            <div class="col-sm-1">
+                {{- form_help(form) -}}
+            </div>
+        {%- endif -%}
     </div>
 {%- endblock checkbox_row %}
 
