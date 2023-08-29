@@ -18,11 +18,11 @@
         "symfony/debug-bundle": "^4.4",
         "symfony/dependency-injection": "^4.4",
         "symfony/doctrine-bridge": "^4.4",
-        "symfony/dotenv": "^4.4",
         "symfony/error-handler": "^4.4",
         "symfony/event-dispatcher": "^4.4",
         "symfony/filesystem": "^4.4",
         "symfony/finder": "^4.4",
+        "symfony/flex": "^2.3",
         "symfony/form": "^4.4",
         "symfony/framework-bundle": "^4.4",
         "symfony/http-client": "^4.4",
@@ -79,6 +79,9 @@
 
         "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7"
     },
+    "require-dev": {
+        "symfony/dotenv": "^4.4"
+    },
     "provide": {
         "mapbender/fom": "3.3",
         "mapbender/owsproxy": "3.3.99"
@@ -101,7 +104,8 @@
         "mapbender/coordinates-utility": "<1.0.9",
         "wheregroup/jquerydialogextendjs": "<2.1",
         "mapbender/vis-ui.js": "<0.1.80",
-        "mapbender/wmts": "*"
+        "mapbender/wmts": "*",
+        "symfony/symfony": "*"
     },
     "extra": {
         "branch-alias": {
