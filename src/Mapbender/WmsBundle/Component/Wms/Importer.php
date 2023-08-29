@@ -245,6 +245,9 @@ class Importer extends SourceLoader
         $titleMap = array();
         foreach ($instance->getLayers() as $oldInstanceLayer) {
             $sourceItem = $oldInstanceLayer->getSourceItem();
+            if (!$sourceItem) {
+                continue;
+            }
             if ($sourceItem->getName()) {
                 $nameMap += array($sourceItem->getName() => $oldInstanceLayer);
             }
