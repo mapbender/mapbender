@@ -15,7 +15,7 @@
         </{{ _tagName }}>
     {% else %}
         {# @todo: figure out how to use original block declaration #}
-        <div class="form-group{% if not valid %} has-error{% endif %} no-gutters">
+        <div class="{% if not valid %} has-error{% endif %} mb-3">
           {{- block('checkbox_widget') -}}
           {{- form_errors(form) -}}
         </div>
@@ -68,7 +68,7 @@
 
 {% block form_fields %}
 <div class="instanceContainer">
-    <div class="row form-group">
+    <div class="row mb-3">
       <div class="col-xs-9 col-9 text-nowrap clip-text">
         <label class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}:</label>
         <a href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>

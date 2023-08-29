@@ -173,7 +173,7 @@ $(function() {
         $sortableCollection.sortable({
             axis: 'y',
             items: '>.collectionItem',
-            handle: $sortableCollection.find('.panel-heading').length > 0 ? '.panel-heading' : false,
+            handle: $sortableCollection.find('.card-header').length > 0 ? '.card-header' : false,
         });
         $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);
