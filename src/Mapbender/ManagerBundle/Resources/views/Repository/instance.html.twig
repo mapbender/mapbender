@@ -49,7 +49,7 @@
             )
           </p>
         </div>
-        <div class="col-xs-4 col-4 text-right">
+        <div class="col-xs-4 col-4 text-end">
           <p>
             <a class="btn btn-light" href="{{ path('mapbender_manager_repository_view', {'sourceId': form.vars.data.source.id}) }}">{{ 'mb.terms.source.singular' | trans }}&nbsp;<i class="fa fa-desktop"></i></a>
           </p>
@@ -73,7 +73,7 @@
         <label class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}:</label>
         <a href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
       </div>
-      <div class="col-xs-3 col-3 text-right">
+      <div class="col-xs-3 col-3 text-end">
           {{- block('form_buttons') -}}
       </div>
     </div>
