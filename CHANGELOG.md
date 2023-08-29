@@ -17,6 +17,7 @@ Bugfixes:
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
 * [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
+* [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [Map element] Handle incorrect EPSG codes ([PR#1489](https://github.com/mapbender/mapbender/pull/1489))
 * [SearchRouter] Search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
 * [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))

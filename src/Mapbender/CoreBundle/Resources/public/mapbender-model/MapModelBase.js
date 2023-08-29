@@ -75,6 +75,7 @@ window.Mapbender.MapModelBase = (function() {
                 }
             } catch (e) {
                 console.error("Restoration of local storage source selection settings failed, ignoring");
+                throw e;
             }
         }
     }
@@ -1098,7 +1099,7 @@ window.Mapbender.MapModelBase = (function() {
                     // Source not present in target settings => deactivate all layers
                     diff.sources.push({
                         id: fromSourceSettings.id,
-                        deactivate: fromSourceSettings.selectedIds.slice(),
+                        deactivate: fromSourceSettings.selectedLayers.slice(),
                         activate: []
                     });
                 }
