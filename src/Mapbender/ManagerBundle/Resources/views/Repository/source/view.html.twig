@@ -9,22 +9,30 @@
 {% block heading %}
     {%- if grants is not empty -%}
         <div class="dropdown bs-dropdown pull-right">
-            <button type="button" class="btn btn-light" data-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
+            <button type="button" class="btn btn-light" data-bs-toggle="dropdown"><i class="fa fas fa-bars"></i></button>
             <ul class="dropdown-menu">
                 {%- if grants.edit | default(false) -%}
-                <li><a href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}"
-                    ><i class="fa fa-fw fas fa-refresh fa-sync-alt"></i> {{ 'mb.manager.admin.source.update' | trans }}</a></li>
-                <li><a href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}"
-                    ><i class="fa fa-fw fas fa-wifi"></i> {{ 'mb.manager.sourceinstance.create_reusable' | trans }}</a></li>
+                <li>
+                    <a class="dropdown-item" href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}">
+                        <i class="fa fa-fw fas fa-refresh fa-sync-alt"></i> {{ 'mb.manager.admin.source.update' | trans }}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}">
+                        <i class="fa fa-fw fas fa-wifi"></i> {{ 'mb.manager.sourceinstance.create_reusable' | trans }}
+                    </a>
+                </li>
                 {%- endif -%}
                 {%- if grants.delete | default(false) -%}
                     {%- if (grants | length) > 1 -%}
-                        <li role="separator" class="divider"></li>
+                        <li><hr class="dropdown-divider"></li>
                     {%- endif -%}
-                    <li class="label-danger"><a href="#"
-                           class="-fn-delete"
-                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId": source.id}) }}"
-                           data-id="{{ source.id }}"><i class="fa fa-fw fa-trash-o far fa-trash-alt"></i> {{ 'mb.actions.delete' | trans}}</a>
+                    <li class="bg-danger">
+                        <a class="dropdown-item -fn-delete" href="#"
+                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId": source.id}) }}" data-id="{{ source.id }}">
+                            <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i> {{ 'mb.actions.delete' | trans}}
+                        </a>
+                    </li>
                 {%- endif -%}
             </ul>
         </div>
