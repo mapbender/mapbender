@@ -1,23 +1,26 @@
-
 window.Mapbender = Mapbender || {};
-window.Mapbender.WmsSourceLayer = (function() {
+window.Mapbender.WmsSourceLayer = (function () {
     function WmsSourceLayer() {
         Mapbender.SourceLayer.apply(this, arguments);
     }
+
     Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
     WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
     Object.assign(WmsSourceLayer.prototype, {
         constructor: WmsSourceLayer,
-        getId: function() {
+        getId: function () {
             return this.options.id;
         },
-        getSelected: function() {
+        getName: function () {
+            return this.options.name;
+        },
+        getSelected: function () {
             return this.options.treeOptions.selected;
         },
-        setSelected: function(state) {
+        setSelected: function (state) {
             this.options.treeOptions.selected = !!state;
         },
-        getSelectedList: function() {
+        getSelectedList: function () {
             var selectedLayers = [];
             if (this.getSelected()) {
                 selectedLayers.push(this);
@@ -27,7 +30,7 @@ window.Mapbender.WmsSourceLayer = (function() {
             }
             return selectedLayers;
         },
-        isInScale: function(scale) {
+        isInScale: function (scale) {
             // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
             //       equivalently
             var min = this.options.minScale;
@@ -38,7 +41,7 @@ window.Mapbender.WmsSourceLayer = (function() {
                 return !(max && max < scale);
             }
         },
-        intersectsExtent: function(extent, srsName) {
+        intersectsExtent: function (extent, srsName) {
             var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
                 // unlimited layer extent
@@ -55,7 +58,7 @@ window.Mapbender.WmsSourceLayer = (function() {
     });
     return WmsSourceLayer;
 }());
-window.Mapbender.WmsSource = (function() {
+window.Mapbender.WmsSource = (function () {
     // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
     function WmsSource(definition) {
         Mapbender.Source.apply(this, arguments);
@@ -63,13 +66,14 @@ window.Mapbender.WmsSource = (function() {
         if (definition.customParams) {
             $.extend(this.customParams, definition.customParams);
         }
-        (definition.configuration.options.dimensions || []).map(function(dimensionConfig) {
+        (definition.configuration.options.dimensions || []).map(function (dimensionConfig) {
             if (dimensionConfig.default) {
                 customParams[dimensionConfig.__name] = dimensionConfig.default;
             }
         });
         this.customParams = customParams;
     }
+
     WmsSource.prototype = Object.create(Mapbender.Source.prototype);
     WmsSource.prototype.constructor = WmsSource;
     Mapbender.Source.typeMap['wms'] = WmsSource;
@@ -83,74 +87,79 @@ window.Mapbender.WmsSource = (function() {
          * @param {Object} [mapOptions]
          * @return {Array<Object>}
          */
-        createNativeLayers: function(srsName, mapOptions) {
+        createNativeLayers: function (srsName, mapOptions) {
             return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
         },
         /**
          * @return {SourceSettings}
          */
-        getSettings: function() {
-            var selectedLayers = this.configuration.children[0].getSelectedList();
-            var selectedIds = selectedLayers.map(function(layer) {
-                return layer.getId();
+        getSettings: function () {
+            const selectedLayers = this.configuration.children[0].getSelectedList().map(function (layer) {
+                return {
+                    id: layer.getId(),
+                    name: layer.getName(),
+                };
             });
             return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
-                selectedIds: selectedIds
+                selectedLayers: selectedLayers
             });
         },
         /**
          * @param {SourceSettingsDiff|null} diff
          */
-        applySettingsDiff: function(diff) {
+        applySettingsDiff: function (diff) {
             Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
-            if (diff && ((diff.activate || []).length || (diff.deactivate || []).length)) {
-                Mapbender.Util.SourceTree.iterateLayers(this, false, function(layer) {
-                    if (-1 !== (diff.activate || []).indexOf(layer.getId())) {
-                        layer.setSelected(true);
-                    }
-                    if (-1 !== (diff.deactivate || []).indexOf(layer.getId())) {
-                        layer.setSelected(false);
-                    }
-                });
-            }
+
+            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
+            if (!isDiffValid) return;
+
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
+                for (let index in (diff.activate || [])) {
+                    if (diff.activate[index].id === layer.getId()) layer.setSelected(true);
+                }
+                for (let index in (diff.deactivate || [])) {
+                    if (diff.deactivate[index].id === layer.getId()) layer.setSelected(false);
+                }
+            }.bind(this));
         },
-        getSelected: function() {
+
+        getSelected: function () {
             // delegate to root layer
             return this.configuration.children[0].getSelected();
         },
-        refresh: function() {
+        refresh: function () {
             var cacheBreakParams = {
                 _OLSALT: Math.random()
             };
             this.addParams(cacheBreakParams);
         },
-        addParams: function(params) {
+        addParams: function (params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {
                 Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
             }
             var rtp = this._runtimeParams;
-            $.extend(this.customParams, _.omit(params, function(value, key) {
+            $.extend(this.customParams, _.omit(params, function (value, key) {
                 return -1 !== rtp.indexOf(('' + key).toUpperCase());
             }));
         },
-        removeParams: function(names) {
+        removeParams: function (names) {
             // setting a param to null effectively removes it from the generated URL
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
             // see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/uri.js#L16
-            var nullParams = _.object(names, names.map(function() {
+            var nullParams = _.object(names, names.map(function () {
                 return null;
             }));
             this.addParams(nullParams);
         },
-        toJSON: function() {
+        toJSON: function () {
             var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
             s.customParams = this.customParams;
             return s;
         },
-        updateEngine: function() {
+        updateEngine: function () {
             var layers = [], styles = [];
-            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (layer) {
                 // Layer names can be emptyish, most commonly on root layers
                 // Suppress layers with empty names entirely
                 if (layer.options.name && layer.state.visibility) {
@@ -200,9 +209,9 @@ window.Mapbender.WmsSource = (function() {
         /**
          * @return {Array<WmsSourceLayer>}
          */
-        getFeatureInfoLayers: function() {
+        getFeatureInfoLayers: function () {
             var layers = [];
-            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(layer) {
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (layer) {
                 // Layer names can be emptyish, most commonly on root layers
                 // Suppress layers with empty names entirely
                 if (layer.options.name && layer.state.info) {
@@ -215,9 +224,9 @@ window.Mapbender.WmsSource = (function() {
          * Overview support hack: get names of all 'selected' leaf layers (c.f. instance backend),
          * disregarding 'allowed', disregarding 'state', not recalculating out of scale / out of bounds etc.
          */
-        getActivatedLeaves: function() {
+        getActivatedLeaves: function () {
             var layers = [];
-            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function(node, index, parents) {
+            Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (node, index, parents) {
                 var selected = node.options.treeOptions.selected;
                 for (var pi = 0; selected && pi < parents.length; ++pi) {
                     selected = selected && parents[pi].options.treeOptions.selected;
@@ -228,11 +237,11 @@ window.Mapbender.WmsSource = (function() {
             });
             return layers;
         },
-        hasVisibleLayers: function(srsName) {
+        hasVisibleLayers: function (srsName) {
             var activatedLayers = this.getActivatedLeaves();
-            var nonEmptyLayerNames = activatedLayers.map(function(sourceLayer) {
+            var nonEmptyLayerNames = activatedLayers.map(function (sourceLayer) {
                 return sourceLayer.options.name;
-            }).filter(function(layerName) {
+            }).filter(function (layerName) {
                 return !!layerName;
             });
             return !!nonEmptyLayerNames.length;
@@ -243,7 +252,7 @@ window.Mapbender.WmsSource = (function() {
          *
          * @return Object<String, (String | (Array<String>))
          */
-        getGetMapRequestBaseParams: function() {
+        getGetMapRequestBaseParams: function () {
             var params = {
                 LAYERS: [],
                 STYLES: [],
@@ -263,7 +272,7 @@ window.Mapbender.WmsSource = (function() {
             }
             return params;
         },
-        _isBboxFlipped: function(srsName) {
+        _isBboxFlipped: function (srsName) {
             if (this.configuration.options.version === '1.3.0') {
                 return Mapbender.mapEngine.isProjectionAxisFlipped(srsName);
             } else {
@@ -276,7 +285,7 @@ window.Mapbender.WmsSource = (function() {
          * @param {String} srsName
          * @return {Array<Object>}
          */
-        getPrintConfigs: function(bounds, scale, srsName) {
+        getPrintConfigs: function (bounds, scale, srsName) {
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName, true);
             var extraParams = {
                 REQUEST: 'GetMap',          // required for tunnel resolution
@@ -285,13 +294,13 @@ window.Mapbender.WmsSource = (function() {
             };
             var dataOut = [];
             var leafInfoMap = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(this, scale, bounds);
-            var resFromScale = function(scale) {
+            var resFromScale = function (scale) {
                 return (scale && Mapbender.Model.scaleToResolution(scale, undefined, srsName)) || null;
             };
             var commonOptions = Object.assign({}, this._getPrintBaseOptions(), {
                 changeAxis: this._isBboxFlipped(srsName)
             });
-            _.forEach(leafInfoMap, function(item) {
+            _.forEach(leafInfoMap, function (item) {
                 if (item.state.visibility) {
                     var replaceParams = Object.assign({}, extraParams, {
                         LAYERS: item.layer.options.name,
@@ -306,7 +315,7 @@ window.Mapbender.WmsSource = (function() {
                     }));
                 }
             });
-            return dataOut.sort(function(a, b) {
+            return dataOut.sort(function (a, b) {
                 return a.order - b.order;
             });
         }

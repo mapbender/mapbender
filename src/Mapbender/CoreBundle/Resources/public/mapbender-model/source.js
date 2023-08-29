@@ -8,29 +8,30 @@
 /**
  * @typedef {Object} SourceSettings
  * @property {Number} opacity
- * @property {Array<String>} selectedIds
+ * @property {Array<{id: Number, name: String}>} selectedLayers
  */
 /**
  * @typedef {Object} SourceSettingsDiff
  * @property {Number} [opacity]
- * @property {Array<String>} [activate]
- * @property {Array<String>} [deactivate]
+ * @property {Array<Object>} [activate]
+ * @property {Array<Object>} [deactivate]
  */
 
 window.Mapbender = Mapbender || {};
 
-window.Mapbender.LayerGroup = (function() {
+window.Mapbender.LayerGroup = (function () {
     function LayerGroup(title, parent) {
         this.title_ = title;
         this.parent = parent || null;
         this.children = [];
         this.siblings = [this];
     }
+
     Object.assign(LayerGroup.prototype, {
-        getTitle: function() {
+        getTitle: function () {
             return this.title_;
         },
-        getActive: function() {
+        getActive: function () {
             var active = this.getSelected();
             var parent = this.parent;
             while (parent && active) {
@@ -43,11 +44,11 @@ window.Mapbender.LayerGroup = (function() {
          * @return Boolean
          * @abstract
          */
-        getSelected: function() {
+        getSelected: function () {
             throw new Error("Invoked abstract LayerGroup.getSelected");
         },
-        removeChild: function(child) {
-            [this.children, this.siblings].forEach(function(list) {
+        removeChild: function (child) {
+            [this.children, this.siblings].forEach(function (list) {
                 var index = list.indexOf(child);
                 if (-1 !== index) {
                     list.splice(index, 1);
@@ -58,31 +59,31 @@ window.Mapbender.LayerGroup = (function() {
     return LayerGroup;
 })();
 
-window.Mapbender.Layerset = (function() {
-    function Layerset(title, id) {
+window.Mapbender.Layerset = (function () {
+    function Layerset(title, id, selected) {
         Mapbender.LayerGroup.call(this, title, null);
         this.id = id;
-        // layersets always start out enabled
-        this.selected = true;
+        this.selected = selected;
     }
+
     Layerset.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(Layerset.prototype, {
         constructor: Layerset,
-        getId: function() {
+        getId: function () {
             return this.id;
         },
-        getSelected: function() {
+        getSelected: function () {
             return this.selected;
         },
-        setSelected: function(state) {
+        setSelected: function (state) {
             this.selected = !!state;
         },
-        getSettings: function() {
+        getSettings: function () {
             return {
                 selected: this.getSelected()
             };
         },
-        applySettings: function(settings) {
+        applySettings: function (settings) {
             var dirty = settings.selected !== this.selected;
             this.setSelected(settings.selected);
             return dirty;
@@ -91,7 +92,7 @@ window.Mapbender.Layerset = (function() {
     return Layerset;
 })();
 
-window.Mapbender.Source = (function() {
+window.Mapbender.Source = (function () {
     function Source(definition) {
         Mapbender.LayerGroup.call(this, definition.title, null);
         if (definition.id || definition.id === 0) {
@@ -101,18 +102,19 @@ window.Mapbender.Source = (function() {
         this.configuration = definition.configuration;
         this.wmsloader = definition.wmsloader;
         var sourceArg = this;
-        this.configuration.children = (this.configuration.children || []).map(function(childDef) {
+        this.configuration.children = (this.configuration.children || []).map(function (childDef) {
             return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
         });
         this.children = this.configuration.children;
         this.configuredSettings_ = this.getSettings();
     }
+
     Source.typeMap = {};
     /**
      * @param {*} definition
      * @returns {Mapbender.Source}
      */
-    Source.factory = function(definition) {
+    Source.factory = function (definition) {
         var typeClass = Source.typeMap[definition.type];
         if (!typeClass) {
             typeClass = Source;
@@ -127,7 +129,7 @@ window.Mapbender.Source = (function() {
          * @param {Object} [mapOptions]
          * @return {Array<Object>}
          */
-        createNativeLayers: function(srsName, mapOptions) {
+        createNativeLayers: function (srsName, mapOptions) {
             console.error("Layer creation not implemented", this);
             throw new Error("Layer creation not implemented");
         },
@@ -136,11 +138,11 @@ window.Mapbender.Source = (function() {
          * @param {Object} [mapOptions]
          * @return {Array<Object>}
          */
-        initializeLayers: function(srsName, mapOptions) {
+        initializeLayers: function (srsName, mapOptions) {
             this.nativeLayers = this.createNativeLayers(srsName, mapOptions);
             return this.nativeLayers;
         },
-        getActive: function() {
+        getActive: function () {
             var upstream = Mapbender.LayerGroup.prototype.getActive.call(this);
             // NOTE: (only) WmsLoader sources don't have a layerset
             return upstream && (!this.layerset || this.layerset.getSelected());
@@ -152,30 +154,30 @@ window.Mapbender.Source = (function() {
         nativeLayers: [],
         recreateOnSrsSwitch: false,
         wmsloader: false,
-        destroyLayers: function(olMap) {
+        destroyLayers: function (olMap) {
             if (this.nativeLayers && this.nativeLayers.length) {
-                this.nativeLayers.map(function(olLayer) {
+                this.nativeLayers.map(function (olLayer) {
                     Mapbender.mapEngine.destroyLayer(olMap, olLayer);
                 });
             }
             this.nativeLayers = [];
         },
-        getNativeLayers: function() {
+        getNativeLayers: function () {
             return this.nativeLayers.slice();
         },
-        getSettings: function() {
+        getSettings: function () {
             return {
                 opacity: this.configuration.options.opacity
             };
         },
-        getConfiguredSettings: function() {
+        getConfiguredSettings: function () {
             return Object.assign({}, this.configuredSettings_);
         },
         /**
          * @param {SourceSettings} settings
          * @return {boolean}
          */
-        applySettings: function(settings) {
+        applySettings: function (settings) {
             var diff = this.diffSettings(this.getSettings(), settings);
             if (diff) {
                 this.applySettingsDiff(diff);
@@ -187,7 +189,7 @@ window.Mapbender.Source = (function() {
         /**
          * @param {SourceSettingsDiff} diff
          */
-        applySettingsDiff: function(diff) {
+        applySettingsDiff: function (diff) {
             if (diff && typeof (diff.opacity) !== 'undefined') {
                 this.setOpacity(diff.opacity);
             }
@@ -197,23 +199,46 @@ window.Mapbender.Source = (function() {
          * @param {SourceSettings} to
          * @return {SourceSettingsDiff|null}
          */
-        diffSettings: function(from, to) {
-            var diff = {
-                activate: to.selectedIds.filter(function(id) {
-                    return -1 === from.selectedIds.indexOf(id);
-                }),
-                deactivate: from.selectedIds.filter(function(id) {
-                    return -1 === to.selectedIds.indexOf(id);
-                })
-            };
+        diffSettings: function (from, to) {
+            // before v4, only the selectedIds were saved as an array.
+            // since v4, an object with id and name is saved are saved encapsulated as an array of objects to
+            // check for selectedIds for backwards compatibility
+            // @todo for v5: Remove check
+            const diff = to.hasOwnProperty('selectedIds') ?
+                {
+                    activate: to.selectedIds.filter(function (id) {
+                        return (from.selectedLayers || []).findIndex(fromLayer =>
+                            fromLayer.id === id
+                        ) === -1;
+                    }),
+                    deactivate: (from.selectedLayers || []).filter(function (layer) {
+                        return -1 === to.selectedIds.indexOf(layer.id);
+                    })
+                } :
+                {
+                    activate: (to.selectedLayers || []).filter(function (layer) {
+                        return (from.selectedLayers || []).findIndex(fromLayer =>
+                            fromLayer.id === layer.id ||
+                            fromLayer.name === layer.name
+                        ) === -1;
+                    }),
+
+                    deactivate: (from.selectedLayers || []).filter(function (layer) {
+                        return (to.selectedLayers || []).findIndex(toLayer =>
+                            toLayer.id === layer.id ||
+                            toLayer.name === layer.name
+                        ) === -1;
+                    })
+                };
+
             if (to.opacity !== from.opacity) {
                 diff.opacity = to.opacity
             }
             if (!diff.activate.length) {
-                delete(diff.activate);
+                delete (diff.activate);
             }
             if (!diff.deactivate.length) {
-                delete(diff.deactivate);
+                delete (diff.deactivate);
             }
             // null if completely empty
             return Object.keys(diff).length && diff || null;
@@ -223,25 +248,26 @@ window.Mapbender.Source = (function() {
          * @param {SourceSettingsDiff} diff
          * @return {SourceSettings}
          */
-        mergeSettings: function(base, diff) {
+        mergeSettings: function (base, diff) {
             var settings = Object.assign({}, base);
             if (typeof (diff.opacity) !== 'undefined') {
                 settings.opacity = diff.opacity;
             }
-            settings.selectedIds = settings.selectedIds.filter(function(id) {
-                return -1 === ((diff || {}).deactivate || []).indexOf(id);
+            settings.selectedLayers = settings.selectedLayers.filter(function (layer) {
+                return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => diffLayer.options.id === layer.options.id);
             });
-            settings.selectedIds = settings.selectedIds.concat((diff || {}).activate || []);
+            settings.selectedLayers = settings.selectedLayers.concat((diff || {}).activate || []);
             return settings;
         },
-        checkRecreateOnSrsSwitch: function(oldProj, newProj) {
+
+        checkRecreateOnSrsSwitch: function (oldProj, newProj) {
             return this.recreateOnSrsSwitch;
         },
-        getNativeLayer: function(index) {
-            var layer =  this.nativeLayers[index || 0] || null;
+        getNativeLayer: function (index) {
+            var layer = this.nativeLayers[index || 0] || null;
             var c = this.nativeLayers.length;
             if (typeof index === 'undefined' && c !== 1) {
-                console.warn("Mapbender.Source.getNativeLayer called on a source with flexible layer count; currently "  + c + " native layers");
+                console.warn("Mapbender.Source.getNativeLayer called on a source with flexible layer count; currently " + c + " native layers");
             }
             return layer;
         },
@@ -249,9 +275,9 @@ window.Mapbender.Source = (function() {
          * @param {string} id
          * @return {SourceLayer}
          */
-        getLayerById: function(id) {
+        getLayerById: function (id) {
             var foundLayer = null;
-            Mapbender.Util.SourceTree.iterateLayers(this, false, function(sourceLayer) {
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function (sourceLayer) {
                 if (sourceLayer.options.id === id) {
                     foundLayer = sourceLayer;
                     // abort iteration
@@ -260,10 +286,10 @@ window.Mapbender.Source = (function() {
             });
             return foundLayer;
         },
-        getRootLayer: function() {
+        getRootLayer: function () {
             return this.configuration.children[0];
         },
-        _reduceBboxMap: function(bboxMap, projCode) {
+        _reduceBboxMap: function (bboxMap, projCode) {
             if (bboxMap && Object.keys(bboxMap).length) {
                 if (projCode) {
                     if (bboxMap[projCode]) {
@@ -277,7 +303,7 @@ window.Mapbender.Source = (function() {
             }
             return null;
         },
-        getLayerBounds: function(layerId, projCode, inheritFromParent) {
+        getLayerBounds: function (layerId, projCode, inheritFromParent) {
             var layer;
             if (layerId) {
                 layer = this.getLayerById(layerId);
@@ -291,16 +317,16 @@ window.Mapbender.Source = (function() {
             }
             return layer.getBounds(projCode, inheritFromParent) || null;
         },
-        setOpacity: function(value) {
+        setOpacity: function (value) {
             this.configuration.options.opacity = value;
-            this.nativeLayers.map(function(layer) {
+            this.nativeLayers.map(function (layer) {
                 layer.setOpacity(value);
             });
         },
-        _bboxArrayToBounds: function(bboxArray, projCode) {
+        _bboxArrayToBounds: function (bboxArray, projCode) {
             return Mapbender.mapEngine.boundsFromArray(bboxArray);
         },
-        _getPrintBaseOptions: function() {
+        _getPrintBaseOptions: function () {
             return {
                 type: this.configuration.type,
                 sourceId: this.id,
@@ -310,7 +336,7 @@ window.Mapbender.Source = (function() {
         },
         // Custom toJSON for mbMap.getMapState()
         // Drops nativeLayers to avoid circular references
-        toJSON: function() {
+        toJSON: function () {
             return {
                 id: this.id,
                 title: this.title,
@@ -322,7 +348,7 @@ window.Mapbender.Source = (function() {
     return Source;
 }());
 
-window.Mapbender.SourceLayer = (function() {
+window.Mapbender.SourceLayer = (function () {
     function SourceLayer(definition, source, parent) {
         Mapbender.LayerGroup.call(this, ((definition || {}).options || {}).title || '', parent)
         this.options = definition.options || {};
@@ -338,11 +364,12 @@ window.Mapbender.SourceLayer = (function() {
         }
         this.siblings = [this];
     }
+
     SourceLayer.prototype = Object.create(Mapbender.LayerGroup.prototype);
     Object.assign(SourceLayer.prototype, {
         constructor: SourceLayer,
         // need custom toJSON for getMapState call
-        toJSON: function() {
+        toJSON: function () {
             // Skip the circular-ref inducing properties 'siblings', 'parent' and 'source'
             var r = {
                 options: this.options,
@@ -353,10 +380,10 @@ window.Mapbender.SourceLayer = (function() {
             }
             return r;
         },
-        getParent: function() {
+        getParent: function () {
             return this.parent;
         },
-        remove: function() {
+        remove: function () {
             var index = this.siblings.indexOf(this);
             if (index !== -1) {
                 this.siblings.splice(index, 1);
@@ -369,7 +396,7 @@ window.Mapbender.SourceLayer = (function() {
                 return null;
             }
         },
-        getBounds: function(projCode, inheritFromParent) {
+        getBounds: function (projCode, inheritFromParent) {
             var bboxMap = this.options.bbox;
             var srsOrder = [projCode].concat(Object.keys(bboxMap));
             for (var i = 0; i < srsOrder.length; ++i) {
@@ -386,7 +413,7 @@ window.Mapbender.SourceLayer = (function() {
             }
             return null;
         },
-        hasBounds: function() {
+        hasBounds: function () {
             var layer = this;
             do {
                 if (Object.keys(layer.options.bbox).length) {
@@ -398,7 +425,7 @@ window.Mapbender.SourceLayer = (function() {
         }
     });
     SourceLayer.typeMap = {};
-    SourceLayer.factory = function(definition, source, parent) {
+    SourceLayer.factory = function (definition, source, parent) {
         var typeClass = SourceLayer.typeMap[source.type];
         if (!typeClass) {
             typeClass = SourceLayer;

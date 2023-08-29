@@ -1,3 +1,80 @@
+## next major release
+Breaking changes (for details on migration process see UPGRADING.md):
+* Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
+  automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
+
+Features:
+* [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
+* [FOM] Add support for xlsx file creation ([PR#1487](https://github.com/mapbender/mapbender/pull/1487))
+* [Application Markup Cache] Added parameter `mapbender.markup_cache.include_session_id` (default false). For details see PR description. ([PR#1481](https://github.com/mapbender/mapbender/pull/1481))
+* Add Multipoint Geometry to LayoutRendererGeoJson in PrintBundle ([PR#1490](https://github.com/mapbender/mapbender/pull/1490))
+
+Bugfixes:
+* Zoom in application did not work when fixed zoom steps were active ([#1466](https://github.com/mapbender/mapbender/issues/1466), [PR#1472](https://github.com/mapbender/mapbender/pull/1472))
+* Fix WMS configuration cannot be unserialized when updating from mapbender <3.2.4 versions in PHP >= 8.2 ([PR#1477](https://github.com/mapbender/mapbender/pull/1477))
+* Do not crash application after a layerset has been removed and the map element has not yet been saved ([PR#1482](https://github.com/mapbender/mapbender/pull/1482))
+* Correctly handle removal of GetFeatureInfo capability when refreshing sources ([#1480](https://github.com/mapbender/mapbender/issues/1480), [PR#1488](https://github.com/mapbender/mapbender/pull/1488))
+* [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
+* [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
+* [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
+* [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
+* [Map element] Handle incorrect EPSG codes ([PR#1489](https://github.com/mapbender/mapbender/pull/1489))
+* [SearchRouter] Search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
+* [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
+* [SearchRouter] Additional search properties were ignored ([#1474](https://github.com/mapbender/mapbender/issues/1474), [PR#1476](https://github.com/mapbender/mapbender/pull/1476))
+* [Manager] Show message indicating too low max_input_vars value when editing instance layers ([PR#1491](https://github.com/mapbender/mapbender/pull/1491))
+* [BaseSourceSwitcher] Element behaved incorrectly when "allow selected" was not set in the WMS instance ([PR#1492](https://github.com/mapbender/mapbender/pull/1492))
+
+
+## v3.3.4
+Manual changes required during upgrade:
+* In `app/config/security.yml` add the following line at `security.firewalls.secured_area.form_login`: 
+```yml
+csrf_token_generator: security.csrf.token_manager
+```
+* OpenLayers was upgraded. See their [Upgrade notice](https://github.com/openlayers/openlayers/releases/tag/v7.0.0) for potential non-backward-compatible changes
+
+Security:
+* Added CSRF protection tokens in various places throughout the application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458))
+* Users without edit rights were able to delete and hide elements within an application ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/c384839bda6b9e07b29cd986e08aae8d8f957e3f))
+
+Features:
+* Add Ukranian translations by sacredkesha ([PR#1442](https://github.com/mapbender/mapbender/pull/1442))
+* Enable Ukranian in locale auto-detection ([#1443](https://github.com/mapbender/mapbender/issues/1443))
+* Update OpenLayers to 7.3 ([PR#1460](https://github.com/mapbender/mapbender/pull/1460))
+* Add configurability for Layerset initial (Layertree) selection state (use `selected: false` in YAML-defined applications)
+* Add option to deactivate or deselect newly added layers during WMS update in GUI and via arguments `--deactivate-new-layers` or `--deselect-new-layers` in `mapbender:wms:reload:url / :file` commands ([PR#1447](https://github.com/mapbender/mapbender/pull/1447)) 
+* Add collapsible collection type that displays as a bootstrap accordion in the backend with duplicate feature ([link to source](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/CollapsibleCollectionType.php))
+* Add ability to add help texts to fields in backend. Use [`MapbenderTypeTrait::createInlineHelpText`](https://github.com/mapbender/mapbender/blob/a522c05de8058fcd194140bd7ce2afa9b1edb941/src/Mapbender/CoreBundle/Element/Type/MapbenderTypeTrait.php)
+* Show icon previews in the icon selection dropdown in the button element ([PR#1450](https://github.com/mapbender/mapbender/pull/1450))
+* Layersets are now sorted alphabetically ([PR#1452](https://github.com/mapbender/mapbender/pull/1452))
+* [FeatureInfo] Redesigned highlight color selection: Opacity is now part of the color selection. Stroke and fill opacity can be selected independently ([PR#1463](https://github.com/mapbender/mapbender/pull/1463))  
+* [Ruler] Added optional help text. All colors and the font size are now configurable ([PR#1463](https://github.com/mapbender/mapbender/pull/1463))  
+* [LayerTree] Sorting layers is now also possible on mobile devices ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
+* [SearchRouter] Zoom to feature automatically if there is only one result ([PR#1454](https://github.com/mapbender/mapbender/pull/1454))
+* [ScaleSelect], [ScaleDisplay] Format numbers with thousand separators, fix blank field in scale select, localise default prefix in scale display ([PR#1453](https://github.com/mapbender/mapbender/pull/1453))
+* [SimpleSearch] Extended simple search to handle multiple configurations switchable by a dropdown menu in frontend, to clear search by a button and to display all geometry types ([PR#1446](https://github.com/mapbender/mapbender/pull/1446))
+
+Bugfixes:
+* Security settings could not be saved if a user or group where access control has been previously defined is deleted. Execute `./app/console mapbender:security:fixacl` if you already have this problem.  ([PR#1455](https://github.com/mapbender/mapbender/pull/1455))
+* Reordering layers in layertree element was not possible on devices with touch support ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
+* WMS and WMTS loading errors with PostgreSQL default database (correction) (#1441)
+* Show instance layer id in popover again (removed in v3.3.3, but is needed for referencing them, see [documentation](https://doc.mapbender.org/en/functions/basic/map.html#make-layer-visible) )
+* Show elements that can be floatable but don't need to as button targets ([#1446](https://github.com/mapbender/mapbender/pull/1446/commits/a522c05de8058fcd194140bd7ce2afa9b1edb941)) 
+* inconsistent labelling for open (dialog) automatically vs activate automatically settings
+* Only auto-open elements when they are visible in the current responsive configuration ([see commit](https://github.com/mapbender/mapbender/commit/1ee41db0e84a87bfdb23ca9f16e85a695721716b))
+* Make mouse cursor behaviour consistent on misc interactions on "Layersets" backend page ([see commit](https://github.com/mapbender/mapbender/commit/f3102825ce0c5b28bc7c98d0d1f926bdb3f5b3ed))
+* Openlayers 7 incompatibility in print rotation control 
+* WMS Layers named "0" were not shown ([PR#1465](https://github.com/mapbender/mapbender/pull/1465))
+* Instantly show/hide "No instance added" notice in layerset configuration ([PR#1458](https://github.com/mapbender/mapbender/pull/1458/commits/5be2cc8baeab33cf6b7278bd2370c56601f2699f))
+* On Mac (all browsers) and on Firefox (all platforms) the layer tree hamburger menu was unusable when the area is scrolling ([PR#1457](https://github.com/mapbender/mapbender/pull/1457))
+* When the layer tree was used in a mobile pane the pane was closed on each checkbox toggle ([#1404](https://github.com/mapbender/mapbender/issues/1404))
+* Fix style cannot be unserialized when updating from mapbender <3.2.5 versions in PHP >= 8.2 ([PR#1461](https://github.com/mapbender/mapbender/pull/1461))
+* [SearchRouter], [WMSLoader] Fix missing visual feedback when submitting invalid form ([#1276](https://github.com/mapbender/mapbender/issues/1276))
+* [SearchRouter] fix no result filtering on "0" value
+* [Sketch] Remove buggy geometry type 'text', all its features are already represented by 'point' ([PR#1456](https://github.com/mapbender/mapbender/pull/1456))
+
+
 ## v3.3.3
 * Fix Wms loading errors with PostgreSQL default database
 * Fix broken form label for Overview visibility in English locale (see [PR#1439](https://github.com/mapbender/mapbender/pull/1439))
