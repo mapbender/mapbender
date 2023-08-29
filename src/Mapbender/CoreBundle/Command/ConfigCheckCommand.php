@@ -33,7 +33,7 @@ namespace Mapbender\CoreBundle\Command;
  * List all Loaded PHP extensions
  *
  * Step 9 (checkPermissions):
- * Displays the Permission Owner and Group for 'app/logs/','app/cache/','web/uploads/','web/xmlschemas/' and 'web/' Directory
+ * Displays the Permission Owner and Group for 'var/logs/','var/cache/','web/uploads/','web/xmlschemas/' and 'web/' Directory
  */
 
 use Doctrine\DBAL\Connection;
@@ -146,7 +146,7 @@ class ConfigCheckCommand extends Command
         $rows=[];
         $success = true;
 
-        $folders= array('app/logs/','app/cache/','web/uploads/','web/xmlschemas/','web/');
+        $folders= array('var/logs/','var/cache/','web/uploads/','web/xmlschemas/','web/');
         foreach ($folders as $folder){
             $filename = $this->rootDir . '/../' . $folder;
             $info = new \SplFileInfo($filename);
