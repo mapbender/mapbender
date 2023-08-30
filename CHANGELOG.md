@@ -4,6 +4,13 @@ Breaking changes (for details on migration process see UPGRADING.md):
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 
 Features:
+
+Bugfixes:
+* [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
+
+
+## v3.3.5
+Features:
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 * [FOM] Add support for xlsx file creation ([PR#1487](https://github.com/mapbender/mapbender/pull/1487))
 * [Application Markup Cache] Added parameter `mapbender.markup_cache.include_session_id` (default false). For details see PR description. ([PR#1481](https://github.com/mapbender/mapbender/pull/1481))
@@ -17,7 +24,6 @@ Bugfixes:
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
 * [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
-* [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [Map element] Handle incorrect EPSG codes ([PR#1489](https://github.com/mapbender/mapbender/pull/1489))
 * [SearchRouter] Search failed due to cached csrf tokens in production environment ([PR#1475](https://github.com/mapbender/mapbender/pull/1475))
 * [SearchRouter] Highlighting was reset after hovering over another item ([PR#1470](https://github.com/mapbender/mapbender/pull/1470))
