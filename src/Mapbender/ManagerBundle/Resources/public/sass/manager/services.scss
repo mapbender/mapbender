@@ -96,17 +96,3 @@
     width: 1%;    // Contract as far as possible
   }
 }
-.infoMsgBox {
-  &.popover {
-    left: initial;
-    max-width: initial; // Overrule Bootstrap 276px max-width :[
-  }
-  min-width: 30em;
-
-  .labelInput {
-    width: 30%;
-  }
-  .inputWrapper, .dropdown {
-    width: 65%;
-  }
-}

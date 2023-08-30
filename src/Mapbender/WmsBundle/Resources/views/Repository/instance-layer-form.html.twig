@@ -12,7 +12,6 @@
             {% set _icon = (layer.sublayer | length) ? 'fa fas fa-folder-open' : 'fa fas fa-caret-right' %}
             <td class="level{{ level }} itemType"><span class="itemType {{ _icon }}"></span></td>
             <td class="titleColumn" title="{{ form_layer.title.vars.label | trans }}">{{ form_widget(form_layer.title) }}</td>
-
             <td title="{{ form_layer.minScale.vars.label | trans }}">{{ form_widget(form_layer.minScale) }}</td>
             <td title="{{ form_layer.maxScale.vars.label | trans }}">{{ form_widget(form_layer.maxScale) }}</td>
             {{ form_row(form_layer.active) }}
@@ -23,20 +22,37 @@
             {{ form_row(form_layer.allowtoggle) }}
             {{ form_row(form_layer.toggle) }}
             <td class="text-end">
+            {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}
             <div class="static-popover-wrap">
-              <div class="infoMsgBox popover left hidden">
-                  <div class="arrow"></div>
-                  <div class="popover-content form-horizontal">
+              <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
+                    title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
+                <i class="fa fas fa-ellipsis-h"></i>
+              </span>
+              <div class="popover-inner-wrap">
+                <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
+                  <div class="popover-arrow"></div>
+                  <div class="popover-body">
                     <span class="hidden layer-priority">{{ form_widget(form_layer.priority) }}</span>
-                    {{- form_row(form_layer.displayId, {'value': layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id}) -}}
-                    {{- form_row(form_layer.displayName) -}}
-                    {{- form_row(form_layer.style) -}}
+                      <div class="row mb-3">
+                        <div class="col-sm-2">{{ form_label(form_layer.displayId) }}</div>
+                        <div class="col-sm-10">
+                          {% set inputVal = layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id %}
+                          {{ form_widget(form_layer.displayId, {'value': inputVal}) }}
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-sm-2">{{ form_label(form_layer.displayName) }}</div>
+                        <div class="col-sm-10">{{ form_widget(form_layer.displayName) }}</div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-sm-2">{{ form_label(form_layer.style) }}</div>
+                        <div class="col-sm-10">{{ form_widget(form_layer.style) }}</div>
+                      </div>
                   </div>
+                </div>
               </div>
-              <span class="-fn-toggle-layer-detail clickable" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
             </div>
             </td>
-
         </tr>
         {% if layer.sublayer|length > 0 %}
             {% for sublayer in layer.sublayer %}

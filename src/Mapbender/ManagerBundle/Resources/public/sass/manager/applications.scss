@@ -112,16 +112,21 @@
   .popover-inner-wrap {
     display: none;
     position: absolute;
+      right: -95px;
     &.display {
       display: block;
     }
     .popover {
       position: relative;
       width: 305px;
-      right: 315px;
+      right: 320px;
       top: -35px;
       .popover-arrow {
         top: 0px;
+      }
+    }
+    .popover.regionConfig {
+      .popover-arrow {
         transform: translate(304px, 19px);
       }
       .popover-body {
@@ -131,14 +136,24 @@
         .col-sm-10 {
           width: 58.33333333%;
         }
-        .form-group {
-          .col-sm-2 {
-            width: 0;
-          }
-          .col-sm-10 {
-            width: 100%;
-          }
+        .form-check {
+          white-space: nowrap;
         }
+      }
+    }
+    .popover.infoMsgBox {
+      .popover-arrow {
+        transform: translate(297px, 19px);
+      }
+      .popover-arrow::before {
+        right: 0;
+        border-left-color: var(--bs-popover-arrow-border);
+        border-width: calc(var(--bs-popover-arrow-width) * .5) 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
+      }
+      .popover-arrow::after {
+        right: var(--bs-popover-border-width);
+        border-left-color: var(--bs-popover-bg);
+        border-width: calc(var(--bs-popover-arrow-width) * .5) 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
       }
     }
   }

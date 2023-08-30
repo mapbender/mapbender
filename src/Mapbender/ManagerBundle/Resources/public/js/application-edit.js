@@ -466,10 +466,8 @@ $(function() {
         });
     })(jQuery);
     $('.regionProperties [data-toggle-target]').on('click', function() {
-        $($(this).attr('data-toggle-target')).parent().toggleClass('display');
-        $($(this).attr('data-toggle-target')).toggleClass('show');
+        var target = $(this).attr('data-toggle-target');
+        $(target).parent().toggleClass('display');
+        $(target).toggleClass('show');
     });
-    // enable Bootstrap Popover:
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 });
