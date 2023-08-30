@@ -10,7 +10,7 @@ parameters:
     # the logo will display on your login page, the backend again, and some of the application templates.
     branding.project_name: ~
     branding.project_version: ~
-    branding.logo: ~                # web-relative path
+    branding.logo: ~                # public-relative path
 
     branding.login_backdrop: ~
     branding.login_backdrop_hq: ~

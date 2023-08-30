@@ -39,7 +39,7 @@
         <parameter key="mapbender.print.queueable">false</parameter>
         <!-- Storage path can be anywhere, should probably be /var/ in proper LSB setups
              Storage in web is pre-standardization legacy behavior -->
-        <parameter key="mapbender.print.queue.storage_dir">%kernel.project_dir%/web/prints</parameter>
+        <parameter key="mapbender.print.queue.storage_dir">%kernel.project_dir%/public/prints</parameter>
         <!-- Queue load path is the same as storage_path by default, but can be set to some
              other value to support a "print queue server" installed separately from the browser-facing
              Mapbender install. This value will be used to retrieve the finished PDF when serving the
@@ -83,7 +83,7 @@
             </argument>
         </service>
         <service id="mapbender.imageexport.renderer.markers" class="%mapbender.imageexport.renderer.markers.class%">
-            <argument>%kernel.project_dir%/web</argument>
+            <argument>%kernel.project_dir%/public</argument>
         </service>
         <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
             <argument>%mapbender.imageexport.resource_dir%/fonts</argument>

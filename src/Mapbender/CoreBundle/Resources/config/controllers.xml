@@ -14,7 +14,7 @@
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
                  class="Mapbender\CoreBundle\Controller\ComponentsController"
                  public="true">
-            <argument>%kernel.project_dir%/web</argument>
+            <argument>%kernel.project_dir%/public</argument>
             <argument>%kernel.project_dir%/vendor</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\LoginController"

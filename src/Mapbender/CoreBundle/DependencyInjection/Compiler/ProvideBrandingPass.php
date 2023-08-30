@@ -102,7 +102,7 @@ class ProvideBrandingPass implements CompilerPassInterface
             'bundles/mapbendercore/image/logo_mb3.png',
             'bundles/mapbendercore/image/logo_mb.png',
             'bundles/mapbendercore/image/mapbender-logo.png',
-            'bundles/web/mapbendermanager/logo.png',
+            'bundles/public/mapbendermanager/logo.png',
         );
 
         // disregard any historically used logos from fom : server_logo
