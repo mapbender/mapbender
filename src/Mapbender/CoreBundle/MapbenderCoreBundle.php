@@ -39,12 +39,6 @@ class MapbenderCoreBundle extends Bundle
         $container->addCompilerPass(new ProvideBrandingPass());
         $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
 
-        // @todo: remove legacy form theme bridging
-        //        TBD: either rely on correct starter config (and do nothing here)
-        //             or SET theme here, discarding starter config
-        $formThemeOldLocation = '@FOMCore/Form/fields.html.twig';
-        $formThemeNewLocation = '@MapbenderCore/form/fields.html.twig';
-        $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
     }
