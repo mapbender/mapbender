@@ -34,7 +34,6 @@
         "symfony/monolog-bundle": "^3",
         "symfony/options-resolver": "^4.4",
         "symfony/routing": "^4.4",
-        "symfony/security": "^4.4",
         "symfony/security-acl": "~3.0",
         "symfony/security-bundle": "^4.4",
         "symfony/security-core": "^4.4",
