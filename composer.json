@@ -15,6 +15,7 @@
         "symfony/asset": "^5.4",
         "symfony/config": "^5.4",
         "symfony/console": "^5.4",
+        "symfony/dotenv": "^5.4",
         "symfony/debug-bundle": "^5.4",
         "symfony/dependency-injection": "^5.4",
         "symfony/doctrine-bridge": "^5.4",
@@ -77,9 +78,6 @@
         "components/jqueryui": "^1",
 
         "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7"
-    },
-    "require-dev": {
-        "symfony/dotenv": "^5.4"
     },
     "provide": {
         "mapbender/fom": "3.3",
