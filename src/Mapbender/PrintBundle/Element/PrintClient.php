@@ -289,7 +289,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             'printLegend' => !!ArrayUtil::getDefault($config, 'legend_default_behaviour', true),
         );
 
-        return $this->formFactory->create($formType, $data, $options);
+        return $this->formFactory->createNamed('', $formType, $data, $options);
     }
 
     /**

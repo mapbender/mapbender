@@ -10,6 +10,7 @@
         "ext-gd": "*",
         "ext-curl": "*",
         "ext-json": "*",
+        "ext-zip": "*",
 
         "symfony/acl-bundle": "^2",
         "symfony/asset": "^5.4",
