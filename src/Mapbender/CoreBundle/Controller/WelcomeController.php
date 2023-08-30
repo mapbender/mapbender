@@ -1,6 +1,8 @@
 <?php
+
 namespace Mapbender\CoreBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,12 +24,13 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
  */
 class WelcomeController extends AbstractController
 {
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
+    protected ApplicationYAMLMapper $yamlRepository;
+    protected ManagerRegistry $doctrine;
 
-    public function __construct(ApplicationYAMLMapper $yamlRepository)
+    public function __construct(ApplicationYAMLMapper $yamlRepository, ManagerRegistry $doctrine)
     {
         $this->yamlRepository = $yamlRepository;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -40,7 +43,7 @@ class WelcomeController extends AbstractController
     public function listAction(Request $request)
     {
         $yamlApplications = $this->yamlRepository->getApplications();
-        $dbApplications = $this->getDoctrine()->getRepository(Application::class)->findBy(array(), array(
+        $dbApplications = $this->doctrine->getRepository(Application::class)->findBy(array(), array(
             'title' => 'ASC',
         ));
         /** @var Application[] $allApplications */
@@ -54,7 +57,7 @@ class WelcomeController extends AbstractController
         }
 
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
-            'applications'      => $allowedApplications,
+            'applications' => $allowedApplications,
             'create_permission' => $this
                 ->isGranted('CREATE', new ObjectIdentity('class', Application::class)),
         ));

@@ -28,6 +28,7 @@
                  class="Mapbender\CoreBundle\Controller\WelcomeController"
                  public="true">
                 <argument type="service" id="mapbender.application.yaml_entity_repository" />
+                <argument type="service" id="doctrine" />
         </service>
         <service id="Mapbender\CoreBundle\Controller\InstanceTunnelController"
                  class="Mapbender\CoreBundle\Controller\InstanceTunnelController"
