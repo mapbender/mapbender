@@ -169,12 +169,18 @@ class AssetFactoryBase
         try {
             return $this->fileLocator->locate($input);
         } catch (\InvalidArgumentException $e) {
-            if (preg_match('#^[/.]*?/vendor/#', $input)) {
-                // Ignore /vendor/ reference (avoid depending on internal package structure)
-                return null;
-            } else {
-                throw $e;
+            try {
+                // try again using the absolute path
+                return $this->fileLocator->locate(realpath($input));
+            } catch(\InvalidArgumentException $e) {
+                if (preg_match('#^[/.]*?/vendor/#', $input)) {
+                    // Ignore /vendor/ reference (avoid depending on internal package structure)
+                    return null;
+                } else {
+                    throw $e;
+                }
             }
+
         }
     }
 

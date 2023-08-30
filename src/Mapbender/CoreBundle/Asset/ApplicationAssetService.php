@@ -191,10 +191,10 @@ class ApplicationAssetService
                 return array();
             case 'js':
                 if (!$this->debug) {
-                    $openlayers = '../../../vendor/mapbender/openlayers6-es5/dist/ol.js';
+                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
                     $proj4js = '/components/proj4js/dist/proj4.js';
                 } else {
-                    $openlayers = '../../../vendor/mapbender/openlayers6-es5/dist/ol-debug.js';
+                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js';
                     $proj4js = '/components/proj4js/dist/proj4-src.js';
                 }
 

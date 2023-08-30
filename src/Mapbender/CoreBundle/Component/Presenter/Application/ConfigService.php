@@ -56,7 +56,7 @@ class ConfigService
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->urlProcessor = $urlProcessor;
         $this->router = $router;
-        $this->assetBaseUrl = $baseUrlPackage->getUrl(null);
+        $this->assetBaseUrl = $baseUrlPackage->getUrl('');
         $this->debug = $debug;
     }
 
