@@ -35,6 +35,7 @@
         "symfony/monolog-bundle": "^3",
         "symfony/options-resolver": "^5.4",
         "symfony/routing": "^5.4",
+        "symfony/runtime": "^5.4",
         "symfony/security-acl": "~3.0",
         "symfony/security-bundle": "^5.4",
         "symfony/security-core": "^5.4",
