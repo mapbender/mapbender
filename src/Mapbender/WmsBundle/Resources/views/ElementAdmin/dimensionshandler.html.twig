@@ -1,19 +1,7 @@
-
-
-{%- if false -%}{# predefine blocks without immediately rendering them #}
-    {% block _form_configuration_dimensionsets_entry_extent_widget %}
-        <div class="inputWrapper">
-            <input data-name="extentDisplay" type="text" readonly="readonly" disabled="disabled" class="input" />
-            <div class="mb-slider" style="margin: 0.5em 0;"></div>
-            {{ block('hidden_widget') }}
-        </div>
-    {% endblock %}
-{%- endif -%}
-
-    {{ form_row(form.title) }}
-    {{ form_rest(form.configuration) }}
-    {% if form.configuration.dimensionsets.vars.prototype is not defined or (not form.configuration.dimensionsets.vars.prototype.group.vars.choices | length) %}
-        <p>{{ "mb.wms.dimensionsets.no_dimension" | trans }}</p>
-    {% endif %}
+{{ form_row(form.title) }}
+{{ form_rest(form.configuration) }}
+{% if form.configuration.dimensionsets.vars.prototype is not defined or (not form.configuration.dimensionsets.vars.prototype.group.vars.choices | length) %}
+    <p>{{ "mb.wms.dimensionsets.no_dimension" | trans }}</p>
+{% endif %}
 <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/backend/dimensionshandler.js') }}"></script>

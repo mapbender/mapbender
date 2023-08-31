@@ -195,9 +195,13 @@ $(function() {
             }
         });
         $modal.modal('show');
-        // Hack to get <script> tags working, returned by ajax response
+        // get <script> tags working, returned by ajax response
         $modal.find('script').each(function (index, element) {
-            eval(element.innerHTML);
+            if ($(this).attr('src')) {
+                $.getScript($(element).attr('src'));
+            } else {
+                $.globalEval($(element).text());
+            }
         });
     }
 
