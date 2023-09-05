@@ -156,6 +156,12 @@ ul.toolBar, .toolBar > ul {
       }
     }
   }
+  .menu-wrapper.open {
+    .dropdown-menu {
+      display: block;
+      right: 0;
+    }
+  }
 }
 
 // Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)
