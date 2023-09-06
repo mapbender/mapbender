@@ -1,0 +1,39 @@
+<div class="ps-1">
+    <div class="mb-3">
+        <p>{{ "mb.core.coordinatesutility.view.srs.title" | trans }}</p>
+        <div class="dropdown" title="{{ "mb.core.coordinatesutility.view.srs.tooltip" | trans }}">
+            <select class="hiddenDropdown srs"></select>
+            <div class="dropdownValue iconDown"></div>
+            <ul class="dropdownList"></ul>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+        <input class="form-control input-coordinate" type="text" title="{{ "mb.core.coordinatesutility.view.transformedCoordinates.tooltip" | trans }}" value=""/>
+        <span class="input-group-text -fn-copy-clipboard">
+            <i class="fa far fa-paste" title="{{ "mb.core.coordinatesutility.view.copytoclipboard.tooltip" | trans }}"></i>
+        </span>
+    </div>
+    <div class="mb-3">
+        <div class="form-text mb-2">
+            {{ "mb.core.coordinatesutility.view.originCoordinates.title" | trans }}
+        </div>
+        <div class="input-group">
+            <input class="form-control map-coordinate" type="text" title="{{ "mb.core.coordinatesutility.view.transformedCoordinates.tooltip" | trans }}" value=""/>
+            <span class="input-group-text -fn-copy-clipboard">
+                <i class="fa far fa-paste" title="{{ "mb.core.coordinatesutility.view.copytoclipboard.tooltip" | trans }}"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <button type="button" class="btn btn-sm btn-outline-success coordinate-search">
+                {{ "mb.core.coordinatesutility.view.button.search" | trans }}
+            </button>
+        </div>
+        <div class="col text-end">
+            <button type="button" class="btn btn-sm btn-outline-secondary center-map">
+                {{ "mb.core.coordinatesutility.view.button.centermap" | trans }}
+            </button>
+        </div>
+    </div>
+</div>

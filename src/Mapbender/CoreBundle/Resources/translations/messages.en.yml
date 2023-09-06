@@ -364,6 +364,30 @@ mb:
         adminDeleteHint: "Note: the administrator can always delete public entries"
         allowAnonymousSave: Allow saving to anonymous users
         showDate: Show date
+    coordinatesutility:
+      class:
+        title: 'Coordinates utility'
+        description: 'Transform coordinates in different SRS. Navigate to coordinates on the map.'
+      widget:
+        error:
+          noSrs: 'No SRS is defined'
+          invalidCoordinates: 'Invalid coordinates'
+      view:
+        srs:
+          title: 'Coordinate system'
+          tooltip: 'Coordinate system'
+        transformedCoordinates:
+          tooltip: 'Transformed coordinates'
+        copytoclipboard:
+          tooltip: 'Copy to clipboard'
+        originCoordinates:
+          title: 'Coordinate in map reference system'
+          tooltip: 'read only'
+        button:
+          search: 'Coordinate search'
+          centermap: 'Center map'
+      backend:
+        addMapSrsList: "Add map's srs list"
     admin:
       poi:
         label:

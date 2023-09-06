@@ -137,6 +137,10 @@
             <tag name="form.type" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
+        <service id="mb.coordsutility.form.srslist" class="Mapbender\CoreBundle\Element\Type\CoordinatesUtilitySrsListType" >
+            <tag name="form.type" />
+            <argument type="service" id="router" />
+        </service>
 
         <service id="signer" class="%signer.class%">
             <argument>%secret%</argument>

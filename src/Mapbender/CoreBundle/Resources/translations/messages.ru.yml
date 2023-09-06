@@ -244,6 +244,30 @@ mb:
       tag:
         srs: SRS
         selector: выбор
+    coordinatesutility:
+      class:
+        title: 'Утилита координат'
+        description: 'Трансформация координат в другие системы. Навигация к выбранным координатам.'
+      widget:
+        error:
+          noSrs: 'Ситемы координат не установлены'
+          invalidCoordinates: 'Неверные координаты'
+      view:
+        srs:
+          title: 'Система координат'
+          tooltip: 'Система координат'
+        transformedCoordinates:
+          tooltip: 'Трансформированные координаты'
+        copytoclipboard:
+          tooltip: 'Копировать в буфер обмена'
+        originCoordinates:
+          title: 'Координаты с системе координат карты'
+          tooltip: 'редактирование невоможно'
+        button:
+          search: 'Поиск координат'
+          centermap: 'Центрировать карту'
+      backend:
+        addMapSrsList: "Добавить системы координат карты"
     admin:
       poi:
         label:

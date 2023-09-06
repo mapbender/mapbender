@@ -4,7 +4,7 @@
  See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/views/Form/
 #}
 
-{% use "bootstrap_3_layout.html.twig" with
+{% use 'bootstrap_5_layout.html.twig' with
   checkbox_widget as bs3_checkbox_widget,
   checkbox_label as bs3_checkbox_label,
   form_errors as bs3_errors
@@ -17,47 +17,26 @@
   {{- block('bs3_errors') -}}
 {%- endblock form_errors -%}
 
-{%- block form_widget_simple -%}
-  {%- if type is not defined or type not in ['file', 'hidden'] -%}
-    {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
-    <div class="inputWrapper">
-      {{- parent() -}}
-    </div>
-  {%- else -%}
+{% block form_widget_simple -%}
+    {%- if type is not defined or type != 'hidden' %}
+        {%- set widget_class = ' form-control' %}
+        {%- if type|default('') == 'color' -%}
+            {%- set widget_class = widget_class ~ ' form-control-color' -%}
+        {%- elseif type|default('') == 'range' -%}
+            {%- set widget_class = ' form-range' -%}
+        {%- endif -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ widget_class)|trim}) -%}
+    {% endif -%}
+    {%- if type is defined and type in ['range', 'color'] %}
+        {# Attribute "required" is not supported #}
+        {% set required = false %}
+    {% endif -%}
     {{- parent() -}}
-  {%- endif -%}
-{%- endblock form_widget_simple -%}
-
-{% block collection_widget %}
-  {% set allowCollapse = form.vars.allow_collapse is defined and form.vars.allow_collapse %}
-  {% if allowCollapse %}
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  {% endif %}
-  {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
-  {%- if sortable is defined -%}
-    {%- set attr = attr | merge({'data-sortable': '1'}) -%}
-  {%- endif -%}
-  {%- if prototype is defined -%}
-    {%- set attr = attr|merge({'data-prototype': form_row(prototype) | spaceless }) -%}
-  {%- endif -%}
-  <div {{ block('widget_container_attributes') }}>
-    {%- if prototype is defined and form.vars.allow_add is not empty -%}
-      <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
-    {%- endif -%}
-    {%- for child in form -%}
-        {{- form_row(child) -}}
-    {%- endfor -%}
-  </div>
-  {% if allowCollapse %}
-    </div>
-  {% endif %}
-{% endblock collection_widget %}
+{%- endblock form_widget_simple %}
 
 {% block textarea_widget %}
-  <div class="inputWrapper">
-    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' input') | trim}) -%}
-    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
-  </div>
+    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' form-control') | trim}) -%}
+    <textarea {{ block('widget_attributes') }} rows="5">{{ value }}</textarea>
 {% endblock textarea_widget %}
 
 {%- block choice_widget -%}
@@ -165,13 +144,23 @@
 {%- endblock choice_widget_collapsed -%}
 
 {%- block form_label -%}
-  {%- if 'checkbox' in form.vars.block_prefixes -%}
-    {{- block('bs3_checkbox_label') -}}
-  {%- else -%}
-    {%- set label_attr = label_attr | merge({'class': (label_attr.class | default('') ~ ' labelInput') | trim}) -%}
-    {{- block('div_form_label') -}}
-  {%- endif -%}
-{% endblock form_label %}
+    {% if label is not same as(false) -%}
+        {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+        {%- if compound is defined and compound -%}
+            {%- set element = 'legend' -%}
+            {%- if 'col-form-label' not in parent_label_class -%}
+                {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' col-form-label' )|trim}) -%}
+            {%- endif -%}
+        {%- else -%}
+            {%- set row_class = row_class|default(row_attr.class|default('')) -%}
+            {%- set label_attr = label_attr|merge({for: id}) -%}
+            {%- if 'col-form-label' not in parent_label_class -%}
+                {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ('input-group' in row_class ? ' input-group-text' : ' form-label') )|trim}) -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+    {{- parent() -}}
+{%- endblock form_label %}
 
 {%- block checkbox_widget -%}
   {{- block('bs3_checkbox_widget') -}}
@@ -189,76 +178,57 @@
 {% endblock checkbox_row %}
 
 {% block form_row %}
-  {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
-
-    {% set allowCollapse = form.parent.vars.allow_collapse is defined and form.parent.vars.allow_collapse %}
-
-    {% if allowCollapse %}
-      {# get index of item within parent for initial collapse state #}
-      {% set index = -1 %}
-      {% set break = false %}
-      {% for child in form.parent.children if not break %}
-          {% if not child.isRendered %}
-              {% set index = loop.index %}
-              {% set break = true %}
-          {% endif %}
-      {% endfor %}
-      <div class="panel panel-default collectionItem clear">
-        <div class="panel-heading" role="tab" id="headingOne">
-          <h4 class="panel-title">
-            <a role="button" class="collapse-toggle" aria-expanded="true">
-                <span class="panel-label {% if not form.vars.valid  %}text-danger{% endif %}" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">{{ 'mb.form.unnamed_entry' | trans }}</span>
-                <div class="panel-buttons">
-                    <a href="#" class="collapse-toggle clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}">
-                        <i class="fa fa-fw fa-cog far"></i>
-                    </a>
-                    {%- if form.parent.vars.allow_add -%}
-                    <a href="#" class="collectionDuplicate clickable hover-highlight-effect" title="{{ 'mb.actions.duplicate' | trans }}">
-                        <i class="fa fa-fw fa-copy far"></i>
-                    </a>
-                    {%- endif -%}
-                    {%- if form.parent.vars.allow_delete -%}
-                    <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
-                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
-                    </a>
-                    {%- endif -%}
-                </div>
-            </a>
-          </h4>
-        </div>
-        {% set opened = not form.vars.valid
-            or index == -1
-            or form.parent.vars.initial_collapse_state == 'all_opened'
-            or (form.parent.vars.initial_collapse_state == 'first_opened' and index == 1)
-            or (form.parent.vars.initial_collapse_state == 'last_opened' and index == form.parent.children | length)
-            or (form.parent.vars.initial_collapse_state == 'all_collapsed_except_single' and form.parent.children | length == 1)
-        %}
-        <div class="panel-collapse collapse {% if opened %}in{% endif %}" role="tabpanel"
-           aria-labelledby="headingOne">
-          <div class="panel-body">
-              {{ form_widget(form) }}
-          </div>
-        </div>
-      </div>
-    {% else %}
+    {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
         <div class="collectionItem clear">
             {%- if form.parent.vars.allow_delete -%}
-                <a href="#" class="collectionRemove clickable hover-highlight-effect"><i
-                        class="fa fa-fw fa-trash-o far fa-trash-alt"></i></a>
+                <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
+                    <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                </a>
             {%- endif -%}
-            {# No label for collection item #}
             {{ form_widget(form) }}
         </div>
-    {% endif %}
-  {%- else -%}
-    <div class="form-group no-gutters{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
-      {{- form_label(form) -}}
-      {{- form_help(form) -}}
-      {{- form_widget(form) -}}
-      {{- form_errors(form) -}}
+    {%- else -%}
+    <div class="mb-3{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+        {# create a horizontal form for "Vendor Specific Param" and "Dimension-Handler" #}
+        {%- if form.parent and ('vendor_specific' in form.parent.vars.block_prefixes or 'dimension_inst' in form.parent.vars.block_prefixes) -%}
+            <div class="row">
+                <div class="col-sm-2">{{- form_label(form) -}}</div>
+                <div class="col-sm-9">{{- form_widget(form) -}}</div>
+            </div>
+        {%- else -%}
+          {{- form_label(form) -}}
+          {{- form_help(form) -}}
+          {{- form_widget(form) -}}
+          {{- form_errors(form) -}}
+        {%- endif -%}
     </div>
-  {%- endif -%}
+    {%- endif -%}
 {% endblock form_row %}
+
+{% block collection_widget %}
+    {% set allowCollapse = form.vars.allow_collapse is defined and form.vars.allow_collapse %}
+    {% if allowCollapse %}
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% endif %}
+    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
+    {%- if sortable is defined -%}
+        {%- set attr = attr | merge({'data-sortable': '1'}) -%}
+    {%- endif -%}
+    {%- if prototype is defined -%}
+        {%- set attr = attr|merge({'data-prototype': form_row(prototype) | spaceless }) -%}
+    {%- endif -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if prototype is defined and form.vars.allow_add is not empty -%}
+            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
+        {%- endif -%}
+        {%- for child in form -%}
+            {{- form_row(child) -}}
+        {%- endfor -%}
+    </div>
+    {% if allowCollapse %}
+        </div>
+    {% endif %}
+{% endblock collection_widget %}
 
 {# Misc #}
 
@@ -276,7 +246,7 @@
   {% spaceless %}
   <div class="ace-collection" {{ block('widget_container_attributes') }}>
     {%- if form.vars.allow_add -%}
-    <div class="form-group text-right">
+    <div class="form-group text-end">
         <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
             <i class="fa fas fa-2x fa-plus"></i>
         </span>
