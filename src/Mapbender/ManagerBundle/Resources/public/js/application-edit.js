@@ -134,7 +134,7 @@ $(function() {
         var $modal = window.Mapbender.bootstrapModal($form, {
             title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
             subTitle: strings.subTitle || '',
-            cssClass: useWideModal && 'modal-lg',
+            cssClass: useWideModal && 'modal-xl',
             buttons: (extraButtons || []).slice().concat([
                 {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),

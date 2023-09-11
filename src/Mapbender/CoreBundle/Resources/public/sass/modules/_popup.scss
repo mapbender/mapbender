@@ -154,6 +154,6 @@ $popupBackgroundColor: $backgroundColor !default;
   @include absolute(70px 0 $space*3 0);
 }
 
-.modal-dialog {
+.modal-dialog:not(.modal-lg):not(.modal-xl) {
     max-width: 600px;
 }
