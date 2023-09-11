@@ -120,7 +120,7 @@
             <tag name="mapbender.element" replaces="Mapbender\CoreBundle\Element\Redlining" />
         </service>
         <service id="mapbender.element.CoordinatesUtility" class="Mapbender\CoreBundle\Element\CoordinatesUtility">
-            <tag name="mapbender.element" />
+            <tag name="mapbender.element" replaces="Mapbender\CoordinatesUtilityBundle\Element\CoordinatesUtility" />
             <argument type="service" id="doctrine" />
         </service>
     </services>

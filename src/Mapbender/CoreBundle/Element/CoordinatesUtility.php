@@ -48,7 +48,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
                 '@MapbenderCoreBundle/Resources/public/sass/element/coordinatesutility.scss',
             ],
             'trans' => [
-                'mb.coordinatesutility.widget.*',
+                'mb.core.coordinatesutility.widget.*',
             ],
         ];
     }
