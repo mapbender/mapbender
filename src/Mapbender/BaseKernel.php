@@ -11,9 +11,6 @@ use Symfony\Component\Routing\RouteCollectionBuilder;
 
 /**
  * Mapbender base kernel
- *
- * If you need to extend this by your own class, inherit from it and register it via the KERNEL_CLASS environment
- * variable in the .env file
  */
 class BaseKernel extends Kernel
 {
@@ -21,7 +18,7 @@ class BaseKernel extends Kernel
 
     private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
-    // TODO: what to do with this?
+    /** @noinspection PhpUnused used when creating kernel, necessary to include parameters.yml file */
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
         $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
