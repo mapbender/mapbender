@@ -1,4 +1,55 @@
-## next major release
+## next major release (v4.0)
+### Symfony updated to version 5.4 LTS
+- symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
+  that the core mapbender requires are included now. If you're missing a symfony component, 
+  check https://github.com/symfony/symfony/blob/5.4/composer.json#L58 for the dependency that might be needed and install 
+  it manually to your project using `./bin/composer install symfony/your-bundle` 
+- Local webserver bundle has been removed and replaced by the symfony local web server. Install the
+  [symfony cli](https://symfony.com/download). Then, instead of `./bin/console server:run` now call `symfony server:start --no-tls`
+- Symfony Directory Structure (all within `application`) updated to conform to the symfony Flex default:
+	- app/cache => var/cache
+	- app/logs => var/logs
+	- app/db => var/db (adjust this path in your configuration if you're using SQLite)
+	- app/console => bin/console
+	- app/config => config. Configuration is split into dedicated files per package living in config/packages. Detailed 
+      instructions can be found on https://symfonycasts.com/screencast/symfony4-upgrade/framework-config. Mapbender default configuration is already migrated, only migrate the changes you made to the default configuration 
+	- app/Resources/MapbenderPrintBundle => config/MapbenderPrintBundle
+	- app/Resources/public => public
+	- app/web => public
+	- app/web/app.php, app/web/app_dev.php, app/web/app_test.php => public/index.php - 
+      :warning: Make sure to also update your apache vhosts accordingly! 
+	- app/AppKernel.php => src/Kernel.php. Unless you are doing any custom logic, the Kernel can now stay blank when it's 
+      inheriting from Mapbender\BaseKernel. Make sure to define your bundles in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html).
+- Changes in configuration:
+	- `kernel.root_dir` replaced by `kernel.project_dir`. Note: `project_dir` points to  the application folder, 
+       i.e. one directory layer deeper than before.
+	- All classes inheriting from `AbstractController` must add the following within their `<service>` definition:
+
+```xml
+<call method="setContainer">
+    <argument type="service" id="service_container"/>
+</call>
+```
+
+- `Mapbender\BaseKernel`: removed methods `addNameSpaceBundles`, `registerBundles` and `filterUniqueBundles`. 
+   Instead, register your bundle in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html)
+- Swiftmailer replaced by built-in symfony/mailer:
+	- Changed classes see https://github.com/rectorphp/rector-symfony/blob/main/config/sets/swiftmailer/swiftmailer-to-symfony-mailer.php
+	- Configuration moved from swiftmailer to framework.mailer
+	- Parameters `mailer_transport`, `mailer_host`, `mailer_user` and `mailer_password` merged into a single parameter 
+      `mailer_dsn` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See https://symfony.com/doc/current/mailer.html#using-built-in-transports for details
+- Doctrine: updated ORM from 2.10 to 2.15 and DBAL from 2.11 to 3
+	- Type `json_array` was replaced by `json`. Run `bin/console mapbender:database:upgrade` if you were using the `json_array` database type
+
+
+
+### Twig: Updated from v2 to v3 (https://twig.symfony.com/doc/2.x/deprecated.html#tags)
+- for if -> replace by for | filter
+- spaceless standalone tag -> {% apply spaceless %}
+- Referencing templates using BundleName:: replaced by @notation and slashes (e.g. `MapbenderCoreBundle::index.html` -> `@MapbenderCore/index.html`)
+- Templating component was replaced by twig. Twig was already used, the `templating` top level setting is now gone.
+
+
 ### Removed OpenLayers 2 support
 OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now removed from the core. If you were using OpenLayers >= 4
 already, you should not expect breaking changes. You can now safely remove all version checks for `Mapbender.mapEngine.code` 
@@ -20,6 +71,9 @@ The following methods have been renamed (only relevant if you overwrite or call 
 
 The following files have been renamed:
 - `mapbender.model.ol4.js` => `mapbender.model.js` 
+
+
+
 
 ## v3.3.x
 ### Removed Component\Application
