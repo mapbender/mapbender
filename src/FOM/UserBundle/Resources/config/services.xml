@@ -44,7 +44,7 @@
     <services>
         <service id="fom.user_helper.service" class="%fom.user_helper.service.class%">
             <argument type="service" id="security.acl.provider" />
-            <argument type="service" id="security.encoder_factory" />
+            <argument type="service" id="security.password_hasher_factory" />
             <argument>%fom_user.user_own_permissions%</argument>
         </service>
 

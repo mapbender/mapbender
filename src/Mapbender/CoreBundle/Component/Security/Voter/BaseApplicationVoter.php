@@ -36,12 +36,12 @@ abstract class BaseApplicationVoter extends Voter
      * @param mixed $subject
      * @return bool
      */
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         return is_object($subject) && ($subject instanceof Application) && \in_array($attribute, $this->getSupportedAttributes($subject));
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         switch ($attribute) {
             case 'CLONE':

@@ -41,7 +41,7 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
         $this->logger = $logger ?: new NullLogger();
     }
 
-    protected function doInitialize()
+    protected function doInitialize(): void
     {
         $this->collection = new ArrayCollection();
         foreach ($this->data as $region => $elementsDefinition) {

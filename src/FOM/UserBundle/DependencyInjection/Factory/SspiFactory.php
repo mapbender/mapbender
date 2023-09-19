@@ -25,12 +25,12 @@ class SspiFactory implements SecurityFactoryInterface
         return array($providerId, $listenerId, $defaultEntryPointId);
     }
 
-    public function getPosition()
+    public function getPosition(): string
     {
         return 'pre_auth';
     }
 
-    public function getKey()
+    public function getKey(): string
     {
         return 'sspi';
     }

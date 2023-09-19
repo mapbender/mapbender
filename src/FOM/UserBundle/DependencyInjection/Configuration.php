@@ -13,7 +13,7 @@ class Configuration implements ConfigurationInterface {
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $rootName = 'fom_user';
         $treeBuilder = new TreeBuilder($rootName);

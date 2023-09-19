@@ -19,7 +19,7 @@ class YamlApplicationElementVoter extends Voter
         $this->accessDecisionManager = $accessDecisionManager;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // Only vote on VIEW on an Element in a Yaml-defined Application
         return
@@ -29,7 +29,7 @@ class YamlApplicationElementVoter extends Voter
         ;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         /** @var Element $subject */
         $roleNames = $subject->getYamlRoles();
