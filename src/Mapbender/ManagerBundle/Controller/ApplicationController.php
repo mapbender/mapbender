@@ -194,6 +194,9 @@ class ApplicationController extends ApplicationControllerBase
             }
         }
         $template = $this->templateRegistry->getApplicationTemplate($application);
+        if (!$template) {
+            throw new \Exception("The requested template " . $application->getTemplate() . " is not available.");
+        }
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
