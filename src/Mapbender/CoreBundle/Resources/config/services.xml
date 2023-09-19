@@ -42,7 +42,7 @@
         <parameter key="mapbender.responsive.elements">%mapbender.responsive%</parameter>
         <parameter key="mapbender.responsive.containers">%mapbender.responsive%</parameter>
         <parameter key="mapbender.yaml_application_dirs" type="collection">
-            <parameter>%kernel.project_dir%/app/config/applications</parameter>
+            <parameter>%kernel.project_dir%/config/applications</parameter>
         </parameter>
         <parameter key="mapbender.disabled_elements" type="collection" />
         <parameter key="mapbender.uploads_dir">uploads</parameter>

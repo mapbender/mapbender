@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Scripting hint: Use -q to reduce output to translated message only.
  *
  * Scripting hint 2: batch translate a key from all currently supported locales:
- * echo -n 'de en es fr it nl pt ru tr'| xargs -n1 -d\  -- bash -c 'echo -n $0:\ ; app/console translation:get -q --domain=messages mb.core.simplesearch.error.geometry.missing --locale=$0'
+ * echo -n 'de en es fr it nl pt ru tr'| xargs -n1 -d\  -- bash -c 'echo -n $0:\ ; bin/console translation:get -q --domain=messages mb.core.simplesearch.error.geometry.missing --locale=$0'
  */
 class TranslationGetCommand extends AbstractTranslationCommand
 {

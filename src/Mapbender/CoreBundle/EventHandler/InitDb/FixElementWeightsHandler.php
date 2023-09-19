@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Fixes incomplete Element "weight" column values that may have been broken
  * by buggy older / development versions.
  *
- * Hooked into `app/console mapbender:database:init`
+ * Hooked into `bin/console mapbender:database:init`
  */
 class FixElementWeightsHandler extends AbstractInitDbHandler
 {
