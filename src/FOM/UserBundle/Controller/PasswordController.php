@@ -160,7 +160,7 @@ class PasswordController extends AbstractEmailProcessController
         }
 
         if (!$this->checkTimeInterval($user->getResetTime(), $this->maxTokenAge)) {
-            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+            return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
                 'url' => $this->generateUrl('fom_user_password_tokenreset', array(
                     'token' => $user->getResetToken(),
                 )),

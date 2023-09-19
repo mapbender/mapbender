@@ -8,6 +8,9 @@
                  public="true">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="FOM\UserBundle\Service\FixAceOrderService" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
                  class="FOM\UserBundle\Controller\PasswordController"
@@ -21,6 +24,9 @@
             <argument>%fom_user.reset_password%</argument>
             <argument>%fom_user.max_reset_time%</argument>
             <argument>%kernel.debug%</argument>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="FOM\UserBundle\Controller\SecurityController"
                  class="FOM\UserBundle\Controller\SecurityController"
@@ -37,6 +43,9 @@
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="fom.acl_assignment_filter" />
             <argument>%fom.user.acl_classes%</argument>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="FOM\UserBundle\Service\FixAceOrderService"
                  class="FOM\UserBundle\Service\FixAceOrderService"
@@ -53,6 +62,9 @@
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="FOM\UserBundle\Controller\RegistrationController"
                  class="FOM\UserBundle\Controller\RegistrationController"
@@ -67,6 +79,9 @@
             <argument>%fom_user.max_registration_time%</argument>
             <argument>%fom_user.self_registration_groups%</argument>
             <argument>%kernel.debug%</argument>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
     </services>
 </container>

@@ -126,7 +126,7 @@ class RegistrationController extends AbstractEmailProcessController
         }
 
         if(!$this->checkTimeInterval($user->getRegistrationTime(), $this->maxTokenAge)) {
-            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+            return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
                 'url' => $this->generateUrl('fom_user_registration_reset', array(
                     'token' => $user->getRegistrationToken(),
                 )),
@@ -187,8 +187,8 @@ class RegistrationController extends AbstractEmailProcessController
      */
     protected function sendRegistrationMail($user)
     {
-       $text = $this->renderView('FOMUserBundle:Registration:email-body.text.twig', array("user" => $user));
-       $html = $this->renderView('FOMUserBundle:Registration:email-body.html.twig', array("user" => $user));
+       $text = $this->renderView('@FOMUser/Registration/email-body.text.twig', array("user" => $user));
+       $html = $this->renderView('@FOMUser/Registration/email-body.html.twig', array("user" => $user));
         $subject = $this->translator->trans('fom.user.registration.email_subject');
         $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }

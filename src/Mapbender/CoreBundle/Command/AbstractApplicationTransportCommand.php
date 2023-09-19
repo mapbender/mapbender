@@ -70,7 +70,7 @@ abstract class AbstractApplicationTransportCommand extends Command
      */
     protected function getRootUser()
     {
-        foreach ($this->getEntityRepository('FOMUserBundle:User')->findAll() as $user) {
+        foreach ($this->getEntityRepository(User::class)->findAll() as $user) {
             /** @var User $user*/
             if ($user->isAdmin()) {
                 return $user;
