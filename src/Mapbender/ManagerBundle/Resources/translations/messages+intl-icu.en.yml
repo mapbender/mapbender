@@ -59,7 +59,12 @@ mb:
           left: Left
           right: Right
     sourceinstance:
-      embedded_in_applications: '{0} This instance is not used in any application|{1} This instance is used in one application|]1,Inf[ This instance is used in %count% applications'
+      embedded_in_applications: >
+        {count, plural,
+            =0    {This instance is not used in any application}
+            one   {This instance is used in one application}
+            other {This instance is used in # applications}
+        }
       convert_to_reusable: Convert to shared instance
       convert_to_bound: Convert to bound instance
       converted_to_bound: A bound copy of the shared instance has been added to the application
@@ -85,7 +90,12 @@ mb:
           ok: 'Source OK'
           toupdate: 'Source not current anymore'
           unreachable: 'Source unreachable'
-        embedded_in_applications: '{0} This source is not assigned to any application|{1} This source is assigned to one application|]1,Inf[ This source is assigned to %count% applications'
+        embedded_in_applications: >
+            {count, plural,
+                =0    {This source is not used in any application}
+                one   {This source is used in one application}
+                other {This source is used in # applications}
+            }
       map:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
