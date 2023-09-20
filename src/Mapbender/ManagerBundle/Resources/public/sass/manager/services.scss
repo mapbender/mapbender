@@ -95,4 +95,15 @@
   td.itemType, .checkboxColumn {
     width: 1%;    // Contract as far as possible
   }
+  .form-check-input {
+      text-align: center;
+      float: none;
+      border: 1px solid rgb(128,128,128);
+      &[disabled] {
+        border: 1px solid rgba(128,128,128, 0.5);
+      }
+  }
+  th.checkboxColumn {
+    padding: .5rem .2rem;
+  }
 }
