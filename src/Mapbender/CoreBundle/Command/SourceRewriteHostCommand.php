@@ -62,7 +62,7 @@ class SourceRewriteHostCommand extends Command
                                      OneWayTransformer $transformer)
     {
         $em = $this->getEntityManager();
-        $repository = $em->getRepository('MapbenderCoreBundle:Source');
+        $repository = $em->getRepository(Source::class);
         /** @var Source[] $sources */
         $sources = $repository->findAll();
 

@@ -150,7 +150,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $em = $this->getEntityManager();
         /** @var Source|null $source */
-        $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source = $em->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             throw $this->createNotFoundException();
         }
@@ -188,7 +188,7 @@ class RepositoryController extends ApplicationControllerBase
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $em = $this->getEntityManager();
         /** @var Source $source */
-        $source = $em->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source = $em->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             // If delete action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
@@ -315,7 +315,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $wmsWithSameTitle = $this->getDoctrine()
             ->getManager()
-            ->getRepository("MapbenderCoreBundle:Source")
+            ->getRepository(Source::class)
             ->findBy(array('title' => $source->getTitle()));
 
         if (count($wmsWithSameTitle) > 0) {

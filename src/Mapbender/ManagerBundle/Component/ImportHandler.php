@@ -1,5 +1,5 @@
 <?php
-    
+
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Criteria;
@@ -259,8 +259,8 @@ class ImportHandler extends ExchangeHandler
                     $app->setSource(Application::SOURCE_DB);
                     $app->setUpdated(new \DateTime());
                     $this->em->persist($app);
-                    $newSlug = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'slug', $app->getSlug(), '_imp');
-                    $newTitle = EntityUtil::getUniqueValue($this->em, 'MapbenderCoreBundle:Application', 'title', $app->getTitle(), '_imp');
+                    $newSlug = EntityUtil::getUniqueValue($this->em, Application::class, 'slug', $app->getSlug(), '_imp');
+                    $newTitle = EntityUtil::getUniqueValue($this->em, Application::class, 'title', $app->getTitle(), '_imp');
                     $app->setSlug($newSlug);
                     $app->setTitle($newTitle);
 

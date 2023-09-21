@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ImportHandler;
 use Symfony\Component\Console\Command\Command;
 
@@ -35,7 +36,7 @@ abstract class AbstractApplicationTransportCommand extends Command
      */
     protected function getApplicationRepository()
     {
-        return $this->getEntityRepository('MapbenderCoreBundle:Application');
+        return $this->getEntityRepository(Application::class);
     }
 
     /**

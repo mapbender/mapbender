@@ -7,6 +7,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
@@ -76,7 +78,7 @@ class Collector
      */
     protected function getSources()
     {
-        return $this->getEntityRepository('MapbenderCoreBundle:Source')->findAll();
+        return $this->getEntityRepository(Source::class)->findAll();
     }
 
     /**
@@ -84,7 +86,7 @@ class Collector
      */
     protected function getSourceInstances()
     {
-        return $this->getEntityRepository('MapbenderCoreBundle:SourceInstance')->findAll();
+        return $this->getEntityRepository(SourceInstance::class)->findAll();
     }
 
     /**
@@ -92,7 +94,7 @@ class Collector
      */
     protected function getApplications()
     {
-        return $this->getEntityRepository('MapbenderCoreBundle:Application')->findAll();
+        return $this->getEntityRepository(Application::class)->findAll();
     }
 
     /**
@@ -100,6 +102,6 @@ class Collector
      */
     protected function getLayersets()
     {
-        return $this->getEntityRepository('MapbenderCoreBundle:Layerset')->findAll();
+        return $this->getEntityRepository(Layerset::class)->findAll();
     }
 }

@@ -52,7 +52,7 @@ class SourceInstanceController extends ApplicationControllerBase
     {
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
-        $instance = $em->getRepository("MapbenderCoreBundle:SourceInstance")->find($instanceId);
+        $instance = $em->getRepository(SourceInstance::class)->find($instanceId);
         $applicationRepository = $this->getDbApplicationRepository();
         if (!$layerset) {
             if ($slug) {

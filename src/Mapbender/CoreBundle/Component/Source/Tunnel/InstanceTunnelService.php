@@ -200,7 +200,7 @@ class InstanceTunnelService
         $matchedRouteName = $routerMatch['_route'];
         if ($matchedRouteName === $this->tunnelRouteName || $matchedRouteName === $this->legendTunnelRouteName) {
             $instanceId = $routerMatch['instanceId'];
-            $repository = $this->entityManager->getRepository('MapbenderCoreBundle:SourceInstance');
+            $repository = $this->entityManager->getRepository(SourceInstance::class);
             /** @var SourceInstance|null $entity */
             $entity = $repository->find($instanceId);
             if ($entity) {
