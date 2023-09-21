@@ -3,6 +3,10 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 
+Bugfixes:
+* [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
+
+## v3.3.5
 Features:
 * [Mapbender Development] Add source map support when in development environment ([PR#1468](https://github.com/mapbender/mapbender/pull/1468))
 * [FOM] Add support for xlsx file creation ([PR#1487](https://github.com/mapbender/mapbender/pull/1487))
