@@ -13,36 +13,27 @@
         </div>
     {% endif %}
 
-
     <form name="login" method="post" action="login/check">
-        <div class="form-wrapper">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-            <div id="login">
-                <div class="form-group no-gutters">
-                    <label class="labelInput required" for="username">
-                        {{ 'fom.user.login.login.username' | trans }}
-                    </label>
-                    <div class="inputWrapper">
-                        <input type="text" id="username" name="_username" required="required" autofocus="autofocus"
-                               class="input" value="{{ last_username }}">
-                    </div>
-                </div>
-                <div class="form-group no-gutters">
-                    <label class="labelInput required" for="password">
-                        {{ 'fom.user.login.login.password' | trans }}
-                    </label>
-                    <div class="inputWrapper">
-                        <input type="password" id="password" name="_password" required="required" class="input">
-                    </div>
-                </div>
-            </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+        <div class="mb-3">
+            <label class="form-label" for="username">
+                {{ 'fom.user.login.login.username' | trans }}
+            </label>
+            <input type="text" id="username" name="_username" required="required" autofocus="autofocus"
+                   class="form-control form-control-lg" value="{{ last_username }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="password">
+                {{ 'fom.user.login.login.password' | trans }}
+            </label>
+            <input type="password" id="password" name="_password" required="required" class="form-control form-control-lg">
+        </div>
 
-            {{ parent() }}
+        {{ parent() }}
 
-            <div class="text-center">
-                <input type="submit" class="btn btn-primary btn-lg login-button"
-                       value="{{ (submit_text | default('mb.actions.save')) | trans }}"/>
-            </div>
+        <div class="text-center">
+            <input type="submit" class="btn btn-primary btn-lg login-button"
+                   value="{{ (submit_text | default('mb.actions.save')) | trans }}"/>
         </div>
     </form>
 {% endblock %}

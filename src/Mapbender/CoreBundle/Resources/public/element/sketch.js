@@ -417,8 +417,8 @@
             var self = this;
             this._closePopovers();
             var $popover = $(document.createElement('div'))
-                .addClass('popover bottom')
-                .prepend($(document.createElement('div')).addClass('arrow'))
+                .addClass('popover')
+                .prepend($(document.createElement('div')).addClass('popover-arrow'))
                 .append($content)
             ;
             $('.-js-edit-content-anchor', $targetRow).append($popover);

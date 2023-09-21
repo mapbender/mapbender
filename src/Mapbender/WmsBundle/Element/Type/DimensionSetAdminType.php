@@ -45,6 +45,9 @@ class DimensionSetAdminType extends AbstractType
             ))
             ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'attr' => array(
+                    'data-extent-range' => 'extent-range-hidden',
+                ),
             ))
         ;
     }

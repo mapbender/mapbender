@@ -22,6 +22,9 @@ $.widget('mapbender.mbSimpleSearch', {
     },
     _setSelectedConfiguration: function(index) {
         this.selectedConfiguration = parseInt(index);
+        if (!(this.selectedConfiguration in this.options['configurations'])) {
+            this.selectedConfiguration = 0;
+        }
         const configuration = this.options['configurations'][this.selectedConfiguration];
 
         this.iconUrl_ = configuration.result_icon_url || null;

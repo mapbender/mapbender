@@ -76,8 +76,8 @@
 
         "mapbender/owsproxy": "^3.1.8",
 
-        "datatables/datatables": "^1.10.16",
-        "components/bootstrap": "^3 || ^4",
+        "datatables/datatables": "^1.10.16",,
+        "twbs/bootstrap": "^5.0",
         "components/jqueryui": "^1",
 
         "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7"
@@ -114,6 +114,9 @@
             "dev-release/3.0.7": "3.0.8.x-dev",
             "dev-release/3.2": "3.2.x-dev",
             "dev-master": "3.3.x-dev"
+        },
+        "installer-paths":{
+            "web/components/bootstrap/": ["twbs/bootstrap"]
         }
     }
 }

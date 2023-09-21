@@ -90,6 +90,7 @@ mb:
         Description: 'Wijzig de achtergrond-bronnen'
       form:
         mesage: 'Geen basis-bron set is gedefinieerd.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legenda

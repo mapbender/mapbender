@@ -1200,11 +1200,11 @@ window.Mapbender.MapModelBase = (function() {
             var settings = Object.assign({}, base, {
                 viewParams: diff.viewParams,
                 sources: base.sources.map(/** @param {SourceSettings} baseSettings */ function(baseSettings) {
-                    var diffMatches = diff.sources.filter(function(diffEntry) {
+                    var diffMatch = diff.sources.find(function(diffEntry) {
                         return ('' + diffEntry.id) === ('' + baseSettings.id);
                     });
-                    if (diffMatches.length) {
-                        return Mapbender.Source.prototype.mergeSettings.call(null, baseSettings, diffMatches[0]);
+                    if (diffMatch) {
+                        return Mapbender.Source.prototype.mergeSettings.call(null, baseSettings, diffMatch);
                     } else {
                         return baseSettings;
                     }

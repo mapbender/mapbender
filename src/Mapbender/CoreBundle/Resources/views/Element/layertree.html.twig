@@ -28,7 +28,7 @@
           {% if configuration.menu is defined and configuration.menu %}
           <span class="layer-menu-btn"><i class="fa fas fa-bars"></i></span>
             <div class="layer-menu hidden">
-              <div class="text-right">
+              <div class="text-end">
                 <span class="exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"><i class="fa fas fa-times"></i></span>
               </div>
               {% if 'opacity' in configuration.menu %}
@@ -47,7 +47,7 @@
                       <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
                   </div>
               {% endif %}
-              <div class="text-right">
+              <div class="text-end">
                 {% if 'zoomtolayer' in configuration.menu %}
                 <span class="layer-zoom fa fas fa-search hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
                 {% endif %}

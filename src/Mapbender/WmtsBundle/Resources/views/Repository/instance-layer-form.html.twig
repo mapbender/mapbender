@@ -6,20 +6,38 @@
     {{ form_row(form.allowselected) }}
     {{ form_row(form.selected) }}
     {%- endblock -%}
-    <td class="text-right">
-    <div class="static-popover-wrap">
-      <div class="infoMsgBox popover left hidden">
-        <div class="arrow"></div>
-        <div class="popover-content form-horizontal">
-        {%- block layer_details_content -%}
-          {%- set layer = form.vars.data -%}
-          {{- form_row(form.displayId, {'value': layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id}) -}}
-          {{- form_row(form.displayName) -}}
-          {{- form_row(form.supportedCrs) -}}
-        {%- endblock -%}
+    <td class="text-end">
+      {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}
+      <div class="static-popover-wrap">
+        <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
+          title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
+          <i class="fa fas fa-ellipsis-h"></i>
+        </span>
+        <div class="popover-inner-wrap">
+          <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
+            <div class="popover-arrow"></div>
+            <div class="popover-body">
+              {%- block layer_details_content -%}
+                <div class="row mb-3">
+                  <div class="col-sm-2">{{ form_label(form_layer.displayId) }}</div>
+                  <div class="col-sm-10">
+                    {%- set layer = form.vars.data -%}
+                    {% set inputVal = layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id %}
+                    {{ form_widget(form_layer.displayId, {'value': inputVal}) }}
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-2">{{ form_label(form_layer.displayName) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form_layer.displayName) }}</div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-sm-2">{{ form_label(form_layer.supportedCrs) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form_layer.supportedCrs) }}</div>
+                </div>
+              {%- endblock -%}
+            </div>
+          </div>
         </div>
       </div>
-      <span class="-fn-toggle-layer-detail clickable" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}"><i class="fa fas fa-ellipsis-h"></i></span>
-    </div>
     </td>
 </tr>

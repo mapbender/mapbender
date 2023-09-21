@@ -63,6 +63,14 @@ $(function () {
                     $slider.removeClass('-created');
                 }
             }
+        },
+        initExtentInput: function (collection) {
+            $('input[data-extent-range]', collection).attr('type', 'hidden');
+            var extentInput = $('.row .row:last-child .col-sm-10', collection);
+            var extentDisplay = '<input data-name="extentDisplay" type="text" readonly="readonly" disabled="disabled" class="form-control" />';
+            var slider = '<div class="mb-slider" style="margin: 0.5em 0;"></div>';
+            extentInput.append(extentDisplay);
+            extentInput.append(slider);
         }
     };
     var usedValues = [];
@@ -87,15 +95,17 @@ $(function () {
     });
     $(document).on('click', '.collectionAdd', function (event) {
         var $collection = $(event.currentTarget).closest('[data-prototype]');
+        var newCollection = $('.collectionItem', $collection).last();
+        dimHandler.initExtentInput(newCollection);
         var nOpts = $(selectSelector + ' > option').length;
         if (usedValues.length >= nOpts) {
             // return false;   // no worky, we can't prevent creation from here :\
         }
-        var $new = $('.collectionItem', $collection).last();    // :)
-        $('select[data-name="group"]', $new).trigger('change');
+        $('select[data-name="group"]', newCollection).trigger('change');
     });
     $(collectionSelector).each(function(ix, item) {
         var $item = $(item);
+        dimHandler.initExtentInput($item);
         dimHandler.initSlider($item);
     });
 });

@@ -90,6 +90,7 @@ mb:
         Description: 'Haritanın altlık kaynağını değiştirin.'
       form:
         mesage: 'Altlık kaynağı ayarı tanımlanmadı.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: 'Lejant'

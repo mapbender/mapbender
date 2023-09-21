@@ -94,5 +94,10 @@
                  public="true" lazy="true">
             <argument type="service" id="twig" />
         </service>
+        <service id="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"
+                 class="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"
+                 public="true">
+            <argument type="service" id="doctrine" />
+        </service>
     </services>
 </container>

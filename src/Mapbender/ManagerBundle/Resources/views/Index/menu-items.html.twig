@@ -15,8 +15,10 @@
     </ul>
   </li>
   {%- else -%}
-  <li{% if item.active %} class="active"{% endif %}>
-    <a href="{{ path(item.route) }}">{{ item.title|trans }}</a>
+  <li class="nav-item">
+    <a class="nav-link{% if item.active %} active"{% endif %}" href="{{ path(item.route) }}">
+      {{ item.title|trans }}
+    </a>
   </li>
   {%- endif -%}
 {% endfor %}

@@ -7,6 +7,10 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
 
+Bugfixes:
+* [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
+
+## v3.3.5
 Features:
 * PHP 8.2 is now fully supported.
 

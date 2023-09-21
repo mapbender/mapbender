@@ -1,39 +1,37 @@
-<nav class="navbar navbar-fixed-top navigationBar">
+<nav class="navbar navbar-expand-sm fixed-top bg-body-tertiary navigationBar">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation-main" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <i class="fa fa-fw fas fa-bars"></i>
-            </button>
-            <a class="navbar-brand " href="{{ path('mapbender_core_welcome_list') }}">
-                <img class="logo" alt="{{ fom.server_name }} {{ fom.server_version}}" src="{{ asset(fom.server_logo)}}"/>
-                <span class="navbar-brand-name">{{ fom.server_name }}</span>
-            </a>
-        </div>
+        <a class="navbar-brand " href="{{ path('mapbender_core_welcome_list') }}">
+            <img class="logo" alt="{{ fom.server_name }} {{ fom.server_version}}" src="{{ asset(fom.server_logo)}}" />
+            <span class="navbar-brand-name">{{ fom.server_name }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation-main" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navigation-main">
-            <ul class="nav navbar-nav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% include '@MapbenderManager/Index/menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
                 {% for sitelink in get_sitelinks() %}
-                <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a>
+                </li>
                 {% endfor %}
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="navbar-nav ms-auto">
                 {% if app.user %}
-                  <li class="dropdown bs-dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <li class="nav-item">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
                         <i class="fa fas fa-user"></i>&nbsp;{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
-                        <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                     {%- if app.user.password -%}
                       <li>
-                          <a href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
+                          <a class="dropdown-item" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
                               <i class="fa fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
                           </a>
                       </li>
                     {%- endif -%}
                       <li>
-                          <a href="{{ path('mapbender_core_login_logout') }}">
+                          <a class="dropdown-item" href="{{ path('mapbender_core_login_logout') }}">
                               <i class="fa far fa-sign-out"></i>&nbsp;{{ 'fom.core.manager.btn.logout' | trans }}
                           </a>
                       </li>

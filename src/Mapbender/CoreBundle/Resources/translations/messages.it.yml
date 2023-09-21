@@ -90,6 +90,7 @@ mb:
         Description: 'Cambia la risorsa dello sfondo'
       form:
         mesage: 'Nessun set per la risorsa di base è definito.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legenda
@@ -243,6 +244,30 @@ mb:
       tag:
         srs: SRS
         selector: selettore
+    coordinatesutility:
+      class:
+        title: 'Strumento per le coordinate'
+        description: 'Trasforma le coordinate in un differente SRS. Naviga alle coordinate nella mappa.'
+      widget:
+        error:
+          noSrs: 'No SRS è definito'
+          invalidCoordinates: 'Coordinate invalide'
+      view:
+        srs:
+          title: 'Sistema di riferimento'
+          tooltip: 'Sistema di riferimento'
+        transformedCoordinates:
+          tooltip: 'coordinate trasformate'
+        copytoclipboard:
+          tooltip: 'Copia negli appunti'
+        originCoordinates:
+          title: 'Coordinate del sistema di riferimento'
+          tooltip: 'solo leggibile'
+        button:
+          search: 'Cerca coordinate'
+          centermap: 'Centra la mappa'
+      backend:
+        addMapSrsList: 'Aggiungi la lista srs della mappa'
     admin:
       poi:
         label:

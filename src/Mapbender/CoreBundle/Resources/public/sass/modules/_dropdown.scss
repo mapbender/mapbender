@@ -55,6 +55,8 @@ select.numeric {
 .dropdownList li {
   cursor: pointer;
   display: block;
+  font-weight: 400;
+  color: var(--bs-body-color);
   &:not(.nested-group):hover {
     background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
   }
@@ -78,6 +80,8 @@ select.numeric {
     overflow-x: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+    font-weight: 400;
+    color: var(--bs-body-color);
     &.iconDown {
       padding-right: 2em;
     }

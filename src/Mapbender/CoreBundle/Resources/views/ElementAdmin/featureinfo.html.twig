@@ -1,5 +1,6 @@
-<div class="extraWideLabelForm">
-    <div class="form-group no-gutters">
+
+<div class="elementFormFeatureInfo extraWideLabelForm">
+    <div class="mb-3">
         {{ form_widget(form.configuration.autoActivate, {'label_attr': {'class': 'checkbox-inline'}}) }}
         {{ form_widget(form.configuration.deactivateOnClose, {'label_attr': {'class': 'checkbox-inline'}}) }}
         {{ form_widget(form.configuration.printResult, {'label_attr': {'class': 'checkbox-inline'}}) }}
@@ -10,7 +11,9 @@
     {{ form_row(form.configuration.maxCount) }}
     {{ form_row(form.configuration.width) }}
     {{ form_row(form.configuration.height) }}
-    <h3>{{ 'mb.core.admin.featureinfo.label.highlighting_group' | trans }}</h3>
+    <h3 class="mt-4">
+        {{ 'mb.core.admin.featureinfo.label.highlighting_group' | trans }}
+    </h3>
     {{ form_row(form.configuration.highlighting) }}
     <div class="row">
         <fieldset class="col-12 col-xs-12 col-md-6">

@@ -90,6 +90,7 @@ mb:
         Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
       form:
         mesage: 'Segundo plano não existe.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legenda

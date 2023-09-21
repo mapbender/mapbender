@@ -32,7 +32,7 @@
     }
 
     function onFirstInputOfItemChanged(input) {
-        const $label = $(input).closest('.panel').find('.panel-label');
+        const $label = $(input).closest('.card').find('.panel-label');
         let value = input.value;
         if (!value) value = $label.attr('data-unnamed');
         $label.text(value);
@@ -88,12 +88,12 @@
         });
 
         $modal.on('click', '.collapse-toggle', function (e) {
-            $(e.target).closest('.panel').find('.collapse').collapse('toggle');
+            $(e.target).closest('.card').find('.collapse').collapse('toggle');
         });
-        $modal.find('.panel-group').on('keyup', '.form-group:first-child input', function (e) {
+        $modal.find('.panel-group').on('keyup', '.mb-3.row:first-child input', function (e) {
             onFirstInputOfItemChanged(e.target);
         });
-        $modal.find('.panel-group .form-group:first-child input').each(function (i, e) {
+        $modal.find('.panel-group .mb-3.row:first-child input').each(function (i, e) {
             onFirstInputOfItemChanged(e);
         });
     })

@@ -23,8 +23,8 @@
 {% block form_main2 %}
   <div class="extendedGroup">
     {% if form.dimensions is defined %}
-      <div class="panel panel-default content-toggle-container closed">
-        <div class="panel-heading content-toggle clickable clearfix">
+      <div class="card content-toggle-container closed mb-3">
+        <div class="card-header content-toggle clickable clearfix">
           <i class="fa fa-lg fas fa-plus pull-right"></i>
           {{ 'mb.wms.repo.instance.label.dimensions' | trans }}
         </div>
@@ -35,12 +35,12 @@
         </div>
       </div>
     {% endif %}
-    <div class="panel panel-default content-toggle-container closed">
-      <div class="panel-heading content-toggle clickable clearfix">
+    <div class="card content-toggle-container closed mb-3">
+      <div class="card-header content-toggle clickable clearfix">
         <i class="fa fa-lg fas fa-plus pull-right"></i>
         {{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}
       </div>
-      <div class="panel-body content-toggle-target form-horizontal">
+      <div class="card-body content-toggle-target vendorspecifics-form">
         {{ form_widget(form.vendorspecifics) }}
       </div>
     </div>

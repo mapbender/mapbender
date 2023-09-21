@@ -1,6 +1,6 @@
 {% extends '@MapbenderCore/index.html.twig' %}
 {%- set title = title | default(fom.server_name) -%}
-{%- set pagetitle = pagetitle | default(fom.server_name ~ ': ' ~ title) -%}
+{%- set pagetitle = pagetitle | default(fom.server_name ~ ' ' ~ title) -%}
 {% block mobilejs %}
   {%- set scaleFactor = scaleFactor | default(1) -%}
   {{ parent() }}

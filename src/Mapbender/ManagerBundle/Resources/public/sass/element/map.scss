@@ -1,11 +1,10 @@
 .elementFormMap {
   .singleRow {
-    .labelInput {
-      width: 5em;
+    .col-sm-2 {
+      width: 33.3%;
     }
-    .inputWrapper {
-      min-width: 0;
-      width: 80px;
+    .col-sm-10 {
+      width: 66.6%;
     }
   }
 }

@@ -8,8 +8,22 @@
         max-width: 50vw;
     }
 
+    &.input-group {
+        position: relative;
+    }
+
+    .button-close {
+        margin-right: 5rem;
+    }
+
+    .btn-outline-secondary {
+        border-color: #dee2e6;
+    }
+
     .dropdown:not(.bs-dropdown) {
-        border-left: none;
+        margin-left: 0px;
+        border: 1px solid #dee2e6;
+        border-right: none;
         background: $backgroundColor;
         text-align: left;
         display: table-cell;
@@ -33,15 +47,11 @@
 
         .dropdownList {
             right: 0;
-            margin-top: 10px;
+            margin-top: 21px;
         }
     }
 
     .choice-selected {
         font-weight: 600;
     }
-}
-
-.sidePane .input-group-growing, .mobilePane .input-group-growing {
-    width: 100%;
 }
