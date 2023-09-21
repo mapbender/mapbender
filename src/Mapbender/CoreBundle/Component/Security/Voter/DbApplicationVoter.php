@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class DbApplicationVoter extends BaseApplicationVoter
 {
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         /** @var mixed|Application $subject */
         if (parent::supports($attribute, $subject) && $subject->getSource() !== Application::SOURCE_YAML) {
@@ -26,7 +26,7 @@ class DbApplicationVoter extends BaseApplicationVoter
         }
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         /** @var Application $subject */
         switch ($attribute) {

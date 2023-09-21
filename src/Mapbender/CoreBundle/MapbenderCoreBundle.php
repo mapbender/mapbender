@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPa
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -38,12 +39,6 @@ class MapbenderCoreBundle extends Bundle
         $container->addCompilerPass(new ProvideBrandingPass());
         $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
 
-        // @todo: remove legacy form theme bridging
-        //        TBD: either rely on correct starter config (and do nothing here)
-        //             or SET theme here, discarding starter config
-        $formThemeOldLocation = 'FOMCoreBundle:Form:fields.html.twig';
-        $formThemeNewLocation = 'MapbenderCoreBundle:form:fields.html.twig';
-        $container->addCompilerPass(new RewriteFormThemeCompilerPass($formThemeOldLocation, $formThemeNewLocation));
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
     }
@@ -82,7 +77,7 @@ class MapbenderCoreBundle extends Bundle
         );
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return null;
     }

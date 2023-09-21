@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocatorInterface;
 
 /**
@@ -20,15 +21,17 @@ class AssetFactoryBase
     protected $fileLocator;
     /** @var string[] */
     protected $publishedBundleNameMap;
+    protected LoggerInterface $logger;
 
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
      * @param string[] $bundleClassMap
      */
-    public function __construct(FileLocatorInterface $fileLocator, $webDir, $bundleClassMap)
+    public function __construct(FileLocatorInterface $fileLocator, LoggerInterface $logger, $webDir, $bundleClassMap)
     {
         $this->fileLocator = $fileLocator;
+        $this->logger = $logger;
         $this->webDir = $webDir;
         $this->publishedBundleNameMap = $this->initPublishedBundlePaths($bundleClassMap);
     }
@@ -169,12 +172,23 @@ class AssetFactoryBase
         try {
             return $this->fileLocator->locate($input);
         } catch (\InvalidArgumentException $e) {
-            if (preg_match('#^[/.]*?/vendor/#', $input)) {
-                // Ignore /vendor/ reference (avoid depending on internal package structure)
-                return null;
-            } else {
-                throw $e;
+            try {
+                // try again using the absolute path
+                $realpath = realpath($input);
+                if ($realpath === false) {
+                    $this->logger->warning('Asset $input not found, skipping.');
+                    return null;
+                }
+                return $this->fileLocator->locate($realpath);
+            } catch(\InvalidArgumentException $e) {
+                if (preg_match('#^[/.]*?/vendor/#', $input)) {
+                    // Ignore /vendor/ reference (avoid depending on internal package structure)
+                    return null;
+                } else {
+                    throw $e;
+                }
             }
+
         }
     }
 

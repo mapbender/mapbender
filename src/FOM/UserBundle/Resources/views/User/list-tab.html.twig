@@ -10,9 +10,9 @@
     {%- endif -%}
     </div>
     <div class="col-sm-7 col-xs-12 col-12">
-        {% include 'MapbenderManagerBundle::fragments/filter-container.html.twig' with {filterTargetId: 'listFilterUsers' } %}
+        {% include '@MapbenderManager/fragments/filter-container.html.twig' with {filterTargetId: 'listFilterUsers' } %}
     </div>
 </div>
 <div class="content-box content-box-lg">
-    {%- include 'FOMUserBundle:User:list.html.twig' -%}
+    {%- include '@FOMUser/User/list.html.twig' -%}
 </div>

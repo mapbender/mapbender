@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "@MapbenderManager/manager.html.twig" %}
 {% block form_buttons %}
     {%- set _return_url = return_url | default(path( return_path | default('mapbender_manager_application_index'))) -%}
     {%- if return_url is defined and return_url is same as (false) -%}

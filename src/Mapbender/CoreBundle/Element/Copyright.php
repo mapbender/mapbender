@@ -9,9 +9,9 @@ use Twig;
 
 /**
  * A Copyright
- * 
+ *
  * Displays a copyright label and terms of use.
- * 
+ *
  * @author Paul Schmidt
  */
 class Copyright extends AbstractElementService
@@ -109,6 +109,6 @@ class Copyright extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:copyright.html.twig';
+        return '@MapbenderCore/ElementAdmin/copyright.html.twig';
     }
 }

@@ -86,12 +86,12 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:coordinatesutility.html.twig';
+        return '@MapbenderCore/ElementAdmin/coordinatesutility.html.twig';
     }
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:coordinatesutility.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/coordinatesutility.html.twig');
         $view->attributes['class'] = 'mb-element-coordinatesutility';
         $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();
         return $view;

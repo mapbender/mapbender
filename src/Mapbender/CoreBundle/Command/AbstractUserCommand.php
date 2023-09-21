@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use FOM\UserBundle\Entity\User;
 use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractUserCommand extends Command
@@ -36,7 +37,7 @@ abstract class AbstractUserCommand extends Command
     protected function getRepository()
     {
         /** @var EntityRepository $repository */
-        $repository = $this->managerRegistry->getRepository('FOMUserBundle:User');
+        $repository = $this->managerRegistry->getRepository(User::class);
         return $repository;
     }
 }

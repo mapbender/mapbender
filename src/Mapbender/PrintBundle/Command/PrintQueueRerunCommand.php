@@ -17,7 +17,7 @@ class PrintQueueRerunCommand extends AbstractPrintQueueExecutionCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $id = intval($input->getArgument('id'));
         $job = $this->repository->find($id);
@@ -26,5 +26,6 @@ class PrintQueueRerunCommand extends AbstractPrintQueueExecutionCommand
         } else {
             throw new \RuntimeException("No queued print job with id $id");
         }
+        return 0;
     }
 }

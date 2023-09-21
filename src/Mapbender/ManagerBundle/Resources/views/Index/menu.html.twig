@@ -9,7 +9,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navigation-main">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
+                {% include '@MapbenderManager/Index/menu-items.html.twig' with {items: mapbender_manager_menu_items(app.request)} %}
                 {% for sitelink in get_sitelinks() %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a>

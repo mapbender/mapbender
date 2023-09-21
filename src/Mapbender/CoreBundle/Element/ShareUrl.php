@@ -63,7 +63,7 @@ class ShareUrl extends ButtonLike
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:ShareUrl.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/ShareUrl.html.twig');
         parent::initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-element-shareurl';
         return $view;

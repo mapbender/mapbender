@@ -159,7 +159,7 @@ class SourcesCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $collector = new Collector($this->managerRegistry);
         if ($this->bucketBy == 'application') {
@@ -202,6 +202,7 @@ class SourcesCommand extends Command
                 $output->writeln(Yaml::dump($dataArray, 6000, 4));
             }
         }
+        return 0;
     }
 
     /**

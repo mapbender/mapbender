@@ -33,7 +33,7 @@ class FOMUserExtension extends Extension {
         $container->setParameter("fom_user.login_delay_after_fail", $config["login_delay_after_fail"]);
     }
 
-    public function getAlias() {
+    public function getAlias(): string {
         return 'fom_user';
     }
 }

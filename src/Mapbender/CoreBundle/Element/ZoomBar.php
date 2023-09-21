@@ -82,7 +82,7 @@ class ZoomBar extends AbstractElementService implements FloatingElement
         if (!$mapElement) {
             return false;
         }
-        $view = new TemplateView('MapbenderCoreBundle:Element:zoombar.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/zoombar.html.twig');
         $view->attributes['class'] = 'mb-element-zoombar';
         $scales = array();
         $mapConfig = $mapElement->getConfiguration();
@@ -132,6 +132,6 @@ class ZoomBar extends AbstractElementService implements FloatingElement
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:zoombar.html.twig';
+        return '@MapbenderManager/Element/zoombar.html.twig';
     }
 }

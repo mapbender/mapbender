@@ -19,7 +19,7 @@ owsproxy.useragent: OWSProxy3
 
 ## Extension configuration
 
-The configuration is done in `app/config/config.yml` at `ows_proxy3_core` section.
+The configuration is done in `bin/config/config.yml` at `ows_proxy3_core` section.
 
 Owsproxy evaluates the extension configuration node `ows_proxy3_core`.
 The defaults are:

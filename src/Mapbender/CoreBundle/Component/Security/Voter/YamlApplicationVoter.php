@@ -7,14 +7,14 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class YamlApplicationVoter extends BaseApplicationVoter
 {
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // only vote on Yaml-defined Application instances
         /** @var mixed|Application $subject */
         return parent::supports($attribute, $subject) && $subject->getSource() === Application::SOURCE_YAML;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         /** @var Application $subject */
         switch ($attribute) {

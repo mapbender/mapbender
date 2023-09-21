@@ -37,7 +37,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         $this->addArgument('input', InputArgument::REQUIRED, 'File name (`-` for stdin) or directory');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output = new SymfonyStyle($input, $output);
         $inputArg = $input->getArgument('input');
@@ -56,6 +56,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
                 throw new \InvalidArgumentException("Input path {$inputArg} does not exist");
             }
         }
+        return 0;
     }
 
     protected function processFile($path, InputInterface $input, OutputStyle $output)

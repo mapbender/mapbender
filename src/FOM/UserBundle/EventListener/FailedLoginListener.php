@@ -65,10 +65,9 @@ class FailedLoginListener implements EventSubscriberInterface
         /** @var EntityRepository $repository */
 
         $em = $this->entityManager;
-        $className  = 'FOMUserBundle:UserLogEntry';
         $userName = $event->getAuthenticationToken()->getUsername();
         $ipAddress  = $_SERVER["REMOTE_ADDR"];
-        $repository = $em->getRepository($className);
+        $repository = $em->getRepository(UserLogEntry::class);
         $userInfo = array(
             'userName' => $userName,
             'ipAddress' => $ipAddress,

@@ -9,7 +9,7 @@
             C29.64,118.46,43.05,86.48,67.41,62.55z"/></g></svg>
     {% endblock %}
 {% endif %}
-{% spaceless %}
+{% apply spaceless %}
     {% if configuration.draggable is defined and configuration.draggable %}
       <div class="move-icon-wrap component">
           <i class="fa fas fa-arrows"></i>
@@ -58,4 +58,4 @@
     {% endif %}
   </ul>
 </div>
-{% endspaceless %}
+{% endapply %}

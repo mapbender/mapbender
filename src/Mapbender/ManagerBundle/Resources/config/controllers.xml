@@ -11,11 +11,17 @@
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument>%mapbender.responsive.elements%</argument>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\IndexController"
                  class="Mapbender\ManagerBundle\Controller\IndexController"
                  public="true">
             <argument type="service" id="mapbender.twig.manager.menu" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
                  class="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
@@ -23,10 +29,16 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\LayersetController"
                  class="Mapbender\ManagerBundle\Controller\LayersetController"
                  public="true" lazy="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
                  class="Mapbender\ManagerBundle\Controller\ElementController"
@@ -35,18 +47,27 @@
             <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
             <argument type="service" id="fom.acl.manager" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\RepositoryController"
                  class="Mapbender\ManagerBundle\Controller\RepositoryController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  class="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  public="true">
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="translator" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
         </service>
     </services>
 </container>

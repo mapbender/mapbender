@@ -114,16 +114,16 @@ class FeatureInfo extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:featureinfo.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/featureinfo.html.twig');
         $view->attributes['class'] = 'mb-element-featureinfo';
         $view->attributes['data-title'] = $element->getTitle();
         $config = $element->getConfiguration() ?: array();
         $view->variables['displayType'] = ArrayUtil::getDefault($config, 'displayType', 'tabs');
         $view->variables['iframe_scripts'] = array(
-            '@MapbenderCoreBundle/Resources/public/element/featureinfo-mb-action.js',
+            file_get_contents(__DIR__ . '/../Resources/public/element/featureinfo-mb-action.js'),
         );
         if (!empty($config['highlighting'])) {
-            $view->variables['iframe_scripts'][] = '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js';
+            $view->variables['iframe_scripts'][] = file_get_contents(__DIR__ . '/../Resources/public/element/featureinfo-highlighting.js');
         }
         return $view;
     }
@@ -133,7 +133,7 @@ class FeatureInfo extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:featureinfo.html.twig';
+        return '@MapbenderCore/ElementAdmin/featureinfo.html.twig';
     }
 
     public static function updateEntityConfig(Element $entity)

@@ -38,7 +38,7 @@ class DbApplicationElementVoter extends Voter
         $this->permissionMap = $permissionMap;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // Only vote on VIEW on an Element in a non-Yaml-defined Application
         return
@@ -48,7 +48,7 @@ class DbApplicationElementVoter extends Voter
         ;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         // Minimal reimplementation of AclVoter, minus FieldVote supprt, minus logging, minus ObjectIdentity renormalization
         /** @see \Symfony\Component\Security\Acl\Voter\AclVoter::vote */

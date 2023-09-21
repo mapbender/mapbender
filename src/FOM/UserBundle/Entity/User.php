@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use FOM\UserBundle\EventListener\UserProfileListener;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("email")
  * @ORM\Table(name="fom_user")
  */
-class User extends AbstractUser implements EquatableInterface
+class User extends AbstractUser implements EquatableInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="string", nullable=false, length=255, unique=true)
@@ -72,7 +73,7 @@ class User extends AbstractUser implements EquatableInterface
         $this->groups = new ArrayCollection();
     }
 
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): bool
     {
         // Avoid automatic implicit logout after modifying group assignments or profile information
         // see https://github.com/symfony/symfony/issues/35501
@@ -188,7 +189,7 @@ class User extends AbstractUser implements EquatableInterface
     /**
      * @return array
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         $roles = array();
         foreach ($this->getGroups() as $group) {
@@ -254,6 +255,11 @@ class User extends AbstractUser implements EquatableInterface
     public function getProfile()
     {
         return $this->profile;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getEmail();
     }
 
     // why...?

@@ -55,7 +55,7 @@ class Ruler extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:ruler.html.twig';
+        return '@MapbenderManager/Element/ruler.html.twig';
     }
 
     /**

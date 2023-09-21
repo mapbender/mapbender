@@ -16,6 +16,6 @@
 {% endif %}
 {%- set script_content = '' -%}
 {%- for script_template in iframe_scripts -%}
-  {%- set script_content = script_content ~ include(script_template) -%}
+  {%- set script_content = script_content ~ script_template -%}
 {%- endfor -%}
 <div class="hidden -js-iframe-script-template" data-script="{{ script_content }}"></div>

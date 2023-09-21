@@ -43,7 +43,7 @@ class LinkButton extends ButtonLike
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:link_button.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/link_button.html.twig');
         $this->initializeView($view, $element);
         $view->variables['link_target'] = $element->getConfiguration()['click'];
         return $view;

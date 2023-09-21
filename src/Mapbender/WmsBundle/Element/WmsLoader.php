@@ -46,7 +46,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
                                 Importer $sourceImporter,
                                 $exampleUrl)
     {
-        $this->instanceRepository = $managerRegistry->getRepository('Mapbender\CoreBundle\Entity\SourceInstance');
+        $this->instanceRepository = $managerRegistry->getRepository(SourceInstance::class);
         $this->authorizationChecker = $authorizationChecker;
         $this->sourceTypeDirectory = $sourceTypeDirectory;
         $this->sourceImporter = $sourceImporter;
@@ -119,12 +119,12 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderWmsBundle:ElementAdmin:wmsloader.html.twig';
+        return '@MapbenderWms/ElementAdmin/wmsloader.html.twig';
     }
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderWmsBundle:Element:wmsloader.html.twig');
+        $view = new TemplateView('@MapbenderWms/Element/wmsloader.html.twig');
         $view->attributes['class'] = 'mb-element-wmsloader';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['example_url'] = $this->exampleUrl;

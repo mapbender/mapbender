@@ -32,7 +32,7 @@ This directory may not be accessible or detection may fail on certain configurat
 Use `mapbender.imageexport.temp_dir` (string; default `null` for auto-detection) to set a valid,
 writable temp directory instead.
 
-Use `mapbender.imageexport.resource_dir` (string; default `%kernel.root_dir%/Resources/MapbenderPrintBundle`)
+Use `mapbender.imageexport.resource_dir` (string; default `%kernel.project_dir%/config/MapbenderPrintBundle`)
 to control where ImageExport and print look for fonts, "dynamic_image" resources and certain built-in
 images like the north arrow.
 

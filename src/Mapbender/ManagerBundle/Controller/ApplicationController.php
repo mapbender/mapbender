@@ -194,6 +194,9 @@ class ApplicationController extends ApplicationControllerBase
             }
         }
         $template = $this->templateRegistry->getApplicationTemplate($application);
+        if (!$template) {
+            throw new \Exception("The requested template " . $application->getTemplate() . " is not available.");
+        }
 
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
@@ -283,7 +286,7 @@ class ApplicationController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('VIEW', $sourceOid);
 
         $layerset = $this->requireLayerset($layersetId, $application);
-        $sources = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Source')->findBy(array(), array(
+        $sources = $this->getDoctrine()->getRepository(Source::class)->findBy(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));

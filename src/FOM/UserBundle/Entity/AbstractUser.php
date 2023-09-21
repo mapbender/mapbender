@@ -95,7 +95,7 @@ abstract class AbstractUser implements UserInterface
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -120,7 +120,7 @@ abstract class AbstractUser implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return array(
             'ROLE_USER',

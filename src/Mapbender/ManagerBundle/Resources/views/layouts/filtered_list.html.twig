@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "@MapbenderManager/manager.html.twig" %}
 
 {% block manager_content %}
     {%- set list_id = list_id | default('listFilter0') -%}
@@ -9,7 +9,7 @@
             </div>
             {%- if items -%}
                 <div class="col-sm-7 col-xs-12 col-12">
-                {% include "MapbenderManagerBundle::fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
+                {% include "@MapbenderManager/fragments/filter-container.html.twig" with {filterTargetId: list_id} only %}
                 </div>
             {%- endif -%}
         </div>

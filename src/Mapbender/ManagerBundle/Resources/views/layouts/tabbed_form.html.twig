@@ -1,4 +1,4 @@
-{% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
+{% extends "@MapbenderManager/layouts/tabbed.html.twig" %}
 {% block tabs_wrapper %}
     {{- form_start(form, {"attr": {"novalidate": "novalidate"}}) -}}
     {%- if form._token is defined -%}

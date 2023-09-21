@@ -86,7 +86,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:layertree.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/layertree.html.twig');
         $view->attributes['class'] = 'mb-element-layertree';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['configuration'] = array(
@@ -100,7 +100,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
+        return '@MapbenderCore/ElementAdmin/layertree.html.twig';
     }
 
 

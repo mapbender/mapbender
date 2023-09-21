@@ -18,7 +18,7 @@
           <div class="popover regionConfig bs-popover-auto fade" id="{{ _popover_id }}" data-popper-placement="left">
             <div class="popover-arrow"></div>
             <div class="popover-body">
-              {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
+              {% form_theme form '@MapbenderCore/form/fields_horizontal.html.twig' %}
               {{ form_rest(form) }}
             </div>
           </div>
@@ -52,8 +52,9 @@
           </tr>
         </thead>
         <tbody>
-        {% for element in application.getElementsByRegion(region) if not is_typeof_element_disabled(element) %}
-              <tr class="element" {% if is_map_element(element) -%}
+        {% for element in application.getElementsByRegion(region) %}
+              {% if not is_typeof_element_disabled(element) %}
+               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
                 {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}"
                     data-token="{{ csrf_token('element_edit') }}">
@@ -99,6 +100,7 @@
             <tr class="dummy">
               <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
             </tr>
+            {% endif %}
           {% endfor %}
         </tbody>
       </table>

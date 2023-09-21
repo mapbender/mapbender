@@ -28,7 +28,7 @@ class Map extends AbstractElementService
 
     public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->srsRepository = $managerRegistry->getRepository('MapbenderCoreBundle:SRS');
+        $this->srsRepository = $managerRegistry->getRepository(SRS::class);
     }
 
     /**
@@ -169,7 +169,7 @@ class Map extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:map.html.twig';
+        return '@MapbenderManager/Element/map.html.twig';
     }
 
     /**

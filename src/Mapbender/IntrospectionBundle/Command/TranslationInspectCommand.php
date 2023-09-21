@@ -10,7 +10,7 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 
 class TranslationInspectCommand extends AbstractTranslationCommand
 {
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $catalogs = $this->getCatalogs($this->allCatalogNames);
         $referenceCatalogs = array(
@@ -19,6 +19,7 @@ class TranslationInspectCommand extends AbstractTranslationCommand
         );
         $this->showIdentityTranslations($output, $catalogs);
         $this->showRepetitions($output, $referenceCatalogs, $catalogs);
+        return 0;
     }
 
     /**

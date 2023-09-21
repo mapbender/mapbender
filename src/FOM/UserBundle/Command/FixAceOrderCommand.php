@@ -38,10 +38,10 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->fixAceOrderService->fixAceOrder();
         $output->writeln("Command completed.");
-        return null;
+        return 0;
     }
 }

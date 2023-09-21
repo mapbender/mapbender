@@ -1,4 +1,4 @@
-{% extends 'MapbenderCoreBundle::index.html.twig' %}
+{% extends '@MapbenderCore/index.html.twig' %}
 {%- set title = title | default(fom.server_name) -%}
 {%- set pagetitle = pagetitle | default(fom.server_name ~ ' ' ~ title) -%}
 {% block mobilejs %}
@@ -51,7 +51,7 @@
       {% endif %}
       <div class="justify-v">
         <div class="logoContainer">
-          <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender 3"
+          <a href="{{ path('mapbender_core_welcome_list') }}"><img class="logo" alt="Mapbender Logo"
                                                                    src="{{ asset(fom.server_logo) }}"></a>
         </div>
         <div class="loginBox">

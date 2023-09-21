@@ -69,7 +69,7 @@ class InspectTranslationTwigsCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $resources = $this->collectResourcePaths($input);
         foreach ($resources as $resourceName) {
@@ -81,6 +81,7 @@ class InspectTranslationTwigsCommand extends Command
             }
             $this->inspectContent($output, $content, $resourceName);
         }
+        return 0;
     }
 
     protected function inspectContent(OutputInterface $output, $content, $resourceName)

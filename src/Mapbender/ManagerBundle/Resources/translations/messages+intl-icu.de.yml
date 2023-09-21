@@ -59,7 +59,12 @@ mb:
           left: Links
           right: Rechts
     sourceinstance:
-      embedded_in_applications: '{0} Diese Instanz wird von keiner Anwendung genutzt|{1} Diese Instanz wird von einer Anwendung genutzt|]1,Inf[ Diese Instanz wird von %count% Anwendungen genutzt'
+      embedded_in_applications: >
+        {count, plural,
+            =0    {Diese Instanz wird von keiner Anwendung genutzt}
+            one   {Diese Instanz wird von einer Anwendung genutzt}
+            other {Diese Instanz wird von # Anwendungen genutzt}
+        }
       convert_to_reusable: In freie Instanz umwandeln
       convert_to_bound: In private Instanz umwandeln
       converted_to_bound: Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt
@@ -85,7 +90,12 @@ mb:
           ok: 'Datenquelle OK'
           toupdate: 'Datenquelle inaktuell'
           unreachable: 'Die Datenquelle ist nicht erreichbar'
-        embedded_in_applications: '{0} Diese Datenquelle wird von keiner Anwendung genutzt|{1} Diese Datenquelle wird von einer Anwendung genutzt|]1,Inf[ Diese Datenquelle wird in %count% Anwendungen genutzt'
+        embedded_in_applications: >
+            {count, plural,
+                =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
+                one   {Diese Datenquelle wird von einer Anwendung genutzt}
+                other {Diese Datenquelle wird von # Anwendungen genutzt}
+            }
       map:
         max_extent: 'Max. Karten­ausdehnung'
         max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'

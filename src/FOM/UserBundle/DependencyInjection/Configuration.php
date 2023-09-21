@@ -13,7 +13,7 @@ class Configuration implements ConfigurationInterface {
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $rootName = 'fom_user';
         $treeBuilder = new TreeBuilder($rootName);
@@ -59,7 +59,7 @@ class Configuration implements ConfigurationInterface {
                     ->defaultValue('FOM\UserBundle\Form\Type\BasicProfileType')
                 ->end()
                 ->scalarNode('profile_template')
-                    ->defaultValue('FOMUserBundle:User:basic_profile.html.twig')
+                    ->defaultValue('@FOMUser/User/basic_profile.html.twig')
                 ->end()
                 ->arrayNode('self_registration_groups')
                     ->prototype('scalar')->end()

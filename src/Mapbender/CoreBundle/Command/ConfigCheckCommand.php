@@ -33,7 +33,7 @@ namespace Mapbender\CoreBundle\Command;
  * List all Loaded PHP extensions
  *
  * Step 9 (checkPermissions):
- * Displays the Permission Owner and Group for 'app/logs/','app/cache/','web/uploads/','web/xmlschemas/' and 'web/' Directory
+ * Displays the Permission Owner and Group for 'var/logs/','var/cache/','public/uploads/','public/xmlschemas/' and 'public/' Directory
  */
 
 use Doctrine\DBAL\Connection;
@@ -65,7 +65,7 @@ class ConfigCheckCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io=new SymfonyStyle($input,$output);
         $this->checkDatabaseConnection($io);
@@ -76,6 +76,7 @@ class ConfigCheckCommand extends Command
         $this->checkPhpIni($io);
         $this->getLoadedPhpExtensions($io);
         $this->checkPermissions($io);
+        return 0;
     }
 
     protected function checkDatabaseConnection(SymfonyStyle $output){
@@ -146,7 +147,7 @@ class ConfigCheckCommand extends Command
         $rows=[];
         $success = true;
 
-        $folders= array('app/logs/','app/cache/','web/uploads/','web/xmlschemas/','web/');
+        $folders= array('var/logs/','var/cache/','public/uploads/','public/xmlschemas/','public/');
         foreach ($folders as $folder){
             $filename = $this->rootDir . '/../' . $folder;
             $info = new \SplFileInfo($filename);
@@ -176,10 +177,10 @@ class ConfigCheckCommand extends Command
         $rows=[];
         $success = true;
         $ignoreFolders= array('.','..','.gitignore','.gitkeep');
-        $webDirs = scandir($this->rootDir.'/../web/bundles');
+        $webDirs = scandir($this->rootDir.'/../public/bundles');
         foreach ($webDirs as $webDir){
             if(!in_array($webDir,$ignoreFolders)){
-                if (is_link($this->rootDir.'/../web/bundles/'.$webDir)) {
+                if (is_link($this->rootDir.'/../public/bundles/'.$webDir)) {
                     $rows[]=[$webDir,'yes'];
                 }else{
                     $rows[]=[$webDir,'no'];

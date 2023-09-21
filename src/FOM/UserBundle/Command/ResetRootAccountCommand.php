@@ -69,7 +69,7 @@ EOT
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $root = $this->getRoot();
 
@@ -102,7 +102,7 @@ EOT
         $this->entityManager->flush();
 
         $output->writeln("User {$root->getUsername()} {$mode}.");
-        return null;
+        return 0;
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)

@@ -42,7 +42,7 @@
         <parameter key="mapbender.responsive.elements">%mapbender.responsive%</parameter>
         <parameter key="mapbender.responsive.containers">%mapbender.responsive%</parameter>
         <parameter key="mapbender.yaml_application_dirs" type="collection">
-            <parameter>%kernel.root_dir%/config/applications</parameter>
+            <parameter>%kernel.project_dir%/config/applications</parameter>
         </parameter>
         <parameter key="mapbender.disabled_elements" type="collection" />
         <parameter key="mapbender.uploads_dir">uploads</parameter>
@@ -175,13 +175,13 @@
                 <argument>false</argument>
             </call>
             <call method="addLoadPath">
-                <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
+                <argument>%kernel.project_dir%/mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
             </call>
             <call method="addLoadPath">
-                <argument>%kernel.root_dir%/../vendor/igosuki/compass-mixins/lib</argument>
+                <argument>%kernel.project_dir%/vendor/igosuki/compass-mixins/lib</argument>
             </call>
             <call method="addLoadPath">
-                <argument>%kernel.root_dir%/../web</argument>
+                <argument>%kernel.project_dir%/public</argument>
             </call>
         </service>
 
@@ -223,7 +223,7 @@
         </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">
             <argument type="service" id="filesystem" />
-            <argument>%kernel.root_dir%/../web</argument>
+            <argument>%kernel.project_dir%/public</argument>
             <argument>%mapbender.uploads_dir%</argument>
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
@@ -247,7 +247,8 @@
                  class="%mapbender.asset_compiler.css.class%"
                  lazy="true">
             <argument type="service" id="file_locator" />
-            <argument>%kernel.root_dir%/../web</argument>
+            <argument type="service" id="logger" />
+            <argument>%kernel.project_dir%/public</argument>
             <argument>%kernel.bundles%</argument>
             <argument type="service" id="mapbender.assetic.filter.sass" />
             <argument type="service" id="router" />
@@ -256,7 +257,8 @@
                  class="%mapbender.asset_compiler.js.class%"
                  lazy="true">
             <argument type="service" id="file_locator" />
-            <argument>%kernel.root_dir%/../web</argument>
+            <argument type="service" id="logger" />
+            <argument>%kernel.project_dir%/public</argument>
             <argument>%kernel.bundles%</argument>
         </service>
         <service id="mapbender.asset_compiler.translations"
@@ -280,7 +282,7 @@
         </service>
         <service id="mapbender.xmlvalidator.service" class="Mapbender\CoreBundle\Component\XmlValidatorService">
             <argument type="service" id="mapbender.http_transport.service" />
-            <argument>%kernel.root_dir%/../web/xmlschemas</argument>
+            <argument>%kernel.project_dir%/public/xmlschemas</argument>
             <argument type="service" id="logger" on-invalid="null" />
         </service>
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">

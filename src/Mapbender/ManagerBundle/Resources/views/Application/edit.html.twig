@@ -1,6 +1,6 @@
-{% extends "MapbenderManagerBundle::layouts/tabbed_form.html.twig" %}
+{% extends "@MapbenderManager/layouts/tabbed_form.html.twig" %}
 {%- set title = application.id ? application.title : ('mb.manager.admin.application.new.title' | trans) -%}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block css %}
     {{parent()}}
@@ -52,23 +52,23 @@
             <p class="alert alert-info">{{"mb.manager.admin.application.create_use" | trans }}</p>
           {%- endif -%}
         <div class="row">
-        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+        {% include '@MapbenderManager/Application/form-basic.html.twig' %}
         </div>
       </div>
     {%- if application.id -%}
       <div{{ tab_macros.tab_content_attributes('Layout') }}>{#- #containerLayout -#}
-        {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
+        {% include '@MapbenderManager/Application/form-elements.html.twig' %}
       </div>
       <div{{ tab_macros.tab_content_attributes('Layers') }}>{#- #containerLayers -#}
-        {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
+        {% include '@MapbenderManager/Application/form-layersets.html.twig' %}
       </div>
     {%- endif -%}
       <div{{ tab_macros.tab_content_attributes('CustomCss') }}>{#- #containerCustomCss -#}
-        {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
+        {% include '@MapbenderManager/Application/form-css.html.twig' %}
       </div>
       <div{{ tab_macros.tab_content_attributes('Security') }}>{#- #containerSecurity -#}
         {% block securityTab %}
-          {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+          {% include '@MapbenderManager/Application/form-security.html.twig' %}
         {% endblock %}
       </div>
 {% endblock %}

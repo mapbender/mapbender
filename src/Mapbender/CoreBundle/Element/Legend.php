@@ -87,7 +87,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:legend.html.twig';
+        return '@MapbenderCore/ElementAdmin/legend.html.twig';
     }
 
     public static function updateEntityConfig(Element $entity)

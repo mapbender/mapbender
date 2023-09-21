@@ -76,7 +76,7 @@ class AboutDialog extends ButtonLike
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:about_dialog.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/about_dialog.html.twig');
         $this->initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-aboutButton';
         $templateName = $this->getContentTemplateName($element);
@@ -93,6 +93,6 @@ class AboutDialog extends ButtonLike
 
     protected function getContentTemplateName(Element $element)
     {
-        return 'MapbenderCoreBundle:Element:about_dialog_content.html.twig';
+        return '@MapbenderCore/Element/about_dialog_content.html.twig';
     }
 }

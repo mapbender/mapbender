@@ -1,4 +1,4 @@
-{% extends 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
+{% extends '@MapbenderManager/Repository/source/view-metadata-common.html.twig' %}
 {%- block source_meta_rows -%}
 {{- parent() -}}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.onlineresource" | trans }}:</th><td>{{ source.onlineResource }}</td></tr>

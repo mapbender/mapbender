@@ -1,14 +1,14 @@
-{% extends "MapbenderManagerBundle:Repository:source/view.html.twig" %}
+{% extends "@MapbenderManager/Repository/source/view.html.twig" %}
 
 {% block metadata_content %}
-  {%- include 'MapbenderWmsBundle:Repository:source/view-metadata.html.twig' with {'show_constraints': true } -%}
+  {%- include '@MapbenderWms/Repository/source/view-metadata.html.twig' with {'show_constraints': true } -%}
 {% endblock metadata_content %}
 {% block details_content %}
-  {% include 'MapbenderWmsBundle:Repository:source/view-details.html.twig' %}
+  {% include '@MapbenderWms/Repository/source/view-details.html.twig' %}
 {% endblock %}
 {% block layers_content %}
   {% if source.version == '1.1.1' %}
     <p class="alert alert-info">{{ 'mb.wms.wmsloader.repo.view.message.cautionscalehint'|trans }}</p>
   {% endif %}
-  {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': source.rootlayer, 'itemLevel': 1 }%}
+  {% include "@MapbenderWms/Repository/layer.html.twig"  with {'layer': source.rootlayer, 'itemLevel': 1 }%}
 {% endblock layers_content %}

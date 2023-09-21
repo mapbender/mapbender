@@ -13,7 +13,7 @@
   </table>
   <div class="indent">
   {% for subtheme in theme.themes %}
-    {% include "MapbenderWmtsBundle:Repository:theme.html.twig"  with {'theme': subtheme, 'itemLevel': 2 }%}
+    {% include "@MapbenderWmts/Repository/theme.html.twig"  with {'theme': subtheme, 'itemLevel': 2 }%}
   {% endfor %}
   </div>
 </div>

@@ -19,9 +19,10 @@ class SourceShowCommand extends AbstractSourceCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $source = $this->getSourceById($input->getArgument('id'));
         $this->showSource($output, $source);
+        return 0;
     }
 }

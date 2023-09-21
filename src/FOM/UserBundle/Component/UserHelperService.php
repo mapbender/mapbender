@@ -5,6 +5,7 @@ namespace FOM\UserBundle\Component;
 
 
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -23,8 +24,8 @@ class UserHelperService
 {
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
-    /** @var EncoderFactoryInterface */
-    protected $encoderFactory;
+    /** @var PasswordHasherFactoryInterface */
+    protected $passwordHasherFactory;
     /** @var mixed[]; from collection parameter fom_user.user_own_permissions */
     protected $permissionsOnSelf;
 
@@ -34,11 +35,11 @@ class UserHelperService
      * @param mixed[] $permissionsOnSelf
      */
     public function __construct(MutableAclProviderInterface $aclProvider,
-                                EncoderFactoryInterface $encoderFactory,
+                                PasswordHasherFactoryInterface $encoderFactory,
                                 $permissionsOnSelf)
     {
         $this->aclProvider = $aclProvider;
-        $this->encoderFactory = $encoderFactory;
+        $this->passwordHasherFactory = $encoderFactory;
         $this->permissionsOnSelf = $permissionsOnSelf;
     }
 
@@ -50,11 +51,11 @@ class UserHelperService
      */
     public function setPassword(User $user, $password)
     {
-        $encoder = $this->encoderFactory->getEncoder($user);
+        $encoder = $this->passwordHasherFactory->getPasswordHasher($user);
 
         $salt = $this->generateSalt(32);
 
-        $encryptedPassword = $encoder->encodePassword($password, $salt);
+        $encryptedPassword = $encoder->hash($password, $salt);
 
         $user
             ->setPassword($encryptedPassword)

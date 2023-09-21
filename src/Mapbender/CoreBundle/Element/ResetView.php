@@ -60,7 +60,7 @@ class ResetView extends ButtonLike
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:ResetView.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/ResetView.html.twig');
         $this->initializeView($view, $element);
         return $view;
     }

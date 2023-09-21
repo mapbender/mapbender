@@ -1,5 +1,5 @@
-{% extends "MapbenderManagerBundle::layouts/tabbed.html.twig" %}
-{%- import 'MapbenderManagerBundle::macros/tabs.html.twig' as tab_macros -%}
+{% extends "@MapbenderManager/layouts/tabbed.html.twig" %}
+{%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {%- block js -%}
     {{- parent() -}}
@@ -44,7 +44,7 @@
 {% block tab_container_contact %}
     <div{{ tab_macros.tab_content_attributes('Contact', 'serviceContainer') }}>{#- #containerContact -#}
         {% block contact_content %}
-        {% include 'MapbenderManagerBundle:Repository:source/view-contact.html.twig' with {'contact' : source.contact} %}
+        {% include '@MapbenderManager/Repository/source/view-contact.html.twig' with {'contact' : source.contact} %}
         {% endblock contact_content %}
     </div>
 {% endblock tab_container_contact %}
@@ -63,12 +63,12 @@
     {% block tab_containers %}
         <div{{ tab_macros.tab_content_attributes('MetaData', 'active serviceContainer') }}>{#- #containerMetaData -#}
             {% block metadata_content %}
-                {% include 'MapbenderManagerBundle:Repository:source/view-metadata-common.html.twig' %}
+                {% include '@MapbenderManager/Repository/source/view-metadata-common.html.twig' %}
             {% endblock metadata_content %}
         </div>
         <div{{ tab_macros.tab_content_attributes('Applications', 'serviceContainer') }}>{#- #containerApplications -#}
             {% block applications_content %}
-                {% include 'MapbenderManagerBundle:Repository:source/applications.html.twig' %}
+                {% include '@MapbenderManager/Repository/source/applications.html.twig' %}
             {% endblock applications_content %}
         </div>
         {%- if source.contact is defined and source.contact -%}
@@ -76,7 +76,7 @@
         {%- endif -%}
         <div{{ tab_macros.tab_content_attributes('Service', 'serviceContainer') }}>{#- #containerService -#}
             {% block details_content %}
-                {% include 'MapbenderManagerBundle:Repository:source/view-details-common.html.twig' %}
+                {% include '@MapbenderManager/Repository/source/view-details-common.html.twig' %}
             {% endblock details_content %}
         </div>
         <div{{ tab_macros.tab_content_attributes('Layers', 'serviceContainer') }}>{#- #containerLayers -#}

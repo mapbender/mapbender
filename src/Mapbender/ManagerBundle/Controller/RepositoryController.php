@@ -57,7 +57,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $oid);
-        $repository = $this->getDoctrine()->getRepository('Mapbender\CoreBundle\Entity\Source');
+        $repository = $this->getDoctrine()->getRepository(Source::class);
         /** @var Source[] $sources */
         $sources = $repository->findBy(array(), array(
             'title' => 'ASC',
@@ -260,7 +260,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         /** @var Source|null $source */
-        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $source = $this->getDoctrine()->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             // If edit action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.

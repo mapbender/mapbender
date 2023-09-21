@@ -100,12 +100,12 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderPrintBundle:ElementAdmin:imageexport.html.twig';
+        return '@MapbenderPrint/ElementAdmin/imageexport.html.twig';
     }
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderPrintBundle:Element:imageexport.html.twig');
+        $view = new TemplateView('@MapbenderPrint/Element/imageexport.html.twig');
         $view->attributes['class'] = 'mb-element-imageexport';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['submitUrl'] = $this->urlGenerator->generate('mapbender_core_application_element', array(

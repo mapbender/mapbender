@@ -8,8 +8,8 @@
             {# get index of item within parent for initial collapse state #}
             {% set index = -1 %}
             {% set break = false %}
-            {% for child in form.parent.children if not break %}
-                {% if not child.isRendered %}
+            {% for child in form.parent.children %}
+                {% if (not child.isRendered) and (not break) %}
                     {% set index = loop.index %}
                     {% set break = true %}
                 {% endif %}

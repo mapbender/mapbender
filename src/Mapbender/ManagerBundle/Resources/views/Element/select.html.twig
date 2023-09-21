@@ -1,4 +1,4 @@
-{% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'listFilterElements'} %}
+{% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterElements'} %}
 
     <ul id="listFilterElements">
     {%- for meta in elements | sort((a, b) => (a.title | trans) <=> (b.title | trans)) -%}

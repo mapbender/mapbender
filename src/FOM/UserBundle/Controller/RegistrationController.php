@@ -7,6 +7,7 @@ use FOM\UserBundle\Entity\Group;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,7 +27,7 @@ class RegistrationController extends AbstractEmailProcessController
     protected $maxTokenAge;
     protected $groupTitles;
 
-    public function __construct(\Swift_Mailer $mailer,
+    public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
                                 UserHelperService $userHelper,
                                 $userEntityClass,
@@ -78,7 +79,7 @@ class RegistrationController extends AbstractEmailProcessController
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
 
-            $groupRepository = $this->getDoctrine()->getRepository('FOMUserBundle:Group');
+            $groupRepository = $this->getDoctrine()->getRepository(Group::class);
             foreach ($this->groupTitles as $groupTitle) {
                 /** @var Group|null $group */
                 $group = $groupRepository->findOneBy(array(
@@ -125,7 +126,7 @@ class RegistrationController extends AbstractEmailProcessController
         }
 
         if(!$this->checkTimeInterval($user->getRegistrationTime(), $this->maxTokenAge)) {
-            return $this->render('FOMUserBundle:Login:error-tokenexpired.html.twig', array(
+            return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
                 'url' => $this->generateUrl('fom_user_registration_reset', array(
                     'token' => $user->getRegistrationToken(),
                 )),
@@ -186,8 +187,8 @@ class RegistrationController extends AbstractEmailProcessController
      */
     protected function sendRegistrationMail($user)
     {
-       $text = $this->renderView('FOMUserBundle:Registration:email-body.text.twig', array("user" => $user));
-       $html = $this->renderView('FOMUserBundle:Registration:email-body.html.twig', array("user" => $user));
+       $text = $this->renderView('@FOMUser/Registration/email-body.text.twig', array("user" => $user));
+       $html = $this->renderView('@FOMUser/Registration/email-body.html.twig', array("user" => $user));
         $subject = $this->translator->trans('fom.user.registration.email_subject');
         $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }

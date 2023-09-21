@@ -53,7 +53,7 @@ class SimpleSearch extends AbstractElementService
 
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:simple_search.html.twig';
+        return '@MapbenderCore/ElementAdmin/simple_search.html.twig';
     }
 
     public function getWidgetName(Element $element)
@@ -97,7 +97,7 @@ class SimpleSearch extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:simple_search.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/simple_search.html.twig');
         $view->attributes['class'] = 'mb-element-simplesearch';
         $configurations = $element->getConfiguration()['configurations'];
         if (\preg_match('#toolbar|footer#i', $element->getRegion())) {

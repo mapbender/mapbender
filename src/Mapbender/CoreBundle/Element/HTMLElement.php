@@ -54,7 +54,7 @@ class HTMLElement extends AbstractElementService
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $view = new TemplateView('MapbenderCoreBundle:Element:htmlelement.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/htmlelement.html.twig');
         $view->attributes['class'] = 'mb-element-htmlelement';
         $view->attributes['data-title'] = $element->getTitle();
 
@@ -80,6 +80,6 @@ class HTMLElement extends AbstractElementService
 
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
+        return '@MapbenderCore/ElementAdmin/htmlelement.html.twig';
     }
 }

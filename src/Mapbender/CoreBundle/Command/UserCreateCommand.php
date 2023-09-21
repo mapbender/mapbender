@@ -41,7 +41,7 @@ class UserCreateCommand extends AbstractUserCommand
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('name');
         /** @var User|null $user */

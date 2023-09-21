@@ -65,7 +65,7 @@ class BaseSourceSwitcher extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:basesourceswitcher.html.twig';
+        return '@MapbenderCore/ElementAdmin/basesourceswitcher.html.twig';
     }
 
     /**
@@ -129,7 +129,7 @@ class BaseSourceSwitcher extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:basesourceswitcher.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/basesourceswitcher.html.twig');
         $view->attributes['class'] = 'mb-element-basesourceswitcher';
         if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
             $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle();

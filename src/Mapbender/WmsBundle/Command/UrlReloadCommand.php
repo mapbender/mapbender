@@ -23,7 +23,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $targetId = $input->getArgument('id');
         $target = $this->getSourceById($targetId);
@@ -40,6 +40,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
             $em->rollback();
             throw $e;
         }
+        return 0;
     }
 
     protected function getValidationOption(InputInterface $input)

@@ -19,7 +19,7 @@
       </div>
       <div class="content-toggle-target smallText lighter-headings">
       {% for tilematrix in tilematrixset.tilematrices %}
-        {% include "MapbenderWmtsBundle:Repository:tilematrix.html.twig" with {'tilematrix': tilematrix }%}
+        {% include "@MapbenderWmts/Repository/tilematrix.html.twig" with {'tilematrix': tilematrix }%}
       {% endfor %}
       </div>
     </div>

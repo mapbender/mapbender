@@ -11,7 +11,7 @@
         <a href="{{ path(item.route) }}">{{ item.title | trans }}</a>
       </li>
       {%- endif %}
-      {% include 'MapbenderManagerBundle:Index:menu-items.html.twig' with {'items': item.subroutes} %}
+      {% include '@MapbenderManager/Index/menu-items.html.twig' with {'items': item.subroutes} %}
     </ul>
   </li>
   {%- else -%}

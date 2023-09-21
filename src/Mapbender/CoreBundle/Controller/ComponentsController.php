@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Controller to deliver assets from various vendor paths from /components/ urls.
- * Only answers if file does not actually exist in web/components (see example rewrite configuration in .htaccess).
+ * Only answers if file does not actually exist in public/components (see example rewrite configuration in .htaccess).
  * Having this Controller allows installing and requesting /components/ packages even without having
  * a "component installer" package, such as robloach/component-installer (abandoned) or
  * mnsami/composer-custom-directory-installer on the system.

@@ -90,7 +90,7 @@ class Sketch extends AbstractElementService
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCoreBundle:ElementAdmin:sketch.html.twig';
+        return '@MapbenderCore/ElementAdmin/sketch.html.twig';
     }
 
     public function getClientConfiguration(Element $element)
@@ -103,7 +103,7 @@ class Sketch extends AbstractElementService
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:sketch.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/sketch.html.twig');
         $view->attributes['class'] = 'mb-element-sketch';
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
         $view->variables['radiusEditing'] = true;

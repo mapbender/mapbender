@@ -87,7 +87,7 @@ class InstanceTunnelController extends AbstractController
     {
         /** @var SourceInstance|null $instance */
         $instance = $this->getDoctrine()
-            ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+            ->getRepository(SourceInstance::class)->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }

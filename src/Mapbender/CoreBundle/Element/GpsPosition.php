@@ -77,7 +77,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('MapbenderCoreBundle:Element:gpsposition.html.twig');
+        $view = new TemplateView('@MapbenderCore/Element/gpsposition.html.twig');
         $this->initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-gpsButton';
         return $view;
@@ -89,7 +89,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:gpsposition.html.twig';
+        return '@MapbenderManager/Element/gpsposition.html.twig';
     }
 
     public static function updateEntityConfig(Entity\Element $entity)

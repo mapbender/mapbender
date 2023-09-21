@@ -21,7 +21,7 @@ class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $minDays = intval($input->getArgument('age'));
         if ($minDays < 0) {
@@ -48,5 +48,6 @@ class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
         if ($input->getOption('remove-dangling-files')) {
             $this->removeDanglingFiles($output);
         }
+        return 0;
     }
 }

@@ -1,4 +1,4 @@
-{% extends "MapbenderCoreBundle::index.html.twig" %}
+{% extends "@MapbenderCore/index.html.twig" %}
 
 {% block css %}
   <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/fonts/ubuntu/ubuntu.css') }}" />
@@ -15,7 +15,7 @@
 
 {% block content %}
   <div class="head">
-      {% include 'MapbenderManagerBundle:Index:menu.html.twig' %}
+      {% include '@MapbenderManager/Index/menu.html.twig' %}
       {% for key, messages in app.session.bag('flashes').all() %}
         <div class="flashBox alert alert-{{ key != 'error' ? key : 'danger' }}" role="alert">
             {%- for message in messages -%}

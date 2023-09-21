@@ -25,7 +25,7 @@ fom_user:
     profile_formtype: FOM\UserBundle\Form\Type\BasicProfileType
     ## Twig resource path to user profile template; obsolete. Any form
     ## type will render properly with just the default template.
-    profile_template: FOMUserBundle:User:basic_profile.html.twig
+    profile_template: '@FOMUser/User/basic_profile.html.twig'
 
     # Artificial login delay after repeated failed attempts
     ## Login delay (in seconds) for repeated failed attempts

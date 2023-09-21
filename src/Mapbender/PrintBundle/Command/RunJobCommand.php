@@ -42,7 +42,7 @@ class RunJobCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $jobArray = $this->getJobArray($input->getArgument('inputFile'));
 
@@ -52,6 +52,7 @@ class RunJobCommand extends Command
         file_put_contents($outputFileName, $outputBody);
         $outputSize = strlen($outputBody);
         $output->writeln("$outputSize bytes written to $outputFileName");
+        return 0;
     }
 
     /**

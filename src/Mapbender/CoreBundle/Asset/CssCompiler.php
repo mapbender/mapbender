@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\FilterInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -31,11 +32,13 @@ class CssCompiler extends AssetFactoryBase
      * @param FilterInterface $sassFilter
      * @param RouterInterface $router
      */
-    public function __construct(FileLocatorInterface $fileLocator, $webDir, $bundleClassMap,
+    public function __construct(FileLocatorInterface $fileLocator,
+                                LoggerInterface $logger,
+                                $webDir, $bundleClassMap,
                                 FilterInterface $sassFilter,
                                 RouterInterface $router)
     {
-        parent::__construct($fileLocator, $webDir, $bundleClassMap);
+        parent::__construct($fileLocator, $logger, $webDir, $bundleClassMap);
         $this->sassFilter = $sassFilter;
         $this->cssRewriteFilter = new \Assetic\Filter\CssRewriteFilter();
         $this->router = $router;

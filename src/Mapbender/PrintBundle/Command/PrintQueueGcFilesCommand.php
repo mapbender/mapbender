@@ -16,12 +16,13 @@ class PrintQueueGcFilesCommand extends AbstractPrintQueueCleanCommand
         $this->addOption('dry-run', null, InputOption::VALUE_NONE);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('dry-run')) {
             $this->showDanglingFiles($output, $this->findDanglingFiles(), OutputInterface::VERBOSITY_QUIET);
         } else {
             $this->removeDanglingFiles($output);
         }
+        return 0;
     }
 }

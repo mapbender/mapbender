@@ -52,7 +52,7 @@ class Mobile extends Template
 
     public function getTwigTemplate()
     {
-        return 'MapbenderMobileBundle:Template:mobile.html.twig';
+        return '@MapbenderMobile/Template/mobile.html.twig';
     }
 
     public function getBodyClass(Application $application)
