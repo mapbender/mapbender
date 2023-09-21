@@ -51,7 +51,7 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $slug = $input->getArgument('slug');
         /** @var Application|null $app */
@@ -76,5 +76,6 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
                 $output->writeln(Yaml::dump($data, 20, 2));
                 break;
         }
+        return 0;
     }
 }

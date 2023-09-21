@@ -63,7 +63,7 @@ class ElementClassesCommand extends Command
         $output->getFormatter()->setStyle('note', $noteStyle);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $elementNames = $this->inventory->getActiveInventory();
         $headers = array(
@@ -93,6 +93,7 @@ class ElementClassesCommand extends Command
             }
         }
         $this->renderInfoPerNamespace($input, $output, $headers, $rows);
+        return 0;
     }
 
     protected function renderInfoPerNamespace(InputInterface $input, OutputInterface $output, $headers, $rows)

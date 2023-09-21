@@ -65,7 +65,7 @@ class ConfigCheckCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io=new SymfonyStyle($input,$output);
         $this->checkDatabaseConnection($io);
@@ -76,6 +76,7 @@ class ConfigCheckCommand extends Command
         $this->checkPhpIni($io);
         $this->getLoadedPhpExtensions($io);
         $this->checkPermissions($io);
+        return 0;
     }
 
     protected function checkDatabaseConnection(SymfonyStyle $output){

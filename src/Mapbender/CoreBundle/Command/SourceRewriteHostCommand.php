@@ -36,10 +36,11 @@ class SourceRewriteHostCommand extends Command
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, "Preview changes without saving");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $transformer = $this->getTransformer($input);
         $this->processSources($input, $output, $transformer);
+        return 0;
     }
 
     protected function getTransformer(InputInterface $input)

@@ -44,7 +44,7 @@ class VersionCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         if ($input->getOption('project')) {
@@ -61,5 +61,6 @@ class VersionCommand extends Command
         } else {
             $output->writeln("{$name} {$version}");
         }
+        return 0;
     }
 }

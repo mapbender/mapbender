@@ -15,7 +15,7 @@ class UserListCommand extends AbstractUserCommand
         $this->setHelp('List all users stored in the database');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var User[] $users */
         $users = $this->getRepository()->findBy(array(), array(
@@ -31,5 +31,6 @@ class UserListCommand extends AbstractUserCommand
             }
             $output->writeln("User #{$user->getId()} name: " . print_r($user->getUsername(), true) . $since);
         }
+        return 0;
     }
 }

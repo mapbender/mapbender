@@ -29,7 +29,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $targetId = $input->getArgument('id');
         $target = $this->getSourceById($targetId);
@@ -52,6 +52,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
             $em->rollback();
             throw $e;
         }
+        return 0;
     }
 
     protected function getReloadSource($path, InputInterface $input)

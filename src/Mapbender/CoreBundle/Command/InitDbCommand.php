@@ -33,9 +33,10 @@ class InitDbCommand extends Command
         $this->setDescription('Performs required db (re-)initializations and cleanups');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $event = new InitDbEvent($output);
         $this->eventDispatcher->dispatch($event, 'mapbender.init.db');
+        return 0;
     }
 }

@@ -27,7 +27,7 @@ class PrintQueueNextCommand extends AbstractPrintQueueExecutionCommand
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->checkHung($output);
         $maxJobs = intval($input->getOption('max-jobs')) ?: null;
@@ -53,6 +53,7 @@ class PrintQueueNextCommand extends AbstractPrintQueueExecutionCommand
         } while ($waitMore && $processMoreJobs);
         $unprocessedCount = count($this->repository->findReadyForProcessing());
         $output->writeln("{$unprocessedCount} unprocessed jobs remaining", OutputInterface::VERBOSITY_VERBOSE);
+        return 0;
     }
 
     /**

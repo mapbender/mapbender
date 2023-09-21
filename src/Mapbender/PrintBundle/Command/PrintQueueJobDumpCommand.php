@@ -47,7 +47,7 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $jobEntity = $this->repository->find($input->getArgument('id'));
         if (!$jobEntity) {
@@ -67,5 +67,6 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
                 // initialize should have already produced a (much better) message
                 throw new \RuntimeException("Unsupported format");
         }
+        return 0;
     }
 }

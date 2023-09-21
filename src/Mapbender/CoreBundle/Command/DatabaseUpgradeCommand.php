@@ -39,10 +39,11 @@ class DatabaseUpgradeCommand extends Command
      * @return int|null|void
      */
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->updateMapElementConfigs($input, $output);
         $this->updateDoctrineTypes($input, $output);
+        return 0;
     }
 
     protected function getObsoleteMapOptionNames()

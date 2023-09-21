@@ -16,7 +16,7 @@ class PrintQueueRepairCommand extends AbstractPrintQueueCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("Resetting hung jobs");
         $atLeastOne = false;
@@ -32,5 +32,6 @@ class PrintQueueRepairCommand extends AbstractPrintQueueCommand
         } else {
             $output->writeln("No hung jobs to reset");
         }
+        return 0;
     }
 }

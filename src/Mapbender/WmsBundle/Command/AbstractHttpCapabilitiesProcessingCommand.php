@@ -28,7 +28,7 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $origin = $this->getOrigin($input);
         $this->processOrigin($origin, $input);
@@ -39,6 +39,7 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
         }
         $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
         $this->processSource($output, $source);
+        return 0;
     }
 
     protected function getOrigin(InputInterface $input)

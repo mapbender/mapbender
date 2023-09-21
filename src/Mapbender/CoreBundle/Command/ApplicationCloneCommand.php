@@ -18,7 +18,7 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
         $this->addArgument('slug', InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $slug = $input->getArgument('slug');
         /** @var Application|null $application */
@@ -39,5 +39,6 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
         }
 
         $output->writeln("Application cloned to new slug {$clonedApp->getSlug()}, id {$clonedApp->getId()}");
+        return 0;
     }
 }

@@ -28,7 +28,7 @@ class TranslationGetCommand extends AbstractTranslationCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $locale = $input->getOption('locale') ?: null;
         $catalog = $this->getCatalog($locale);
