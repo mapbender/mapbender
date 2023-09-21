@@ -134,7 +134,7 @@ $(function() {
         var $modal = window.Mapbender.bootstrapModal($form, {
             title: Mapbender.trans(strings.title || 'mb.manager.components.popup.edit_element.title'),
             subTitle: strings.subTitle || '',
-            cssClass: useWideModal && 'modal-lg',
+            cssClass: useWideModal && 'modal-xl',
             buttons: (extraButtons || []).slice().concat([
                 {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
@@ -165,7 +165,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                    cssClass: 'btn btn-default btn-sm popupClose'
+                    cssClass: 'btn btn-light btn-sm popupClose'
                 }
             ])
         });
@@ -173,7 +173,7 @@ $(function() {
         $sortableCollection.sortable({
             axis: 'y',
             items: '>.collectionItem',
-            handle: $sortableCollection.find('.panel-heading').length > 0 ? '.panel-heading' : false,
+            handle: $sortableCollection.find('.card-header').length > 0 ? '.card-header' : false,
         });
         $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);
@@ -194,6 +194,15 @@ $(function() {
                 });
             }
         });
+        $modal.modal('show');
+        // get <script> tags working, returned by ajax response
+        $modal.find('script').each(function (index, element) {
+            if ($(this).attr('src')) {
+                $.getScript($(element).attr('src'));
+            } else {
+                $.globalEval($(element).text());
+            }
+        });
     }
 
     function startElementChooser(regionName, listUrl) {
@@ -210,7 +219,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });
@@ -239,6 +248,7 @@ $(function() {
                 ]);
                 return false;
             });
+            $modal.modal('show');
         });
     }
 
@@ -281,7 +291,7 @@ $(function() {
             if (!nodes || !nodes.length) {
                 return;
             }
-            Mapbender.bootstrapModal(nodes, {
+            var $modal = Mapbender.bootstrapModal(nodes, {
                 title: Mapbender.trans(popupTitle),
                 buttons: [
                     {
@@ -291,10 +301,11 @@ $(function() {
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });
+            $modal.modal('show');
         });
     });
 
@@ -319,17 +330,18 @@ $(function() {
             if (_handleLoginRedirect(response)) {
                 return;
             }
-            Mapbender.bootstrapModal($.parseHTML(response), {
+            var $modal = Mapbender.bootstrapModal($.parseHTML(response), {
                 title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
                 subTitle: layersetTitle,
                 cssClass: 'modal-lg',
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-default btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose'
                     }
                 ]
             });
+            $modal.modal('show');
         });
         return false;
     });
@@ -371,10 +383,6 @@ $(function() {
     var maxFileSize = fileInput.attr('data-max-size');
     var minWidth = fileInput.attr('data-min-width');
     var minHeight = fileInput.attr('data-min-height');
-
-    $(document).on('click', '.inputWrapper.upload .btn', function() {
-        $('input[type="file"]', $(this).closest('.form-group')).click();
-    });
 
     fileInput.on('change', function(e) {
         setUploadFilename(e);
@@ -462,6 +470,8 @@ $(function() {
         });
     })(jQuery);
     $('.regionProperties [data-toggle-target]').on('click', function() {
-        $($(this).attr('data-toggle-target')).toggleClass('hidden');
+        var target = $(this).attr('data-toggle-target');
+        $(target).parent().toggleClass('display');
+        $(target).toggleClass('show');
     });
 });

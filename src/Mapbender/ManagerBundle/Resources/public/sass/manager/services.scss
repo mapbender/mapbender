@@ -47,13 +47,6 @@
 
 // --------------------------------------------------------- EDIT SERVICE
 .instanceContainer{
-  // Supported extended nesting on .panel-heading for WMS dimensions
-  .panel-default .panel-heading {
-    background-color: #efefef;
-  }
-  .panel-default>.panel-heading {
-    background-color: #f5f5f5;    // = .panel-default
-  }
   .extendedGroup {
     .collectionAdd {
       display: block;
@@ -62,9 +55,6 @@
       display: inline-block;
     }
     .labelInput {width:90px;}
-    .inputWrapper, div.dropdown {
-      width:200px;
-    }
     .collectionRemove {
       right: -1.5em;
     }
@@ -72,10 +62,8 @@
     .form-group .checkbox {
       margin-top: 0;
     }
-  }
-  .extendedGroup .panel-body, .popover {
-    .form-group {
-      margin-bottom: 0.35em;
+    .vendorspecifics-form .collectionItem .col-sm-2 {
+      width: 25%;
     }
   }
 }
@@ -110,18 +98,15 @@
   td.itemType, .checkboxColumn {
     width: 1%;    // Contract as far as possible
   }
-}
-.infoMsgBox {
-  &.popover {
-    left: initial;
-    max-width: initial; // Overrule Bootstrap 276px max-width :[
+  .form-check-input {
+      text-align: center;
+      float: none;
+      border: 1px solid rgb(128,128,128);
+      &[disabled] {
+        border: 1px solid rgba(128,128,128, 0.5);
+      }
   }
-  min-width: 30em;
-
-  .labelInput {
-    width: 30%;
-  }
-  .inputWrapper, .dropdown {
-    width: 65%;
+  th.checkboxColumn {
+    padding: .5rem .2rem;
   }
 }

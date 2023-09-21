@@ -4,7 +4,7 @@
       {% include 'MapbenderManagerBundle::fragments/filter-group.html.twig' with {filterTargetId: 'all-instances'} %}
     {%- endif -%}
   </div>
-  <div class="col-xs-6 col-6 text-right">
+  <div class="col-xs-6 col-6 text-end">
     <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_layerset_new", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
       <i class="fa fas fa-2x fa-plus"></i>
     </span>
@@ -20,7 +20,7 @@
               <th colspan="2" class="valign-top">
                 <h3>{{ layerset.title }}</h3>
               </th>
-              <th colspan="3" class="text-right valign-top">
+              <th colspan="3" class="text-end valign-top">
                 <p class="text-nowrap iconColumn">
                 {%- apply spaceless -%}
                 <a href="#" class="-fn-add-instance hover-highlight-effect"
@@ -89,7 +89,7 @@
                   : path('mapbender_manager_repository_instanceenabled', {'layerset': layerset, 'instanceId': assignment.instance.id})
             } -%}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ _sort_url }}" data-token="{{ csrf_token('layerset') }}">
-                <td class="text-right">{{ instance.id }}</td>
+                <td class="text-end">{{ instance.id }}</td>
                 <td>{{ instance.title }}</td>
                 <td class="sourceColumn"><a href="{{ path('mapbender_manager_repository_view', {sourceId: instance.source.id}) }}">#{{ instance.source.id }} {{ instance.source.title }}</a></td>
                 <td class="text-nowrap"

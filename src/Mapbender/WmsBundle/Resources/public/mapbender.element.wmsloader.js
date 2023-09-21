@@ -79,7 +79,7 @@
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
             } else {
-                this.popup.$element.removeClass('hidden');
+                this.popup.$element.removeClass('d-none');
                 this.popup.focus();
             }
 
@@ -87,7 +87,7 @@
         },
         close: function(){
             if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('hidden');
+                this.popup.$element.addClass('d-none');
             }
             if (this.callback) {
                 (this.callback)();

@@ -4,28 +4,30 @@
 </div>
 
 {% form_theme form _self %}
-  {# Define block without immediate output #}
-  {%- if false -%}
-
+{# Define block without immediate output #}
+{%- if false -%}
   {% block region_settings_widget %}
     <div {{ block('widget_container_attributes') }}>
       {%- if not form.rendered and form.children | length -%}
       {%- set _popover_id = 'popover_' ~ form.vars.id -%}
       <div class="static-popover-wrap">
         <span data-toggle-target="#{{ _popover_id }}">
-          <i class="fa fa-cog"></i></span>
-        {# see https://getbootstrap.com/docs/3.4/javascript/#static-popover #}
-        <div class="popover left hidden" id="{{ _popover_id }}">
-          <div class="arrow"></div>
-          <div class="popover-content form-horizontal">
-            {{ form_rest(form) }}
+          <i class="fa fa-cog"></i>
+        </span>
+        <div class="popover-inner-wrap">
+          <div class="popover regionConfig bs-popover-auto fade" id="{{ _popover_id }}" data-popper-placement="left">
+            <div class="popover-arrow"></div>
+            <div class="popover-body">
+              {% form_theme form 'MapbenderCoreBundle:form:fields_horizontal.html.twig' %}
+              {{ form_rest(form) }}
+            </div>
           </div>
         </div>
       </div>
       {%- endif -%}
     </div>
   {% endblock %}
-  {%- endif -%}
+{%- endif -%}
 
 {% for region in regions %}
   <div class="{{region}} region">

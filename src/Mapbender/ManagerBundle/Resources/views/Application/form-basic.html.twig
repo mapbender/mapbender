@@ -1,16 +1,8 @@
 {%- form_theme form _self -%}
 {%- if false -%}
 {%- block _application_screenshotFile_widget -%}
-    {%- set attr = attr|merge({'class': ('input ' ~ (attr.class | default(''))) | trim}) -%}
-      <div class="inputWrapper upload">
-          {{- block('form_widget_simple') -}}
-          <span class="btn btn-default btn-sm">
-              {{ 'mb.manager.admin.application.upload.button' | trans }}
-          </span>
-          <span class="upload_label">
-              {{ form.parent.vars.data.screenshot | default('mb.manager.admin.application.upload.label' | trans) }}
-          </span>
-      </div>
+    {%- set attr = attr|merge({'class': ((attr.class | default(''))) | trim}) -%}
+    {{- block('form_widget_simple') -}}
 {%- endblock %}
 {%- endif -%}
 <div class="col-md-8 col-xs-12 col-12">

@@ -1,0 +1,168 @@
+{# Mapbender form theme for horizontal forms #}
+{% use 'bootstrap_5_horizontal_layout.html.twig' %}
+
+{% block form_row -%}
+    {%- if form.parent and 'collection' in form.parent.vars.block_prefixes -%}
+        {% set allowCollapse = form.parent.vars.allow_collapse is defined and form.parent.vars.allow_collapse %}
+        {% if allowCollapse %}
+            {# get index of item within parent for initial collapse state #}
+            {% set index = -1 %}
+            {% set break = false %}
+            {% for child in form.parent.children if not break %}
+                {% if not child.isRendered %}
+                    {% set index = loop.index %}
+                    {% set break = true %}
+                {% endif %}
+            {% endfor %}
+            <div class="card collectionItem clear">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h6 class="mb-0">
+                        <a role="button" class="collapse-toggle" aria-expanded="true">
+                            <span class="panel-label {% if not form.vars.valid  %}text-danger{% endif %}" data-unnamed="{{ 'mb.form.unnamed_entry' | trans }}">
+                                {{ 'mb.form.unnamed_entry' | trans }}
+                            </span>
+                            <div class="panel-buttons">
+                                <a href="#" class="collapse-toggle clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}">
+                                    <i class="fa fa-fw fa-cog far"></i>
+                                </a>
+                                {%- if form.parent.vars.allow_add -%}
+                                    <a href="#" class="collectionDuplicate clickable hover-highlight-effect" title="{{ 'mb.actions.duplicate' | trans }}">
+                                        <i class="fa fa-fw fa-copy far"></i>
+                                    </a>
+                                {%- endif -%}
+                                {%- if form.parent.vars.allow_delete -%}
+                                    <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
+                                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                                    </a>
+                                {%- endif -%}
+                            </div>
+                        </a>
+                    </h6>
+                </div>
+                {% set opened = not form.vars.valid
+                    or index == -1
+                    or form.parent.vars.initial_collapse_state == 'all_opened'
+                    or (form.parent.vars.initial_collapse_state == 'first_opened' and index == 1)
+                    or (form.parent.vars.initial_collapse_state == 'last_opened' and index == form.parent.children | length)
+                    or (form.parent.vars.initial_collapse_state == 'all_collapsed_except_single' and form.parent.children | length == 1)
+                %}
+                <div class="panel-collapse collapse {% if opened %}show{% endif %}" role="tabpanel"
+                     aria-labelledby="headingOne">
+                    <div class="card-body">
+                        {{ form_widget(form) }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="collectionItem clear">
+                {%- if form.parent.vars.allow_delete -%}
+                    <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
+                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                    </a>
+                {%- endif -%}
+                <div class="row mb-3">
+                    {{ form_label(form) }}
+                    <div class="col-sm-10">
+                        {{ form_widget(form) }}
+                    </div>
+                </div>
+            </div>
+        {%- endif -%}
+    {%- else -%}
+        {%- if expanded is defined and expanded -%}
+            {{ block('fieldset_form_row') }}
+        {%- else -%}
+            {%- set widget_attr = {} -%}
+            {%- if help is not empty -%}
+                {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+            {%- endif -%}
+            <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' mb-3 row' ~ ((not compound or force_error|default(false)) and not valid ? ' is-invalid'))|trim})} %}{{ block('attributes') }}{% endwith %}>
+                {{- form_label(form) -}}
+                {% set attrClass = (form.vars.help is not null) ? 'col-sm-9' : block('form_group_class') %}
+                <div class="{{ attrClass }}">
+                    {{- form_widget(form, widget_attr) -}}
+                    {{- form_errors(form) -}}
+                </div>
+                {% if form.vars.help is not null %}
+                    <div class="col-sm-1">
+                        {{- form_help(form) -}}
+                    </div>
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock form_row %}
+
+{% block checkbox_row -%}
+    <div{% with {attr: row_attr|merge({class: (row_attr.class|default('mb-3') ~ ' row')|trim})} %}{{ block('attributes') }}{% endwith %}>{#--#}
+        {% set attrClass = (form.vars.help is not null) ? 'col-sm-11' : block('form_group_class') %}
+        <div class="{{ attrClass }}">
+            {{- form_widget(form) -}}
+            {{- form_errors(form) -}}
+        </div>{#--#}
+        {% if form.vars.help is not null %}
+            <div class="col-sm-1">
+                {{- form_help(form) -}}
+            </div>
+        {%- endif -%}
+    </div>
+{%- endblock checkbox_row %}
+
+{%- block choice_widget_collapsed -%}
+    {%- if multiple -%}
+        {{- parent() -}}
+    {%- else -%}
+        <div class="dropdown"{%- if attr.title is defined -%} title="{{ translation_domain is same as(false) ? attr.title : attr.title|trans({}, translation_domain) }}"{%- endif -%}{% if dropdown_elements_html is defined %} data-html="true"{% endif %}>
+            {%- set attr = attr | merge({'class': ('hiddenDropdown ' ~ (attr.class | default (''))) | trim}) -%}
+            {{- block('symfony_choice_widget_collapsed') -}}
+            <div class="dropdownValue iconDown">
+                {{ block('choice_widget_collapsed_selected_value') }}
+            </div>
+            <ul class="dropdownList">
+                {%- if placeholder is not none -%}
+                    {%- set options = [{'value': '', 'label': placeholder, 'nogroup': 1}] -%}
+                    {{- block('hiddendropdown_option_display') -}}
+                {%- endif -%}
+                {%- if preferred_choices|length > 0 -%}
+                    {% set options = preferred_choices %}
+                    {{- block('hiddendropdown_option_display') -}}
+                {%- endif -%}
+                {%- set options = choices -%}
+                {{- block('hiddendropdown_option_display') -}}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock choice_widget_collapsed -%}
+
+{% block collection_widget %}
+    {% set allowCollapse = form.vars.allow_collapse is defined and form.vars.allow_collapse %}
+    {% if allowCollapse %}
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% endif %}
+    {%- set attr = attr | merge({'class': (attr.class | default('') ~ ' collection') | trim}) -%}
+    {%- if sortable is defined -%}
+        {%- set attr = attr | merge({'data-sortable': '1'}) -%}
+    {%- endif -%}
+    {%- if prototype is defined -%}
+        {%- set attr = attr|merge({'data-prototype': form_row(prototype) | spaceless }) -%}
+    {%- endif -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if prototype is defined and form.vars.allow_add is not empty -%}
+            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
+        {%- endif -%}
+        {%- for child in form -%}
+            {{- form_row(child) -}}
+        {%- endfor -%}
+    </div>
+    {% if allowCollapse %}
+        </div>
+    {% endif %}
+{% endblock collection_widget %}
+
+{% block form_group_class -%}
+    {%- if 'collection' in form.vars.block_prefixes -%}
+        col-sm-12
+    {%- else -%}
+        col-sm-10
+    {%- endif -%}
+{%- endblock form_group_class %}

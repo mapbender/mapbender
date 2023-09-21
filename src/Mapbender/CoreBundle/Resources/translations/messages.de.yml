@@ -151,6 +151,7 @@ mb:
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
+        instancesets: 'Instancesets'
     legend:
       class:
         title: Legende
@@ -365,6 +366,30 @@ mb:
         adminDeleteHint: "Hinweis: Administratoren dürfen öffentliche Einträge immer löschen"
         allowAnonymousSave: Anonyme Besucher dürfen speichern
         showDate: Datum anzeigen
+    coordinatesutility:
+      class:
+        title: 'Koordinaten Utility'
+        description: 'Koordinaten-Transformation. Navigation zu Koordinaten auf der Karte.'
+      widget:
+        error:
+          noSrs: 'Kein SRS ist definiert'
+          invalidCoordinates: 'Ungültige Koordinaten'
+      view:
+        srs:
+          title: 'Koordinatensystem'
+          tooltip: 'Koordinatensystem'
+        transformedCoordinates:
+          tooltip: 'Transformierte Koordinaten'
+        copytoclipboard:
+          tooltip: 'Koordinaten in die Zwischenablage kopieren'
+        originCoordinates:
+          title: 'Koordinaten im Anzeige-Koordinatensystem der Karte'
+          tooltip: 'nicht editierbar'
+        button:
+          search: 'Koordinatensuche'
+          centermap: 'Karte zentrieren'
+      backend:
+        addMapSrsList: "Koordinatensysteme von der Karte hinzufügen"
     admin:
       poi:
         label:

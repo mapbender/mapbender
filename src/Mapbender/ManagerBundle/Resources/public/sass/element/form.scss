@@ -2,16 +2,12 @@
   // HACK to prevent trailing dropdowns expanding modal enough so that it starts to scroll
   // See WmsLoader / ScaleSelector / ImageExport forms
   min-height: 520px;
-  font-size: 0.85rem;
   $labelWidth: 100px;
   .labelInput {
     width: $labelWidth;
   }
   textarea {
     resize: none;
-  }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + 20px});
   }
   .left .checkbox {
     display: inline-block;
@@ -45,9 +41,6 @@
   .labelInput {
     width: 120px;
   }
-  .inputWrapper, .dropdown {
-    width: calc(100% - #{$labelWidth + 20px});
-  }
 }
 
 .collectionItem {
@@ -58,6 +51,20 @@
   position: relative;
   margin-bottom: 20px;
 
+  legend {
+    display: none;
+  }
+
+  .col-sm-10 {
+    width: 95%;
+    .col-sm-2 {
+      width: 25%;
+    }
+    .col-sm-10 {
+      width: 75%;
+    }
+  }
+
   textarea {
     min-height: 100px;
   }
@@ -66,19 +73,11 @@
     margin-bottom: 0;
   }
 
-  .panel-heading {
-    position: relative;
-  }
-
   .panel-buttons {
     position: absolute;
-    right: 15px;
-    top: 50%;
+    right: 10px;
+    margin-top: -8px;
     transform: translateY(-50%);
-
-    a {
-        margin-left: 6px;
-    }
   }
 
   > .collectionRemove {
@@ -86,6 +85,21 @@
     right: -0.75em;
     line-height: 2;
     z-index: 1;
+  }
+}
+
+.card.collectionItem {
+  .card-header {
+    padding: 0.7rem;
+  }
+  .col-sm-2 {
+    width: 20%;
+  }
+  .col-sm-9 {
+    width: 71%;
+  }
+  .col-sm-10 {
+    width: 80%;
   }
 }
 

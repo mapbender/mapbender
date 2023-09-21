@@ -31,49 +31,17 @@ h4, .h4, .tabContainer > ul {
 }
 
 .navigationBar {
-  .nav {
-    font-weight: bold;
-  }
-  .navbar-toggle {
-    border-color: #ccc;
-  }
-  .navbar-nav>li>a:hover, .navbar-nav>li.active>a, .dropdown-menu>.active>a {
-    color: inherit;
-    background-color: #eee;
-  }
-  &, & .dropdown-menu {
-    background-color: rgba(255, 255, 255, 1);
-    border-color: #e7e7e7;
-  }
   box-shadow: 0 1px 8px rgba(191, 191, 191, 0.5);
-  .dropdown-menu>li>a, .dropdown-menu>.active>a {
-    color: inherit;
-  }
-
-  .navbar-brand {
-    // Reduce top/bottom padding on Bootstrap .navbar-brand (default 15px) to show the logo a bit larger
-    padding-top: 5px;
-    padding-bottom: 5px;
-    // For .logo's vertical alignment to work, it needs an inline-block sibling element with full height
-    // see https://stackoverflow.com/a/7310398
-    &:before {
-      content: "";
-      display: inline-block;
-      vertical-align: middle;
-      height: 100%;
-    }
-  }
   .logo {
-    max-width: 120px;
+    max-width: 30px;
     max-height: 100%;
-  }
-  .navbar-brand>img.logo, .navbar-brand-name {
-    display: inline-block;  // revert Bootstrap default block on .navbar-brand>img to allow vertical-align to take effect
   }
   .navbar-brand-name {
     font-weight: 400;
-    vertical-align: middle;
     margin-left: 0.25em;
+  }
+  .dropdown-menu {
+      margin-top: 0px;
   }
 }
 
@@ -147,16 +115,18 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       padding-left: 0;  // Remove Bootstrap 3 default 15px left / right for underline sizing
       padding-right: 0;
       padding-bottom: 10px; // = Bootstrap 3 default. Repeated for clarity
+      color: black;
+      cursor: pointer;
     }
     // Pad enclosing li instead of >a for underline sizing; redistribute entire padding right
     padding-left: 0;
     padding-right: 30px;
 
     font-weight: bold;
-    &:not(.active) {
+    a:not(.active) {
       opacity: 0.7;
     }
-    &.active > a {
+    a.active {
       // Trade bottom-padding for border to maintain height
       padding-bottom: 7px;
       border-bottom: solid #079ee0 3px;
@@ -185,47 +155,6 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       margin: 20px 0;
     }
   }
-}
-
-.filter-group {
-  th & {
-    margin-bottom: 0;
-    max-width: initial;
-  }
-  label {
-    width: auto;
-    min-width: 80px;
-    margin: 0 0.5em 0 0;
-  }
-  .inputWrapper, >input {
-    width: 200px;
-    max-width: calc(100% - 120px);  // for crowded table rows with filter embedded into a th
-  }
-  .inputWrapper {
-    display: inline-block;
-  }
-  .container-filter & {
-    white-space: nowrap;
-    label {
-      font-weight: inherit;
-      min-width: initial;
-    }
-    .inputWrapper, >input {
-      box-sizing: content-box;
-      padding: 0;
-      height: auto;
-      width: 12em;
-      max-width: initial;
-      border: none;
-      border-radius: 0;
-      border-bottom: 1px solid rgba(0,0,0,0.5);
-      background-color: transparent;
-    }
-  }
-}
-
-.container-filter {
-  text-align: right;
 }
 
 #listFilterPermission {
@@ -285,11 +214,6 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 
 .popover {
   font-size: inherit;
-}
-.popover, .panel-body {
-  .form-group:last-child, .collectionItem:last-child {
-    margin-bottom: 0;
-  }
 }
 
 .popup .table {

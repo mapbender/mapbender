@@ -104,13 +104,13 @@ $(function() {
     });
 
     $(".instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
-        var $target = $(this);
-        var $row = $target.closest('tr');
-        var $table = $row.closest('table');
-        var $targetBox = $('.infoMsgBox', $row);
-        if ($targetBox.length) {
-            $('.infoMsgBox', $table).not($targetBox).addClass('hidden');
-        }
-        $targetBox.toggleClass('hidden');
+        // toggle targeted popover
+        var target = $(this).attr("data-toggle-target");
+        $(target).parent().toggleClass("display");
+        $(target).toggleClass("show");
+        // deactivate all other popovers
+        var otherPopovers = ".popover:not(" + target + ")";
+        $(otherPopovers).parent().removeClass("display");
+        $(otherPopovers).removeClass("show");
     });
 });
