@@ -75,13 +75,9 @@
 
   .panel-buttons {
     position: absolute;
-    right: 0;
+    right: 10px;
     margin-top: -8px;
     transform: translateY(-50%);
-
-    a {
-        margin-left: 6px;
-    }
   }
 
   > .collectionRemove {
@@ -93,6 +89,9 @@
 }
 
 .card.collectionItem {
+  .card-header {
+    padding: 0.7rem;
+  }
   .col-sm-2 {
     width: 20%;
   }
