@@ -23,7 +23,7 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     '@MapbenderManagerBundle/Resources/public/form/collection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                     '@MapbenderManagerBundle/Resources/public/js/confirm-delete.js',
-                    '/components/bootstrap/dist/js/bootstrap.bundle.js',
+                    '/components/bootstrap/js/bootstrap.bundle.js',
                 );
             case 'trans':
                 return array(
