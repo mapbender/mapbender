@@ -8,7 +8,7 @@
   [symfony cli](https://symfony.com/download). Then, instead of `./bin/console server:run` now call `symfony server:start --no-tls`
 - Symfony Directory Structure (all within `application`) updated to conform to the symfony Flex default:
 	- app/cache => var/cache
-	- app/logs => var/logs
+	- app/logs => var/log
 	- app/db => var/db (adjust this path in your configuration if you're using SQLite)
 	- app/console => bin/console
 	- app/config => config. Configuration is split into dedicated files per package living in config/packages. Detailed 
