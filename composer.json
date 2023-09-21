@@ -76,7 +76,7 @@
 
         "mapbender/owsproxy": "^3.1.8",
 
-        "datatables/datatables": "^1.10.16",,
+        "datatables/datatables": "^1.10.16",
         "twbs/bootstrap": "^5.0",
         "components/jqueryui": "^1",
 
