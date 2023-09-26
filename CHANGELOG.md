@@ -9,6 +9,8 @@ Breaking changes (for details on migration process see UPGRADING.md):
 
 Features:
 * PHP 8.2 is now fully supported.
+* [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
+  a separate bundle in this repo.
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
