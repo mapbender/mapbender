@@ -5,7 +5,8 @@
   check https://github.com/symfony/symfony/blob/5.4/composer.json#L58 for the dependency that might be needed and install 
   it manually to your project using `./bin/composer install symfony/your-bundle` 
 - Local webserver bundle has been removed and replaced by the symfony local web server. Install the
-  [symfony cli](https://symfony.com/download). Then, instead of `./bin/console server:run` now call `symfony server:start --no-tls`
+  [symfony cli](https://symfony.com/download). Then, instead of `./bin/console server:run` now call `symfony server:start --no-tls`. 
+  See [README of mapbender-starter](https://github.com/mapbender/mapbender-starter/blob/develop/README.md#built-in-server) for details
 - Symfony Directory Structure (all within `application`) updated to conform to the symfony Flex default:
 	- app/cache => var/cache
 	- app/logs => var/log
@@ -18,6 +19,7 @@
 	- app/web => public
 	- app/web/app.php, app/web/app_dev.php, app/web/app_test.php => public/index.php - 
       :warning: Make sure to also update your apache vhosts accordingly! 
+      Environment can now be set using the environment variable APP_ENV.
 	- app/AppKernel.php => src/Kernel.php. Unless you are doing any custom logic, the Kernel can now stay blank when it's 
       inheriting from Mapbender\BaseKernel. Make sure to define your bundles in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html).
 - Changes in configuration:
