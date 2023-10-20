@@ -74,7 +74,7 @@ class SQLSearchEngine
 
         $qb->orderBy('t.' . $key, 'ASC');
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery()->fetchAllAssociative();
         $dataOut = array();
         foreach ($stmt as $row) {
             if (!array_key_exists($key, $row)) {
@@ -134,7 +134,7 @@ class SQLSearchEngine
             $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
         }
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery()->fetchAllAssociative();
         return $this->rowsToGeoJson($stmt);
     }
 
