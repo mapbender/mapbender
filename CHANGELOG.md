@@ -11,10 +11,12 @@ Features:
 * PHP 8.2 is now fully supported.
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
+* [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
+* [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 
 
 ## v3.3.5
