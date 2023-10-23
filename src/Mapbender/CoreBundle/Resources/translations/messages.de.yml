@@ -125,6 +125,7 @@ mb:
     searchrouter:
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
+      exportcsv: 'Export der Trefferliste als CSV.'
       class:
         title: Suchen
         description: 'Ermöglicht die Konfiguration von individuellen Suchen'

@@ -99,6 +99,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             "results" => array(
                 "view" => "table",
                 "count" => "true",
+                "exportcsv" => "false",
                 "headers" => array(),
                 "callback" => array(
                     "event" => "click",
@@ -165,6 +166,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             'trans' => array(
                 'mb.core.searchrouter.result_counter',
                 'mb.core.searchrouter.no_results',
+                'mb.core.searchrouter.exportcsv',
             ),
         );
     }

@@ -67,6 +67,7 @@ mb:
     searchrouter:
       no_results: 'Aucun résultat.'
       result_counter: 'Résultats: %count%'
+      exportcsv: 'Exporter les résultats vers un fichier CSV.'
       class:
         title: 'Routeur de recherche'
         description: 'Élément de routeur de recherche configurable'

@@ -67,6 +67,7 @@ mb:
     searchrouter:
       no_results: 'Sua pesquisa não encontrou resultados'
       result_counter: 'Resultados: %count%'
+      exportcsv: 'Exportar os resultados para CSV.'
       class:
         title: Procurar
         description: 'Possibilita a configuração de pesquisas individuais'
