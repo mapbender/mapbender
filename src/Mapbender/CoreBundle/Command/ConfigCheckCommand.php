@@ -149,7 +149,7 @@ class ConfigCheckCommand extends Command
 
         $folders= array('var/log/','var/cache/','public/uploads/','public/xmlschemas/','public/');
         foreach ($folders as $folder){
-            $filename = $this->rootDir . '/../' . $folder;
+            $filename = $this->rootDir . '/' . $folder;
             $info = new \SplFileInfo($filename);
             $permission= substr(sprintf('%o', $info->getPerms()), -4);
             $owner = $info->getOwner();
@@ -177,10 +177,10 @@ class ConfigCheckCommand extends Command
         $rows=[];
         $success = true;
         $ignoreFolders= array('.','..','.gitignore','.gitkeep');
-        $webDirs = scandir($this->rootDir.'/../public/bundles');
+        $webDirs = scandir($this->rootDir.'/public/bundles');
         foreach ($webDirs as $webDir){
             if(!in_array($webDir,$ignoreFolders)){
-                if (is_link($this->rootDir.'/../public/bundles/'.$webDir)) {
+                if (is_link($this->rootDir.'/public/bundles/'.$webDir)) {
                     $rows[]=[$webDir,'yes'];
                 }else{
                     $rows[]=[$webDir,'no'];
@@ -249,7 +249,6 @@ class ConfigCheckCommand extends Command
         }else{
             $output->writeln('No Extension Loaded');
         }
-
     }
 
     protected function isLinux(){
