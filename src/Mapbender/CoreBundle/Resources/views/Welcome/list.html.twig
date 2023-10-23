@@ -23,7 +23,7 @@
 {%- block boxlist_item_content -%}
 {%- set application = item -%}
           <div class="row">
-            <div class="col-md-2 col-xs-12 col-12">
+            <div class="col-lg-2 col-md-3 col-12">
               <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
               {%- set _screenshot_src = application_screenshot_path(application) -%}
               {%- if _screenshot_src %}
@@ -39,7 +39,7 @@
               {% endif %}
               </a>
             </div>
-            <div class="col-md-10 col-xs-12 col-12">
+            <div class="col-lg-10 col-md-9 col-12">
               {{ parent() }}
             </div>
           </div>
