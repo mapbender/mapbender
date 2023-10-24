@@ -269,7 +269,8 @@
         </service>
         <service id="mapbender.application_asset.service"
                  class="%mapbender.application_asset.service.class%"
-                 lazy="true">
+                 lazy="true"
+                 public="true">
             <argument type="service" id="mapbender.asset_compiler.css" />
             <argument type="service" id="mapbender.asset_compiler.js" />
             <argument type="service" id="mapbender.asset_compiler.translations" />
