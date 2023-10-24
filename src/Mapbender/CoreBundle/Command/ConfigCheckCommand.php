@@ -37,7 +37,9 @@ namespace Mapbender\CoreBundle\Command;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,28 +48,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConfigCheckCommand extends Command
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-    protected $rootDir;
 
-    public function __construct(ManagerRegistry $managerRegistry,
-                                $rootDir)
+    public function __construct(protected ManagerRegistry $managerRegistry,
+                                protected string          $rootDir)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->rootDir = $rootDir;
-        parent::__construct(null);
+        parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setDescription('Check Mapbender requirements')
-        ;
+        $this->setDescription('Check Mapbender requirements');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io=new SymfonyStyle($input,$output);
+        $io = new SymfonyStyle($input, $output);
         $this->checkDatabaseConnection($io);
         $this->checkSystemRequirements($io);
         $this->checkAssets($io);
@@ -79,24 +74,24 @@ class ConfigCheckCommand extends Command
         return 0;
     }
 
-    protected function checkDatabaseConnection(SymfonyStyle $output){
+    protected function checkDatabaseConnection(SymfonyStyle $output): bool
+    {
         $output->title("Check Database connections");
-        $headers = ['Connection','Status','Message'];
-        $rows=[];
-        $success=true;
+        $headers = ['Connection', 'Status', 'Message'];
+        $rows = [];
+        $success = true;
         $connections = $this->managerRegistry->getConnections();
-        foreach ($connections AS $connection){
-            /** @var Connection $connection*/
+        foreach ($connections as $connection) {
+            /** @var Connection $connection */
             try {
-                $connection->isConnected();
                 $connection->connect();
-                $rows[]=[$connection->getDatabase(),'successfull','<fg=green>ok</>'];
-            } catch (ConnectionException $e) {
+                $rows[] = [$connection->getDatabase(), 'successfull', '<fg=green>ok</>'];
+            } catch (ConnectionException|DriverException|Exception $e) {
                 $success = false;
-                $rows[]=[$connection->getDatabase(),'Error','<fg=red>'.$e->getMessage().'</>'];
+                $rows[] = [$connection->getDatabase(), 'Error', '<fg=red>' . $e->getMessage() . '</>'];
             }
         }
-        $output->table($headers,$rows);
+        $output->table($headers, $rows);
         return $success;
     }
 
@@ -105,53 +100,40 @@ class ConfigCheckCommand extends Command
      * @return bool
      * @todo  APACHE mod_rewrite;
      */
-    protected function checkSystemRequirements(SymfonyStyle $output)
+    protected function checkSystemRequirements(SymfonyStyle $output): bool
     {
         $output->title("Check System Requirements");
-        $headers = ['Extension name','Is loaded?','Message'];
-        $rows=[];
+        $headers = ['Extension name', 'Is loaded?', 'Message'];
+        $rows = [];
         $success = true;
-        $requiredExtensions = array('sqlite3','curl','gd','intl','mbstring','fileinfo','openssl','bz2');
-        $requiredExtensionsPhp7=array('zip','xml');
-        foreach ($requiredExtensions as $requiredExtension){
-            if(extension_loaded($requiredExtension)){
-                $rows[]=[$requiredExtension,'yes','<fg=green>ok</>'];
+        $requiredExtensions = array('sqlite3', 'curl', 'gd', 'intl', 'mbstring', 'fileinfo', 'openssl', 'bz2', 'zip', 'xml');
+        foreach ($requiredExtensions as $requiredExtension) {
+            if (extension_loaded($requiredExtension)) {
+                $rows[] = [$requiredExtension, 'yes', '<fg=green>ok</>'];
 
-            }else{
-                $rows[]=[$requiredExtension,'no','<fg=red>Extension is required</>'];
+            } else {
+                $rows[] = [$requiredExtension, 'no', '<fg=red>Extension is required</>'];
                 $success = false;
             }
         }
-        if (version_compare(phpversion(), '7.0.0', '>=')) {
-            foreach ($requiredExtensionsPhp7 as $requiredExtension){
-                if(extension_loaded($requiredExtension)){
-                    $rows[]=[$requiredExtension,'yes','<fg=green>ok</>'];
-                }else{
-                    $rows[]=[$requiredExtension,'no','<fg=red>Extension is required for PHP 7</>'];
-                    $success = false;
-                }
-
-            }
-        }
-        $output->table($headers,$rows);
+        $output->table($headers, $rows);
         return $success;
     }
 
     /**
      * @todo: maybe this only works on Linux
      */
-    protected function checkPermissions(SymfonyStyle $output)
+    protected function checkPermissions(SymfonyStyle $output): bool
     {
         $output->title("Check Permissions");
-        $headers = ['Folder', 'User', 'Group','Permissions'];
-        $rows=[];
-        $success = true;
+        $headers = ['Folder', 'User', 'Group', 'Permissions'];
+        $rows = [];
 
-        $folders= array('var/log/','var/cache/','public/uploads/','public/xmlschemas/','public/');
-        foreach ($folders as $folder){
-            $filename = $this->rootDir . '/../' . $folder;
+        $folders = array('var/log/', 'var/cache/', 'public/uploads/', 'public/xmlschemas/', 'public/');
+        foreach ($folders as $folder) {
+            $filename = $this->rootDir . '/' . $folder;
             $info = new \SplFileInfo($filename);
-            $permission= substr(sprintf('%o', $info->getPerms()), -4);
+            $permission = substr(sprintf('%o', $info->getPerms()), -4);
             $owner = $info->getOwner();
             $group = $info->getGroup();
             if (function_exists('\posix_getpwuid')) {
@@ -162,47 +144,46 @@ class ConfigCheckCommand extends Command
             }
             $rows[] = [$folder, $owner, $group, $permission];
         }
-        $output->table($headers,$rows);
-        return $success;
+        $output->table($headers, $rows);
+        return true;
     }
 
     /**
      * @param SymfonyStyle $output
      * @return bool
      */
-    protected function checkAssets(SymfonyStyle $output)
+    protected function checkAssets(SymfonyStyle $output): bool
     {
         $output->title("Check Asset Folders");
-        $headers = ['Folder','is Symlink?'];
-        $rows=[];
-        $success = true;
-        $ignoreFolders= array('.','..','.gitignore','.gitkeep');
-        $webDirs = scandir($this->rootDir.'/../public/bundles');
-        foreach ($webDirs as $webDir){
-            if(!in_array($webDir,$ignoreFolders)){
-                if (is_link($this->rootDir.'/../public/bundles/'.$webDir)) {
-                    $rows[]=[$webDir,'yes'];
-                }else{
-                    $rows[]=[$webDir,'no'];
+        $headers = ['Folder', 'is Symlink?'];
+        $rows = [];
+        $ignoreFolders = array('.', '..', '.gitignore', '.gitkeep');
+        $webDirs = scandir($this->rootDir . '/public/bundles');
+        foreach ($webDirs as $webDir) {
+            if (!in_array($webDir, $ignoreFolders)) {
+                if (is_link($this->rootDir . '/public/bundles/' . $webDir)) {
+                    $rows[] = [$webDir, 'yes'];
+                } else {
+                    $rows[] = [$webDir, 'no'];
                 }
             }
         }
-        $output->table($headers,$rows);
-        return $success;
+        $output->table($headers, $rows);
+        return true;
     }
 
     /**
      * @todo: this only works on Linux
      *
      */
-    protected function checkFastCGI(SymfonyStyle $output)
+    protected function checkFastCGI(SymfonyStyle $output): void
     {
         $output->title('Check FastCGI');
-        if($this->isLinux()){
-            $outputCmd=shell_exec('a2query -m| grep fcgi');
-            if(isset($outputCmd)){
+        if ($this->isLinux()) {
+            $outputCmd = shell_exec('a2query -m| grep fcgi');
+            if (isset($outputCmd)) {
                 $output->writeln($outputCmd);
-            }else{
+            } else {
                 $output->writeln('FastCGI not Found');
             }
         }
@@ -212,48 +193,48 @@ class ConfigCheckCommand extends Command
      * @todo: this only works on Linux
      *
      */
-    protected function checkModRewrite(SymfonyStyle $output)
+    protected function checkModRewrite(SymfonyStyle $output): void
     {
         $output->title('Check Apache mod_rewrite');
-        if($this->isLinux()){
-            $outputCmd=shell_exec('a2query -m rewrite');
-            if(isset($outputCmd)){
+        if ($this->isLinux()) {
+            $outputCmd = shell_exec('a2query -m rewrite');
+            if (isset($outputCmd)) {
                 $output->writeln($outputCmd);
-            }else{
+            } else {
                 $output->writeln('mod_rewrite not Found');
             }
         }
     }
 
-    protected function checkPhpIni(SymfonyStyle $output)
+    protected function checkPhpIni(SymfonyStyle $output): void
     {
         $output->title("Check PHP ini");
-        $headers = ['Parameter','Value'];
-        $rows=[];
-        $checks=array('date.timezeone','max_input_vars','MaxRequestLen','max_execution_time','memory_limit','upload_max_filesize',
-            'oci8.max_persistent','oci8.default_prefetch','session.save_handler','zend_extension','opcache.enable','opcache.memory_consumption',
-            'opcache.interned_strings_buffer','opcache.max_accelerated_files','opcache.max_wasted_percentage',);
-        foreach ($checks as $check){
+        $headers = ['Parameter', 'Value'];
+        $rows = [];
+        $checks = array('date.timezeone', 'max_input_vars', 'MaxRequestLen', 'max_execution_time', 'memory_limit', 'upload_max_filesize',
+            'oci8.max_persistent', 'oci8.default_prefetch', 'session.save_handler', 'zend_extension', 'opcache.enable', 'opcache.memory_consumption',
+            'opcache.interned_strings_buffer', 'opcache.max_accelerated_files', 'opcache.max_wasted_percentage',);
+        foreach ($checks as $check) {
 
-            $rows[]=[$check,ini_get($check)];
+            $rows[] = [$check, ini_get($check)];
         }
-        $output->table($headers,$rows);
+        $output->table($headers, $rows);
     }
 
-    protected function getLoadedPhpExtensions(SymfonyStyle $output)
+    protected function getLoadedPhpExtensions(SymfonyStyle $output): void
     {
         $output->title("Loaded PHP Extensions");
-        $loadedExtensions= get_loaded_extensions ();
-        if(count($loadedExtensions)!=0){
+        $loadedExtensions = get_loaded_extensions();
+        if (count($loadedExtensions) != 0) {
             $output->listing($loadedExtensions);
-        }else{
+        } else {
             $output->writeln('No Extension Loaded');
         }
-
     }
 
-    protected function isLinux(){
-        if(PHP_OS =="Linux"){
+    protected function isLinux(): bool
+    {
+        if (PHP_OS == "Linux") {
             return true;
         }
         return false;
