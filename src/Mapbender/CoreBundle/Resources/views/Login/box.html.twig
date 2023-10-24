@@ -44,7 +44,9 @@
       <div>{# NOTE: need any display: block outer element for working float: right #}
         <ul class="sitelinks list-inline list-unstyled pull-right">
           {% for sitelink in sitelinks %}
-            <li><a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a></li>
+            <li class="list-inline-item">
+                <a href="{{ asset(sitelink.link) }}">{{ sitelink.text | trans }}</a>
+            </li>
           {% endfor %}
         </ul>
       </div>
