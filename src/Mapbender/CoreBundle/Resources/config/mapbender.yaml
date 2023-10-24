@@ -5,7 +5,7 @@ parameters:
     mapbender.version: 4.0-pre
     mapbender.branding.logo: bundles/mapbendercore/image/logo_mb_notext.png
     # These should all remain empty here, they are just for IDE search results.
-    # Customize these in your parameters.yml.
+    # Customize these in your parameters.yaml.
     # The name will show up in page titles; the version will show in your backend;
     # the logo will display on your login page, the backend again, and some of the application templates.
     branding.project_name: ~

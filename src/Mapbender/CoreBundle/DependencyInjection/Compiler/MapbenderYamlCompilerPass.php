@@ -90,7 +90,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         $finder
             ->in($path)
             ->files()
-            ->name('*.yml');
+            ->name(['*.yml', '*.yaml']);
         $applications = array();
 
         foreach ($finder as $file) {

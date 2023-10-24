@@ -126,7 +126,7 @@ class ApplicationDataService
         if ($updated) {
             // NOTE: $updated is only available on DB applications, always NULL for yaml applications.
             //       Including the container compilation time makes caching safe even for yaml applications though,
-            //       because any edit to any application's yml triggers a container re-compilation, which is reflected
+            //       because any edit to any application's yaml triggers a container re-compilation, which is reflected
             //       in the container timestamp.
             $parts[] = $updated->format('U-u');
         }

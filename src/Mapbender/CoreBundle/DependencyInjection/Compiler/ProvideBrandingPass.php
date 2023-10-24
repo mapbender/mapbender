@@ -19,12 +19,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * a twig global) for backwards compatibility with old templates.
  *
  * The result is a hopefully happy conglomerate of (completely populated) container parameters:
- * * mapbender.version          (set in CoreBundle/Resources/config/mapbender.yml)
- * * mapbender.branding.name    (set in CoreBundle/Resources/config/mapbender.yml)
- * * mabbender.branding.logo    (web-relative path; set in CoreBundle/Resources/config/mapbender.yml)
- * * branding.project_name      (override in parameters.yml; defaults to %mapbender.branding.name% if empty)
- * * branding.project_version   (override in parameters.yml; defaults to %mapbender.version% if empty)
- * * branding.logo              (override in parameters.yml; defaults to %mapbender.branding.logo% if empty)
+ * * mapbender.version          (set in CoreBundle/Resources/config/mapbender.yaml)
+ * * mapbender.branding.name    (set in CoreBundle/Resources/config/mapbender.yaml)
+ * * mabbender.branding.logo    (web-relative path; set in CoreBundle/Resources/config/mapbender.yaml)
+ * * branding.project_name      (override in parameters.yaml; defaults to %mapbender.branding.name% if empty)
+ * * branding.project_version   (override in parameters.yaml; defaults to %mapbender.version% if empty)
+ * * branding.logo              (override in parameters.yaml; defaults to %mapbender.branding.logo% if empty)
  *
  * Most frontend areas should display project branding to support customization.
  *
@@ -96,9 +96,9 @@ class ProvideBrandingPass implements CompilerPassInterface
         $mbLogo = $container->getParameter('mapbender.branding.logo');
         $fomOverrideLogo = ArrayUtil::getDefault(static::getFomParameter($container), 'server_logo', null);
         $historicalLogos = array(
-            // these are all logo names ever referenced in parameters.yml.dist over the entire github
+            // these are all logo names ever referenced in parameters.yaml.dist over the entire github
             // history of mapbender-starter
-            // hint: git log -p parameters.yml.dist | grep -P '^[+-]\s*server_logo:' | awk '{print $3}' | sort -u
+            // hint: git log -p parameters.yaml.dist | grep -P '^[+-]\s*server_logo:' | awk '{print $3}' | sort -u
             'bundles/mapbendercore/image/logo_mb3.png',
             'bundles/mapbendercore/image/logo_mb.png',
             'bundles/mapbendercore/image/mapbender-logo.png',
@@ -125,7 +125,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         $mergedFomParam = array_replace($fomParam, $fomParamReplacements);
         $container->setParameter('fom', $mergedFomParam);
 
-        // Forward to twig global; this mirrors legay Mapbender Starter config.yml, which adds the value of the 'fom'
+        // Forward to twig global; this mirrors legay Mapbender Starter config.yaml, which adds the value of the 'fom'
         // parameter as twig global 'fom' by expansion
         // Because we just modified the 'fom' parameter, we must update the Twig global as well
         $twigDefinition = $container->getDefinition('twig');

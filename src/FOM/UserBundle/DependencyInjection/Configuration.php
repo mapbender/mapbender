@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface {
         $treeBuilder->getRootNode()
             ->children()
                 // not used, value irrelevant; kept to avoid errors with older
-                // starter config.yml
+                // starter config.yaml
                 ->scalarNode('auto_create_log_table')
                     ->defaultTrue()
                 ->end()

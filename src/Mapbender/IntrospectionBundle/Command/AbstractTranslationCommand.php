@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AbstractTranslationCommand extends Command
 {
     // NOTE: Symfony does not provide listing all available catalogs, so we have to start with a master list
-    // HINT: find . -name 'messages.*.yml' -printf '%f\n' -o -name 'messages.*.xlf' -printf '%f\n' | sort -u
+    // HINT: find . -name 'messages.*.yaml' -printf '%f\n' -o -name 'messages.*.xlf' -printf '%f\n' | sort -u
     /** @var string[] */
     protected $allCatalogNames = array(
         'en',

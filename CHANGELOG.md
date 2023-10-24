@@ -21,6 +21,8 @@ Bugfixes:
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 
+Other:
+* \*.yml file extension changed to \*.yaml for consistency with symfony core ([PR#1513](https://github.com/mapbender/mapbender/pull/1513))
 
 ## v3.3.5
 Features:

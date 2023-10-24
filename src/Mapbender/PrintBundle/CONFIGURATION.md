@@ -1,5 +1,5 @@
 Container parameters of note in the PrintBundle. Any of the values named below can be modified
-via parameters.yml. Use the names exactly as given (dots _do_ _not_ imply array nesting).
+via parameters.yaml. Use the names exactly as given (dots _do_ _not_ imply array nesting).
 # WMS tiling
 ## GetMap limits
 This is for WMS services that stop returning images if the requested pixel dimensions get too large.

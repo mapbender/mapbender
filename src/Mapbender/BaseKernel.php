@@ -18,7 +18,7 @@ class BaseKernel extends Kernel
 
     private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
-    /** @noinspection PhpUnused used when creating kernel, necessary to include parameters.yml file */
+    /** @noinspection PhpUnused used when creating kernel, necessary to include parameters.yaml file */
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
         $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
