@@ -159,6 +159,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
+                '@MapbenderCoreBundle/Resources/public/element/csv-export.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
