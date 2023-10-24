@@ -18,11 +18,10 @@ class JsCompiler extends AssetFactoryBase
      * Perform simple concatenation of all input assets. Some uniquification will take place.
      *
      * @param (FileAsset|StringAsset)[] $inputs
-     * @param string|null $configSlug for emission of application initialzation script
      * @param bool $debug to enable file input markers
      * @return string
      */
-    public function compile($inputs, $configSlug, bool $debug, ?string $sourceMapRoute)
+    public function compile($inputs, bool $debug, ?string $sourceMapRoute)
     {
         return $this->concatenateContents($inputs, $debug ? $sourceMapRoute : null);
     }
