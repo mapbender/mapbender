@@ -6,13 +6,14 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
-* Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`)
+* Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 
 Features:
 * PHP 8.2 is now fully supported.
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
+* [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
