@@ -54,7 +54,7 @@ class FOMIdentitiesProvider implements IdentitiesProviderInterface
      */
     public function getAllGroups()
     {
-        $repo = $this->getRepository('FOMUserBundle:Group');
+        $repo = $this->getRepository(Group::class);
         return $repo->findAll();
     }
 

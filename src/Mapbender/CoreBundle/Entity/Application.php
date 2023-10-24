@@ -531,7 +531,7 @@ class Application
 
     /**
      * Get elements in a region as a native array instead of a Collection
-     * This is a BC construct used exclusively by ManagerBundle:Resources/views/Application/form-elements.html.twig,
+     * This is a BC construct used exclusively by Resources/views/Application/form-elements.html.twig within ManagerBundle,
      * which uses a |count Twig filter that doesn't support Countables...
      *
      * @param string
