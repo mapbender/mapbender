@@ -396,25 +396,41 @@
             feature.setStyle(this.featureStyles[style]);
         },
         _showResultState: function (results) {
-            var widget = this;
-            var element = widget.element;
-            var table = $('.search-results table', element);
-            var counter = $('.result-counter', element);
+            var element = this.element;
+            const $table = $('.search-results table', element);
+            let $counter = $('.result-counter', element);
+            let $exportcsv = $('.result-exportcsv', element);
 
-            if (0 === counter.length) {
-                counter = $('<div/>', {'class': 'result-counter'})
+            var currentRoute = this.getCurrentRoute();
+
+            if (!$counter.length && currentRoute.results.count === true) {
+                $counter = $('<div/>', {'class': 'result-counter'}).prependTo($('.search-results', element));
+            }
+
+            if (!$exportcsv.length && currentRoute.results.exportcsv === true) {
+                $exportcsv = $('<button/>', {'class': 'btn btn-sm btn-default result-exportcsv fa fas fa-download left'})
+                    .attr("title", Mapbender.trans('mb.core.searchrouter.exportcsv'))
                     .prependTo($('.search-results', element));
             }
 
             if (results.length > 0) {
-                counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
+                $counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
                     count: results.length
                 }));
-                table.show();
+
+                $exportcsv.show().unbind().on('click', () => this._exportCsv(results));
+                $table.show();
             } else {
-                table.hide();
-                counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
+                $table.hide();
+                $exportcsv.hide();
+                $counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
+        },
+        _exportCsv: function (features) {
+            if (!this.csvExport) {
+                this.csvExport = new CsvExport();
+            }
+            this.csvExport.export(features, this.getCurrentRoute().results.headers);
         },
         _createStyleMap: function (styles) {
             function _createSingleStyle(options) {

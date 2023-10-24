@@ -67,6 +67,7 @@ mb:
     searchrouter:
       no_results: 'Sonuç bulunamadı'
       result_counter: 'Sonuçlar: %count%'
+      exportcsv: 'Sonuçları CSV'ye aktarma.'
       class:
         title: 'Arama yönlendiricisi'
         description: 'Yapılandırılabilir arama yönlendirme'

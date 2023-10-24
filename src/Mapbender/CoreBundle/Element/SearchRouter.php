@@ -99,6 +99,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             "results" => array(
                 "view" => "table",
                 "count" => "true",
+                "exportcsv" => "false",
                 "headers" => array(),
                 "callback" => array(
                     "event" => "click",
@@ -158,6 +159,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
+                '@MapbenderCoreBundle/Resources/public/element/csv-export.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
@@ -165,6 +167,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             'trans' => array(
                 'mb.core.searchrouter.result_counter',
                 'mb.core.searchrouter.no_results',
+                'mb.core.searchrouter.exportcsv',
             ),
         );
     }

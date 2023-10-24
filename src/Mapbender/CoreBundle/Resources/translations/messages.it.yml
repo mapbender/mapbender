@@ -67,6 +67,7 @@ mb:
     searchrouter:
       no_results: 'Nessun risultato trovato.'
       result_counter: 'Risultati: %count%'
+      exportcsv: 'Esportare i risultati in CSV.'
       class:
         title: 'Cerca router'
         description: 'Ricerca configurabile su elemento routing'

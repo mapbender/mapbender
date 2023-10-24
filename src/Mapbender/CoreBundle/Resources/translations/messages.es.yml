@@ -67,6 +67,7 @@ mb:
     searchrouter:
       no_results: 'No results'
       result_counter: 'Results: %count%'
+      exportcsv: 'Exporte los resultados a CSV.'
       class:
         title: 'Buscar ruteador'
         description: 'Búsqueda configurable del elemeteo de ruteo'
