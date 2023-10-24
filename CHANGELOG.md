@@ -6,6 +6,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
+* Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`)
 
 Features:
 * PHP 8.2 is now fully supported.

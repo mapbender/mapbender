@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Mapbender\Utils\AssetReferenceUtil;
 
 /**
  * Produces merged application assets.
@@ -22,24 +21,15 @@ use Mapbender\Utils\AssetReferenceUtil;
  */
 class ApplicationAssetService
 {
-    /** @var CssCompiler */
-    protected $cssCompiler;
-    /** @var JsCompiler */
-    protected $jsCompiler;
-    /** @var TranslationCompiler */
-    protected $translationCompiler;
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-    /** @var bool */
-    protected $debug;
-    /** @var bool */
-    protected $strict;
+    protected CssCompiler $cssCompiler;
+    protected JsCompiler $jsCompiler;
+    protected TranslationCompiler $translationCompiler;
+    protected ElementFilter$elementFilter;
+    protected ElementInventoryService $inventory;
+    protected TypeDirectoryService $sourceTypeDirectory;
+    protected ApplicationTemplateRegistry $templateRegistry;
+    protected bool $debug;
+    protected bool $strict;
 
     public function __construct(CssCompiler $cssCompiler,
                                 JsCompiler $jsCompiler,
@@ -135,7 +125,7 @@ class ApplicationAssetService
             $this->getTemplateLateAssetReferences($application, $type),
         ));
         $references = call_user_func_array('\array_merge', $referenceLists);
-        $references = AssetReferenceUtil::deduplicate($references);
+        $references = $this->deduplicate($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
         $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
@@ -284,8 +274,7 @@ class ApplicationAssetService
     public function getTemplateBaseAssetReferences(Application $application, $type)
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
-        $refs = $templateComponent->getAssets($type);
-        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
+        return $templateComponent->getAssets($type);
     }
 
     /**
@@ -355,29 +344,7 @@ class ApplicationAssetService
     public function getTemplateLateAssetReferences(Application $application, $type)
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
-        $refs = $templateComponent->getLateAssets($type);
-        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
-    }
-
-    /**
-     * Amends magically implicit bundle scope in unqualified assetic resource references.
-     * 'file.js' => '@MapbenderMagicallyImplicitBundle/Resources/public/file.js'
-     *
-     * @param object $scopeObject
-     * @param string[] $references
-     * @param string $type
-     * @return string[]
-     * @deprecated only use asset references assetic understands without further processing
-     */
-    protected function qualifyAssetReferencesBulk($scopeObject, $references, $type)
-    {
-        // NOTE: Translations assets are views (twig templates); they never supported
-        //       automatic bundle namespace inferrence, and they still don't.
-        if ($type === 'trans') {
-            return $references;
-        } else {
-            return AssetReferenceUtil::qualifyBulk($scopeObject, $references, $this->strict);
-        }
+        return $templateComponent->getLateAssets($type);
     }
 
     /**
@@ -399,5 +366,27 @@ class ApplicationAssetService
             }
         }
         return \implode("\n", $variableLines);
+    }
+
+    /**
+     * ~array_unique but compatible with StringAsset (and maybe other objects)
+     * Non-string inputs are retained without inspection.
+     *
+     * @param mixed[] $references
+     * @return mixed[]
+     */
+    private function deduplicate(array $references)
+    {
+        $seen = array();
+        $refsOut = array();
+        foreach ($references as $reference) {
+            if (!\is_string($reference)) {
+                $refsOut[] = $reference;
+            } elseif (empty($seen[$reference])) {
+                $seen[$reference] = true;
+                $refsOut[] = $reference;
+            }
+        }
+        return $refsOut;
     }
 }
