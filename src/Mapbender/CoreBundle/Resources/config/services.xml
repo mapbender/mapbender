@@ -279,6 +279,7 @@
             <argument type="service" id="mapbender.application_template_registry" />
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>
+            <argument>%mapbender.asset_overrides%</argument>
         </service>
         <service id="mapbender.xmlvalidator.service" class="Mapbender\CoreBundle\Component\XmlValidatorService">
             <argument type="service" id="mapbender.http_transport.service" />

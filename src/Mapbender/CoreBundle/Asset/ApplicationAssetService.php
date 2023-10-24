@@ -31,6 +31,8 @@ class ApplicationAssetService
     protected bool $debug;
     protected bool $strict;
 
+    protected array $assetOverrideMap = [];
+
     protected bool $debugOpenlayers = false;
 
     public function __construct(CssCompiler                 $cssCompiler,
@@ -40,8 +42,9 @@ class ApplicationAssetService
                                 ElementInventoryService     $inventory,
                                 TypeDirectoryService        $sourceTypeDirectory,
                                 ApplicationTemplateRegistry $templateRegistry,
-                                                            $debug = false,
-                                                            $strict = false)
+                                bool                        $debug = false,
+                                bool                        $strict = false,
+                                ?array                      $assetOverrides = null)
     {
         $this->cssCompiler = $cssCompiler;
         $this->jsCompiler = $jsCompiler;
@@ -52,6 +55,10 @@ class ApplicationAssetService
         $this->templateRegistry = $templateRegistry;
         $this->debug = $debug;
         $this->strict = $strict;
+
+        if (is_array($assetOverrides)) {
+            $this->registerAssetOverrides($assetOverrides);
+        }
     }
 
     /**
@@ -95,10 +102,30 @@ class ApplicationAssetService
     }
 
     /**
+     * after calling this function, everytime $originalRef is requested, $newRef will be included instead
+     * Can be used to override internal templates, javascript or css files
+     * @see self::registerAssetOverrides() for registering multiple files at a time
+     */
+    public function registerAssetOverride(string $originalRef, string $newRef): void
+    {
+        $this->assetOverrideMap[$originalRef] = $newRef;
+    }
+
+    /**
+     * after calling this function, everytime an asset that corresponds to a key in the overrideMap is requested,
+     * it is replaced by the asset of the corresponding value
+     * Can be used to override internal templates, javascript or css files
+     */
+    public function registerAssetOverrides(array $overrideMap): void
+    {
+        $this->assetOverrideMap = array_merge($this->assetOverrideMap, $overrideMap);
+    }
+
+    /**
      * Retrieves all required assets from elements, templates, etc. that are needed to display an application
      * @return string[]
      */
-    public function collectAssetReferences(Application $application, $type): array
+    protected function collectAssetReferences(Application $application, $type): array
     {
         $referenceLists = array();
         if ($type === 'css') {
@@ -126,6 +153,7 @@ class ApplicationAssetService
         $references = array_merge($references, $extraYamlRefs);
 
         $references = $this->deduplicate($references);
+        $references = $this->replaceWithOverrides($references);
 
         if ($type === 'css') {
             $customCss = trim($application->getCustomCss());
@@ -230,7 +258,7 @@ class ApplicationAssetService
      * Provides assets required by the application template
      * @return string[]
      */
-    public function getTemplateBaseAssetReferences(Application $application, string $type): array
+    protected function getTemplateBaseAssetReferences(Application $application, string $type): array
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         return $templateComponent->getAssets($type);
@@ -240,7 +268,7 @@ class ApplicationAssetService
      * Provides assets required by the elements used in an application
      * @return string[]
      */
-    public function getElementAssetReferences(Application $application, string $type): array
+    protected function getElementAssetReferences(Application $application, string $type): array
     {
         $combinedRefs = array();
         // Skip grants checks here to avoid issues with application asset caching.
@@ -295,7 +323,7 @@ class ApplicationAssetService
     /**
      * @return string[]
      */
-    public function getTemplateLateAssetReferences(Application $application, string $type): array
+    protected function getTemplateLateAssetReferences(Application $application, string $type): array
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
         return $templateComponent->getLateAssets($type);
@@ -316,6 +344,22 @@ class ApplicationAssetService
             }
         }
         return \implode("\n", $variableLines);
+    }
+
+    /**
+     * Replace references where an override was registered.
+     * @see self::registerAssetOverride()
+     */
+    protected function replaceWithOverrides(array $references): array
+    {
+        for ($i = 0; $i < count($references); $i++) {
+            $ref = $references[$i];
+            if (!is_string($ref)) continue;
+            if (array_key_exists($ref, $this->assetOverrideMap)) {
+                $references[$i] = $this->assetOverrideMap[$ref];
+            }
+        }
+        return $references;
     }
 
     /**
