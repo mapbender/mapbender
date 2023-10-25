@@ -76,9 +76,10 @@
 
         "mapbender/owsproxy": "^3.1.8",
 
+        "components/jquery": "^3.7.1",
+        "jquery/jquery-ui": "^1.13.2",
         "datatables/datatables": "^1.10.16",
         "twbs/bootstrap": "^5.0",
-        "components/jqueryui": "^1",
 
         "mapbender/openlayers6-es5": "^0.4.3.2 || ^6.4.3.2 || ^7"
     },
@@ -118,5 +119,19 @@
         "installer-paths":{
             "web/components/bootstrap/": ["twbs/bootstrap"]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery-ui",
+                "version": "1.13.2",
+                "source": {
+                    "url": "https://github.com/jquery/jquery-ui",
+                    "type": "git",
+                    "reference": "1.13.2"
+                }
+            }
+        }
+    ]
 }
