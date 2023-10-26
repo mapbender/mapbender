@@ -19,6 +19,31 @@
       margin-right: 0.125em;
     }
   }
+  .static-popover-wrap {
+    position: relative; // for anchoring of absolute-positioned .popover
+    .popover {
+      position: absolute;
+      font-size: inherit;
+      min-width: 20em;
+      display: initial;
+      left: initial;
+      right: -1em;
+      top: 25px;
+      .popover-arrow {
+        transform: translate(250px, -7px);
+      }
+      .popover-arrow::before {
+        top: 0;
+        border-bottom-color: var(--bs-popover-arrow-border);
+        border-width: 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
+      }
+      .popover-arrow::after {
+        top: var(--bs-popover-border-width);
+        border-bottom-color: var(--bs-popover-bg);
+        border-width: 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
+      }
+    }
+  }
 }
 .popup.mbViewManager-dialog {
   height: 500px;
