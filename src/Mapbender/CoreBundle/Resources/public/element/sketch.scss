@@ -57,6 +57,16 @@
     display: inline-block;
     min-width: 1.5em;
   }
+  .btn-outline-secondary {
+    --bs-btn-color: #6c757d;
+    --bs-btn-border-color: #ccc;
+    --bs-btn-hover-color: #333;
+    --bs-btn-hover-bg: #e6e6e6;
+    --bs-btn-hover-border-color: #ccc;
+    --bs-btn-active-color: #6c757d;
+    --bs-btn-active-bg: #e6e6e6;
+    --bs-btn-active-border-color: #ccc;
+  }
 }
 .popup.sketch-dialog {
   min-height: 380px;
