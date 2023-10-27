@@ -1,7 +1,3 @@
-/**
- * Migrated to Mapbender from FOM v3.0.6.3
- * See https://github.com/mapbender/fom/tree/v3.0.6.3/src/FOM/CoreBundle/Resources/public/js
- */
 $(function() {
     // init tabcontainers --------------------------------------------------------------------
     var tabs = $(".tabContainer").find(".tab");
@@ -147,8 +143,9 @@ $(function() {
     $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
         var $this = $(this);
         var $cb = $('input[type="checkbox"]', this);
-        $cb.trigger('click');
-        $this.toggleClass('active', !!$cb.prop('checked'));
+        const isChecked = $cb.prop('checked');
+        $cb.prop('checked', !isChecked);
+        $this.toggleClass('active', !isChecked);
         var scope = $this.closest('table');
         setPermissionsRootState($this.attr("data-perm-type"), scope);
     });
