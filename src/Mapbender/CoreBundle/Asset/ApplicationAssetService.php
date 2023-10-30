@@ -188,7 +188,6 @@ class ApplicationAssetService
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/util.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                '/components/underscore/underscore-min.js',
                 '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                 '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
             ),

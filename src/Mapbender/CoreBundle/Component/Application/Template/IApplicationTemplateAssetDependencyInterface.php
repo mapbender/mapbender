@@ -17,7 +17,7 @@ interface IApplicationTemplateAssetDependencyInterface
      * 1) bundle-qualified paths starting with '@'; e.g:
      *    '@SpecialTemplateBundle/Resources/public/template/special-template.css'
      * 2) web-root-anchored paths starting with '/'; e.g:
-     *    '/components/underscore/underscore-min.js'
+     *    '/components/jquery/jquery.min.js'
      *
      * 'trans' entries are expected to name .json.twig files and must be
      * twig-compatible (e.g. Somebundle:[optional-subpath under Resources/views:]translations.json.twig

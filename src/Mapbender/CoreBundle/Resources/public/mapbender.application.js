@@ -41,7 +41,7 @@ Mapbender.ElementRegistry = (function($){
     ElementRegistry.prototype.listWidgets = function() {
         var data = {};
         $('.mb-element').each(function(i, el) {
-            _.assign(data, $(el).data());
+            Object.extend(data, $(el).data());
         });
         return data;
     };
@@ -161,7 +161,7 @@ Mapbender.ElementRegistry = (function($){
      */
     ElementRegistry.prototype.addTrackingByClass_ = function(bundle, node) {
         var classNames = ($(node).attr('class') || '').split(/\s+/);
-        var mbClasses = _.uniq(classNames.filter(function(c) {
+        var mbClasses = Mapbender.Util.array_unique(classNames.filter(function(c) {
             return !!c.match(/^mb-element-/);
         }));
         // record same promises bundle in class index for class-name based lookups

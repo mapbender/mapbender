@@ -520,7 +520,7 @@
         },
         _getFormValues: function (form) {
             var values = {};
-            _.each($(':input', form), function (input) {
+            $(':input', form).each(function(index, input) {
                 var $input = $(input);
                 var name = $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, '');
                 values[name] = $input.val();
