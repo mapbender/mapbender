@@ -14,7 +14,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
-use Mapbender\Utils\AssetReferenceUtil;
 
 /**
  * Produces merged application assets.
@@ -22,34 +21,30 @@ use Mapbender\Utils\AssetReferenceUtil;
  */
 class ApplicationAssetService
 {
-    /** @var CssCompiler */
-    protected $cssCompiler;
-    /** @var JsCompiler */
-    protected $jsCompiler;
-    /** @var TranslationCompiler */
-    protected $translationCompiler;
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-    /** @var bool */
-    protected $debug;
-    /** @var bool */
-    protected $strict;
+    protected CssCompiler $cssCompiler;
+    protected JsCompiler $jsCompiler;
+    protected TranslationCompiler $translationCompiler;
+    protected ElementFilter $elementFilter;
+    protected ElementInventoryService $inventory;
+    protected TypeDirectoryService $sourceTypeDirectory;
+    protected ApplicationTemplateRegistry $templateRegistry;
+    protected bool $debug;
+    protected bool $strict;
 
-    public function __construct(CssCompiler $cssCompiler,
-                                JsCompiler $jsCompiler,
-                                TranslationCompiler $translationCompiler,
-                                ElementFilter $elementFilter,
-                                ElementInventoryService $inventory,
-                                TypeDirectoryService $sourceTypeDirectory,
+    protected array $assetOverrideMap = [];
+
+    protected bool $debugOpenlayers = false;
+
+    public function __construct(CssCompiler                 $cssCompiler,
+                                JsCompiler                  $jsCompiler,
+                                TranslationCompiler         $translationCompiler,
+                                ElementFilter               $elementFilter,
+                                ElementInventoryService     $inventory,
+                                TypeDirectoryService        $sourceTypeDirectory,
                                 ApplicationTemplateRegistry $templateRegistry,
-                                $debug=false,
-                                $strict=false)
+                                bool                        $debug = false,
+                                bool                        $strict = false,
+                                ?array                      $assetOverrides = null)
     {
         $this->cssCompiler = $cssCompiler;
         $this->jsCompiler = $jsCompiler;
@@ -60,40 +55,38 @@ class ApplicationAssetService
         $this->templateRegistry = $templateRegistry;
         $this->debug = $debug;
         $this->strict = $strict;
+
+        if (is_array($assetOverrides)) {
+            $this->registerAssetOverrides($assetOverrides);
+        }
     }
 
     /**
      * @return string[]
      */
-    public function getValidAssetTypes(bool $sourceMap = false)
+    public function getValidAssetTypes(bool $sourceMap = false): array
     {
         if ($sourceMap) return ['js', 'css'];
         return ['js', 'css', 'trans'];
     }
 
     /**
-     * @param Application $application
-     * @param string $type
-     * @return string
+     * Get asset content for a specific application in the frontend
      */
-    public function getAssetContent(Application $application, string $type, bool $sourceMap, ?string $sourceMapRoute)
+    public function getAssetContent(Application $application, string $type, bool $sourceMap, ?string $sourceMapRoute): string
     {
         if (!in_array($type, $this->getValidAssetTypes($sourceMap), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
-        $refs = $this->collectAssetReferences($application, $type);
+        $references = $this->collectAssetReferences($application, $type);
         $assetType = $sourceMap ? 'map.' . $type : $type;
-        return $this->compileAssetContent(null, $refs, $assetType, $sourceMapRoute);
+        return $this->compileAssetContent($references, $assetType, $sourceMapRoute);
     }
 
     /**
      * Get asset content for backend or login.
-     *
-     * @param TemplateAssetDependencyInterface $source
-     * @param string $type
-     * @return string
      */
-    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, string $type, bool $sourceMap, ?string $sourceMapRoute)
+    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, string $type, bool $sourceMap, ?string $sourceMapRoute): string
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -105,15 +98,34 @@ class ApplicationAssetService
         );
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
         $assetType = $sourceMap ? 'map.' . $type : $type;
-        return $this->compileAssetContent(null, $references, $assetType, $sourceMapRoute);
+        return $this->compileAssetContent($references, $assetType, $sourceMapRoute);
     }
 
     /**
-     * @param Application $application
-     * @param $type
+     * after calling this function, everytime $originalRef is requested, $newRef will be included instead
+     * Can be used to override internal templates, javascript or css files
+     * @see self::registerAssetOverrides() for registering multiple files at a time
+     */
+    public function registerAssetOverride(string $originalRef, string $newRef): void
+    {
+        $this->assetOverrideMap[$originalRef] = $newRef;
+    }
+
+    /**
+     * after calling this function, everytime an asset that corresponds to a key in the overrideMap is requested,
+     * it is replaced by the asset of the corresponding value
+     * Can be used to override internal templates, javascript or css files
+     */
+    public function registerAssetOverrides(array $overrideMap): void
+    {
+        $this->assetOverrideMap = array_merge($this->assetOverrideMap, $overrideMap);
+    }
+
+    /**
+     * Retrieves all required assets from elements, templates, etc. that are needed to display an application
      * @return string[]
      */
-    public function collectAssetReferences(Application $application, $type)
+    protected function collectAssetReferences(Application $application, $type): array
     {
         $referenceLists = array();
         if ($type === 'css') {
@@ -126,79 +138,96 @@ class ApplicationAssetService
             }
             $referenceLists[] = $variables;
         }
-        $referenceLists[] = $this->getBaseAssetReferences($type);
-        $referenceLists[] = $this->getFrontendBaseAssets($type);
         $referenceLists = array_merge($referenceLists, array(
-            $this->getMapEngineAssetReferences($application, $type),
+            $this->getBaseAssetReferences($type),
+            $this->getFrontendBaseAssets($type),
+            $this->getLayerAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
         ));
         $references = call_user_func_array('\array_merge', $referenceLists);
-        $references = AssetReferenceUtil::deduplicate($references);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
         $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
         $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
         $references = array_merge($references, $extraYamlRefs);
-        switch ($type) {
-            case 'css':
-                $customCss = trim($application->getCustomCss());
-                if ($customCss) {
-                    $references[] = new StringAsset($customCss);
-                }
-                break;
-            default:
-                // do nothing
-                break;
+
+        $references = $this->deduplicate($references);
+        $references = $this->replaceWithOverrides($references);
+
+        if ($type === 'css') {
+            $customCss = trim($application->getCustomCss());
+            if ($customCss) {
+                $references[] = new StringAsset($customCss);
+            }
         }
         return $references;
     }
 
-    /**
-     * @param string $configSlug
-     * @param string[]|StringAsset[] $refs
-     * @param string $type
-     * @return string
-     */
-    protected function compileAssetContent($configSlug, $refs, $type, ?string $sourceMapRoute)
+    protected function compileAssetContent(array $refs, string $type, ?string $sourceMapRoute): string
     {
-        switch ($type) {
-            case 'css':
-                return $this->cssCompiler->compile($refs);
-            case 'map.css':
-                return $this->debug ? $this->cssCompiler->createMap($refs) : "";
-            case 'js':
-                return $this->jsCompiler->compile($refs, $configSlug, $this->debug, $sourceMapRoute);
-            case 'map.js':
-                return $this->debug ? $this->jsCompiler->createMap($refs) : "";
-            case 'trans':
-                // JSON does not support embedded comments, so ignore $debug here
-                return $this->translationCompiler->compile($refs);
-            default:
-                throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
-        }
+        return match ($type) {
+            'css' => $this->cssCompiler->compile($refs),
+            'map.css' => $this->debug ? $this->cssCompiler->createMap($refs) : "",
+            'js' => $this->jsCompiler->compile($refs, $this->debug, $sourceMapRoute),
+            'map.js' => $this->debug ? $this->jsCompiler->createMap($refs) : "",
+            'trans' => $this->translationCompiler->compile($refs),
+            default => throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true)),
+        };
     }
 
     /**
-     * @param Application $application
-     * @param string $type
+     * provides assets required by frontend and backend
      * @return string[]
      */
-    public function getMapEngineAssetReferences(Application $application, $type)
+    protected function getBaseAssetReferences(string $type): array
+    {
+        return match ($type) {
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/polyfills.js',
+                '@MapbenderCoreBundle/Resources/public/stubs.js',
+                '@MapbenderCoreBundle/Resources/public/util.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+                '/components/underscore/underscore-min.js',
+                '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+            ),
+            'trans' => array(
+                'mb.actions.*',
+                'mb.terms.*',
+            ),
+            default => array(),
+        };
+    }
+
+    /**
+     * provides assets required by the frontend (for all applications)
+     * @return string[]
+     */
+    protected function getFrontendBaseAssets(string $type): array
     {
         switch ($type) {
-            default:
-                return array();
             case 'js':
-                if (!$this->debug) {
-                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
-                    $proj4js = '/components/proj4js/dist/proj4.js';
-                } else {
+                if ($this->debug && $this->debugOpenlayers) {
                     $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol-debug.js';
                     $proj4js = '/components/proj4js/dist/proj4-src.js';
+                } else {
+                    $openlayers = '../vendor/mapbender/openlayers6-es5/dist/ol.js';
+                    $proj4js = '/components/proj4js/dist/proj4.js';
                 }
 
-                $commonAssets = array(
+                return [
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
+                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
+                    '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '@MapbenderCoreBundle/Resources/public/init/frontend.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
@@ -216,84 +245,30 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
-                );
-                break;
+                ];
             case 'css':
-                return array(
+                return [
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
-                );
+                ];
         }
-        return array_merge($commonAssets, $this->getLayerAssetReferences($application, $type));
+        return [];
     }
 
     /**
-     * @param string $type
+     * Provides assets required by the application template
      * @return string[]
      */
-    protected function getBaseAssetReferences($type)
-    {
-        switch ($type) {
-            case 'js':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/polyfills.js',
-                    '@MapbenderCoreBundle/Resources/public/stubs.js',
-                    '@MapbenderCoreBundle/Resources/public/util.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-                    '/components/underscore/underscore-min.js',
-                    '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-                );
-                break;
-            case 'trans':
-                return array(
-                    'mb.actions.*',
-                    'mb.terms.*',
-                );
-            default:
-                return array();
-        }
-    }
-
-    protected function getFrontendBaseAssets($type)
-    {
-        switch ($type) {
-            default:
-                return array();
-            case 'js':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
-                    '@MapbenderCoreBundle/Resources/public/mb-action.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
-                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
-                    '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '@MapbenderCoreBundle/Resources/public/init/frontend.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
-                    '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
-                );
-        }
-    }
-
-    /**
-     * @param Application $application
-     * @param string $type
-     * @return string[]
-     */
-    public function getTemplateBaseAssetReferences(Application $application, $type)
+    protected function getTemplateBaseAssetReferences(Application $application, string $type): array
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
-        $refs = $templateComponent->getAssets($type);
-        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
+        return $templateComponent->getAssets($type);
     }
 
     /**
-     * @param Application $application
-     * @param string $type
+     * Provides assets required by the elements used in an application
      * @return string[]
      */
-    public function getElementAssetReferences(Application $application, $type)
+    protected function getElementAssetReferences(Application $application, string $type): array
     {
         $combinedRefs = array();
         // Skip grants checks here to avoid issues with application asset caching.
@@ -306,7 +281,11 @@ class ApplicationAssetService
         return $combinedRefs;
     }
 
-    protected function getSingleElementAssetReferences(Element $element, $type)
+    /**
+     * provides assets required by an element
+     * @return string[]
+     */
+    protected function getSingleElementAssetReferences(Element $element, $type): array
     {
         if ($handler = $this->inventory->getHandlerService($element)) {
             $fullElementRefs = $handler->getRequiredAssets($element);
@@ -315,7 +294,7 @@ class ApplicationAssetService
                 // Migrate to potentially update class
                 $this->elementFilter->migrateConfig($element);
                 $handlingClass = $element->getClass();
-            } catch (ElementErrorException $e) {
+            } catch (ElementErrorException) {
                 // for frontend presentation, incomplete / invalid elements are silently suppressed
                 // => return nothing
                 return array();
@@ -325,73 +304,39 @@ class ApplicationAssetService
             $shimService = $this->inventory->getFrontendHandler($element);
             $fullElementRefs = $shimService->getRequiredAssets($element);
         }
-        // NOTE: no support for automatically amending asset bundle scope based on class name (=legacy)
         return ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
     }
 
     /**
-     * @param Application $application
-     * @param string $type
+     * Provides assets needed for a specific application (e.g. for WMSSource)
      * @return string[]
      */
-    protected function getLayerAssetReferences(Application $application, $type)
+    protected function getLayerAssetReferences(Application $application, string $type): array
     {
-        switch ($type) {
-            case 'js':
-                return $this->sourceTypeDirectory->getScriptAssets($application);
-            case 'trans':
-            case 'css':
-                return array();
-            default:
-                throw new \InvalidArgumentException("Unsupported type " . print_r($type, true));
-        }
+        return match ($type) {
+            'js' => $this->sourceTypeDirectory->getScriptAssets($application),
+            'trans', 'css' => array(),
+            default => throw new \InvalidArgumentException("Unsupported type " . print_r($type, true)),
+        };
     }
 
     /**
-     * @param Application $application
-     * @param string $type
      * @return string[]
      */
-    public function getTemplateLateAssetReferences(Application $application, $type)
+    protected function getTemplateLateAssetReferences(Application $application, string $type): array
     {
         $templateComponent = $this->templateRegistry->getApplicationTemplate($application);
-        $refs = $templateComponent->getLateAssets($type);
-        return $this->qualifyAssetReferencesBulk($templateComponent, $refs, $type);
+        return $templateComponent->getLateAssets($type);
     }
 
-    /**
-     * Amends magically implicit bundle scope in unqualified assetic resource references.
-     * 'file.js' => '@MapbenderMagicallyImplicitBundle/Resources/public/file.js'
-     *
-     * @param object $scopeObject
-     * @param string[] $references
-     * @param string $type
-     * @return string[]
-     * @deprecated only use asset references assetic understands without further processing
-     */
-    protected function qualifyAssetReferencesBulk($scopeObject, $references, $type)
-    {
-        // NOTE: Translations assets are views (twig templates); they never supported
-        //       automatic bundle namespace inferrence, and they still don't.
-        if ($type === 'trans') {
-            return $references;
-        } else {
-            return AssetReferenceUtil::qualifyBulk($scopeObject, $references, $this->strict);
-        }
-    }
-
-    /**
-     * @param string $customCss
-     * @return string
-     */
-    protected function extractSassVariables($customCss)
+    protected function extractSassVariables(string $customCss): string
     {
         // Strip multiline comments (including unclosed at the end)
         $customCss = \preg_replace('#/\*.*?(\*/|$)#Ds', '', $customCss);
         // Strip single-line comments
         $customCss = \preg_replace('#//[^\n]*$#', '', $customCss);
         // Strip leading whitespace
-        $customCss = \preg_replace('#^\s+#', '', $customCss);
+        $customCss = ltrim($customCss);
         $variableLines = array();
         foreach (\explode("\n", $customCss) as $line) {
             if (\trim($line) && \preg_match('#^\s*\$.*?:#', $line)) {
@@ -399,5 +344,40 @@ class ApplicationAssetService
             }
         }
         return \implode("\n", $variableLines);
+    }
+
+    /**
+     * Replace references where an override was registered.
+     * @see self::registerAssetOverride()
+     */
+    protected function replaceWithOverrides(array $references): array
+    {
+        for ($i = 0; $i < count($references); $i++) {
+            $ref = $references[$i];
+            if (!is_string($ref)) continue;
+            if (array_key_exists($ref, $this->assetOverrideMap)) {
+                $references[$i] = $this->assetOverrideMap[$ref];
+            }
+        }
+        return $references;
+    }
+
+    /**
+     * ~array_unique but compatible with StringAsset (and maybe other objects)
+     * Non-string inputs are retained without inspection.
+     */
+    private function deduplicate(array $references): array
+    {
+        $seen = array();
+        $refsOut = array();
+        foreach ($references as $reference) {
+            if (!\is_string($reference)) {
+                $refsOut[] = $reference;
+            } elseif (empty($seen[$reference])) {
+                $seen[$reference] = true;
+                $refsOut[] = $reference;
+            }
+        }
+        return $refsOut;
     }
 }

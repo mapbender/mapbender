@@ -58,9 +58,6 @@ class ElementShim extends AbstractElementService
                 'css' => array(),
                 'trans' => array(),
             );
-            foreach (array('js', 'css') as $type) {
-                $references[$type] = AssetReferenceUtil::qualifyBulk($component, $references[$type], false);
-            }
             $this->assets[$key] = $references;
         }
         return $this->assets[$key];

@@ -49,9 +49,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ConfigCheckCommand extends Command
 {
 
-    public function __construct(protected ManagerRegistry $managerRegistry,
-                                protected string          $rootDir)
+    protected ManagerRegistry $managerRegistry;
+    protected string $rootDir;
+
+    public function __construct(ManagerRegistry $managerRegistry,
+                                string          $rootDir)
     {
+        $this->managerRegistry = $managerRegistry;
+        $this->rootDir = $rootDir;
         parent::__construct();
     }
 
