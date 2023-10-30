@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Form\EventListener\UserSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,7 +55,7 @@ class UserType extends AbstractType
         if (true === $options['group_permission']) {
             $builder
                 ->add('groups', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
-                    'class' =>  'FOMUserBundle:Group',
+                    'class' =>  Group::class,
                     'query_builder' => function (EntityRepository $er) {
                         $qb = $er->createQueryBuilder('r')
                             ->add('orderBy', 'r.title ASC');

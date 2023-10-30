@@ -91,7 +91,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
     public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
     {
         /** @var WmsInstance $instance */
-        $repository = $this->entityManager->getRepository('MapbenderWmsBundle:WmsSource');
+        $repository = $this->entityManager->getRepository(WmsSource::class);
         $yamlSource = $instance->getSource();
         $matchValues = array(
             'originUrl' => $yamlSource->getOriginUrl(),

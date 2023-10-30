@@ -259,7 +259,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
 
     public function getUserIdentifier(): string
     {
-        return $this->getEmail();
+        return $this->getUsername();
     }
 
     // why...?

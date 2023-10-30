@@ -124,7 +124,7 @@ class ApplicationExchangeController extends AbstractController
         } catch (ImportException $e) {
             $em->rollback();
             $this->addFlash('error', $e->getMessage());
-            return $this->forward('MapbenderManagerBundle:Application:index');
+            return $this->forward('mapbender_manager_application_index');
         }
     }
 

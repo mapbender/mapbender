@@ -83,9 +83,8 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      */
     public function getRepository()
     {
-        $classReference = 'MapbenderPrintBundle:QueuedPrintJob';
         /** @var QueuedPrintJobRepository $repository */
-        $repository = $this->entityManager->getRepository($classReference);
+        $repository = $this->entityManager->getRepository(QueuedPrintJob::class);
         return $repository;
     }
 
