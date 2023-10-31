@@ -229,7 +229,7 @@
         }
 
         var self = this;
-        Object.keys(this.options).forEach(function(optionName) {
+        Object.keys(this.options).forEach((optionName) => {
             if (this.staticOptions_.indexOf(optionName) >= 0) return;
 
             var value = self.options[optionName];
