@@ -4,12 +4,9 @@
 namespace FOM\UserBundle\Controller;
 
 
-use FOM\UserBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -80,9 +77,9 @@ abstract class AbstractEmailProcessController extends UserControllerBase
         $message->subject($subject);
         $message->from("$this->emailFromName <$this->emailFromAddress>");
         $message->to($mailTo);
-        $message->setBody($bodyText);
+        $message->text($bodyText);
         if ($bodyHtml) {
-            $message->attachPart(new DataPart($bodyHtml, null, 'text/html'));
+            $message->html($bodyHtml);
         }
         $this->mailer->send($message);
     }
