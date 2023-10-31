@@ -16,14 +16,14 @@
     <form name="login" method="post" action="login/check">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
         <div class="mb-3">
-            <label class="form-label" for="username">
+            <label class="form-label required" for="username">
                 {{ 'fom.user.login.login.username' | trans }}
             </label>
             <input type="text" id="username" name="_username" required="required" autofocus="autofocus"
                    class="form-control form-control-lg" value="{{ last_username }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="password">
+            <label class="form-label required" for="password">
                 {{ 'fom.user.login.login.password' | trans }}
             </label>
             <input type="password" id="password" name="_password" required="required" class="form-control form-control-lg">

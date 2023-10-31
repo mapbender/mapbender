@@ -1,5 +1,5 @@
     <div class="mb-3">
-        <div class="btn-group btn-group-sm">
+        <div class="btn-group">
         {% if 'point' in geometrytypes %}
             <button type="button" data-tool-name="point" title="{{ "mb.core.sketch.geometrytype.point"|trans }}" class="btn btn-outline-secondary"><i class="icon-draw-point"></i></button>
         {% endif %}
@@ -16,11 +16,13 @@
             <button type="button" data-tool-name="circle" title="{{ "mb.core.sketch.geometrytype.circle"|trans }}" class="btn btn-outline-secondary"><i class="icon-draw-circle"></i></button>
         {% endif %}
         </div>
-        <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-sm btn-outline-secondary -fn-tool-off"><i class="fa fas fa-stop"></i></button>
+        <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-outline-secondary -fn-tool-off">
+            <i class="fa fas fa-stop"></i>
+        </button>
     </div>
     <div class="mb-3 -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
         <div class="btn-toolbar">
-            <div class="btn-group btn-group-sm btn-group-sm-square">
+            <div class="btn-group btn-group-sm-square">
                 {%- for color in colors -%}
                     <button type="button" class="btn btn-outline-secondary color-select{{- loop.first ? ' active' : '' -}}" data-color="{{ color }}"><i class="color-preview" style="background: {{ color }};">&nbsp;</i></button>
                 {%- endfor -%}
@@ -35,7 +37,7 @@
     </div>
 
     <div class="row mb-3">
-        <div class="{{- dialogMode ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
+        <div class="px-3 {{- dialogMode ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
             <label for="label-text" class="form-label">{{ "mb.core.sketch.inputs.label"|trans}}</label>
             <input name="label-text" type="text" class="form-control" disabled="disabled">
         </div>
@@ -44,7 +46,7 @@
             <label for="label-text" class="form-label">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
             <div class="input-group">
                 <input name="radius" type="text" class="form-control" disabled="disabled">
-                <div class="input-group-addon">m</div>
+                <span class="input-group-text">m</span>
             </div>
         </div>
         {%- endif -%}
@@ -80,7 +82,7 @@
                 </div>
             </div>
             <div class="text-nowrap text-end">
-                <button type="button" class="btn btn-sm btn-light -fn-close">{{ 'mb.actions.close' | trans }}</button>
+                <button type="button" class="btn btn-sm btn-secondary -fn-close">{{ 'mb.actions.close' | trans }}</button>
             </div>
         </div>
     </div>

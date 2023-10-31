@@ -1,47 +1,54 @@
     {%- if grants.savePublic or grants.savePrivate -%}
     <div>
-        <form data-token="{{ csrf_token('view_manager') }}">
-        <div class="form-group">
-            <div class="input-group">
+        <form class="ps-1" data-token="{{ csrf_token('view_manager') }}">
+            <div class="input-group mb-3">
                 <input type="text" name="title" class="form-control" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
-                <span class="input-group-addon btn -fn-save-new" title="{{ 'mb.actions.save' | trans }}">
+                <button class="btn btn-outline-secondary -fn-save-new" title="{{ 'mb.actions.save' | trans }}">
                     <i class="fa fas fa-save"></i>
-                </span>
+                </button>
             </div>
-        </div>
-        {%- if grants.savePublic and grants.savePrivate -%}
-        <div class="form-group checkbox">
-            <label><input name="save-as-public" type="checkbox">{{ 'mb.core.viewManager.saveAsPublic' | trans }}</label>
-        </div>
+            {%- if grants.savePublic and grants.savePrivate -%}
+                <div class="mb-3 form-check">
+                    <input id="exampleCheck1" class="form-check-input" type="checkbox" name="save-as-public">
+                    <label for="exampleCheck1" class="form-check-label">
+                        {{ 'mb.core.viewManager.saveAsPublic' | trans }}
+                    </label>
+                </div>
+            {%- endif -%}
         </form>
-        {%- endif -%}
     </div>
     {%- endif -%}
     <div class="ui-helper-clearfix -fn-loading-placeholder">
         <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
     </div>
     <div class="hidden -js-delete-confirmation-content">
-        <p>{{ 'mb.core.viewManager.confirmDelete' | trans }}</p>
-        <div class="text-nowrap">
-            <button type="button" class="btn btn-sm btn-danger -fn-confirm">{{ 'mb.actions.delete' | trans }}</button>
-            <button type="button" class="btn btn-sm btn-light -fn-cancel">{{ 'mb.actions.cancel' | trans }}</button>
+        <div class="popover-body">
+            <p>{{ 'mb.core.viewManager.confirmDelete' | trans }}</p>
+            <div class="text-nowrap">
+                <button type="button" class="btn btn-sm btn-danger -fn-confirm">
+                    {{ 'mb.actions.delete' | trans }}
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary -fn-cancel">
+                    {{ 'mb.actions.cancel' | trans }}
+                </button>
+            </div>
         </div>
     </div>
     <div class="hidden -js-update-content">
-        <div class="form-horizontal">
-            <div class="row form-group">
-                <div class="col-xs-3 col-3">
-                    <label class="control-label">{{ 'mb.core.viewManager.title' | trans }}</label>
-                </div>
+        <div class="popover-body">
+            <div class="row mb-3">
+                <label class="col-form-label col-xs-3 col-3">
+                    {{ 'mb.core.viewManager.title' | trans }}
+                </label>
                 <div class="col-xs-9 col-9">
                     <input name="title" type="text" class="form-control" />
                 </div>
             </div>
             {%- if showDate -%}
-            <div class="row form-group">
-                <div class="col-xs-3 col-3">
-                    <label class="control-label">{{ 'mb.core.viewManager.date' | trans }}</label>
-                </div>
+            <div class="row mb-3">
+                <label class="col-form-label col-xs-3 col-3">
+                    {{ 'mb.core.viewManager.date' | trans }}
+                </label>
                 <div class="col-xs-9 col-9">
                     <input name="mtime" type="text" class="form-control" readonly="readonly" disabled="disabled" />
                 </div>
@@ -50,9 +57,13 @@
             {%- if showPublicPrivateState -%}
             <p class="-js-record-status"></p>
             {%- endif -%}
-        </div>
-        <div class="text-nowrap text-end">
-            <button type="button" class="btn btn-sm btn-light -fn-close">{{ 'mb.actions.close' | trans }}</button>
-            <button type="button" class="btn btn-sm btn-success -fn-update">{{ 'mb.core.viewManager.replace' | trans }}</button>
+            <div class="text-nowrap text-end">
+                <button type="button" class="btn btn-sm btn-secondary -fn-close">
+                    {{ 'mb.actions.close' | trans }}
+                </button>
+                <button type="button" class="btn btn-sm btn-success -fn-update">
+                    {{ 'mb.core.viewManager.replace' | trans }}
+                </button>
+            </div>
         </div>
     </div>

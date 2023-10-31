@@ -297,7 +297,7 @@
             this._closePopovers();
             $content
                 .addClass('popover bottom')
-                .prepend($(document.createElement('div')).addClass('arrow'))
+                .prepend($(document.createElement('div')).addClass('popover-arrow'))
             ;
             $('.-js-update-content-anchor', $targetRow).append($content);
             var self = this;
@@ -312,7 +312,7 @@
             var deferred = $.Deferred();
             var $popover = $(document.createElement('div'))
                 .addClass('popover bottom')
-                .append($(document.createElement('div')).addClass('arrow'))
+                .append($(document.createElement('div')).addClass('popover-arrow'))
                 .append(content)
             ;
             $popover.on('click', '.-fn-confirm', function() {

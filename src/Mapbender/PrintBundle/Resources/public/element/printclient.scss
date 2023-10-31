@@ -51,4 +51,7 @@
     text-decoration: none;
     outline: none;
   }
+  .btn-secondary {
+    --bs-btn-bg: lighten(#6c757d, 10);
+  }
 }
