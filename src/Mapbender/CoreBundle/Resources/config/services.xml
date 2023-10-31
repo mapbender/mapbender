@@ -293,9 +293,12 @@
             <argument type="service" id="mapbender.element_shim_factory" />
         </service>
         <service id="mapbender.icon_package_fa4" class="Mapbender\CoreBundle\Component\IconPackageFa4">
+            <argument>%mapbender.icons.disable_default_fa%</argument>
+            <argument>%mapbender.icons.custom%</argument>
             <tag name="mapbender.icon_package" priority="-1" />
         </service>
         <service id="mapbender.icon_package_mbicons" class="Mapbender\CoreBundle\Component\IconPackageMbIcons">
+            <argument>%mapbender.icons.disable_default%</argument>
             <tag name="mapbender.icon_package" priority="-2" />
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">

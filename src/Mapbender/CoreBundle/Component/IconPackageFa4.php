@@ -9,16 +9,25 @@ use Mapbender\Utils\HtmlUtil;
 
 class IconPackageFa4 implements IconPackageInterface
 {
-    public function getStyleSheets()
+    protected bool $showDefaultIcons = true;
+    protected array $additionalIcons = [];
+
+    public function __construct(bool $disableDefaultIcons, ?array $additionalIcons)
     {
-        return array(
-            'components/font-awesome/css/all.css',
-        );
+        $this->showDefaultIcons = !$disableDefaultIcons;
+        if (is_array($additionalIcons)) $this->additionalIcons = $additionalIcons;
     }
 
-    public function getChoices()
+
+    public function getStyleSheets()
     {
-        return array(
+        return ['components/font-awesome/css/all.css'];
+    }
+
+    public function getChoices(bool $showAll = false)
+    {
+        $choices = [];
+        if ($this->showDefaultIcons || $showAll) $choices = [
             /** @todo: localize labels */
             /** @todo: remove technocratic "(FontAwesome)" label postfixes */
             'About (FontAwesome)' => 'iconAbout',
@@ -42,11 +51,25 @@ class IconPackageFa4 implements IconPackageInterface
             'Copyright (FontAwesome)' => 'iconCopyright',
             'Share' => 'iconShare',
             'Refresh' => 'iconRefresh',
-        );
+        ];
+
+        foreach ($this->additionalIcons as $icon) {
+            $choices[$icon['title']] = $icon['name'];
+        }
+
+        return $choices;
     }
 
     public function getIconMarkup($iconCode)
     {
+        $class = null;
+        foreach ($this->additionalIcons as $icon) {
+            if ($icon['name'] === $iconCode) {
+                $class = $icon['class'];
+            }
+        }
+
+        if (!$class) {
         switch ($iconCode) {
             default:
                 throw new \LogicException("Unhandled icon code " . \var_export($iconCode, true));
@@ -57,7 +80,6 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconInfoActive':
                 $class = 'fas fa-info-circle'; break;
             case 'iconGps':
-                /** @todo FA5: confirm result is fa-map-marker-alt glyph (poked hole) */
                 $class = 'fas fa-location-dot'; break;
             case 'iconHome':
                 $class = 'fas fa-house'; break;
@@ -72,7 +94,6 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconLayertree':
                 $class = 'fas fa-sitemap'; break;
             case 'iconWms':
-                /** @todo FA5: prefer fa-globe-americas..? (same result as FA4 fa-globe) */
                 $class = 'fas fa-globe'; break;
             case 'iconHelp':
                 $class = 'fas fa-circle-question'; break;
@@ -96,6 +117,8 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconRefresh':
                 $class = 'fas fa-rotate'; break;
         }
+        }
+
         return HtmlUtil::renderTag('i', '', array(
             'class' => $class,
         ));
@@ -103,7 +126,13 @@ class IconPackageFa4 implements IconPackageInterface
 
     public function isHandled($iconCode)
     {
-        return \in_array($iconCode, $this->getChoices()) || \array_key_exists($iconCode, $this->getAliases());
+        foreach ($this->additionalIcons as $icon) {
+            if ($icon['title'] === $iconCode) {
+                return true;
+            }
+        }
+
+        return \in_array($iconCode, $this->getChoices(true)) || \array_key_exists($iconCode, $this->getAliases());
     }
 
     public function getAliases()

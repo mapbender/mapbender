@@ -16,6 +16,7 @@ Features:
   a separate bundle in this repo.
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
+* [Button] Allow customization of the icons available for selection in the button edit form. Use parameter `mapbender.icons.custom` (Array with keys name, title and class). Also added parameters `mapbender.icons.disable_default` and `mapbender.icons.disable_default_fa` to disable default icons. ([PR#1513](https://github.com/mapbender/mapbender/pull/1513)) 
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
