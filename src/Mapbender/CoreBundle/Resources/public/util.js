@@ -1,33 +1,33 @@
 window.Mapbender = Mapbender || {};
 
-Mapbender.error = function(errorObject,delayTimeout) {
+Mapbender.error = function (errorObject, delayTimeout) {
     var errorMessage = errorObject;
-    if(typeof errorObject != "string"){
+    if (typeof errorObject != "string") {
         errorMessage = JSON.stringify(errorObject);
     }
-    $.notify(errorMessage,{autoHideDelay: delayTimeout?delayTimeout:5000}, 'error');
-    console.error("Mapbender Error: ",errorObject);
+    $.notify(errorMessage, {autoHideDelay: delayTimeout ? delayTimeout : 5000}, 'error');
+    console.error("Mapbender Error: ", errorObject);
 };
 
-Mapbender.info = function(infoObject,delayTimeout) {
+Mapbender.info = function (infoObject, delayTimeout) {
     var message = infoObject;
-    if(typeof infoObject != "string"){
+    if (typeof infoObject != "string") {
         message = JSON.stringify(infoObject);
     }
-    $.notify(message,{autoHideDelay: delayTimeout?delayTimeout:5000,className: 'info'});
-    console.log("Mapbender Info: ",infoObject);
+    $.notify(message, {autoHideDelay: delayTimeout ? delayTimeout : 5000, className: 'info'});
+    console.log("Mapbender Info: ", infoObject);
 };
-Mapbender.confirm = function(message){
+Mapbender.confirm = function (message) {
     var res = confirm(message);
     return res;
 };
 
-Mapbender.checkTarget = function(widgetName, target, targetname) {
-    if(target === null || typeof (target) === 'undefined'
-            || new String(target).replace(/^\s+|\s+$/g, '') === ""
-            || $('#' + target).length === 0) {
+Mapbender.checkTarget = function (widgetName, target, targetname) {
+    if (target === null || typeof (target) === 'undefined'
+        || new String(target).replace(/^\s+|\s+$/g, '') === ""
+        || $('#' + target).length === 0) {
         Mapbender.error(widgetName + ': a target element ' + (targetname ? '"' + targetname + '"'
-                : '') + ' is not defined.');
+            : '') + ' is not defined.');
         return false;
     } else {
         return true;
@@ -36,9 +36,9 @@ Mapbender.checkTarget = function(widgetName, target, targetname) {
 
 Mapbender.Util = Mapbender.Util || {};
 
-Mapbender.Util.UUID = function(){
+Mapbender.Util.UUID = function () {
     var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
         return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
@@ -46,16 +46,16 @@ Mapbender.Util.UUID = function(){
     return uuid;
 };
 /* deprecated */
-Mapbender.urlParam = function(key){
+Mapbender.urlParam = function (key) {
     window.console && console.warn(
-            'The function "Mapbender.urlParam" is deprecated, use instead it the "new Mapbender.Util.Url().getParameter(key)"');
+        'The function "Mapbender.urlParam" is deprecated, use instead it the "new Mapbender.Util.Url().getParameter(key)"');
     return new Mapbender.Util.Url(window.location.href).getParameter(key);
 };
 
 /* deprecated */
-Mapbender.UUID = function(){
+Mapbender.UUID = function () {
     window.console && console.warn(
-            'The function "Mapbender.UUID" is deprecated, use instead it the "Mapbender.Util.UUID"');
+        'The function "Mapbender.UUID" is deprecated, use instead it the "Mapbender.Util.UUID"');
     return Mapbender.Util.UUID();
 }
 
@@ -63,8 +63,8 @@ Mapbender.UUID = function(){
  * Creates an url object from a giving url string
  * @param {String} urlString
  */
-Mapbender.Util.Url = function(urlString) {
-    if(!urlString.replace(/^\s+|\s+$/g, ''))// trim
+Mapbender.Util.Url = function (urlString) {
+    if (!urlString.replace(/^\s+|\s+$/g, ''))// trim
         return;
     var self = this;
     var tmp = document.createElement("a");
@@ -112,15 +112,15 @@ Mapbender.Util.Url = function(urlString) {
      * Checks if a url object is valid.
      * @returns {Boolean} true if url valid
      */
-    this.isValid = function(){
-        return  !(!self.hostname || !self.protocol);// TODO ?
+    this.isValid = function () {
+        return !(!self.hostname || !self.protocol);// TODO ?
     };
     /**
      * Reconstruct url
      * @param {boolean} [withoutUser] to omit credentials (default false)
      * @returns {String}
      */
-    this.asString = function(withoutUser) {
+    this.asString = function (withoutUser) {
         var parts = [this.protocol, '//'];
         if (!withoutUser && this.username) {
             parts.push(encodeURIComponent(this.username), ':', encodeURIComponent(this.password || ''), '@');
@@ -153,9 +153,9 @@ Mapbender.Util.Url = function(urlString) {
      * @param {Boolean} [ignoreCase]
      * @returns {String|null}
      */
-    this.getParameter = function(name, ignoreCase) {
-        for(var key in self.parameters) {
-            if(key === name || (ignoreCase && key.toLowerCase() === name.toLowerCase())) {
+    this.getParameter = function (name, ignoreCase) {
+        for (var key in self.parameters) {
+            if (key === name || (ignoreCase && key.toLowerCase() === name.toLowerCase())) {
                 return self.parameters[key];
             }
         }
@@ -167,7 +167,7 @@ Mapbender.Util.Url = function(urlString) {
  * @param {String} x
  * @return {String}
  */
-Mapbender.Util.escapeRegex = function(x) {
+Mapbender.Util.escapeRegex = function (x) {
     // See https://stackoverflow.com/a/6969486
     return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
@@ -181,7 +181,7 @@ Mapbender.Util.escapeRegex = function(x) {
  * @param {boolean} [caseSensitive] default true
  * @return {String}
  */
-Mapbender.Util.removeUrlParams = function(url, names, caseSensitive) {
+Mapbender.Util.removeUrlParams = function (url, names, caseSensitive) {
     var ci_ = !caseSensitive && (typeof caseSensitive !== 'undefined');
     var qmAt = url.indexOf('?');
     if (qmAt === -1 || !names.length) {
@@ -218,7 +218,7 @@ Mapbender.Util.removeUrlParams = function(url, names, caseSensitive) {
  * @param {Object} params
  * @return {String}
  */
-Mapbender.Util.addUrlParams = function(url, params) {
+Mapbender.Util.addUrlParams = function (url, params) {
     var hashAt = url.indexOf('#');
     if (hashAt !== -1) {
         return Mapbender.Util.addUrlParams(url.substring(0, hashAt), params) + url.substring(hashAt);
@@ -243,7 +243,7 @@ Mapbender.Util.addUrlParams = function(url, params) {
  * @param {boolean} [caseSensitive] default true
  * @return {String}
  */
-Mapbender.Util.replaceUrlParams = function(url, params, caseSensitive) {
+Mapbender.Util.replaceUrlParams = function (url, params, caseSensitive) {
     var hashAt = url.indexOf('#');
     if (hashAt !== -1) {
         return Mapbender.Util.replaceUrlParams(url.substring(0, hashAt), params, caseSensitive) + url.substring(hashAt);
@@ -268,7 +268,7 @@ Mapbender.Util.replaceUrlParams = function(url, params, caseSensitive) {
  * @param {Object} b
  * @return {boolean}
  */
-Mapbender.Util.extentsIntersect = function(a, b) {
+Mapbender.Util.extentsIntersect = function (a, b) {
     /**
      * Rectangle intersection logic lifted from OpenLayers 2
      * minus all its behavioural tweak options we do not need.
@@ -293,11 +293,11 @@ Mapbender.Util.extentsIntersect = function(a, b) {
     return ((inBottom || inTop) && (inLeft || inRight));
 };
 
-Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
+Mapbender.Util.isInScale = function (scale, min_scale, max_scale) {
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
 };
 
-Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
+Mapbender.Util.isSameSchemeAndHost = function (urlA, urlB) {
     var a = document.createElement('a');
     var b = document.createElement('a');
     a.href = urlA;
@@ -305,7 +305,7 @@ Mapbender.Util.isSameSchemeAndHost = function(urlA, urlB) {
     return a.host === b.host && a.protocol && b.protocol;
 };
 
-Mapbender.Util.removeProxy = function(url) {
+Mapbender.Util.removeProxy = function (url) {
     var proxyBase = Mapbender.configuration.application.urls.proxy + '?url=';
     if (url.indexOf(proxyBase) === 0) {
         return decodeURIComponent(url.substring(proxyBase.length));
@@ -313,7 +313,7 @@ Mapbender.Util.removeProxy = function(url) {
     return url;
 };
 
-Mapbender.Util.removeSignature = function(url) {
+Mapbender.Util.removeSignature = function (url) {
     var pos = url.indexOf("_signature");
     if (pos !== -1) {
         var url_new = url.substring(0, pos);
@@ -333,7 +333,7 @@ Mapbender.Util.removeSignature = function(url) {
  * @param {String} url
  * @returns {Promise<HTMLImageElement>}
  */
-Mapbender.Util.preloadImageAsset = function(url) {
+Mapbender.Util.preloadImageAsset = function (url) {
     var fullUrl;
     if (/^(\/)|([\w-]*:?\/\/)/.test(url)) {
         fullUrl = url;
@@ -344,10 +344,10 @@ Mapbender.Util.preloadImageAsset = function(url) {
 
     var deferred = $.Deferred();
     var image = new Image();
-    image.onload = function() {
+    image.onload = function () {
         deferred.resolveWith(null, [image]);
     };
-    image.onerror = function() {
+    image.onerror = function () {
         deferred.reject();
     };
     image.src = fullUrl;
@@ -363,7 +363,7 @@ Mapbender.Util.preloadImageAsset = function(url) {
  * @param {String} url
  * @return {Array<String>}
  */
-Mapbender.Util.splitUrlQueryParams = function(url) {
+Mapbender.Util.splitUrlQueryParams = function (url) {
     return (url || '')
         // Reduce to pure query string; becomes empty if no "?" in url
         .replace(/^[^?]*\??([^#]*).*$/, '$1')
@@ -372,7 +372,7 @@ Mapbender.Util.splitUrlQueryParams = function(url) {
         // Remove trailing &, if any
         .replace(/&$/, '')
         .split('&')
-    ;
+        ;
 };
 
 /**
@@ -385,7 +385,7 @@ Mapbender.Util.splitUrlQueryParams = function(url) {
  * @param {boolean} [plusToSpace] default true
  * @return {Object.<String, String>}
  */
-Mapbender.Util.getUrlQueryParams = function(url, plusToSpace) {
+Mapbender.Util.getUrlQueryParams = function (url, plusToSpace) {
     var assignments = Mapbender.Util.splitUrlQueryParams(url);
     var params = {};
     for (var i = 0; i < assignments.length; ++i) {
@@ -417,10 +417,10 @@ Mapbender.Util.getUrlQueryParams = function(url, plusToSpace) {
  * @param {String} name
  * @return {Object}
  */
-Mapbender.Util.unpackObjectParam = function(values, name) {
+Mapbender.Util.unpackObjectParam = function (values, name) {
     var params = {};
     var prefix = [name, '['].join('');
-    var fullNames = Object.keys(values).filter(function(name) {
+    var fullNames = Object.keys(values).filter(function (name) {
         return 0 === name.indexOf(prefix);
     });
     for (var i = 0; i < fullNames.length; ++i) {
@@ -451,6 +451,127 @@ Mapbender.Util.unpackObjectParam = function(values, name) {
     return params[name] || null;
 };
 
+/**
+ * Returns a copy of the given array containing only the unique values
+ * Equality check is type-safe (corresponding to ===), so "0" and 0 are separate values
+ * @param {*[]} array
+ * @returns {*[]}
+ */
+Mapbender.Util.array_unique = function (array) {
+    if (!Array.isArray(array)) return array;
+
+    let result = [];
+    array.forEach((value) => {
+        if (result.indexOf(value) === -1) {
+            result.push(value);
+        }
+    });
+    return result;
+}
+
+/**
+ * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
+ * @param {{}} obj
+ * @param {(value: *, key: string) => boolean} predicate
+* @returns {*[]}
+ */
+Mapbender.Util.object_filter = function (obj, predicate) {
+    let results = {};
+    for (const [key, value] of Object.entries(obj)) {
+        if (predicate(value, key)) results[key] = value;
+    }
+    return results;
+};
+
+/**
+ * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
+ * @param {*[]} array
+ * @param {(value: *, index: number) => boolean} predicate
+* @returns {*[]}
+ */
+Mapbender.Util.array_filter = function (array, predicate) {
+    let results = [];
+    array.forEach((value, index) => {
+        if (predicate(value, index)) results.push(value);
+    })
+    return results;
+};
+
+/**
+ * Returns a copy of the array or object containing only those elements, where the predicate function returns a truthy value (e.g true, 1)
+ * @param {{}|*[]} arrayOrObj
+ * @param {(value: *, indexOrKey: number|string) => boolean} predicate
+ * @returns {{}|*[]}
+ */
+Mapbender.Util.filter = function (arrayOrObj, predicate) {
+    if (Array.isArray(arrayOrObj)) return Mapbender.Util.array_filter(arrayOrObj, predicate);
+    if (typeof arrayOrObj === 'object') return Mapbender.Util.object_filter(arrayOrObj, predicate);
+    return arrayOrObj;
+};
+
+/**
+ * Returns the first item of the array or object where the predicate returns a truthy value (e.g. true, 1). Return null if
+ * the array or object is emo
+ * @param {{}|*[]} arrayOrObj
+ * @param {(value: *) => boolean} predicate
+ * @returns {*|null}
+ */
+Mapbender.Util.findFirst = function (arrayOrObj, predicate) {
+    const isArray = Array.isArray(arrayOrObj);
+    const array = isArray ? arrayOrObj : Object.entries(arrayOrObj);
+    let foundValue = null;
+
+    for (let i = 0; i < array.length && foundValue === null; i++) {
+        const item = isArray ? array[i] : array[i][1];
+        if (predicate(item)) {
+            foundValue = item;
+        }
+    }
+    return foundValue;
+}
+
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * @param {function(): *} func
+ * @param {number} delayMs delay time [ms]
+ * @param {boolean} [immediate] if set to true, the method will trigger on the first call
+ * @returns {function(): *}
+ */
+Mapbender.Util.debounce = function (func, delayMs, immediate) {
+    let timeout, args, context, timestamp, result;
+
+    const later = function () {
+        const last = Date.now() - timestamp;
+
+        if (last < delayMs && last >= 0) {
+            timeout = setTimeout(later, delayMs - last);
+        } else {
+            timeout = null;
+            if (!immediate) {
+                result = func.apply(context, args);
+                context = args = null;
+            }
+        }
+    };
+
+    return function () {
+        context = this;
+        args = arguments;
+        timestamp = Date.now();
+        const callNow = immediate && !timeout;
+        if (!timeout) timeout = setTimeout(later, delayMs);
+        if (callNow) {
+            result = func.apply(context, args);
+            context = args = null;
+        }
+
+        return result;
+    };
+}
+
+
 Mapbender.ElementUtil = {
     /**
      * Checks the markup region containing the element for reasonable
@@ -462,14 +583,14 @@ Mapbender.ElementUtil = {
      * @param {jQuery|HTMLElement} element
      * @returns boolean
      */
-    checkDialogMode: function(element) {
+    checkDialogMode: function (element) {
         return !$(element).closest('.sideContent, .mobilePane').length;
     },
     /**
      * @param {jQuery|HTMLElement} element
      * @returns boolean
      */
-    checkResponsiveVisibility: function(element) {
+    checkResponsiveVisibility: function (element) {
         const $element = $(element);
         // Only check for responsive visibility if the element has one of the hide classes
         if (!$element.hasClass('hide-screentype-desktop') && !$element.hasClass('hide-screentype-mobile')) return true;

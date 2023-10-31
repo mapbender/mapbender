@@ -74,7 +74,18 @@ The following methods have been renamed (only relevant if you overwrite or call 
 The following files have been renamed:
 - `mapbender.model.ol4.js` => `mapbender.model.js` 
 
+## Removed underscore.js
+The library was only used sparsely and was not worth the effort of keeping up to date. The following replacements can be used:
 
+- `_.assign`, `_.extend`: `Object.extend`
+- `_.debounce`: `Mapbender.Util.debounce`
+- `_.difference`: Write manully (one-liner)
+- `_.each`, `_.forEach`: `Array.prototype.forEach` or `JQuery.each`
+- `_.findWhere`: `Mapbender.Util.findFirst`
+- `_.mapObject`: Write manully (three-liner)
+- `_.object`: Write manully (three-liner)
+- `_.omit`, `_.filter`: `Mapbender.Util.filter`
+- `_.uniq`: `Mapbender.Util.array_unique`
 
 
 ## v3.3.x

@@ -231,9 +231,8 @@
             var widget = this;
             var sources = widget._getSources();
             var html = $('<ul/>');
-            _.each(sources, function (source) {
-                html.append(widget._createSourceHtml(source));
-            });
+
+            sources.forEach((source) => html.append(widget._createSourceHtml(source)));
             // strip top-level dummy <ul>
             return $(' > *', html);
         },

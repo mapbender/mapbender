@@ -81,7 +81,7 @@ $(function () {
         $selects.each(function() {
             usedValues = usedValues.concat($(this).val());
         });
-        usedValues = _.uniq(usedValues);
+        usedValues = Mapbender.Util.array_unique(usedValues);
         $('option', $selects).each(function() {
             $(this).prop('disabled', (usedValues.indexOf(this.value) !== -1) && !$(this).is(':selected'));
         });

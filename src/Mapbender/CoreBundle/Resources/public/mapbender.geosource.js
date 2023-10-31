@@ -65,9 +65,11 @@ Mapbender.Geo.SourceHandler = {
      * @return {boolean}
      */
     updateLayerStates: function(source, scale, extent, srsName) {
-        var stateMap = _.mapObject(this.getExtendedLeafInfo(source, scale, extent, srsName), function(item) {
-            return item.state;
-        });
+        let stateMap = {}
+        const leafInfo = this.getExtendedLeafInfo(source, scale, extent, srsName);
+        for (const [key, item] of Object.entries(leafInfo)) {
+            stateMap[key] = item.state;
+        }
 
         var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
         var stateChanged = false;

@@ -250,14 +250,14 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         getSourceById: function(id) {
-            return _.findWhere(this.sourceTree, {id: '' + id}) || null;
+            return Mapbender.Util.findFirst(this.sourceTree, (value) => value.id === '' + id);
         },
         /**
          * @param {Number|String} id
          * @return {Mapbender.Layerset|null}
          */
         getLayersetById: function(id) {
-            return _.findWhere(Mapbender.layersets, {id: '' + id}) || null;
+            return Mapbender.Util.findFirst(Mapbender.layersets, (value) => value.id === '' + id);
         },
         /**
          * @param {Mapbender.Layerset} theme
@@ -1356,7 +1356,7 @@ window.Mapbender.MapModelBase = (function() {
             var updateHandler = function(evt, data) {
                 self._updateViewParamFragment(data.params);
             };
-            this.mbMap.element.on('mbmapviewchanged', _.debounce(updateHandler, 400));
+            this.mbMap.element.on('mbmapviewchanged', Mapbender.Util.debounce(updateHandler, 400));
             window.addEventListener('popstate', function() {
                 self._applyViewParamFragment();
             });
@@ -1386,7 +1386,7 @@ window.Mapbender.MapModelBase = (function() {
                 'mb.sourcenodeselectionchanged',
                 'mbmapsourcechanged'
             ];
-            this.mbMap.element.on(listened.join(' '), _.debounce(updateHandler, 1000));
+            this.mbMap.element.on(listened.join(' '), Mapbender.Util.debounce(updateHandler, 1000));
         },
         /**
          * @param {{left: Number, right: Number, top: Number, bottom: Number}} extent

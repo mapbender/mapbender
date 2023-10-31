@@ -421,7 +421,7 @@
                 var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
                 var leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 var sourceLegendList = [];
-                _.forEach(leafInfo, function(activeLeaf) {
+                for(const activeLeaf of Object.values(leafInfo)) {
                     if (activeLeaf.state.visibility) {
                         for (var p = -1; p < activeLeaf.parents.length; ++p) {
                             var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
@@ -450,7 +450,7 @@
                             }
                         }
                     }
-                });
+                }
                 if (sourceLegendList.length) {
                     // reverse source order
                     legends.unshift(sourceLegendList);
@@ -519,18 +519,18 @@
                 });
             }
             var mapDpi = (this.map.options || {}).dpi || 72;
-            _.assign(jobData, {
+            Object.assign(jobData, {
                 overview: overview,
                 mapDpi: mapDpi,
                 'extent_feature': extentFeature
             });
             if ($('input[name="printLegend"]', this.$form).prop('checked')) {
-                _.assign(jobData, {
+                Object.assign(jobData, {
                     legends: this._collectLegends()
                 });
             }
             if (this.digitizerData) {
-                _.assign(jobData, this.digitizerData);
+                Object.assign(jobData, this.digitizerData);
             }
             return jobData;
         },

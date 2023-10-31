@@ -229,7 +229,9 @@
         }
 
         var self = this;
-        _.difference(Object.keys(this.options), this.staticOptions_).forEach(function(optionName) {
+        Object.keys(this.options).forEach(function(optionName) {
+            if (this.staticOptions_.indexOf(optionName) >= 0) return;
+
             var value = self.options[optionName];
             switch(optionName) {
                 case 'title':

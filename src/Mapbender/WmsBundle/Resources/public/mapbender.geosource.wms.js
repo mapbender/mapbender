@@ -138,8 +138,8 @@ window.Mapbender.WmsSource = (function () {
                 Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
             }
             var rtp = this._runtimeParams;
-            $.extend(this.customParams, _.omit(params, function (value, key) {
-                return -1 !== rtp.indexOf(('' + key).toUpperCase());
+            $.extend(this.customParams, Mapbender.Util.filter(params, function (value, key) {
+                return rtp.indexOf(('' + key).toUpperCase()) === -1;
             }));
         },
         removeParams: function (names) {
@@ -147,10 +147,11 @@ window.Mapbender.WmsSource = (function () {
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
             // see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/uri.js#L16
-            var nullParams = _.object(names, names.map(function () {
-                return null;
-            }));
-            this.addParams(nullParams);
+            let mapOfNamesToRemove = {}
+            names.forEach((name) => {
+                mapOfNamesToRemove[name] = null;
+            })
+            this.addParams(mapOfNamesToRemove);
         },
         toJSON: function () {
             var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
@@ -300,7 +301,7 @@ window.Mapbender.WmsSource = (function () {
             var commonOptions = Object.assign({}, this._getPrintBaseOptions(), {
                 changeAxis: this._isBboxFlipped(srsName)
             });
-            _.forEach(leafInfoMap, function (item) {
+            for(const item of Object.values(item)) {
                 if (item.state.visibility) {
                     var replaceParams = Object.assign({}, extraParams, {
                         LAYERS: item.layer.options.name,
@@ -314,7 +315,7 @@ window.Mapbender.WmsSource = (function () {
                         order: item.order
                     }));
                 }
-            });
+            }
             return dataOut.sort(function (a, b) {
                 return a.order - b.order;
             });
