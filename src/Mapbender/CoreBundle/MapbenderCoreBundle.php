@@ -70,8 +70,8 @@ class MapbenderCoreBundle extends Bundle
             'services.xml',
             'controllers.xml',
             'commands.xml',
-            'mapbender.yml',
-            'constraints.yml',
+            'mapbender.yaml',
+            'constraints.yaml',
             'elements.xml',
             'templates.xml',
         );

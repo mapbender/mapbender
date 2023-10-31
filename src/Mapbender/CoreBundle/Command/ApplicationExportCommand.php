@@ -33,7 +33,7 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
     {
         $this->setName('mapbender:application:export');
         $this->addArgument('slug', InputArgument::REQUIRED);
-        $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yml', 'json');
+        $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yaml', 'json');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -44,7 +44,7 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
                 break;
             case 'yml':
             case 'yaml':
-                $input->setOption('format', 'yml');
+                $input->setOption('format', 'yaml');
                 break;
             default:
                 throw new \InvalidArgumentException("Unsupported format " . print_r($input->getOption('format'), true));
@@ -72,7 +72,7 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
             case 'json':
                 $output->writeln(json_encode($data));
                 break;
-            case 'yml':
+            case 'yaml':
                 $output->writeln(Yaml::dump($data, 20, 2));
                 break;
         }
