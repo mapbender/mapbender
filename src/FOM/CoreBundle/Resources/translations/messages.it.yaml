@@ -3,10 +3,10 @@ fom:
     components:
       popup:
         delete_user_group:
-          title: 'Conferma cancellazione'
-          content: 'Cancellare davvero %userGroup%?'
+          title: Conferma cancellazione
+          content: Cancellare davvero %userGroup%?
           btn:
             cancel: Cancella
             ok: OK
     fields:
-      no_user_group_defined: 'Nessun utente o gruppo definito.'
+      no_user_group_defined: Nessun utente o gruppo definito.

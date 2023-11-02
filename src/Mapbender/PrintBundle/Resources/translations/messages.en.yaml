@@ -6,11 +6,11 @@ mb:
           ok: Export
           cancel: Cancel
       info:
-        noactivelayer: 'No active layer!'
-      chooseformat: 'Choose Export Format'
+        noactivelayer: No active layer!
+      chooseformat: Choose Export Format
       class:
-        title: 'Image export'
-        description: 'Image Export allows you to export your current mapview. You can choose png or jpeg format.'
+        title: Image export
+        description: Image Export allows you to export your current mapview. You can choose png or jpeg format.
       tag:
         image: image
         export: export

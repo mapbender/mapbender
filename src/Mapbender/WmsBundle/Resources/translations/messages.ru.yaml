@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Пример
-          wmsurl: 'Сервис URL'
+          wmsurl: Сервис URL
           wmsuser: Пользователь
           wmspass: Пароль
       error:
@@ -24,10 +24,10 @@ mb:
             version: Версия
             originurl: '>Оригинал URL'
             abstract: Абстрактный
-            onlineresource: 'Интернет ресурс'
-            exceptionformats: 'Формат Исключение'
+            onlineresource: Интернет ресурс
+            exceptionformats: Формат Исключение
             fees: Сборы
-            accessconstraints: 'Ограничения доступа'
+            accessconstraints: Ограничения доступа
             person: Человек
             organization: Организация
             position: Позиция
@@ -35,21 +35,21 @@ mb:
             facsimile: Телефакс
             email: E-mail
             address: Адрес
-            addresstype: 'Тип Адреса'
+            addresstype: Тип Адреса
             city: Город
             state: Государство
-            postcode: 'Почтовые индекс'
+            postcode: Почтовые индекс
             country: Страна
         instance:
           btn:
             save: Сохранить
             cancel: Отменить
           label:
-            originurl: 'Оригинал URL'
-            buffer: 'Кафель буфер'
-            ratio: 'BBOX фактор'
+            originurl: Оригинал URL
+            buffer: Кафель буфер
+            ratio: BBOX фактор
             visible: Видимый
-            basesource: 'База Источник'
+            basesource: База Источник
             proxy: Прокси
             transparency: Прозрачность
             tiled: Плиточный
@@ -60,17 +60,16 @@ mb:
             select: Выбрать
             info: Информация
             toggle: Переключатель
-            reorder: 'Изменения порядка'
+            reorder: Изменения порядка
             allow: Позволять
             'on': Включи
           vendorspecific:
-            label: 'Vendor определенный'
-
+            label: Vendor определенный
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
         preview:
           title:
-            servicerepository: 'Обслуживание репозитория'
+            servicerepository: Обслуживание репозитория
           label:
             load: Загрузить
         layer:
@@ -81,72 +80,72 @@ mb:
             queryable: Queryable
             cascaded: Каскадная
             opaque: Непрозрачный
-            nosubset: 'Нет подгруппы'
-            fixedwidth: 'Фиксированная ширина'
-            fixedheight: 'Фиксированная Высота'
+            nosubset: Нет подгруппы
+            fixedwidth: Фиксированная ширина
+            fixedheight: Фиксированная Высота
             latlonbounds: LatLonBounds
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: 'Легенда URL'
+            legendurl: Легенда URL
             scale: Шкала
             min: Минимальный
             max: максимальная
-            scalehint: 'Масштаб Примечание'
+            scalehint: Масштаб Примечание
             attribution: Атрибуция
-            onlineresource: 'Интернет ресурсов'
-            logourl: 'Logo URL'
+            onlineresource: Интернет ресурсов
+            logourl: Logo URL
             identifier: Идентификатор
             authority: Полномочия
             url: URL
             value: Значение
-            metadataurl: 'Метаданные URL'
+            metadataurl: Метаданные URL
             dimension: Измерение
             extent: Экстент
-            dataurl: 'Data URL'
-            featurelisturl: 'Featurelist URL'
+            dataurl: Data URL
+            featurelisturl: Featurelist URL
         instancelayerform:
           label:
-            layerstitle: 'Название слоя'
-            minscale: 'Минимальная шкала'
-            maxsclase: 'Максимальная Шкала'
+            layerstitle: Название слоя
+            minscale: Минимальная шкала
+            maxsclase: Максимальная Шкала
             active: Активный
-            allowselecttoc: 'Разрешить Выберите в TOC'
-            selectedtoc: 'Выбранный на TOC'
-            allowinfotoc: 'Allow FeatureInfo at TOC'
-            infotoc: 'FeatureInfo at TOC'
-            allowtoggletoc: 'Allow Toggle at TOC'
-            toggletoc: 'Toggle at TOC'
-            allowreordertoc: 'Разрешить Упорядочить по ТОС'
-            moreinfo: 'Больше информации'
+            allowselecttoc: Разрешить Выберите в TOC
+            selectedtoc: Выбранный на TOC
+            allowinfotoc: Allow FeatureInfo at TOC
+            infotoc: FeatureInfo at TOC
+            allowtoggletoc: Allow Toggle at TOC
+            toggletoc: Toggle at TOC
+            allowreordertoc: Разрешить Упорядочить по ТОС
+            moreinfo: Больше информации
             id:
               title: Id
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Имя слоя'
+            layersname: Имя слоя
             style: Style
       admin:
         label:
-          splitlayers: 'Разделение слои'
+          splitlayers: Разделение слои
       class:
-        title: 'WMS loader'
-        description: 'Загружает WMS через GetCapabilities-Request'
+        title: WMS loader
+        description: Загружает WMS через GetCapabilities-Request
     dimensionsets:
-      no_dimension: 'нет размерность'
+      no_dimension: нет размерность
     dimhandler:
       class:
-        title: 'Размеры проводник'
-        description: 'Размеры обработчики группы и называет размерность поддерживается экземпляров на карту'
+        title: Размеры проводник
+        description: Размеры обработчики группы и называет размерность поддерживается экземпляров на карту
     repository:
       parser:
-        couldnotparse: 'Не удалось проанализировать CapabilitiesDocument'
-        not_supported_document: 'Не поддерживается CapabilitiesDocument'
-        not_supported_version: 'Версия WMS не поддерживается'
+        couldnotparse: Не удалось проанализировать CapabilitiesDocument
+        not_supported_document: Не поддерживается CapabilitiesDocument
+        not_supported_version: Версия WMS не поддерживается
     metadata:
       section:
         common:
           _title: общий
         useconditions:
-          _title: 'условия использования'
+          _title: условия использования
         contact:
           _title: контакт
         items:

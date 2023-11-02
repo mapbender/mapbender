@@ -5,137 +5,137 @@ fom:
       authenticated: Alle angemeldeten Nutzer
   user:
     registration:
-      email_body_html: '<p>Hallo %user_username%,</p><p>Sie haben sich kürzlich registriert. Um die Registrierung abzuschließen, klicken Sie bitte <a href="%url%">hier</a>.</p>'
+      email_body_html: <p>Hallo %user_username%,</p><p>Sie haben sich kürzlich registriert. Um die Registrierung abzuschließen, klicken Sie bitte <a href="%url%">hier</a>.</p>
       done:
         title: Registrierung
-        congratulations: 'Herzlichen Glückwunsch!'
-        account_activated: 'Ihr Account wurde erfolgreich aktiviert und ist einsatzbereit!'
-        back_to_login: 'Zurück zum Login'
+        congratulations: Herzlichen Glückwunsch!
+        account_activated: Ihr Account wurde erfolgreich aktiviert und ist einsatzbereit!
+        back_to_login: Zurück zum Login
       form:
         title: Registrierung
-        choose_password: 'Passwort auswählen'
-        confirm_password: 'Passwort bestätigen'
+        choose_password: Passwort auswählen
+        confirm_password: Passwort bestätigen
         email: E-Mail
-        back_to_login: 'Zurück zum Login'
+        back_to_login: Zurück zum Login
         register: Registrieren
-      email_subject: 'Ihre Registrierung'
+      email_subject: Ihre Registrierung
       send:
         title: Registrierung
-        account_created: 'Ihr Account wurde erstellt. Eine E-Mail mit Ihrem Freischaltungs-Code und -Link ist Ihnen mit Ihrer bereitgestellten Adresse gesendet worden.'
-        back_to_login: 'Zurück zum Login'
-      email_body_text: 'Hallo %user_username%, Sie haben sich kürzlich registriert. Um die Registrierung abzuschließen, rufen Sie bitte folgenden Link in Ihrem Browser auf %url%.'
+        account_created: Ihr Account wurde erstellt. Eine E-Mail mit Ihrem Freischaltungs-Code und -Link ist Ihnen mit Ihrer bereitgestellten Adresse gesendet worden.
+        back_to_login: Zurück zum Login
+      email_body_text: Hallo %user_username%, Sie haben sich kürzlich registriert. Um die Registrierung abzuschließen, rufen Sie bitte folgenden Link in Ihrem Browser auf %url%.
     group:
       index:
         groups: Gruppen
-        add_new_group: 'Neue Gruppe hinzufügen'
+        add_new_group: Neue Gruppe hinzufügen
         title: Titel
         description: Beschreibung
-        edit_group: 'Gruppe bearbeiten'
-        delete_group: 'Gruppe löschen'
-        no_groups_available: 'Keine Gruppen verfügbar'
+        edit_group: Gruppe bearbeiten
+        delete_group: Gruppe löschen
+        no_groups_available: Keine Gruppen verfügbar
       form:
-        edit_group: 'Gruppe bearbeiten'
-        new_group: 'Neue Gruppe'
+        edit_group: Gruppe bearbeiten
+        new_group: Neue Gruppe
       container:
         base_data: Basisdaten
         users: Benutzer
-        users_of_selected: 'Benutzer von %users_count% selektiert'
-        no_user_exists: 'Benutzer existiert nicht'
+        users_of_selected: Benutzer von %users_count% selektiert
+        no_user_exists: Benutzer existiert nicht
     login:
       error_tockenexp:
-        title: 'Passwort zurücksetzen'
+        title: Passwort zurücksetzen
         sorry: Sorry!
-        registration_token_expired: 'Ihr Registrierungs-Token ist abgelaufen. Leider müssen Sie ein neues Token anfordern.'
-        request_new_token: 'Neues Token anfordern'
-        back_to_login: 'Zurück zur Anmeldung'
+        registration_token_expired: Ihr Registrierungs-Token ist abgelaufen. Leider müssen Sie ein neues Token anfordern.
+        request_new_token: Neues Token anfordern
+        back_to_login: Zurück zur Anmeldung
       login:
         title: Anmeldung
         username: Benutzer
         password: Passwort
         register: Register
-        forgot_password: 'Passwort vergessen'
+        forgot_password: Passwort vergessen
         login: Anmelden
       error_notocken:
-        password_reset: 'Passwort zurücksetzen'
+        password_reset: Passwort zurücksetzen
         sorry: Sorry!
-        no_such_tocken: 'Token nicht gefunden. Wenn Sie denken, dass dies ein Fehler ist, bitte kontaktieren Sie Ihren Administrator.'
-        contact: 'Kontakt Administrator'
-        back_to_login: 'Zurück zur Anmeldung'
+        no_such_tocken: Token nicht gefunden. Wenn Sie denken, dass dies ein Fehler ist, bitte kontaktieren Sie Ihren Administrator.
+        contact: Kontakt Administrator
+        back_to_login: Zurück zur Anmeldung
     user:
       index:
         title: Benutzer
-        add_new_user: 'Neuen Benutzer hinzufügen'
+        add_new_user: Neuen Benutzer hinzufügen
         name: Name
         email: E-Mail
         groups: Gruppen
-        edit_user: 'Benutzer bearbeiten'
-        contact_user: 'Kontaktieren Sie den Benutzer per E-Mail'
-        edit_group: 'Gruppe bearbeiten'
-        delete_user: 'Benutzer löschen'
-        no_users_available: 'Kein Benutzer verfügbar.'
+        edit_user: Benutzer bearbeiten
+        contact_user: Kontaktieren Sie den Benutzer per E-Mail
+        edit_group: Gruppe bearbeiten
+        delete_user: Benutzer löschen
+        no_users_available: Kein Benutzer verfügbar.
       form:
-        edit_user: 'Benutzer bearbeiten'
-        new_user: 'Neuer Benutzer'
+        edit_user: Benutzer bearbeiten
+        new_user: Neuer Benutzer
       container:
         base_data: Basisdaten
         profile: Profil
         groups: Gruppen
         security: Sicherheit
-        choose_password: 'Passwort auswählen'
-        confirm_password: 'Passwort bestätigen'
+        choose_password: Passwort auswählen
+        confirm_password: Passwort bestätigen
         name: Name
-        users_of_selected: 'Gruppen von %users_count% selektiert'
+        users_of_selected: Gruppen von %users_count% selektiert
         no_groups_defined: Keine Gruppen definiert
         username: Benutzername
         description: Beschreibung
         activated: aktiviert
     acl:
       index:
-        access_control_lists: 'Globale Zugriffssteuerungsliste (ACL)'
+        access_control_lists: Globale Zugriffssteuerungsliste (ACL)
         name: Name
         class: Klasse
         edit: Bearbeiten
-      required: 'Die erforderlichen Felder sind mit dunkler Beschriftung markiert, optionale Felder haben eine hellere Beschriftung.'
+      required: Die erforderlichen Felder sind mit dunkler Beschriftung markiert, optionale Felder haben eine hellere Beschriftung.
       edit:
-        edit_class_acl: 'ACL-Klasse bearbeiten von %name%'
+        edit_class_acl: ACL-Klasse bearbeiten von %name%
       groups_users:
         name: Name
-        no_goups_users: 'Keine Gruppen/Benutzer definiert.'
+        no_goups_users: Keine Gruppen/Benutzer definiert.
     password:
-      email_body_html: '<p>Hallo %user_username%,</p><p>Sie haben ein neues Mapbender Passwort angefordert. <p>Klicken Sie bitte <a href="%url%">hier</a>, um Ihr Passwort zu ändern.</p>'
+      email_body_html: <p>Hallo %user_username%,</p><p>Sie haben ein neues Mapbender Passwort angefordert. <p>Klicken Sie bitte <a href="%url%">hier</a>, um Ihr Passwort zu ändern.</p>
       done:
-        password_reset: 'Passwort zurücksetzen'
-        congratulations: 'Herzlichen Glückwunsch!'
-        password_been_reset: 'Ihr Passwort wurde erfolgreich zurückgesetzt.'
-        back_to_login: 'Zurück zur Anmeldung'
+        password_reset: Passwort zurücksetzen
+        congratulations: Herzlichen Glückwunsch!
+        password_been_reset: Ihr Passwort wurde erfolgreich zurückgesetzt.
+        back_to_login: Zurück zur Anmeldung
       reset:
-        title: 'Passwort zurücksetzen'
-        btn: 'Passwort zurücksetzen'
+        title: Passwort zurücksetzen
+        btn: Passwort zurücksetzen
       form:
-        message: 'Zum Zurücksetzen des Passworts geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail Adresse an.'
-        title: 'Passwort vergessen'
-        username_email: 'Benutzername oder E-Mail'
-        back_to_login: 'Zurück zum Login'
-        require_password: 'Passwort anfordern'
-      email_subject: 'Passwort vergessen'
+        message: Zum Zurücksetzen des Passworts geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail Adresse an.
+        title: Passwort vergessen
+        username_email: Benutzername oder E-Mail
+        back_to_login: Zurück zum Login
+        require_password: Passwort anfordern
+      email_subject: Passwort vergessen
       send:
-        title: 'Passwort zurücksetzen'
-        email_been_sent: 'Eine E-Mail mit Ihrem zurückgesetzten Code und Link ist Ihnen zu Ihrer bereitgestellten Adresse gesendet worden.'
-        back_to_login: 'Zurück zur Anmeldung'
-      email_body_text: 'Hallo %user_username%, Sie haben ein neues Passwort angefordert. Rufen Sie in Ihrem Browser folgenden Link auf "%url%"'
+        title: Passwort zurücksetzen
+        email_been_sent: Eine E-Mail mit Ihrem zurückgesetzten Code und Link ist Ihnen zu Ihrer bereitgestellten Adresse gesendet worden.
+        back_to_login: Zurück zur Anmeldung
+      email_body_text: Hallo %user_username%, Sie haben ein neues Passwort angefordert. Rufen Sie in Ihrem Browser folgenden Link auf "%url%"
     userbundle:
       user_control: Benutzerverwaltung
       users: Benutzer
-      new_user: 'Neuer Benutzer'
+      new_user: Neuer Benutzer
       groups: Gruppen
-      new_group: 'Neue Gruppe'
+      new_group: Neue Gruppe
       classes:
-        acls: 'Berechtigungen ACLs'
+        acls: Berechtigungen ACLs
         users: Benutzer
         groups: Gruppen
       roles:
-        super_admin: 'Kann alles verwalten (super admin)'
-        user_admin: 'Kann Benutzer und Gruppen verwalten'
+        super_admin: Kann alles verwalten (super admin)
+        user_admin: Kann Benutzer und Gruppen verwalten
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:

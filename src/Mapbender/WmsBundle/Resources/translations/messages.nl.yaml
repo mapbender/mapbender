@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Voorbeeld
-          wmsurl: 'Service URL'
+          wmsurl: Service URL
           wmsuser: Gebruiker
           wmspass: Wachtwoord
       error:
@@ -22,12 +22,12 @@ mb:
             title: Titel
             name: Naam
             version: Versie
-            originurl: 'Oorspronkelijke URL'
+            originurl: Oorspronkelijke URL
             abstract: Abstract
-            onlineresource: 'Online Resource'
-            exceptionformats: 'Exceptie Formaten'
+            onlineresource: Online Resource
+            exceptionformats: Exceptie Formaten
             fees: Fees
-            accessconstraints: 'Toegangs beperkingen'
+            accessconstraints: Toegangs beperkingen
             person: Persoon
             organization: Organisatie
             position: Positie
@@ -35,7 +35,7 @@ mb:
             facsimile: Faxnummer
             email: Email
             address: Adres
-            addresstype: 'Adres-type'
+            addresstype: Adres-type
             city: Plaats
             state: Provincie
             postcode: Postcode
@@ -47,7 +47,7 @@ mb:
             save: Bewaar
             cancel: Annuleren
           label:
-            originurl: 'Oorspronkelijke URL'
+            originurl: Oorspronkelijke URL
             visible: Zichtbaar
             basesource: Basis bron
             proxy: Proxy
@@ -61,7 +61,7 @@ mb:
             info: info
             toggle: wissel (toggle)
             reorder: herorder
-            allow: 'sta toe'
+            allow: sta toe
             'on': aan
             buffer: BBOX factor
             ratio: Tile buffer
@@ -69,7 +69,7 @@ mb:
             label: Leverancier-specifiek
         preview:
           title:
-            servicerepository: 'Service Repository'
+            servicerepository: Service Repository
           label:
             load: Laad
         layer:
@@ -87,59 +87,59 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Stijlen
-            legendurl: 'Legenda URL'
+            legendurl: Legenda URL
             scale: Schaal
             min: Min
             max: Max
-            scalehint: 'Schaal hint'
+            scalehint: Schaal hint
             attribution: Attribution
-            onlineresource: 'Online bron'
-            logourl: 'Logo URL'
+            onlineresource: Online bron
+            logourl: Logo URL
             identifier: Identifier
             authority: Autoriteit
             url: URL
             value: Waarde
-            metadataurl: 'Metadata URL'
+            metadataurl: Metadata URL
             dimension: Dimensie
             extent: Extent
-            dataurl: 'Data URL'
-            featurelisturl: 'Kenmerklijst URL'
+            dataurl: Data URL
+            featurelisturl: Kenmerklijst URL
         instancelayerform:
           label:
-            layerstitle: 'Laag titel'
+            layerstitle: Laag titel
             minscale: Minschaal
             maxsclase: Maxschaal
             active: actief
-            allowselecttoc: 'Sta selecteren van TOC toe'
-            selectedtoc: 'Geselecteerd op TOC'
-            allowinfotoc: 'Sta kenmerkinfo toe op TOC'
-            infotoc: 'Kenmerkinfo op TOC'
-            allowtoggletoc: 'Sta Toggle bij TOC toe'
-            toggletoc: 'Toggle op TOC'
-            allowreordertoc: 'Sta herorder bij TOC toe'
-            moreinfo: 'Meer informatie'
+            allowselecttoc: Sta selecteren van TOC toe
+            selectedtoc: Geselecteerd op TOC
+            allowinfotoc: Sta kenmerkinfo toe op TOC
+            infotoc: Kenmerkinfo op TOC
+            allowtoggletoc: Sta Toggle bij TOC toe
+            toggletoc: Toggle op TOC
+            allowreordertoc: Sta herorder bij TOC toe
+            moreinfo: Meer informatie
             id:
               title: ID
               description: 'Instantie Laag Id in de vorm: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Laag naam'
+            layersname: Laag naam
             style: Stijl
       class:
-        title: 'WMS lader'
-        description: 'Laad een WMS via de getCapabilities-Request'
+        title: WMS lader
+        description: Laad een WMS via de getCapabilities-Request
       admin:
         label:
-          splitlayers: 'Splits lagen'
+          splitlayers: Splits lagen
     repository:
       parser:
-        couldnotparse: 'Kon Capabilities Document niet parsen'
-        not_supported_document: 'Niet-ondersteund Capabilities Document'
-        not_supported_version: 'De WMS version wordt niet ondersteund'
+        couldnotparse: Kon Capabilities Document niet parsen
+        not_supported_document: Niet-ondersteund Capabilities Document
+        not_supported_version: De WMS version wordt niet ondersteund
     metadata:
       section:
         common:
           _title: Algemeen
         useconditions:
-          _title: 'Gerbuiksvoorwaarden'
+          _title: Gerbuiksvoorwaarden
         contact:
           _title: Contact
         items:
@@ -151,7 +151,7 @@ mb:
           dimensions: Dimensies
     dimhandler:
       class:
-         title: 'Dimensie afhandelaar'
-         description: 'Dimensie afhandelaar groepen en roept dimensie ondersteund op kaart aan'
+        title: Dimensie afhandelaar
+        description: Dimensie afhandelaar groepen en roept dimensie ondersteund op kaart aan
     dimensionsets:
-      no_dimension: 'geen dimensie'
+      no_dimension: geen dimensie

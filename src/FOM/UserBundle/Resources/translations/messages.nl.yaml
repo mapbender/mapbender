@@ -1,148 +1,150 @@
 fom:
   user:
     registration:
-      email_body_html: '<p>Hallo %user_username%,</p><p>U heeft zich recentelijk geregistreerd. Om uw registratie af te ronden klik dan op <a href="%url%">here</a>.</p>'
+      email_body_html: <p>Hallo %user_username%,</p><p>U heeft zich recentelijk geregistreerd. Om uw registratie af te ronden klik dan op <a href="%url%">here</a>.</p>
       done:
         title: Registratie
         congratulations: Gefeliciteerd!
-        account_activated: 'Uw gebruikersnaam is succesvol geregistreerd en is klaar voor gebruik.'
-        back_to_login: 'Terug naar inlog'
+        account_activated: Uw gebruikersnaam is succesvol geregistreerd en is klaar voor gebruik.
+        back_to_login: Terug naar inlog
       form:
         title: Registratie
-        choose_password: 'Geef een wachtwoord'
-        confirm_password: 'Bevestig wachtwoord'
+        choose_password: Geef een wachtwoord
+        confirm_password: Bevestig wachtwoord
         email: Email
-        back_to_login: 'Terug naar inlog'
+        back_to_login: Terug naar inlog
         register: Registreer
-      email_subject: 'Uw registratie'
+      email_subject: Uw registratie
       send:
         title: Registratie
-        account_created: 'Uw gebruikersnaam is aangemaakt. Een email met uw activatiecode wordt naar uw opgegeven email gestuurd met de activatie link.'
-        back_to_login: 'Terug naar inlog'
-      email_body_text: 'Hallo %user_username%, u bent recentelijk geregistreerd. Om uw registratie definitief te maken dient u %url% te activeren en te bevestigen'
+        account_created: Uw gebruikersnaam is aangemaakt. Een email met uw activatiecode wordt naar uw opgegeven email gestuurd met de activatie link.
+        back_to_login: Terug naar inlog
+      email_body_text: Hallo %user_username%, u bent recentelijk geregistreerd. Om uw registratie definitief te maken dient u %url% te activeren en te bevestigen
     group:
       index:
         groups: Groepen
-        add_new_group: 'Voeg een groep toe'
+        add_new_group: Voeg een groep toe
         title: Titel
         description: Omschrijving
-        edit_group: 'Bewerk groep'
-        delete_group: 'Verwijder groep'
-        no_groups_available: 'Geen groepen beschikbaar.'
+        edit_group: Bewerk groep
+        delete_group: Verwijder groep
+        no_groups_available: Geen groepen beschikbaar.
       form:
-        edit_group: 'Wijzig groep'
-        new_group: 'Nieuwe groep'
+        edit_group: Wijzig groep
+        new_group: Nieuwe groep
       container:
-        base_data: 'Basis data'
+        base_data: Basis data
         users: Gebruikers
-        users_of_selected: 'Gebruikers van %users_count% geselecteerd'
-        no_user_exists: 'Gebruiker bestaat niet.'
+        users_of_selected: Gebruikers van %users_count% geselecteerd
+        no_user_exists: Gebruiker bestaat niet.
     login:
       error_tockenexp:
-        title: 'Reset wachtwoord'
+        title: Reset wachtwoord
         sorry: Sorry!
-        registration_token_expired: 'Uw registratie sleutel is verlopen. Helaas moet u een nieuwe sleutel aanvragen.'
-        request_new_token: 'Vraag een sleutel aan'
-        back_to_login: 'Terug naar inlog'
+        registration_token_expired: Uw registratie sleutel is verlopen. Helaas moet u een nieuwe sleutel aanvragen.
+        request_new_token: Vraag een sleutel aan
+        back_to_login: Terug naar inlog
       login:
         title: Login
         username: Gebruikersnaam
         password: Wachtwoord
         register: Registreer
-        forgot_password: 'Wachtwoord vergeten'
+        forgot_password: Wachtwoord vergeten
         login: Login
       error_notocken:
-        password_reset: 'Rest wachtwoord'
+        password_reset: Rest wachtwoord
         sorry: Sorry!
-        no_such_tocken: 'Uw sleutel kan niet gevonden worden. Als u denkt dat dit een fout is dient u contact op te nemen met de administrator.'
-        contact: 'Neem contact op met de administrator'
-        back_to_login: 'Terug naar login'
+        no_such_tocken: Uw sleutel kan niet gevonden worden. Als u denkt dat dit een fout is dient u contact op te nemen met de administrator.
+        contact: Neem contact op met de administrator
+        back_to_login: Terug naar login
     user:
       index:
         title: Gebruikers
-        add_new_user: 'Voeg een nieuwe gebruiker toe'
+        add_new_user: Voeg een nieuwe gebruiker toe
         name: Naam
         email: E-Mail
         groups: Groepen
-        edit_user: 'Wijzig gebruiker'
-        contact_user: 'Contact een gebruiker via e-mail'
-        edit_group: 'Wijzig groep'
-        delete_user: 'Verwijder gebruiker'
-        no_users_available: 'Geen gebruikers beschikbaar.'
+        edit_user: Wijzig gebruiker
+        contact_user: Contact een gebruiker via e-mail
+        edit_group: Wijzig groep
+        delete_user: Verwijder gebruiker
+        no_users_available: Geen gebruikers beschikbaar.
       form:
-        edit_user: 'Wijzig gebruiker'
-        new_user: 'Nieuwe gebruiker'
+        edit_user: Wijzig gebruiker
+        new_user: Nieuwe gebruiker
       container:
-        base_data: 'Basis data'
+        base_data: Basis data
         profile: Profiel
         groups: Groepen
         security: Beveiliging
-        choose_password: 'Geef een wachtwoord op'
-        confirm_password: 'Bevestig wachtwoord'
+        choose_password: Geef een wachtwoord op
+        confirm_password: Bevestig wachtwoord
         name: Naam
-        users_of_selected: 'Gebruikers van %users_count% geselecteerd'
+        users_of_selected: Gebruikers van %users_count% geselecteerd
         no_groups_defined: Geen groepen gedefinieerd
         username: Gebruikersnaam
         description: Beschrijving
         activated: geactiveerd
     acl:
       index:
-        access_control_lists: 'Global toegangscontrole lijsten'
+        access_control_lists: Global toegangscontrole lijsten
         name: Naam
         class: Klasse
         edit: Wijzig
-      required: 'Verplichte velden zijn donker gekleurd en optionele velden zijn licht gekleurd.'
+      required: Verplichte velden zijn donker gekleurd en optionele velden zijn licht gekleurd.
       edit:
-        edit_class_acl: 'Wijzig klasse toegangscontrole (ACL) voor %name%'
+        edit_class_acl: Wijzig klasse toegangscontrole (ACL) voor %name%
       groups_users:
         name: Naam
-        no_goups_users: 'Geen groepen en gebruikers gedefinieerd.'
+        no_goups_users: Geen groepen en gebruikers gedefinieerd.
     password:
-      email_body_html: "&lt;p&gt;Hallo %user_username%,&lt;/p&gt;&lt;p&gt; u heeft om een nieuwe wachtwoord verzocht.\n&lt;br /&gt;Klik &lt;a href=\"%url%\"&gt;here&lt;/a&gt;."
+      email_body_html: |-
+        &lt;p&gt;Hallo %user_username%,&lt;/p&gt;&lt;p&gt; u heeft om een nieuwe wachtwoord verzocht.
+        &lt;br /&gt;Klik &lt;a href="%url%"&gt;here&lt;/a&gt;.
       done:
-        password_reset: 'Reset wachtwoord'
+        password_reset: Reset wachtwoord
         congratulations: Gefeliciteerd!
-        password_been_reset: 'Uw wachtwoord is succesvol gewijzigd.'
-        back_to_login: 'Terug naar login'
+        password_been_reset: Uw wachtwoord is succesvol gewijzigd.
+        back_to_login: Terug naar login
       reset:
-        title: 'Reset wachtwoord'
-        btn: 'Reset wachtwoord'
+        title: Reset wachtwoord
+        btn: Reset wachtwoord
       form:
-        message: 'To reset your password please provide your username or your e-mail address.'
-        title: 'Wachtwoord vergeten'
-        username_email: 'Gebruikersnaam of email adres'
-        back_to_login: 'Terug naar login'
-        require_password: 'Wachtwoord benodigd'
-      email_subject: 'Wachtwoord vergeten'
+        message: To reset your password please provide your username or your e-mail address.
+        title: Wachtwoord vergeten
+        username_email: Gebruikersnaam of email adres
+        back_to_login: Terug naar login
+        require_password: Wachtwoord benodigd
+      email_subject: Wachtwoord vergeten
       send:
-        title: 'Reset wachtwoord'
-        email_been_sent: 'Een email met de reset code is naar uw email adres gestuurd.'
-        back_to_login: 'Terug naar login'
-      email_body_text: 'Hallo %user_username%, u heeft om een nieuw wachtwoord gevraagd. Start de volgende link op "%url%".'
+        title: Reset wachtwoord
+        email_been_sent: Een email met de reset code is naar uw email adres gestuurd.
+        back_to_login: Terug naar login
+      email_body_text: Hallo %user_username%, u heeft om een nieuw wachtwoord gevraagd. Start de volgende link op "%url%".
     userbundle:
-      user_control: 'Gebruikers control'
+      user_control: Gebruikers control
       users: Gebruikers
-      new_user: 'Nieuwe gebruiker'
+      new_user: Nieuwe gebruiker
       groups: Groepen
-      new_group: 'Nieuwe groep'
+      new_group: Nieuwe groep
       classes:
         acls: ACLs
         users: Gebruikers
         groups: Groepen
       roles:
-        super_admin: 'Alles kan aangepast worden(super admin)'
-        user_admin: 'Gebruikers en groepen kunnen geadministreerd worden'
+        super_admin: Alles kan aangepast worden(super admin)
+        user_admin: Gebruikers en groepen kunnen geadministreerd worden
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:
-      firstname: 'Voornaam'
-      lastName: 'Achternaam'
+      firstname: Voornaam
+      lastName: Achternaam
       notes: Notities
       phone: Telefoon
       organizationName: Organisatie
       organizationRole: Rol
       street: Straat
-      zipCode: 'Postcode'
+      zipCode: Postcode
       city: Plaats
       country: Land

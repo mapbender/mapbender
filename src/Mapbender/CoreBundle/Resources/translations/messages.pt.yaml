@@ -1,6 +1,6 @@
 mb:
   actions:
-    accept: Ok    # appropriate?
+    accept: Ok
     add: Adicionar
     back: Voltar
     cancel: Cancelar
@@ -31,67 +31,67 @@ mb:
         singular: '%type% instância'
     security: Segurança
   states:
-    active: ativa # m.; f.: ativo
-    inactive: inativa # m.; f.: inativo
+    active: ativa
+    inactive: inativa
   core:
     featureinfo:
       error:
-        nolayer: 'Camada de informação não existe.'
-        unknownoption: 'Opção desconhecida'
-        noresult: 'A visão geral não contem camadas.'
+        nolayer: Camada de informação não existe.
+        unknownoption: Opção desconhecida
+        noresult: A visão geral não contem camadas.
       class:
         title: Informação
         description: Informação
     aboutdialog:
       content:
         versionprefix: Versão
-        learnmore: 'Aprenda mais sobre o Mapbender.'
-        linktitle: 'Visita o site oficial do Mapbender.'
-        website: 'Ao Site'
+        learnmore: Aprenda mais sobre o Mapbender.
+        linktitle: Visita o site oficial do Mapbender.
+        website: Ao Site
       class:
-        title: 'Diálogo sobre Mapbender'
-        description: 'O diálogo sobre Mapbender indica informações sobre Mapbender.'
+        title: Diálogo sobre Mapbender
+        description: O diálogo sobre Mapbender indica informações sobre Mapbender.
       tag:
         help: Ajuda
         info: Info
-        about: 'Info diálogo'
+        about: Info diálogo
     simplesearch:
       input:
         search: Procurar
       class:
-        title: 'Pesquisa simples'
-        description: 'Pesquisa simples sobre dados de JSON (p. ex. Solr)'
+        title: Pesquisa simples
+        description: Pesquisa simples sobre dados de JSON (p. ex. Solr)
       error:
         geometry:
-          missing: ~
+          missing: null
     searchrouter:
-      no_results: 'Sua pesquisa não encontrou resultados'
+      no_results: Sua pesquisa não encontrou resultados
       result_counter: 'Resultados: %count%'
-      exportcsv: 'Exportar os resultados para CSV.'
+      exportcsv: Exportar os resultados para CSV.
       class:
         title: Procurar
-        description: 'Possibilita a configuração de pesquisas individuais'
+        description: Possibilita a configuração de pesquisas individuais
       tag:
         search: Procurar
         router: Router
     poi:
-      sharepoi: 'Combinar ponto de encontro'
+      sharepoi: Combinar ponto de encontro
       text:
         snippet: 'Você pode mandar o link seguinte num e-mail. O link abre a aplicação e mostra o ponto de encontro. '
       class:
-        title: 'Ponto de encontro (POI)'
-        description: 'Elemento sobre o que pode-se gerar e mandar um ponto de encontro.'
+        title: Ponto de encontro (POI)
+        description: Elemento sobre o que pode-se gerar e mandar um ponto de encontro.
       label:
-        text: ~
+        text: null
     basesourceswitcher:
       error:
-        sourcenotavailable: 'O serviço com ID %id% não está disponível.'
+        sourcenotavailable: O serviço com ID %id% não está disponível.
       class:
-        title: 'Mudar o segundo plano'
-        Description: 'Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.'
+        title: Mudar o segundo plano
+        Description: Pode-se definier o segundo plano. Na aplicação pode-se mudar o plano.
       form:
-        mesage: 'Segundo plano não existe.'
-        instancesets: 'Instancesets'
+        mesage: Segundo plano não existe.
+        instancesets: Instancesets
     legend:
       class:
         title: Legenda
@@ -99,7 +99,7 @@ mb:
     ruler:
       create_error: 'Medição: O tipo de geometria tem que ser linha ou área.'
       class:
-        title: 'Medição de linha/área'
+        title: Medição de linha/área
         description: 'Medição: Uma linha/área é desenhado para indicar o seu tamanho num diálogo.'
       tag:
         line: Linha
@@ -111,68 +111,68 @@ mb:
         quality: Qualidade
         scale: Escala
         rotation: Rotação
-        legend: 'Imprimir legenda'
+        legend: Imprimir legenda
       class:
         title: Impressão
-        description: 'Diálogo de Impressão'
+        description: Diálogo de Impressão
       btn:
-        deactivate: ~
-        activate: ~
+        deactivate: null
+        activate: null
     overview:
-      nolayer: 'Camada não disponível'
+      nolayer: Camada não disponível
       class:
-        title: 'Visão geral (overview)'
-        description: 'Mostra uma visão geral (overview).'
+        title: Visão geral (overview)
+        description: Mostra uma visão geral (overview).
       tag:
-        overview: 'Visão geral'
-        map: 'Mapa (visão geral)'
+        overview: Visão geral
+        map: Mapa (visão geral)
     metadata:
       popup:
         title: Metadados
     gpsposition:
       error:
-        notsupported: 'O serviço Geolocation não é suportado por pelo seu browser.'
+        notsupported: O serviço Geolocation não é suportado por pelo seu browser.
         nosignal: Kurrentli seu posible música losate a posição legal.
       class:
-        title: 'Posição GPS'
-        description: 'Entrega um botão para indica a posição GPS'
+        title: Posição GPS
+        description: Entrega um botão para indica a posição GPS
       tag:
-        gpsposition: 'Posição GPS'
+        gpsposition: Posição GPS
         gps: GPS
         position: Posição
         button: Button
     layertree:
       const:
-        outofscale: 'Camada fora de escala'
-        outofbounds: 'Camada fora de BoundingBox'
-        parentinvisible: 'Camada superior invisível'
+        outofscale: Camada fora de escala
+        outofbounds: Camada fora de BoundingBox
+        parentinvisible: Camada superior invisível
       tooltip:
         sublayers_openclose: Abrir/Fechar
-        removelayer: 'Tirar camada'
+        removelayer: Tirar camada
         menu:
           close: Fechar
       label:
-        visibility_onoff: 'Visibilidade ligada/desligada'
-        featureinfo_onoff: 'informação ligada/desligada'
+        visibility_onoff: Visibilidade ligada/desligada
+        featureinfo_onoff: informação ligada/desligada
         opacity: Dimensão
-        zoomtolayer: 'Ampliar em cima de camada'
+        zoomtolayer: Ampliar em cima de camada
         metadata: Metadados
         legend: Legend
-        kmlexport: 'KML export'
-        dimension_onoff: 'Dimensão ligada/desligada'
+        kmlexport: KML export
+        dimension_onoff: Dimensão ligada/desligada
         dimension: Dimensão
-        sourcevisibility_onoff: 'Visibilidade ligada/desligada'
+        sourcevisibility_onoff: Visibilidade ligada/desligada
       class:
-        title: 'Árvore de camadas'
-        description: 'Árvore de camadas de mapa'
+        title: Árvore de camadas
+        description: Árvore de camadas de mapa
     zoombar:
-      zoombybox: 'Caixa de ampliar'
-      zoombyworld: 'Mostrar toda extensão'
+      zoombybox: Caixa de ampliar
+      zoombyworld: Mostrar toda extensão
       zoomin: Ampliar
       zoomout: Reduzir
       class:
-        title: 'Ferramenta de navegação'
-        description: 'A ferramenta de navegação oferece zoom e mover, parecido com OpenLayers'
+        title: Ferramenta de navegação
+        description: A ferramenta de navegação oferece zoom e mover, parecido com OpenLayers
       tag:
         zoom: Zoom
         pan: Mover
@@ -181,8 +181,8 @@ mb:
         panel: Panel
     activityindicator:
       class:
-        title: 'Indicação de atividade'
-        description: 'Indica atividade de HTTP'
+        title: Indicação de atividade
+        description: Indica atividade de HTTP
       tag:
         activity: Atividade
         indicator: Indicador
@@ -194,8 +194,8 @@ mb:
         button: button
     coordinatesdisplay:
       class:
-        title: 'Indicação de coordenadas'
-        description: 'A indicação de coordenadas mostra a posição do rato nas coordenadas de mapa.'
+        title: Indicação de coordenadas
+        description: A indicação de coordenadas mostra a posição do rato nas coordenadas de mapa.
       tag:
         coordinates: Coordenadas
         display: Visualização
@@ -203,98 +203,98 @@ mb:
         position: Posição
     copyright:
       class:
-        title: ~
-        description: 'Mostra os termos de utilização.'
+        title: null
+        description: Mostra os termos de utilização.
       tag:
         copyright: Copyright
         dialog: Diálogo
     map:
       class:
         title: Mapa
-        description: 'O mapa baseia em OpenLayers'
+        description: O mapa baseia em OpenLayers
       tag:
         map: Mapa
         mapquery: Mapquery
         openlayers: OpenLayers
-      srsnotfound: 'Não encontrou características de SRS para %srslist%.'
+      srsnotfound: Não encontrou características de SRS para %srslist%.
     scalebar:
       class:
-        title: 'Barra de escala'
-        description: 'Barra de escala, que indica a escala atual.'
+        title: Barra de escala
+        description: Barra de escala, que indica a escala atual.
       tag:
         scale: Escala
         bar: Barra
     scaledisplay:
       class:
-        title: 'Indicação de escala'
-        description: 'A escala atual não está indicada.'
+        title: Indicação de escala
+        description: A escala atual não está indicada.
       tag:
         scale: Escala
         display: Indicação
     scaleselector:
       class:
-        title: 'Seleção de escala'
-        description: 'Caixa de seleção com escalas disponívels para mudar a escala. Indica a escala atual.'
+        title: Seleção de escala
+        description: Caixa de seleção com escalas disponívels para mudar a escala. Indica a escala atual.
       tag:
         scale: Escala
         selector: Seleção
     srsselector:
       class:
-        title: 'Seleção de SRS'
-        description: 'Depois da seleção dum sistema de referência espacial (SRS) muda o SRS do mapa.'
+        title: Seleção de SRS
+        description: Depois da seleção dum sistema de referência espacial (SRS) muda o SRS do mapa.
       tag:
         srs: SRS
         selector: Seleção
     admin:
       poi:
         label:
-          usemailto: 'Use mailto'
+          usemailto: Use mailto
       legend:
         label:
-          hideemptylayers: 'Oculta camadas sem objetos'
-          generatelegendurl: 'Gerar URL de legenda'
-          showsourcetitle: 'Mostrar o título de origem de dados'
-          showlayertitle: 'Mostrar o título da camada'
-          showgroupedlayertitle: 'Mostrar o título da camada agrupada'
+          hideemptylayers: Oculta camadas sem objetos
+          generatelegendurl: Gerar URL de legenda
+          showsourcetitle: Mostrar o título de origem de dados
+          showlayertitle: Mostrar o título da camada
+          showgroupedlayertitle: Mostrar o título da camada agrupada
       featureinfo:
         label:
-          deactivateonclose: 'Desativar ao fechar'
-          onlyvalid: 'Mostrar válido somente'
-          highlighting: ~
+          deactivateonclose: Desativar ao fechar
+          onlyvalid: Mostrar válido somente
+          highlighting: null
       printclient:
         label:
-          rotatable: 'Pode girar'
-          legend: 'Imprimir legenda'
-          legend_default_behaviour: ~
+          rotatable: Pode girar
+          legend: Imprimir legenda
+          legend_default_behaviour: null
       layertree:
         label:
-          showbasesources: 'Mostrar BaseSources'
-          showlayerremove: 'Show layer remove'
-          usetheme: 'Mostrar o tema'
+          showbasesources: Mostrar BaseSources
+          showlayerremove: Show layer remove
+          usetheme: Mostrar o tema
           themes: Temas
           theme:
-            opened: 'Tema aberto/fechado'
-            activate: 'Enabling Layer Add / Remove'
-            useTheme: 'Camada temática'
-            label: 'Nome do tema'
-          hidenottoggleable: 'Ocultar arquivos que não pode-se abrir'
-          hideselect: 'Ocultar visibilidade de arquivos'
-          hideinfo: 'Ocultar info'
+            opened: Tema aberto/fechado
+            activate: Enabling Layer Add / Remove
+            useTheme: Camada temática
+            label: Nome do tema
+          hidenottoggleable: Ocultar arquivos que não pode-se abrir
+          hideselect: Ocultar visibilidade de arquivos
+          hideinfo: Ocultar info
       template:
         sidepane:
           type:
-            label: ~
+            label: null
             choice:
               tabs: Separador
               accordion: Acordeão
     htmlelement:
       class:
         title: HTML
-        description: 'Adicionar HTML'
+        description: Adicionar HTML
     entity:
       app:
         screenshotfile:
-          error: 'Ficheiro demasiado grande. O tamanho maximo é %limit% bytes.'
+          error: Ficheiro demasiado grande. O tamanho maximo é %limit% bytes.
     sketch:
       geometrytype:
         point: Punto
@@ -304,9 +304,9 @@ mb:
         circle: Circulo
       geometry:
         action:
-          remove: 'Tirar geometria'
-          edit: 'Editar geometria'
-          zoom: 'Ampliar em cima de geometria'
+          remove: Tirar geometria
+          edit: Editar geometria
+          zoom: Ampliar em cima de geometria
       class:
-        title: ~
+        title: null
         description: Ferramenta

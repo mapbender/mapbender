@@ -23,12 +23,7 @@ mb:
             layerrefs: Layerrefs
         instance:
           label:
-            # tilemartixset: Tilemartixset
             style: Стиль
-        # instancelayerform:
-          # label:
-            # layer_matrixsets: доступні набори матриць
-            # layer_styles: доступні стилі
         layer:
           label:
             identifier: Ідентифікатор

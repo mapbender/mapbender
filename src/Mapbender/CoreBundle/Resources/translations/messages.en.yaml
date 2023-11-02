@@ -47,21 +47,21 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'No feature info layer exists.'
-        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
-        noresult: 'no result'
+        nolayer: No feature info layer exists.
+        unknownoption: Unknown or unhandled option %key% for %namespace%.%widgetname%.
+        noresult: no result
       class:
         title: FeatureInfo
         description: FeatureInfo
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'learn more about Mapbender'
-        linktitle: 'Visit our official Mapbender website'
+        learnmore: learn more about Mapbender
+        linktitle: Visit our official Mapbender website
         website: website
       class:
-        title: 'About dialog'
-        description: 'Shows an about dialog'
+        title: About dialog
+        description: Shows an about dialog
       tag:
         help: help
         info: info
@@ -72,8 +72,8 @@ mb:
         search: Search
         clear: Clear
       class:
-        title: 'Simple Search'
-        description: 'Single field search on JSON sources (e.g. Solr)'
+        title: Simple Search
+        description: Single field search on JSON sources (e.g. Solr)
       error:
         geometry:
           missing: The selected entry does not contain a geometry.
@@ -90,11 +90,11 @@ mb:
         query_ws_replace.help: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>
         query_format: Query key format
         query_format.help: Format for PHP's <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected
-        token_regex: "Tokenizer: Split Regex"
-        token_regex.help: "The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)"
-        token_regex_in: "Tokenizer: Search Regex"
+        token_regex: 'Tokenizer: Split Regex'
+        token_regex.help: 'The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)'
+        token_regex_in: 'Tokenizer: Search Regex'
         token_regex_in.help: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".
-        token_regex_out: "Tokenizer: Replacement Regex"
+        token_regex_out: 'Tokenizer: Replacement Regex'
         token_regex_out.help: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.
         collection_path: Results Path
         collection_path.help: Path pointing to the array of results within the search url's response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)
@@ -107,11 +107,11 @@ mb:
         sourceSrs: Source SRS
         sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.
         delay: Search Delay [ms]
-        delay.help: "The automatic search will trigger that many milliseconds after the last key input. Default: 300ms"
+        delay.help: 'The automatic search will trigger that many milliseconds after the last key input. Default: 300ms'
         result_buffer: Result Buffer [map units]
         result_buffer.help: Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.
         result_minscale: Minimum Scale [Denominator]
-        result_minscale.help: "Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale."
+        result_minscale.help: 'Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale.'
         result_maxscale: Maximum Scale [Denominator]
         result_icon_url: Icon URL
         result_icon_url.help: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.
@@ -119,48 +119,48 @@ mb:
         result_icon_offset.help: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin
       errors:
         invalid_query_format: The specified query format does not contain placeholders. Read the help text!
-        invalid_epsg_code: "The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234"
+        invalid_epsg_code: The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234
         no_configuration_added: Please add at least one configuration
     searchrouter:
-      no_results: 'No results found.'
+      no_results: No results found.
       result_counter: 'Results: %count%'
-      exportcsv: 'Export results to CSV.'
+      exportcsv: Export results to CSV.
       class:
-        title: 'Search router'
-        description: 'Configurable search routing element'
+        title: Search router
+        description: Configurable search routing element
       tag:
         search: search
         router: router
     poi:
-      sharepoi: 'Share POI'
+      sharepoi: Share POI
       text:
-        snippet: 'You can use the following snippet in an email to send the POI'
+        snippet: You can use the following snippet in an email to send the POI
       popup:
         btn:
           position: Positioning
       class:
         title: POI
-        description: 'Create a POI for sharing'
+        description: Create a POI for sharing
       label:
         text: Text
     basesourceswitcher:
       error:
-        sourcenotavailable: 'A source with id %id% is not available.'
+        sourcenotavailable: A source with id %id% is not available.
       class:
-        title: 'Base source switcher'
-        Description: 'Change the map''s background sources.'
+        title: Base source switcher
+        Description: Change the map's background sources.
       form:
-        mesage: 'No basesource set is defined.'
-        instancesets: 'Instancesets'
+        mesage: No basesource set is defined.
+        instancesets: Instancesets
     legend:
       class:
         title: Legend
-        description: 'The legend shows the legend of the map''s layers'
+        description: The legend shows the legend of the map's layers
     ruler:
       create_error: 'Ruler: Type must be line or area.'
       class:
-        title: 'Line/Area Ruler'
-        description: 'Ruler to draw a line/area and display length/area in a dialog'
+        title: Line/Area Ruler
+        description: Ruler to draw a line/area and display length/area in a dialog
       tag:
         line: line
         area: area
@@ -178,18 +178,18 @@ mb:
         quality: Quality
         scale: Scale
         rotation: Rotation
-        legend: 'Print legend'
+        legend: Print legend
       class:
-        title: 'Print client'
-        description: 'Renders a Print dialog'
+        title: Print client
+        description: Renders a Print dialog
       btn:
-        deactivate: 'Deactivate Print Frame'
-        activate: 'Activate Print Frame'
+        deactivate: Deactivate Print Frame
+        activate: Activate Print Frame
     overview:
-      nolayer: 'The overview element has no layer.'
+      nolayer: The overview element has no layer.
       class:
         title: Overview
-        description: 'Renders a small overview map'
+        description: Renders a small overview map
       tag:
         overview: overview
         map: map
@@ -205,47 +205,47 @@ mb:
         notsupported: Geolocation services are not supported by your browser.
         nosignal: Currently it's not possible to locate your position.
       class:
-        title: 'GPS Position'
-        description: 'Renders a button to show the GPS Position'
+        title: GPS Position
+        description: Renders a button to show the GPS Position
       tag:
-        gpsposition: 'GPS Position'
+        gpsposition: GPS Position
         gps: GPS
         position: position
         button: button
     layertree:
       const:
-        outofscale: 'Layer out of scale'
-        outofbounds: 'Layer out of bounds'
-        parentinvisible: 'Parent layer invisible'
+        outofscale: Layer out of scale
+        outofbounds: Layer out of bounds
+        parentinvisible: Parent layer invisible
       tooltip:
-        sublayers_openclose: 'Sublayers open/close'
-        removelayer: 'Remove layer'
+        sublayers_openclose: Sublayers open/close
+        removelayer: Remove layer
         menu:
           close: Close
       label:
-        visibility_onoff: 'Visibility on/off'
-        featureinfo_onoff: 'Featureinfo on/off'
+        visibility_onoff: Visibility on/off
+        featureinfo_onoff: Featureinfo on/off
         opacity: Opacity
-        zoomtolayer: 'Zoom to layer'
+        zoomtolayer: Zoom to layer
         metadata: Metadata
         legend: Legend
-        kmlexport: 'KML export'
-        dimension_onoff: 'On/Off Dimension'
+        kmlexport: KML export
+        dimension_onoff: On/Off Dimension
         dimension: Dimension
-        sourcevisibility_onoff: 'Show sources'
+        sourcevisibility_onoff: Show sources
       class:
-        title: 'Layer tree'
-        description: 'Tree of map''s layers'
+        title: Layer tree
+        description: Tree of map's layers
     zoombar:
-      zoombybox: 'Zoom by box'
-      zoombyworld: 'Zoom by world'
+      zoombybox: Zoom by box
+      zoombyworld: Zoom by world
       zoom_home: Back to start
       zoomHomeRestoresLayers: '"Back to start" also resets layer settings'
       zoomin: Zoom in
       zoomout: Zoom out
       class:
-        title: 'Navigation toolbar'
-        description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
+        title: Navigation toolbar
+        description: The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.
       tag:
         zoom: zoom
         pan: pan
@@ -254,8 +254,8 @@ mb:
         panel: panel
     activityindicator:
       class:
-        title: 'Activity indicator'
-        description: 'Shows HTTP activity'
+        title: Activity indicator
+        description: Shows HTTP activity
       tag:
         activity: activity
         indicator: indicator
@@ -276,8 +276,8 @@ mb:
         click: Target URL
     coordinatesdisplay:
       class:
-        title: 'Coordinates display'
-        description: 'The coordinates display shows your mouse position in map coordinates.'
+        title: Coordinates display
+        description: The coordinates display shows your mouse position in map coordinates.
       tag:
         coordinates: coordinates
         display: display
@@ -286,51 +286,51 @@ mb:
     copyright:
       class:
         title: Copyright
-        description: 'Shows terms of use'
+        description: Shows terms of use
       tag:
         copyright: Copyright
         dialog: dialog
     map:
       class:
         title: Map
-        description: 'OpenLayers based map'
+        description: OpenLayers based map
       tag:
         map: map
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: 'SRS properties for %srslist% are not found'
+      srsnotfound: SRS properties for %srslist% are not found
       admin:
         fixedZoomSteps: Fixed zoom steps
     scalebar:
       class:
-        title: 'Scale bar'
-        description: 'The scalebar displays a small line indicator representing the current map scale.'
+        title: Scale bar
+        description: The scalebar displays a small line indicator representing the current map scale.
       tag:
         scale: scale
         bar: bar
     scaledisplay:
       label: Scale
       scale_prefix: Prefix
-      scale_prefix.help:  Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user's language.
+      scale_prefix.help: Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user's language.
       unit_prefix: Shorten scale
       unit_prefix.help: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.
       class:
-        title: 'Scale display'
-        description: 'Displays the current map scale'
+        title: Scale display
+        description: Displays the current map scale
       tag:
         scale: scale
         display: display
     scaleselector:
       class:
-        title: 'Scale selector'
-        description: 'Displays and changes a map scale'
+        title: Scale selector
+        description: Displays and changes a map scale
       tag:
         scale: scale
         selector: selector
     srsselector:
       class:
-        title: 'SRS selector'
-        description: 'The spatial reference system selector changes the map''s spatial reference system'
+        title: SRS selector
+        description: The spatial reference system selector changes the map's spatial reference system
       tag:
         srs: SRS
         selector: selector
@@ -362,50 +362,50 @@ mb:
         access.rwd: Allow saving and deletion
         publicEntries: Public list
         privateEntries: Show private list
-        adminDeleteHint: "Note: the administrator can always delete public entries"
+        adminDeleteHint: 'Note: the administrator can always delete public entries'
         allowAnonymousSave: Allow saving to anonymous users
         showDate: Show date
     coordinatesutility:
       class:
-        title: 'Coordinates utility'
-        description: 'Transform coordinates in different SRS. Navigate to coordinates on the map.'
+        title: Coordinates utility
+        description: Transform coordinates in different SRS. Navigate to coordinates on the map.
       widget:
         error:
-          noSrs: 'No SRS is defined'
-          invalidCoordinates: 'Invalid coordinates'
+          noSrs: No SRS is defined
+          invalidCoordinates: Invalid coordinates
       view:
         srs:
-          title: 'Coordinate system'
-          tooltip: 'Coordinate system'
+          title: Coordinate system
+          tooltip: Coordinate system
         transformedCoordinates:
-          tooltip: 'Transformed coordinates'
+          tooltip: Transformed coordinates
         copytoclipboard:
-          tooltip: 'Copy to clipboard'
+          tooltip: Copy to clipboard
         originCoordinates:
-          title: 'Coordinate in map reference system'
-          tooltip: 'read only'
+          title: Coordinate in map reference system
+          tooltip: read only
         button:
-          search: 'Coordinate search'
-          centermap: 'Center map'
+          search: Coordinate search
+          centermap: Center map
       backend:
-        addMapSrsList: "Add map's srs list"
+        addMapSrsList: Add map's srs list
     admin:
       poi:
         label:
-          usemailto: 'Use Mailto'
+          usemailto: Use Mailto
       legend:
         label:
-          hideemptylayers: 'Hide empty layers'
-          generatelegendurl: 'Generate legend url'
-          showsourcetitle: 'Show source title'
-          showlayertitle: 'Show layer title'
-          showgroupedlayertitle: 'Show grouped layer title'
+          hideemptylayers: Hide empty layers
+          generatelegendurl: Generate legend url
+          showsourcetitle: Show source title
+          showlayertitle: Show layer title
+          showgroupedlayertitle: Show grouped layer title
       featureinfo:
         label:
-          deactivateonclose: 'Deactivate on close'
-          onlyvalid: 'Only valid'
-          highlighting_group: 'Highlighting'
-          highlighting: 'Highlighting enabled'
+          deactivateonclose: Deactivate on close
+          onlyvalid: Only valid
+          highlighting_group: Highlighting
+          highlighting: Highlighting enabled
           default_group: Default
           hover_group: On hover
           fillColor: Fill color
@@ -417,23 +417,23 @@ mb:
       printclient:
         label:
           rotatable: Rotatable
-          legend: 'Print legend'
-          legend_default_behaviour: 'Legend checkbox active'
+          legend: Print legend
+          legend_default_behaviour: Legend checkbox active
           required_fields_first: Display required fields first
       layertree:
         label:
-          showbasesources: 'Show base sources'
-          showlayerremove: 'Show layer remove'
-          usetheme: 'Thematic layer'
+          showbasesources: Show base sources
+          showlayerremove: Show layer remove
+          usetheme: Thematic layer
           themes: Themes
           theme:
             opened: opened
-            activate: 'Enabling Layer Add / Remove'
-            useTheme: 'Theme show'
-            label: 'theme name'
-          hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
-          hideinfo: 'Hide info'
+            activate: Enabling Layer Add / Remove
+            useTheme: Theme show
+            label: theme name
+          hidenottoggleable: Hide not toggleable
+          hideselect: Hide visibility by folders
+          hideinfo: Hide info
       template:
         sidepane:
           type:
@@ -445,7 +445,7 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: 'Add some HTML'
+        description: Add some HTML
     entity:
       app:
         screenshotfile:
@@ -462,9 +462,9 @@ mb:
         radius: Radius
       geometry:
         action:
-          remove: 'Remove geometry'
-          edit: 'Edit geometry'
-          zoom: 'Zoom to geometry'
+          remove: Remove geometry
+          edit: Edit geometry
+          zoom: Zoom to geometry
           stop_drawing: Stop drawing
       class:
         title: Sketches
@@ -473,7 +473,6 @@ mb:
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color
-    # (imported) Yaml application amenity
     redlining:
       class:
         title: Sketches

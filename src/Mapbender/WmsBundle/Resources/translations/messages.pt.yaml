@@ -22,12 +22,12 @@ mb:
             title: Título
             name: Nome
             version: Versão
-            originurl: 'URL de origem'
+            originurl: URL de origem
             abstract: Descrição
-            onlineresource: 'Recurso online'
-            exceptionformats: 'Formatos de exceção'
+            onlineresource: Recurso online
+            exceptionformats: Formatos de exceção
             fees: Taxa
-            accessconstraints: 'Limitações de acesso'
+            accessconstraints: Limitações de acesso
             person: Pessoa
             organization: Organização
             position: Posição
@@ -35,10 +35,10 @@ mb:
             facsimile: Fax
             email: Email
             address: Endereço
-            addresstype: 'Tipo de endereço'
+            addresstype: Tipo de endereço
             city: Cidade
             state: Estado
-            postcode: 'Código postal'
+            postcode: Código postal
             country: País
           message:
             cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
@@ -47,15 +47,15 @@ mb:
             save: Guardar
             cancel: Cancelar
           label:
-            originurl: 'URL de origem'
+            originurl: URL de origem
             visible: Visibilidade
             basesource: Basesource
             proxy: Proxy
             transparency: Transparência
-            tiled: 'Em mosaico'
+            tiled: Em mosaico
             title: Título
-            minsc: 'Escala mínima'
-            maxsc: 'Escala máxima'
+            minsc: Escala mínima
+            maxsc: Escala máxima
             active: Ativo
             select: Escolhido
             info: Informação
@@ -63,13 +63,13 @@ mb:
             reorder: Organizar
             allow: Permitir
             'on': Ligado
-            ratio: 'Factor de BBox'
-            buffer: 'Buffer de bloco'
+            ratio: Factor de BBox
+            buffer: Buffer de bloco
           vendorspecific:
-            label: 'Vendor specific'
+            label: Vendor specific
         preview:
           title:
-            servicerepository: 'Repository de serviços'
+            servicerepository: Repository de serviços
           label:
             load: Carregar
         layer:
@@ -78,68 +78,68 @@ mb:
             title: Título
             abstract: Descrição
             queryable: Consultável
-            cascaded: 'Em cascata'
+            cascaded: Em cascata
             opaque: Opaco
-            nosubset: 'Sem subgrupo'
-            fixedwidth: 'Largura fixa'
-            fixedheight: 'Altura fixa'
-            latlonbounds: 'Limite LatLon'
+            nosubset: Sem subgrupo
+            fixedwidth: Largura fixa
+            fixedheight: Altura fixa
+            latlonbounds: Limite LatLon
             boundingbox: BoundingBox
             srs: SRS
             styles: Estilos
-            legendurl: 'URL de legenda'
+            legendurl: URL de legenda
             scale: Escala
             min: Mínimo
             max: Máximo
-            scalehint: 'Dica de escala'
+            scalehint: Dica de escala
             attribution: Attribution
-            onlineresource: 'Recurso online'
-            logourl: 'URL de logotipo'
+            onlineresource: Recurso online
+            logourl: URL de logotipo
             identifier: Identificador
             authority: Autoridade
             url: URL
             value: Valor
-            metadataurl: 'URL de metadados'
+            metadataurl: URL de metadados
             dimension: Dimensão
             extent: Extensão
-            dataurl: 'URL de dados'
-            featurelisturl: 'URL de Featurelist'
+            dataurl: URL de dados
+            featurelisturl: URL de Featurelist
         instancelayerform:
           label:
-            layerstitle: 'Título da camada'
-            minscale: 'Escala mínima'
-            maxsclase: 'Escala máxima'
+            layerstitle: Título da camada
+            minscale: Escala mínima
+            maxsclase: Escala máxima
             active: Ativo
-            allowselecttoc: 'Permite a escolha no árvore de camadas'
-            selectedtoc: 'Escolhido no árvore de camadas'
-            allowinfotoc: 'Permite FeatureInfo no árvore de camadas'
-            infotoc: 'FeatureInfo no árvore de camadas'
-            allowtoggletoc: 'Permite mudar no árvore de camadas'
-            toggletoc: 'Mudar no árvore de camadas'
-            allowreordertoc: 'Permite organizar no árvore de camadas'
-            moreinfo: 'Mais informações'
+            allowselecttoc: Permite a escolha no árvore de camadas
+            selectedtoc: Escolhido no árvore de camadas
+            allowinfotoc: Permite FeatureInfo no árvore de camadas
+            infotoc: FeatureInfo no árvore de camadas
+            allowtoggletoc: Permite mudar no árvore de camadas
+            toggletoc: Mudar no árvore de camadas
+            allowreordertoc: Permite organizar no árvore de camadas
+            moreinfo: Mais informações
             id:
               title: ID
               description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Nome
             style: Estilo
       class:
-        title: 'Carregar WMS'
+        title: Carregar WMS
         description: 'Carrega um WMS sobre getCapabilities-Request '
       admin:
         label:
-          splitlayers: 'Dividir camadas'
+          splitlayers: Dividir camadas
     repository:
       parser:
-        couldnotparse: 'Não pode "parse" o documento XML.'
-        not_supported_document: 'O documento XML não é suportado.'
-        not_supported_version: 'A versão de WMS não é suportado.'
+        couldnotparse: Não pode "parse" o documento XML.
+        not_supported_document: O documento XML não é suportado.
+        not_supported_version: A versão de WMS não é suportado.
     metadata:
       section:
         common:
           _title: Common
         useconditions:
-          _title: 'Termos de utilização'
+          _title: Termos de utilização
         contact:
           _title: Contacto
         items:
@@ -151,7 +151,7 @@ mb:
           dimensions: Dimensão
     dimhandler:
       class:
-        title: 'Handler de dimensão'
-        description: ~
+        title: Handler de dimensão
+        description: null
     dimensionsets:
-      no_dimension: 'Não existe nenhuma dimensão'
+      no_dimension: Não existe nenhuma dimensão

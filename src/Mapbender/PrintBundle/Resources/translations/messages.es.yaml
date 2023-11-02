@@ -6,11 +6,11 @@ mb:
           ok: Exportar
           cancel: Cancelar
       info:
-        noactivelayer: 'No hay capa activa!'
-      chooseformat: 'Escoger formato para exportar'
+        noactivelayer: No hay capa activa!
+      chooseformat: Escoger formato para exportar
       class:
-        title: 'Exportar imagen'
-        description: 'Exportar imagen le permite exportar la vista actual del mapa. Puede escoger formato png o jpeg.'
+        title: Exportar imagen
+        description: Exportar imagen le permite exportar la vista actual del mapa. Puede escoger formato png o jpeg.
       tag:
         image: imagen
         export: exportar

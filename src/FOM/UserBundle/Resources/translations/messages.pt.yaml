@@ -1,149 +1,150 @@
 fom:
   user:
     registration:
-      email_body_html: '<p>Olá %user_username%,</p><p> você recentemente criou uma conta. Para completar o seu registo, por favor clique <a href="%url%">aqui</a>.</p>'
+      email_body_html: <p>Olá %user_username%,</p><p> você recentemente criou uma conta. Para completar o seu registo, por favor clique <a href="%url%">aqui</a>.</p>
       done:
         title: Registo
         congratulations: Parabéns!
-        account_activated: 'A sua conta foi activada com sucesso e está pronta para uso.'
-        back_to_login: 'Voltar à página de login'
+        account_activated: A sua conta foi activada com sucesso e está pronta para uso.
+        back_to_login: Voltar à página de login
       form:
         title: Registo
-        choose_password: 'Escolha uma senha'
-        confirm_password: 'Confirmar senha'
+        choose_password: Escolha uma senha
+        confirm_password: Confirmar senha
         email: Email
-        back_to_login: 'Voltar à página de login'
+        back_to_login: Voltar à página de login
         register: Registar
-      email_subject: 'Seu registo'
+      email_subject: Seu registo
       send:
         title: Registo
-        account_created: 'A sua conta foi criada. Um e-mail de activação foi enviado para o seu email.'
-        back_to_login: 'Voltar à página de login'
-      email_body_text: 'Olá %user_username%. Você recentemente criou uma conta. Para completar o seu registo, por favor clique no link ao seu browser %url%.'
+        account_created: A sua conta foi criada. Um e-mail de activação foi enviado para o seu email.
+        back_to_login: Voltar à página de login
+      email_body_text: Olá %user_username%. Você recentemente criou uma conta. Para completar o seu registo, por favor clique no link ao seu browser %url%.
     group:
       index:
         groups: Grupos
-        add_new_group: 'Adicionar um novo grupo'
+        add_new_group: Adicionar um novo grupo
         title: Título
         description: Descrição
-        edit_group: 'Editar grupo'
-        delete_group: 'Eliminar grupo'
-        no_groups_available: 'Nenhum grupo disponível'
+        edit_group: Editar grupo
+        delete_group: Eliminar grupo
+        no_groups_available: Nenhum grupo disponível
       form:
-        edit_group: 'Editar grupo'
-        new_group: 'Novo grupo'
+        edit_group: Editar grupo
+        new_group: Novo grupo
       container:
-        base_data: 'Dados básicos'
+        base_data: Dados básicos
         users: Usuários
-        users_of_selected: 'Usuários de %users_count% selecionado'
-        no_user_exists: 'Não existe nenhum usuário'
+        users_of_selected: Usuários de %users_count% selecionado
+        no_user_exists: Não existe nenhum usuário
     login:
       error_tockenexp:
-        title: 'Nova senha'
+        title: Nova senha
         sorry: Desculpa!
-        registration_token_expired: 'O seu registo expirou. Infelizmente, você tem que solicitar um novo token.'
-        request_new_token: 'Solicitar novo token'
-        back_to_login: 'Voltar à página de login'
+        registration_token_expired: O seu registo expirou. Infelizmente, você tem que solicitar um novo token.
+        request_new_token: Solicitar novo token
+        back_to_login: Voltar à página de login
       login:
         title: Login
         username: Usuário
         password: Senha
         register: Registar
-        forgot_password: 'Esqueceu a senha'
+        forgot_password: Esqueceu a senha
         login: Login
       error_notocken:
-        password_reset: 'Nova senha'
+        password_reset: Nova senha
         sorry: Desculpa!
-        no_such_tocken: 'Token não foi encontrado. Se detectar um erro, por favor entre em contato com o administrador do site.'
-        contact: 'Contactar o Administrador'
-        back_to_login: 'Voltar à página de login'
+        no_such_tocken: Token não foi encontrado. Se detectar um erro, por favor entre em contato com o administrador do site.
+        contact: Contactar o Administrador
+        back_to_login: Voltar à página de login
     user:
       index:
         title: Usuários
-        add_new_user: 'Adicionar novo usuário'
+        add_new_user: Adicionar novo usuário
         name: Nome
         email: Email
         groups: Grupos
-        edit_user: 'Editar usuário'
-        contact_user: 'Contactar usuário por e-mail'
-        edit_group: 'Editar grupo'
-        delete_user: 'Eliminar usuário'
-        no_users_available: 'Nenhum usuário disponível'
+        edit_user: Editar usuário
+        contact_user: Contactar usuário por e-mail
+        edit_group: Editar grupo
+        delete_user: Eliminar usuário
+        no_users_available: Nenhum usuário disponível
       form:
-        edit_user: 'Editar usuário'
-        new_user: 'Novo usuário'
+        edit_user: Editar usuário
+        new_user: Novo usuário
       container:
-        base_data: 'Dados básicos'
+        base_data: Dados básicos
         profile: Perfil
         groups: Grupos
         security: Segurança
-        choose_password: 'Escolher uma senha'
-        confirm_password: 'Confirmar senha'
+        choose_password: Escolher uma senha
+        confirm_password: Confirmar senha
         name: Nome
-        users_of_selected: 'grupos de %users_count% selecionados'
+        users_of_selected: grupos de %users_count% selecionados
         no_groups_defined: Não definia grupos
         username: Usuário
         description: Description
         activated: activated
     acl:
       index:
-        access_control_lists: 'Global Access Control Lists'
+        access_control_lists: Global Access Control Lists
         name: Nome
         class: Classe
         edit: Editar
-      required: 'Campos obrigatoŕios são marcados com rótulos escuros. Required fields are marked with dark labels. Campos opcionais tem rótulos mais ligeiro.'
+      required: Campos obrigatoŕios são marcados com rótulos escuros. Required fields are marked with dark labels. Campos opcionais tem rótulos mais ligeiro.
       edit:
-        edit_class_acl: 'Editar classe ACL para %name%'
+        edit_class_acl: Editar classe ACL para %name%
       groups_users:
         name: Nome
-        no_goups_users: 'Não definia grupos e usuários'
+        no_goups_users: Não definia grupos e usuários
     password:
-      email_body_html: "&lt;p&gt;Olá %user_username%,&lt;/p&gt;&lt;p&gt;Você solicitou uma nova senha.\n&lt;br /&gt;Por Favor, clique &lt;a href=\"%url%\"&gt;aqui&lt;/a&gt;."
+      email_body_html: |-
+        &lt;p&gt;Olá %user_username%,&lt;/p&gt;&lt;p&gt;Você solicitou uma nova senha.
+        &lt;br /&gt;Por Favor, clique &lt;a href="%url%"&gt;aqui&lt;/a&gt;.
       done:
-        password_reset: 'Nova senha'
+        password_reset: Nova senha
         congratulations: Parabéns!
         password_been_reset: 'Sua senha foi redefinida. '
-        back_to_login: 'Voltar à login'
+        back_to_login: Voltar à login
       reset:
-        title: 'Nova senha'
-        btn: 'Nova senha'
+        title: Nova senha
+        btn: Nova senha
       form:
-        message: 'Para redefinir a sua senha, por favor introduza o seu nome de usuário e o seu email.'
-        title: 'Esqueceu a senha'
-        username_email: 'Usuário o email'
-        back_to_login: 'Voltar à login'
-        require_password: 'Exigir uma senha'
-      email_subject: 'Esqueceu a senha'
+        message: Para redefinir a sua senha, por favor introduza o seu nome de usuário e o seu email.
+        title: Esqueceu a senha
+        username_email: Usuário o email
+        back_to_login: Voltar à login
+        require_password: Exigir uma senha
+      email_subject: Esqueceu a senha
       send:
-        title: 'Nova senha'
-        email_been_sent: 'O link para redefinir a sua password foi enviado para o endereço de e-mail desta conta.'
-        back_to_login: 'Voltar à login'
-      email_body_text: 'Olá %user_username%, você solicitou uma nova senha. Clique no link ao seu browser "%url%".'
+        title: Nova senha
+        email_been_sent: O link para redefinir a sua password foi enviado para o endereço de e-mail desta conta.
+        back_to_login: Voltar à login
+      email_body_text: Olá %user_username%, você solicitou uma nova senha. Clique no link ao seu browser "%url%".
     userbundle:
-      user_control: 'Controle de usuários'
+      user_control: Controle de usuários
       users: Usuários
-      new_user: 'Novo usuário'
+      new_user: Novo usuário
       groups: Grupos
-      new_group: 'Novo grupo'
+      new_group: Novo grupo
       classes:
         acls: ACLs
         users: Usuários
         groups: Grupos
       roles:
-        super_admin: 'Pode adminstrar tudo (super admin)'
-        user_admin: 'Pode administrar usuários e grupos'
+        super_admin: Pode adminstrar tudo (super admin)
+        user_admin: Pode administrar usuários e grupos
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:
-      # @todo: all sub-entries
-      firstname: ~
-      lastName: ~
-      notes: ~
-      phone: ~
-      organizationName: ~
-      organizationRole: ~
-      street: ~
-      zipCode: ~
-      city: ~
-      country: ~
+      firstname: null
+      lastName: null
+      notes: null
+      phone: null
+      organizationName: null
+      organizationRole: null
+      street: null
+      zipCode: null
+      city: null
+      country: null

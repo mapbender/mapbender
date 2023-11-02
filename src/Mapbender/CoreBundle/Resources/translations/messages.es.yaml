@@ -1,6 +1,6 @@
 mb:
   actions:
-    accept: Ok    # appropriate?
+    accept: Ok
     add: Añadir
     back: Atrás
     cancel: Cancelar
@@ -31,76 +31,76 @@ mb:
         singular: '%type% instancia'
     security: Seguridad
   states:
-    active: activo # m.; f.: activa
-    inactive: inactivo # m.; f.: inactiva
+    active: activo
+    inactive: inactivo
   core:
     featureinfo:
       error:
-        nolayer: 'No existe feature info de la capa.'
-        unknownoption: 'Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.'
-        noresult: 'no result'
+        nolayer: No existe feature info de la capa.
+        unknownoption: Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.
+        noresult: no result
       class:
         title: FeatureInfo
         description: FeatureInfo
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'aprende mas sobre Mapbender'
-        linktitle: 'Visita nuestri sitio oficial de Mapbender'
+        learnmore: aprende mas sobre Mapbender
+        linktitle: Visita nuestri sitio oficial de Mapbender
         website: website
       class:
-        title: 'Diálogo Acerca de'
-        description: 'Mostrar un diálogo acerca de'
+        title: Diálogo Acerca de
+        description: Mostrar un diálogo acerca de
       tag:
         help: ayuda
         info: info
-        about: 'acerca de'
+        about: acerca de
     simplesearch:
       input:
         search: Buscar
       class:
-        title: 'Búsqueda Simple'
-        description: 'Campo de búsqueda sencillo en base JSON (e.g. Solr)'
+        title: Búsqueda Simple
+        description: Campo de búsqueda sencillo en base JSON (e.g. Solr)
       error:
         geometry:
-          missing: ~
+          missing: null
     searchrouter:
-      no_results: 'No results'
+      no_results: No results
       result_counter: 'Results: %count%'
-      exportcsv: 'Exporte los resultados a CSV.'
+      exportcsv: Exporte los resultados a CSV.
       class:
-        title: 'Buscar ruteador'
-        description: 'Búsqueda configurable del elemeteo de ruteo'
+        title: Buscar ruteador
+        description: Búsqueda configurable del elemeteo de ruteo
       tag:
         search: búsqueda
         router: ruteador
     poi:
-      sharepoi: 'Compartir POI'
+      sharepoi: Compartir POI
       text:
-        snippet: 'Puedes usar el siguiente fragmento en un email para enviar el POI'
+        snippet: Puedes usar el siguiente fragmento en un email para enviar el POI
       class:
         title: POI
-        description: 'Crear un POI para compartir'
+        description: Crear un POI para compartir
       label:
         text: Texto
     basesourceswitcher:
       error:
-        sourcenotavailable: 'Una fuente con id %id% no está habilitado'
+        sourcenotavailable: Una fuente con id %id% no está habilitado
       class:
-        title: ~
-        Description: 'Change the map''s background sources'
+        title: null
+        Description: Change the map's background sources
       form:
-        mesage: 'No fuentebase seteada esta definida.'
-        instancesets: 'Instancesets'
+        mesage: No fuentebase seteada esta definida.
+        instancesets: Instancesets
     legend:
       class:
         title: Leyenda
-        description: 'La leyenda muestra la leyenda de las capas del mapa'
+        description: La leyenda muestra la leyenda de las capas del mapa
     ruler:
       create_error: 'Regla: Tipo debe ser línea o área.'
       class:
-        title: 'Regla Línear/Área'
-        description: 'Regla para dibujar una línea/área y presentar la longitud/área en un diálogo'
+        title: Regla Línear/Área
+        description: Regla para dibujar una línea/área y presentar la longitud/área en un diálogo
       tag:
         line: línea
         area: área
@@ -111,18 +111,18 @@ mb:
         quality: Calidad
         scale: Escala
         rotation: Rotación
-        legend: ~
+        legend: null
       class:
-        title: 'Cliente de Impresión'
-        description: 'Renders un diálogo de Impresión'
+        title: Cliente de Impresión
+        description: Renders un diálogo de Impresión
       btn:
-        deactivate: ~
-        activate: ~
+        deactivate: null
+        activate: null
     overview:
-      nolayer: 'El elemento overview no tiene capa.'
+      nolayer: El elemento overview no tiene capa.
       class:
         title: Overview
-        description: 'Renders un pequeño mapa overview'
+        description: Renders un pequeño mapa overview
       tag:
         overview: overview
         map: mapa
@@ -134,45 +134,45 @@ mb:
         notsupported: Los servicios de geolocalización no son soportados por su navegador.
         nosignal: Actualmente no es posible localizar su posición.
       class:
-        title: 'Posición GPS'
-        description: 'Renders un botón para mostrar la Posición del GPS'
+        title: Posición GPS
+        description: Renders un botón para mostrar la Posición del GPS
       tag:
-        gpsposition: 'Posición GPS'
+        gpsposition: Posición GPS
         gps: GPS
         position: posición
         button: botón
     layertree:
       const:
-        outofscale: 'Capa fuera de la escala'
-        outofbounds: 'Capa fuera de límites'
-        parentinvisible: 'Capa pariente invisible'
+        outofscale: Capa fuera de la escala
+        outofbounds: Capa fuera de límites
+        parentinvisible: Capa pariente invisible
       tooltip:
-        sublayers_openclose: 'Subcapas abrit/cerrar'
-        removelayer: 'Remover capa'
+        sublayers_openclose: Subcapas abrit/cerrar
+        removelayer: Remover capa
         menu:
           close: Close
       label:
-        visibility_onoff: 'Visibilidad prender/apagar'
-        featureinfo_onoff: 'Featureinfo prender/apagar'
+        visibility_onoff: Visibilidad prender/apagar
+        featureinfo_onoff: Featureinfo prender/apagar
         opacity: Opacity
-        zoomtolayer: 'Aumento a la capa'
+        zoomtolayer: Aumento a la capa
         metadata: Metadata
         legend: Leyenda
-        kmlexport: 'Exportar Kml'
-        dimension_onoff: ~
-        dimension: ~
-        sourcevisibility_onoff: ~
+        kmlexport: Exportar Kml
+        dimension_onoff: null
+        dimension: null
+        sourcevisibility_onoff: null
       class:
-        title: 'Árbol de capa'
-        description: 'Árbol de las capas del mapa'
+        title: Árbol de capa
+        description: Árbol de las capas del mapa
     zoombar:
-      zoombybox: 'Acercamiento por recuadro'
-      zoombyworld: 'Acercamiento global'
+      zoombybox: Acercamiento por recuadro
+      zoombyworld: Acercamiento global
       zoomin: Acercar
       zoomout: Alejar
       class:
-        title: 'Barra de navegación'
-        description: 'El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers'
+        title: Barra de navegación
+        description: El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers
       tag:
         zoom: acercamiento
         pan: panorama
@@ -181,8 +181,8 @@ mb:
         panel: panel
     activityindicator:
       class:
-        title: 'Indicador de actividad'
-        description: 'Mostrar actividad HTTP'
+        title: Indicador de actividad
+        description: Mostrar actividad HTTP
       tag:
         activity: actividad
         indicator: indicador
@@ -194,8 +194,8 @@ mb:
         button: botón
     coordinatesdisplay:
       class:
-        title: 'Mostrar coordenadas'
-        description: 'Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.'
+        title: Mostrar coordenadas
+        description: Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.
       tag:
         coordinates: coordenadas
         display: muestra
@@ -203,103 +203,103 @@ mb:
         position: posición
     copyright:
       class:
-        title: 'Derechos de Autor'
-        description: 'Muestra términos de uso'
+        title: Derechos de Autor
+        description: Muestra términos de uso
       tag:
-        copyright: 'Derechos de Autor'
+        copyright: Derechos de Autor
         dialog: diálogo
     map:
       class:
         title: Mapa
-        description: 'OpenLayers mapa basado'
+        description: OpenLayers mapa basado
       tag:
         map: mapa
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: 'Propiedades SRS para %srslist% no se encontraron'
+      srsnotfound: Propiedades SRS para %srslist% no se encontraron
     scalebar:
       class:
-        title: 'Barra de escala'
-        description: 'La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.'
+        title: Barra de escala
+        description: La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.
       tag:
         scale: escala
         bar: barra
     scaledisplay:
       class:
-        title: 'Mostrar la escala'
-        description: 'Muestra la escala actual del mapa'
+        title: Mostrar la escala
+        description: Muestra la escala actual del mapa
       tag:
         scale: Escala
         display: mostrar
     scaleselector:
       class:
-        title: 'Selector de escala'
-        description: 'Muestra y cambia la escala del mapa'
+        title: Selector de escala
+        description: Muestra y cambia la escala del mapa
       tag:
         scale: escala
         selector: selector
     srsselector:
       class:
-        title: ~
-        description: 'El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa'
+        title: null
+        description: El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa
       tag:
         srs: SRS
         selector: selector
     admin:
       poi:
         label:
-          usemailto: 'Usar Email a'
+          usemailto: Usar Email a
       legend:
         label:
-          hideemptylayers: 'Ocultar capas vacías'
-          generatelegendurl: 'Generar leyenda url'
-          showsourcetitle: 'Mostrar título de fuente'
-          showlayertitle: 'Mostrar título de capa'
-          showgroupedlayertitle: 'Mostrar titulo de capa agrupado'
+          hideemptylayers: Ocultar capas vacías
+          generatelegendurl: Generar leyenda url
+          showsourcetitle: Mostrar título de fuente
+          showlayertitle: Mostrar título de capa
+          showgroupedlayertitle: Mostrar titulo de capa agrupado
       featureinfo:
         label:
-          deactivateonclose: 'Desactivar al cerrar'
-          onlyvalid: ~
-          highlighting: ~
+          deactivateonclose: Desactivar al cerrar
+          onlyvalid: null
+          highlighting: null
       printclient:
         label:
-          rotatable: ~
-          legend: ~
-          legend_default_behaviour: ~
+          rotatable: null
+          legend: null
+          legend_default_behaviour: null
       layertree:
         label:
-          showbasesources: 'Mostar fuentes bases'
-          showlayerremove: 'Mostrar quitar capa'
-          usetheme: ~
-          themes: ~
+          showbasesources: Mostar fuentes bases
+          showlayerremove: Mostrar quitar capa
+          usetheme: null
+          themes: null
           theme:
             opened: opened
-            activate: ~
-            useTheme: ~
-            label: ~
-          hidenottoggleable: ~
-          hideselect: ~
-          hideinfo: ~
+            activate: null
+            useTheme: null
+            label: null
+          hidenottoggleable: null
+          hideselect: null
+          hideinfo: null
     htmlelement:
       class:
-        title: ~
-        description: ~
+        title: null
+        description: null
     entity:
       app:
         screenshotfile:
-          error: ~
+          error: null
     sketch:
       geometrytype:
-        point: ~
-        line: ~
-        polygon: ~
-        rectangle: ~
+        point: null
+        line: null
+        polygon: null
+        rectangle: null
         circle: Circulo
       geometry:
         action:
-          remove: ~
-          edit: ~
-          zoom: ~
+          remove: null
+          edit: null
+          zoom: null
       class:
-        title: ~
-        description: ~
+        title: null
+        description: null

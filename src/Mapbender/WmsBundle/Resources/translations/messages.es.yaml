@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Ejemplo
-          wmsurl: 'Servicio URL'
+          wmsurl: Servicio URL
           wmsuser: User
           wmspass: Password
       error:
@@ -22,12 +22,12 @@ mb:
             title: Título
             name: Nombre
             version: Versión
-            originurl: 'Origen del URL'
+            originurl: Origen del URL
             abstract: Abstracto
-            onlineresource: 'Recurso en línea'
-            exceptionformats: 'Formatos de Excepción'
+            onlineresource: Recurso en línea
+            exceptionformats: Formatos de Excepción
             fees: Cuotas
-            accessconstraints: 'Restricciones de Acceso'
+            accessconstraints: Restricciones de Acceso
             person: Persona
             organization: Organización
             position: Posición
@@ -35,10 +35,10 @@ mb:
             facsimile: Facsímil
             email: Email
             address: Dirección
-            addresstype: 'Tipo Dirección'
+            addresstype: Tipo Dirección
             city: Ciudad
             state: Estado
-            postcode: 'Código Postal'
+            postcode: Código Postal
             country: País
           message:
             cautionscalehint: 'Precaución: Calculos de escala están sujetos a limitaciones de resolución ScaleHint en WMS 1.1.1!'
@@ -47,9 +47,9 @@ mb:
             save: Guardar
             cancel: Cancelar
           label:
-            originurl: 'Origen URL'
+            originurl: Origen URL
             visible: Visible
-            basesource: 'Fuente WMS'
+            basesource: Fuente WMS
             proxy: Proxy
             transparency: Transparencia
             tiled: Tiled
@@ -63,13 +63,13 @@ mb:
             reorder: reordenar
             allow: permitir
             'on': 'on'
-            ratio: 'BBOX factor'
-            buffer: 'Tile buffer'
+            ratio: BBOX factor
+            buffer: Tile buffer
           vendorspecific:
-            label: 'Vendor specific'
+            label: Vendor specific
         preview:
           title:
-            servicerepository: 'Repositorio de Servicio'
+            servicerepository: Repositorio de Servicio
           label:
             load: Cargar
         layer:
@@ -78,7 +78,7 @@ mb:
             title: Título
             abstract: Abstracto
             queryable: Consultable
-            cascaded: 'En cascada'
+            cascaded: En cascada
             opaque: Opaco
             nosubset: NoSubconjunto
             fixedwidth: FixedWidth
@@ -87,59 +87,59 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Estilos
-            legendurl: 'Leyenda URL'
+            legendurl: Leyenda URL
             scale: Escala
             min: Min
             max: Max
             scalehint: Scalehint
             attribution: Atribución
-            onlineresource: 'Recurso en línea'
-            logourl: 'Logo URL'
+            onlineresource: Recurso en línea
+            logourl: Logo URL
             identifier: Identificador
             authority: Autoridad
             url: URL
             value: Valor
-            metadataurl: 'Metadata URL'
+            metadataurl: Metadata URL
             dimension: Dimensión
             extent: Extención
-            dataurl: 'Datos URL'
-            featurelisturl: 'Featurelist URL'
+            dataurl: Datos URL
+            featurelisturl: Featurelist URL
         instancelayerform:
           label:
-            layerstitle: 'Título de las Capas'
+            layerstitle: Título de las Capas
             minscale: Minscale
             maxsclase: Maxsclase
             active: activo
-            allowselecttoc: 'Permitir Seleccionar en TOC'
-            selectedtoc: 'Seleccionado en TOC'
-            allowinfotoc: 'Permitir FeatureInfo en TOC'
-            infotoc: 'FeatureInfo en TOC'
-            allowtoggletoc: 'Permitir Toggle en TOC'
-            toggletoc: 'Toggle en TOC'
-            allowreordertoc: 'Permitir Reordenar en TOC'
-            moreinfo: 'Más información'
+            allowselecttoc: Permitir Seleccionar en TOC
+            selectedtoc: Seleccionado en TOC
+            allowinfotoc: Permitir FeatureInfo en TOC
+            infotoc: FeatureInfo en TOC
+            allowtoggletoc: Permitir Toggle en TOC
+            toggletoc: Toggle en TOC
+            allowreordertoc: Permitir Reordenar en TOC
+            moreinfo: Más información
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nombre de las Capas'
+            layersname: Nombre de las Capas
             style: Estilo
       class:
-        title: 'WMS cargador'
-        description: 'Cargar un WMS via getCapabilities-Request'
+        title: WMS cargador
+        description: Cargar un WMS via getCapabilities-Request
       admin:
         label:
-          splitlayers: 'Partir las capas'
+          splitlayers: Partir las capas
     repository:
       parser:
-        couldnotparse: ~
-        not_supported_document: ~
-        not_supported_version: ~
+        couldnotparse: null
+        not_supported_document: null
+        not_supported_version: null
     metadata:
       section:
         common:
           _title: Common
         useconditions:
-          _title: 'Terms of use'
+          _title: Terms of use
         contact:
           _title: Contact
         items:
@@ -151,7 +151,7 @@ mb:
           dimensions: Dimensions
     dimhandler:
       class:
-        title: 'Dimensions handler'
-        description: ~
+        title: Dimensions handler
+        description: null
     dimensionsets:
-      no_dimension: 'no dimension'
+      no_dimension: no dimension

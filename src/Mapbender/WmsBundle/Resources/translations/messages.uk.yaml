@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Приклад
-          wmsurl: 'Сервіс URL'
+          wmsurl: Сервіс URL
           wmsuser: Користувач
           wmspass: Пароль
       error:
@@ -24,10 +24,10 @@ mb:
             version: Версія
             originurl: '>Оригінал URL'
             abstract: Абстрактний
-            onlineresource: 'Інтернет ресурс'
-            exceptionformats: 'Формат Виключення'
+            onlineresource: Інтернет ресурс
+            exceptionformats: Формат Виключення
             fees: Збори
-            accessconstraints: 'Обмеження доступу'
+            accessconstraints: Обмеження доступу
             person: Людина
             organization: Організація
             position: Позиція
@@ -35,10 +35,10 @@ mb:
             facsimile: Телефакс
             email: E-mail
             address: Адреса
-            addresstype: 'Тип Адреси'
+            addresstype: Тип Адреси
             city: Місто
             state: Область
-            postcode: 'Поштовий індекс'
+            postcode: Поштовий індекс
             country: Країна
           message:
             cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
@@ -47,11 +47,9 @@ mb:
             save: Зберегти
             cancel: Відмінити
           label:
-            originurl: 'Оригінал URL'
-            # buffer: 'Буфер'
-            # ratio: 'BBOX фактор'
+            originurl: Оригінал URL
             visible: Видимий
-            basesource: 'Джерело'
+            basesource: Джерело
             proxy: Проксі
             transparency: Прозорість
             tiled: Плитковий
@@ -62,21 +60,19 @@ mb:
             select: Обрати
             info: Інформація
             toggle: Перемикач
-            reorder: 'Зміна порядку'
+            reorder: Зміна порядку
             allow: Дозволити
             'on': Включити
-            ratio: "BBOX фактор"
-            buffer: 'Буфер'
+            ratio: BBOX фактор
+            buffer: Буфер
             layerOrder: Порядок шарів
             layerOrder.standard: Стандартний
             layerOrder.reverse: QGIS
           vendorspecific:
-            label: 'певний Vendor'
-          # message:
-            # cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
+            label: певний Vendor
         preview:
           title:
-            servicerepository: 'Обслуговування репозиторію'
+            servicerepository: Обслуговування репозиторію
           label:
             load: Завантажити
         layer:
@@ -87,69 +83,64 @@ mb:
             queryable: Queryable
             cascaded: Каскадна
             opaque: Непрозорий
-            nosubset: 'Немає підгрупи'
-            fixedwidth: 'Фіксована ширина'
-            fixedheight: 'Фіксована висота'
+            nosubset: Немає підгрупи
+            fixedwidth: Фіксована ширина
+            fixedheight: Фіксована висота
             latlonbounds: LatLonBounds
             boundingbox: BoundingBox
             srs: SRS
             styles: Стилі
-            legendurl: 'Легенда URL'
+            legendurl: Легенда URL
             scale: Шкала
             min: Мінімальний
             max: Максимальний
-            scalehint: 'Примітка масштабу'
+            scalehint: Примітка масштабу
             attribution: Атрибуція
-            onlineresource: 'Інтернет ресурсів'
-            logourl: 'Лого URL'
+            onlineresource: Інтернет ресурсів
+            logourl: Лого URL
             identifier: Ідентифікатор
             authority: Повноваження
             url: URL
             value: Значення
-            metadataurl: 'Метадані URL'
+            metadataurl: Метадані URL
             dimension: Вимір
             extent: Екстент
-            dataurl: 'Data URL'
-            featurelisturl: 'Featurelist URL'
+            dataurl: Data URL
+            featurelisturl: Featurelist URL
         instancelayerform:
           label:
-            layerstitle: 'Назва шару'
-            minscale: 'Мінімальна шкала'
-            maxsclase: 'Максимальна Шкала'
+            layerstitle: Назва шару
+            minscale: Мінімальна шкала
+            maxsclase: Максимальна Шкала
             active: Активний
-            allowselecttoc: 'Дозволити обирати в TOC'
-            selectedtoc: 'Обраний на TOC'
-            allowinfotoc: 'Allow FeatureInfo at TOC'
-            infotoc: 'FeatureInfo at TOC'
-            allowtoggletoc: 'Allow Toggle at TOC'
-            toggletoc: 'Toggle at TOC'
-            allowreordertoc: 'Дозволити Впорядкувати по ТОС'
-            moreinfo: 'Більше інформації'
-            # id:
-              # title: Id
-              # description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Ім''я шару'
+            allowselecttoc: Дозволити обирати в TOC
+            selectedtoc: Обраний на TOC
+            allowinfotoc: Allow FeatureInfo at TOC
+            infotoc: FeatureInfo at TOC
+            allowtoggletoc: Allow Toggle at TOC
+            toggletoc: Toggle at TOC
+            allowreordertoc: Дозволити Впорядкувати по ТОС
+            moreinfo: Більше інформації
+            layersname: Ім'я шару
             style: Стиль
       class:
-        title: 'WMS loader'
-        description: 'Завантажує WMS через GetCapabilities-Request'
+        title: WMS loader
+        description: Завантажує WMS через GetCapabilities-Request
       admin:
         label:
-          autoopen: 'Автоматично відкритий'
-          splitlayers: 'Розділення шарів'
+          autoopen: Автоматично відкритий
+          splitlayers: Розділення шарів
     repository:
       parser:
-        couldnotparse: 'Не вдалось проаналізувати CapabilitiesDocument'
-        not_supported_document: 'Не підтримується CapabilitiesDocument'
-        not_supported_version: 'Версія WMS не підтримується'
-        # not_valid_dtd: 'Документ WMS не діє (DTD)'
-        # not_valid_xsd: 'Документ WMS не діє (XSD)'
+        couldnotparse: Не вдалось проаналізувати CapabilitiesDocument
+        not_supported_document: Не підтримується CapabilitiesDocument
+        not_supported_version: Версія WMS не підтримується
     metadata:
       section:
         common:
           _title: загальний
         useconditions:
-          _title: 'умови використання'
+          _title: умови використання
         contact:
           _title: контакт
         items:
@@ -160,8 +151,8 @@ mb:
         label:
           dimensions: Розмірність
     dimensionsets:
-      no_dimension: 'немає розмірності'
+      no_dimension: немає розмірності
     dimhandler:
       class:
-        title: 'Розміри провідника'
-        description: 'DimensionsHandler групує та викликає на карті екземпляри, що підтримуються розмірністю'
+        title: Розміри провідника
+        description: DimensionsHandler групує та викликає на карті екземпляри, що підтримуються розмірністю

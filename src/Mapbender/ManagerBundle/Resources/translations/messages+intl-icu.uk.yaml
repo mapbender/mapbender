@@ -57,7 +57,7 @@ mb:
           left: Зліва
           right: Справа
     sourceinstance:
-      embedded_in_applications: >
+      embedded_in_applications: |
         {count, plural,
             =0    {Цей екземпляр не використовується в жодному застосунку}
             one   {Цей екземпляр використовується в одному застосунку}
@@ -74,34 +74,34 @@ mb:
     admin:
       sources: Джерела
       source:
-        add: 'Додати джерело'
-        show_metadata: 'Показати метадані'
-        delete: 'Видалити джерело'
+        add: Додати джерело
+        show_metadata: Показати метадані
+        delete: Видалити джерело
         new:
-          add: 'Додати джерело'
-        valid: 'Джерело дійсне'
-        notvalid: 'Джерело недійсне'
-        no_source: 'Немає доступного джерела'
-        update: 'Оновити джерело'
+          add: Додати джерело
+        valid: Джерело дійсне
+        notvalid: Джерело недійсне
+        no_source: Немає доступного джерела
+        update: Оновити джерело
         status:
-          ok: 'Джерело OK'
-          toupdate: 'Джерело більше не актуальне'
-          unreachable: 'Джерело недоступне'
-        embedded_in_applications: >
-            {count, plural,
-                =0    {Цей джерело не використовується в жодному застосунку}
-                one   {Цей джерело використовується в одному застосунку}
-                other {Цей джерело використовується в # застосунках}
-            }
+          ok: Джерело OK
+          toupdate: Джерело більше не актуальне
+          unreachable: Джерело недоступне
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Цей джерело не використовується в жодному застосунку}
+              one   {Цей джерело використовується в одному застосунку}
+              other {Цей джерело використовується в # застосунках}
+          }
       map:
-        max_extent: 'Максимальна область'
-        start_extent: 'Початкова область'
+        max_extent: Максимальна область
+        start_extent: Початкова область
       element:
         title: Назва
         type: Тип
-        add: 'Додати новий елемент до'
-        show_hide: 'Переключити показ/приховування елемента'
-        no_element_added: 'Немає доданих елементів'
+        add: Додати новий елемент до
+        show_hide: Переключити показ/приховування елемента
+        no_element_added: Немає доданих елементів
         anchor:
           label: Розташування
           left-top: Зверху зліва
@@ -113,31 +113,31 @@ mb:
       overview:
         fix: Закріпити
       layerset:
-        add: 'Додати набір шарів'
+        add: Додати набір шарів
         title: Назва
         type: Тип
-        edit: 'Редагувати набір шарів'
+        edit: Редагувати набір шарів
         delete:
-          title: 'Видалити шари'
-          confirm: 'Ви дійсно хочете видалити набір шарів з назвою <span class="italic">%layerset_title%</span>?'
+          title: Видалити шари
+          confirm: Ви дійсно хочете видалити набір шарів з назвою <span class="italic">%layerset_title%</span>?
         id: Id
       instance:
-        add: 'Додати екземпляр'
-        show_hide: 'Переключити показ/приховування екземпляру'
-        edit: 'Редагувати екземпляр'
+        add: Додати екземпляр
+        show_hide: Переключити показ/приховування екземпляру
+        edit: Редагувати екземпляр
         delete:
-          title: 'Видалити екземпляр'
-          confirm: 'Ви дійсно хочете видалити екземпляр <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Жодного екземпляра не додано'
-        no_layer_added: 'Жодного шару не додано'
+          title: Видалити екземпляр
+          confirm: Ви дійсно хочете видалити екземпляр <span class="italic">%instance_title%</span>?
+        no_instance_added: Жодного екземпляра не додано
+        no_layer_added: Жодного шару не додано
       template: Шаблон
       application:
         view: Огляд
         edit:
-          title: 'Редагувати застосунок'
-          base_data: 'Базові дані'
+          title: Редагувати застосунок
+          base_data: Базові дані
         screenshot: Мініатюра
-        layouts: 'Панелі інструментів'
+        layouts: Панелі інструментів
         layersets: Шари
         custom_css: CSS
         security:
@@ -145,21 +145,21 @@ mb:
           public: активовано
         save: Зберегти
         cancel: Скасувати
-        view_this: 'Показати застосунок'
-        duplicate: 'Створити копію застосунку'
+        view_this: Показати застосунок
+        duplicate: Створити копію застосунку
         public:
-          on_off: 'Переключити опублікування/скасування публікації застосунку'
-        delete: 'Видалити застосунок'
-        no_application: 'Немає доступних застосунків'
+          on_off: Переключити опублікування/скасування публікації застосунку
+        delete: Видалити застосунок
+        no_application: Немає доступних застосунків
         new:
-          title: 'Новий застосунок'
-        create_use: 'Заповніть основну інформацію під час створення нового застосунку, а потім використовуйте режим редагування, щоб додати елементи та шари.'
+          title: Новий застосунок
+        create_use: Заповніть основну інформацію під час створення нового застосунку, а потім використовуйте режим редагування, щоб додати елементи та шари.
         btn:
           create: Створити
           cancel: Скасувати
         upload:
           button: 'Вибрати файл:'
-          label: 'Файл не обрано'
+          label: Файл не обрано
         export:
           addAcl: ACLs
           addSources: Джерела
@@ -172,44 +172,44 @@ mb:
             import: Import
         title: Назва
         url:
-          title: 'Назва URL'
+          title: Назва URL
         description: Опис
         template: Шаблон
     source:
-      serviceurl: 'Service URL-адреса сервісу'
+      serviceurl: Service URL-адреса сервісу
       username: Ім''я користувача
       password: Пароль
       load: Завантажити
     managerbundle:
-      new_application: 'Новий застосунок'
-      add_source: 'Додати джерело'
-      add_user_group: 'Додати користувачів та групи'
-      acl_element: 'Acl елемент'
+      new_application: Новий застосунок
+      add_source: Додати джерело
+      add_user_group: Додати користувачів та групи
+      acl_element: Acl елемент
       import_application: Імпорт
       export_application: Експорт
     components:
       popup:
         add_element:
-          title: 'Додати елемент'
+          title: Додати елемент
         edit_element:
-          title: 'Редагувати елемент'
+          title: Редагувати елемент
         delete_element:
-          title: 'Підтвердити видалення'
+          title: Підтвердити видалення
         add_edit_layerset:
-          title_edit: 'Редагувати набір шарів'
-          title_add: 'Додати набір шарів'
+          title_edit: Редагувати набір шарів
+          title_add: Додати набір шарів
         delete_layerset:
-          title: 'Видалити набір шарів'
+          title: Видалити набір шарів
         add_instance:
-          title: 'Вибрати джерело'
+          title: Вибрати джерело
         delete_instance:
-          title: 'Підтвердити видалення'
+          title: Підтвердити видалення
         delete_user_group:
-          title: 'Підтвердити видалення'
-          content: 'Дійсно видалити %userGroup%?'
+          title: Підтвердити видалення
+          content: Дійсно видалити %userGroup%?
     import:
       application:
-        failed: 'Застосунок не може бути імпортовано.'
+        failed: Застосунок не може бути імпортовано.
     http_connection_error: Помилка підключення
     http_error_response: Віддалений сервер відповів повідомленням про помилку
     xml_invalid: Недійсний документ
@@ -217,13 +217,13 @@ mb:
   core:
     admin:
       button:
-        show_label: 'Показати мітку'
+        show_label: Показати мітку
       element:
         autostart: Автозапуск
     entity:
       app:
         screenshotfile:
-          error: 'Файл завеликий (% uploadFileSize% байт). Дозволений максимальний розмір становить %MaxFileSize% байт.'
-          format_error: 'Цей формат не підтримується!'
+          error: Файл завеликий (% uploadFileSize% байт). Дозволений максимальний розмір становить %MaxFileSize% байт.
+          format_error: Цей формат не підтримується!
           resolution:
-            error: 'Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.'
+            error: Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.

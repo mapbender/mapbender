@@ -45,21 +45,21 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'Елементу інфо-шар не існує.'
-        unknownoption: 'Невідомий або необроблений параметр %key% для %namespace%.%widgetname%.'
-        noresult: 'Немає результату'
+        nolayer: Елементу інфо-шар не існує.
+        unknownoption: Невідомий або необроблений параметр %key% для %namespace%.%widgetname%.
+        noresult: Немає результату
       class:
         title: Інформація
         description: Інформація про об''єкт
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Дізнатися більше про Mapbender'
-        linktitle: 'Відвідайте наш офіційний сайт Mapbender'
+        learnmore: Дізнатися більше про Mapbender
+        linktitle: Відвідайте наш офіційний сайт Mapbender
         website: сайт
       class:
-        title: 'Діалогове вікно про додаток'
-        description: 'Показати діалогове вікно про додаток'
+        title: Діалогове вікно про додаток
+        description: Показати діалогове вікно про додаток
       tag:
         help: Довідка
         info: інформація
@@ -68,8 +68,8 @@ mb:
       input:
         search: Пошук
       class:
-        title: 'Простий Пошук'
-        description: 'Пошук по одному полю в джерелах JSON (наприклад Solr)'
+        title: Простий Пошук
+        description: Пошук по одному полю в джерелах JSON (наприклад Solr)
       error:
         geometry:
           missing: Обраний об''єкт не містить геометрії.
@@ -77,45 +77,45 @@ mb:
         placeholder: Заповнювач
         sourceSrs: Джерело SRS
     searchrouter:
-      no_results: 'Не знайдено результатів.'
+      no_results: Не знайдено результатів.
       result_counter: 'Результати: %count%'
-      exportcsv: 'Експортуйте результати в CSV.'
+      exportcsv: Експортуйте результати в CSV.
       class:
-        title: 'Пошук маршрутизатора'
+        title: Пошук маршрутизатора
         description: 'Налаштовуваний елемент маршрутизації пошуку '
       tag:
         search: пошук
         router: маршрутизатор
     poi:
-      sharepoi: 'Поділитися POI'
+      sharepoi: Поділитися POI
       text:
-        snippet: 'Ви можете використовувати наступний фрагмент в електронному листі, щоб надіслати POI'
+        snippet: Ви можете використовувати наступний фрагмент в електронному листі, щоб надіслати POI
       popup:
         btn:
           position: Розстановка
       class:
         title: POI
-        description: 'Створити POI для спільного використання'
+        description: Створити POI для спільного використання
       label:
         text: Текст
     basesourceswitcher:
       error:
-        sourcenotavailable: 'Джерело з ідентифікатором %id% недоступне'
+        sourcenotavailable: Джерело з ідентифікатором %id% недоступне
       class:
-        title: 'Перемикач базового джерела'
-        Description: 'Змінити фонові джерела мапи.'
+        title: Перемикач базового джерела
+        Description: Змінити фонові джерела мапи.
       form:
-        mesage: 'Базовий набір джерел не визначено.'
-        instancesets: 'Набори екземплярів'
+        mesage: Базовий набір джерел не визначено.
+        instancesets: Набори екземплярів
     legend:
       class:
         title: Легенда
-        description: 'Легенда показує легенду шарів мапи'
+        description: Легенда показує легенду шарів мапи
     ruler:
       create_error: 'Лінійка: тип має бути лінією або областю.'
       class:
-        title: 'Лінійка Лінія/Область'
-        description: 'Лінійка для малювання лінії/області та відображення довжини/площі в діалоговому вікні'
+        title: Лінійка Лінія/Область
+        description: Лінійка для малювання лінії/області та відображення довжини/площі в діалоговому вікні
       tag:
         line: лінія
         area: область
@@ -126,18 +126,18 @@ mb:
         quality: Якість
         scale: Масштаб
         rotation: Обертання
-        legend: 'Надрукувати легенду'
+        legend: Надрукувати легенду
       class:
-        title: 'Надрукувати клієнт'
-        description: 'Відтворює діалогове вікно друку'
+        title: Надрукувати клієнт
+        description: Відтворює діалогове вікно друку
       btn:
-        deactivate: 'Деактивувати кадр друку'
-        activate: 'Деактивувати кадр друку'
+        deactivate: Деактивувати кадр друку
+        activate: Деактивувати кадр друку
     overview:
-      nolayer: 'Елемент огляду не має шару.'
+      nolayer: Елемент огляду не має шару.
       class:
         title: Огляд
-        description: 'Відображає невелику оглядову мапу'
+        description: Відображає невелику оглядову мапу
       tag:
         overview: огляд
         map: мапа
@@ -153,8 +153,8 @@ mb:
         notsupported: Геолокаційні послуги не підтримуються вашим браузером.
         nosignal: Наразі неможливо визначити ваше місце розташування.
       class:
-        title: 'GPS-положення'
-        description: 'Відображає кнопку, щоб показати положення GPS'
+        title: GPS-положення
+        description: Відображає кнопку, щоб показати положення GPS
       tag:
         gpsposition: GPS-положення
         gps: GPS
@@ -162,38 +162,38 @@ mb:
         button: кнопка
     layertree:
       const:
-        outofscale: 'Шар поза масштабом'
-        outofbounds: 'Шар за межами'
-        parentinvisible: 'Батьківський шар невидимий'
+        outofscale: Шар поза масштабом
+        outofbounds: Шар за межами
+        parentinvisible: Батьківський шар невидимий
       tooltip:
-        sublayers_openclose: 'Підшари відкрити/закрити'
-        removelayer: 'Видалити шар'
+        sublayers_openclose: Підшари відкрити/закрити
+        removelayer: Видалити шар
         menu:
           close: Закрити
       label:
-        visibility_onoff: 'Видимість вмк/вимк'
-        featureinfo_onoff: 'Інформація про об''єкт вмк/вимк'
+        visibility_onoff: Видимість вмк/вимк
+        featureinfo_onoff: Інформація про об'єкт вмк/вимк
         opacity: Непрозорість
-        zoomtolayer: 'Збільшити шар'
+        zoomtolayer: Збільшити шар
         metadata: Метадані
         legend: Легенда
-        kmlexport: 'Експорт Kml'
-        dimension_onoff: 'Вмк/Вимк Розмір'
+        kmlexport: Експорт Kml
+        dimension_onoff: Вмк/Вимк Розмір
         dimension: Розмір
-        sourcevisibility_onoff: 'Показати джерела'
+        sourcevisibility_onoff: Показати джерела
       class:
-        title: 'Дерево шарів'
-        description: 'Дерево шарів мапи'
+        title: Дерево шарів
+        description: Дерево шарів мапи
     zoombar:
-      zoombybox: 'Збільшити за вікном'
-      zoombyworld: 'Збільшити за світом'
+      zoombybox: Збільшити за вікном
+      zoombyworld: Збільшити за світом
       zoom_home: Повернутися до початку
       zoomHomeRestoresLayers: '"Повернутися до початку" також скидає налаштування шару'
       zoomin: Наблизити
       zoomout: Віддалити
       class:
-        title: 'Панель навігації'
-        description: 'Панель навігації забезпечує плаваючий контроль для панорамування та масштабування, аналогічно елементу керування OpenLayers PanZoomBar. Однак цей елемент легше використовувати, коли потрібен власний стиль.'
+        title: Панель навігації
+        description: Панель навігації забезпечує плаваючий контроль для панорамування та масштабування, аналогічно елементу керування OpenLayers PanZoomBar. Однак цей елемент легше використовувати, коли потрібен власний стиль.
       tag:
         zoom: Масштаб
         pan: панорама
@@ -202,8 +202,8 @@ mb:
         panel: панель
     activityindicator:
       class:
-        title: 'Індикатор активності'
-        description: 'Показує активність HTTP'
+        title: Індикатор активності
+        description: Показує активність HTTP
       tag:
         activity: активність
         indicator: індикатор
@@ -224,8 +224,8 @@ mb:
         click: Цільова URL-адреса
     coordinatesdisplay:
       class:
-        title: 'Відображення координат'
-        description: 'Відображення координат показує положення курсора миші в координатах мапи.'
+        title: Відображення координат
+        description: Відображення координат показує положення курсора миші в координатах мапи.
       tag:
         coordinates: координати
         display: відображення
@@ -234,46 +234,46 @@ mb:
     copyright:
       class:
         title: Авторське право
-        description: 'Показати Умови використання'
+        description: Показати Умови використання
       tag:
         copyright: Авторське право
         dialog: діалогове вікно
     map:
       class:
         title: Мапа
-        description: 'Мапа на основі OpenLayers'
+        description: Мапа на основі OpenLayers
       tag:
         map: мапа
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: 'Властивості SRS для %srslist% не знайдено'
+      srsnotfound: Властивості SRS для %srslist% не знайдено
       admin:
         fixedZoomSteps: Фіксовані кроки масштабування
     scalebar:
       class:
-        title: 'Масштабна панель'
-        description: 'Масштабна панель відображає маленький лінійний індикатор, що представляє поточний масштаб мапи'
+        title: Масштабна панель
+        description: Масштабна панель відображає маленький лінійний індикатор, що представляє поточний масштаб мапи
       tag:
         scale: масштаб
         bar: панель
     scaledisplay:
       class:
-        title: 'Відображення масштабу'
-        description: 'Відображає поточний масштаб мапи'
+        title: Відображення масштабу
+        description: Відображає поточний масштаб мапи
       tag:
         scale: масштаб
         display: Відображення
     scaleselector:
       class:
-        title: 'Селектор масштабу'
-        description: 'Відображає та змінює масштаб мапи'
+        title: Селектор масштабу
+        description: Відображає та змінює масштаб мапи
       tag:
         scale: масштаб
         selector: селектор
     srsselector:
       class:
-        title: 'SRS селектор'
-        description: 'Селектор просторової системи відліку змінює просторову системи відліку мапи'
+        title: SRS селектор
+        description: Селектор просторової системи відліку змінює просторову системи відліку мапи
       tag:
         srs: SRS
         selector: селектор
@@ -305,28 +305,28 @@ mb:
         access.rwd: Дозволити збереження і видалення
         publicEntries: Публічний список
         privateEntries: Показати приватний список
-        adminDeleteHint: "Примітка: адміністратор завжди може видалити загальнодоступні записи"
+        adminDeleteHint: 'Примітка: адміністратор завжди може видалити загальнодоступні записи'
         allowAnonymousSave: Дозволити збереження анонімним користувачам
         showDate: Показати дату
     admin:
       poi:
         label:
-          usemailto: 'Використання Mailto'
+          usemailto: Використання Mailto
       legend:
         label:
           autoopen: Автовідкриття
-          hideemptylayers: 'Приховати порожні шари'
-          generatelegendurl: 'Генерувати URL легенди'
-          showsourcetitle: 'Показати назву джерела'
-          showlayertitle: 'Показати назву шару'
-          showgroupedlayertitle: 'Показати назву групи шарів'
+          hideemptylayers: Приховати порожні шари
+          generatelegendurl: Генерувати URL легенди
+          showsourcetitle: Показати назву джерела
+          showlayertitle: Показати назву шару
+          showgroupedlayertitle: Показати назву групи шарів
       featureinfo:
         label:
           autoopen: Автовідкриття
-          deactivateonclose: 'Деактивувати під час закриття'
-          onlyvalid: 'Тільки дійсні'
-          highlighting_group: 'Виділення'
-          highlighting: 'Виділення увімкнено'
+          deactivateonclose: Деактивувати під час закриття
+          onlyvalid: Тільки дійсні
+          highlighting_group: Виділення
+          highlighting: Виділення увімкнено
           default_group: За замовчуванням
           hover_group: При наведенні
           fillColor: Колір заливки
@@ -337,29 +337,27 @@ mb:
         label:
           autoopen: Автовідкриття
           rotatable: Поворотний
-          legend: 'Надрукувати легенду'
-          legend_default_behaviour: 'Прапорець легенди активний'
+          legend: Надрукувати легенду
+          legend_default_behaviour: Прапорець легенди активний
           required_fields_first: Спочатку відобразити обов’язкові поля
       copyright:
         label:
           autoopen: Автовідкриття
       layertree:
         label:
-          showbasesources: 'Показати базові джерела'
+          showbasesources: Показати базові джерела
           autoopen: Автовідкриття
-          showlayerremove: 'Показати видалення шару'
-          usetheme: 'Тематичний шар'
+          showlayerremove: Показати видалення шару
+          usetheme: Тематичний шар
           themes: Теми
           theme:
             opened: відкрито
-            activate: 'Увімкнення додавання/видалення шару'
-            useTheme: 'Показати тему'
-            # sourceVisibility: 'Тема: видимість джерела'
-            # allSelected: 'Тема: видимість шару'
-            label: 'назва теми'
-          hidenottoggleable: 'Приховати папки, що не перемикаються'
-          hideselect: 'Приховати видимість за папками'
-          hideinfo: 'Приховати інформацію'
+            activate: Увімкнення додавання/видалення шару
+            useTheme: Показати тему
+            label: назва теми
+          hidenottoggleable: Приховати папки, що не перемикаються
+          hideselect: Приховати видимість за папками
+          hideinfo: Приховати інформацію
       template:
         sidepane:
           type:
@@ -371,7 +369,7 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: 'Додати HTML-теги'
+        description: Додати HTML-теги
     entity:
       app:
         screenshotfile:
@@ -388,9 +386,9 @@ mb:
         radius: Радіус
       geometry:
         action:
-          remove: 'Видалити геометрію'
-          edit: 'Редагувати геометрію'
-          zoom: 'Показати геометрію'
+          remove: Видалити геометрію
+          edit: Редагувати геометрію
+          zoom: Показати геометрію
           stop_drawing: Зупинити малювання
       class:
         title: Ескізи
@@ -400,7 +398,6 @@ mb:
         deactivate_on_close: Деактивувати при закритті
         colors: Кольори
         allow_custom_color: Дозволити власні кольори
-    # (imported) Yaml application amenity
     redlining:
       class:
         title: Ескізи

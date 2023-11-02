@@ -2,7 +2,7 @@ fom:
   core:
     manager:
       logged_as: 'Logeado como '
-      you_account: 'Su cuenta'
+      you_account: Su cuenta
       btn:
         logout: Salir
         login: Login

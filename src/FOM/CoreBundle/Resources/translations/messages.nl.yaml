@@ -3,10 +3,10 @@ fom:
     components:
       popup:
         delete_user_group:
-          title: 'Bevestig verwijderen'
+          title: Bevestig verwijderen
           content: '%userGroup% echt verwijderen?'
           btn:
             cancel: Cancel
             ok: OK
     fields:
-      no_user_group_defined: 'Geen gebruiker of groep gedefineerd.'
+      no_user_group_defined: Geen gebruiker of groep gedefineerd.

@@ -4,11 +4,11 @@ mb:
       dialog:
         label:
           example: Exemple
-          wmsurl: 'URL du service'
-          wmsuser: 'Nom d''utilisateur'
-          wmspass: 'Mot de passe'
+          wmsurl: URL du service
+          wmsuser: Nom d'utilisateur
+          wmspass: Mot de passe
       error:
-        load: "WMSLoader: Impossible de chrager les WMS capabilities!"
+        load: 'WMSLoader: Impossible de chrager les WMS capabilities!'
       repo:
         macros:
           label:
@@ -22,12 +22,12 @@ mb:
             title: Titre
             name: Nom
             version: Version
-            originurl: 'URL d''origine'
+            originurl: URL d'origine
             abstract: Résumé
-            onlineresource: 'Ressource en ligne'
-            exceptionformats: 'Formats d''exception'
+            onlineresource: Ressource en ligne
+            exceptionformats: Formats d'exception
             fees: Frais
-            accessconstraints: 'Contraintes d''accès'
+            accessconstraints: Contraintes d'accès
             person: Personne
             organization: Organisation
             position: Position
@@ -35,10 +35,10 @@ mb:
             facsimile: Fax
             email: Courriel
             address: Adresse
-            addresstype: 'Type d''adresse'
+            addresstype: Type d'adresse
             city: Ville
             state: État/Province
-            postcode: 'Code Postal'
+            postcode: Code Postal
             country: Pays
           message:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
@@ -47,7 +47,7 @@ mb:
             save: Sauvegarder
             cancel: Annuler
           label:
-            originurl: 'URL d''origine'
+            originurl: URL d'origine
             visible: Visible
             basesource: Fond de carte
             proxy: Proxy
@@ -63,13 +63,13 @@ mb:
             reorder: Réorganiser
             allow: permettre
             'on': 'on'
-            ratio: 'BBOX factor'
-            buffer: 'Tampon de la tuile'
+            ratio: BBOX factor
+            buffer: Tampon de la tuile
           vendorspecific:
-            label: 'Vendor specific'
+            label: Vendor specific
         preview:
           title:
-            servicerepository: 'Répertoire du service'
+            servicerepository: Répertoire du service
           label:
             load: Charger
         layer:
@@ -87,59 +87,59 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: 'URL de la légende'
+            legendurl: URL de la légende
             scale: Échelle
             min: Min
             max: Max
             scalehint: Scalehint
             attribution: Attribution
-            onlineresource: 'Online Resource'
-            logourl: 'URL du logo'
+            onlineresource: Online Resource
+            logourl: URL du logo
             identifier: Identifier
             authority: Authorité
             url: URL
             value: Valeur
-            metadataurl: 'URL des métadonnées'
+            metadataurl: URL des métadonnées
             dimension: Dimension
             extent: Étendue
-            dataurl: 'URL des données'
-            featurelisturl: 'URL du featurelist'
+            dataurl: URL des données
+            featurelisturl: URL du featurelist
         instancelayerform:
           label:
-            layerstitle: 'Titre de la couche'
+            layerstitle: Titre de la couche
             minscale: Minscale
             maxsclase: Maxsclase
             active: active
-            allowselecttoc: 'Permettre la sélection en cliquant'
-            selectedtoc: 'Sélectionné en cliquant'
-            allowinfotoc: 'Permettre le FeatureInfo en cliquant'
-            infotoc: 'FeatureInfo en cliquant'
-            allowtoggletoc: 'Permettre le basculement'
-            toggletoc: 'Basculer en cliquant'
-            allowreordertoc: 'Permettre la réorganisation en cliquant'
-            moreinfo: 'Plus d''informations'
+            allowselecttoc: Permettre la sélection en cliquant
+            selectedtoc: Sélectionné en cliquant
+            allowinfotoc: Permettre le FeatureInfo en cliquant
+            infotoc: FeatureInfo en cliquant
+            allowtoggletoc: Permettre le basculement
+            toggletoc: Basculer en cliquant
+            allowreordertoc: Permettre la réorganisation en cliquant
+            moreinfo: Plus d'informations
             id:
               title: ID
               description: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nom de la couche'
+            layersname: Nom de la couche
             style: Style
       class:
-        title: 'Chargeur de WMS'
-        description: 'Charge un service WMS via une requête ''getCapabilities'''
+        title: Chargeur de WMS
+        description: Charge un service WMS via une requête 'getCapabilities'
       admin:
         label:
-          splitlayers: 'Séparer les couches'
+          splitlayers: Séparer les couches
     repository:
       parser:
-        couldnotparse: 'Impossible d''analyser CapabilitiesDocument'
-        not_supported_document: 'Le CapabilitiesDocument n''est pas supporté'
-        not_supported_version: 'La version du service WMS n''est pas supportée'
+        couldnotparse: Impossible d'analyser CapabilitiesDocument
+        not_supported_document: Le CapabilitiesDocument n'est pas supporté
+        not_supported_version: La version du service WMS n'est pas supportée
     metadata:
       section:
         common:
           _title: Commun
         useconditions:
-          _title: 'Conditions d''utilisation'
+          _title: Conditions d'utilisation
         contact:
           _title: Contact
         items:
@@ -151,7 +151,7 @@ mb:
           dimensions: Dimensions
     dimhandler:
       class:
-        title: 'Prise en charge des dimensions'
-        description: 'DimensionsHandler groupe and fait appel aux instances supportant les dimensions'
+        title: Prise en charge des dimensions
+        description: DimensionsHandler groupe and fait appel aux instances supportant les dimensions
     dimensionsets:
-      no_dimension: 'Aucune dimension'
+      no_dimension: Aucune dimension

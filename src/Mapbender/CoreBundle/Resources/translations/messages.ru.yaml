@@ -22,7 +22,7 @@ mb:
       singular: Источник
       plural: Источники
     layerset:
-      singular: Слой  # @todo: this is simply "layer"
+      singular: Слой
       plural: Слои
     sourceinstance:
       singular: Экземпляр
@@ -36,38 +36,38 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: 'Не существует функция инфо-слой.'
-        unknownoption: 'Неизвестный или необрабатываемый параметр %key% для %namespace%.%widgetname%.'
-        noresult: 'Ничего не найдено'
+        nolayer: Не существует функция инфо-слой.
+        unknownoption: Неизвестный или необрабатываемый параметр %key% для %namespace%.%widgetname%.
+        noresult: Ничего не найдено
       class:
         title: Инфосвойства
         description: Инфосвойства
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: 'Посетите наш Mapbender'
-        linktitle: 'Посетите наш официальный сайт Mapbender'
+        learnmore: Посетите наш Mapbender
+        linktitle: Посетите наш официальный сайт Mapbender
         website: сайт
       class:
-        title: 'Раздел о программе'
-        description: 'Показать раздел о программе'
+        title: Раздел о программе
+        description: Показать раздел о программе
       tag:
         help: справка
         info: инфо
-        about: 'о программе'
+        about: о программе
     simplesearch:
       input:
         search: Поиск
       class:
-        title: 'Простой Поиск'
-        description: 'Поле поиска источников (например Solr)'
+        title: Простой Поиск
+        description: Поле поиска источников (например Solr)
       error:
         geometry:
           missing: Выбраный объект не содержит геометрии.
     searchrouter:
-      no_results: 'Не найдено результатов.'
+      no_results: Не найдено результатов.
       result_counter: 'Результаты: %count%'
-      exportcsv: 'Экспортировать результаты в CSV.'
+      exportcsv: Экспортировать результаты в CSV.
       class:
         title: Поиск
         description: 'Настраиваемый элемент поиска '
@@ -75,32 +75,32 @@ mb:
         search: поиск
         router: маршрут
     poi:
-      sharepoi: 'Поделиться POI'
+      sharepoi: Поделиться POI
       text:
-        snippet: 'Вы можете использовать следующий фрагмент кода в электронной почте, чтобы отправить POI'
+        snippet: Вы можете использовать следующий фрагмент кода в электронной почте, чтобы отправить POI
       class:
         title: POI
-        description: 'Создать POI для обмена'
+        description: Создать POI для обмена
       label:
         text: Текст
     basesourceswitcher:
       error:
-        sourcenotavailable: 'Источник с идентификатором %%d% не доступен'
+        sourcenotavailable: Источник с идентификатором %%d% не доступен
       class:
-        title: 'Базовый источник коммутатор'
+        title: Базовый источник коммутатор
         Description: 'Изменить фоновые источники  карты '
       form:
-        mesage: 'Нет исходного набора.'
-        instancesets: 'Наборы экземпляров'
+        mesage: Нет исходного набора.
+        instancesets: Наборы экземпляров
     legend:
       class:
         title: Легенда
-        description: 'Легенда показывает легенды слоев карты'
+        description: Легенда показывает легенды слоев карты
     ruler:
       create_error: 'Линейка: Тип должен быть линией или областью.'
       class:
         title: Линейка/Зона
-        description: 'Линейку, чтобы нарисовать линию/зону и расчитать длина/площадь в окне'
+        description: Линейку, чтобы нарисовать линию/зону и расчитать длина/площадь в окне
       tag:
         line: линия
         area: область
@@ -111,18 +111,18 @@ mb:
         quality: Качество
         scale: Масштаб
         rotation: Вращение
-        legend: 'Легенда'
+        legend: Легенда
       class:
         title: Печать
-        description: 'Отображает диалоговое окно печати'
+        description: Отображает диалоговое окно печати
       btn:
-        deactivate: ~
-        activate: ~
+        deactivate: null
+        activate: null
     overview:
-      nolayer: 'Обзор элемента не имеет слоя.'
+      nolayer: Обзор элемента не имеет слоя.
       class:
         title: Обзор
-        description: 'Показывает небольшую обзорну карту'
+        description: Показывает небольшую обзорну карту
       tag:
         overview: обзор
         map: карта
@@ -131,11 +131,11 @@ mb:
         title: Метаданные
     gpsposition:
       error:
-        notsupported: 'Геолокационные сервисы не поддерживаются вашим браузером.'
+        notsupported: Геолокационные сервисы не поддерживаются вашим браузером.
         nosignal: Невозможно определить ваше местоположение.
       class:
         title: GPS-положение
-        description: 'Отображает кнопку, чтобы показать позицию GPS'
+        description: Отображает кнопку, чтобы показать позицию GPS
       tag:
         gpsposition: GPS-положение
         gps: GPS
@@ -143,36 +143,36 @@ mb:
         button: кнопка
     layertree:
       const:
-        outofscale: 'Слой вне масштаба'
-        outofbounds: 'Слой за пределами поля'
-        parentinvisible: 'Родительский слой невидим'
+        outofscale: Слой вне масштаба
+        outofbounds: Слой за пределами поля
+        parentinvisible: Родительский слой невидим
       tooltip:
-        sublayers_openclose: 'Подслои открыть/закрыть'
-        removelayer: 'Удалить слой'
+        sublayers_openclose: Подслои открыть/закрыть
+        removelayer: Удалить слой
         menu:
           close: Закрыть
       label:
-        visibility_onoff: 'Видимость вкл/выкл'
-        featureinfo_onoff: 'Инфосвойства вкл/выкл'
+        visibility_onoff: Видимость вкл/выкл
+        featureinfo_onoff: Инфосвойства вкл/выкл
         opacity: Прозрачность
-        zoomtolayer: 'Масштаб по слоюr'
+        zoomtolayer: Масштаб по слоюr
         metadata: Метаданные
         legend: Легенда
-        kmlexport: 'Kml экспорт'
-        dimension_onoff: 'Вкл/Выкл Измерение'
+        kmlexport: Kml экспорт
+        dimension_onoff: Вкл/Выкл Измерение
         dimension: Измерение
-        sourcevisibility_onoff: 'Вкл/Выкл Сервисы'
+        sourcevisibility_onoff: Вкл/Выкл Сервисы
       class:
-        title: 'Дерево слоев'
-        description: 'Дерево слоев карты'
+        title: Дерево слоев
+        description: Дерево слоев карты
     zoombar:
       zoombybox: Масштаб
       zoombyworld: Кругозор
       zoomin: Приблизить
       zoomout: Отдалить
       class:
-        title: 'Панель навигации'
-        description: 'Панель навигации обеспечивает  управления для панорамирования и масштабирования, аналогично в элементу OpenLayers PanZoomBar. Этот элемент проще в использовании, когда необходимы пользовательские стили .'
+        title: Панель навигации
+        description: Панель навигации обеспечивает  управления для панорамирования и масштабирования, аналогично в элементу OpenLayers PanZoomBar. Этот элемент проще в использовании, когда необходимы пользовательские стили .
       tag:
         zoom: Масштаб
         pan: панорама
@@ -181,8 +181,8 @@ mb:
         panel: панель
     activityindicator:
       class:
-        title: 'Индикатор активности'
-        description: 'Показывает активность http'
+        title: Индикатор активности
+        description: Показывает активность http
       tag:
         activity: активности
         indicator: индикатор
@@ -195,7 +195,7 @@ mb:
     coordinatesdisplay:
       class:
         title: 'Отображение координат '
-        description: 'Отображение координат показывает ваше положение курсора мыши в координатах карты.'
+        description: Отображение координат показывает ваше положение курсора мыши в координатах карты.
       tag:
         coordinates: координаты
         display: Отображение
@@ -204,117 +204,117 @@ mb:
     copyright:
       class:
         title: Copyright
-        description: 'Показать Условия использования'
+        description: Показать Условия использования
       tag:
         copyright: Copyright
         dialog: Раздел
     map:
       class:
         title: Карта
-        description: 'OpenLayers карта'
+        description: OpenLayers карта
       tag:
         map: карта
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: 'SRS свойства для  %srslist% не найдены'
+      srsnotfound: SRS свойства для  %srslist% не найдены
     scalebar:
       class:
-        title: 'Масштабная линейка'
-        description: 'В масштабной линейки индикатора, показывает текущий масштаб карты.'
+        title: Масштабная линейка
+        description: В масштабной линейки индикатора, показывает текущий масштаб карты.
       tag:
         scale: масштаб
         bar: bar
     scaledisplay:
       class:
-        title: 'Масштаб отображения'
-        description: 'Отображает текущий масштаб карты'
+        title: Масштаб отображения
+        description: Отображает текущий масштаб карты
       tag:
         scale: масштаб
         display: Отображение
     scaleselector:
       class:
-        title: 'Шкала масштаба'
-        description: 'Отображает и изменяет масштаб карты'
+        title: Шкала масштаба
+        description: Отображает и изменяет масштаб карты
       tag:
         scale: масштаб
         selector: выбор
     srsselector:
       class:
         title: 'SRS '
-        description: 'Система пространственной привязки  меняет карту пространственной системы отсчета'
+        description: Система пространственной привязки  меняет карту пространственной системы отсчета
       tag:
         srs: SRS
         selector: выбор
     coordinatesutility:
       class:
-        title: 'Утилита координат'
-        description: 'Трансформация координат в другие системы. Навигация к выбранным координатам.'
+        title: Утилита координат
+        description: Трансформация координат в другие системы. Навигация к выбранным координатам.
       widget:
         error:
-          noSrs: 'Ситемы координат не установлены'
-          invalidCoordinates: 'Неверные координаты'
+          noSrs: Ситемы координат не установлены
+          invalidCoordinates: Неверные координаты
       view:
         srs:
-          title: 'Система координат'
-          tooltip: 'Система координат'
+          title: Система координат
+          tooltip: Система координат
         transformedCoordinates:
-          tooltip: 'Трансформированные координаты'
+          tooltip: Трансформированные координаты
         copytoclipboard:
-          tooltip: 'Копировать в буфер обмена'
+          tooltip: Копировать в буфер обмена
         originCoordinates:
-          title: 'Координаты с системе координат карты'
-          tooltip: 'редактирование невоможно'
+          title: Координаты с системе координат карты
+          tooltip: редактирование невоможно
         button:
-          search: 'Поиск координат'
-          centermap: 'Центрировать карту'
+          search: Поиск координат
+          centermap: Центрировать карту
       backend:
-        addMapSrsList: "Добавить системы координат карты"
+        addMapSrsList: Добавить системы координат карты
     admin:
       poi:
         label:
-          usemailto: 'Использование mailto'
+          usemailto: Использование mailto
       legend:
         label:
-          hideemptylayers: 'Скрыть пустые слои'
-          generatelegendurl: 'Генерировать URL легенды'
-          showsourcetitle: 'Показать название источника'
-          showlayertitle: 'Показать название слоя'
-          showgroupedlayertitle: 'Показать название группы слоев'
+          hideemptylayers: Скрыть пустые слои
+          generatelegendurl: Генерировать URL легенды
+          showsourcetitle: Показать название источника
+          showlayertitle: Показать название слоя
+          showgroupedlayertitle: Показать название группы слоев
       featureinfo:
         label:
-          deactivateonclose: 'Деактивировать при закрытии'
-          onlyvalid: 'Только действительные'
-          highlighting: ~
+          deactivateonclose: Деактивировать при закрытии
+          onlyvalid: Только действительные
+          highlighting: null
       printclient:
         label:
           rotatable: Поворачиваемые
-          legend: 'Легенда'
-          legend_default_behaviour: 'Legend checkbox active'
+          legend: Легенда
+          legend_default_behaviour: Legend checkbox active
       layertree:
         label:
-          showbasesources: 'Показать базу источника'
-          showlayerremove: 'Показать удаление слоя'
-          usetheme: 'Тематический слой'
+          showbasesources: Показать базу источника
+          showlayerremove: Показать удаление слоя
+          usetheme: Тематический слой
           themes: Темы
           theme:
-            opened: 'Вкл/Выкл Рубрику'
-            activate: 'Enabling Layer Add / Remove'
-            useTheme: 'Показать рубрики'
+            opened: Вкл/Выкл Рубрику
+            activate: Enabling Layer Add / Remove
+            useTheme: Показать рубрики
             label: Рубрика
-          hidenottoggleable: 'Скрыть не переключаемые папки'
-          hideselect: 'Скрыть видимость у папок'
-          hideinfo: 'Скрыть информацию'
+          hidenottoggleable: Скрыть не переключаемые папки
+          hideselect: Скрыть видимость у папок
+          hideinfo: Скрыть информацию
       template:
         sidepane:
           type:
-            label: ~
+            label: null
             choice:
               tabs: Вкладки
-              accordion: ~
+              accordion: null
     htmlelement:
       class:
         title: HTML
-        description: 'Добавить тэги HTML'
+        description: Добавить тэги HTML
     entity:
       app:
         screenshotfile:
@@ -328,18 +328,16 @@ mb:
         circle: Круг
       geometry:
         action:
-          remove: 'Удалить геометрию'
-          edit: 'Редактировать геометрию'
-          zoom: 'Показать геометрию'
+          remove: Удалить геометрию
+          edit: Редактировать геометрию
+          zoom: Показать геометрию
       class:
-        title: ~
-        description: ~
+        title: null
+        description: null
       admin:
         deactivate_on_close: Деактивировать при закрытии
-
-# Login exceptions
-"Bad credentials.": 'Ошибка аутентификации'
-"User account is locked.": 'Учетная запись заблокирована.'
-"User account is disabled.": 'Учетная запись деактивирована.'
-'User account has expired.': 'Срок действия учетной записи истёк.'
-'User credentials have expired.': 'Срок действия пароля истёк.'
+Bad credentials.: Ошибка аутентификации
+User account is locked.: Учетная запись заблокирована.
+User account is disabled.: Учетная запись деактивирована.
+User account has expired.: Срок действия учетной записи истёк.
+User credentials have expired.: Срок действия пароля истёк.
