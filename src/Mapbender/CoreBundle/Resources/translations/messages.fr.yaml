@@ -352,6 +352,3 @@ Available Users: Utilisateurs disponibles
 No Users: Aucun utilisateur
 Share POI: Partager le POI
 Text: Texte
-You can use the following snippet in an email to send the POI:
-  ? ''
-  : Vous pouvez utiliser l'extrait suivant pour partager le POI.
