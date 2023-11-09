@@ -297,7 +297,10 @@ $(function() {
                     {
                         label: Mapbender.trans(confirmText),
                         cssClass: 'btn btn-success btn-sm',
-                        type: 'submit'
+                        type: 'submit',
+                        callback: function() {
+                            $("form", $modal).submit();
+                        }
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
