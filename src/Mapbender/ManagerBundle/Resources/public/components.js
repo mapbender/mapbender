@@ -1,29 +1,16 @@
 $(function() {
     // init tabcontainers --------------------------------------------------------------------
-    var tabs = $(".tabContainer").find(".tab");
-    tabs.attr("tabindex", 0);
-    tabs.bind("click keypress", function(e) {
-        if (e.type === "keypress" && e.keyCode !== 13) {
-            return;
-        }
-
-        var me = $(this);
-        var tabcont = me.parent().parent();
-        $('>.tabs >.tab, >.container', tabcont).removeClass('active');
-        me.addClass("active");
-        $("#" + me.attr("id").replace("tab", "container"), tabcont).addClass("active");
-    });
+    const $tabContainer = $(".tabContainer, .tabContainerAlt");
     var activeTab = (window.location.hash || '').substring(1);
-    $(".tabContainer, .tabContainerAlt").on('click', '.tab, ul.nav>li[id]', function() {
+    $tabContainer.on('click', '.nav-link[id]', function() {
         var tabId = $(this).attr('id');
         // rewrite url fragment without scrolling page
         // see https://stackoverflow.com/questions/3870057/how-can-i-update-window-location-hash-without-jumping-the-document
         window.history.replaceState(null, null, '#' + tabId);
     });
     if (activeTab) {
-        var $activeTabHeader = $('#' + activeTab, $('.tabContainer, .tabContainerAlt'));
-        var $navLink = $('>a', $activeTabHeader);
-        ($navLink.length && $navLink || $activeTabHeader).click();
+        console.log($tabContainer.find('#' + activeTab));
+        $tabContainer.find('#' + activeTab).tab('show');
     }
 
     $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {
