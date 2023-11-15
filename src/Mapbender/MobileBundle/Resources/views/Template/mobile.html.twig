@@ -8,15 +8,6 @@
 
 {% block frontend_content %}
   <div id="templateWrapper" class="templateWrapper">
-      {% block splash_screen %}
-      <div id="splash-screen" class="splashScreenWrapper">
-        <div class="splashScreen">
-          <img class="app-screenshot" src="{{ asset(uploads_dir ~ '/' ~application.screenshot) }}" alt="{{ application.title }}" title="{{ application.description }}">
-          <h1 class="app-title" title="{{ application.description }}">{{ application.title }}</h1>
-        </div>
-      </div>
-      {% endblock %}
-
       <div id="content" class="contentPane">
           {{ map_markup(application) | raw }}
           {{ unanchored_content_elements(application) | raw }}

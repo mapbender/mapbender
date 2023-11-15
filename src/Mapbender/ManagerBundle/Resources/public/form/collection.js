@@ -74,17 +74,19 @@
         $(this).closest('.collection').trigger('collectionlengthchange');
     });
 
+    const initPopovers = function ($parent) {
+        $parent.find('[data-bs-toggle="popover"]').map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+            html: true,
+            placement: 'left',
+        }));
+    }
+
     $(document).on('shown.bs.modal', function (e) {
         const $modal = $(e.target);
-        const initPopovers = function () {
-            $modal.find('[data-toggle="popover"]').popover({
-                html: true,
-                placement: 'left',
-            });
-        }
-        initPopovers();
+
+        initPopovers($parent);
         $modal.on('collectionlengthchange', function () {
-            initPopovers();
+            initPopovers($parent);
         });
 
         $modal.on('click', '.collapse-toggle', function (e) {

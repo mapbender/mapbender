@@ -59,37 +59,6 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
-/* ------------------------------------------------------------ MOBILE SPLASH */
-.splashScreenWrapper {
-  background-color: rgba(255, 255, 255, .7);
-  z-index: 2;
-  @include absolute(0 0 0 0);
-}
-.splashScreen{
-  margin:0 auto;
-  padding: $space;
-  border: solid 2px $panelBorderColor;
-  background-color: $backgroundColor;
-  @include absolute(50% '' '' 50%);
-  @include transform(translate(-50%, -50%));
-  max-width: 100%;
-  max-height: 100%;
-  img.app-screenshot {
-    max-width: 100%;
-    height: auto;
-    width: auto\9; /* ie8 */
-  }
-  .app-title {
-    text-align: center;
-  }
-  .app-title:last-child {
-    margin-bottom: 0;
-  }
-  .app-title:first-child {
-    margin-top: 0;
-  }
-}
-
 
 body.mobile-template {
   .mb-element-layertree .leaveContainer, .mb-element-basesourceswithcer > .basesourcesetswitch {
