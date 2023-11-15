@@ -42,7 +42,6 @@ class Mobile extends Template
             case 'js':
                 return array(
                     '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-                    '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
                     '@MapbenderMobileBundle/Resources/public/js/mobile.js',
                 );
             default:
