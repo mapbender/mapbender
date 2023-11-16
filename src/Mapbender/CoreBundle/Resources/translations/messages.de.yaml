@@ -497,6 +497,8 @@ mb:
       footer: Fußzeile
       sidepane: Sidepane
       content: Kartenbereich
+  splashscreen:
+    loading: Anwendung lädt …
 Bad credentials.: Authentifizierung fehlgeschlagen.
 User account is locked.: Benutzerkonto ist gesperrt.
 User account is disabled.: Benutzerkonto ist deaktiviert.

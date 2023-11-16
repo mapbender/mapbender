@@ -495,3 +495,5 @@ mb:
       footer: Footer
       sidepane: Sidepane
       content: Map area
+  splashscreen:
+    loading: Application loading …

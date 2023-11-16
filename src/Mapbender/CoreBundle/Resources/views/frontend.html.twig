@@ -24,15 +24,21 @@
 
 {% block content %}
     {% block splash_screen %}
-        <div id="splash-screen" class="splashscreen__wrapper">
+        {% if region_props.content.properties.splashscreen is defined and region_props.content.properties.splashscreen %}
+        <div id="splash-screen" class="splashscreen__wrapper js-splashscreen{% if region_props.content.properties.autohide_splashscreen %} js-splashscreen-autohide{% endif %}">
             <div class="splashscreen">
                 <img class="splashscreen__img" src="{{ asset(fom.server_logo) }}" alt="">
                 <h1 class="splashscreen__title">{{ application.title }}</h1>
                 {% if application.description %}
                     <p class="splashscreen__text">{{ application.description }}</p>
                 {% endif %}
+                <div class="loadingspinner"><div class="loadingspinner__inner">
+                <div></div><div><div></div></div>
+                </div></div>
+                {{ 'mb.splashscreen.loading' | trans }}
             </div>
         </div>
+        {% endif %}
     {% endblock %}
     {% block frontend_content %}{% endblock %}
 {% endblock %}

@@ -33,4 +33,9 @@
     }).fail(function (jqXHR, textStatus, errorThrown) {
         Mapbender.info("Load application's configuration: " + errorThrown);
     });
+
+    $(document).one('click', '.js-splashscreen', function(e){
+        $(e.target).remove();
+    });
+
 })(jQuery);
