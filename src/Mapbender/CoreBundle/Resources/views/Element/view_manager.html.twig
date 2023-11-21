@@ -4,7 +4,7 @@
             <div class="input-group mb-3">
                 <input type="text" name="title" class="form-control" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
                 <button class="btn btn-outline-secondary -fn-save-new" title="{{ 'mb.actions.save' | trans }}">
-                    <i class="fa fas fa-save"></i>
+                    <i class="fas fa-floppy-disk"></i>
                 </button>
             </div>
             {%- if grants.savePublic and grants.savePrivate -%}
@@ -19,7 +19,7 @@
     </div>
     {%- endif -%}
     <div class="ui-helper-clearfix -fn-loading-placeholder">
-        <div class="pull-right"><i class="fa fas fa-spinner fa-spin"></i></div>
+        <div class="pull-right"><i class="fas fa-spinner"></i></div>
     </div>
     <div class="hidden -js-delete-confirmation-content">
         <div class="popover-body">

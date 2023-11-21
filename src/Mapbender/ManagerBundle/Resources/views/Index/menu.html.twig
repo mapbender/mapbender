@@ -20,19 +20,19 @@
                 {% if app.user %}
                     <li class="nav-item">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                        <i class="fa fas fa-user"></i>&nbsp;{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
+                        <i class="fas fa-user"></i>&nbsp;{{ "fom.core.manager.logged_as"|trans}}: {{ app.user.username }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                     {%- if app.user.password -%}
                       <li>
                           <a class="dropdown-item" href="{{ path('fom_user_user_edit', {'id': app.user.id}) }}">
-                              <i class="fa fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
+                              <i class="fas fa-wrench"></i>&nbsp;{{ 'fom.core.manager.you_account' | trans }}
                           </a>
                       </li>
                     {%- endif -%}
                       <li>
                           <a class="dropdown-item" href="{{ path('mapbender_core_login_logout') }}">
-                              <i class="fa far fa-sign-out"></i>&nbsp;{{ 'fom.core.manager.btn.logout' | trans }}
+                              <i class="fas fa-right-from-bracket"></i>&nbsp;{{ 'fom.core.manager.btn.logout' | trans }}
                           </a>
                       </li>
                     </ul>
@@ -40,7 +40,7 @@
               {% else %}
                 <li>
                   <a href="{{ path('mapbender_core_login_login') }}">
-                    <i class="fa fas fa-sign-in"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
+                    <i class="fas fa-right-to-bracket"></i>&nbsp;{{ 'fom.core.manager.btn.login' | trans }}
                   </a>
                 </li>
               {% endif %}

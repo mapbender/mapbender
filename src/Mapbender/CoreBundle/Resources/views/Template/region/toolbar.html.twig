@@ -15,7 +15,7 @@
             <button type="button" class="btn btn-light"
                     {%- if not _menu_label -%} title="{{ 'mb.template.toolbar_menu_tooltip' | trans }}" {%-endif -%}>
                 {#- eat whitespace -#}
-                <i class="fa fas fa-bars iconBig"></i></button>
+                <i class="fas fa-bars iconBig"></i></button>
             <ul class="dropdown-menu">
                 {{- menu_content | raw -}}
             </ul>

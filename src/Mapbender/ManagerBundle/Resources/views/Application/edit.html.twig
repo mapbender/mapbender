@@ -24,14 +24,14 @@
     <a class="btn btn-light action-button"
        target="_blank"
        href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}">
-        <i class="fa fas fa-lg fa-desktop"></i>
+        <i class="fas fa-lg fa-desktop"></i>
         <span>{{ 'mb.manager.admin.application.view' | trans }}</span>
     </a>
   {%- endif -%}
   {%- if not application.id -%}
     <a class="btn btn-light action-button"
        href="{{ path('mapbender_manager_application_import') }}">
-        <i class="fa fas fa-lg fa-upload"></i>
+        <i class="fas fa-lg fa-upload"></i>
         <span>{{ 'mb.manager.managerbundle.import_application' | trans }}</span>
     </a>
   {%- endif -%}

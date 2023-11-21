@@ -182,7 +182,7 @@
         <div class="collectionItem clear">
             {%- if form.parent.vars.allow_delete -%}
                 <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
-                    <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                    <i class="fas fa-fw fa-trash"></i>
                 </a>
             {%- endif -%}
             {{ form_widget(form) }}
@@ -219,7 +219,7 @@
     {%- endif -%}
     <div {{ block('widget_container_attributes') }}>
         {%- if prototype is defined and form.vars.allow_add is not empty -%}
-            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
+            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fas fa-plus"></i></a>
         {%- endif -%}
         {%- for child in form -%}
             {{- form_row(child) -}}
@@ -248,7 +248,7 @@
     {%- if form.vars.allow_add -%}
     <div class="form-group text-end">
         <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
-            <i class="fa fas fa-2x fa-plus"></i>
+            <i class="fas fa-2x fa-plus"></i>
         </span>
     </div>
     {%- endif -%}
@@ -310,7 +310,7 @@
         {% endif %}
       {%- endfor -%}
       <td class="iconColumn">
-        <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></span>
+        <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="fas fa-trash"></i></span>
       </td>
     </tr>
 {% endblock %}

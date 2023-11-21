@@ -23,16 +23,16 @@
                             </span>
                             <div class="panel-buttons">
                                 <a href="#" class="collapse-toggle clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}">
-                                    <i class="fa fa-fw fa-cog far"></i>
+                                    <i class="fas fa-fw fa-cog"></i>
                                 </a>
                                 {%- if form.parent.vars.allow_add -%}
                                     <a href="#" class="collectionDuplicate clickable hover-highlight-effect" title="{{ 'mb.actions.duplicate' | trans }}">
-                                        <i class="fa fa-fw fa-copy far"></i>
+                                        <i class="fas fa-fw fa-copy"></i>
                                     </a>
                                 {%- endif -%}
                                 {%- if form.parent.vars.allow_delete -%}
                                     <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
-                                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                                        <i class="fas fa-fw fa-trash"></i>
                                     </a>
                                 {%- endif -%}
                             </div>
@@ -57,7 +57,7 @@
             <div class="collectionItem clear">
                 {%- if form.parent.vars.allow_delete -%}
                     <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
-                        <i class="fa fa-fw fa-trash-o far fa-trash-alt"></i>
+                        <i class="fas fa-fw fa-trash-o"></i>
                     </a>
                 {%- endif -%}
                 <div class="row mb-3">
@@ -148,7 +148,7 @@
     {%- endif -%}
     <div {{ block('widget_container_attributes') }}>
         {%- if prototype is defined and form.vars.allow_add is not empty -%}
-            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fa fas fa-plus"></i></a>
+            <a href="#" class="collectionAdd hover-highlight-effect clickable"><i class="fas fa-plus"></i></a>
         {%- endif -%}
         {%- for child in form -%}
             {{- form_row(child) -}}

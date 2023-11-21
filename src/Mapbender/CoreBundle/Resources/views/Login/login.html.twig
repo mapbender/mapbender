@@ -42,11 +42,11 @@
 
 {% block extra_links %}
     {% if selfregister == true %}
-        <a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans }}
+        <a class="linkButton" href="{{ path('fom_user_registration_form') }}"><i class="fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.register' | trans }}
         </a>
     {% endif %}
     {% if reset_password == true %}
         <a class="linkButton" href="{{ path('fom_user_password_form') }}"><i
-                class="fa fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans }}?</a>
+                class="fas fa-caret-right"></i>&nbsp;{{ 'fom.user.login.login.forgot_password' | trans }}?</a>
     {% endif %}
 {% endblock %}
