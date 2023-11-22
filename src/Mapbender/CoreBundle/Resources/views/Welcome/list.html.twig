@@ -6,7 +6,7 @@
 {%- if create_permission -%}
 <div class="content-box content-box-md">
   <a href="{{ path('mapbender_manager_application_new') }}">
-      <i class="fa fas fa-lg fa-plus"></i>
+      <i class="fas fa-lg fa-plus"></i>
       <span>{{ 'mb.manager.admin.application.new.title' | trans }}</span>
   </a>
 </div>
@@ -33,7 +33,7 @@
               {% else %}
                 <div class="preview-box preview-info">
                   <div class="placeholder-icon">
-                    <span class="fa fas fa-image"></span>
+                    <span class="fas fa-image"></span>
                   </div>
                 </div>
               {% endif %}
@@ -47,22 +47,22 @@
 
 {%- block item_interactions -%}
               <a class="btn btn-light" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">
-                <i class="fa fas fa-desktop"></i>
+                <i class="fas fa-desktop"></i>
               </a>
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
               {%- if is_granted('CLONE', application) -%}
                 <a class="btn btn-light" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }}">
-                  <i class="fa far fa-copy"></i>
+                  <i class="fas fa-copy"></i>
                 </a>
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
                 <a class="btn btn-light" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
-                  <i class="fa fas fa-download"></i>
+                  <i class="fas fa-download"></i>
                 </a>
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
               <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
-                <i class="fa fas fa-cog"></i>
+                <i class="fas fa-cog"></i>
               </a>
               {% endif %}
 
@@ -71,7 +71,7 @@
                     data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
                     data-token="{{ csrf_token('application_edit') }}"
                     data-toggle-flag-icons="fa-eye-slash:fa-eye">
-                    <i class="fa fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                    <i class="fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                 </span>
               {% endif %}
 
@@ -81,7 +81,7 @@
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-token="{{ csrf_token('application_delete') }}"
                       data-slug="{{ application.slug }}"
-                ><i class="fa fa-trash-o far fa-trash-alt"></i></span>
+                ><i class="fas fa-trash"></i></span>
               {% endif %}
 {%- endblock -%}
 

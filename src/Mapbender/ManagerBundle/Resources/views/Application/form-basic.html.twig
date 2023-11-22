@@ -20,10 +20,10 @@
         <div class="screenshot_img{{ _screenshot_src is empty ? ' default' }}">
             <div class="cell_edit">
                 <img alt="Load" data-load=true class="screenshot" src="{{ _screenshot_src }}" />
-                <i class="fa fas fa-image placeholder-icon"></i>
+                <i class="fas fa-image placeholder-icon"></i>
             </div>
         </div>
-        <button {{ _screenshot_src ? '' : 'disabled="disabled" ' }}class="-fn-delete btn btn-danger" title="{{ 'mb.actions.remove' | trans }}"><i class="fa fa-trash-o far fa-trash-alt"></i></button>
+        <button {{ _screenshot_src ? '' : 'disabled="disabled" ' }}class="-fn-delete btn btn-danger" title="{{ 'mb.actions.remove' | trans }}"><i class="fas fa-trash"></i></button>
     </div>
 </div>
 <div class="col-md-8 col-xs-12 col-12">

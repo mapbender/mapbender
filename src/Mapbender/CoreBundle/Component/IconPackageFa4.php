@@ -12,7 +12,7 @@ class IconPackageFa4 implements IconPackageInterface
     public function getStyleSheets()
     {
         return array(
-            'components/font-awesome/css/font-awesome.min.css',
+            'components/font-awesome/css/all.css',
         );
     }
 
@@ -51,50 +51,50 @@ class IconPackageFa4 implements IconPackageInterface
             default:
                 throw new \LogicException("Unhandled icon code " . \var_export($iconCode, true));
             case 'iconAbout':
-                $class = 'fa fas fa-users'; break;
+                $class = 'fas fa-users'; break;
             case 'iconAreaRuler':
-                $class = 'fa fas fa-crop'; break;
+                $class = 'fas fa-crop'; break;
             case 'iconInfoActive':
-                $class = 'fa fas fa-info-circle'; break;
+                $class = 'fas fa-info-circle'; break;
             case 'iconGps':
                 /** @todo FA5: confirm result is fa-map-marker-alt glyph (poked hole) */
-                $class = 'fa fas fa-map-marker-alt fa-map-marker'; break;
+                $class = 'fas fa-location-dot'; break;
             case 'iconHome':
-                $class = 'fa fas fa-home'; break;
+                $class = 'fas fa-house'; break;
             case 'iconLegend':
-                $class = 'fa fas fa-th-list'; break;
+                $class = 'fas fa-th-list'; break;
             case 'iconLogout':
-                $class = 'fa fas fa-sign-out'; break;
+                $class = 'fas fa-right-from-bracket'; break;
             case 'iconPrint':
-                $class = 'fa fas fa-print'; break;
+                $class = 'fas fa-print'; break;
             case 'iconSearch':
-                $class = 'fa fas fa-search'; break;
+                $class = 'fas fa-magnifying-glass'; break;
             case 'iconLayertree':
-                $class = 'fa fas fa-sitemap'; break;
+                $class = 'fas fa-sitemap'; break;
             case 'iconWms':
                 /** @todo FA5: prefer fa-globe-americas..? (same result as FA4 fa-globe) */
-                $class = 'fa fas fa-globe'; break;
+                $class = 'fas fa-globe'; break;
             case 'iconHelp':
-                $class = 'fa fas fa-question-circle'; break;
+                $class = 'fas fa-circle-question'; break;
             case 'iconEdit':
             case 'iconWmcEditor':
             case 'iconSketch':
-                $class = 'fa fa-edit'; break;
+                $class = 'fas fa-pen-to-square'; break;
             case 'iconWmcLoader':
-                $class = 'fa fas fa-folder-open'; break;
+                $class = 'fas fa-folder-open'; break;
             case 'iconCoordinates':
             case 'iconGpsTarget':
-                $class = 'fa fas fa-crosshairs'; break;
+                $class = 'fas fa-crosshairs'; break;
             case 'iconPoi':
-                $class = 'fa fas fa-thumbtack fa-thumb-tack'; break;
+                $class = 'fas fa-thumbtack'; break;
             case 'iconImageExport':
-                $class = 'fa fas fa-camera'; break;
+                $class = 'fas fa-camera'; break;
             case 'iconCopyright':
-                $class = 'fa far fa-copyright'; break;
+                $class = 'fas fa-copyright'; break;
             case 'iconShare':
-                $class = 'fa fas fa-share-alt'; break;
+                $class = 'fas fa-share'; break;
             case 'iconRefresh':
-                $class = 'fa fas fa-sync-alt fa-refresh'; break;
+                $class = 'fas fa-rotate'; break;
         }
         return HtmlUtil::renderTag('i', '', array(
             'class' => $class,

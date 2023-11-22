@@ -19,7 +19,7 @@
     <div class="component">
       <div class="rotation toolBarColors">
         <span class="rotate-cw toolbar-button-hover-effect clickable" data-degrees="45">{{ block('quarter_circle_arrow_svg') }}</span>
-        <span class="reset-rotation toolbar-button-hover-effect clickable" data-rotation-bias="-45"><i class="fa fa-location-arrow default-rotate-left-45"></i></span>
+        <span class="reset-rotation toolbar-button-hover-effect clickable" data-rotation-bias="-45"><i class="fas fa-location-arrow"></i></span>
         <span class="rotate-ccw toolbar-button-hover-effect clickable" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
       </div>
     </div>
@@ -28,31 +28,31 @@
   <ul class="toolPane toolBarColors list-unstyled">
     {% if 'zoom_max' in configuration.components %}
       <li class="zoom-world clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoombyworld" | trans }}">
-        <i class="fa fa-globe fas fa-globe-americas"></i>
+        <i class="fas fa-globe fas fa-globe-americas"></i>
       </li>
     {% endif %}
     {%- if 'zoom_home' in configuration.components -%}
         <li class="clickable toolbar-button-hover-effect -fn-zoom-home" title="{{ "mb.core.zoombar.zoom_home" | trans }}">
-          <i class="fa fas fa-home"></i>
+          <i class="fas fa-house"></i>
         </li>
     {%- endif -%}
     {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="zoom-in clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"><i class="fa far fa-plus-square fa-plus-square-o"></i></div>
+        <div class="zoom-in clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"><i class="fas fa-square-plus"></i></div>
         {% endif %}
         {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
         <ul class="zoomSliderLevels list-unstyled">
             {%- for _level, _scale in zoom_levels -%}
             {%- if not loop.first -%}
-            <li class="zoom-level-gap"><i class="fa fas fa-ellipsis-v"></i></li>
+            <li class="zoom-level-gap"><i class="fa-solid fa-ellipsis-vertical"></i></li>
             {%- endif -%}
-            <li class="clickable toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"><i class="fa far fa-circle"></i></li>
+            <li class="clickable toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"><i class="fas fa-circle"></i></li>
             {%- endfor -%}
         </ul>
         {% endif %}
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="zoom-out clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"><i class="fa far fa-minus-square fa-minus-square-o"></i></div>
+        <div class="zoom-out clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"><i class="fas fa-square-minus"></i></div>
         {% endif %}
       </li>
     {% endif %}

@@ -21,9 +21,9 @@
             <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : instance.id}) }}">
             {%- endif -%}
                 {%- if instance.layerset -%}
-                <span title="{{ 'mb.terms.sourceinstance.bound.singular' | trans }}"><i class="fa fas fa-anchor"></i></span>&nbsp;
+                <span title="{{ 'mb.terms.sourceinstance.bound.singular' | trans }}"><i class="fas fa-anchor"></i></span>&nbsp;
                 {%- else -%}
-                <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}"><i class="fa fas fa-wifi"></i></span>&nbsp;
+                <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}"><i class="fas fa-wifi"></i></span>&nbsp;
                 {%- endif -%}
                 {{ assignment.instance.title | default('#' ~ assignment.instance.id) }}
                 ({{ "mb.terms.layerset.singular" | trans }} {{ layerset.title | default(layerset.id) }})

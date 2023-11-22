@@ -29,7 +29,7 @@
                     <td class="theme-settings text-nowrap text-end">
                         {{- form_widget(theme.useTheme, {'label_attr': {'class': 'checkbox-inline'}}) -}}
                         <span class="item-opened clickable" title="{{ theme.opened.vars.attr.title | trans }}">
-                            <i class="fa fas fa-fw {{ theme.opened.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
+                            <i class="fas fa-fw {{ theme.opened.vars.data ? 'fa-folder-open' : 'fa-folder' }}"></i>
                             <span class="hidden">{{ form_widget(theme.opened) }}</span>
                         </span>
                     </td>

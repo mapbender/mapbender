@@ -6,7 +6,7 @@
   </div>
   <div class="col-xs-6 col-6 text-end">
     <span class="-fn-add-layerset hover-highlight-effect" data-url="{{ path("mapbender_manager_layerset_new", {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.layerset.add' | trans}}">
-      <i class="fa fas fa-2x fa-plus"></i>
+      <i class="fas fa-2x fa-plus"></i>
     </span>
   </div>
 </div>
@@ -26,12 +26,12 @@
                 <a href="#" class="-fn-add-instance hover-highlight-effect"
                    title="{{ "mb.manager.admin.instance.add" | trans }}"
                    data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}">
-                  <i class="fa fas fa-plus"></i>
+                  <i class="fas fa-plus"></i>
                 </a>
                 <a href="#" class="-fn-edit-layerset hover-highlight-effect"
                    title="{{ "mb.manager.admin.layerset.edit" | trans }} {{layerset.title}}"
                    data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}">
-                    <i class="fa fas fa-cog"></i>
+                    <i class="fas fa-cog"></i>
                 </a>
                 <span>
                   <input id="toggle-layerset-selected-{{ layerset.id }}" type="checkbox"
@@ -40,11 +40,11 @@
                      data-url="{{ path('mapbender_manager_layerset_setselected', {layerset: layerset}) }}"
                      {{- layerset.selected ? ' checked' : '' -}}>
                   <label for="toggle-layerset-selected-{{ layerset.id }}"
-                         class="fa fas fa-square-o checkbox-icon-toggled-label-off hover-highlight-effect"
+                         class="fas fa-square checkbox-icon-toggled-label-off hover-highlight-effect"
                          title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.unselectedtoc.help' | trans -}}"
                   ></label>
                   <label for="toggle-layerset-selected-{{ layerset.id }}"
-                         class="fa fas fa-check-square-o checkbox-icon-toggled-label-on hover-highlight-effect"
+                         class="fas fa-check-square checkbox-icon-toggled-label-on hover-highlight-effect"
                          title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc.help' | trans -}}"
                   ></label>
                 </span>
@@ -52,7 +52,7 @@
                    title="{{ "mb.manager.admin.layerset.delete.title" | trans }} {{layerset.title}}"
                    data-token="{{ csrf_token('layerset_delete') }}"
                    data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}">
-                    <i class="fa fa-trash-o far fa-trash-alt"></i>
+                    <i class="fas fa-trash"></i>
                 </a>
                 {%- endapply -%}
                 </p>
@@ -94,9 +94,9 @@
                 <td class="sourceColumn"><a href="{{ path('mapbender_manager_repository_view', {sourceId: instance.source.id}) }}">#{{ instance.source.id }} {{ instance.source.title }}</a></td>
                 <td class="text-nowrap"
                   {%- if _is_reusable %}
-                    title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fa fas fa-wifi" ></i>
+                    title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fas fa-wifi" ></i>
                   {%- else -%}
-                     title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fa fas fa-anchor"></i>
+                     title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fas fa-anchor"></i>
                   {%- endif -%}
                   &nbsp;{{ instance.source.type }}</td>
                 <td class="iconColumn">
@@ -106,17 +106,17 @@
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"
                        data-token="{{ csrf_token('layerset') }}"
                        data-url="{{ _toggle_url }}">
-                    <i class="fa fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                    <i class="fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </a>
                   {%- if _edit_url -%}
-                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fa fas fa-cog"></i></a>
+                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-cog"></i></a>
                   {%- endif -%}
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
                      title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}"
                      data-token="{{ csrf_token('layerset') }}"
                      data-url="{{ _delete_url }}">
-                    <i class="fa fa-trash-o far fa-trash-alt"></i>
+                    <i class="fas fa-trash"></i>
                   </a>
                   {%- endapply -%}
                 </td>

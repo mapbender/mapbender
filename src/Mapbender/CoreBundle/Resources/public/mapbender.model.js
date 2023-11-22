@@ -781,7 +781,7 @@ window.Mapbender.MapModelOl4 = (function() {
             var def = $.Deferred();
             // Always make a new clone of the template
             var $popup = $(
-                '<div class="mbmappopup"><span class="close-btn -fn-close"><i class="fa fas fa-times"></i></span></div>'
+                '<div class="mbmappopup"><span class="close-btn -fn-close"><i class="fas fa-times"></i></span></div>'
             );
             $popup.append(content);
             $popup.append('<div class="clear"></div>');

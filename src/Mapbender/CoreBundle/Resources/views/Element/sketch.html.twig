@@ -17,7 +17,7 @@
         {% endif %}
         </div>
         <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-outline-secondary -fn-tool-off">
-            <i class="fa fas fa-stop"></i>
+            <i class="fas fa-stop"></i>
         </button>
     </div>
     <div class="mb-3 -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
@@ -30,7 +30,7 @@
             {%- if allow_custom_color -%}
             <div class="btn-group btn-group-sm btn-group-sm-square ms-2">
                 <button type="button" class="btn btn-outline-secondary color-select custom-color-select" disabled><i class="color-preview">&nbsp;</i></button>
-                <button type="button" class="-fn-color-customize btn btn-outline-secondary"><i class="fa fas fa-fw fa-caret-down"></i></button>
+                <button type="button" class="-fn-color-customize btn btn-outline-secondary"><i class="fas fa-caret-down fa-fw"></i></button>
             </div>
             {%- endif -%}
         </div>
@@ -54,7 +54,7 @@
     <table class="table table-striped geometry-table">
         <tr class="geometry-item hidden" data-id="">
             <td class="compact row-marker">
-                <i class="fa fas fa-fw fa-angle-double-right"></i>
+                <i class="fas fa-angles-right fa-fw"></i>
             </td>
             <td class="geometry-name"></td>
             <td class="geometry-actions compact text-nowrap">
