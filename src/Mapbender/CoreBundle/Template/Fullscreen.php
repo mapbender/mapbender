@@ -4,9 +4,6 @@ namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ContentSettingsType;
-use Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType;
-use Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
@@ -126,12 +123,10 @@ class Fullscreen extends Template
     {
         switch ($regionName) {
             case 'sidepane':
-                return SidepaneSettingsType::class;
+                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
             case 'toolbar':
             case 'footer':
-                return ToolbarSettingsType::class;
-            case 'content':
-                return ContentSettingsType::class;
+                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
             default:
                 return null;
         }
@@ -152,11 +147,6 @@ class Fullscreen extends Template
                     'align' => 'left',
                     'closed' => false,
                 );
-            case 'content':
-                return [
-                    "splashscreen" => true,
-                    "autohide_splashscreen" => true,
-                ];
             default:
                 return parent::getRegionPropertiesDefaults($regionName);
         }

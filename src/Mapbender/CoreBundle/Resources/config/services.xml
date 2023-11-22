@@ -133,12 +133,6 @@
             <tag name="form.type" />
             <argument>%mapbender.responsive.containers%</argument>
         </service>
-        <service id="form.type.template.fullscreen.content_settings"
-                 class="Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ContentSettingsType"
-                 lazy="true">
-            <tag name="form.type" />
-            <argument type="service" id="translator" />
-        </service>
         <service id="form.type.template.sidepane_settings" class="Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType">
             <tag name="form.type" />
             <argument>%mapbender.responsive.containers%</argument>
