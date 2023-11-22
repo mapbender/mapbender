@@ -16,7 +16,7 @@ trait MapbenderTypeTrait
     public function createInlineHelpText(array $typeConfiguration, TranslatorInterface $trans): array
     {
         if (empty($typeConfiguration['help'])) return $typeConfiguration;
-        $typeConfiguration['help'] = '<i class="fa-question-circle" data-bs-toggle="popover" data-bs-content="'
+        $typeConfiguration['help'] = '<i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="'
             . htmlspecialchars( $trans->trans($typeConfiguration['help']))
             . '" data-bs-placement="left" data-bs-html="true"></i>';
         $typeConfiguration['help_html'] = true;

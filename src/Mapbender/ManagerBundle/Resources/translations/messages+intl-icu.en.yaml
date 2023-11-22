@@ -73,6 +73,8 @@ mb:
       created_reusable: A new shared instance has been created
     application:
       persistentView: Persistent map state
+      splashscreen: Show Splashscreen
+      splashscreen_autohide: Auto-hide Splashscreen
     admin:
       sources: Sources
       csrf_token_invalid: Invalid CSRF token.

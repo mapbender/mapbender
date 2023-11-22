@@ -1,15 +1,23 @@
 <?php
 namespace Mapbender\ManagerBundle\Form\Type;
 
+use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class ApplicationType extends AbstractType
 {
+    use MapbenderTypeTrait;
+    public function __construct(private TranslatorInterface $trans) {
+
+    }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -79,6 +87,13 @@ class ApplicationType extends AbstractType
                 'required' => false,
                 'label' => 'mb.manager.application.persistentView',
             ))
+            ->add('splashscreen', CheckboxType::class, $this->createInlineHelpText([
+                'label' => 'mb.manager.application.splashscreen',
+                //'help' => "If true, while an application is loading, a splashscreen is shown using the branding logo and the application's title and description"
+            ], $this->trans))->add('autohideSplashscreen', CheckboxType::class, $this->createInlineHelpText([
+                'label' => 'mb.manager.application.splashscreen_autohide',
+                //'help' => "If true, the splashscreen will be automatically dismissed once the application is ready for user interaction. Otherwise, the user needs to click once to dismiss the splashscreen."
+            ], $this->trans))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))
