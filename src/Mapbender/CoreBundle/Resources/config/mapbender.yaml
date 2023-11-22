@@ -20,3 +20,7 @@ parameters:
     mapbender.sitelinks: []
 
     mapbender.asset_overrides: ~
+    mapbender.icons.disable_default: false
+    mapbender.icons.disable_default_fa: false
+    mapbender.icons.custom: ~
+

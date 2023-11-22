@@ -13,9 +13,17 @@ use Mapbender\Utils\HtmlUtil;
  */
 class IconPackageMbIcons implements IconPackageInterface
 {
-    public function getChoices()
+    protected bool $showDefaultIcons = true;
+
+    public function __construct(bool $disableDefaultIcons)
     {
-        return array(
+        $this->showDefaultIcons = !$disableDefaultIcons;
+    }
+
+    public function getChoices(): array
+    {
+        if (!$this->showDefaultIcons) return [];
+        return [
             'Layer tree' => 'icon-layer-tree',
             'Feature Info' => 'icon-feature-info',
             'Area ruler' => 'icon-area-ruler',
@@ -24,14 +32,12 @@ class IconPackageMbIcons implements IconPackageInterface
             'Image Export' => 'icon-image-export',
             'Legend' => 'icon-legend',
             'About' => 'icon-about',
-        );
+        ];
     }
 
-    public function getStyleSheets()
+    public function getStyleSheets(): array
     {
-        return array(
-            'components/mapbender-icons/style.css',
-        );
+        return ['components/mapbender-icons/style.css'];
     }
 
     public function getIconMarkup($iconCode)
@@ -45,7 +51,7 @@ class IconPackageMbIcons implements IconPackageInterface
     {
         return \in_array($iconCode, $this->getChoices());
     }
-    
+
     public function getAliases()
     {
         return array();
