@@ -28,6 +28,9 @@
     .btn {
       margin-left: 1.5em;
     }
+      &.pull-right {
+          justify-content: end;
+      }
   }
   @media screen and (max-width: 767px) {
     // Reduce button spacing to prevent overflow

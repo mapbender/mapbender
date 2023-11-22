@@ -51,6 +51,11 @@
 - Referencing templates using BundleName:: replaced by @notation and slashes (e.g. `MapbenderCoreBundle::index.html` -> `@MapbenderCore/index.html`)
 - Templating component was replaced by twig. Twig was already used, the `templating` top level setting is now gone.
 
+### FontAwesome: Updated from v4 to v6 
+- [Migration Guide](https://fontawesome.com/v6/docs/web/setup/upgrade/upgrade-from-v4)
+- Some icon class names have changed. Refer to the migration guide linked above
+- Some icon styles are now only available for FontAwesome pro users. The open-source mapbender does not come with a
+  FontAwesome pro license.
 
 ### Removed OpenLayers 2 support
 OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now removed from the core. If you were using OpenLayers >= 4
