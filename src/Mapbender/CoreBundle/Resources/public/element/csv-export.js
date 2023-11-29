@@ -31,7 +31,7 @@ class CsvExport {
             }
 
             if (!colValue.length) {
-                colValue = 'NULL';
+                colValue = '""';
             } else {
                 colValue = '"' + colValue + '"';
             }
