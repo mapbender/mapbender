@@ -1,5 +1,8 @@
 :root {
     --primary: #079ee0;
+    --splashscreen-border: none;
+    --splashscreen-border-radius: 25px;
+    --splashscreen-background: rgba(255,255,255,0.8);
 }
 .splashscreen__wrapper {
     background-color: rgba(255, 255, 255, .7);
@@ -14,14 +17,15 @@
 .splashscreen {
     margin: 0 auto;
     padding: 10px;
-    border: solid 2px #aaa;
-    background-color: #ffffff;
+    background-color: var(--splashscreen-background);
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
     max-width: 80%;
     max-height: 100%;
+    border: var(--splashscreen-border);
+    border-radius: var(--splashscreen-border-radius);
 }
 
 .splashscreen__img {
@@ -85,8 +89,8 @@
     top: calc(var(--loadingspinner-size) * 0.14);
     left: calc(var(--loadingspinner-size) * 0.14);
     border-radius: 50%;
-    border: calc(var(--loadingspinner-size) * 0.08) solid #000;
-    border-color: var(--primary) transparent var(--primary) transparent;
+    border: calc(var(--loadingspinner-size) * 0.08) solid var(--primary);
+    border-color:  transparent var(--primary) transparent;
     animation: loadingspinner__inner 1s linear infinite;
 }
 

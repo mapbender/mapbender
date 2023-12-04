@@ -135,9 +135,6 @@ class ApplicationYAMLMapper
         if (isset($definition['splashscreen'])) {
             $application->setSplashscreen($definition['splashscreen']);
         }
-        if (isset($definition['autohide_splashscreen'])) {
-            $application->setAutohideSplashscreen($definition['autohide_splashscreen']);
-        }
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
         }

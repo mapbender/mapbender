@@ -88,11 +88,6 @@ class Application
     protected bool $splashscreen = true;
 
     /**
-     * @ORM\Column(type="boolean", name="autohide_splashscreen", options={"default": true})
-     */
-    protected bool $autohideSplashscreen = true;
-
-    /**
      * @var RegionProperties[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
      * @ORM\OrderBy({"id" = "asc"})
@@ -693,16 +688,6 @@ class Application
     public function setSplashscreen(bool $splashscreen): void
     {
         $this->splashscreen = $splashscreen;
-    }
-
-    public function isAutohideSplashscreen(): bool
-    {
-        return $this->autohideSplashscreen;
-    }
-
-    public function setAutohideSplashscreen(bool $autohideSplashscreen): void
-    {
-        $this->autohideSplashscreen = $autohideSplashscreen;
     }
 
     /**

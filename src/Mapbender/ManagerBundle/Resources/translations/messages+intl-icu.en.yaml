@@ -74,7 +74,6 @@ mb:
     application:
       persistentView: Persistent map state
       splashscreen: Show Splashscreen
-      splashscreen_autohide: Auto-hide Splashscreen
     admin:
       sources: Sources
       csrf_token_invalid: Invalid CSRF token.

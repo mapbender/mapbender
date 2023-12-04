@@ -12,6 +12,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 
 Features:
 * PHP 8.2 is now fully supported.
+* Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))

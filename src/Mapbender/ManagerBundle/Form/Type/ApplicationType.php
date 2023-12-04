@@ -90,9 +90,6 @@ class ApplicationType extends AbstractType
             ->add('splashscreen', CheckboxType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.application.splashscreen',
                 //'help' => "If true, while an application is loading, a splashscreen is shown using the branding logo and the application's title and description"
-            ], $this->trans))->add('autohideSplashscreen', CheckboxType::class, $this->createInlineHelpText([
-                'label' => 'mb.manager.application.splashscreen_autohide',
-                //'help' => "If true, the splashscreen will be automatically dismissed once the application is ready for user interaction. Otherwise, the user needs to click once to dismiss the splashscreen."
             ], $this->trans))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
