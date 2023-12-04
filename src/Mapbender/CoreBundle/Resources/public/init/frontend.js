@@ -35,7 +35,7 @@
     });
 
     $(document).one('click', '.js-splashscreen', function(e){
-        $(e.target).remove();
+        $(e.target).closest('.js-splashscreen').remove();
     });
 
 })(jQuery);
