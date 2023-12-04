@@ -424,6 +424,7 @@ $.extend(Mapbender, (function($) {
         // Tell the world that all widgets have been set up. Some elements will
         // need this to make calls to other element's widgets
         $(document).trigger('mapbender.setupfinished');
+        $('.js-splashscreen-autohide').addClass("removed").one("transitionend", (e) => $(e.target).remove());
     }
 
     return {

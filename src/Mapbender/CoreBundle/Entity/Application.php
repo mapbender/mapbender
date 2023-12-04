@@ -15,10 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Application entity
  *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
- * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
- *
  * @UniqueEntity("title")
  * @UniqueEntity("slug")
  * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
@@ -33,8 +29,6 @@ class Application
     /** Databased application type */
     const SOURCE_DB = 2;
 
-    /** @deprecated; use MAP_ENGINE_CURRENT */
-    const MAP_ENGINE_OL4 = 'ol4';
     const MAP_ENGINE_CURRENT = 'current';
 
     /** @var array YAML roles */
@@ -87,6 +81,11 @@ class Application
      * @var bool
      */
     protected $persistentView = false;
+
+    /**
+     * @ORM\Column(type="boolean", name="splashscreen", options={"default": true})
+     */
+    protected bool $splashscreen = true;
 
     /**
      * @var RegionProperties[]|ArrayCollection
@@ -673,12 +672,22 @@ class Application
      */
     public function setMapEngineCode($mapEngineCode)
     {
-        if ($mapEngineCode === self::MAP_ENGINE_OL4) {
+        if ($mapEngineCode !== self::MAP_ENGINE_CURRENT) {
             $mapEngineCode = Application::MAP_ENGINE_CURRENT;
-            @trigger_error("Engine code 'ol4' is deprecated, use {$mapEngineCode} instead", E_USER_DEPRECATED);
+            @trigger_error("Currently, only {$mapEngineCode} is supported", E_USER_DEPRECATED);
         }
         $this->map_engine_code = $mapEngineCode;
         return $this;
+    }
+
+    public function isSplashscreen(): bool
+    {
+        return $this->splashscreen;
+    }
+
+    public function setSplashscreen(bool $splashscreen): void
+    {
+        $this->splashscreen = $splashscreen;
     }
 
     /**

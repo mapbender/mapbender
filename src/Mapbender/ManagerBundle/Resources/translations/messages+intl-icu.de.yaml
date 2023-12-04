@@ -73,6 +73,8 @@ mb:
       created_reusable: Neue freie Instanz erzeugt
     application:
       persistentView: Kartenzustand merken
+      splashscreen: Ladescreen anzeigen
+      splashscreen_autohide: Ladescreen automatisch ausblenden
     admin:
       csrf_token_invalid: CSRF-Token ungültig.
       sources: Datenquellen

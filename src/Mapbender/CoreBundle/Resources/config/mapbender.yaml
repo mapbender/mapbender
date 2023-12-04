@@ -11,6 +11,8 @@ parameters:
     branding.project_name: ~
     branding.project_version: ~
     branding.logo: ~                # public-relative path
+    branding.splashscreen_image: ~  # public-relative path. Falls back to branding.logo.
+    # splashscreen_image can be an object with application id as keys and "default" as the default image
 
     branding.login_backdrop: ~
     branding.login_backdrop_hq: ~

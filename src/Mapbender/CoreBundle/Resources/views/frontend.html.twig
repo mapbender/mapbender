@@ -4,23 +4,46 @@
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/fonts/open-sans/open-sans.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/mapbender.splashscreen.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/fonts/open-sans/open-sans.css') }}"/>
     <link rel="stylesheet" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}"/>
     <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') }}"/>
 {% endblock %}
 
 {% block trans %}
-    {{parent()}}
+    {{ parent() }}
     <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
 {% endblock %}
 
 {% block js %}
     <script type="text/javascript">window.applicationConfigUrl = '{{ path('mapbender_core_application_configuration', {'slug': application.slug}) }}';</script>
-    {{parent()}}
+    {{ parent() }}
     <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/mapbendercore/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}
+    {% block splash_screen %}
+        {% if application.splashscreen is defined and application.splashscreen %}
+        <div id="splash-screen" class="splashscreen__wrapper js-splashscreen js-splashscreen-autohide">
+            <div class="splashscreen">
+                {% if fom.splashscreen_image[application.slug] is defined %}
+                    <img class="splashscreen__img" src="{{ asset(fom.splashscreen_image[application.slug]) }}" alt="">
+                {% else %}
+                    <img class="splashscreen__img" src="{{ asset(fom.splashscreen_image.default) }}" alt="">
+                {% endif %}
+                <h1 class="splashscreen__title">{{ application.title }}</h1>
+                <div class="loadingspinner">
+                    <div class="loadingspinner__inner">
+                        <div></div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endblock %}
     {% block frontend_content %}{% endblock %}
 {% endblock %}

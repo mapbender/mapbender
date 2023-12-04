@@ -38,10 +38,12 @@ class ProvideBrandingPass implements CompilerPassInterface
         $name = $this->selectProjectName($container);
         $version = $this->selectProjectVersion($container);
         $logo = $this->selectLogo($container);
+        $splashscreenLogo = $this->selectSplashscreenImage($container, $logo);
         $container->setParameter('branding.project_name', $name);
         $container->setParameter('branding.project_version', $version);
         $container->setParameter('branding.logo', $logo);
-        $this->forwardSelectionToFom($container, $name, $version, $logo);
+        $container->setParameter('branding.splashscreen_image', $splashscreenLogo);
+        $this->forwardSelectionToFom($container, $name, $version, $logo, $splashscreenLogo);
     }
 
     public static function selectProjectName(ContainerInterface $container)
@@ -113,12 +115,28 @@ class ProvideBrandingPass implements CompilerPassInterface
         }
     }
 
-    public static function forwardSelectionToFom(ContainerBuilder $container, $name, $version, $logo)
+    public static function selectSplashscreenImage(ContainerBuilder $container, string $fallback)
+    {
+        $image = null;
+        if ($container->hasParameter('branding.splashscreen_image')) {
+            $image = $container->getParameter('branding.splashscreen_image');
+        }
+        if (!$image) return ["default" => $fallback];
+        if (is_string($image)) return ["default" => $image];
+        if (!is_array($image)) throw new \Exception("Parameter branding.splashscreen_image must be either a string or an associative array");
+        if (!array_key_exists("default", $image)) {
+            $image["default"] = $fallback;
+        }
+        return $image;
+    }
+
+    public static function forwardSelectionToFom(ContainerBuilder $container, $name, $version, $logo, $splashscreenLogo)
     {
         $fomParamReplacements = array(
             'server_name' => $name,
             'server_version' => $version,
             'server_logo' => $logo,
+            'splashscreen_image' => $splashscreenLogo,
         );
 
         $fomParam = static::getFomParameter($container);
