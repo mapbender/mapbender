@@ -62,6 +62,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
             'trans' => array(
                 'mb.core.layertree.*',
                 'mb.core.metadata.*',
+                'mb.demoapps.*',
             ),
         );
         return $assets;

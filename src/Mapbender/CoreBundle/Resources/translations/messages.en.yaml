@@ -495,3 +495,13 @@ mb:
       footer: Footer
       sidepane: Sidepane
       content: Map area
+  demoapps:
+    themes: Themes
+    backgroundThemes: Background themes
+    baseMaps: Base maps
+    aerialView: Aerial view
+    noBackground: No background
+    poi: Please take a look at this POI
+    search: Search location
+    about: About Mapbender
+

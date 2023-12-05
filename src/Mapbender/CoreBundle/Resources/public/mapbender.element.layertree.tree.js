@@ -173,7 +173,9 @@
             var $li = this.themeTemplate.clone();
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
-            $('span.layer-title:first', $li).text(layerset.getTitle() || '');
+            let title = layerset.getTitle() || '';
+            if (options && options.title) title = Mapbender.trans(options.title);
+            $('span.layer-title:first', $li).text(title);
             this._updateFolderState($li);
             this._updateThemeNode(layerset, $li);
             return $li;
