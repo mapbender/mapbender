@@ -52,7 +52,7 @@ class AboutDialog extends ButtonLike
     public static function getDefaultConfiguration()
     {
         $defaults = array_replace(parent::getDefaultConfiguration(), array(
-            "tooltip" => "About",
+            "tooltip" => "mb.core.aboutdialog.admin.tooltip",
         ));
         unset($defaults['icon']);
         return $defaults;

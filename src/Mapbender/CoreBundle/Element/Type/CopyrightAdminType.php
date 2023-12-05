@@ -37,6 +37,7 @@ class CopyrightAdminType extends AbstractType
             ))
             ->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => true,
+                'label' => 'mb.core.copyright.admin.content',
                 'constraints' => array(
                     new NotBlank(),
                     new HtmlTwigConstraint(),

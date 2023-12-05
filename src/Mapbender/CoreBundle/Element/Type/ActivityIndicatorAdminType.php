@@ -15,15 +15,19 @@ class ActivityIndicatorAdminType extends AbstractType
         $builder
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.activityindicator.admin.tooltip',
             ))
             ->add('activityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.activityindicator.admin.activityclass',
             ))
             ->add('ajaxActivityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.activityindicator.admin.ajaxactivityclass',
             ))
             ->add('tileActivityClass', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.activityindicator.admin.tileactivityclass',
             ))
         ;
     }

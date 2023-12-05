@@ -25,15 +25,19 @@ class GpsPositionAdminType extends AbstractType
             ))
             ->add('average', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.gpsposition.admin.average',
             ))
             ->add('follow', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.core.gpsposition.admin.follow',
             ))
             ->add('centerOnFirstPosition', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.core.gpsposition.admin.centeronfirstposition',
             ))
             ->add('zoomToAccuracyOnFirstPosition', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.core.gpsposition.admin.zoomtoaccuracyonfirstposition',
             ))
         ;
     }

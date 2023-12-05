@@ -23,10 +23,11 @@ class CoordinatesUtilityAdminType extends AbstractType
         $builder
             ->add('srsList', 'Mapbender\CoreBundle\Element\Type\CoordinatesUtilitySrsListType', array(
                 'required' => false,
+                'label' => 'mb.core.coordinatesutility.admin.srslist',
             ))
             ->add('zoomlevel', 'Symfony\Component\Form\Extension\Core\Type\IntegerType',
                 [
-                    'label' => "Zoom-Level",
+                    'label' => "mb.core.coordinatesutility.admin.zoomlevel",
                     'empty_data'  => 0,
                     'attr' => [
                         'type' => 'number',

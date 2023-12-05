@@ -53,6 +53,11 @@ mb:
       class:
         title: Information
         description: Information
+      admin:
+        maxcount: Max. Anzahl
+        height: Höhe
+        width: Breite
+        displaytype: Anzeigetyp
     aboutdialog:
       content:
         versionprefix: Version
@@ -66,6 +71,8 @@ mb:
         help: Hilfe
         info: Info
         about: Info-Dialog
+      admin:
+        tooltip: About
     simplesearch:
       input:
         searchterm: Suchbegriff
@@ -213,6 +220,11 @@ mb:
         gps: GPS
         position: Position
         button: Button
+      admin:
+        average: Durchschnitt
+        follow: Folge
+        centeronfirstposition: Zentrieren auf der ersten Position
+        zoomtoaccuracyonfirstposition: Zoom auf Genauigkeit bei der ersten Position
     layertree:
       const:
         outofscale: Ebene außerhalb des Maßstabs
@@ -261,15 +273,27 @@ mb:
       tag:
         activity: Aktivität
         indicator: Indikator
+      admin:
+        tooltip: Tooltip
+        activityclass: Aktivitätsklasse
+        ajaxactivityclass: Ajax
+        tileactivityclass: Tile
     button:
       class:
         title: Button
         description: Button
       tag:
         button: Button
+      admin:
+        click: Klicken
+        action: Aktion
+        deactivate: Deaktivieren
     controlbutton:
       class:
         description: Steuert ein anderes Element
+      admin:
+        group: Gruppe
+        target: Ziel
     linkbutton:
       class:
         title: Link
@@ -292,6 +316,8 @@ mb:
       tag:
         copyright: Copyright
         dialog: Dialog
+      admin:
+        content: Inhalt
     map:
       class:
         title: Karte
@@ -391,6 +417,9 @@ mb:
           centermap: Karte zentrieren
       backend:
         addMapSrsList: Koordinatensysteme von der Karte hinzufügen
+      admin:
+        srslist: SRS Liste
+        zoomlevel: Zoomstufe
     admin:
       poi:
         label:
@@ -448,6 +477,9 @@ mb:
       class:
         title: HTML
         description: HTML hinzufügen
+      admin:
+        content: Inhalf
+        classes: Klassen
     entity:
       app:
         screenshotfile:
@@ -490,6 +522,12 @@ mb:
         description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
       admin:
         open_in_new_tab: In neuem Tab öffnen
+    coordinatesdesplay:
+      admin:
+        numdigits: Zahlenziffern
+        empty: Leer
+        prefix: Präfix
+        separator: Trennzeichen
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:

@@ -53,6 +53,11 @@ mb:
       class:
         title: FeatureInfo
         description: FeatureInfo
+      admin:
+        maxcount: Max count
+        height: Height
+        width: Width
+        displaytype: Display type
     aboutdialog:
       content:
         versionprefix: v.
@@ -66,6 +71,8 @@ mb:
         help: help
         info: info
         about: about
+      admin:
+        tooltip: About
     simplesearch:
       input:
         searchterm: Search term
@@ -212,6 +219,11 @@ mb:
         gps: GPS
         position: position
         button: button
+      admin:
+        average: Average
+        follow: Follow
+        centeronfirstposition: Center on first position
+        zoomtoaccuracyonfirstposition: Zoom to accuracy on first position
     layertree:
       const:
         outofscale: Layer out of scale
@@ -259,15 +271,27 @@ mb:
       tag:
         activity: activity
         indicator: indicator
+      admin:
+        tooltip: Tooltip
+        activityclass: Activity class
+        ajaxactivityclass: Ajax
+        tileactivityclass: Tile
     button:
       class:
         title: Button
         description: Button
       tag:
         button: button
+      admin:
+        click: Click
+        action: Action
+        deactivate: Deactivate
     controlbutton:
       class:
         description: Controls another element
+      admin:
+        group: Group
+        target: Target
     linkbutton:
       class:
         title: Link
@@ -290,6 +314,8 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialog
+      admin:
+        content: Content
     map:
       class:
         title: Map
@@ -389,6 +415,9 @@ mb:
           centermap: Center map
       backend:
         addMapSrsList: Add map's srs list
+      admin:
+        srslist: SRS List
+        zoomlevel: Zoom level
     admin:
       poi:
         label:
@@ -446,6 +475,9 @@ mb:
       class:
         title: HTML
         description: Add some HTML
+      admin:
+        content: Content
+        classes: Classes
     entity:
       app:
         screenshotfile:
@@ -488,6 +520,12 @@ mb:
         description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
+    coordinatesdesplay:
+      admin:
+        numdigits: Number Digits
+        empty: Empty
+        prefix: Prefix
+        separator: Separator
   template:
     toolbar_menu_tooltip: Toggle menu
     region:

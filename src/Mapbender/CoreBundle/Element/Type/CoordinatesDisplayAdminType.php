@@ -15,6 +15,7 @@ class CoordinatesDisplayAdminType extends AbstractType
         $builder
             ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
+                'label' => 'mb.core.coordinatesdesplay.admin.numdigits',
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -23,14 +24,17 @@ class CoordinatesDisplayAdminType extends AbstractType
             ->add('empty', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,
+                'label' => 'mb.core.coordinatesdesplay.admin.empty',
             ))
             ->add('prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,
+                'label' => 'mb.core.coordinatesdesplay.admin.prefix',
             ))
             ->add('separator', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'trim' => false,
+                'label' => 'mb.core.coordinatesdesplay.admin.separator',
             ))
         ;
     }
