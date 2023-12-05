@@ -235,8 +235,8 @@ mb:
       admin:
         average: Durchschnitt
         follow: Folge
-        centeronfirstposition: Zentrieren auf der ersten Position
-        zoomtoaccuracyonfirstposition: Zoom auf Genauigkeit bei der ersten Position
+        centeronfirstposition: Zentriere auf die erste Position
+        zoomtoaccuracyonfirstposition: Zoom auf Genauigkeit der ersten Position
     layertree:
       const:
         outofscale: Ebene außerhalb des Maßstabs
@@ -286,9 +286,9 @@ mb:
         panel: Panel
       admin:
         components: Komponenten
-        rotation: Drehungen
+        rotation: Drehen
         zoommax: Zoom auf maximale Ausdehnung
-        zoominout: Rein- und rauszoomen
+        zoominout: Rein- und Rauszoomen
         zoomslider: Zoom-Schieberegler
     activityindicator:
       class:
@@ -397,7 +397,7 @@ mb:
         srs: SRS
         selector: Auswahl
       admin:
-        srsselector: SSR-Wähler
+        srsselector: SRS-Auswahl
         tooltip: Tooltip
     ShareUrl:
       class:
@@ -455,7 +455,7 @@ mb:
       backend:
         addMapSrsList: Koordinatensysteme von der Karte hinzufügen
       admin:
-        srslist: SRS Liste
+        srslist: SRS-Liste
         zoomlevel: Zoomstufe
     admin:
       poi:
