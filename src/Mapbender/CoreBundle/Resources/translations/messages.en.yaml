@@ -183,6 +183,7 @@ mb:
         help_help: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user's language
         stroke_width_while_drawing: Line width while drawing
         only_for_area: only relevant if geometry is set to <i>Area</i>
+        style: Style
     printclient:
       label:
         template: Template
