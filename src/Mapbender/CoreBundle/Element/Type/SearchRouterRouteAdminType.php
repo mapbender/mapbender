@@ -13,10 +13,10 @@ class SearchRouterRouteAdminType extends AbstractType
     {
         $builder->addModelTransformer(new SearchRouterRouteTransformer());
         $builder->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
-            'label' => 'Title',
+            'label' => 'mb.core.searchrouterroute.admin.title',
         ));
         $yamlConfigType = $builder->create('configuration', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
-            'label' => 'Configuration',
+            'label' => 'mb.core.searchrouterroute.admin.configuration',
         ));
         $yamlConfigType->addViewTransformer(new YAMLDataTransformer(20));
         $builder->add($yamlConfigType);

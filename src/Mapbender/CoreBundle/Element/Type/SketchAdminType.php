@@ -26,6 +26,7 @@ class SketchAdminType extends AbstractType
             ))
             ->add('geometrytypes', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
+                'label' => 'mb.core.sketch.admin.geometrytypes',
                 'multiple' => true,
                 'choices' => array(
                     'mb.core.sketch.geometrytype.point' => 'point',

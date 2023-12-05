@@ -138,6 +138,10 @@ mb:
       tag:
         search: search
         router: router
+      admin:
+        width: Width
+        height: Height
+        routes: Routes
     poi:
       sharepoi: Share POI
       text:
@@ -264,6 +268,12 @@ mb:
         control: control
         navigation: navigation
         panel: panel
+      admin:
+        components: Components
+        rotation: Rotation
+        zoommax: Zoom to maximum extent
+        zoominout: Zoom in and out
+        zoomslider: Zoom slider
     activityindicator:
       class:
         title: Activity indicator
@@ -334,6 +344,9 @@ mb:
       tag:
         scale: scale
         bar: bar
+      admin:
+        maxwidth: Maximum width
+        units: Unit
     scaledisplay:
       label: Scale
       scale_prefix: Prefix
@@ -353,6 +366,8 @@ mb:
       tag:
         scale: scale
         selector: selector
+      admin:
+        tooltip: Tooltip
     srsselector:
       class:
         title: SRS selector
@@ -360,6 +375,8 @@ mb:
       tag:
         srs: SRS
         selector: selector
+      admin:
+        srsselector: SRS selector
     ShareUrl:
       class:
         title: Share URL
@@ -505,6 +522,7 @@ mb:
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color
+        geometrytypes: Geometry types
     redlining:
       class:
         title: Sketches
@@ -526,6 +544,10 @@ mb:
         empty: Empty
         prefix: Prefix
         separator: Separator
+    searchrouterroute:
+      admin:
+        title': Title
+        configuration: Configuration
   template:
     toolbar_menu_tooltip: Toggle menu
     region:
