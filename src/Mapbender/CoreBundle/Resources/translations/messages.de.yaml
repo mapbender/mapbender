@@ -58,6 +58,8 @@ mb:
         height: Höhe
         width: Breite
         displaytype: Anzeigetyp
+        tabs: Reiter
+        accordion: Akkordeon
     aboutdialog:
       content:
         versionprefix: Version
@@ -70,9 +72,9 @@ mb:
       tag:
         help: Hilfe
         info: Info
-        about: Info-Dialog
+        about: Über
       admin:
-        tooltip: About
+        tooltip: Über
     simplesearch:
       input:
         searchterm: Suchbegriff
@@ -155,6 +157,10 @@ mb:
         description: Element über das eine Treffpunkt generiert und verschickt werden kann.
       label:
         text: Bearbeiten Sie den Text
+      admin:
+        body: Körper
+        gps: gps
+        placeholder: Bitte schauen Sie sich diesen POI an
     basesourceswitcher:
       error:
         sourcenotavailable: Der Dienst mit der ID %id% ist nicht vorhanden.
@@ -210,6 +216,7 @@ mb:
         visibility.closed_initially: Initial geschlossen
         visibility.open_initially: Initial offen
         visibility.open_permanent: Dauerhaft offen
+        layerset: Layerset
     metadata:
       popup:
         title: Metadaten
@@ -255,6 +262,12 @@ mb:
       class:
         title: Ebenenbaum
         description: Baum der Karten-Ebenen
+      admin:
+        layerremove: Ebene entfernen
+        opacity: Deckkraft
+        zoomtolayer: Auf Ebene zoomen
+        metadata: Metadaten
+        dimension: Abmessung
     zoombar:
       zoombybox: Ausschnitt aufziehen
       zoombyworld: Zoom auf gesamte Ausdehnung
@@ -287,8 +300,8 @@ mb:
       admin:
         tooltip: Tooltip
         activityclass: Aktivitätsklasse
-        ajaxactivityclass: Ajax
-        tileactivityclass: Tile
+        ajaxactivityclass: Ajax Activity Class
+        tileactivityclass: Tile Activity Class
     button:
       class:
         title: Button
@@ -340,6 +353,11 @@ mb:
       srsnotfound: SRS Eigenschaften für %srslist% wurden nicht gefunden.
       admin:
         fixedZoomSteps: Feste Maßstabsstufen
+        layersets: Layersets
+        tilesize: Kachelgröße
+        SRS: SRS
+        scales: Maßstäbe (csv)
+        othersrs: Andere SRS
     scalebar:
       class:
         title: Maßstabsleiste
@@ -380,6 +398,7 @@ mb:
         selector: Auswahl
       admin:
         srsselector: SSR-Wähler
+        tooltip: Tooltip
     ShareUrl:
       class:
         title: URL teilen
@@ -483,6 +502,7 @@ mb:
           hidenottoggleable: Nicht aufklappbare Ordner ausblenden
           hideselect: Visibility bei Ordnern ausblenden
           hideinfo: Info ausblenden
+          menu: Menü
       template:
         sidepane:
           type:
@@ -491,12 +511,15 @@ mb:
               tabs: Buttons
               accordion: Akkordeon
               unstyled: Unformatiert
+      button:
+        show_label: Beschriftung anzeigen
+        label: Beschriftung anzeigen
     htmlelement:
       class:
         title: HTML
         description: HTML hinzufügen
       admin:
-        content: Inhalf
+        content: Inhalt
         classes: Klassen
     entity:
       app:
@@ -541,16 +564,22 @@ mb:
         description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
       admin:
         open_in_new_tab: In neuem Tab öffnen
-    coordinatesdesplay:
+    coordinesdisplay:
       admin:
-        numdigits: Zahlenziffern
-        empty: Leer
+        numdigits: Anzahl der Nachkommastellen
+        empty: Leere Anzeige
         prefix: Präfix
         separator: Trennzeichen
+        label: Beschriftung anzeigen
     searchrouterroute:
       admin:
         title': Titel
         configuration: Konfiguration
+    instanceset:
+      admin:
+        title: Titel
+        group: Gruppe
+        instances: Instanzen
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:

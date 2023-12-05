@@ -21,9 +21,11 @@ class POIAdminType extends AbstractType
             ))
             ->add('body', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.core.poi.admin.body',
             ))
             ->add('gps', 'Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType', array(
                 'required' => false,
+                'label' => 'mb.core.poi.admin.gps',
                 'include_buttons' => true,      // NOTE: GpsPosition is a button-type
                 'element_filter_function' => function(Element $element) {
                     return \is_a($element->getClass(), 'Mapbender\CoreBundle\Element\GpsPosition', true);

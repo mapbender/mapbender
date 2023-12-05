@@ -58,6 +58,8 @@ mb:
         height: Height
         width: Width
         displaytype: Display type
+        tabs: Tabs
+        accordion: Accordion
     aboutdialog:
       content:
         versionprefix: v.
@@ -154,6 +156,10 @@ mb:
         description: Create a POI for sharing
       label:
         text: Text
+      admin:
+        body: Body
+        gps: gps
+        placeholder: Please take a look at this POI
     basesourceswitcher:
       error:
         sourcenotavailable: A source with id %id% is not available.
@@ -209,6 +215,7 @@ mb:
         visibility.closed_initially: Initially closed
         visibility.open_initially: Initially open
         visibility.open_permanent: Permanently open
+        layerset: Layerset
     metadata:
       popup:
         title: Metadata
@@ -253,6 +260,12 @@ mb:
       class:
         title: Layer tree
         description: Tree of map's layers
+      admin:
+        layerremove: Remove layer
+        opacity: Opacity
+        zoomtolayer: Zoom to layer
+        metadata: Metadata
+        dimension: Dimension
     zoombar:
       zoombybox: Zoom by box
       zoombyworld: Zoom by world
@@ -338,6 +351,11 @@ mb:
       srsnotfound: SRS properties for %srslist% are not found
       admin:
         fixedZoomSteps: Fixed zoom steps
+        layersets: Layersets
+        tilesize: Tile size
+        SRS: SRS
+        scales: Scales (csv)
+        othersrs: Other SRS
     scalebar:
       class:
         title: Scale bar
@@ -378,6 +396,7 @@ mb:
         selector: selector
       admin:
         srsselector: SRS selector
+        tooltip: Tooltip
     ShareUrl:
       class:
         title: Share URL
@@ -481,6 +500,7 @@ mb:
           hidenottoggleable: Hide not toggleable
           hideselect: Hide visibility by folders
           hideinfo: Hide info
+          menu: Menu
       template:
         sidepane:
           type:
@@ -489,6 +509,9 @@ mb:
               tabs: Buttons
               accordion: Accordion
               unstyled: Unstyled
+      button:
+        show_label: Show label
+        label: Show label
     htmlelement:
       class:
         title: HTML
@@ -539,16 +562,22 @@ mb:
         description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
-    coordinatesdesplay:
+    coordinesdisplay:
       admin:
-        numdigits: Number Digits
+        numdigits: Number of decimal places
         empty: Empty
         prefix: Prefix
         separator: Separator
+        label: Show label
     searchrouterroute:
       admin:
         title': Title
         configuration: Configuration
+    instanceset:
+      admin:
+        title: Title
+        group: Group
+        instances: Instances
   template:
     toolbar_menu_tooltip: Toggle menu
     region:
