@@ -5,7 +5,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 * Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
-* FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521))
+* FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521)) ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
 * Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * Removed underscore.js. Some functions are replaced by native JS functions, some are replaced by Mapbender.Util functions ([PR#1514](https://github.com/mapbender/mapbender/pull/1514))
@@ -26,6 +26,7 @@ Bugfixes:
 
 Other:
 * \*.yml file extension changed to \*.yaml for consistency with symfony core ([PR#1513](https://github.com/mapbender/mapbender/pull/1513))
+* [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 
 ## v3.3.5
 Features:
