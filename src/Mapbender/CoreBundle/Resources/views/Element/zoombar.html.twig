@@ -33,13 +33,13 @@
     {% endif %}
     {%- if 'zoom_home' in configuration.components -%}
         <li class="clickable toolbar-button-hover-effect -fn-zoom-home" title="{{ "mb.core.zoombar.zoom_home" | trans }}">
-          <i class="fas fa-house"></i>
+          <i class="fas fa-house-chimney"></i>
         </li>
     {%- endif -%}
     {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="zoom-in clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"><i class="fas fa-square-plus"></i></div>
+        <div class="zoom-in clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomin" | trans }}"><i class="fa-regular fa-square-plus"></i></div>
         {% endif %}
         {% if 'zoom_slider' in configuration.components and zoom_levels is not empty %}
         <ul class="zoomSliderLevels list-unstyled">
@@ -52,7 +52,7 @@
         </ul>
         {% endif %}
         {% if 'zoom_in_out' in configuration.components %}
-        <div class="zoom-out clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"><i class="fas fa-square-minus"></i></div>
+        <div class="zoom-out clickable toolbar-button-hover-effect" title="{{ "mb.core.zoombar.zoomout" | trans }}"><i class="fa-regular fa-square-minus"></i></div>
         {% endif %}
       </li>
     {% endif %}

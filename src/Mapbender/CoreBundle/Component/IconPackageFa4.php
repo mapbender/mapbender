@@ -49,8 +49,12 @@ class IconPackageFa4 implements IconPackageInterface
             'POI (FontAwesome)' => 'iconPoi',
             'Image Export (FontAwesome)' => 'iconImageExport',
             'Copyright (FontAwesome)' => 'iconCopyright',
-            'Share' => 'iconShare',
+            'Share (FontAwesome)' => 'iconShare',
+            'Share Arrow(FontAwesome)' => 'iconShareArrow',
             'Refresh' => 'iconRefresh',
+            'Earth (FontAwesome)' => 'iconEarth',
+            'Map (FontAwesome)' => 'iconMap',
+            'Map Pin (FontAwesome)' => 'iconMapPin',
         ];
 
         foreach ($this->additionalIcons as $icon) {
@@ -78,11 +82,11 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconAreaRuler':
                 $class = 'fas fa-crop'; break;
             case 'iconInfoActive':
-                $class = 'fas fa-info-circle'; break;
+                $class = 'fas fa-circle-info'; break;
             case 'iconGps':
                 $class = 'fas fa-location-dot'; break;
             case 'iconHome':
-                $class = 'fas fa-house'; break;
+                $class = 'fas fa-house-chimney'; break;
             case 'iconLegend':
                 $class = 'fas fa-th-list'; break;
             case 'iconLogout':
@@ -113,9 +117,18 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconCopyright':
                 $class = 'fas fa-copyright'; break;
             case 'iconShare':
+                $class = 'fas fa-share-nodes'; break;
+            case 'iconShareArrow':
                 $class = 'fas fa-share'; break;
             case 'iconRefresh':
                 $class = 'fas fa-rotate'; break;
+            case 'iconMap':
+                $class = 'fa-regular fa-map'; break;
+            case 'iconMapPin':
+                $class = 'fas fa-map-pin'; break;
+            case 'iconEarth':
+                $class = 'fa-regular fa-earth-africa'; break;
+
         }
         }
 
