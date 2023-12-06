@@ -33,7 +33,7 @@
               {% else %}
                 <div class="preview-box preview-info">
                   <div class="placeholder-icon">
-                    <span class="fas fa-image"></span>
+                    <span class="far fa-image"></span>
                   </div>
                 </div>
               {% endif %}
@@ -47,12 +47,12 @@
 
 {%- block item_interactions -%}
               <a class="btn btn-light" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">
-                <i class="fas fa-desktop"></i>
+                <i class="fas fa-display"></i>
               </a>
               {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
               {%- if is_granted('CLONE', application) -%}
                 <a class="btn btn-light" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }}">
-                  <i class="fas fa-copy"></i>
+                  <i class="far fa-copy"></i>
                 </a>
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
@@ -62,7 +62,7 @@
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
               <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
-                <i class="fas fa-cog"></i>
+                <i class="fas fa-gear"></i>
               </a>
               {% endif %}
 
@@ -81,7 +81,7 @@
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-token="{{ csrf_token('application_delete') }}"
                       data-slug="{{ application.slug }}"
-                ><i class="fas fa-trash"></i></span>
+                ><i class="far fa-trash-can"></i></span>
               {% endif %}
 {%- endblock -%}
 
