@@ -665,7 +665,7 @@
             if ($el.is('.-fn-toggle-info')) {
                 icons = ['fa-info', 'fa-info-circle'];
             } else {
-                icons = ['far fa-square', 'far fa-square-check'];
+                icons = ['fa-square', 'fa-square-check'];
             }
             $('>i', $el)
                 .toggleClass(icons[1], !!active)
