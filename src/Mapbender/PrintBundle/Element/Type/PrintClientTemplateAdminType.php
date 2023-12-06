@@ -15,9 +15,11 @@ class PrintClientTemplateAdminType extends AbstractType
         $builder
             ->add('template', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.printclienttemplate.admin.template',
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.printclienttemplate.admin.label',
             ))
         ;
     }

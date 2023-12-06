@@ -19,6 +19,7 @@ class PrintClientQualityAdminType extends AbstractType
             ))
             ->add('label', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.printclientquality.admin.label',
             ))
         ;
     }

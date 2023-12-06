@@ -170,6 +170,9 @@ mb:
       form:
         mesage: Keine Hintergrund Definitionen vorhanden.
         instancesets: Instancesets
+      admin:
+        tooltip: Tooltip
+        instances: Instanzen
     legend:
       class:
         title: Legende
@@ -356,7 +359,7 @@ mb:
         layersets: Layersets
         tilesize: Kachelgröße
         SRS: SRS
-        scales: Maßstäbe (csv)
+        scales: Maßstäbe (komma-separiert)
         othersrs: Andere SRS
     scalebar:
       class:
@@ -455,7 +458,7 @@ mb:
       backend:
         addMapSrsList: Koordinatensysteme von der Karte hinzufügen
       admin:
-        srslist: SRS-Liste
+        srslist: SRS-Listef
         zoomlevel: Zoomstufe
     admin:
       poi:
@@ -580,6 +583,10 @@ mb:
         title: Titel
         group: Gruppe
         instances: Instanzen
+    basebutton:
+      admin:
+        tooltip: Tooltip
+        icon: Icon
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:

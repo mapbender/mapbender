@@ -18,6 +18,7 @@ class WmsLoaderAdminType extends AbstractType
     {
         $builder
             ->add('defaultFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'label' => 'mb.core.wmsloader.admin.defaultformat',
                 "choices" => array(
                     "image/png" => "image/png",
                     "image/gif" => "image/gif",
@@ -25,6 +26,7 @@ class WmsLoaderAdminType extends AbstractType
                 ),
             ))
             ->add('defaultInfoFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'label' => 'mb.core.wmsloader.admin.defaultinfoformat',
                 "choices" => array(
                     "text/html" => "text/html",
                     "text/xml" => "text/xml",

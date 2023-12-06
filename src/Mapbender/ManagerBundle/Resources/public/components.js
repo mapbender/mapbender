@@ -215,7 +215,7 @@ $(function() {
         var $permissionsTable;
         var isModified = false;
         var popupOptions = {
-            title: "Secure element",
+            title: "Mapbender.trans('mb.actions.secureelement')",
             buttons: [
                 {
                     label: Mapbender.trans('mb.actions.reset'),

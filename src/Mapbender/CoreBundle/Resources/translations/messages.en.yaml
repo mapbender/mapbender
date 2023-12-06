@@ -169,6 +169,9 @@ mb:
       form:
         mesage: No basesource set is defined.
         instancesets: Instancesets
+      admin:
+        tooltip: Tooltip
+        instances: Instances
     legend:
       class:
         title: Legend
@@ -578,6 +581,10 @@ mb:
         title: Title
         group: Group
         instances: Instances
+    basebutton:
+      admin:
+        tooltip: Tooltip
+        icon: Icon
   template:
     toolbar_menu_tooltip: Toggle menu
     region:

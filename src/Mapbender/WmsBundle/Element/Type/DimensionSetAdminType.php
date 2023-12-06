@@ -30,12 +30,14 @@ class DimensionSetAdminType extends AbstractType
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.core.dimensionset.admin.title',
                 'attr' => array(
                     'data-name' => 'title',
                 ),
             ))
             ->add('group', 'Mapbender\WmsBundle\Element\Type\DimensionSetDimensionChoiceType', array(
                 'required' => true,
+                'label' => 'mb.core.dimensionset.admin.group',
                 'multiple' => true,
                 'mapped' => true,
                 'dimensions' => $options['dimensions'],
@@ -45,6 +47,7 @@ class DimensionSetAdminType extends AbstractType
             ))
             ->add('extent', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.core.dimensionset.admin.extent',
                 'attr' => array(
                     'data-extent-range' => 'extent-range-hidden',
                 ),

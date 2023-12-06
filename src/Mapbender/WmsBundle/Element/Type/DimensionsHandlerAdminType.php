@@ -29,6 +29,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
         $builder
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.dimensionshandler.admin.tooltip',
             ))
         ;
         $builder->addEventSubscriber($this);
@@ -51,6 +52,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
         $event->getForm()
             ->add('dimensionsets', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
+                'label' => 'mb.core.dimensionshandler.admin.dimensionsets',
                 'allow_add' => !!count($dimensions),
                 'allow_delete' => true,
                 'auto_initialize' => false,

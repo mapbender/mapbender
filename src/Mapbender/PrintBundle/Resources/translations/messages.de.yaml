@@ -46,3 +46,17 @@ mb:
           choice:
             global: global
             private: privat
+  core:
+    printclient:
+      admin:
+        scales: Maßstäbe
+        fileprefix: Datei-Präfix
+        optionalfields: Optionale Felder
+        replacepattern: Muster ersetzen
+    printclienttemplate:
+      admin:
+        template: Vorlage
+        label: Label
+    printclientquality:
+      admin:
+        label: Label

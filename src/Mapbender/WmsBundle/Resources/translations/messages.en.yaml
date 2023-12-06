@@ -68,6 +68,12 @@ mb:
             layerOrder: Layer ordering
             layerOrder.standard: standard
             layerOrder.reverse: QGIS
+            exceptionformat: Exception format
+            infoformat: Format of GetFeatureInfo request
+            format': Format of the GetMap request
+            dimensions: Dimensions
+            vendorspecifics: Vendor specifics
+            layers: Layers
           vendorspecific:
             label: Vendor specific
         preview:
@@ -160,3 +166,17 @@ mb:
         description: DimensionsHandler groups and calls the dimension supported instances at the map
     dimensionsets:
       no_dimension: no dimension
+  core:
+    dimensionset:
+      admin:
+        title: Title
+        group: Group
+        extent: Extent
+    dimensionshandler:
+      admin:
+        tooltip: Tooltip
+        dimensionsets: Dimensionsets
+    wmsloader:
+      admin:
+        defaultformat: Default format
+        defaultinfoformat: Default info format
