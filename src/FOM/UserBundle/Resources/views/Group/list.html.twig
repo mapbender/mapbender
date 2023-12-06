@@ -16,7 +16,7 @@
         <td>{{ group.description }}</td>
         <td class="iconColumn">
             {% if is_granted('EDIT', group) %}
-              <a class="hover-highlight-effect"  href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"><i class="fa-solid fa-gear"></i></a>
+              <a class="hover-highlight-effect"  href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"><i class="fas fa-gear"></i></a>
             {% endif %}
             {% if is_granted('DELETE', group) %}
             <span class="-fn-delete hover-highlight-effect"
@@ -24,7 +24,7 @@
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
               data-token="{{ csrf_token('group_delete') }}"
-            ><i class="fa-regular fa-trash-can"></i></span>
+            ><i class="far fa-trash-can"></i></span>
             {% endif %}
         </td>
       </tr>

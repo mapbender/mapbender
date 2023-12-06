@@ -164,7 +164,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             $group.append($a);
             buttonsEmpty = false;
         } else {
-            loader = '<span class="loading"><i class="fa-solid fa-gear"></i></span>';
+            loader = '<span class="loading"><i class="fas fa-gear"></i></span>';
         }
         if (row.deleteUrl) {
             var deleteTitle = row.downloadUrl

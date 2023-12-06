@@ -12,7 +12,7 @@
       {%- set _popover_id = 'popover_' ~ form.vars.id -%}
       <div class="static-popover-wrap">
         <span data-toggle-target="#{{ _popover_id }}">
-          <i class="fa-solid fa-gear"></i>
+          <i class="fas fa-gear"></i>
         </span>
         <div class="popover-inner-wrap">
           <div class="popover regionConfig bs-popover-auto fade" id="{{ _popover_id }}" data-popper-placement="left">
@@ -77,7 +77,7 @@
                   <span class="editElement hover-highlight-effect clickable"
                         title="{{ 'mb.actions.edit' | trans }}"
                         data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
-                    <i class="fa-solid fa-gear"></i>
+                    <i class="fas fa-gear"></i>
                   </span>
                   {% set _aces = mapbender_manager_object_aces(element) %}
                   <span class="secureElement {% if _aces %}text-danger {% endif %}hover-highlight-effect"
@@ -93,7 +93,7 @@
                         data-slug="{{ application.slug }}"
                         data-token="{{ csrf_token('element_delete') }}"
                         data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
-                        ><i class="fa-regular fa-trash-can"></i></span>
+                        ><i class="far fa-trash-can"></i></span>
                 </td>
               </tr>
         {% else %}

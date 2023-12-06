@@ -123,11 +123,11 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconRefresh':
                 $class = 'fas fa-rotate'; break;
             case 'iconMap':
-                $class = 'fa-regular fa-map'; break;
+                $class = 'far fa-map'; break;
             case 'iconMapPin':
                 $class = 'fas fa-map-pin'; break;
             case 'iconEarth':
-                $class = 'fa-regular fa-earth-africa'; break;
+                $class = 'far fa-earth-africa'; break;
 
         }
         }

@@ -182,7 +182,7 @@
         <div class="collectionItem clear">
             {%- if form.parent.vars.allow_delete -%}
                 <a href="#" class="collectionRemove clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}">
-                    <i class="fa-regular fa-fw fa-trash-can"></i>
+                    <i class="far fa-fw fa-trash-can"></i>
                 </a>
             {%- endif -%}
             {{ form_widget(form) }}
@@ -310,7 +310,7 @@
         {% endif %}
       {%- endfor -%}
       <td class="iconColumn">
-        <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="fa-regular fa-trash-can"></i></span>
+        <span class="hover-highlight-effect -fn-delete" title="{{ 'mb.actions.remove' | trans }}"><i class="far fa-trash-can"></i></span>
       </td>
     </tr>
 {% endblock %}

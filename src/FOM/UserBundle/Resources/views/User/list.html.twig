@@ -37,7 +37,7 @@
           {% endif %}
           <td class="iconColumn">
             {% if is_granted('EDIT', user) %}
-              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fa-solid fa-gear"></i></a>
+              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fas fa-gear"></i></a>
             {% endif %}
             {% if user.id != 1 and is_granted('DELETE', user) %}
               <span class="-fn-delete hover-highlight-effect"
@@ -45,7 +45,7 @@
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"
                 data-token="{{ csrf_token('user_delete') }}"
-              ><i class="fa-regular fa-trash-can"></i></span>
+              ><i class="far fa-trash-can"></i></span>
             {% endif %}
           </td>
         </tr>
