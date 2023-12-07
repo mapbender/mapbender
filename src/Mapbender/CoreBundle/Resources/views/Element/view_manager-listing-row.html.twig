@@ -13,16 +13,16 @@
             {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
                 <i class="-fn-open-update fas fa-gear clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}"></i>
             {%- else -%}
-                <i class="-fn-open-info fa fas fa-info-circle clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.details' | trans }}"></i>
+                <i class="-fn-open-info fa fas fa-circle-info clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.details' | trans }}"></i>
             {%- endif -%}
         </span>
         {%- if _is_private or grants.deletePublic -%}
         <span class="static-popover-wrap -js-confirmation-anchor-delete">
-            <i class="-fn-delete fa fa-trash-o far fa-trash-alt clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}"></i>
+            <i class="-fn-delete fa far fa-trash-can clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}"></i>
         </span>
         {%- endif -%}
         <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}" data-diff="{{ record.encode() | json_encode }}">
-            <i class="fas fa-folder-open"></i>
+            <i class="fas fa-magnifying-glass-plus"></i>
         </a>
     </td>
 </tr>
