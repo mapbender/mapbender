@@ -301,7 +301,7 @@ window.Mapbender.WmsSource = (function () {
             var commonOptions = Object.assign({}, this._getPrintBaseOptions(), {
                 changeAxis: this._isBboxFlipped(srsName)
             });
-            for(const item of Object.values(item)) {
+            for(const item of Object.values(leafInfoMap)) {
                 if (item.state.visibility) {
                     var replaceParams = Object.assign({}, extraParams, {
                         LAYERS: item.layer.options.name,

@@ -5,7 +5,7 @@
               <i class="fas fa-folder fa-fw"></i>
           </span>
           <span class="-fn-toggle-selected clickable" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans }}">
-                <i class="fas fa-square fa-fw"></i>
+                <i class="far fa-square fa-fw"></i>
           </span>
           <span class="layer-title"></span>
         </div>
@@ -17,7 +17,7 @@
             <i class="fas fa-folder fa-fw"></i>
           </span>
           <span class="clickable -fn-toggle-selected" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}">
-              <i class="fas fa-square fa-fw"></i>
+              <i class="far fa-square fa-fw"></i>
           </span>
           <span class="clickable -fn-toggle-info" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}">
             <i class="fas fa-info fa-fw"></i>
@@ -29,7 +29,7 @@
           <span class="layer-menu-btn"><i class="fas fa-bars"></i></span>
             <div class="layer-menu hidden">
               <div class="text-end">
-                <span class="exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"><i class="fa fas fa-times"></i></span>
+                <span class="exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"><i class="fa fas fa-xmark"></i></span>
               </div>
               {% if 'opacity' in configuration.menu %}
                   <div class="layer-control-opacity layer-control-root-only">
@@ -55,7 +55,7 @@
                 <span class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
                 {% endif %}
                 {% if 'layerremove' in configuration.menu %}
-                <span class="layer-remove-btn fa fas fa-times hover-highlight-effect clickable" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+                <span class="layer-remove-btn fa fas fa-circle-xmark hover-highlight-effect clickable" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
                 {% endif %}
               </div>
             </div>

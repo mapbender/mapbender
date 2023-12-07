@@ -103,20 +103,3 @@ $layer-slider-bar-height: 5px;
     }
   }
 }
-.mb-element-layertree {
-  /** @todo FA5: remove these hacks
-      In FA5 both filled and unfilled icons
-      use the same codepoint, but a different font
-      (.fas vs .far).
-      On FA4, the filled and unfilled versions use
-      different codepoints.
-      There is no forward compatible markup that
-      works for both FA4 and FA5.
-  */
-  .far.fa-check-square:before {
-    content: "\f046";   // = (FA4 only) .fa-check-square-o
-  }
-  .far.fa-square:before {
-    content: "\f096";   // = (FA4 only) .fa-square-o
-  }
-}
