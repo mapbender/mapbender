@@ -45,7 +45,7 @@
         <ul class="zoomSliderLevels list-unstyled">
             {%- for _level, _scale in zoom_levels -%}
             {%- if not loop.first -%}
-            <li class="zoom-level-gap"><i class="fas fa-ellipsis-vertical"></i></li>
+            <li class="zoom-level-gap"><i class="far fa-ellipsis-vertical"></i></li>
             {%- endif -%}
             <li class="clickable toolbar-button-hover-effect" title="1:{{ _scale }}" data-zoom="{{ _level }}"><i class="fas fa-circle"></i></li>
             {%- endfor -%}
