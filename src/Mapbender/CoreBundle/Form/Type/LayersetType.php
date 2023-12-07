@@ -19,6 +19,7 @@ class LayersetType extends AbstractType
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'attr' => array(
                     'maxlength' => 128,
+                    'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.title',
                 ),
             ))
             ->add('selected', CheckboxType::class, array(

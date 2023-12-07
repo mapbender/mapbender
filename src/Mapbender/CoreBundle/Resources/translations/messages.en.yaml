@@ -601,4 +601,9 @@ mb:
     poi: Please take a look at this POI
     search: Search location
     about: About Mapbender
-
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Title

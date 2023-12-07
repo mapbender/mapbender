@@ -28,6 +28,7 @@ class ImportJobType extends AbstractType
     {
         $builder
             ->add('importFile', 'Symfony\Component\Form\Extension\Core\Type\FileType', array(
+                'label' => 'mb.core.importjobtype.admin.importfile',
                 'constraints' => array(
                     new NotBlank(),
                 ),

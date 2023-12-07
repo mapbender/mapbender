@@ -603,6 +603,12 @@ mb:
     poi: Bitte werfen Sie einen Blick auf diesen POI
     search: Ort suchen
     about: Über Mapbender
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Titel
 Bad credentials.: Authentifizierung fehlgeschlagen.
 User account is locked.: Benutzerkonto ist gesperrt.
 User account is disabled.: Benutzerkonto ist deaktiviert.
