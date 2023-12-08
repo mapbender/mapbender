@@ -159,12 +159,12 @@ $.widget("mapbender.mbPrintClientJobList", {
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
-            $icon = $('<i/>').addClass('fa fa-file-pdf-o');
+            $icon = $('<i/>').addClass('fa far fa-file-pdf fa-lg');
             $a.append($icon);
             $group.append($a);
             buttonsEmpty = false;
         } else {
-            loader = '<span class="loading"><i class="fas fa-gear"></i></span>';
+            loader = '<span class="loading"><i class="fa fas fa-gear fa-spin fa-lg"></i></span>';
         }
         if (row.deleteUrl) {
             var deleteTitle = row.downloadUrl
@@ -178,7 +178,7 @@ $.widget("mapbender.mbPrintClientJobList", {
                 .attr('data-id', row.id)
                 .attr('title', Mapbender.trans(deleteTitle))
             ;
-            $icon = $('<i/>').addClass('fa fa-remove');
+            $icon = $('<i/>').addClass('fa far fa-trash-can');
             $deleteSpan.append($icon);
             $group.append($deleteSpan);
             buttonsEmpty = false;
