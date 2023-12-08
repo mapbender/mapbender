@@ -71,7 +71,7 @@ mb:
             exceptionformat: Fehlerformat
             infoformat: Format der GetFeatureInfo-Anfrage
             format': Format der GetMap-Anfrage
-            dimensions: Abmessungen
+            dimensions: Dimensions
             vendorspecifics: Vendor specifics
             layers: Ebenen
           vendorspecific:
@@ -182,3 +182,22 @@ mb:
       admin:
         defaultformat: Standardformat
         defaultinfoformat: Standard-Infoformat
+    admin:
+      ? ''
+      : vendorspecifictype:
+          name: Namen
+          default: Default
+          hidden: Versteckt
+      onlineresource:
+        format: Format
+        href: href
+      legendurltype:
+        width: Breite
+        height: Höhe
+        onlineresource: Online-Ressource
+label' => 'mb:
+  core:
+    admin:
+      ? ''
+      : vendorspecifictype:
+          vstype: Vendor spezifischer Typ

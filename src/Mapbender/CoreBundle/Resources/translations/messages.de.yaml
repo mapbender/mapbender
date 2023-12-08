@@ -361,6 +361,7 @@ mb:
         SRS: SRS
         scales: Maßstäbe (komma-separiert)
         othersrs: Andere SRS
+        srs: SRS
     scalebar:
       class:
         title: Maßstabsleiste
@@ -516,7 +517,11 @@ mb:
               unstyled: Unformatiert
       button:
         show_label: Beschriftung anzeigen
-        label: Beschriftung anzeigen
+        label: Beschriftung
+      layerset:
+        label:
+          title: Titel
+          selected: Ausgewählt
     htmlelement:
       class:
         title: HTML
@@ -576,17 +581,18 @@ mb:
         label: Beschriftung anzeigen
     searchrouterroute:
       admin:
-        title': Titel
+        title: Titel
         configuration: Konfiguration
     instanceset:
       admin:
         title: Titel
         group: Gruppe
         instances: Instanzen
+        instancesets: Instancesets
     basebutton:
       admin:
         tooltip: Tooltip
-        icon: Icon
+        icon: Symbol
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:

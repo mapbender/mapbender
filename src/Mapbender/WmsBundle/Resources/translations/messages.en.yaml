@@ -180,3 +180,22 @@ mb:
       admin:
         defaultformat: Default format
         defaultinfoformat: Default info format
+    admin:
+      ? ''
+      : vendorspecifictype:
+          name: Name
+          default: Default
+          hidden: Hidden
+      onlineresource:
+        format: Format
+        href: href
+      legendurltype:
+        width: Width
+        height: Height
+        onlineresource: Online resource
+label' => 'mb:
+  core:
+    admin:
+      ? ''
+      : vendorspecifictype:
+          vstype: Vendor specific type

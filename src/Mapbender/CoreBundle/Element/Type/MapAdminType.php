@@ -56,7 +56,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'label' => 'mb.core.map.admin.tilesize',
             ))
             ->add('srs', TextType::class, array(
-                'label' => 'mb.core.map.admin.SRS',
+                'label' => 'mb.core.map.admin.srs',
             ))
             ->add('base_dpi', NumberType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.base_dpi',

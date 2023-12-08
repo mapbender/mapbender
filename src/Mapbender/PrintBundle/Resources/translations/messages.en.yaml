@@ -53,6 +53,12 @@ mb:
         fileprefix: File prefix
         optionalfields: Optional fields
         replacepattern: Replace pattern
+        templates: Templates
+        qualitylevels: Quality levels
+      label:
+        quality: Quality
+      class:
+        title: Title
     printclienttemplate:
       admin:
         template: Template
@@ -60,3 +66,8 @@ mb:
     printclientquality:
       admin:
         label: Label
+    admin:
+      printclient:
+        label:
+          qualitylevels: Quality levels
+          templates: Templates

@@ -40,7 +40,7 @@ class InstanceSetAdminType extends AbstractType
                 'application' => $options['application'],
                 'choice_filter' => $options['choice_filter'],
                 'multiple' => true,
-                'label' => 'mb.core.instanceset.admin.instances',
+                'label' => 'mb.core.instanceset.admin.instancesets',
                 'required' => true,
                 'label_with_layerset_prefix' => false,
             ))

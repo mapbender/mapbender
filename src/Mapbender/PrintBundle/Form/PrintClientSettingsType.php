@@ -67,6 +67,7 @@ class PrintClientSettingsType extends AbstractType
             $dpis = array_values($qualityChoices);
             $builder->add('quality', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'data' => $dpis ? $dpis[0] : '72',
+                'label' => 'mb.core.printclient.label.quality',
             ));
         }
         $builder

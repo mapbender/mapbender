@@ -54,6 +54,7 @@ class PrintClientAdminType extends AbstractType
         }
         $builder
             ->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'label' => 'mb.core.admin.printclient.label.qualitylevels',
                 'auto_initialize' => false,
                 'required' => false,
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
@@ -83,6 +84,7 @@ class PrintClientAdminType extends AbstractType
                 'label' => 'mb.core.printclient.admin.replacepattern',
             ))
             ->add('templates', SortableCollectionType::class, array(
+                'label' => 'mb.core.admin.printclient.label.templates',
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,

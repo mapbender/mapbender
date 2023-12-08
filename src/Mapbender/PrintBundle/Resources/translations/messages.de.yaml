@@ -53,6 +53,12 @@ mb:
         fileprefix: Datei-Präfix
         optionalfields: Optionale Felder
         replacepattern: Muster ersetzen
+        templates: Vorlagen
+        qualitylevels: Qualitätsstufen
+      label:
+        quality: Qualität
+      class:
+        title: Titel
     printclienttemplate:
       admin:
         template: Vorlage
@@ -60,3 +66,8 @@ mb:
     printclientquality:
       admin:
         label: Label
+    admin:
+      printclient:
+        label:
+          qualitylevels: Qualitätsstufen
+          templates: Vorlagen

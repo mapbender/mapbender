@@ -30,6 +30,7 @@ class VendorSpecificType extends AbstractType
     {
         $builder
             ->add('vstype', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                'label' => 'mb.core.admin..vendorspecifictype.vstype',
                 'required' => true,
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
@@ -39,12 +40,15 @@ class VendorSpecificType extends AbstractType
             ))
             ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.core.admin..vendorspecifictype.name',
             ))
             ->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.core.admin..vendorspecifictype.default',
             ))
             ->add('hidden', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
+                'label' => 'mb.core.admin..vendorspecifictype.hidden',
             ))
         ;
     }

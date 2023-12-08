@@ -165,7 +165,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             "legend_default_behaviour" => true,
             "optional_fields" => array(
                 "title" => array(
-                    "label" => 'Title',
+                    "label" => 'mb.core.printclient.class.title',
                     "options" => array(
                         "required" => false,
                     ),
