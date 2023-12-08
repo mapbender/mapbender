@@ -58,14 +58,14 @@ mb:
       label:
         quality: Qualität
       class:
-        title: Titel
+        title: Beschriftung
     printclienttemplate:
       admin:
         template: Vorlage
         label: Label
     printclientquality:
       admin:
-        label: Label
+        label: Beschriftung
     admin:
       printclient:
         label:
