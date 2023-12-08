@@ -62,7 +62,7 @@ mb:
     printclienttemplate:
       admin:
         template: Vorlage
-        label: Label
+        label: Beschriftung
     printclientquality:
       admin:
         label: Beschriftung
