@@ -158,7 +158,7 @@ mb:
       label:
         text: Bearbeiten Sie den Text
       admin:
-        body: Körper
+        body: Inhalt
         gps: gps
         placeholder: Bitte schauen Sie sich diesen POI an
     basesourceswitcher:

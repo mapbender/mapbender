@@ -193,6 +193,15 @@ mb:
         width: Width
         height: Height
         onlineresource: Online resource
+      vendorspecifictype:
+        hidden: Hidden
+        setdefaults: Set defaults
+    vendorspecifictype:
+      admin:
+        vstype: Vendor specifics
+        name: Name
+        default: Default
+        hidden: Hidden
 label' => 'mb:
   core:
     admin:

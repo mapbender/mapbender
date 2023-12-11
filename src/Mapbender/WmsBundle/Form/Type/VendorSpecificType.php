@@ -16,7 +16,6 @@ class VendorSpecificType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'name' => '',
             'vstype' => VS::TYPE_VS_SIMPLE,
             'hidden' => false,
             'data_class' => 'Mapbender\WmsBundle\Component\VendorSpecific',
@@ -30,7 +29,7 @@ class VendorSpecificType extends AbstractType
     {
         $builder
             ->add('vstype', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'label' => 'mb.core.admin..vendorspecifictype.vstype',
+                'label' => 'mb.core.vendorspecifictype.admin.vstype',
                 'required' => true,
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
@@ -40,15 +39,15 @@ class VendorSpecificType extends AbstractType
             ))
             ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
-                'label' => 'mb.core.admin..vendorspecifictype.name',
+                'label' => 'mb.core.vendorspecifictype.admin.name',
             ))
             ->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
-                'label' => 'mb.core.admin..vendorspecifictype.default',
+                'label' => 'mb.core.vendorspecifictype.admin.default',
             ))
             ->add('hidden', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin..vendorspecifictype.hidden',
+                'label' => 'mb.core.vendorspecifictype.admin.hidden',
             ))
         ;
     }
