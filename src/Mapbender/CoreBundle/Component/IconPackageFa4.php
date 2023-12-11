@@ -127,7 +127,7 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconMapPin':
                 $class = 'fas fa-map-pin'; break;
             case 'iconEarth':
-                $class = 'far fa-earth-africa'; break;
+                $class = 'fars fa-earth-africa'; break;
 
         }
         }
