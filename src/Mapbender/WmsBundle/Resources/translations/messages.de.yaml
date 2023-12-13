@@ -182,7 +182,6 @@ mb:
       admin:
         defaultformat: Standardformat
         defaultinfoformat: Standard-Infoformat
-    admin:
       onlineresource:
         format: Format
         href: href
@@ -199,8 +198,3 @@ mb:
         name: Namen
         default: Standard
         hidden: Verstekt
-label' => 'mb:
-  core:
-    admin:
-      vendorspecifictype:
-        vstype: Vendor spezifischer Typ

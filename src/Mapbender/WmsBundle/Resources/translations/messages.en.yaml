@@ -65,17 +65,17 @@ mb:
             'on': 'on'
             ratio: BBOX factor
             buffer: Tile buffer
-            layerOrder: Layer ordering
-            layerOrder.standard: standard
-            layerOrder.reverse: QGIS
+            layerorder: Layer ordering
+            layerorder.standard: standard
+            layerorder.reverse: QGIS
             exceptionformat: Exception format
             infoformat: Format of GetFeatureInfo request
-            format': Format of the GetMap request
+            format: Format of the GetMap request
             dimensions: Dimensions
             vendorspecifics: Vendor specifics
             layers: Layers
           vendorspecific:
-            label: Vendor specific
+            label: Vendor specifics
         preview:
           title:
             servicerepository: Service Repository
@@ -156,6 +156,10 @@ mb:
         items:
           _title: Layer
           name: Name
+        useconditions:
+          _title: Terms of use
+      popup:
+        title: Meta data
     repo:
       instance:
         label:
@@ -180,12 +184,6 @@ mb:
       admin:
         defaultformat: Default format
         defaultinfoformat: Default info format
-    admin:
-      ? ''
-      : vendorspecifictype:
-          name: Name
-          default: Default
-          hidden: Hidden
       onlineresource:
         format: Format
         href: href
@@ -202,9 +200,3 @@ mb:
         name: Name
         default: Default
         hidden: Hidden
-label' => 'mb:
-  core:
-    admin:
-      ? ''
-      : vendorspecifictype:
-          vstype: Vendor specific type
