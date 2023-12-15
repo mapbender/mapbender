@@ -101,11 +101,6 @@
         },
         _initEvents: function() {
             var self = this;
-            this.element.on('click', '.-fn-save-new', function() {
-                self._saveNew().then(function() {
-                    self._updatePlaceholder();
-                });
-            });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
                 var settings = self._extractLinkSettings(this);
@@ -216,6 +211,7 @@
                     $tbody.prepend(newRow);
                 }
                 self._flash($(newRow), '#88ff88');
+                self._updatePlaceholder();
             });
         },
         _delete: function(id, csrfToken) {
