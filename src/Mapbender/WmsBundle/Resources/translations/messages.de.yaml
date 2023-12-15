@@ -148,14 +148,14 @@ mb:
     metadata:
       section:
         common:
-          _title: Allgemein
+          title: Allgemein
         contact:
-          _title: Kontakt
+          title: Kontakt
         items:
-          _title: Ebene
+          title: Ebene
           name: Name
         useconditions:
-          _title: Nutzungsbedingungen
+          title: Nutzungsbedingungen
       popup:
         title: Metadaten
     repo:

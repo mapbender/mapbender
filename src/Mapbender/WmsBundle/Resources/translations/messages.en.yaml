@@ -148,16 +148,14 @@ mb:
     metadata:
       section:
         common:
-          _title: Common
-        useconditions:
-          _title: Terms of use
+          title: General information
         contact:
-          _title: Contact
+          title: Contact
         items:
-          _title: Layer
+          title: Layer
           name: Name
         useconditions:
-          _title: Terms of use
+          title: Terms of use
       popup:
         title: Meta data
     repo:
