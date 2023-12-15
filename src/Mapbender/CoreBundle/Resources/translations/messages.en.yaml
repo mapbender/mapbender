@@ -172,6 +172,7 @@ mb:
       admin:
         tooltip: Tooltip
         instances: Instances
+        instancesets: Instancesets
     legend:
       class:
         title: Legend

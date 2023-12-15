@@ -41,7 +41,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
             $event->getForm()
                 ->add('instancesets', SortableCollectionType::class, array(
                     'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
-                    'label' => 'mb.core.basesourceswitcher.admin.instances',
+                    'label' => 'mb.core.basesourceswitcher.admin.instancesets',
                     'allow_add' => true,
                     'allow_delete' => true,
                     'entry_options' => array(

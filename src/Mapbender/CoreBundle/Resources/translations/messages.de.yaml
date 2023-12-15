@@ -173,6 +173,7 @@ mb:
       admin:
         tooltip: Tooltip
         instances: Instanzen
+        instancesets: Instancesets
     legend:
       class:
         title: Legende
