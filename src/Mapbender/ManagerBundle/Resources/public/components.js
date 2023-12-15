@@ -9,7 +9,6 @@ $(function() {
         window.history.replaceState(null, null, '#' + tabId);
     });
     if (activeTab) {
-        console.log($tabContainer.find('#' + activeTab));
         $tabContainer.find('#' + activeTab).tab('show');
     }
 
