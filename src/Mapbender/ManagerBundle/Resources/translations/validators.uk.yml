@@ -1,0 +1,8 @@
+mb:
+  core:
+    entity:
+      app:
+        screenshotfile:
+          format_error: Даний формат не підтримується!
+    layerset:
+      unique_title: Ця назва вже використовується.

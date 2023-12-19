@@ -44,7 +44,8 @@
                 title="{{"fom.user.user.index.delete_user" | trans}}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"
-              ><i class="fa fas fa-times"></i></span>
+                data-token="{{ csrf_token('user_delete') }}"
+              ><i class="fa fas fa-trash-o"></i></span>
             {% endif %}
           </td>
         </tr>

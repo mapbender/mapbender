@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 
 use Mapbender\Component\ClassUtil;
+use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -165,7 +166,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             if ($options['region_name_pattern'] && !preg_match($options['region_name_pattern'], $element->getRegion())) {
                 return false;
             }
-            if (!$options['include_floatable'] && \is_a($className, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
+            if (!$options['include_floatable'] && \is_a($className, FloatingElement::class, true)) {
                 return false;
             }
             $r = new \ReflectionClass($className);

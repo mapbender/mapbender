@@ -2,13 +2,28 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Form\Type\ExtentType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MapAdminType extends AbstractType implements DataTransformerInterface
 {
+    use MapbenderTypeTrait;
+
+    private TranslatorInterface $trans;
+
+    public function __construct(TranslatorInterface $trans)
+    {
+        $this->trans = $trans;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -35,28 +50,34 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     'class' => 'input inputWrapper choiceExpandedSortable',
                 ),
             ))
-            ->add('tileSize', 'Symfony\Component\Form\Extension\Core\Type\NumberType', array(
+            ->add('tileSize', NumberType::class, array(
                 'required' => false,
                 'label' => 'Tile size',
             ))
-            ->add('srs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('srs', TextType::class, array(
                 'label' => 'SRS',
             ))
-            ->add('extent_max', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
+            ->add('base_dpi', NumberType::class, $this->createInlineHelpText([
+                'label' => 'mb.manager.admin.map.base_dpi',
+                'help' => 'mb.manager.admin.map.base_dpi.help',
+            ], $this->trans))
+            ->add('extent_max', ExtentType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.max_extent',
-            ))
-            ->add('extent_start', 'Mapbender\CoreBundle\Form\Type\ExtentType', array(
+                'help' => 'mb.manager.admin.map.max_extent.help',
+            ], $this->trans))
+            ->add('extent_start', ExtentType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.start_extent',
-            ))
-            ->add('fixedZoomSteps', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'help' => 'mb.manager.admin.map.start_extent.help',
+            ], $this->trans))
+            ->add('fixedZoomSteps', CheckboxType::class, array(
                 'label' => 'mb.core.map.admin.fixedZoomSteps',
                 'required' => false,
             ))
-            ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('scales', TextType::class, array(
                 'label' => 'Scales (csv)',
                 'required' => true,
             ))
-            ->add('otherSrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('otherSrs', TextType::class, array(
                 'label' => 'Other SRS',
                 'required' => false,
             ))

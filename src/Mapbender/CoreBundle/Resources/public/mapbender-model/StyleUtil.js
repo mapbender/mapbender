@@ -138,20 +138,27 @@ window.Mapbender.StyleUtil = (function() {
             var keywordRule = cssKeywordColors[rule];
             if (typeof keywordRule !== 'undefined') {
                 hexPairs = [keywordRule.slice(1, 3), keywordRule.slice(3, 5), keywordRule.slice(5, 7)];
-            } else if (/^#[a-z0-9]{3,6}$/i.test(rule)) {
-                if (rule.length === 4) {
-                    // short form, e.g. '#9cf', expand to six digits
-                    hexPairs = [rule[1], rule[2], rule[3]].map(function(digit) {
-                        return [digit, digit].join('');
-                    });
-                } else {
+            } else if (/^#[a-fA-F0-9]{3,8}$/i.test(rule)) {
+                if (rule.length === 4 || rule.length === 5) {
+                    // short form, e.g. '#9cf', #9cf4, expand to six/eight digits
+                    hexPairs = [
+                        '' + rule[1] + rule[1],
+                        '' + rule[2] + rule[2],
+                        '' + rule[3] + rule[3],
+                    ];
+                    if (rule.length === 5) hexPairs.push('' + rule[4] + rule[4]);
+                } else if (rule.length === 7) {
                     hexPairs = [rule.slice(1, 3), rule.slice(3, 5), rule.slice(5, 7)];
+                } else if (rule.length === 9) {
+                    hexPairs = [rule.slice(1, 3), rule.slice(3, 5), rule.slice(5, 7), rule.slice(7, 9)];
                 }
             }
             if (hexPairs) {
-                return hexPairs.map(function(hexPair) {
+                const mapped = hexPairs.map(function(hexPair) {
                     return parseInt(hexPair, 16);
                 });
+                if (mapped.length === 4) mapped[3] /= 255;
+                return mapped;
             } else {
                 var matches = (rule || '').match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*((?:\d*\.\d+)|(?:\d+(?:\.\d*)?))\)$/);
                 if (!matches) {

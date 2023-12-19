@@ -187,6 +187,7 @@ ul.toolBar, .toolBar > ul {
   overflow: visible;
   width: 350px;
   position: absolute;
+  z-index: 3;
 
   border-bottom: 1px solid $sidepaneBorderColor;
   .toggleSideBar {

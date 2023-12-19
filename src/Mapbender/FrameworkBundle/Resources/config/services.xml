@@ -8,6 +8,8 @@
         <parameter key="mapbender.force_engine">null</parameter>
         <parameter key="mapbender.application_template.fallback">null</parameter>
         <parameter key="mapbender.user_info_provider.class">Mapbender\FrameworkBundle\Component\UserInfoProvider</parameter>
+        <parameter key="mapbender.markup_cache.class">Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache</parameter>
+        <parameter key="mapbender.markup_cache.include_session_id">false</parameter>
     </parameters>
     <services>
         <service id="mapbender.auto_locale_listener" class="Mapbender\FrameworkBundle\EventListener\AutomaticLocaleListener">
@@ -36,12 +38,13 @@
             <argument>%mapbender.responsive.containers%</argument>
         </service>
         <service id="mapbender.cache.application_markup"
-                 class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache"
+                 class="%mapbender.markup_cache.class%"
                  lazy="true">
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="translator" />
             <argument>%kernel.cache_dir%</argument>
+            <argument>%mapbender.markup_cache.include_session_id%</argument>
         </service>
         <service id="mapbender.cache.backend"
                  class="Mapbender\CoreBundle\Component\Cache\Backend\File"

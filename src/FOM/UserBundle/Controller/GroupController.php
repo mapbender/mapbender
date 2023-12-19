@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Service\FixAceOrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,9 +27,15 @@ class GroupController extends AbstractController
     /** @var MutableAclProviderInterface */
     protected $aclProvider;
 
-    public function __construct(MutableAclProviderInterface $aclProvider)
+    private FixAceOrderService $fixAceOrderService;
+
+    public function __construct(
+        MutableAclProviderInterface $aclProvider,
+        FixAceOrderService $fixAceOrderService
+    )
     {
         $this->aclProvider = $aclProvider;
+        $this->fixAceOrderService = $fixAceOrderService;
     }
 
     /**
@@ -139,7 +146,7 @@ class GroupController extends AbstractController
      * @param string $id
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(Request  $request, $id)
     {
         /** @var Group|null $group */
         $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
@@ -149,6 +156,13 @@ class GroupController extends AbstractController
         }
         // ACL access check
         $this->denyAccessUnlessGranted('DELETE', $group);
+
+        if (!$this->isCsrfTokenValid('group_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
+
+
         /** @var EntityManagerInterface $em $em */
         $em = $this->getDoctrine()->getManagerForClass(Group::class);
         $em->beginTransaction();
@@ -166,6 +180,7 @@ class GroupController extends AbstractController
 
             $em->flush();
             $em->commit();
+            $this->fixAceOrderService->fixAceOrder();
         } catch(\Exception $e) {
             $em->rollback();
             $this->addFlash('error', "The group couldn't be deleted.");

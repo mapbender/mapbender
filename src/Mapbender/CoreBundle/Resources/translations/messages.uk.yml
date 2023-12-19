@@ -1,0 +1,423 @@
+mb:
+  actions:
+    accept: Підтвердити
+    add: Додати
+    back: Повернутися
+    cancel: Скасувати
+    close: Закрити
+    delete: Видалити
+    edit: Редагувати
+    filter: Фільтрувати
+    print: Надрукувати
+    refresh: Оновити
+    remove: Прибрати
+    reset: Скинути
+    save: Зберегти
+    search: Шукати
+  terms:
+    application:
+      singular: Застосунок
+      plural: Застосунки
+    source:
+      singular: Джерело
+      plural: Джерела
+    layerset:
+      singular: Набір шарів
+      plural: Набори шарів
+    sourceinstance:
+      singular: Екземпляр
+      plural: Екземпляри
+      typed:
+        singular: '%type% екземпляр'
+      reusable:
+        singular: Спільний екземпляр
+        plural: Спільні екземпляри
+      bound:
+        singular: Пов''язаний екземпляр
+        plural: Пов''язані екземпляри
+    security: Безпека
+  form:
+    choice_required: Оберіть один
+    choice_optional: Немає
+  states:
+    active: активний
+    inactive: неактивний
+  core:
+    featureinfo:
+      error:
+        nolayer: 'Елементу інфо-шар не існує.'
+        unknownoption: 'Невідомий або необроблений параметр %key% для %namespace%.%widgetname%.'
+        noresult: 'Немає результату'
+      class:
+        title: Інформація
+        description: Інформація про об''єкт
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'Дізнатися більше про Mapbender'
+        linktitle: 'Відвідайте наш офіційний сайт Mapbender'
+        website: сайт
+      class:
+        title: 'Діалогове вікно про додаток'
+        description: 'Показати діалогове вікно про додаток'
+      tag:
+        help: Довідка
+        info: інформація
+        about: Про додаток
+    simplesearch:
+      input:
+        search: Пошук
+      class:
+        title: 'Простий Пошук'
+        description: 'Пошук по одному полю в джерелах JSON (наприклад Solr)'
+      error:
+        geometry:
+          missing: Обраний об''єкт не містить геометрії.
+      admin:
+        placeholder: Заповнювач
+        sourceSrs: Джерело SRS
+    searchrouter:
+      no_results: 'Не знайдено результатів.'
+      result_counter: 'Результати: %count%'
+      class:
+        title: 'Пошук маршрутизатора'
+        description: 'Налаштовуваний елемент маршрутизації пошуку '
+      tag:
+        search: пошук
+        router: маршрутизатор
+    poi:
+      sharepoi: 'Поділитися POI'
+      text:
+        snippet: 'Ви можете використовувати наступний фрагмент в електронному листі, щоб надіслати POI'
+      popup:
+        btn:
+          position: Розстановка
+      class:
+        title: POI
+        description: 'Створити POI для спільного використання'
+      label:
+        text: Текст
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'Джерело з ідентифікатором %id% недоступне'
+      class:
+        title: 'Перемикач базового джерела'
+        Description: 'Змінити фонові джерела мапи.'
+      form:
+        mesage: 'Базовий набір джерел не визначено.'
+    legend:
+      class:
+        title: Легенда
+        description: 'Легенда показує легенду шарів мапи'
+    ruler:
+      create_error: 'Лінійка: тип має бути лінією або областю.'
+      class:
+        title: 'Лінійка Лінія/Область'
+        description: 'Лінійка для малювання лінії/області та відображення довжини/площі в діалоговому вікні'
+      tag:
+        line: лінія
+        area: область
+        measure: міра
+    printclient:
+      label:
+        template: Шаблон
+        quality: Якість
+        scale: Масштаб
+        rotation: Обертання
+        legend: 'Надрукувати легенду'
+      class:
+        title: 'Надрукувати клієнт'
+        description: 'Відтворює діалогове вікно друку'
+      btn:
+        deactivate: 'Деактивувати кадр друку'
+        activate: 'Деактивувати кадр друку'
+    overview:
+      nolayer: 'Елемент огляду не має шару.'
+      class:
+        title: Огляд
+        description: 'Відображає невелику оглядову мапу'
+      tag:
+        overview: огляд
+        map: мапа
+      admin:
+        visibility.closed_initially: Спочатку закрито
+        visibility.open_initially: Спочатку відкрито
+        visibility.open_permanent: Постійно відкрито
+    metadata:
+      popup:
+        title: Метадані
+    gpsposition:
+      error:
+        notsupported: Геолокаційні послуги не підтримуються вашим браузером.
+        nosignal: Наразі неможливо визначити ваше місце розташування.
+      class:
+        title: 'GPS-положення'
+        description: 'Відображає кнопку, щоб показати положення GPS'
+      tag:
+        gpsposition: GPS-положення
+        gps: GPS
+        position: положення
+        button: кнопка
+    layertree:
+      const:
+        outofscale: 'Шар поза масштабом'
+        outofbounds: 'Шар за межами'
+        parentinvisible: 'Батьківський шар невидимий'
+      tooltip:
+        sublayers_openclose: 'Підшари відкрити/закрити'
+        removelayer: 'Видалити шар'
+        menu:
+          close: Закрити
+      label:
+        visibility_onoff: 'Видимість вмк/вимк'
+        featureinfo_onoff: 'Інформація про об''єкт вмк/вимк'
+        opacity: Непрозорість
+        zoomtolayer: 'Збільшити шар'
+        metadata: Метадані
+        legend: Легенда
+        kmlexport: 'Експорт Kml'
+        dimension_onoff: 'Вмк/Вимк Розмір'
+        dimension: Розмір
+        sourcevisibility_onoff: 'Показати джерела'
+      class:
+        title: 'Дерево шарів'
+        description: 'Дерево шарів мапи'
+    zoombar:
+      zoombybox: 'Збільшити за вікном'
+      zoombyworld: 'Збільшити за світом'
+      zoom_home: Повернутися до початку
+      zoomHomeRestoresLayers: '"Повернутися до початку" також скидає налаштування шару'
+      zoomin: Наблизити
+      zoomout: Віддалити
+      class:
+        title: 'Панель навігації'
+        description: 'Панель навігації забезпечує плаваючий контроль для панорамування та масштабування, аналогічно елементу керування OpenLayers PanZoomBar. Однак цей елемент легше використовувати, коли потрібен власний стиль.'
+      tag:
+        zoom: Масштаб
+        pan: панорама
+        control: керування
+        navigation: навігація
+        panel: панель
+    activityindicator:
+      class:
+        title: 'Індикатор активності'
+        description: 'Показує активність HTTP'
+      tag:
+        activity: активність
+        indicator: індикатор
+    button:
+      class:
+        title: Кнопка
+        description: Кнопка
+      tag:
+        button: кнопка
+    controlbutton:
+      class:
+        description: Керує іншим елементом
+    linkbutton:
+      class:
+        title: Посилання
+        description: Посилання на зовнішню URL-адресу
+      admin:
+        click: Цільова URL-адреса
+    coordinatesdisplay:
+      class:
+        title: 'Відображення координат'
+        description: 'Відображення координат показує положення курсора миші в координатах мапи.'
+      tag:
+        coordinates: координати
+        display: відображення
+        mouse: миша
+        position: положення
+    copyright:
+      class:
+        title: Авторське право
+        description: 'Показати Умови використання'
+      tag:
+        copyright: Авторське право
+        dialog: діалогове вікно
+    map:
+      class:
+        title: Мапа
+        description: 'Мапа на основі OpenLayers'
+      tag:
+        map: мапа
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'Властивості SRS для %srslist% не знайдено'
+      admin:
+        fixedZoomSteps: Фіксовані кроки масштабування
+    scalebar:
+      class:
+        title: 'Масштабна панель'
+        description: 'Масштабна панель відображає маленький лінійний індикатор, що представляє поточний масштаб мапи'
+      tag:
+        scale: масштаб
+        bar: панель
+    scaledisplay:
+      class:
+        title: 'Відображення масштабу'
+        description: 'Відображає поточний масштаб мапи'
+      tag:
+        scale: масштаб
+        display: Відображення
+    scaleselector:
+      class:
+        title: 'Селектор масштабу'
+        description: 'Відображає та змінює масштаб мапи'
+      tag:
+        scale: масштаб
+        selector: селектор
+    srsselector:
+      class:
+        title: 'SRS селектор'
+        description: 'Селектор просторової системи відліку змінює просторову системи відліку мапи'
+      tag:
+        srs: SRS
+        selector: селектор
+    ShareUrl:
+      class:
+        title: Поділитися URL-адресою
+        description: Поділітися поточним виглядом мапи через url
+      copied_to_clipboard: URL-фдресу скопійовано в буфер обміну
+    viewManager:
+      class:
+        title: Менеджер перегляду
+        description: Зберігає стани мапи для подальшого відновлення
+      saveAsPublic: Зберігти відкрито
+      recordStatus:
+        public: Публічний запис
+        private: Приватний запис
+      confirmDelete: Підтвердити видалення
+      no_data: Немає даних
+      title: Назва
+      date: Дата
+      enter_title: Введіть назву
+      apply: Застосувати
+      replace: Замінити
+      details: Показати деталі
+      admin:
+        access.none: Не показувати
+        access.ro: Тільки для читання
+        access.rw: Дозволити збереження
+        access.rwd: Дозволити збереження і видалення
+        publicEntries: Публічний список
+        privateEntries: Показати приватний список
+        adminDeleteHint: "Примітка: адміністратор завжди може видалити загальнодоступні записи"
+        allowAnonymousSave: Дозволити збереження анонімним користувачам
+        showDate: Показати дату
+    admin:
+      poi:
+        label:
+          usemailto: 'Використання Mailto'
+      legend:
+        label:
+          autoopen: Автовідкриття
+          hideemptylayers: 'Приховати порожні шари'
+          generatelegendurl: 'Генерувати URL легенди'
+          showsourcetitle: 'Показати назву джерела'
+          showlayertitle: 'Показати назву шару'
+          showgroupedlayertitle: 'Показати назву групи шарів'
+      featureinfo:
+        label:
+          autoopen: Автовідкриття
+          deactivateonclose: 'Деактивувати під час закриття'
+          onlyvalid: 'Тільки дійсні'
+          highlighting_group: 'Виділення'
+          highlighting: 'Виділення увімкнено'
+          default_group: За замовчуванням
+          hover_group: При наведенні
+          fillColor: Колір заливки
+          strokeColor: Колір штрихування
+          opacity_pct: Непрозорість (%)
+          stroke_width_px: Ширина штриха(пікселі)
+      printclient:
+        label:
+          autoopen: Автовідкриття
+          rotatable: Поворотний
+          legend: 'Надрукувати легенду'
+          legend_default_behaviour: 'Прапорець легенди активний'
+          required_fields_first: Спочатку відобразити обов’язкові поля
+      copyright:
+        label:
+          autoopen: Автовідкриття
+      layertree:
+        label:
+          showbasesources: 'Показати базові джерела'
+          autoopen: Автовідкриття
+          showlayerremove: 'Показати видалення шару'
+          usetheme: 'Тематичний шар'
+          themes: Теми
+          theme:
+            opened: відкрито
+            activate: 'Увімкнення додавання/видалення шару'
+            useTheme: 'Показати тему'
+            # sourceVisibility: 'Тема: видимість джерела'
+            # allSelected: 'Тема: видимість шару'
+            label: 'назва теми'
+          hidenottoggleable: 'Приховати папки, що не перемикаються'
+          hideselect: 'Приховати видимість за папками'
+          hideinfo: 'Приховати інформацію'
+      template:
+        sidepane:
+          type:
+            label: Тип
+            choice:
+              tabs: Кнопки
+              accordion: Гармошка
+              unstyled: Без стилю
+    htmlelement:
+      class:
+        title: HTML
+        description: 'Додати HTML-теги'
+    entity:
+      app:
+        screenshotfile:
+          error: Помилка
+    sketch:
+      geometrytype:
+        point: Крапка
+        line: Лінія
+        polygon: Полігон
+        rectangle: Прямокутник
+        circle: Коло
+      inputs:
+        label: Мітка
+        radius: Радіус
+      geometry:
+        action:
+          remove: 'Видалити геометрію'
+          edit: 'Редагувати геометрію'
+          zoom: 'Показати геометрію'
+          stop_drawing: Зупинити малювання
+      class:
+        title: Ескізи
+        description: Інструмент для малювання
+      admin:
+        auto_activate: Активувати автоматично
+        deactivate_on_close: Деактивувати при закритті
+        colors: Кольори
+        allow_custom_color: Дозволити власні кольори
+    # (imported) Yaml application amenity
+    redlining:
+      class:
+        title: Ескізи
+    resetView:
+      class:
+        title: Скинути перегляд
+        description: Відновлює початковий вигляд мапи та параметри джерела
+      admin:
+        resetDynamicSources: Видалити динамічно завантажувані джерела
+    applicationSwitcher:
+      class:
+        title: Перемикач застосунків
+        description: Перемикається на інший застосунок, зберігаючи поточне положення на мапі
+      admin:
+        open_in_new_tab: Відкрити в новій вкладці
+  template:
+    toolbar_menu_tooltip: Перемкнути меню
+    region:
+      toolbar: Верхня панель інструментів
+      footer: Нижня панель
+      sidepane: Бокова панель
+      content: Мапа області

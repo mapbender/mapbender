@@ -59,7 +59,7 @@ class Sketch extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            "auto_activate" => false,
+            'autoOpen' => false,
             "deactivate_on_close" => true,
             "geometrytypes" => array(
                 "point",
@@ -131,6 +131,27 @@ class Sketch extends AbstractElementService
             $config += array('colors' => array($config['paintstyles']['fillColor']));
         }
         unset($config['paintstyles']);
+        if (isset($config['auto_activate'])) {
+            $config['autoOpen'] = $config['auto_activate'];
+        }
+        unset($config['auto_activate']);
+
+        if (array_key_exists('geometrytypes', $config)) {
+            // Geometry Type "text" deprecated and replaced by "point" in v3.3.4
+            $position = array_search('text', $config['geometrytypes']);
+            if ($position !== false) {
+                if (in_array('point', $config['geometrytypes'])) {
+                    // do not add 'point' a second time if it already exists
+                    unset($config['geometrytypes'][$position]);
+                    $config['geometrytypes'] = array_values($config['geometrytypes']);
+                } else {
+                    // no 'point' in configuration, replace existing entry
+                    $config['geometrytypes'][$position] = 'point';
+                }
+            }
+
+        }
+
         $entity->setConfiguration($config);
     }
 }

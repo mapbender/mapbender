@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
@@ -100,12 +101,23 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $priority;
 
     /**
+     * if set to true, info is not just disabled, but not available. If this is set to true, setting info to
+     * true is prevented. This is required for the case when the info was previously activated but not available
+     * anymore after a WMS update. The info status should then be resetted.
+     */
+    private ?bool $infoUnavailable = false;
+
+    /**
      * WmsInstanceLayer constructor.
      */
-    public function __construct()
+    public function __construct(SourceLoaderSettings $settings = null)
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+        if ($settings !== null) {
+            $this->active = $settings->activateNewLayers();
+            $this->selected = $settings->selectNewLayers();;
+        }
     }
 
     public function __clone()
@@ -206,7 +218,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setActive($active)
     {
-        $this->active = $active;
+        $this->active = (bool) $active;
         return $this;
     }
 
@@ -228,7 +240,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowselected($allowselected)
     {
-        $this->allowselected = $allowselected;
+        $this->allowselected = (bool) $allowselected;
         return $this;
     }
 
@@ -250,7 +262,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setSelected($selected)
     {
-        $this->selected = $selected;
+        $this->selected = (bool) $selected;
         return $this;
     }
 
@@ -270,9 +282,14 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $info
      * @return WmsInstanceLayer
      */
-    public function setInfo($info)
+    public function setInfo($info, bool $force = false)
     {
-        $this->info = $info;
+        if ($this->infoUnavailable === true && !$force) {
+            $this->info = false;
+        } else {
+            $this->info = (bool) $info;
+            if ($force && !$info) $this->infoUnavailable = true;
+        }
         return $this;
     }
 
@@ -304,7 +321,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setToggle($toggle)
     {
-        $this->toggle = $toggle;
+        $this->toggle = (bool) $toggle;
         return $this;
     }
 
@@ -316,7 +333,12 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowinfo($allowinfo)
     {
-        $this->allowinfo = $allowinfo;
+        if ($this->infoUnavailable === true) {
+            $this->allowinfo = false;
+        } else {
+            $this->allowinfo = (bool) $allowinfo;
+        }
+
         return $this;
     }
 
@@ -348,7 +370,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowtoggle($allowtoggle)
     {
-        $this->allowtoggle = $allowtoggle;
+        $this->allowtoggle = (bool) $allowtoggle;
         return $this;
     }
 
@@ -509,14 +531,14 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param WmsInstance $instance
      * @param WmsLayerSource $layerSource
      */
-    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource)
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, ?SourceLoaderSettings $settings = null)
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
         $this->setPriority($layerSource->getPriority());
 
         $queryable = !!$layerSource->getQueryable();
-        $this->setInfo($queryable);
+        $this->setInfo($queryable, true);
         $this->setAllowinfo($queryable);
         $instance->addLayer($this);
         if ($layerSource->getSublayer()->count() > 0) {
@@ -527,7 +549,7 @@ class WmsInstanceLayer extends SourceInstanceItem
             $this->setAllowtoggle(null);
         }
         foreach ($layerSource->getSublayer() as $wmslayersourceSub) {
-            $subLayerInstance = new static();
+            $subLayerInstance = new static($settings);
             $subLayerInstance->populateFromSource($instance, $wmslayersourceSub);
             $subLayerInstance->setParent($this);
             $this->addSublayer($subLayerInstance);

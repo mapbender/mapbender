@@ -14,6 +14,7 @@ mb:
     reset: Reset
     save: Save
     search: Search
+    duplicate: Duplicate
   terms:
     application:
       singular: Application
@@ -39,6 +40,7 @@ mb:
   form:
     choice_required: Choose one
     choice_optional: None
+    unnamed_entry: Unnamed Entry
   states:
     active: active
     inactive: inactive
@@ -66,7 +68,9 @@ mb:
         about: about
     simplesearch:
       input:
+        searchterm: Search term
         search: Search
+        clear: Clear
       class:
         title: 'Simple Search'
         description: 'Single field search on JSON sources (e.g. Solr)'
@@ -74,8 +78,49 @@ mb:
         geometry:
           missing: The selected entry does not contain a geometry.
       admin:
+        configurations: Configurations
+        title: Title
         placeholder: Placeholder
+        placeholder.help: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.
+        query_url: Query URL
+        query_url.help: Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)
+        query_key: Query URL parameter key
+        query_key.help: The query parameter key to append (e.g. <code>q</code>)
+        query_ws_replace: Query Whitespace replacement pattern
+        query_ws_replace.help: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>
+        query_format: Query key format
+        query_format.help: Format for PHP's <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected
+        token_regex: "Tokenizer: Split Regex"
+        token_regex.help: "The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)"
+        token_regex_in: "Tokenizer: Search Regex"
+        token_regex_in.help: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".
+        token_regex_out: "Tokenizer: Replacement Regex"
+        token_regex_out.help: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.
+        collection_path: Results Path
+        collection_path.help: Path pointing to the array of results within the search url's response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)
+        label_attribute: Label Attribute
+        label_attribute.help: Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>
+        geom_attribute: Geometry Attribute
+        geom_attribute.help: Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)
+        geom_format: Geometry Format
+        geom_format.help: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
         sourceSrs: Source SRS
+        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.
+        delay: Search Delay [ms]
+        delay.help: "The automatic search will trigger that many milliseconds after the last key input. Default: 300ms"
+        result_buffer: Result Buffer [map units]
+        result_buffer.help: Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.
+        result_minscale: Minimum Scale [Denominator]
+        result_minscale.help: "Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale."
+        result_maxscale: Maximum Scale [Denominator]
+        result_icon_url: Icon URL
+        result_icon_url.help: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.
+        result_icon_offset: Icon Offset
+        result_icon_offset.help: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin
+      errors:
+        invalid_query_format: The specified query format does not contain placeholders. Read the help text!
+        invalid_epsg_code: "The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234"
+        no_configuration_added: Please add at least one configuration
     searchrouter:
       no_results: 'No results found.'
       result_counter: 'Results: %count%'
@@ -118,6 +163,13 @@ mb:
         line: line
         area: area
         measure: measure
+      help: Double-click to end drawing
+      admin:
+        type: Geometry
+        help: Helptext
+        help_help: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user's language
+        stroke_width_while_drawing: Line width while drawing
+        only_for_area: only relevant if geometry is set to <i>Area</i>
     printclient:
       label:
         template: Template
@@ -255,6 +307,11 @@ mb:
         scale: scale
         bar: bar
     scaledisplay:
+      label: Scale
+      scale_prefix: Prefix
+      scale_prefix.help:  Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user's language.
+      unit_prefix: Shorten scale
+      unit_prefix.help: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.
       class:
         title: 'Scale display'
         description: 'Displays the current map scale'
@@ -312,7 +369,6 @@ mb:
           usemailto: 'Use Mailto'
       legend:
         label:
-          autoopen: Auto-open
           hideemptylayers: 'Hide empty layers'
           generatelegendurl: 'Generate legend url'
           showsourcetitle: 'Show source title'
@@ -320,7 +376,6 @@ mb:
           showgroupedlayertitle: 'Show grouped layer title'
       featureinfo:
         label:
-          autoopen: Auto-open
           deactivateonclose: 'Deactivate on close'
           onlyvalid: 'Only valid'
           highlighting_group: 'Highlighting'
@@ -331,20 +386,17 @@ mb:
           strokeColor: Stroke color
           opacity_pct: Opacity (%)
           stroke_width_px: Stroke width (pixels)
+          fontColor: Font color
+          fontSize: Font size
       printclient:
         label:
-          autoopen: Auto-open
           rotatable: Rotatable
           legend: 'Print legend'
           legend_default_behaviour: 'Legend checkbox active'
           required_fields_first: Display required fields first
-      copyright:
-        label:
-          autoopen: Auto-open
       layertree:
         label:
           showbasesources: 'Show base sources'
-          autoopen: Autoopen
           showlayerremove: 'Show layer remove'
           usetheme: 'Thematic layer'
           themes: Themes
@@ -379,12 +431,9 @@ mb:
         polygon: Polygon
         rectangle: Rectangle
         circle: Circle
-        text: Text
       inputs:
         label: Label
         radius: Radius
-      error:
-        notext: 'Text required'
       geometry:
         action:
           remove: 'Remove geometry'
@@ -395,7 +444,6 @@ mb:
         title: Sketches
         description: Drawing tool
       admin:
-        auto_activate: Auto activate
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color

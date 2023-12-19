@@ -18,6 +18,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
             ->setDescription('Reloads a WMS source from given url')
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
             ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
+            ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
         ;
         parent::configure();
     }

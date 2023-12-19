@@ -25,6 +25,8 @@ mb:
         success: A new instance has been created. Please edit it.
   manager:
     automatic: Automatic
+    autoActivate: Activate automatically
+    autoOpen: Open automatically
     confirm_form_discard: Discard changes?
     popup_height: Dialog height
     popup_width: Dialog width
@@ -68,6 +70,7 @@ mb:
       persistentView: Persistent map state
     admin:
       sources: Sources
+      csrf_token_invalid: 'Invalid CSRF token.'
       source:
         add: 'Add source'
         show_metadata: 'Show metadata'
@@ -86,6 +89,8 @@ mb:
       map:
         max_extent: 'Max. extent'
         start_extent: 'Start extent'
+        base_dpi: Default Resolution [dpi]
+        base_dpi.help: The resolution adapts to the screen resolution based on the configured value
       element:
         title: Title
         type: Type
@@ -120,6 +125,9 @@ mb:
           confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'No instance added'
         no_layer_added: 'No layer added'
+        max_input_vars_exceeded: 'PHP setting max_input_vars too low for the number of layers in this instance.'
+        update_successful: 'Your instance has been updated.'
+        converted_to_shared: The instance has been converted to a shared instance.
       template: Template
       application:
         view: View
@@ -172,6 +180,8 @@ mb:
       serviceurl: 'Service URL'
       username: Username
       password: Password
+      activate_new_layers: Activate newly added layers
+      select_new_layers: Select newly added layers
       load: Load
     managerbundle:
       new_application: 'New application'

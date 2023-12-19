@@ -24,6 +24,10 @@
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
         </service>
+        <service id="Mapbender\ManagerBundle\Controller\LayersetController"
+                 class="Mapbender\ManagerBundle\Controller\LayersetController"
+                 public="true" lazy="true">
+        </service>
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
                  class="Mapbender\ManagerBundle\Controller\ElementController"
                  public="true">
@@ -42,6 +46,7 @@
                  class="Mapbender\ManagerBundle\Controller\SourceInstanceController"
                  public="true">
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="translator" />
         </service>
     </services>
 </container>

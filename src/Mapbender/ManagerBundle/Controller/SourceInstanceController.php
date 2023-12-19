@@ -16,20 +16,26 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
     /** @var TypeDirectoryService */
     protected $typeDirectory;
 
+    protected TranslatorInterface $trans;
 
-    public function __construct(TypeDirectoryService $typeDirectory)
+
+    public function __construct(TypeDirectoryService $typeDirectory, TranslatorInterface $trans)
     {
         $this->typeDirectory = $typeDirectory;
+        $this->trans = $trans;
     }
 
     /**
@@ -42,7 +48,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param Layerset|null $layerset
      * @return Response
      */
-    public function editAction(Request $request, $instanceId, $slug=null, Layerset $layerset=null)
+    public function editAction(Request $request, $instanceId, $slug = null, Layerset $layerset = null)
     {
         $em = $this->getEntityManager();
         /** @var SourceInstance|null $instance */
@@ -69,7 +75,7 @@ class SourceInstanceController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         if (!$layerset && $application) {
-            $layerset = $application->getLayersets()->filter(function($layerset) use ($instance) {
+            $layerset = $application->getLayersets()->filter(function ($layerset) use ($instance) {
                 /** @var Layerset $layerset */
                 return $layerset->getCombinedInstances()->contains($instance);
             })->first();
@@ -88,9 +94,11 @@ class SourceInstanceController extends ApplicationControllerBase
             }
             $em->flush();
 
-            $this->addFlash('success', 'Your instance has been updated.');
+            $this->addFlash('success', $this->trans->trans('mb.manager.admin.instance.update_successful'));
             // redirect to self
             return $this->redirectToRoute($request->attributes->get('_route'), $request->attributes->get('_route_params'));
+        } else if ($form->isSubmitted() && count($_POST, COUNT_RECURSIVE) >= ini_get("max_input_vars")) {
+            $form->addError(new FormError($this->trans->trans('mb.manager.admin.instance.max_input_vars_exceeded')));
         }
 
         return $this->render($factory->getFormTemplate($instance), array(
@@ -112,10 +120,34 @@ class SourceInstanceController extends ApplicationControllerBase
         /** @todo: specify / implement proper grants */
         $oid = new ObjectIdentity('class', Source::class);
         $this->denyAccessUnlessGranted('DELETE', $oid);
+
+        // Use an empty form to help client code follow the final redirect properly
+        // See Resources/public/confirm-delete.js
+        $dummyForm = $this->createForm(FormType::class, null, array(
+            'method' => 'DELETE',
+            'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
+                'instance' => $instance,
+            )),
+        ));
+        $dummyForm->handleRequest($request);
+
         if (!$request->isMethod(Request::METHOD_GET)) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($instance);
-            $em->flush();
+            if ($request->request->has('token')) {
+                // Source instance within an application
+                $csrfValid = $this->isCsrfTokenValid('layerset', $request->request->get('token'));
+            } else {
+                // Free Instance (from sources tab)
+                $csrfValid = $dummyForm->isSubmitted() && $dummyForm->isValid();
+            }
+
+            if (!$csrfValid) {
+                $this->addFlash('error', $this->trans->trans('mb.manager.admin.csrf_token_invalid'));
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($instance);
+                $em->flush();
+            }
+
             if ($returnUrl = $request->query->get('return')) {
                 return $this->redirect($returnUrl);
             } else {
@@ -124,18 +156,10 @@ class SourceInstanceController extends ApplicationControllerBase
                 ));
             }
         } else {
-            // Use an empty form to help client code follow the final redirect properly
-            // See Resources/public/confirm-delete.js
-            $dummyForm = $this->createForm(FormType::class, null, array(
-                'method' => 'DELETE',
-                'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
-                    'instance' => $instance,
-                )),
-            ));
             $viewData = $this->getApplicationRelationViewData($instance) + array(
-                'form' => $dummyForm->createView(),
-                'instance' => $instance,
-            );
+                    'form' => $dummyForm->createView(),
+                    'instance' => $instance,
+                );
             return $this->render('@MapbenderManager/SourceInstance/confirmdelete.html.twig', $viewData);
         }
     }
@@ -240,8 +264,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $layerset->getApplication()->setUpdated(new \DateTime('now'));
         $em->persist($layerset->getApplication());
         $em->flush();
-        // @todo: translate flash message
-        $this->addFlash('success', "Die Instanz wurde zu einer freien Instanz umgewandelt");
+        $this->addFlash('success', $this->trans->trans('mb.manager.admin.instance.converted_to_shared'));
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             'instanceId' => $instance->getId(),
             'slug' => $layerset->getApplication()->getSlug(),
@@ -297,6 +320,11 @@ class SourceInstanceController extends ApplicationControllerBase
         }
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
         $newEnabled = $request->request->get('enabled') === 'true';
         $assignment->setEnabled($newEnabled);
@@ -363,6 +391,13 @@ class SourceInstanceController extends ApplicationControllerBase
         $assignments = $layerset->getCombinedInstanceAssignments();
         $targetLayerset = $this->requireLayerset($targetLayersetId);
 
+        $application = $layerset->getApplication();
+        $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         if ($layerset === $targetLayerset) {
             if (intval($newWeight) === $assignment->getWeight()) {
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
@@ -399,7 +434,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $relatedApplications = $applicationRepository->findWithSourceInstance($instance, null, $applicationOrder);
         foreach ($relatedApplications as $application) {
             /** @var Layerset[] $relatedLayersets */
-            $relatedLayersets = $application->getLayersets()->filter(function($layerset) use ($instance) {
+            $relatedLayersets = $application->getLayersets()->filter(function ($layerset) use ($instance) {
                 /** @var Layerset $layerset */
                 return $layerset->getCombinedInstances()->contains($instance);
             })->getValues();

@@ -65,13 +65,10 @@ class ApplicationAssetService
     /**
      * @return string[]
      */
-    public function getValidAssetTypes()
+    public function getValidAssetTypes(bool $sourceMap = false)
     {
-        return array(
-            'js',
-            'css',
-            'trans',
-        );
+        if ($sourceMap) return ['js', 'css'];
+        return ['js', 'css', 'trans'];
     }
 
     /**
@@ -79,13 +76,14 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getAssetContent(Application $application, $type)
+    public function getAssetContent(Application $application, string $type, bool $sourceMap, ?string $sourceMapRoute)
     {
-        if (!in_array($type, $this->getValidAssetTypes(), true)) {
+        if (!in_array($type, $this->getValidAssetTypes($sourceMap), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
         $refs = $this->collectAssetReferences($application, $type);
-        return $this->compileAssetContent(null, $refs, $type);
+        $assetType = $sourceMap ? 'map.' . $type : $type;
+        return $this->compileAssetContent(null, $refs, $assetType, $sourceMapRoute);
     }
 
     /**
@@ -95,7 +93,7 @@ class ApplicationAssetService
      * @param string $type
      * @return string
      */
-    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, $type)
+    public function getBackendAssetContent(TemplateAssetDependencyInterface $source, string $type, bool $sourceMap, ?string $sourceMapRoute)
     {
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
@@ -106,7 +104,8 @@ class ApplicationAssetService
             $source->getLateAssets($type),
         );
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
-        return $this->compileAssetContent(null, $references, $type);
+        $assetType = $sourceMap ? 'map.' . $type : $type;
+        return $this->compileAssetContent(null, $references, $assetType, $sourceMapRoute);
     }
 
     /**
@@ -129,13 +128,6 @@ class ApplicationAssetService
         }
         $referenceLists[] = $this->getBaseAssetReferences($type);
         $referenceLists[] = $this->getFrontendBaseAssets($type);
-        if ($type === 'js') {
-            $referenceLists[] = array(
-                '@MapbenderCoreBundle/Resources/public/init/frontend.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
-            );
-        }
         $referenceLists = array_merge($referenceLists, array(
             $this->getMapEngineAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
@@ -164,17 +156,21 @@ class ApplicationAssetService
 
     /**
      * @param string $configSlug
-     * @param string[] $refs
+     * @param string[]|StringAsset[] $refs
      * @param string $type
      * @return string
      */
-    protected function compileAssetContent($configSlug, $refs, $type)
+    protected function compileAssetContent($configSlug, $refs, $type, ?string $sourceMapRoute)
     {
         switch ($type) {
             case 'css':
-                return $this->cssCompiler->compile($refs, $this->debug);
+                return $this->cssCompiler->compile($refs);
+            case 'map.css':
+                return $this->debug ? $this->cssCompiler->createMap($refs) : "";
             case 'js':
-                return $this->jsCompiler->compile($refs, $configSlug, $this->debug);
+                return $this->jsCompiler->compile($refs, $configSlug, $this->debug, $sourceMapRoute);
+            case 'map.js':
+                return $this->debug ? $this->jsCompiler->createMap($refs) : "";
             case 'trans':
                 // JSON does not support embedded comments, so ignore $debug here
                 return $this->translationCompiler->compile($refs);
@@ -296,6 +292,10 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '@MapbenderCoreBundle/Resources/public/init/frontend.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
+                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                 );
         }
     }

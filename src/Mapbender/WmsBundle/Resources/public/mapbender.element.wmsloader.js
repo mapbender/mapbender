@@ -1,9 +1,7 @@
 (function($){
 
-    $.widget("mapbender.mbWmsloader", {
+    $.widget("mapbender.mbWmsloader", $.mapbender.mbDialogElement, {
         options: {
-            autoOpen: false,
-            title: Mapbender.trans('mb.wms.wmsloader.title'),
             wms_url: null
         },
         loadedSourcesCount: 0,
@@ -35,7 +33,7 @@
             if (queryParams.wms_id) {
                 this._getInstances(queryParams.wms_id);
             }
-            if (this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
             }
         },
@@ -59,6 +57,8 @@
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'button',
                             callback: function(){
+                                var form = this.$element.find('form').get(0);
+                                if (form.reportValidity && !form.reportValidity()) return;
                                 var url = $('input[name="loadWmsUrl"]', self.element).val();
                                 if(url === ''){
                                     $('input[name="loadWmsUrl"]', self.element).focus();
@@ -82,6 +82,8 @@
                 this.popup.$element.removeClass('hidden');
                 this.popup.focus();
             }
+
+            this.notifyWidgetActivated();
         },
         close: function(){
             if (this.popup && this.popup.$element) {
@@ -91,6 +93,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
         loadDeclarativeWms: function(elm){
             var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];

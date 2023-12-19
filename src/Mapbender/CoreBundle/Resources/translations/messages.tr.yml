@@ -250,7 +250,6 @@ mb:
           usemailto: 'Mailto`yu kullanın'
       legend:
         label:
-          autoopen: 'Otomatik aç'
           hideemptylayers: 'Boş katmanları gizle'
           generatelegendurl: 'Lejant URL`si oluştur'
           showsourcetitle: 'Kaynak başlığını göster'
@@ -258,23 +257,17 @@ mb:
           showgroupedlayertitle: 'Gruplanmış katman başlığını göster'
       featureinfo:
         label:
-          autoopen: 'Otomatik aç'
           deactivateonclose: 'Kapandığında devre dışı bırak'
           onlyvalid: 'Sadece geçerli olan'
           highlighting: ~
       printclient:
         label:
-          autoopen: 'Otomatik aç'
           rotatable: 'Döndürülebilir'
           legend: 'Lejant yazdır'
           legend_default_behaviour: 'Lejant onay kutusu etkin'
-      copyright:
-        label:
-          autoopen: 'Otomatik aç'
       layertree:
         label:
           showbasesources: 'Altlık kaynaklarını göster'
-          autoopen: 'Otomatik aç'
           showlayerremove: 'Katman kaldır aracını göster'
           usetheme: 'Tematik katman'
           themes: 'Temalar'
@@ -308,7 +301,6 @@ mb:
         polygon: 'Çokgen'
         rectangle: 'Dikdörtgen'
         circle: Çember
-        text: 'Metin'
       geometry:
         action:
           remove: 'Geometriyi kaldır'
@@ -318,7 +310,6 @@ mb:
         title: 'İşaretleme'
         description: 'İşaretleme aracı'
       admin:
-        auto_activate: Otomatik etkinleştir
         deactivate_on_close: Kapandığında devre dışı bırak
     # (imported) Yaml application amenity
     redlining:

@@ -21,7 +21,7 @@ class FeatureInfoAdminType extends AbstractType
             ))
             ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.core.admin.featureinfo.label.autoopen',
+                'label' => 'mb.manager.autoActivate',
             ))
             ->add('printResult', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array('required' => false))
             ->add('deactivateOnClose', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
@@ -48,20 +48,18 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.highlighting',
             ))
-            ->add('defaultStyle', FeatureInfoStyleType::class, array(
+            ->add('defaultStyle', PaintType::class, array(
                 'label' => 'mb.core.admin.featureinfo.label.default_group',
                 'inherit_data' => true,
                 'fieldNameFillColor' => 'fillColorDefault',
                 'fieldNameStrokeColor' => 'strokeColorDefault',
-                'fieldNameOpacity' => 'opacityDefault',
                 'fieldNameStrokeWidth' => 'strokeWidthDefault',
             ))
-            ->add('hoverStyle', FeatureInfoStyleType::class, array(
+            ->add('hoverStyle', PaintType::class, array(
                 'label' => 'mb.core.admin.featureinfo.label.hover_group',
                 'inherit_data' => true,
                 'fieldNameFillColor' => 'fillColorHover',
                 'fieldNameStrokeColor' => 'strokeColorHover',
-                'fieldNameOpacity' => 'opacityHover',
                 'fieldNameStrokeWidth' => 'strokeWidthHover',
             ))
         ;

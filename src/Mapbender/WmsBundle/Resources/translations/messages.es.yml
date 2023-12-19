@@ -118,6 +118,9 @@ mb:
             toggletoc: 'Toggle en TOC'
             allowreordertoc: 'Permitir Reordenar en TOC'
             moreinfo: 'Más información'
+            id:
+              title: ID
+              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nombre de las Capas'
             style: Estilo
       class:
@@ -125,7 +128,6 @@ mb:
         description: 'Cargar un WMS via getCapabilities-Request'
       admin:
         label:
-          autoopen: 'Auto abrir'
           splitlayers: 'Partir las capas'
     repository:
       parser:

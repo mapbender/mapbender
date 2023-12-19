@@ -1,0 +1,167 @@
+mb:
+  wms:
+    wmsloader:
+      dialog:
+        label:
+          example: Приклад
+          wmsurl: 'Сервіс URL'
+          wmsuser: Користувач
+          wmspass: Пароль
+      error:
+        load: 'WMSLoader: WMS Capabilities не завантажений!'
+      repo:
+        macros:
+          label:
+            formats: Формат
+        view:
+          label:
+            metadata: Метадані
+            contact: Контакт
+            details: Подробиці
+            layers: Шари
+            title: Назва
+            name: Ім'я
+            version: Версія
+            originurl: '>Оригінал URL'
+            abstract: Абстрактний
+            onlineresource: 'Інтернет ресурс'
+            exceptionformats: 'Формат Виключення'
+            fees: Збори
+            accessconstraints: 'Обмеження доступу'
+            person: Людина
+            organization: Організація
+            position: Позиція
+            telephone: Телефон
+            facsimile: Телефакс
+            email: E-mail
+            address: Адреса
+            addresstype: 'Тип Адреси'
+            city: Місто
+            state: Область
+            postcode: 'Поштовий індекс'
+            country: Країна
+          message:
+            cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
+        instance:
+          btn:
+            save: Зберегти
+            cancel: Відмінити
+          label:
+            originurl: 'Оригінал URL'
+            # buffer: 'Буфер'
+            # ratio: 'BBOX фактор'
+            visible: Видимий
+            basesource: 'Джерело'
+            proxy: Проксі
+            transparency: Прозорість
+            tiled: Плитковий
+            title: Назва
+            minsc: Minsc
+            maxsc: Maxsc
+            active: Активний
+            select: Обрати
+            info: Інформація
+            toggle: Перемикач
+            reorder: 'Зміна порядку'
+            allow: Дозволити
+            'on': Включити
+            ratio: "BBOX фактор"
+            buffer: 'Буфер'
+            layerOrder: Порядок шарів
+            layerOrder.standard: Стандартний
+            layerOrder.reverse: QGIS
+          vendorspecific:
+            label: 'певний Vendor'
+          # message:
+            # cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
+        preview:
+          title:
+            servicerepository: 'Обслуговування репозиторію'
+          label:
+            load: Завантажити
+        layer:
+          label:
+            name: Ім'я
+            title: Назва
+            abstract: Абстрактний
+            queryable: Queryable
+            cascaded: Каскадна
+            opaque: Непрозорий
+            nosubset: 'Немає підгрупи'
+            fixedwidth: 'Фіксована ширина'
+            fixedheight: 'Фіксована висота'
+            latlonbounds: LatLonBounds
+            boundingbox: BoundingBox
+            srs: SRS
+            styles: Стилі
+            legendurl: 'Легенда URL'
+            scale: Шкала
+            min: Мінімальний
+            max: Максимальний
+            scalehint: 'Примітка масштабу'
+            attribution: Атрибуція
+            onlineresource: 'Інтернет ресурсів'
+            logourl: 'Лого URL'
+            identifier: Ідентифікатор
+            authority: Повноваження
+            url: URL
+            value: Значення
+            metadataurl: 'Метадані URL'
+            dimension: Вимір
+            extent: Екстент
+            dataurl: 'Data URL'
+            featurelisturl: 'Featurelist URL'
+        instancelayerform:
+          label:
+            layerstitle: 'Назва шару'
+            minscale: 'Мінімальна шкала'
+            maxsclase: 'Максимальна Шкала'
+            active: Активний
+            allowselecttoc: 'Дозволити обирати в TOC'
+            selectedtoc: 'Обраний на TOC'
+            allowinfotoc: 'Allow FeatureInfo at TOC'
+            infotoc: 'FeatureInfo at TOC'
+            allowtoggletoc: 'Allow Toggle at TOC'
+            toggletoc: 'Toggle at TOC'
+            allowreordertoc: 'Дозволити Впорядкувати по ТОС'
+            moreinfo: 'Більше інформації'
+            # id:
+              # title: Id
+              # description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+            layersname: 'Ім''я шару'
+            style: Стиль
+      class:
+        title: 'WMS loader'
+        description: 'Завантажує WMS через GetCapabilities-Request'
+      admin:
+        label:
+          autoopen: 'Автоматично відкритий'
+          splitlayers: 'Розділення шарів'
+    repository:
+      parser:
+        couldnotparse: 'Не вдалось проаналізувати CapabilitiesDocument'
+        not_supported_document: 'Не підтримується CapabilitiesDocument'
+        not_supported_version: 'Версія WMS не підтримується'
+        # not_valid_dtd: 'Документ WMS не діє (DTD)'
+        # not_valid_xsd: 'Документ WMS не діє (XSD)'
+    metadata:
+      section:
+        common:
+          _title: загальний
+        useconditions:
+          _title: 'умови використання'
+        contact:
+          _title: контакт
+        items:
+          _title: Шар
+          name: Ім'я
+    repo:
+      instance:
+        label:
+          dimensions: Розмірність
+    dimensionsets:
+      no_dimension: 'немає розмірності'
+    dimhandler:
+      class:
+        title: 'Розміри провідника'
+        description: 'DimensionsHandler групує та викликає на карті екземпляри, що підтримуються розмірністю'

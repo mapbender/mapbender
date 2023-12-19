@@ -118,6 +118,9 @@ mb:
             toggletoc: 'Toggle op TOC'
             allowreordertoc: 'Sta herorder bij TOC toe'
             moreinfo: 'Meer informatie'
+            id:
+              title: ID
+              description: 'Instantie Laag Id in de vorm: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Laag naam'
             style: Stijl
       class:
@@ -125,7 +128,6 @@ mb:
         description: 'Laad een WMS via de getCapabilities-Request'
       admin:
         label:
-          autoopen: 'Auto open'
           splitlayers: 'Splits lagen'
     repository:
       parser:

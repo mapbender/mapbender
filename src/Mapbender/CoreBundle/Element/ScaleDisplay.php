@@ -35,10 +35,9 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
     public static function getDefaultConfiguration()
     {
         return array(
-            'title' => 'Scale Display',
+            'title' => self::getClassTitle(),
             'unitPrefix' => false,
-            /** @todo: fix this default value (1: nobody wants the '='; 2: translation) */
-            'scalePrefix' => 'Scale = ',
+            'scalePrefix' => 'mb.core.scaledisplay.label',
             'anchor' => 'right-bottom',
         );
     }

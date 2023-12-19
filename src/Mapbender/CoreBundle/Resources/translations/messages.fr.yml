@@ -249,7 +249,6 @@ mb:
           usemailto: ~
       legend:
         label:
-          autoopen: ~
           hideemptylayers: 'Cacher les couches vides'
           generatelegendurl: 'Générer l''URL de la légende'
           showsourcetitle: 'Afficher le titre de la source'
@@ -257,23 +256,17 @@ mb:
           showgroupedlayertitle: 'Afficher le titre des groupes de couches'
       featureinfo:
         label:
-          autoopen: ~
           deactivateonclose: ~
           onlyvalid: ~
           highlighting: ~
       printclient:
         label:
-          autoopen: ~
           rotatable: Pivotable
           legend: 'Imprimer la légende'
           legend_default_behaviour: ~
-      copyright:
-        label:
-          autoopen: ~
       layertree:
         label:
           showbasesources: 'Afficher les fonds de carte'
-          autoopen: Autoopen
           showlayerremove: 'Afficher l''option de supression de couche'
           usetheme: 'Couche thématique'
           themes: Themes
@@ -307,7 +300,6 @@ mb:
         polygon: Polygone
         rectangle: Rectangle
         circle: Cercle
-        text: Texte
       geometry:
         action:
           remove: 'Supprimer la géométrie'
@@ -317,7 +309,6 @@ mb:
         title: Annotation
         description: 'Outil d''annotation'
       admin:
-        auto_activate: ~
         deactivate_on_close: Désactiver à la fermeture
     # (imported) Yaml application amenity
     redlining:

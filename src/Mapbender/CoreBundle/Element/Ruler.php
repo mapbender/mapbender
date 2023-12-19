@@ -37,6 +37,7 @@ class Ruler extends AbstractElementService
             'css' => array(),
             'trans' => array(
                 'mb.core.ruler.create_error',
+                'mb.core.ruler.help',
             ),
         );
     }
@@ -64,6 +65,14 @@ class Ruler extends AbstractElementService
     {
         return array(
             'type' => 'line',
+            'help' => 'mb.core.ruler.help',
+            'precision' => 'auto',
+            'fillColor' => 'rgba(255,255,255,0.2)',
+            'strokeColor' => '#3399CC',
+            'strokeWidth' => 2,
+            'strokeWidthWhileDrawing' => 3,
+            'fontColor' => '#000000',
+            'fontSize' => 12,
         );
     }
 

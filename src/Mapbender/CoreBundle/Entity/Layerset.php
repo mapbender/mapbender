@@ -44,6 +44,12 @@ class Layerset
     protected $application;
 
     /**
+     * NOTE: must specify portable default to avoid a nullable troolean column
+     * @ORM\Column(type="boolean", nullable=false, options={"default": true})
+     */
+    protected $selected = true;
+
+    /**
      * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove", "persist"})
      * @ORM\JoinColumn(name="instances", referencedColumnName="id")
      * @ORM\OrderBy({"weight" = "asc"})
@@ -137,6 +143,22 @@ class Layerset
     public function getApplication()
     {
         return $this->application;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSelected()
+    {
+        return !!$this->selected;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setSelected($value)
+    {
+        return $this->selected = !!$value;
     }
 
     /**

@@ -53,18 +53,21 @@
         {% for element in application.getElementsByRegion(region) if not is_typeof_element_disabled(element) %}
               <tr class="element" {% if is_map_element(element) -%}
                   id="-ft-map-element"
-                {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
+                {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}"
+                    data-token="{{ csrf_token('element_edit') }}">
                 <td>{{ element_title(element) | trans }}</td>
                 <td>{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
                   <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                       data-toggle-flag-icons="fa-eye-slash:fa-eye"
+                      data-token="{{ csrf_token('element_edit') }}"
                       data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
                       title="{{ 'mb.manager.admin.element.show_hide' | trans }}">
                     <i class="fa fas {{ element.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </span>
                   {% if allow_screentypes %}
-                  <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}">
+                  <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}"
+                    data-token="{{ csrf_token('element_edit') }}">
                     {%- set _element_screentype = element.getScreenType() -%}
                     <i data-screentype="mobile" class="screentype-icon fa fa-lg fa-mobile-alt fa-mobile-phone {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
                     <i data-screentype="desktop" class="screentype-icon fa fa-desktop{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
@@ -87,6 +90,7 @@
                   <span class="-fn-delete hover-highlight-effect"
                         title="{{ 'mb.actions.delete' | trans }}"
                         data-slug="{{ application.slug }}"
+                        data-token="{{ csrf_token('element_delete') }}"
                         data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
                         ><i class="fa fa-trash-o far fa-trash-alt"></i></span>
                 </td>

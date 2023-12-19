@@ -34,6 +34,7 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   background-color: #fff;
   height: 100%;
   padding: $space $space 0 $space;
+  z-index: 3;
   .panel-content {
     display: flex;
     flex-direction: column;

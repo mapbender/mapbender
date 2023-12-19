@@ -25,10 +25,12 @@ class IconPackageFa4 implements IconPackageInterface
             'Area ruler (FontAwesome)' => 'iconAreaRuler',
             'Feature info (FontAwesome)' => 'iconInfoActive',
             'GPS (FontAwesome)' => 'iconGps',
+            'Home (FontAwesome)' => 'iconHome',
             'Legend (FontAwesome)' => 'iconLegend',
             'Print (FontAwesome)' => 'iconPrint',
             'Search (FontAwesome)' => 'iconSearch',
             'Layer tree (FontAwesome)' => 'iconLayertree',
+            'Logout (FontAwesome)' => 'iconLogout',
             'WMS (FontAwesome)' => 'iconWms',
             'Help (FontAwesome)' => 'iconHelp',
             'Edit (FontAwesome)' => 'iconEdit',     // = formerly iconWmcEditor, iconSketch
@@ -57,8 +59,12 @@ class IconPackageFa4 implements IconPackageInterface
             case 'iconGps':
                 /** @todo FA5: confirm result is fa-map-marker-alt glyph (poked hole) */
                 $class = 'fa fas fa-map-marker-alt fa-map-marker'; break;
+            case 'iconHome':
+                $class = 'fa fas fa-home'; break;
             case 'iconLegend':
                 $class = 'fa fas fa-th-list'; break;
+            case 'iconLogout':
+                $class = 'fa fas fa-sign-out'; break;
             case 'iconPrint':
                 $class = 'fa fas fa-print'; break;
             case 'iconSearch':
@@ -99,7 +105,7 @@ class IconPackageFa4 implements IconPackageInterface
     {
         return \in_array($iconCode, $this->getChoices()) || \array_key_exists($iconCode, $this->getAliases());
     }
-    
+
     public function getAliases()
     {
         return array(

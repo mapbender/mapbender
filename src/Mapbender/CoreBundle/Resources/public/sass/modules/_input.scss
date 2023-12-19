@@ -15,8 +15,8 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 }
 
 .input {
-  &[disabled] {
-    background: darken($inputBackgroundColor, 10%)
+  &[disabled], &[readonly] {
+    color: lighten($inputForegroundColor, 40%);
   }
 
   &::placeholder {

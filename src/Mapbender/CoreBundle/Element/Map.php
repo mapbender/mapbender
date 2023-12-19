@@ -57,6 +57,7 @@ class Map extends AbstractElementService
             'layersets' => array(),
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
+            'base_dpi' => 96,
             'tileSize' => 512,
             'extent_max' => array(0, 40, 20, 60),
             'extent_start' => array(5, 45, 15, 55),

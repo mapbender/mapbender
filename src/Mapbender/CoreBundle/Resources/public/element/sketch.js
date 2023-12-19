@@ -1,10 +1,9 @@
 (function($){
 
-    $.widget("mapbender.mbSketch", {
+    $.widget("mapbender.mbSketch", $.mapbender.mbDialogElement, {
         options: {
-            auto_activate: false,
             deactivate_on_close: true,
-            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'text'],
+            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'circle'],
             radiusEditing: false,
             colors: []
         },
@@ -13,7 +12,6 @@
         geomCounter: 0,
         rowTemplate: null,
         toolLabels: {},
-        requireText_: false,
         editing_: null,
         $labelInput_: null,
         useDialog_: false,
@@ -28,9 +26,8 @@
                 'polygon': Mapbender.trans('mb.core.sketch.geometrytype.polygon'),
                 'rectangle': Mapbender.trans('mb.core.sketch.geometrytype.rectangle'),
                 'circle': Mapbender.trans('mb.core.sketch.geometrytype.circle'),
-                'text': Mapbender.trans('mb.core.sketch.geometrytype.text')
             });
-            this.useDialog_ = !this.element.closest('.sideContent').length && !this.element.closest('.mobilePane').length;
+            this.useDialog_ = this.checkDialogMode();
             this.editContent_ = $('.-js-edit-content', this.element).remove().removeClass('hidden').html();
             this.$labelInput_ = $('input[name="label-text"]', this.element);
             var self = this;
@@ -92,14 +89,14 @@
                     return self._getFeatureAttribute(feature, 'label') || '';
                 },
                 labelAlign: function(feature) {
-                    if (-1 !== ['point', 'text'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
+                    if (-1 !== ['point'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
                         return 'lm';
                     } else {
                         return 'cm';
                     }
                 },
                 labelXOffset: function(feature) {
-                    if (-1 !== ['point', 'text'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
+                    if (-1 !== ['point'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
                         return 10;
                     } else {
                         return 0;
@@ -112,7 +109,6 @@
                 this.editControl = this._createEditControl(this.layer.getNativeLayer());
                 // Native "sketchcomplete" event is OpenLayers 2 only
                 this.layer.getNativeLayer().events.on({
-                    sketchcomplete: this._validateText.bind(this),
                     afterfeaturemodified: function() {
                         self.editing_ = null;
                     }
@@ -122,7 +118,7 @@
             }
             this.setupMapEventListeners();
             this._trigger('ready');
-            if (this.useDialog_ && this.options.auto_activate) {
+            if (this.checkAutoOpen()) {
                 this.activate();
             }
             this.trackLabelInput_(this.$labelInput_);
@@ -145,6 +141,7 @@
                 this._open();
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
+            this.notifyWidgetActivated();
         },
         deactivate: function() {
             this._deactivateControl();
@@ -158,6 +155,7 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
         // sidepane interaction, safe to use activate / deactivate unchanged
         reveal: function() {
@@ -167,7 +165,7 @@
             this.deactivate();
         },
         /**
-         * deprecated
+         * @deprecated
          * @param {array} callback
          */
         open: function(callback){
@@ -219,9 +217,6 @@
                 this.popup.$element.addClass('hidden');
             }
         },
-        _toolRequiresLabel: function(toolName) {
-            return toolName === 'text';
-        },
         _onToolButtonClick: function($button) {
             this._endEdit();
             $('[data-tool-name]', this.element).not($button).removeClass('active');
@@ -230,19 +225,10 @@
             } else {
                 var toolName = $button.attr('data-tool-name');
                 this.$labelInput_.prop('disabled', false);
-                this.requireText_ = this._toolRequiresLabel(toolName);
                 this._startDraw(toolName);
                 $button.addClass('active');
             }
             return false;
-        },
-        _validateText: function() {
-            if (this.requireText_ && !this.$labelInput_.val().trim()) {
-                Mapbender.info(Mapbender.trans('mb.core.sketch.error.notext'));
-                return false;
-            } else {
-                return true;
-            }
         },
         _onFeatureAdded: function(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
@@ -270,24 +256,8 @@
                 case 'rectangle':
                     this.layer.draw(toolName, featureAdded);
                     break;
-                case 'text':
-                    this._monkeyPatchLabelCondition(this.layer.draw('point', featureAdded));
-                    break;
                 default:
                     throw new Error("No implementation for tool name " + toolName);
-            }
-        },
-        _monkeyPatchLabelCondition: function(interaction) {
-            // OpenLayers 4 only. OpenLayers 2 handles this via map-global sketchcomplete event
-            // Condition cannot be set via public API after creation. So we patch the private attribute 'condition_'
-            if (interaction.condition_ && !interaction.monkeyPatchedLabelCondition) {
-                var self = this;
-                interaction.condition_ = function(event) {
-                    // invoke original default handler
-                    var original = ol.events.condition.noModifierKeys(event);
-                    return original && self._validateText();
-                };
-                interaction.monkeyPatchedLabelCondition = true;
             }
         },
         /**
@@ -406,7 +376,7 @@
         trackLabelInput_: function($input) {
             var self = this;
             $input.on('input', function() {
-                if (self.editing_ && self._validateText()) {
+                if (self.editing_) {
                     var text = $(this).val().trim();
                     self._updateFeatureLabel(self.editing_, text);
                     var label = self._getGeomLabel(self.editing_);

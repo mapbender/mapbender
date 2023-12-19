@@ -84,7 +84,9 @@ class WmtsInstance extends SourceInstance
      */
     public function setOpacity($opacity)
     {
-        $this->opacity = $opacity;
+        if (is_numeric($opacity)) {
+            $this->opacity = intval($opacity);
+        }
         return $this;
     }
 
@@ -102,7 +104,7 @@ class WmtsInstance extends SourceInstance
      */
     public function setProxy($proxy)
     {
-        $this->proxy = $proxy;
+        $this->proxy = (bool) $proxy;
         return $this;
     }
 

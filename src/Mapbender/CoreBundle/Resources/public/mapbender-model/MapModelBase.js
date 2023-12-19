@@ -175,13 +175,14 @@ window.Mapbender.MapModelBase = (function() {
          * @param {Mapbender.SourceLayer} layer
          * @param {boolean|null} [selected]
          * @param {boolean|null} [info]
+         * @param {boolean|null} [ignoreAllowSelectedSetting] if set to true the setting allowSelected will be ignored
          * engine-agnostic
          */
-        controlLayer: function controlLayer(layer, selected, info) {
+        controlLayer: function controlLayer(layer, selected, info, ignoreAllowSelectedSetting) {
             var updated = false;
             if (layer && selected !== null && typeof selected !== 'undefined') {
                 var selected0 = layer.options.treeOptions.selected;
-                var selectedAfter = !!selected && layer.options.treeOptions.allow.selected;
+                var selectedAfter = !!selected && (ignoreAllowSelectedSetting || layer.options.treeOptions.allow.selected);
                 updated = updated || (selected0 !== selectedAfter);
                 layer.options.treeOptions.selected = selectedAfter;
             }
@@ -278,11 +279,12 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {Mapbender.Source} source
-         * @param {boolean} state
+         * @param {boolean} state: layer source will be set to visible if true
+         * @param {boolean} ignoreAllowSelectedSetting: if set to true the setting allowSelected will be ignored
          * engine-agnostic
          */
-        setSourceVisibility: function(source, state) {
-            this.controlLayer(source.getRootLayer(), state);
+        setSourceVisibility: function(source, state, ignoreAllowSelectedSetting) {
+            this.controlLayer(source.getRootLayer(), state, null, ignoreAllowSelectedSetting);
         },
         setSourceOpacity: function(source, opacity) {
             source.setOpacity(opacity);
@@ -541,11 +543,13 @@ window.Mapbender.MapModelBase = (function() {
             var layersetNames = this.mbMap.options.layersets.slice().reverse();
             var sources = [];
             for (var i = 0; i < layersetNames.length; ++i) {
-                var theme = this.getLayersetById(layersetNames[i]);
+                const layersetId = layersetNames[i];
+                var theme = this.getLayersetById(layersetId);
                 if (!theme) {
-                    throw new Error("No layerset with id " + layersetId);
+                    console.log("No layerset with id " + layersetId + ". Edit and save the map element if you just removed a layerset or layer.");
+                } else {
+                    sources = sources.concat.apply(sources, theme.children.slice().reverse());
                 }
-                sources = sources.concat.apply(sources, theme.children.slice().reverse());
             }
             return sources;
         },

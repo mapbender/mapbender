@@ -6,6 +6,7 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\SourceLoader;
+use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -96,7 +97,7 @@ class Loader extends SourceLoader
         $this->validator->validateDocument($this->xmlToDom($content));
     }
 
-    public function updateSource(Source $target, Source $reloaded)
+    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null)
     {
         /** @var HttpTileSource $target */
         /** @var HttpTileSource $reloaded */

@@ -1,8 +1,6 @@
-(function($) {
-    $.widget("mapbender.mbLayertree", {
+(function ($) {
+    $.widget("mapbender.mbLayertree", $.mapbender.mbDialogElement, {
         options: {
-            type: 'element',
-            autoOpen: false,
             useTheme: false,
             target: null,
             showBaseSource: true,
@@ -18,21 +16,19 @@
         popup: null,
         _mobilePane: null,
         useDialog_: false,
-        isTouch_: false,
 
-        _create: function() {
+        _create: function () {
             // see https://stackoverflow.com/a/4819886
-            this.isTouch_ = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-            this.useDialog_ = !this.element.closest('.sideContent,.mobilePane').length;
+            this.useDialog_ = this.checkDialogMode();
             var self = this;
             this._mobilePane = $(this.element).closest('#mobilePane').get(0) || null;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self._setup(mbMap);
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget('mbLayertree');
             });
         },
-        _setup: function(mbMap) {
+        _setup: function (mbMap) {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li.-fn-template', this.element).remove();
             this.template.removeClass('hidden -fn-template');
@@ -43,13 +39,19 @@
 
             this.model = mbMap.getModel();
             this._createTree();
-            if (this.useDialog_ && this.options.autoOpen) {
+            if (this.checkAutoOpen()) {
                 this.open();
             }
             this._createEvents();
             this._trigger('ready');
+
+            const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
+            if (hasNonPersistentScrollbars && this.element.closest('.sideContent').length) {
+                this.element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
+                this.element.closest('.accordion-cell').css('padding-right', '15px');
+            }
         },
-        _createTree: function() {
+        _createTree: function () {
             var sources = this.model.getSources();
             var $rootList = $('ul.layers:first', this.element);
             $rootList.empty();
@@ -75,27 +77,26 @@
             this.reIndent_($rootList, false);
             this._reset();
         },
-        _reset: function() {
-            // Prevent initializing sortable on touch devices, as it breaks touch clicks on folder toggle
-            if (this.options.allowReorder && !this.isTouch_) {
+        _reset: function () {
+            if (this.options.allowReorder) {
                 this._createSortable();
             }
         },
-        _createEvents: function() {
+        _createEvents: function () {
             var self = this;
-            this.element.on('click', '.-fn-toggle-info:not(.disabled)', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.-fn-toggle-children', $.proxy(this._toggleFolder, this));
-            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', $.proxy(self._toggleSelected, self));
-            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-            this.element.on('click', '.layer-menu .exit-button', function() {
+            this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
+            this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
+            this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
+            this.element.on('click', '.layer-menu .exit-button', function () {
                 $(this).closest('.layer-menu').remove();
             });
-            this.element.on('click', '.layer-remove-btn', function() {
+            this.element.on('click', '.layer-remove-btn', function () {
                 var $node = $(this).closest('li.leave');
                 var layer = $node.data('layer');
                 self.model.removeLayer(layer);
             });
-            this.element.on('click', '.layer-metadata', function(evt) {
+            this.element.on('click', '.layer-metadata', function (evt) {
                 self._showMetadata(evt);
             });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
@@ -105,13 +106,13 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
-            $(document).on('mb.sourcenodeselectionchanged', function(e, data) {
+            $(document).on('mb.sourcenodeselectionchanged', function (e, data) {
                 if (data.node instanceof (Mapbender.Layerset)) {
                     self._updateThemeNode(data.node);
                 }
             });
             if (this._mobilePane) {
-                $(this.element).on('click', '.leaveContainer', function() {
+                $(this.element).on('click', '.leaveContainer', function () {
                     $('.-fn-toggle-selected', this).click();
                 });
             }
@@ -122,12 +123,12 @@
          * @param $sourceContainer
          * @private
          */
-        _updateSource: function($sourceContainer) {
+        _updateSource: function ($sourceContainer) {
             // this will capture the "configurationish" layer ids (e.g. "1_0_4_1") from
             // all layers in the source container in DOM order
             var sourceId = $sourceContainer.attr('data-sourceid');
             var layerIdOrder = [];
-            $('.-js-leafnode', $sourceContainer).each(function() {
+            $('.-js-leafnode', $sourceContainer).each(function () {
                 var $t = $(this);
                 var layerId = $t.attr('data-id');
                 if (typeof layerId !== "undefined") {
@@ -141,16 +142,16 @@
          *
          * @private
          */
-        _updateSourceOrder: function() {
+        _updateSourceOrder: function () {
             var $roots = $('.serviceContainer[data-sourceid]', this.element);
-            var sourceIds = $roots.map(function() {
+            var sourceIds = $roots.map(function () {
                 return $(this).attr('data-sourceid');
             }).get().reverse();
             this.model.reorderSources(sourceIds);
         },
-        _createSortable: function() {
+        _createSortable: function () {
             var self = this;
-            var onUpdate = function(event, ui) {
+            var onUpdate = function (event, ui) {
                 if (ui.item.is('.themeContainer,.serviceContainer')) {
                     self._updateSourceOrder();
                 } else {
@@ -158,7 +159,7 @@
                 }
             };
 
-            $("ul.layers", this.element).each(function() {
+            $("ul.layers", this.element).each(function () {
                 $(this).sortable({
                     axis: 'y',
                     items: "> li",
@@ -168,30 +169,31 @@
                 });
             });
         },
-        _createThemeNode: function(layerset, options) {
+        _createThemeNode: function (layerset, options) {
             var $li = this.themeTemplate.clone();
             $li.attr('data-layersetid', layerset.id);
             $li.toggleClass('showLeaves', options.opened);
             $('span.layer-title:first', $li).text(layerset.getTitle() || '');
+            this._updateFolderState($li);
             this._updateThemeNode(layerset, $li);
             return $li;
         },
-        _updateThemeNode: function(layerset, $node) {
+        _updateThemeNode: function (layerset, $node) {
             var $node_ = $node || this._findThemeNode(layerset);
             var $themeControl = $('> .leaveContainer .-fn-toggle-selected', $node_);
             var newState = layerset.getSelected();
             this.updateIconVisual_($themeControl, newState, true);
         },
-        _getThemeOptions: function(layerset) {
-            var matches =  (this.options.themes || []).filter(function(item) {
+        _getThemeOptions: function (layerset) {
+            var matches = (this.options.themes || []).filter(function (item) {
                 return item.useTheme && ('' + item.id) === ('' + layerset.id);
             });
             return matches[0] || null;
         },
-        _findThemeNode: function(layerset) {
+        _findThemeNode: function (layerset) {
             return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
         },
-        _createLayerNode: function(layer) {
+        _createLayerNode: function (layer) {
             var treeOptions = layer.options.treeOptions;
             if (!treeOptions.selected && !treeOptions.allow.selected) {
                 return null;
@@ -217,10 +219,7 @@
             $li.toggleClass('showLeaves', treeOptions.toggle);
 
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
-                $('.-fn-toggle-children > i', $li)
-                    .toggleClass('fa-folder-open', treeOptions.toggle)
-                    .toggleClass('fa-folder', !treeOptions.toggle)
-                ;
+                this._updateFolderState($li);
             } else {
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
@@ -242,11 +241,11 @@
 
             return $li;
         },
-        _createSourceTree: function(source) {
+        _createSourceTree: function (source) {
             var li = this._createLayerNode(source.configuration.children[0]);
             return li;
         },
-        _onSourceAdded: function(event, data) {
+        _onSourceAdded: function (event, data) {
             var source = data.source;
             if (source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
@@ -258,17 +257,17 @@
             this.reIndent_($rootList, false);
             this._reset();
         },
-        _onSourceChanged: function(event, data) {
+        _onSourceChanged: function (event, data) {
             this._resetSourceAtTree(data.source);
         },
-        _onSourceLayerRemoved: function(event, data) {
+        _onSourceLayerRemoved: function (event, data) {
             var layer = data.layer;
             var layerId = layer.options.id;
             var sourceId = layer.source.id;
             var $node = $('[data-sourceid="' + sourceId + '"][data-id="' + layerId + '"]', this.element);
             $node.remove();
         },
-        _redisplayLayerState: function($li, layer) {
+        _redisplayLayerState: function ($li, layer) {
             var $title = $('>.leaveContainer .layer-title', $li);
             // NOTE: outOfScale is only calculated for leaves. May be null
             //       for intermediate nodes.
@@ -284,8 +283,9 @@
             }
             $title.attr('title', tooltipParts.join("\n"));
         },
-        _resetSourceAtTree: function(source) {
+        _resetSourceAtTree: function (source) {
             var self = this;
+
             function resetLayer(layer) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
                 self._updateLayerDisplay($li, layer);
@@ -295,9 +295,10 @@
                     }
                 }
             }
+
             resetLayer(source.configuration.children[0]);
         },
-        _updateLayerDisplay: function($li, layer) {
+        _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
                 this._redisplayLayerState($li, layer);
             }
@@ -306,14 +307,14 @@
                 this._updateLayerCheckboxes($checkboxScope, layer.options.treeOptions);
             }
         },
-        _updateLayerCheckboxes: function($scope, treeOptions) {
+        _updateLayerCheckboxes: function ($scope, treeOptions) {
             var allow = treeOptions.allow || {};
             var $layerControl = $('.-fn-toggle-selected', $scope);
             var $infoControl = $('.-fn-toggle-info', $scope);
             this.updateIconVisual_($layerControl, treeOptions.selected, allow.selected);
             this.updateIconVisual_($infoControl, treeOptions.info, allow.info);
         },
-        _onSourceRemoved: function(event, removed) {
+        _onSourceRemoved: function (event, removed) {
             if (removed && removed.source && removed.source.id) {
                 var $source = this._getSourceNode(removed.source.id);
                 var $theme = $source.closest('.themeContainer', this.element);
@@ -323,15 +324,15 @@
                 }
             }
         },
-        _getSourceNode: function(sourceId) {
+        _getSourceNode: function (sourceId) {
             return $('.serviceContainer[data-sourceid="' + sourceId + '"]', this.element);
         },
-        _onSourceLoadStart: function(event, options) {
+        _onSourceLoadStart: function (event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
             $sourceEl.addClass('state-loading');
         },
-        _onSourceLoadEnd: function(event, options) {
+        _onSourceLoadEnd: function (event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
             $sourceEl.removeClass('state-loading state-error');
@@ -340,26 +341,31 @@
                 this._resetSourceAtTree(options.source);
             }
         },
-        _onSourceLoadError: function(event, options) {
+        _onSourceLoadError: function (event, options) {
             var sourceId = options.source && options.source.id;
             var $sourceEl = sourceId && this._getSourceNode(sourceId);
             $sourceEl.removeClass('state-loading').addClass('state-error');
         },
-        _toggleFolder: function(e) {
+        _toggleFolder: function (e) {
             var $me = $(e.currentTarget);
             var layer = $me.closest('li.leave').data('layer');
             if (layer && (!layer.children || !layer.options.treeOptions.allow.toggle)) {
                 return false;
             }
             var $node = $me.closest('.leave,.themeContainer');
-            var active = $node.toggleClass('showLeaves').hasClass('showLeaves');
-            $('>i', $me)
+            $node.toggleClass('showLeaves')
+
+            this._updateFolderState($node);
+            return false;
+        },
+        _updateFolderState: function($node) {
+            const active = $node.hasClass('showLeaves');
+            $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
                 .toggleClass('fa-folder-open', active)
                 .toggleClass('fa-folder', !active)
             ;
-            return false;
         },
-        _toggleSelected: function(e) {
+        _toggleSelected: function (e) {
             var $target = $(e.currentTarget);
             var newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
@@ -367,30 +373,28 @@
             var source = layer && layer.source;
             var themeId = !source && $target.closest('.themeContainer').attr('data-layersetid');
             if (themeId) {
-                var theme = Mapbender.layersets.filter(function(x) {
+                var theme = Mapbender.layersets.filter(function (x) {
                     return x.id === themeId;
                 })[0];
                 this.model.controlTheme(theme, newState);
             } else {
-               if (layer.parent) {
+                if (layer.parent) {
                     this.model.controlLayer(layer, newState);
                 } else {
                     this.model.setSourceVisibility(source, newState);
                 }
             }
-            if (this._mobilePane) {
-                $('#mobilePaneClose', this._mobilePane).click();
-            }
+
             return false;
         },
-        _toggleInfo: function(e) {
+        _toggleInfo: function (e) {
             var $target = $(e.currentTarget);
             var newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
-        _initMenu: function($layerNode) {
+        _initMenu: function ($layerNode) {
             var layer = $layerNode.data('layer');
             var source = layer.source;
             var menu = $(this.menuTemplate.clone());
@@ -415,7 +419,7 @@
                     speed: 1,
                     steps: 100,
                     handleClass: "layer-opacity-handle",
-                    animationCallback: function(x, y) {
+                    animationCallback: function (x, y) {
                         var opacity = Math.max(0.0, Math.min(1.0, x));
                         var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
@@ -448,7 +452,7 @@
                 menu.remove();
             }
         },
-        _toggleMenu: function(e) {
+        _toggleMenu: function (e) {
             var $target = $(e.target);
             var $layerNode = $target.closest('li.leave');
             if (!$('>.layer-menu', $layerNode).length) {
@@ -457,7 +461,7 @@
             }
             return false;
         },
-        _filterMenu: function(layer) {
+        _filterMenu: function (layer) {
             var enabled = this.options.menu;
             var supported = ['layerremove'];
             if (layer.options.metadataUrl) {
@@ -474,24 +478,24 @@
                 supported.push('zoomtolayer');
             }
 
-            return supported.filter(function(name) {
+            return supported.filter(function (name) {
                 return -1 !== enabled.indexOf(name);
             });
         },
-        _initDimensionsMenu: function($element, menu, dims, source) {
+        _initDimensionsMenu: function ($element, menu, dims, source) {
             var self = this;
             var dimData = $element.data('dimensions') || {};
             var template = $('.layer-control-dimensions', menu);
             var $controls = [];
             var dragHandlers = [];
-            var updateData = function(key, props) {
+            var updateData = function (key, props) {
                 $.extend(dimData[key], props);
                 var ourData = {};
                 ourData[key] = dimData[key];
                 var mergedData = $.extend($element.data('dimensions') || {}, ourData);
                 $element.data('dimensions', mergedData);
             };
-            $.each(dims, function(idx, item) {
+            $.each(dims, function (idx, item) {
                 var $control = template.clone();
                 var label = $('.layer-dimension-title', $control);
 
@@ -502,7 +506,7 @@
                 var inpchkbox = $('input[type="checkbox"]', $control);
                 inpchkbox.data('dimension', item);
                 inpchkbox.prop('checked', dimData[dimDataKey].checked);
-                inpchkbox.on('change', function(e) {
+                inpchkbox.on('change', function (e) {
                     updateData(dimDataKey, {checked: $(this).prop('checked')});
                     self._callDimension(source, $(e.target));
                 });
@@ -524,10 +528,10 @@
                         speed: 1,
                         steps: dimHandler.getStepsNum(),
                         handleClass: 'layer-dimension-handle',
-                        callback: function(x, y) {
+                        callback: function (x, y) {
                             self._callDimension(source, inpchkbox);
                         },
-                        animationCallback: function(x) {
+                        animationCallback: function (x) {
                             var step = Math.round(dimHandler.getStepsNum() * x);
                             var value = dimHandler.valueFromStep(step);
                             label.text(value);
@@ -541,11 +545,11 @@
                 $controls.push($control);
             });
             template.replaceWith($controls);
-            dragHandlers.forEach(function(dh) {
+            dragHandlers.forEach(function (dh) {
                 dh.reflow();
             });
         },
-        _callDimension: function(source, chkbox) {
+        _callDimension: function (source, chkbox) {
             var dimension = chkbox.data('dimension');
             var paramName = dimension['__name'];
             if (chkbox.is(':checked') && paramName) {
@@ -557,7 +561,7 @@
             }
             return true;
         },
-        _zoomToLayer: function(e) {
+        _zoomToLayer: function (e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var options = {
                 sourceId: layer.source.id,
@@ -565,12 +569,12 @@
             };
             this.model.zoomToLayer(options);
         },
-        _showMetadata: function(e) {
+        _showMetadata: function (e) {
             var layer = $(e.target).closest('li.leave', this.element).data('layer');
             var url = layer.options.metadataUrl;
             var useModal = !!this._mobilePane;
             $.ajax(url)
-                .then(function(response) {
+                .then(function (response) {
                     var metadataPopup = new Mapbender.Popup2({
                         title: Mapbender.trans("mb.core.metadata.popup.title"),
                         cssClass: 'metadataDialog',
@@ -589,7 +593,7 @@
                     if (initTabContainer) {
                         initTabContainer(metadataPopup.$element);
                     }
-                }, function(jqXHR, textStatus, errorThrown) {
+                }, function (jqXHR, textStatus, errorThrown) {
                     Mapbender.error(errorThrown);
                 })
             ;
@@ -597,13 +601,13 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback) {
+        defaultAction: function (callback) {
             this.open(callback);
         },
         /**
          * Opens a popup dialog
          */
-        open: function(callback) {
+        open: function (callback) {
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 if (!this.popup || !this.popup.$element) {
@@ -617,8 +621,9 @@
                 }
             }
             this._reset();
+            this.notifyWidgetActivated();
         },
-        getPopupOptions: function() {
+        getPopupOptions: function () {
             return {
                 title: this.element.attr('data-title'),
                 modal: false,
@@ -640,7 +645,7 @@
         /**
          * Closes the popup dialog
          */
-        close: function() {
+        close: function () {
             if (this.useDialog_) {
                 if (this.popup && this.popup.$element) {
                     this.popup.$element.hide();
@@ -650,8 +655,9 @@
                 (this.callback)();
                 this.callback = null;
             }
+            this.notifyWidgetDeactivated();
         },
-        updateIconVisual_: function($el, active, enabled) {
+        updateIconVisual_: function ($el, active, enabled) {
             $el.toggleClass('active', !!active);
             var icons;
             if ($el.is('.-fn-toggle-info')) {
@@ -667,7 +673,7 @@
                 $el.toggleClass('disabled', !enabled);
             }
         },
-        reIndent_: function($lists, recursive) {
+        reIndent_: function ($lists, recursive) {
             for (var l = 0; l < $lists.length; ++l) {
                 var list = $lists[l];
                 var $folderToggles = $('>li >.leaveContainer .-fn-toggle-children', list);

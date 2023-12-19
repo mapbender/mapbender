@@ -34,10 +34,19 @@ $(function () {
         });
     }
     function updateValueDisplay(wrapper) {
-        var $select = $('select', wrapper).first();
-        var $valueDisplay = $('>.dropdownValue', wrapper);
+        const $wrapper = $(wrapper);
+        var $select = $('select', $wrapper).first();
+        var $valueDisplay = $('>.dropdownValue', $wrapper);
+        if ($valueDisplay.hasClass('hide-value')) return;
         var $option = $('option:selected', $select).first();
-        $valueDisplay.text($option.text());
+        let text = $option.html();
+        if ($wrapper.attr('data-html')) {
+            const parser = (new DOMParser()).parseFromString(text, 'text/html');
+            text = parser.documentElement.textContent;
+        }
+        if (text || !$wrapper.attr('data-prevent-empty')) {
+            $valueDisplay.html(text);
+        }
     }
     function installFormEvents(form) {
         var handler = function() {
@@ -74,8 +83,10 @@ $(function () {
         if (dropdownList.children().length === 0) {
             $('option', $select).each(function (i, e) {
                 var node = $('<li>');
+                const value = $(e).attr('value');
                 node.addClass('choice');
-                node.attr('data-value', $(e).attr('value'));
+                if ($select.val() === value) node.addClass('choice-selected');
+                node.attr('data-value', value);
                 node.text($(e).text());
                 dropdownList.append(node);
             });
@@ -109,10 +120,13 @@ $(function () {
         var $select = $('>select', $dropdown);
         var val = $choice.attr('data-value');
         var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', $select);
-        $('>.dropdownValue', $dropdown).text(opt.text());
+        var $valueDisplay = $('>.dropdownValue', $dropdown);
+        if (!$valueDisplay.hasClass('hide-value')) $valueDisplay.html(opt.html());
         $select.val(opt.val());
         $select.trigger('change');
         $list.hide();
+        $list.find('.choice').removeClass('choice-selected');
+        $choice.addClass('choice-selected');
         return false;
     }
     $('.dropdown').each(function () {

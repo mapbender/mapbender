@@ -24,6 +24,8 @@ mb:
       create:
         success: Une nouvelle instance a été créée. Modifiez-la
   manager:
+    autoActivate: Activer automatiquement
+    autoOpen: Ouverture automatique
     admin:
       sources: Sources
       source:

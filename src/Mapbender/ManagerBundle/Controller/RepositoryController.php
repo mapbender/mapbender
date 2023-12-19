@@ -13,10 +13,12 @@ use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -206,21 +208,28 @@ class RepositoryController extends ApplicationControllerBase
             'title' => Criteria::ASC,
             'id' => Criteria::ASC,
         ));
+
+        $dummyForm = $this->createForm(FormType::class, null, array(
+            'method' => 'DELETE',
+            'action' => $this->generateUrl('mapbender_manager_repository_delete', array(
+                'sourceId' => $sourceId,
+            )),
+        ));
+
+        $dummyForm->handleRequest($request);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Use an empty form to help client code follow the final redirect properly
             // See Resources/public/confirm-delete.js
-            $dummyForm = $this->createForm(FormType::class, null, array(
-                'method' => 'DELETE',
-                'action' => $this->generateUrl('mapbender_manager_repository_delete', array(
-                    'sourceId' => $sourceId,
-                )),
-            ));
             return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
                 'source' => $source,
                 'applications' => $affectedApplications,
                 'form' => $dummyForm->createView(),
             ));
+        } elseif (!$dummyForm->isSubmitted() || !$dummyForm->isValid()) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
         }
+
         // capture ACL and entity updates in a single transaction
         $em->beginTransaction();
         $oid         = ObjectIdentity::fromDomainObject($source);
@@ -271,7 +280,7 @@ class RepositoryController extends ApplicationControllerBase
         $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType', $formModel);
+        $form = $this->createForm(HttpSourceOriginType::class, $formModel, ['show_update_fields' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -19,6 +19,27 @@
   }
 }
 
+.help-text-inline {
+    display: inline-block;
+    float: left;
+    position: absolute;
+    right: 2px;
+    margin-top: 2px;
+
+    .fa {
+        padding: 6px;
+    }
+}
+
+.checkbox ~ .help-text-inline {
+    margin-top: -20px;
+}
+
+.popover {
+    width: 300px;
+    max-width: 500px;
+}
+
 .extraWideLabelForm {
   $labelWidth: 120px;
   .labelInput {
@@ -30,19 +51,55 @@
 }
 
 .collectionItem {
+    position: relative;
+}
+
+.collectionItem {
   position: relative;
+  margin-bottom: 20px;
+
   textarea {
     min-height: 100px;
   }
-  margin-bottom: 20px;
+
   .form-group &:last-child {
     margin-bottom: 0;
   }
+
+  .panel-heading {
+    position: relative;
+  }
+
+  .panel-buttons {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    a {
+        margin-left: 6px;
+    }
+  }
+
+  > .collectionRemove {
+    position: absolute;
+    right: -0.75em;
+    line-height: 2;
+    z-index: 1;
+  }
 }
 
-.collectionRemove {
-  position: absolute;
-  right: -0.75em;
-  line-height: 2;
-  z-index: 1;
+.checkbox-icon-toggled {
+    display: none;
+}
+.checkbox-icon-toggled-label-off, .checkbox-icon-toggled-label-on {
+    min-width: 13px;
+}
+.checkbox-icon-toggled:checked ~ .checkbox-icon-toggled-label-off,
+.checkbox-icon-toggled ~ .checkbox-icon-toggled-label-on {
+    display: none;
+}
+
+.checkbox-icon-toggled:checked ~ .checkbox-icon-toggled-label-on {
+    display: inline-block;
 }

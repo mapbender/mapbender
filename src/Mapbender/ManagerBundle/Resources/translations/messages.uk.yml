@@ -1,0 +1,222 @@
+mb:
+  application:
+    create:
+      success: Ваш застосунок було створено.
+      failure:
+        create.directory: Неможливо створити каталог застосунку.
+    save:
+      success: Ваш застосунок було збережено.
+      failure:
+        general: Помилка при спробі зберегти ваш застосунок.
+        create.directory: Ваш застосунок було оновлено, але не вдається створити каталоги застосунку.
+    remove:
+      success: Ваш застосунок було видалено.
+      failure:
+        general: Не вдалося видалити ваш застосунок.
+  layerset:
+    create:
+      success: Ваш набір шарів створено.
+    remove:
+      success: Ваш набір шарів було видалено.
+      failure: Виникла помилка при видаленні набору шарів.
+  source:
+    instance:
+      create:
+        success: Новий екземпляр було створено, але його потрібно відредагувати.
+  manager:
+    automatic: Автоматичний
+    confirm_form_discard: Скасувати зміни?
+    popup_height: Висота діалогового вікна
+    popup_width: Ширина діалогового вікна
+    screentype:
+      label: Тип екрану
+      choice:
+        all: Будь-який
+        mobile: Мобільний
+        desktop: Десктопний
+    toolbar:
+      alignment:
+        label: Вирівнювання
+        choice:
+          left: Зліва
+          right: Справа
+          center: По центру
+      generate_button_menu: Створити меню для кнопок
+      menu_label: Мітка меню
+      visibility: Видимість
+    element:
+      screentype:
+        mobile: Показати на екранах мобільних пристроїв
+        desktop: Показати на екранах комп''ютерів
+    sidepane:
+      width: Довжина
+      closed: Спочатку закрито
+      align:
+        label: Розташування
+        choice:
+          left: Зліва
+          right: Справа
+    sourceinstance:
+      embedded_in_applications: '{0} Цей екземпляр не використовується в жодному застосунку|{1} Цей екземпляр використовується в одному застосунку|]1,Inf[ Цей екземпляр використовується в %count% застосунках'
+      convert_to_reusable: Перетворити на спільний екземпляр
+      convert_to_bound: Перетворити на зв''язаний екземпляр
+      converted_to_bound: Зв''язану копію спільного екземпляра додано до застосунку
+      reusable_added_to_application: Спільний екземпляр додано до застосунку
+      create_reusable: Створити спільний екземпляр
+      created_reusable: Створено новий спільний екземпляр
+    application:
+      persistentView: Постійний стан карти
+    admin:
+      sources: Джерела
+      source:
+        add: 'Додати джерело'
+        show_metadata: 'Показати метадані'
+        delete: 'Видалити джерело'
+        new:
+          add: 'Додати джерело'
+        valid: 'Джерело дійсне'
+        notvalid: 'Джерело недійсне'
+        no_source: 'Немає доступного джерела'
+        update: 'Оновити джерело'
+        status:
+          ok: 'Джерело OK'
+          toupdate: 'Джерело більше не актуальне'
+          unreachable: 'Джерело недоступне'
+        embedded_in_applications: '{0} Це джерело не призначено жодному застосунку|{1} Це джерело призначено одному застосунку|]1,Inf[ Це джерело призначено %count% застосункам'
+      map:
+        max_extent: 'Максимальна область'
+        start_extent: 'Початкова область'
+      element:
+        title: Назва
+        type: Тип
+        add: 'Додати новий елемент до'
+        show_hide: 'Переключити показ/приховування елемента'
+        no_element_added: 'Немає доданих елементів'
+        anchor:
+          label: Розташування
+          left-top: Зверху зліва
+          left-bottom: Знизу зліва
+          right-top: Зверху справа
+          right-bottom: Знизу справа
+      zoombar:
+        draggable: Може бути перетягнутим
+      overview:
+        fix: Закріпити
+      layerset:
+        add: 'Додати набір шарів'
+        title: Назва
+        type: Тип
+        edit: 'Редагувати набір шарів'
+        delete:
+          title: 'Видалити шари'
+          confirm: 'Ви дійсно хочете видалити набір шарів з назвою <span class="italic">%layerset_title%</span>?'
+        id: Id
+      instance:
+        add: 'Додати екземпляр'
+        show_hide: 'Переключити показ/приховування екземпляру'
+        edit: 'Редагувати екземпляр'
+        delete:
+          title: 'Видалити екземпляр'
+          confirm: 'Ви дійсно хочете видалити екземпляр <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Жодного екземпляра не додано'
+        no_layer_added: 'Жодного шару не додано'
+      template: Шаблон
+      application:
+        view: Огляд
+        edit:
+          title: 'Редагувати застосунок'
+          base_data: 'Базові дані'
+        screenshot: Мініатюра
+        layouts: 'Панелі інструментів'
+        layersets: Шари
+        custom_css: CSS
+        security:
+          title: Безпека
+          public: активовано
+        save: Зберегти
+        cancel: Скасувати
+        view_this: 'Показати застосунок'
+        duplicate: 'Створити копію застосунку'
+        public:
+          on_off: 'Переключити опублікування/скасування публікації застосунку'
+        delete: 'Видалити застосунок'
+        no_application: 'Немає доступних застосунків'
+        new:
+          title: 'Новий застосунок'
+        create_use: 'Заповніть основну інформацію під час створення нового застосунку, а потім використовуйте режим редагування, щоб додати елементи та шари.'
+        btn:
+          create: Створити
+          cancel: Скасувати
+        upload:
+          button: 'Вибрати файл:'
+          label: 'Файл не обрано'
+        export:
+          addAcl: ACLs
+          addSources: Джерела
+          btn:
+            export: Експорт
+        import:
+          addAcl: ACLs
+          addSources: Джерела
+          btn:
+            import: Import
+        title: Назва
+        url:
+          title: 'Назва URL'
+        description: Опис
+        template: Шаблон
+        map_engine_code: Механізм мапи
+        map_engine_code.ol2: OpenLayers 2 (legacy)
+        map_engine_code.current: OpenLayers 6
+    source:
+      serviceurl: 'Service URL-адреса сервісу'
+      username: Ім''я користувача
+      password: Пароль
+      load: Завантажити
+    managerbundle:
+      new_application: 'Новий застосунок'
+      add_source: 'Додати джерело'
+      add_user_group: 'Додати користувачів та групи'
+      acl_element: 'Acl елемент'
+      import_application: Імпорт
+      export_application: Експорт
+    components:
+      popup:
+        add_element:
+          title: 'Додати елемент'
+        edit_element:
+          title: 'Редагувати елемент'
+        delete_element:
+          title: 'Підтвердити видалення'
+        add_edit_layerset:
+          title_edit: 'Редагувати набір шарів'
+          title_add: 'Додати набір шарів'
+        delete_layerset:
+          title: 'Видалити набір шарів'
+        add_instance:
+          title: 'Вибрати джерело'
+        delete_instance:
+          title: 'Підтвердити видалення'
+        delete_user_group:
+          title: 'Підтвердити видалення'
+          content: 'Дійсно видалити %userGroup%?'
+    import:
+      application:
+        failed: 'Застосунок не може бути імпортовано.'
+    http_connection_error: Помилка підключення
+    http_error_response: Віддалений сервер відповів повідомленням про помилку
+    xml_invalid: Недійсний документ
+    xml_malformed: Не документ XML або недійсна структура XML
+  core:
+    admin:
+      button:
+        show_label: 'Показати мітку'
+      element:
+        autostart: Автозапуск
+    entity:
+      app:
+        screenshotfile:
+          error: 'Файл завеликий (% uploadFileSize% байт). Дозволений максимальний розмір становить %MaxFileSize% байт.'
+          format_error: 'Цей формат не підтримується!'
+          resolution:
+            error: 'Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.'

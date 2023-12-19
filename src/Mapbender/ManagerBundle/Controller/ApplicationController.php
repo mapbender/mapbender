@@ -22,7 +22,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -221,6 +221,10 @@ class ApplicationController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
+        if (!$this->isCsrfTokenValid('application_edit', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
 
         $requestedState = $request->request->get("enabled") === "true";
@@ -243,6 +247,11 @@ class ApplicationController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('DELETE', $application);
 
+        if (!$this->isCsrfTokenValid('application_delete', $request->request->get('token'))) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return new Response();
+        }
+
         try {
             $em = $this->getEntityManager();
             $em->beginTransaction();
@@ -258,107 +267,6 @@ class ApplicationController extends ApplicationControllerBase
             $this->addFlash('error', 'mb.application.remove.failure.general');
         }
 
-        return new Response();
-    }
-
-    /**
-     * Handle layerset creation and title editing
-     *
-     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET", "POST"}, name="mapbender_manager_application_newlayerset")
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET", "POST"}, name="mapbender_manager_application_editlayerset")
-     * @param Request $request
-     * @param string $slug
-     * @param string|null $layersetId
-     * @return Response
-     */
-    public function editLayersetAction(Request $request, $slug, $layersetId = null)
-    {
-        $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        if ($layersetId) {
-            $layerset = $this->requireLayerset($layersetId, $application);
-        } else {
-            $layerset = new Layerset();
-            $layerset->setApplication($application);
-        }
-
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
-        $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                $em = $this->getEntityManager();
-                $application->setUpdated(new \DateTime('now'));
-                $em->persist($application);
-                $em->persist($layerset);
-                $em->flush();
-                $this->addFlash('success', 'mb.layerset.create.success');
-            } else {
-                foreach ($form->getErrors(false, true) as $error) {
-                    $this->addFlash('error', $error->getMessage());
-                }
-            }
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
-                'slug' => $slug,
-                '_fragment' => 'tabLayers',
-            ));
-        }
-
-        return $this->render('@MapbenderManager/Application/form-layerset.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * A confirmation page for a layerset
-     *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET"})
-     * @param string $slug
-     * @param string $layersetId
-     * @return Response
-     */
-    public function confirmDeleteLayersetAction($slug, $layersetId)
-    {
-        $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $layerset = $this->requireLayerset($layersetId, $application);
-        return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
-            'layerset' => $layerset,
-        ));
-    }
-
-    /**
-     * Delete a layerset
-     *
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"POST"})
-     * @param Request $request
-     * @param string $slug
-     * @param string $layersetId
-     * @return Response
-     */
-    public function deleteLayersetAction(Request $request, $slug, $layersetId)
-    {
-        $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $em = $this->getEntityManager();
-        try {
-            $layerset = $this->requireLayerset($layersetId, $application);
-        } catch (NotFoundHttpException $e) {
-            /** @todo: remove catch, let 404 fly */
-            $layerset = null;
-        }
-        if ($layerset !== null) {
-            $em->beginTransaction();
-            $em->remove($layerset);
-            $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->flush();
-            $em->commit();
-            $this->addFlash('success', 'mb.layerset.remove.success');
-        } else {
-            /** @todo: emit 404 status */
-            $this->addFlash('error', 'mb.layerset.remove.failure');
-        }
-        /** @todo: perform redirect server side, not client side */
         return new Response();
     }
 
@@ -495,7 +403,7 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @throws \Exception
      */
-    public function deleteInstanceAction($slug, $layersetId, $instanceId)
+    public function deleteInstanceAction(Request $request, $slug, $layersetId, $instanceId)
     {
         $em = $this->getEntityManager();
         $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
@@ -504,6 +412,11 @@ class ApplicationController extends ApplicationControllerBase
         if ($application) {
             $this->denyAccessUnlessGranted('EDIT', $application);
         }
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $layerset = $this->requireLayerset($layersetId, $application);
         $instanceCriteria = new Criteria(Criteria::expr()->eq('id', $instanceId));
         $instance = $layerset->getInstances()->matching($instanceCriteria)->first();
@@ -533,7 +446,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $assignmentId
      * @return Response
      */
-    public function detachinstanceAction(Layerset $layerset, $assignmentId)
+    public function detachinstanceAction(Request $request, Layerset $layerset, $assignmentId)
     {
         $application = $layerset->getApplication();
         $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
@@ -544,6 +457,11 @@ class ApplicationController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         $this->denyAccessUnlessGranted('EDIT', $application);
+
+        if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
+            throw new BadRequestHttpException();
+        }
+
         $em = $this->getEntityManager();
         $layerset->getReusableInstanceAssignments()->removeElement($assignment);
         $em->remove($assignment);

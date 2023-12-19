@@ -92,6 +92,31 @@
             <argument>%mapbender.sitelinks%</argument>
         </service>
 
+        <service id="mapbender.form_type.simple_search_configuration_admin" class="Mapbender\CoreBundle\Element\Type\SimpleSearchAdminConfigurationType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.map_admin" class="Mapbender\CoreBundle\Element\Type\MapAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.scale_display_admin" class="Mapbender\CoreBundle\Element\Type\ScaleDisplayAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.ruler_admin" class="Mapbender\CoreBundle\Element\Type\RulerAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.paint" class="Mapbender\CoreBundle\Element\Type\PaintType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
@@ -123,6 +148,11 @@
 
         <service id="twig.extension.stringloader" class="Twig\Extension\StringLoaderExtension">
             <tag name="twig.extension" />
+        </service>
+
+        <service id="mapbender.twig.core.number" class="Mapbender\CoreBundle\Extension\Twig\NumberExtension">
+            <tag name="twig.extension"/>
+            <argument type="service" id="request_stack" />
         </service>
 
         <service id="mapbender.assetic.filter.sass"

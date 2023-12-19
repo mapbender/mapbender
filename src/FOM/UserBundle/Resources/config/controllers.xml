@@ -7,6 +7,7 @@
                  class="FOM\UserBundle\Controller\GroupController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="FOM\UserBundle\Service\FixAceOrderService" />
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
                  class="FOM\UserBundle\Controller\PasswordController"
@@ -37,12 +38,18 @@
             <argument type="service" id="fom.acl_assignment_filter" />
             <argument>%fom.user.acl_classes%</argument>
         </service>
+        <service id="FOM\UserBundle\Service\FixAceOrderService"
+                 class="FOM\UserBundle\Service\FixAceOrderService"
+                 public="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
         <service id="FOM\UserBundle\Controller\UserController"
                  class="FOM\UserBundle\Controller\UserController"
                  public="true">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="fom.user_helper.service" />
             <argument type="service" id="fom.acl.manager" />
+            <argument type="service" id="FOM\UserBundle\Service\FixAceOrderService" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>

@@ -24,6 +24,8 @@ mb:
       create:
         success: Новый образец был создан, но его нужно отредактировать.
   manager:
+    autoActivate: Автоактивирование
+    autoOpen: Открывать автоматически
     admin:
       sources: Источники
       source:

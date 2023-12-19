@@ -97,6 +97,10 @@
   thead>tr>th:first-child {
     padding-left: 0;
   }
+  thead>tr>th.valign-top {
+    // Undo (highly specific) bootstrap vertical-align: bottom rule
+    vertical-align: top;
+  }
   // Element region / Layerset titles use embedded h3 tags
   thead h3 {
     font-size: 140%;
@@ -133,6 +137,9 @@
   }
   th.sourceColumn {
     width: 30%;
+  }
+  th:first-child {
+      max-width: 5em;
   }
   td.sourceColumn {
     text-overflow: ellipsis;

@@ -30,7 +30,17 @@ window.Mapbender.MapModelOl4 = (function() {
         var maxExtent = Mapbender.mapEngine.transformBounds(this.mapMaxExtent, this._configProj, this.initialViewParams.srsName);
 
         this.viewOptions_ = this.calculateViewOptions_(this.initialViewParams, this.mbMap.options, maxExtent);
-        var view = new ol.View(this.viewOptions_);
+        let view;
+        try {
+            view = new ol.View(this.viewOptions_);
+        } catch(e) {
+            if (e instanceof TypeError) {
+                this.viewOptions_.projection = window.Mapbender.MapEngineOl4.fallbackProjection;
+                view = new ol.View(this.viewOptions_);
+            } else {
+                throw e;
+            }
+        }
         // remove zoom after creating view
         delete this.viewOptions_['zoom'];
         try {
