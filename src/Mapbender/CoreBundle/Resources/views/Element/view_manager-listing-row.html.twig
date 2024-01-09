@@ -12,8 +12,6 @@
         <span class="static-popover-wrap -js-update-content-anchor">
             {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
                 <i class="-fn-open-update fas fa-gear clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}"></i>
-            {%- else -%}
-                <i class="-fn-open-info fa fas fa-circle-info clickable hover-highlight-effect" title="{{ 'mb.core.viewManager.details' | trans }}"></i>
             {%- endif -%}
         </span>
         {%- if _is_private or grants.deletePublic -%}
