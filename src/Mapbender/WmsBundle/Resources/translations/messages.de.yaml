@@ -70,9 +70,9 @@ mb:
             layerOrder.reverse: QGIS Style (gleiche Reihenfolge)
             exceptionformat: Fehlerformat
             infoformat: Format der GetFeatureInfo-Anfrage
-            format': Format der GetMap-Anfrage
+            format: Format der GetMap-Anfrage
             dimensions: Dimensions
-            vendorspecifics: Vendor specifics
+            vendorspecifics: Benutzerdefinierte Parameter
             layers: Ebenen
           vendorspecific:
             label: Vendor specific
@@ -194,7 +194,7 @@ mb:
         setdefaults: Standardwerte festlegen
     vendorspecifictype:
       admin:
-        vstype: Anbieter Einzelheiten
-        name: Namen
-        default: Standard
-        hidden: Verstekt
+        vstype: Parameter-Typ
+        name: Parameter-Name
+        default: Standardwert
+        hidden: Versteckt

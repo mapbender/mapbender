@@ -72,7 +72,7 @@ mb:
             infoformat: Format of GetFeatureInfo request
             format: Format of the GetMap request
             dimensions: Dimensions
-            vendorspecifics: Vendor specifics
+            vendorspecifics: Vendor specific parameters
             layers: Layers
           vendorspecific:
             label: Vendor specifics
@@ -194,7 +194,7 @@ mb:
         setdefaults: Set defaults
     vendorspecifictype:
       admin:
-        vstype: Vendor specifics
+        vstype: Parameter type
         name: Name
-        default: Default
+        default: Default value
         hidden: Hidden
