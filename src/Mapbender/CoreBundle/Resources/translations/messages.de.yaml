@@ -159,7 +159,7 @@ mb:
         text: Bearbeiten Sie den Text
       admin:
         body: Text
-        gps: gps
+        gps: GPS
         placeholder: Bitte schauen Sie sich diesen POI an
     basesourceswitcher:
       error:
@@ -461,7 +461,7 @@ mb:
       backend:
         addMapSrsList: Koordinatensysteme von der Karte hinzufügen
       admin:
-        srslist: SRS-Listef
+        srslist: SRS-Liste
         zoomlevel: Zoomstufe
     admin:
       poi:

@@ -77,6 +77,7 @@ class ElementFormFactory
         $formType
             ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
                 'element_class' => $handlingClass,
+                'label' => 'mb.core.admin.title',
                 'required' => false,
             ))
         ;

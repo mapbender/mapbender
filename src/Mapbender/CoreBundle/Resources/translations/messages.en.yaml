@@ -359,7 +359,7 @@ mb:
         layersets: Layersets
         tilesize: Tile size
         SRS: SRS
-        scales: Scales (csv)
+        scales: Scales (comma-separated)
         othersrs: Other SRS
         srs: SRS
     scalebar:

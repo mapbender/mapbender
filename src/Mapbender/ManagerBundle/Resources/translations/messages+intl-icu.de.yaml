@@ -234,6 +234,7 @@ mb:
         show_label: Beschriftung anzeigen
       element:
         autostart: Autostart
+      title: Titel
     entity:
       app:
         screenshotfile:

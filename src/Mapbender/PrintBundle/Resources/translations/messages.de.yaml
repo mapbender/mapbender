@@ -49,7 +49,7 @@ mb:
   core:
     printclient:
       admin:
-        scales: Maßstäbe
+        scales: Maßstäbe (komma-separiert)
         fileprefix: Datei-Präfix
         optionalfields: Optionale Felder
         replacepattern: Muster ersetzen
@@ -58,14 +58,14 @@ mb:
       label:
         quality: Qualität
       class:
-        title: Text
+        title: Druck
     printclienttemplate:
       admin:
         template: Vorlage
-        label: Text
+        label: Bezeichnung
     printclientquality:
       admin:
-        label: Text
+        label: Bezeichnung
     admin:
       printclient:
         label:
