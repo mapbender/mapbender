@@ -593,6 +593,40 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icon
+    icon:
+      mb:
+        about: Information
+        layer_tree: Layer tree
+        feature_info: Feature Info
+        area_ruler: Area ruler
+        polygon: Polygon
+        line_ruler: Line ruler
+        image_export: Image Export
+        legend: Legend
+      fa:
+        about: Group
+        info: Information (inverted)
+        pin: Marker
+        home: Home
+        legend: List
+        print: Print
+        search: Search
+        layer_tree: Hierarchy
+        logout: Logout
+        wms: Globe
+        edit: Edit
+        wmc: Folder
+        coordinates: Coordinates
+        poi: Pin
+        camera: Camera
+        copyright: Copyright
+        share: Share
+        forward: Forward
+        refresh: Refresh
+        earth: Earth
+        map: Map
+        pin_alt: Pin (Alternative)
+        help: Help
   template:
     toolbar_menu_tooltip: Toggle menu
     region:

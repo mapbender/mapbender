@@ -595,6 +595,40 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Symbol
+    icon:
+      mb:
+        about: Information
+        layer_tree: Ebenenbaum
+        feature_info: Feature Info
+        area_ruler: Fläche messen
+        polygon: Polygon
+        line_ruler: Strecke messen
+        image_export: Bildexport
+        legend: Legende
+      fa:
+        about: Gruppe
+        info: Information (invertiert)
+        pin: Marker
+        home: Startseite
+        legend: Liste
+        print: Drucken
+        search: Suche
+        layer_tree: Hierarchie
+        logout: Abmelden
+        wms: Globus
+        edit: Bearbeiten
+        wmc: Ordner
+        coordinates: Koordinaten
+        poi: Stecknadel
+        camera: Kamera
+        copyright: Copyright
+        share: Teilen
+        forward: Weiterleiten
+        refresh: Neu laden
+        earth: Erdkugel
+        map: Karte
+        pin_alt: Stecknadel (Alternative)
+        help: Hilfe
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:

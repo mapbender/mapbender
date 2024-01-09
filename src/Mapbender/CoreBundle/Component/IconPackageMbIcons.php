@@ -24,14 +24,14 @@ class IconPackageMbIcons implements IconPackageInterface
     {
         if (!$this->showDefaultIcons) return [];
         return [
-            'Layer tree' => 'icon-layer-tree',
-            'Feature Info' => 'icon-feature-info',
-            'Area ruler' => 'icon-area-ruler',
-            'Polygon' => 'icon-polygon',
-            'Line ruler' => 'icon-line-ruler',
-            'Image Export' => 'icon-image-export',
-            'Legend' => 'icon-legend',
-            'About' => 'icon-about',
+            'mb.core.icon.mb.about' => 'icon-about',
+            'mb.core.icon.mb.layer_tree' => 'icon-layer-tree',
+            'mb.core.icon.mb.feature_info' => 'icon-feature-info',
+            'mb.core.icon.mb.area_ruler' => 'icon-area-ruler',
+            'mb.core.icon.mb.polygon' => 'icon-polygon',
+            'mb.core.icon.mb.line_ruler' => 'icon-line-ruler',
+            'mb.core.icon.mb.image_export' => 'icon-image-export',
+            'mb.core.icon.mb.legend' => 'icon-legend',
         ];
     }
 
