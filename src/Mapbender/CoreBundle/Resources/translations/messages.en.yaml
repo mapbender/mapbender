@@ -301,9 +301,10 @@ mb:
         indicator: indicator
       admin:
         tooltip: Tooltip
-        activityclass: Activity class
-        ajaxactivityclass: Ajax Activity Class
-        tileactivityclass: Tile Activity Class
+        activityclass: CSS-Class General Activity
+        ajaxactivityclass: CSS-Class Background Activity
+        ajaxactivityclass_help: CSS-Class that is set while an action is active in the background (like a search being performed)
+        tileactivityclass: CSS-Class Map Loading
     button:
       class:
         title: Button

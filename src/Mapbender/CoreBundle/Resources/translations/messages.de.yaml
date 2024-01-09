@@ -303,9 +303,10 @@ mb:
         indicator: Indikator
       admin:
         tooltip: Tooltip
-        activityclass: Aktivitätsklasse
-        ajaxactivityclass: Ajax Activity Class
-        tileactivityclass: Tile Activity Class
+        activityclass: CSS-Klasse Aktivität generell
+        ajaxactivityclass: CSS-Klasse bei Hintergrundaktivität
+        ajaxactivityclass_help: CSS-Klasse, die gesetzt wird, wenn eine Aktion im Hintergrund ausgeführt wird, z.B. wenn eine Suche durchgeführt wird
+        tileactivityclass: CSS-Klasse bei Laden der Karte
     button:
       class:
         title: Button

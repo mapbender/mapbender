@@ -117,6 +117,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.activity_indicator" class="Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
