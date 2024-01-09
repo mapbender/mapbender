@@ -35,6 +35,7 @@
             var element = widget.element;
 
             var routeSelect = $('select#search_routes_route', element);
+            routeSelect.closest('.dropdown').css('display', this.options.routes.length > 1 ? 'block' : 'none');
 
             element.on('submit', '.search-forms form', function (evt) {
                 evt.preventDefault();
