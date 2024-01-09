@@ -65,11 +65,17 @@ mb:
             'on': 'on'
             ratio: BBOX factor
             buffer: Tile buffer
-            layerOrder: Layer ordering
-            layerOrder.standard: standard
-            layerOrder.reverse: QGIS
+            layerorder: Layer ordering
+            layerorder.standard: standard
+            layerorder.reverse: QGIS
+            exceptionformat: Exception format
+            infoformat: Format of GetFeatureInfo request
+            format: Format of the GetMap request
+            dimensions: Dimensions
+            vendorspecifics: Vendor specific parameters
+            layers: Layers
           vendorspecific:
-            label: Vendor specific
+            label: Vendor specifics
         preview:
           title:
             servicerepository: Service Repository
@@ -142,14 +148,16 @@ mb:
     metadata:
       section:
         common:
-          _title: Common
-        useconditions:
-          _title: Terms of use
+          title: General information
         contact:
-          _title: Contact
+          title: Contact
         items:
-          _title: Layer
+          title: Layer
           name: Name
+        useconditions:
+          title: Terms of use
+      popup:
+        title: Meta data
     repo:
       instance:
         label:
@@ -160,3 +168,33 @@ mb:
         description: DimensionsHandler groups and calls the dimension supported instances at the map
     dimensionsets:
       no_dimension: no dimension
+  core:
+    dimensionset:
+      admin:
+        title: Title
+        group: Group
+        extent: Extent
+    dimensionshandler:
+      admin:
+        tooltip: Tooltip
+        dimensionsets: Dimensionsets
+    wmsloader:
+      admin:
+        defaultformat: Default format
+        defaultinfoformat: Default info format
+      onlineresource:
+        format: Format
+        href: href
+      legendurltype:
+        width: Width
+        height: Height
+        onlineresource: Online resource
+      vendorspecifictype:
+        hidden: Hidden
+        setdefaults: Set defaults
+    vendorspecifictype:
+      admin:
+        vstype: Parameter type
+        name: Name
+        default: Default value
+        hidden: Hidden

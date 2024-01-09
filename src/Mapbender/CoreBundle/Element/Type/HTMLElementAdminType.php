@@ -22,9 +22,11 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
             // Temporary. Replaced in preSetData
             ->add('content', TextareaType::class, [
                 'required' => false,
+                'label' => 'mb.core.htmlelement.admin.content',
             ])
             ->add('classes', 'Symfony\Component\Form\Extension\Core\Type\TextType', [
                 'required' => false,
+                'label' => 'mb.core.htmlelement.admin.classes',
             ])
         ;
         $builder->addEventSubscriber($this);
@@ -43,6 +45,7 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
         $element = $event->getForm()->getParent()->getData();
         $event->getForm()->add('content', TextareaType::class, array(
             'required' => false,
+            'label' => 'mb.core.htmlelement.admin.content',
             'constraints' => new HtmlTwigConstraint(array(
                 // Same twig variable scope as frontend
                 /** @see HTMLElement::getView */

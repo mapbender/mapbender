@@ -233,6 +233,7 @@ mb:
         show_label: Show label
       element:
         autostart: Autostart
+      title: Title
     entity:
       app:
         screenshotfile:
@@ -240,3 +241,15 @@ mb:
           format_error: This format is not supported!
           resolution:
             error: Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.
+    importjobtype:
+      admin:
+        importfile: Import file
+  actions:
+    secureelement: Secure element
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: Title
+            opacity: Opacity

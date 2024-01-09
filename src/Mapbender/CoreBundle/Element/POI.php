@@ -46,7 +46,7 @@ class POI extends AbstractElementService
         return array(
             'useMailto' => true,
             /** @todo: use translatable texts */
-            'body'      => 'Please take a look at this POI',
+            'body'      => 'mb.core.poi.admin.placeholder',
             'gps'       => null
         );
     }

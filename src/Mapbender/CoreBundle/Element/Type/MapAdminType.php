@@ -44,6 +44,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ->add('layersets', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
                 'required' => true,
+                'label' => 'mb.core.map.admin.layersets',
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => array(
@@ -52,10 +53,10 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ))
             ->add('tileSize', NumberType::class, array(
                 'required' => false,
-                'label' => 'Tile size',
+                'label' => 'mb.core.map.admin.tilesize',
             ))
             ->add('srs', TextType::class, array(
-                'label' => 'SRS',
+                'label' => 'mb.core.map.admin.srs',
             ))
             ->add('base_dpi', NumberType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.base_dpi',
@@ -74,11 +75,11 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'required' => false,
             ))
             ->add('scales', TextType::class, array(
-                'label' => 'Scales (csv)',
+                'label' => 'mb.core.map.admin.scales',
                 'required' => true,
             ))
             ->add('otherSrs', TextType::class, array(
-                'label' => 'Other SRS',
+                'label' => 'mb.core.map.admin.othersrs',
                 'required' => false,
             ))
         ;

@@ -29,6 +29,7 @@ class OverviewAdminType extends AbstractType
             ->add('layerset', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
                 'required' => true,
+                'label' => 'mb.core.overview.admin.layerset',
             ))
             ->add('fixed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,

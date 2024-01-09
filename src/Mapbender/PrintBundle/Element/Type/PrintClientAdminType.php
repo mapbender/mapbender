@@ -28,9 +28,11 @@ class PrintClientAdminType extends AbstractType
         $builder
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.printclient.admin.scales',
             ))
             ->add('file_prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
+                'label' => 'mb.core.printclient.admin.fileprefix',
             ))
         ;
         $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
@@ -52,6 +54,7 @@ class PrintClientAdminType extends AbstractType
         }
         $builder
             ->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+                'label' => 'mb.core.admin.printclient.label.qualitylevels',
                 'auto_initialize' => false,
                 'required' => false,
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
@@ -70,6 +73,7 @@ class PrintClientAdminType extends AbstractType
             ))
             ->add('optional_fields', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
+                'label' => 'mb.core.printclient.admin.optionalfields',
             ))
             ->add('required_fields_first', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -77,8 +81,10 @@ class PrintClientAdminType extends AbstractType
             ))
             ->add('replace_pattern', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
                 'required' => false,
+                'label' => 'mb.core.printclient.admin.replacepattern',
             ))
             ->add('templates', SortableCollectionType::class, array(
+                'label' => 'mb.core.admin.printclient.label.templates',
                 'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
                 'allow_add' => true,
                 'allow_delete' => true,

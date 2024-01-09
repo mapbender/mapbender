@@ -46,3 +46,28 @@ mb:
           choice:
             global: global
             private: privat
+  core:
+    printclient:
+      admin:
+        scales: Maßstäbe (komma-separiert)
+        fileprefix: Datei-Präfix
+        optionalfields: Optionale Felder
+        replacepattern: Muster ersetzen
+        templates: Vorlagen
+        qualitylevels: Qualitätsstufen
+      label:
+        quality: Qualität
+      class:
+        title: Druck
+    printclienttemplate:
+      admin:
+        template: Vorlage
+        label: Bezeichnung
+    printclientquality:
+      admin:
+        label: Bezeichnung
+    admin:
+      printclient:
+        label:
+          qualitylevels: Qualitätsstufen
+          templates: Vorlagen

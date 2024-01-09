@@ -24,8 +24,10 @@ class OnlineResourceType extends AbstractType
         $builder
             ->add('format', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                     'required' => false,
+                    'label' => 'mb.core.admin.onlineresource.format',
             ))
             ->add('href', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'label' => 'mb.core.admin.onlineresource.href',
                 'required' => false,
             ))
         ;

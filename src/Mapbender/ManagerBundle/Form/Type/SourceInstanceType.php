@@ -20,6 +20,7 @@ class SourceInstanceType extends AbstractType
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => true,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.title',
             ))
             ->add('basesource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -30,6 +31,7 @@ class SourceInstanceType extends AbstractType
                 'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
             ))
             ->add('opacity', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+                'label' => 'mb.wms.wmsloader.repo.instance.label.opacity',
                 'attr' => array(
                     'min' => 0,
                     'max' => 100,

@@ -53,6 +53,13 @@ mb:
       class:
         title: Information
         description: Information
+      admin:
+        maxcount: Max. Anzahl
+        height: Höhe
+        width: Breite
+        displaytype: Anzeigetyp
+        tabs: Reiter
+        accordion: Akkordeon
     aboutdialog:
       content:
         versionprefix: Version
@@ -65,7 +72,9 @@ mb:
       tag:
         help: Hilfe
         info: Info
-        about: Info-Dialog
+        about: Über
+      admin:
+        tooltip: Über
     simplesearch:
       input:
         searchterm: Suchbegriff
@@ -132,6 +141,10 @@ mb:
       tag:
         search: Suchen
         router: Router
+      admin:
+        width: Breite
+        height: Höhe
+        routes: Routen
     poi:
       sharepoi: Treffpunkt vereinbaren
       text:
@@ -144,6 +157,10 @@ mb:
         description: Element über das eine Treffpunkt generiert und verschickt werden kann.
       label:
         text: Bearbeiten Sie den Text
+      admin:
+        body: Text
+        gps: GPS
+        placeholder: Bitte schauen Sie sich diesen POI an
     basesourceswitcher:
       error:
         sourcenotavailable: Der Dienst mit der ID %id% ist nicht vorhanden.
@@ -152,6 +169,10 @@ mb:
         Description: Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.
       form:
         mesage: Keine Hintergrund Definitionen vorhanden.
+        instancesets: Instancesets
+      admin:
+        tooltip: Tooltip
+        instances: Instanzen
         instancesets: Instancesets
     legend:
       class:
@@ -173,6 +194,7 @@ mb:
         help_help: Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers
         stroke_width_while_drawing: Linienstärke während des Zeichnens
         only_for_area: nur relevant, wenn <i>Fläche</i> als Geometrie ausgewählt ist
+        style: Stil
     printclient:
       label:
         template: Vorlage
@@ -198,6 +220,7 @@ mb:
         visibility.closed_initially: Initial geschlossen
         visibility.open_initially: Initial offen
         visibility.open_permanent: Dauerhaft offen
+        layerset: Layerset
     metadata:
       popup:
         title: Metadaten
@@ -213,6 +236,11 @@ mb:
         gps: GPS
         position: Position
         button: Button
+      admin:
+        average: Durchschnitt
+        follow: Folge
+        centeronfirstposition: Zentriere auf die erste Position
+        zoomtoaccuracyonfirstposition: Zoom auf Genauigkeit der ersten Position
     layertree:
       const:
         outofscale: Ebene außerhalb des Maßstabs
@@ -238,6 +266,12 @@ mb:
       class:
         title: Ebenenbaum
         description: Baum der Karten-Ebenen
+      admin:
+        layerremove: Ebene entfernen
+        opacity: Deckkraft
+        zoomtolayer: Auf Ebene zoomen
+        metadata: Metadaten
+        dimension: Abmessung
     zoombar:
       zoombybox: Ausschnitt aufziehen
       zoombyworld: Zoom auf gesamte Ausdehnung
@@ -254,6 +288,12 @@ mb:
         control: Kontrolle
         navigation: Navigation
         panel: Panel
+      admin:
+        components: Komponenten
+        rotation: Drehen
+        zoommax: Zoom auf maximale Ausdehnung
+        zoominout: Rein- und Rauszoomen
+        zoomslider: Zoom-Schieberegler
     activityindicator:
       class:
         title: Aktivitätsanzeige
@@ -261,15 +301,28 @@ mb:
       tag:
         activity: Aktivität
         indicator: Indikator
+      admin:
+        tooltip: Tooltip
+        activityclass: CSS-Klasse Aktivität generell
+        ajaxactivityclass: CSS-Klasse bei Hintergrundaktivität
+        ajaxactivityclass_help: CSS-Klasse, die gesetzt wird, wenn eine Aktion im Hintergrund ausgeführt wird, z.B. wenn eine Suche durchgeführt wird
+        tileactivityclass: CSS-Klasse bei Laden der Karte
     button:
       class:
         title: Button
         description: Button
       tag:
         button: Button
+      admin:
+        click: Klicken
+        action: Aktion
+        deactivate: Deaktivieren
     controlbutton:
       class:
         description: Steuert ein anderes Element
+      admin:
+        group: Gruppe
+        target: Ziel
     linkbutton:
       class:
         title: Link
@@ -292,6 +345,8 @@ mb:
       tag:
         copyright: Copyright
         dialog: Dialog
+      admin:
+        content: Inhalt
     map:
       class:
         title: Karte
@@ -303,6 +358,12 @@ mb:
       srsnotfound: SRS Eigenschaften für %srslist% wurden nicht gefunden.
       admin:
         fixedZoomSteps: Feste Maßstabsstufen
+        layersets: Layersets
+        tilesize: Kachelgröße
+        SRS: SRS
+        scales: Maßstäbe (komma-separiert)
+        othersrs: Andere SRS
+        srs: SRS
     scalebar:
       class:
         title: Maßstabsleiste
@@ -310,6 +371,9 @@ mb:
       tag:
         scale: Maßstab
         bar: Leiste
+      admin:
+        maxwidth: Maximale Breite
+        units: Einheit
     scaledisplay:
       label: Maßstab
       scale_prefix: Präfix
@@ -329,6 +393,8 @@ mb:
       tag:
         scale: Maßstab
         selector: Auswahl
+      admin:
+        tooltip: Tooltip
     srsselector:
       class:
         title: SRS Auswahl
@@ -336,6 +402,9 @@ mb:
       tag:
         srs: SRS
         selector: Auswahl
+      admin:
+        srsselector: SRS-Auswahl
+        tooltip: Tooltip
     ShareUrl:
       class:
         title: URL teilen
@@ -391,6 +460,9 @@ mb:
           centermap: Karte zentrieren
       backend:
         addMapSrsList: Koordinatensysteme von der Karte hinzufügen
+      admin:
+        srslist: SRS-Liste
+        zoomlevel: Zoomstufe
     admin:
       poi:
         label:
@@ -436,6 +508,7 @@ mb:
           hidenottoggleable: Nicht aufklappbare Ordner ausblenden
           hideselect: Visibility bei Ordnern ausblenden
           hideinfo: Info ausblenden
+          menu: Menü
       template:
         sidepane:
           type:
@@ -444,10 +517,20 @@ mb:
               tabs: Buttons
               accordion: Akkordeon
               unstyled: Unformatiert
+      button:
+        show_label: Beschriftung anzeigen
+        label: Beschriftung
+      layerset:
+        label:
+          title: Titel
+          selected: Ausgewählt
     htmlelement:
       class:
         title: HTML
         description: HTML hinzufügen
+      admin:
+        content: Inhalt
+        classes: Klassen
     entity:
       app:
         screenshotfile:
@@ -475,6 +558,7 @@ mb:
         deactivate_on_close: Beim Schließen deaktivieren
         colors: Farben
         allow_custom_color: Farbanpassung erlauben
+        geometrytypes: Geometrie-Typen
     redlining:
       class:
         title: Skizzen
@@ -490,6 +574,61 @@ mb:
         description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
       admin:
         open_in_new_tab: In neuem Tab öffnen
+    coordinesdisplay:
+      admin:
+        numdigits: Anzahl der Nachkommastellen
+        empty: Leere Anzeige
+        prefix: Präfix
+        separator: Trennzeichen
+        label: Beschriftung anzeigen
+    searchrouterroute:
+      admin:
+        title: Titel
+        configuration: Konfiguration
+    instanceset:
+      admin:
+        title: Titel
+        group: Gruppe
+        instances: Instanzen
+        instancesets: Instancesets
+    basebutton:
+      admin:
+        tooltip: Tooltip
+        icon: Symbol
+    icon:
+      mb:
+        about: Information
+        layer_tree: Ebenenbaum
+        feature_info: Feature Info
+        area_ruler: Fläche messen
+        polygon: Polygon
+        line_ruler: Strecke messen
+        image_export: Bildexport
+        legend: Legende
+      fa:
+        about: Gruppe
+        info: Information (invertiert)
+        pin: Marker
+        home: Startseite
+        legend: Liste
+        print: Drucken
+        search: Suche
+        layer_tree: Hierarchie
+        logout: Abmelden
+        wms: Globus
+        edit: Bearbeiten
+        wmc: Ordner
+        coordinates: Koordinaten
+        poi: Stecknadel
+        camera: Kamera
+        copyright: Copyright
+        share: Teilen
+        forward: Weiterleiten
+        refresh: Neu laden
+        earth: Erdkugel
+        map: Karte
+        pin_alt: Stecknadel (Alternative)
+        help: Hilfe
   template:
     toolbar_menu_tooltip: Menü öffnen
     region:
@@ -506,6 +645,12 @@ mb:
     poi: Bitte werfen Sie einen Blick auf diesen POI
     search: Ort suchen
     about: Über Mapbender
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Titel
 Bad credentials.: Authentifizierung fehlgeschlagen.
 User account is locked.: Benutzerkonto ist gesperrt.
 User account is disabled.: Benutzerkonto ist deaktiviert.

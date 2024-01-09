@@ -20,8 +20,10 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array('required' => false))
-        ;
+            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'label' => 'mb.core.basesourceswitcher.admin.tooltip',
+                ));
         $builder->addEventSubscriber($this);
     }
 
@@ -39,6 +41,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
             $event->getForm()
                 ->add('instancesets', SortableCollectionType::class, array(
                     'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
+                    'label' => 'mb.core.basesourceswitcher.admin.instancesets',
                     'allow_add' => true,
                     'allow_delete' => true,
                     'entry_options' => array(

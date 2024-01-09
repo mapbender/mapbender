@@ -15,13 +15,14 @@ class ZoomBarAdminType extends AbstractType
         $builder
             ->add('components', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
+                'label' => 'mb.core.zoombar.admin.components',
                 'multiple' => true,
                 'choices' => array(
-                    "Rotation" => "rotation",
-                    "zoom to max extent" => "zoom_max",
+                    "mb.core.zoombar.admin.rotation" => "rotation",
+                    "mb.core.zoombar.admin.zoommax" => "zoom_max",
                     'mb.core.zoombar.zoom_home' => 'zoom_home',
-                    "Zoom in/out" => "zoom_in_out",
-                    "Zoom slider" => "zoom_slider",
+                    "mb.core.zoombar.admin.zoominout" => "zoom_in_out",
+                    "mb.core.zoombar.admin.zoomslider" => "zoom_slider",
                 ),
                 'attr' => array(
                     'size' => 5,

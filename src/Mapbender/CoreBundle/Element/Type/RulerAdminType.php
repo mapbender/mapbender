@@ -55,6 +55,7 @@ class RulerAdminType extends AbstractType
                 ),
             ))
             ->add('style', PaintType::class, array(
+                'label' => 'mb.core.ruler.admin.style',
                 'inherit_data' => true,
                 'required' => false,
                 'hasFont' => true,

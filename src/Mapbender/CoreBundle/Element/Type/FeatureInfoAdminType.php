@@ -14,9 +14,10 @@ class FeatureInfoAdminType extends AbstractType
         $builder
             ->add('displayType', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'required' => true,
+                'label' => 'mb.core.featureinfo.admin.displaytype',
                 'choices' => array(
-                    'Tabs' => 'tabs',
-                    'Accordion' => 'accordion',
+                    'mb.core.featureinfo.admin.tabs' => 'tabs',
+                    'mb.core.featureinfo.admin.accordion' => 'accordion',
                 ),
             ))
             ->add('autoActivate', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
@@ -34,12 +35,15 @@ class FeatureInfoAdminType extends AbstractType
             ))
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
+                'label' => 'mb.core.featureinfo.admin.width',
             ))
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => true,
+                'label' => 'mb.core.featureinfo.admin.height',
             ))
             ->add('maxCount', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'required' => false,
+                'label' => 'mb.core.featureinfo.admin.maxcount',
                 'attr' => array(
                     'placeholder' => 100,
                 ),

@@ -52,14 +52,17 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ->add('format', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $getMapFormatChoices,
                 'required' => true,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.format',
             ))
             ->add('infoformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $featureInfoFormatChoices,
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.infoformat',
             ))
             ->add('exceptionformat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $exceptionFormatChoices,
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.exceptionformat',
             ))
             ->add('transparency', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
@@ -82,6 +85,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
         if ($source->getDimensions()) {
             $builder->add('dimensions', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.dimensions',
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\DimensionInstType',
                 'allow_add' => false,
                 'allow_delete' => false,
@@ -95,6 +99,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $builder
             ->add('vendorspecifics', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
                 'required' => false,
+                'label' => 'mb.wms.wmsloader.repo.instance.label.vendorspecifics',
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -104,6 +109,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ))
             ->add('layers', 'Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType', array(
                 'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.layers',
                 'entry_options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
                 ),

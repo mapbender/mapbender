@@ -234,6 +234,7 @@ mb:
         show_label: Beschriftung anzeigen
       element:
         autostart: Autostart
+      title: Titel
     entity:
       app:
         screenshotfile:
@@ -241,3 +242,15 @@ mb:
           format_error: Nicht unterstütztes Format
           resolution:
             error: Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.
+    importjobtype:
+      admin:
+        importfile: Datei importieren
+  actions:
+    secureelement: Sicheres Element
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: Titel
+            opacity: Deckkraft

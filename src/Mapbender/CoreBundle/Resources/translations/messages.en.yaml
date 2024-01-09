@@ -53,6 +53,13 @@ mb:
       class:
         title: FeatureInfo
         description: FeatureInfo
+      admin:
+        maxcount: Max count
+        height: Height
+        width: Width
+        displaytype: Display type
+        tabs: Tabs
+        accordion: Accordion
     aboutdialog:
       content:
         versionprefix: v.
@@ -66,6 +73,8 @@ mb:
         help: help
         info: info
         about: about
+      admin:
+        tooltip: About
     simplesearch:
       input:
         searchterm: Search term
@@ -131,6 +140,10 @@ mb:
       tag:
         search: search
         router: router
+      admin:
+        width: Width
+        height: Height
+        routes: Routes
     poi:
       sharepoi: Share POI
       text:
@@ -143,6 +156,10 @@ mb:
         description: Create a POI for sharing
       label:
         text: Text
+      admin:
+        body: Body
+        gps: GPS
+        placeholder: Please take a look at this POI
     basesourceswitcher:
       error:
         sourcenotavailable: A source with id %id% is not available.
@@ -151,6 +168,10 @@ mb:
         Description: Change the map's background sources.
       form:
         mesage: No basesource set is defined.
+        instancesets: Instancesets
+      admin:
+        tooltip: Tooltip
+        instances: Instances
         instancesets: Instancesets
     legend:
       class:
@@ -172,6 +193,7 @@ mb:
         help_help: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user's language
         stroke_width_while_drawing: Line width while drawing
         only_for_area: only relevant if geometry is set to <i>Area</i>
+        style: Style
     printclient:
       label:
         template: Template
@@ -197,6 +219,7 @@ mb:
         visibility.closed_initially: Initially closed
         visibility.open_initially: Initially open
         visibility.open_permanent: Permanently open
+        layerset: Layerset
     metadata:
       popup:
         title: Metadata
@@ -212,6 +235,11 @@ mb:
         gps: GPS
         position: position
         button: button
+      admin:
+        average: Average
+        follow: Follow
+        centeronfirstposition: Center on first position
+        zoomtoaccuracyonfirstposition: Zoom to accuracy on first position
     layertree:
       const:
         outofscale: Layer out of scale
@@ -236,6 +264,12 @@ mb:
       class:
         title: Layer tree
         description: Tree of map's layers
+      admin:
+        layerremove: Remove layer
+        opacity: Opacity
+        zoomtolayer: Zoom to layer
+        metadata: Metadata
+        dimension: Dimension
     zoombar:
       zoombybox: Zoom by box
       zoombyworld: Zoom by world
@@ -252,6 +286,12 @@ mb:
         control: control
         navigation: navigation
         panel: panel
+      admin:
+        components: Components
+        rotation: Rotation
+        zoommax: Zoom to maximum extent
+        zoominout: Zoom in and out
+        zoomslider: Zoom slider
     activityindicator:
       class:
         title: Activity indicator
@@ -259,15 +299,28 @@ mb:
       tag:
         activity: activity
         indicator: indicator
+      admin:
+        tooltip: Tooltip
+        activityclass: CSS-Class General Activity
+        ajaxactivityclass: CSS-Class Background Activity
+        ajaxactivityclass_help: CSS-Class that is set while an action is active in the background (like a search being performed)
+        tileactivityclass: CSS-Class Map Loading
     button:
       class:
         title: Button
         description: Button
       tag:
         button: button
+      admin:
+        click: Click
+        action: Action
+        deactivate: Deactivate
     controlbutton:
       class:
         description: Controls another element
+      admin:
+        group: Group
+        target: Target
     linkbutton:
       class:
         title: Link
@@ -290,6 +343,8 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialog
+      admin:
+        content: Content
     map:
       class:
         title: Map
@@ -301,6 +356,12 @@ mb:
       srsnotfound: SRS properties for %srslist% are not found
       admin:
         fixedZoomSteps: Fixed zoom steps
+        layersets: Layersets
+        tilesize: Tile size
+        SRS: SRS
+        scales: Scales (comma-separated)
+        othersrs: Other SRS
+        srs: SRS
     scalebar:
       class:
         title: Scale bar
@@ -308,6 +369,9 @@ mb:
       tag:
         scale: scale
         bar: bar
+      admin:
+        maxwidth: Maximum width
+        units: Unit
     scaledisplay:
       label: Scale
       scale_prefix: Prefix
@@ -327,6 +391,8 @@ mb:
       tag:
         scale: scale
         selector: selector
+      admin:
+        tooltip: Tooltip
     srsselector:
       class:
         title: SRS selector
@@ -334,6 +400,9 @@ mb:
       tag:
         srs: SRS
         selector: selector
+      admin:
+        srsselector: SRS selector
+        tooltip: Tooltip
     ShareUrl:
       class:
         title: Share URL
@@ -389,6 +458,9 @@ mb:
           centermap: Center map
       backend:
         addMapSrsList: Add map's srs list
+      admin:
+        srslist: SRS List
+        zoomlevel: Zoom level
     admin:
       poi:
         label:
@@ -434,6 +506,7 @@ mb:
           hidenottoggleable: Hide not toggleable
           hideselect: Hide visibility by folders
           hideinfo: Hide info
+          menu: Menu
       template:
         sidepane:
           type:
@@ -442,10 +515,20 @@ mb:
               tabs: Buttons
               accordion: Accordion
               unstyled: Unstyled
+      button:
+        show_label: Show label
+        label: Label
+      layerset:
+        label:
+          title: Title
+          selected: Selected
     htmlelement:
       class:
         title: HTML
         description: Add some HTML
+      admin:
+        content: Content
+        classes: Classes
     entity:
       app:
         screenshotfile:
@@ -473,6 +556,7 @@ mb:
         deactivate_on_close: Deactivate on close
         colors: Colors
         allow_custom_color: Allow custom color
+        geometrytypes: Geometry types
     redlining:
       class:
         title: Sketches
@@ -488,6 +572,61 @@ mb:
         description: Switches to another application while maintaining current map position
       admin:
         open_in_new_tab: Open in new tab
+    coordinesdisplay:
+      admin:
+        numdigits: Number of decimal places
+        empty: Empty
+        prefix: Prefix
+        separator: Separator
+        label: Show label
+    searchrouterroute:
+      admin:
+        title': Title
+        configuration: Configuration
+    instanceset:
+      admin:
+        title: Title
+        group: Group
+        instances: Instances
+        instancesets: Instancesets
+    basebutton:
+      admin:
+        tooltip: Tooltip
+        icon: Icon
+    icon:
+      mb:
+        about: Information
+        layer_tree: Layer tree
+        feature_info: Feature Info
+        area_ruler: Area ruler
+        polygon: Polygon
+        line_ruler: Line ruler
+        image_export: Image Export
+        legend: Legend
+      fa:
+        about: Group
+        info: Information (inverted)
+        pin: Marker
+        home: Home
+        legend: List
+        print: Print
+        search: Search
+        layer_tree: Hierarchy
+        logout: Logout
+        wms: Globe
+        edit: Edit
+        wmc: Folder
+        coordinates: Coordinates
+        poi: Pin
+        camera: Camera
+        copyright: Copyright
+        share: Share
+        forward: Forward
+        refresh: Refresh
+        earth: Earth
+        map: Map
+        pin_alt: Pin (Alternative)
+        help: Help
   template:
     toolbar_menu_tooltip: Toggle menu
     region:
@@ -504,4 +643,9 @@ mb:
     poi: Please take a look at this POI
     search: Search location
     about: About Mapbender
-
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Title

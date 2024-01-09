@@ -68,6 +68,12 @@ mb:
             layerOrder: Layer-Reihenfolge
             layerOrder.standard: Standard (umgekehrt)
             layerOrder.reverse: QGIS Style (gleiche Reihenfolge)
+            exceptionformat: Fehlerformat
+            infoformat: Format der GetFeatureInfo-Anfrage
+            format: Format der GetMap-Anfrage
+            dimensions: Dimensions
+            vendorspecifics: Benutzerdefinierte Parameter
+            layers: Ebenen
           vendorspecific:
             label: Vendor specific
         preview:
@@ -142,14 +148,14 @@ mb:
     metadata:
       section:
         common:
-          _title: Allgemein
+          title: Allgemein
         contact:
-          _title: Kontakt
+          title: Kontakt
         items:
-          _title: Ebene
+          title: Ebene
           name: Name
         useconditions:
-          _title: Nutzungsbedingungen
+          title: Nutzungsbedingungen
       popup:
         title: Metadaten
     repo:
@@ -162,3 +168,33 @@ mb:
         description: Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen
     dimensionsets:
       no_dimension: Keine Dimension vorhanden.
+  core:
+    dimensionset:
+      admin:
+        title: Titel
+        group: Gruppe
+        extent: Ausmaß
+    dimensionshandler:
+      admin:
+        tooltip: Tooltip
+        dimensionsets: Dimensionssets
+    wmsloader:
+      admin:
+        defaultformat: Standardformat
+        defaultinfoformat: Standard-Infoformat
+      onlineresource:
+        format: Format
+        href: href
+      legendurltype:
+        width: Breite
+        height: Höhe
+        onlineresource: Online-Ressource
+      vendorspecifictype:
+        hidden: Versteckt
+        setdefaults: Standardwerte festlegen
+    vendorspecifictype:
+      admin:
+        vstype: Parameter-Typ
+        name: Parameter-Name
+        default: Standardwert
+        hidden: Versteckt

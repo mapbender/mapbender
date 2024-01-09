@@ -11,15 +11,18 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IconClassType extends AbstractType implements EventSubscriberInterface
 {
     /** @var IconIndex */
     protected $iconIndex;
+    protected TranslatorInterface $translator;
 
-    public function __construct(IconIndex $iconIndex)
+    public function __construct(IconIndex $iconIndex, TranslatorInterface $translator)
     {
         $this->iconIndex = $iconIndex;
+        $this->translator = $translator;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -36,9 +39,10 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $choicesWithoutIcon = $this->iconIndex->getChoices();
-        ksort($choicesWithoutIcon);
+        $translatedIcons = $this->translateLabels($choicesWithoutIcon);
+        ksort($translatedIcons);
         $choices = [];
-        foreach ($choicesWithoutIcon as $label => $code) {
+        foreach ($translatedIcons as $label => $code) {
             $choices[$this->iconIndex->getIconMarkup($code) . '&nbsp;&nbsp;' . $label] = $code;
         }
 
@@ -72,5 +76,14 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
         if ($value) {
             $evt->setData($this->iconIndex->normalizeAlias($value));
         }
+    }
+
+    private function translateLabels(array $choices): array
+    {
+        $translated = [];
+        foreach ($choices as $key => $value) {
+            $translated[$this->translator->trans($key)] = $value;
+        }
+        return $translated;
     }
 }

@@ -28,33 +28,29 @@ class IconPackageFa4 implements IconPackageInterface
     {
         $choices = [];
         if ($this->showDefaultIcons || $showAll) $choices = [
-            /** @todo: localize labels */
-            /** @todo: remove technocratic "(FontAwesome)" label postfixes */
-            'About (FontAwesome)' => 'iconAbout',
-            'Area ruler (FontAwesome)' => 'iconAreaRuler',
-            'Feature info (FontAwesome)' => 'iconInfoActive',
-            'GPS (FontAwesome)' => 'iconGps',
-            'Home (FontAwesome)' => 'iconHome',
-            'Legend (FontAwesome)' => 'iconLegend',
-            'Print (FontAwesome)' => 'iconPrint',
-            'Search (FontAwesome)' => 'iconSearch',
-            'Layer tree (FontAwesome)' => 'iconLayertree',
-            'Logout (FontAwesome)' => 'iconLogout',
-            'WMS (FontAwesome)' => 'iconWms',
-            'Help (FontAwesome)' => 'iconHelp',
-            'Edit (FontAwesome)' => 'iconEdit',     // = formerly iconWmcEditor, iconSketch
-            'WMC Loader (FontAwesome)' => 'iconWmcLoader',
-            'Coordinates (FontAwesome)' => 'iconCoordinates',
-            'Gps Target (FontAwesome)' => 'iconGpsTarget',
-            'POI (FontAwesome)' => 'iconPoi',
-            'Image Export (FontAwesome)' => 'iconImageExport',
-            'Copyright (FontAwesome)' => 'iconCopyright',
-            'Share (FontAwesome)' => 'iconShare',
-            'Share Arrow(FontAwesome)' => 'iconShareArrow',
-            'Refresh' => 'iconRefresh',
-            'Earth (FontAwesome)' => 'iconEarth',
-            'Map (FontAwesome)' => 'iconMap',
-            'Map Pin (FontAwesome)' => 'iconMapPin',
+            'mb.core.icon.fa.about' => 'iconAbout',
+            'mb.core.icon.fa.info' => 'iconInfoActive',
+            'mb.core.icon.fa.pin' => 'iconGps',
+            'mb.core.icon.fa.home' => 'iconHome',
+            'mb.core.icon.fa.legend' => 'iconLegend',
+            'mb.core.icon.fa.print' => 'iconPrint',
+            'mb.core.icon.fa.search' => 'iconSearch',
+            'mb.core.icon.fa.layer_tree' => 'iconLayertree',
+            'mb.core.icon.fa.logout' => 'iconLogout',
+            'mb.core.icon.fa.wms' => 'iconWms',
+            'mb.core.icon.fa.help' => 'iconHelp',
+            'mb.core.icon.fa.edit' => 'iconEdit',
+            'mb.core.icon.fa.wmc' => 'iconWmcLoader',
+            'mb.core.icon.fa.coordinates' => 'iconCoordinates',
+            'mb.core.icon.fa.poi' => 'iconPoi',
+            'mb.core.icon.fa.camera' => 'iconImageExport',
+            'mb.core.icon.fa.copyright' => 'iconCopyright',
+            'mb.core.icon.fa.share' => 'iconShare',
+            'mb.core.icon.fa.forward' => 'iconShareArrow',
+            'mb.core.icon.fa.refresh' => 'iconRefresh',
+            'mb.core.icon.fa.earth' => 'iconEarth',
+            'mb.core.icon.fa.map' => 'iconMap',
+            'mb.core.icon.fa.pin_alt' => 'iconMapPin',
         ];
 
         foreach ($this->additionalIcons as $icon) {
@@ -79,8 +75,6 @@ class IconPackageFa4 implements IconPackageInterface
                 throw new \LogicException("Unhandled icon code " . \var_export($iconCode, true));
             case 'iconAbout':
                 $class = 'fas fa-users'; break;
-            case 'iconAreaRuler':
-                $class = 'fas fa-crop'; break;
             case 'iconInfoActive':
                 $class = 'fas fa-circle-info'; break;
             case 'iconGps':

@@ -74,6 +74,7 @@
             lazy="true">
                 <tag name="form.type" />
             <argument type="service" id="mapbender.icon_index" />
+            <argument type="service" id="translator" />
         </service>
     </services>
 </container>

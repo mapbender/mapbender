@@ -15,11 +15,11 @@ class LayerTreeMenuType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $choices = array(
-            'Remove layer' => 'layerremove',
-            'Opacity' => 'opacity',
-            'Zoom to layer' => 'zoomtolayer',
-            'Metadata' => 'metadata',
-            'Dimension' => 'dimension',
+            'mb.core.layertree.admin.layerremove' => 'layerremove',
+            'mb.core.layertree.admin.opacity' => 'opacity',
+            'mb.core.layertree.admin.zoomtolayer' => 'zoomtolayer',
+            'mb.core.layertree.admin.metadata' => 'metadata',
+            'mb.core.layertree.admin.dimension' => 'dimension',
         );
         $resolver->setDefaults(array(
             'choices' => $choices,

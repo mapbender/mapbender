@@ -46,3 +46,28 @@ mb:
           choice:
             global: global
             private: private
+  core:
+    printclient:
+      admin:
+        scales: Scales (comma-separated)
+        fileprefix: File prefix
+        optionalfields: Optional fields
+        replacepattern: Replace pattern
+        templates: Templates
+        qualitylevels: Quality levels
+      label:
+        quality: Quality
+      class:
+        title: Print
+    printclienttemplate:
+      admin:
+        template: Template
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        label:
+          qualitylevels: Quality levels
+          templates: Templates

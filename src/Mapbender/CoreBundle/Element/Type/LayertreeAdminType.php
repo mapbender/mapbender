@@ -41,6 +41,7 @@ class LayertreeAdminType extends AbstractType
             ))
             ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
                 'required' => false,
+                'label' => 'mb.core.admin.layertree.label.menu',
             ))
             ->add('themes', LayertreeThemeCollectionType::class, array(
                 'label' => 'mb.core.admin.layertree.label.themes',
