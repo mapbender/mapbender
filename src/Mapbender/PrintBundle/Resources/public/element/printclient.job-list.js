@@ -159,7 +159,7 @@ $.widget("mapbender.mbPrintClientJobList", {
                 .attr('target', '_blank')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
-            $icon = $('<i/>').addClass('fa-file-pdf-o');
+            $icon = $('<i/>').addClass('far fa-file-pdf fa-lg');
             $a.append($icon);
             $group.append($a);
             buttonsEmpty = false;

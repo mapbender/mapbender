@@ -109,9 +109,9 @@ $.widget("mapbender.mbZoomBar", {
     _zoom2Slider: function() {
         var zoomLevel = this.mbMap.getModel().getCurrentZoomLevel();
         var $activeItem = $('[data-zoom="' + zoomLevel + '"]', this.zoomslider);
-        $('li', this.zoomslider).each(function() {
-            var isActive = $activeItem.is(this);
-            $('>i', this)
+        $('li', this.zoomslider).each(function(e) {
+            const isActive = $activeItem.is(this);
+            $(this).find('.js-zoombar-dot')
                 .toggleClass('fas', isActive)
                 .toggleClass('far', !isActive)
             ;
