@@ -47,8 +47,9 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
                     'entry_options' => array(
                         'application' => $application,
                         'choice_filter' => function($choice) use ($sourceInstanceIds) {
-                            /** @var SourceInstance $choice*/
-                            return \in_array($choice->getId(), $sourceInstanceIds, false);
+                            /** @var SourceInstance|int $choice*/
+                            $choiceId = $choice instanceof SourceInstance ? $choice->getId() : $choice;
+                            return \in_array($choiceId, $sourceInstanceIds, false);
                         },
                     ),
                 ))
