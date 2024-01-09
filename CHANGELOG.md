@@ -12,7 +12,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 
 Features:
 * PHP 8.2 is now fully supported.
-* Backend interface is now fully localised in German and English
+* Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
