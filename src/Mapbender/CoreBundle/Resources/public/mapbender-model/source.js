@@ -254,7 +254,7 @@ window.Mapbender.Source = (function () {
                 settings.opacity = diff.opacity;
             }
             settings.selectedLayers = settings.selectedLayers.filter(function (layer) {
-                return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => diffLayer.options.id === layer.options.id);
+                return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => (diffLayer.options?.id ?? diffLayer.id) === (layer.options?.id ?? layer.id));
             });
             settings.selectedLayers = settings.selectedLayers.concat((diff || {}).activate || []);
             return settings;
@@ -278,7 +278,7 @@ window.Mapbender.Source = (function () {
         getLayerById: function (id) {
             var foundLayer = null;
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (sourceLayer) {
-                if (sourceLayer.options.id === id) {
+                if ((sourceLayer.options?.id ?? sourceLayer.id) === id) {
                     foundLayer = sourceLayer;
                     // abort iteration
                     return false;
