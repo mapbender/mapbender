@@ -2,7 +2,7 @@
     <div>
         <form class="ps-1" data-token="{{ csrf_token('view_manager') }}">
             <div class="input-group mb-3">
-                <input type="text" name="title" class="form-control" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
+                <input type="text" name="title" class="form-control -js-viewmanager-new-name" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
                 <button class="btn btn-outline-secondary -fn-save-new" title="{{ 'mb.actions.save' | trans }}">
                     <i class="fas fa-floppy-disk"></i>
                 </button>

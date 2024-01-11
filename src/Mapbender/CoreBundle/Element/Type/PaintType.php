@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -63,10 +64,10 @@ class PaintType extends AbstractType
                 'help' => $options['strokeColorHelp'],
             ], $this->trans));
 
-            $builder->add($options['fieldNameStrokeWidth'], IntegerType::class, $this->createInlineHelpText([
+            $builder->add($options['fieldNameStrokeWidth'], NumberType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.stroke_width_px',
-                'attr' => ['min' => 0],
+                'attr' => ['min' => 0, 'inputmode' => 'numeric'],
                 'help' => $options['strokeWidthHelp'],
                 'constraints' => [new Constraints\Range(['min' => 0])],
             ], $this->trans));

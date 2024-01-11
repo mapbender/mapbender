@@ -4,7 +4,8 @@
   {% for instance in reusable_instances %}
   <li class="filterItem">
     <a class="checkContainer" href="{{ path('mapbender_manager_application_attachreusableinstance', {'layerset': layerset, 'instance': instance}) }}">
-      <h3><span class="badge badge-info pull-right badge-sm"><i class="fas fa-wifi"></i>&nbsp;{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}</span>
+      <h3>
+        <span class="badge badge--datasource bg-info pull-right bg-sm"><i class="fas fa-wifi"></i>&nbsp;{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}</span>
         {{ instance.source.type }}#{{ instance.source.id }}: {{ instance.title | default(instance.source.title) }}<sup>{{ instance.source.alias }}</sup>
         <div class="clear"></div>
       </h3>

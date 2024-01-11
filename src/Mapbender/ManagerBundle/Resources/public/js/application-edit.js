@@ -55,7 +55,6 @@ $(function() {
         distance: 20,
         stop: function(event, ui) {
             const $item = $(ui.item);
-            console.log($item);
             $item.parent().find("tr.element").each(function(idx, elm) {
                 if ($(elm).attr("data-href") === $item.attr("data-href")) {
                     $.ajax({
@@ -169,12 +168,7 @@ $(function() {
                 }
             ])
         });
-        const $sortableCollection = $('.collection[data-sortable]', $form);
-        $sortableCollection.sortable({
-            axis: 'y',
-            items: '>.collectionItem',
-            handle: $sortableCollection.find('.card-header').length > 0 ? '.card-header' : false,
-        });
+
         $form.on('change sortstop collectionlengthchange', function() {
             $form.data('dirty', true);
             $form.data('discard', false);
@@ -202,6 +196,13 @@ $(function() {
             } else {
                 $.globalEval($(element).text());
             }
+        });
+
+        const $sortableCollection = $('.collection[data-sortable]', $form);
+        $sortableCollection.sortable({
+            axis: 'y',
+            items: '>.collectionItem',
+            handle: $sortableCollection.find('.card-header').length > 0 ? '.card-header' : false,
         });
     }
 
