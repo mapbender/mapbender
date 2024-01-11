@@ -77,6 +77,9 @@
                 this._createHighlightControl();
             }
 
+            $(document).bind('mbmapsourcechanged', this._reorderTabs.bind(this));
+            $(document).bind('mbmapsourcesreordered', this._reorderTabs.bind(this));
+
             widget._trigger('ready');
         },
         /**
@@ -356,6 +359,7 @@
             $appendTo.empty().append(content);
             $header.removeClass('hidden');
             $content.removeClass('hidden');
+            this._reorderTabs();
         },
         _printContent: function () {
             var $documentNode = $('.js-content.active', this.element);
@@ -492,7 +496,28 @@
                 '</script>'
             ];
             return parts.join('');
+        },
+        _reorderTabs: function() {
+            // the model sources contain all sources in the order they are currently displayed on the map
+            // this matches the order in the layer tree
+            const sources = this.mbMap.getModel().getSources();
+            let sourcesOrderMap = {};
+            let index = 0;
+            for (let source of sources) {
+                sourcesOrderMap[source.id] = index++;
+            }
+
+            const $container = $('.tabContainer > .tabs, .accordionContainer', this.element);
+            const $tabs = $container.children();
+            // sort tabs (or accordion panels) by comparing their position using the previously created map
+            const $sortedTabs = $tabs.sort(function(a, b) {
+                const orderA = sourcesOrderMap[$(a).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
+                const orderB = sourcesOrderMap[$(b).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
+                return orderB - orderA;
+            });
+            $container.append($sortedTabs);
         }
+
     });
 
 })(jQuery);
