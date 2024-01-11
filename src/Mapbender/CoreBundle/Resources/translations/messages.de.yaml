@@ -438,7 +438,7 @@ mb:
         showDate: Datum anzeigen
     coordinatesutility:
       class:
-        title: Koordinaten Utility
+        title: Koordinaten-Werkzeug
         description: Koordinaten-Transformation. Navigation zu Koordinaten auf der Karte.
       widget:
         error:
