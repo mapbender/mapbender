@@ -81,8 +81,8 @@
                 style: this._getStyle.bind(this),
             });
             control.on('drawstart', function (event) {
-                self._reset();
-                source.clear();
+                self._resetAfterGeometryWasDrawn();
+                // AE auskommenteirt: source.clear();
                 /** @var {ol.Feature} */
                 var feature = event.feature;
                 var geometry = feature.getGeometry();
@@ -121,6 +121,7 @@
             this.help = $('<p/>').text(Mapbender.trans(this.options.help));
             this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
             this.segments = $('<ul/>');
+            this.count = 0;
             this.segments.append()
             if (this.options.help) this.container.append(this.help);
             this.container.append(this.total);
@@ -191,11 +192,19 @@
         },
         _mapSrsChanged: function (event, srs) {
             if (this.control) {
-                this._reset();
+                this._resetAfterGeometryWasDrawn();
             }
         },
         _reset: function () {
+            // reset when dialog is closed
             $('>li', this.segments).remove();
+            $('>div', this.segments).remove();
+            this.total.text('');
+            this.count = 0;
+        },
+        _resetAfterGeometryWasDrawn: function () {
+            // reset after geometry was drawn
+            //$('>li', this.segments).remove();
             this.total.text('');
         },
         _handleModify: function (event) {
@@ -208,8 +217,10 @@
             }
         },
         _handlePartial: function (event) {
+            // calculates area while drawing areas
             if (this.options.type === 'area') {
-                this._handleFinal(event);
+                var measure = this._getMeasureFromEvent(event);
+                var measureElement = $('<li/>');
                 return;
             }
             var measure = this._getMeasureFromEvent(event);
@@ -225,7 +236,21 @@
         },
         _handleFinal: function (event) {
             var measure = this._getMeasureFromEvent(event);
+            var measureElement = $('<li/>');
+            measureElement.text('');
             this._updateTotal(measure, event);
+
+            this.object = $('<div/>').addClass('object-value').css({'font-weight': 'bold'});
+            this.count = this.count+1;
+
+            var $final = $('>li', this.segments).first();
+            //$final.show();
+
+            //finalObject = this.object.text(this.count+': '+ this.total.text());
+            finalObject = this.object.text(this.total.text());
+            this.segments.prepend(finalObject);
+            this.segments.prepend($('<br/>'));
+            this.total.text('');
         },
         _updateTotal: function (measure, event) {
             this.total.text(measure);
