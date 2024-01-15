@@ -244,7 +244,7 @@
             this.count = this.count+1;
 
             var $final = $('>li', this.segments).first();
-            //$final.show();
+            $final.remove();
 
             //finalObject = this.object.text(this.count+': '+ this.total.text());
             finalObject = this.object.text(this.total.text());
