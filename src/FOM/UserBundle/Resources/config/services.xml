@@ -29,7 +29,7 @@
              doesn't explicitly encode a class name.
              NOTE: it's legal for the named class to not even exist. It just needs to be consistent with current
                    contents of the ACL DB structure -->
-        <parameter key="fom.ldap_user_identities_provider.user_class">Mapbender\LdapIntegrationBundle\Entity\LdapUser</parameter>
+        <parameter key="fom.ldap_user_identities_provider.user_class">Mapbender\LDAPBundle\Security\User\LDAPUser</parameter>
         <!-- internal; automatically replaced with value extracted from 'security' extension config
              see ForwardUserEntityClassPass -->
         <parameter key="fom.user_entity">null</parameter>
