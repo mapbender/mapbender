@@ -24,85 +24,153 @@ mb:
       create:
         success: null
   manager:
-    autoActivate: Auto inicio
-    autoOpen: Auto abrir
+    automatic: 'TRANSLATE: Automatic'
+    autoActivate: 'Auto inicio'
+    autoOpen: 'Auto abrir'
+    confirm_form_discard: 'TRANSLATE: Discard changes?'
+    popup_height: 'TRANSLATE: Dialog height'
+    popup_width: 'TRANSLATE: Dialog width'
+    screentype:
+      label: 'TRANSLATE: Screen type'
+      choice:
+        all: 'TRANSLATE: Any'
+        mobile: 'TRANSLATE: Mobile'
+        desktop: 'TRANSLATE: Desktop'
+    toolbar:
+      alignment:
+        label: 'TRANSLATE: Alignment'
+        choice:
+          left: 'TRANSLATE: Left'
+          right: 'TRANSLATE: Right'
+          center: 'TRANSLATE: Center'
+      generate_button_menu: 'TRANSLATE: Generate menu for buttons'
+      menu_label: 'TRANSLATE: Menu label'
+    visibility: 'TRANSLATE: Visibility'
+    element:
+      screentype:
+        mobile: 'TRANSLATE: Show on mobile screens'
+        desktop: 'TRANSLATE: Show on desktop screens'
+    sidepane:
+      width: 'TRANSLATE: Width'
+      closed: 'TRANSLATE: Initially closed'
+      align:
+        label: 'TRANSLATE: Position'
+        choice:
+          left: 'TRANSLATE: Left'
+          right: 'TRANSLATE: Right'
+    sourceinstance:
+      embedded_in_applications: |
+        TRANSLATE: {count, plural,
+            =0    {This instance is not used in any application}
+            one   {This instance is used in one application}
+            other {This instance is used in # applications}
+        }
+      convert_to_reusable: 'TRANSLATE: Convert to shared instance'
+      convert_to_bound: 'TRANSLATE: Convert to bound instance'
+      converted_to_bound: 'TRANSLATE: A bound copy of the shared instance has been added to the application'
+      reusable_assigned_to_application: 'TRANSLATE: The shared instance has been added to the application'
+      create_reusable: 'TRANSLATE: Create shared instance'
+      created_reusable: 'TRANSLATE: A new shared instance has been created'
+    application:
+      persistentView: 'TRANSLATE: Persistent map state'
+      splashscreen: 'TRANSLATE: Show Splashscreen'
     admin:
       sources: Fuentes
+      csrf_token_invalid: 'TRANSLATE: Invalid CSRF token.'
       source:
-        add: Añadir fuente
-        show_metadata: Mostrar metadata
-        delete: Borrar fuente
+        add: 'Añadir fuente'
+        show_metadata: 'Mostrar metadata'
+        delete: 'Borrar fuente'
         new:
-          add: Añadir fuente
-        valid: Source valid
-        notvalid: Source not valid
-        no_source: Fuente no disponible
-        update: Update source
+          add: 'Añadir fuente'
+        valid: 'Source valid'
+        notvalid: 'Source not valid'
+        no_source: 'Fuente no disponible'
+        update: 'Update source'
         status:
-          ok: Source OK
-          toupdate: Source not current anymore
-          unreachable: Source unreachable
+          ok: 'Source OK'
+          toupdate: 'Source not current anymore'
+          unreachable: 'Source unreachable'
+        embedded_in_applications: |
+          TRANSLATE: {count, plural,
+              =0    {This source is not used in any application}
+              one   {This source is used in one application}
+              other {This source is used in # applications}
+          }
       map:
-        max_extent: Max. extent
-        start_extent: Start extent
+        max_extent: 'Max. extent'
+        max_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
+        start_extent: 'Start extent'
+        start_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) that is initially displayed when loading the map. When clicking on the home icon, the map zooms to this extent.'
+        base_dpi: 'TRANSLATE: Default Resolution [dpi]'
+        base_dpi.help: 'TRANSLATE: The resolution adapts to the screen resolution based on the configured value'
       element:
         title: Título
         type: Tipo
-        add: Añadir un nuevo elemento a
-        show_hide: Cambiar mostrar/ocultar el elemento
-        no_element_added: No añadido elemento
+        add: 'Añadir un nuevo elemento a'
+        show_hide: 'Cambiar mostrar/ocultar el elemento'
+        no_element_added: 'No añadido elemento'
+        anchor:
+          label: 'TRANSLATE: Position'
+          left-top: 'TRANSLATE: Top left'
+          left-bottom: 'TRANSLATE: Bottom left'
+          right-top: 'TRANSLATE: Top right'
+          right-bottom: 'TRANSLATE: Bottom right'
       zoombar:
         draggable: Mobible
       overview:
         fix: Corregir
       layerset:
-        add: Añadir conjunto de capas
+        add: 'Añadir conjunto de capas'
         title: Título
         type: Tipo
-        edit: Editar conjunto de capas
+        edit: 'Editar conjunto de capas'
         delete:
-          title: Borrar conjunto de capas
-          confirm: ¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?
+          title: 'Borrar conjunto de capas'
+          confirm: '¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
         id: Id
       instance:
-        add: Añadir instancia
-        show_hide: Cambiar mostrar/ocultar instancia
-        edit: Editar instancia
+        add: 'Añadir instancia'
+        show_hide: 'Cambiar mostrar/ocultar instancia'
+        edit: 'Editar instancia'
         delete:
-          title: borrar instancia
-          confirm: ¿Realmente quieres quitar la instancia de título <span class="italic">%instance_title%</span>?
-        no_instance_added: Instancia no añadida
-        no_layer_added: No layer added
+          title: 'borrar instancia'
+          confirm: '¿Realmente quieres quitar la instancia de título <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Instancia no añadida'
+        no_layer_added: 'No layer added'
+        max_input_vars_exceeded: 'TRANSLATE: PHP setting max_input_vars too low for the number of layers in this instance.'
+        update_successful: 'TRANSLATE: Your instance has been updated.'
+        converted_to_shared: 'TRANSLATE: The instance has been converted to a shared instance.'
       template: Template
       application:
         view: Ver
         edit:
-          title: Editar aplicación
-          base_data: Dato Base
-        screenshot: Captura de pantalla
+          title: 'Editar aplicación'
+          base_data: 'Dato Base'
+        screenshot: 'Captura de pantalla'
         layouts: Diseños
-        layersets: Conjunto de capas
+        layersets: 'Conjunto de capas'
         custom_css: CSS
         security:
           title: Seguridad
-          public: Acceso público
+          public: 'Acceso público'
         save: Guardar
         cancel: Cancelar
-        view_this: Ver esta aplicación
-        duplicate: Duplicar aplicación
+        view_this: 'Ver esta aplicación'
+        duplicate: 'Duplicar aplicación'
         public:
-          on_off: Cambiar publicar/privado aplicación
-        delete: Borrar aplicación
-        no_application: Aplicación no disponible
+          on_off: 'Cambiar publicar/privado aplicación'
+        delete: 'Borrar aplicación'
+        no_application: 'Aplicación no disponible'
         new:
-          title: Nueva Aplicación
-        create_use: Crear una nueva aplicación proveyendo información básica y luego usando el modo edición para añadir elementos y capas.
+          title: 'Nueva Aplicación'
+        create_use: 'Crear una nueva aplicación proveyendo información básica y luego usando el modo edición para añadir elementos y capas.'
         btn:
           create: Crear
           cancel: Cancelar
         upload:
-          button: Seleccione un archivo
-          label: No ha seleccionado un archivo
+          button: 'Seleccione un archivo'
+          label: 'No ha seleccionado un archivo'
         export:
           addAcl: ACLs
           addSources: Fuentes
@@ -115,56 +183,73 @@ mb:
             import: Importar
         title: Title
         url:
-          title: URL Title
+          title: 'URL Title'
         description: Description
         template: Plantilla
     source:
-      serviceurl: Servicio URL
+      serviceurl: 'Servicio URL'
       username: Usuario
       password: Clave
+      activate_new_layers: 'TRANSLATE: Activate newly added layers'
+      select_new_layers: 'TRANSLATE: Select newly added layers'
       load: Cargar
     managerbundle:
-      new_application: Nueva aplicación
-      add_source: Añadir fuentes
-      add_user_group: Añadir usuarios y grupos
-      acl_element: Elemento Acl
+      new_application: 'Nueva aplicación'
+      add_source: 'Añadir fuentes'
+      add_user_group: 'Añadir usuarios y grupos'
+      acl_element: 'Elemento Acl'
       import_application: Importar
       export_application: Exportar
     components:
       popup:
         add_element:
-          title: Añadir elemento
+          title: 'Añadir elemento'
         edit_element:
-          title: Editar elemento
+          title: 'Editar elemento'
         delete_element:
-          title: Confirma borrar
+          title: 'Confirma borrar'
         add_edit_layerset:
-          title_edit: Editar conjunto de capas
-          title_add: Añadir conjunto de capas
+          title_edit: 'Editar conjunto de capas'
+          title_add: 'Añadir conjunto de capas'
         delete_layerset:
-          title: Borrar conjunto de capas
+          title: 'Borrar conjunto de capas'
         add_instance:
-          title: Seleccionar fuente
+          title: 'Seleccionar fuente'
         delete_instance:
-          title: Confirmar borrar
+          title: 'Confirmar borrar'
         delete_user_group:
-          title: Confirmar eliminar
-          content: Realmente eliminar %userGroup%?
+          title: 'Confirmar eliminar'
+          content: 'Realmente eliminar %userGroup%?'
     import:
       application:
-        failed: La aplicación no puede ser importada
+        failed: 'La aplicación no puede ser importada'
+    http_connection_error: 'TRANSLATE: Connection failed'
+    http_error_response: 'TRANSLATE: The remote server responded with an error message'
     xml_invalid: null
     xml_malformed: null
   core:
     admin:
       button:
-        show_label: Mostrar etiqueta
+        show_label: 'Mostrar etiqueta'
       element:
-        autostart: Auto inicio
+        autostart: 'Auto inicio'
+      title: 'TRANSLATE: Title'
     entity:
       app:
         screenshotfile:
-          error: El archivo es demasiado grande (%uploadFileSize% bytes). El tamaño máximo permitido es %maxFileSize% bytes.
-          format_error: Este formato no esta soportado
+          error: 'El archivo es demasiado grande (%uploadFileSize% bytes). El tamaño máximo permitido es %maxFileSize% bytes.'
+          format_error: 'Este formato no esta soportado'
           resolution:
-            error: Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.
+            error: 'Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.'
+    importjobtype:
+      admin:
+        importfile: 'TRANSLATE: Import file'
+  actions:
+    secureelement: 'TRANSLATE: Secure element'
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: 'TRANSLATE: Title'
+            opacity: 'TRANSLATE: Opacity'

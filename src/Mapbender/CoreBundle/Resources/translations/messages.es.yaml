@@ -14,6 +14,7 @@ mb:
     reset: Reiniciar
     save: Guardar
     search: Buscar
+    duplicate: 'TRANSLATE: Duplicate'
   terms:
     application:
       singular: Aplicación
@@ -22,89 +23,178 @@ mb:
       singular: Fuente
       plural: Fuentes
     layerset:
-      singular: Conjunto de capas
-      plural: Conjuntos de capas
+      singular: 'Conjunto de capas'
+      plural: 'Conjuntos de capas'
     sourceinstance:
       singular: Instancia
       plural: Instancias
       typed:
         singular: '%type% instancia'
+      reusable:
+        singular: 'TRANSLATE: Shared instance'
+        plural: 'TRANSLATE: Shared instances'
+      bound:
+        singular: 'TRANSLATE: Bound instance'
+        plural: 'TRANSLATE: Bound instances'
     security: Seguridad
+  form:
+    choice_required: 'TRANSLATE: Choose one'
+    choice_optional: 'TRANSLATE: None'
+    unnamed_entry: 'TRANSLATE: Unnamed Entry'
   states:
     active: activo
     inactive: inactivo
   core:
     featureinfo:
       error:
-        nolayer: No existe feature info de la capa.
-        unknownoption: Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.
-        noresult: no result
+        nolayer: 'No existe feature info de la capa.'
+        unknownoption: 'Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.'
+        noresult: 'no result'
       class:
         title: FeatureInfo
         description: FeatureInfo
+      admin:
+        maxcount: 'TRANSLATE: Max count'
+        height: 'TRANSLATE: Height'
+        width: 'TRANSLATE: Width'
+        displaytype: 'TRANSLATE: Display type'
+        tabs: 'TRANSLATE: Tabs'
+        accordion: 'TRANSLATE: Accordion'
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: aprende mas sobre Mapbender
-        linktitle: Visita nuestri sitio oficial de Mapbender
+        learnmore: 'aprende mas sobre Mapbender'
+        linktitle: 'Visita nuestri sitio oficial de Mapbender'
         website: website
       class:
-        title: Diálogo Acerca de
-        description: Mostrar un diálogo acerca de
+        title: 'Diálogo Acerca de'
+        description: 'Mostrar un diálogo acerca de'
       tag:
         help: ayuda
         info: info
-        about: acerca de
+        about: 'acerca de'
+      admin:
+        tooltip: 'TRANSLATE: About'
     simplesearch:
       input:
+        searchterm: 'TRANSLATE: Search term'
         search: Buscar
+        clear: 'TRANSLATE: Clear'
       class:
-        title: Búsqueda Simple
-        description: Campo de búsqueda sencillo en base JSON (e.g. Solr)
+        title: 'Búsqueda Simple'
+        description: 'Campo de búsqueda sencillo en base JSON (e.g. Solr)'
       error:
         geometry:
           missing: null
+      admin:
+        configurations: 'TRANSLATE: Configurations'
+        title: 'TRANSLATE: Title'
+        title.help: 'TRANSLATE: Text shown in the configurations dropdown'
+        placeholder: 'TRANSLATE: Placeholder'
+        placeholder.help: 'TRANSLATE: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.'
+        query_url: 'TRANSLATE: Query URL'
+        query_url.help: 'TRANSLATE: Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)'
+        query_key: 'TRANSLATE: Query URL parameter key'
+        query_key.help: 'TRANSLATE: The query parameter key to append (e.g. <code>q</code>)'
+        query_ws_replace: 'TRANSLATE: Query Whitespace replacement pattern'
+        query_ws_replace.help: 'TRANSLATE: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>'
+        query_format: 'TRANSLATE: Query key format'
+        query_format.help: 'TRANSLATE: Format for PHP''s <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected'
+        token_regex: 'TRANSLATE: Tokenizer: Split Regex'
+        token_regex.help: 'TRANSLATE: The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)'
+        token_regex_in: 'TRANSLATE: Tokenizer: Search Regex'
+        token_regex_in.help: 'TRANSLATE: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".'
+        token_regex_out: 'TRANSLATE: Tokenizer: Replacement Regex'
+        token_regex_out.help: 'TRANSLATE: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.'
+        collection_path: 'TRANSLATE: Results Path'
+        collection_path.help: 'TRANSLATE: Path pointing to the array of results within the search url''s response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)'
+        label_attribute: 'TRANSLATE: Label Attribute'
+        label_attribute.help: 'TRANSLATE: Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>'
+        geom_attribute: 'TRANSLATE: Geometry Attribute'
+        geom_attribute.help: 'TRANSLATE: Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)'
+        geom_format: 'TRANSLATE: Geometry Format'
+        geom_format.help: 'TRANSLATE: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
+        sourceSrs: 'TRANSLATE: Source SRS'
+        sourceSrs.help: 'TRANSLATE: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.'
+        delay: 'TRANSLATE: Search Delay [ms]'
+        delay.help: 'TRANSLATE: The automatic search will trigger that many milliseconds after the last key input. Default: 300ms'
+        result_buffer: 'TRANSLATE: Result Buffer [map units]'
+        result_buffer.help: 'TRANSLATE: Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.'
+        result_minscale: 'TRANSLATE: Minimum Scale [Denominator]'
+        result_minscale.help: 'TRANSLATE: Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale.'
+        result_maxscale: 'TRANSLATE: Maximum Scale [Denominator]'
+        result_icon_url: 'TRANSLATE: Icon URL'
+        result_icon_url.help: 'TRANSLATE: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'TRANSLATE: Icon Offset'
+        result_icon_offset.help: 'TRANSLATE: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin'
+      errors:
+        invalid_query_format: 'TRANSLATE: The specified query format does not contain placeholders. Read the help text!'
+        invalid_epsg_code: 'TRANSLATE: The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234'
+        no_configuration_added: 'TRANSLATE: Please add at least one configuration'
     searchrouter:
-      no_results: No results
+      no_results: 'No results'
       result_counter: 'Results: %count%'
-      exportcsv: Exporte los resultados a CSV.
+      exportcsv: 'Exporte los resultados a CSV.'
       class:
-        title: Buscar ruteador
-        description: Búsqueda configurable del elemeteo de ruteo
+        title: 'Buscar ruteador'
+        description: 'Búsqueda configurable del elemeteo de ruteo'
       tag:
         search: búsqueda
         router: ruteador
+      admin:
+        width: 'TRANSLATE: Width'
+        height: 'TRANSLATE: Height'
+        routes: 'TRANSLATE: Routes'
     poi:
-      sharepoi: Compartir POI
+      sharepoi: 'Compartir POI'
       text:
-        snippet: Puedes usar el siguiente fragmento en un email para enviar el POI
+        snippet: 'Puedes usar el siguiente fragmento en un email para enviar el POI'
+      popup:
+        btn:
+          position: 'TRANSLATE: Positioning'
       class:
         title: POI
-        description: Crear un POI para compartir
+        description: 'Crear un POI para compartir'
       label:
         text: Texto
+      admin:
+        body: 'TRANSLATE: Body'
+        gps: 'TRANSLATE: GPS'
+        placeholder: 'TRANSLATE: Please take a look at this POI'
     basesourceswitcher:
       error:
-        sourcenotavailable: Una fuente con id %id% no está habilitado
+        sourcenotavailable: 'Una fuente con id %id% no está habilitado'
       class:
         title: null
-        Description: Change the map's background sources
+        Description: 'Change the map''s background sources'
       form:
-        mesage: No fuentebase seteada esta definida.
+        mesage: 'No fuentebase seteada esta definida.'
         instancesets: Instancesets
+      admin:
+        tooltip: 'TRANSLATE: Tooltip'
+        instances: 'TRANSLATE: Instances'
+        instancesets: 'TRANSLATE: Instancesets'
     legend:
       class:
         title: Leyenda
-        description: La leyenda muestra la leyenda de las capas del mapa
+        description: 'La leyenda muestra la leyenda de las capas del mapa'
     ruler:
       create_error: 'Regla: Tipo debe ser línea o área.'
       class:
-        title: Regla Línear/Área
-        description: Regla para dibujar una línea/área y presentar la longitud/área en un diálogo
+        title: 'Regla Línear/Área'
+        description: 'Regla para dibujar una línea/área y presentar la longitud/área en un diálogo'
       tag:
         line: línea
         area: área
         measure: medida
+      help: 'TRANSLATE: Double-click to end drawing'
+      admin:
+        type: 'TRANSLATE: Geometry'
+        help: 'TRANSLATE: Helptext'
+        help_help: 'TRANSLATE: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user''s language'
+        stroke_width_while_drawing: 'TRANSLATE: Line width while drawing'
+        only_for_area: 'TRANSLATE: only relevant if geometry is set to <i>Area</i>'
+        style: 'TRANSLATE: Style'
     printclient:
       label:
         template: Plantilla
@@ -113,89 +203,135 @@ mb:
         rotation: Rotación
         legend: null
       class:
-        title: Cliente de Impresión
-        description: Renders un diálogo de Impresión
+        title: 'Cliente de Impresión'
+        description: 'Renders un diálogo de Impresión'
       btn:
         deactivate: null
         activate: null
     overview:
-      nolayer: El elemento overview no tiene capa.
+      nolayer: 'El elemento overview no tiene capa.'
       class:
         title: Overview
-        description: Renders un pequeño mapa overview
+        description: 'Renders un pequeño mapa overview'
       tag:
         overview: overview
         map: mapa
+      admin:
+        visibility.closed_initially: 'TRANSLATE: Initially closed'
+        visibility.open_initially: 'TRANSLATE: Initially open'
+        visibility.open_permanent: 'TRANSLATE: Permanently open'
+        layerset: 'TRANSLATE: Layerset'
     metadata:
       popup:
         title: Metadata
     gpsposition:
       error:
-        notsupported: Los servicios de geolocalización no son soportados por su navegador.
-        nosignal: Actualmente no es posible localizar su posición.
+        notsupported: 'Los servicios de geolocalización no son soportados por su navegador.'
+        nosignal: 'Actualmente no es posible localizar su posición.'
       class:
-        title: Posición GPS
-        description: Renders un botón para mostrar la Posición del GPS
+        title: 'Posición GPS'
+        description: 'Renders un botón para mostrar la Posición del GPS'
       tag:
-        gpsposition: Posición GPS
+        gpsposition: 'Posición GPS'
         gps: GPS
         position: posición
         button: botón
+      admin:
+        average: 'TRANSLATE: Average'
+        follow: 'TRANSLATE: Follow'
+        centeronfirstposition: 'TRANSLATE: Center on first position'
+        zoomtoaccuracyonfirstposition: 'TRANSLATE: Zoom to accuracy on first position'
     layertree:
       const:
-        outofscale: Capa fuera de la escala
-        outofbounds: Capa fuera de límites
-        parentinvisible: Capa pariente invisible
+        outofscale: 'Capa fuera de la escala'
+        outofbounds: 'Capa fuera de límites'
+        parentinvisible: 'Capa pariente invisible'
       tooltip:
-        sublayers_openclose: Subcapas abrit/cerrar
-        removelayer: Remover capa
+        sublayers_openclose: 'Subcapas abrit/cerrar'
+        removelayer: 'Remover capa'
         menu:
           close: Close
       label:
-        visibility_onoff: Visibilidad prender/apagar
-        featureinfo_onoff: Featureinfo prender/apagar
+        visibility_onoff: 'Visibilidad prender/apagar'
+        featureinfo_onoff: 'Featureinfo prender/apagar'
         opacity: Opacity
-        zoomtolayer: Aumento a la capa
+        zoomtolayer: 'Aumento a la capa'
         metadata: Metadata
         legend: Leyenda
-        kmlexport: Exportar Kml
+        kmlexport: 'Exportar Kml'
         dimension_onoff: null
         dimension: null
         sourcevisibility_onoff: null
       class:
-        title: Árbol de capa
-        description: Árbol de las capas del mapa
+        title: 'Árbol de capa'
+        description: 'Árbol de las capas del mapa'
+      admin:
+        layerremove: 'TRANSLATE: Remove layer'
+        opacity: 'TRANSLATE: Opacity'
+        zoomtolayer: 'TRANSLATE: Zoom to layer'
+        metadata: 'TRANSLATE: Metadata'
+        dimension: 'TRANSLATE: Dimension'
     zoombar:
-      zoombybox: Acercamiento por recuadro
-      zoombyworld: Acercamiento global
+      zoombybox: 'Acercamiento por recuadro'
+      zoombyworld: 'Acercamiento global'
+      zoom_home: 'TRANSLATE: Back to start'
+      zoomHomeRestoresLayers: 'TRANSLATE: "Back to start" also resets layer settings'
       zoomin: Acercar
       zoomout: Alejar
       class:
-        title: Barra de navegación
-        description: El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers
+        title: 'Barra de navegación'
+        description: 'El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers'
       tag:
         zoom: acercamiento
         pan: panorama
         control: control
         navigation: navegación
         panel: panel
+      admin:
+        components: 'TRANSLATE: Components'
+        rotation: 'TRANSLATE: Rotation'
+        zoommax: 'TRANSLATE: Zoom to maximum extent'
+        zoominout: 'TRANSLATE: Zoom in and out'
+        zoomslider: 'TRANSLATE: Zoom slider'
     activityindicator:
       class:
-        title: Indicador de actividad
-        description: Mostrar actividad HTTP
+        title: 'Indicador de actividad'
+        description: 'Mostrar actividad HTTP'
       tag:
         activity: actividad
         indicator: indicador
+      admin:
+        tooltip: 'TRANSLATE: Tooltip'
+        activityclass: 'TRANSLATE: CSS-Class General Activity'
+        ajaxactivityclass: 'TRANSLATE: CSS-Class Background Activity'
+        ajaxactivityclass_help: 'TRANSLATE: CSS-Class that is set while an action is active in the background (like a search being performed)'
+        tileactivityclass: 'TRANSLATE: CSS-Class Map Loading'
     button:
       class:
         title: Botón
         description: Botón
       tag:
         button: botón
+      admin:
+        click: 'TRANSLATE: Click'
+        action: 'TRANSLATE: Action'
+        deactivate: 'TRANSLATE: Deactivate'
+    controlbutton:
+      class:
+        description: 'TRANSLATE: Controls another element'
+      admin:
+        group: 'TRANSLATE: Group'
+        target: 'TRANSLATE: Target'
+    linkbutton:
+      class:
+        title: 'TRANSLATE: Link'
+        description: 'TRANSLATE: Link to external URL'
+      admin:
+        click: 'TRANSLATE: Target URL'
     coordinatesdisplay:
       class:
-        title: Mostrar coordenadas
-        description: Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.
+        title: 'Mostrar coordenadas'
+        description: 'Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.'
       tag:
         coordinates: coordenadas
         display: muestra
@@ -203,73 +339,164 @@ mb:
         position: posición
     copyright:
       class:
-        title: Derechos de Autor
-        description: Muestra términos de uso
+        title: 'Derechos de Autor'
+        description: 'Muestra términos de uso'
       tag:
-        copyright: Derechos de Autor
+        copyright: 'Derechos de Autor'
         dialog: diálogo
+      admin:
+        content: 'TRANSLATE: Content'
     map:
       class:
         title: Mapa
-        description: OpenLayers mapa basado
+        description: 'OpenLayers mapa basado'
       tag:
         map: mapa
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: Propiedades SRS para %srslist% no se encontraron
+      srsnotfound: 'Propiedades SRS para %srslist% no se encontraron'
+      admin:
+        fixedZoomSteps: 'TRANSLATE: Fixed zoom steps'
+        layersets: 'TRANSLATE: Layersets'
+        tilesize: 'TRANSLATE: Tile size'
+        SRS: 'TRANSLATE: SRS'
+        scales: 'TRANSLATE: Scales (comma-separated)'
+        othersrs: 'TRANSLATE: Other SRS'
+        srs: 'TRANSLATE: SRS'
     scalebar:
       class:
-        title: Barra de escala
-        description: La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.
+        title: 'Barra de escala'
+        description: 'La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.'
       tag:
         scale: escala
         bar: barra
+      admin:
+        maxwidth: 'TRANSLATE: Maximum width'
+        units: 'TRANSLATE: Unit'
     scaledisplay:
+      label: 'TRANSLATE: Scale'
+      scale_prefix: 'TRANSLATE: Prefix'
+      scale_prefix.help: 'TRANSLATE: Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user''s language.'
+      unit_prefix: 'TRANSLATE: Shorten scale'
+      unit_prefix.help: 'TRANSLATE: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.'
       class:
-        title: Mostrar la escala
-        description: Muestra la escala actual del mapa
+        title: 'Mostrar la escala'
+        description: 'Muestra la escala actual del mapa'
       tag:
         scale: Escala
         display: mostrar
     scaleselector:
       class:
-        title: Selector de escala
-        description: Muestra y cambia la escala del mapa
+        title: 'Selector de escala'
+        description: 'Muestra y cambia la escala del mapa'
       tag:
         scale: escala
         selector: selector
+      admin:
+        tooltip: 'TRANSLATE: Tooltip'
     srsselector:
       class:
         title: null
-        description: El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa
+        description: 'El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa'
       tag:
         srs: SRS
         selector: selector
+      admin:
+        srsselector: 'TRANSLATE: SRS selector'
+        tooltip: 'TRANSLATE: Tooltip'
+    ShareUrl:
+      class:
+        title: 'TRANSLATE: Share URL'
+        description: 'TRANSLATE: Share current map view via url'
+      copied_to_clipboard: 'TRANSLATE: URL copied to clipboard'
+    viewManager:
+      class:
+        title: 'TRANSLATE: View manager'
+        description: 'TRANSLATE: Saves map states for later restoration'
+      saveAsPublic: 'TRANSLATE: Save as public'
+      recordStatus:
+        public: 'TRANSLATE: Public entry'
+        private: 'TRANSLATE: Private entry'
+      confirmDelete: 'TRANSLATE: Confirm deletion'
+      no_data: 'TRANSLATE: No data'
+      title: 'TRANSLATE: Title'
+      date: 'TRANSLATE: Date'
+      enter_title: 'TRANSLATE: Enter title'
+      apply: 'TRANSLATE: Apply'
+      replace: 'TRANSLATE: Replace'
+      details: 'TRANSLATE: Show details'
+      admin:
+        access.none: 'TRANSLATE: Do not show'
+        access.ro: 'TRANSLATE: Read only'
+        access.rw: 'TRANSLATE: Allow saving'
+        access.rwd: 'TRANSLATE: Allow saving and deletion'
+        publicEntries: 'TRANSLATE: Public list'
+        privateEntries: 'TRANSLATE: Show private list'
+        adminDeleteHint: 'TRANSLATE: Note: the administrator can always delete public entries'
+        allowAnonymousSave: 'TRANSLATE: Allow saving to anonymous users'
+        showDate: 'TRANSLATE: Show date'
+    coordinatesutility:
+      class:
+        title: 'TRANSLATE: Coordinates utility'
+        description: 'TRANSLATE: Transform coordinates in different SRS. Navigate to coordinates on the map.'
+      widget:
+        error:
+          noSrs: 'TRANSLATE: No SRS is defined'
+          invalidCoordinates: 'TRANSLATE: Invalid coordinates'
+      view:
+        srs:
+          title: 'TRANSLATE: Coordinate system'
+          tooltip: 'TRANSLATE: Coordinate system'
+        transformedCoordinates:
+          tooltip: 'TRANSLATE: Transformed coordinates'
+        copytoclipboard:
+          tooltip: 'TRANSLATE: Copy to clipboard'
+        originCoordinates:
+          title: 'TRANSLATE: Coordinate in map reference system'
+          tooltip: 'TRANSLATE: read only'
+        button:
+          search: 'TRANSLATE: Coordinate search'
+          centermap: 'TRANSLATE: Center map'
+      backend:
+        addMapSrsList: 'TRANSLATE: Add map''s srs list'
+      admin:
+        srslist: 'TRANSLATE: SRS List'
+        zoomlevel: 'TRANSLATE: Zoom level'
     admin:
       poi:
         label:
-          usemailto: Usar Email a
+          usemailto: 'Usar Email a'
       legend:
         label:
-          hideemptylayers: Ocultar capas vacías
-          generatelegendurl: Generar leyenda url
-          showsourcetitle: Mostrar título de fuente
-          showlayertitle: Mostrar título de capa
-          showgroupedlayertitle: Mostrar titulo de capa agrupado
+          hideemptylayers: 'Ocultar capas vacías'
+          generatelegendurl: 'Generar leyenda url'
+          showsourcetitle: 'Mostrar título de fuente'
+          showlayertitle: 'Mostrar título de capa'
+          showgroupedlayertitle: 'Mostrar titulo de capa agrupado'
       featureinfo:
         label:
-          deactivateonclose: Desactivar al cerrar
+          deactivateonclose: 'Desactivar al cerrar'
           onlyvalid: null
+          highlighting_group: 'TRANSLATE: Highlighting'
           highlighting: null
+          default_group: 'TRANSLATE: Default'
+          hover_group: 'TRANSLATE: On hover'
+          fillColor: 'TRANSLATE: Fill color'
+          strokeColor: 'TRANSLATE: Stroke color'
+          opacity_pct: 'TRANSLATE: Opacity (%)'
+          stroke_width_px: 'TRANSLATE: Stroke width (pixels)'
+          fontColor: 'TRANSLATE: Font color'
+          fontSize: 'TRANSLATE: Font size'
       printclient:
         label:
           rotatable: null
           legend: null
           legend_default_behaviour: null
+          required_fields_first: 'TRANSLATE: Display required fields first'
       layertree:
         label:
-          showbasesources: Mostar fuentes bases
-          showlayerremove: Mostrar quitar capa
+          showbasesources: 'Mostar fuentes bases'
+          showlayerremove: 'Mostrar quitar capa'
           usetheme: null
           themes: null
           theme:
@@ -280,10 +507,29 @@ mb:
           hidenottoggleable: null
           hideselect: null
           hideinfo: null
+          menu: 'TRANSLATE: Menu'
+      template:
+        sidepane:
+          type:
+            label: 'TRANSLATE: Type'
+            choice:
+              tabs: 'TRANSLATE: Buttons'
+              accordion: 'TRANSLATE: Accordion'
+              unstyled: 'TRANSLATE: Unstyled'
+      button:
+        show_label: 'TRANSLATE: Show label'
+        label: 'TRANSLATE: Label'
+      layerset:
+        label:
+          title: 'TRANSLATE: Title'
+          selected: 'TRANSLATE: Selected'
     htmlelement:
       class:
         title: null
         description: null
+      admin:
+        content: 'TRANSLATE: Content'
+        classes: 'TRANSLATE: Classes'
     entity:
       app:
         screenshotfile:
@@ -295,11 +541,117 @@ mb:
         polygon: null
         rectangle: null
         circle: Circulo
+      inputs:
+        label: 'TRANSLATE: Label'
+        radius: 'TRANSLATE: Radius'
       geometry:
         action:
           remove: null
           edit: null
           zoom: null
+          stop_drawing: 'TRANSLATE: Stop drawing'
       class:
         title: null
         description: null
+      admin:
+        deactivate_on_close: 'TRANSLATE: Deactivate on close'
+        colors: 'TRANSLATE: Colors'
+        allow_custom_color: 'TRANSLATE: Allow custom color'
+        geometrytypes: 'TRANSLATE: Geometry types'
+    redlining:
+      class:
+        title: 'TRANSLATE: Sketches'
+    resetView:
+      class:
+        title: 'TRANSLATE: Reset view'
+        description: 'TRANSLATE: Restores initial map view and source settings'
+      admin:
+        resetDynamicSources: 'TRANSLATE: Remove dynamically loaded sources'
+    applicationSwitcher:
+      class:
+        title: 'TRANSLATE: Application switcher'
+        description: 'TRANSLATE: Switches to another application while maintaining current map position'
+      admin:
+        open_in_new_tab: 'TRANSLATE: Open in new tab'
+    coordinesdisplay:
+      admin:
+        numdigits: 'TRANSLATE: Number of decimal places'
+        empty: 'TRANSLATE: Empty'
+        prefix: 'TRANSLATE: Prefix'
+        separator: 'TRANSLATE: Separator'
+        label: 'TRANSLATE: Show label'
+    searchrouterroute:
+      admin:
+        title: 'TRANSLATE: Title'
+        configuration: 'TRANSLATE: Configuration'
+    instanceset:
+      admin:
+        title: 'TRANSLATE: Title'
+        group: 'TRANSLATE: Group'
+        instances: 'TRANSLATE: Instances'
+        instancesets: 'TRANSLATE: Instancesets'
+    basebutton:
+      admin:
+        tooltip: 'TRANSLATE: Tooltip'
+        icon: 'TRANSLATE: Icon'
+    icon:
+      mb:
+        about: 'TRANSLATE: Information'
+        layer_tree: 'TRANSLATE: Layer tree'
+        feature_info: 'TRANSLATE: Feature Info'
+        area_ruler: 'TRANSLATE: Area ruler'
+        polygon: 'TRANSLATE: Polygon'
+        line_ruler: 'TRANSLATE: Line ruler'
+        image_export: 'TRANSLATE: Image Export'
+        legend: 'TRANSLATE: Legend'
+      fa:
+        about: 'TRANSLATE: Group'
+        info: 'TRANSLATE: Information (inverted)'
+        pin: 'TRANSLATE: Marker'
+        home: 'TRANSLATE: Home'
+        legend: 'TRANSLATE: List'
+        print: 'TRANSLATE: Print'
+        search: 'TRANSLATE: Search'
+        layer_tree: 'TRANSLATE: Hierarchy'
+        logout: 'TRANSLATE: Logout'
+        wms: 'TRANSLATE: Globe'
+        edit: 'TRANSLATE: Edit'
+        wmc: 'TRANSLATE: Folder'
+        coordinates: 'TRANSLATE: Coordinates'
+        poi: 'TRANSLATE: Pin'
+        camera: 'TRANSLATE: Camera'
+        copyright: 'TRANSLATE: Copyright'
+        share: 'TRANSLATE: Share'
+        forward: 'TRANSLATE: Forward'
+        refresh: 'TRANSLATE: Refresh'
+        earth: 'TRANSLATE: Earth'
+        map: 'TRANSLATE: Map'
+        pin_alt: 'TRANSLATE: Pin (Alternative)'
+        help: 'TRANSLATE: Help'
+  template:
+    toolbar_menu_tooltip: 'TRANSLATE: Toggle menu'
+    region:
+      toolbar: 'TRANSLATE: Top toolbar'
+      footer: 'TRANSLATE: Footer'
+      sidepane: 'TRANSLATE: Sidepane'
+      content: 'TRANSLATE: Map area'
+  demoapps:
+    themes: 'TRANSLATE: Themes'
+    backgroundThemes: 'TRANSLATE: Background themes'
+    baseMaps: 'TRANSLATE: Base maps'
+    aerialView: 'TRANSLATE: Aerial view'
+    noBackground: 'TRANSLATE: No background'
+    poi: 'TRANSLATE: Please take a look at this POI'
+    search: 'TRANSLATE: Search location'
+    about: 'TRANSLATE: About Mapbender'
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: 'TRANSLATE: Title'
+'Bad credentials.': 'TRANSLATE: Bad credentials.'
+'User account is locked.': 'TRANSLATE: User account is locked.'
+'User account is disabled.': 'TRANSLATE: User account is disabled.'
+'User account has expired.': 'TRANSLATE: User account has expired.'
+'User credentials have expired.': 'TRANSLATE: User credentials have expired.'
