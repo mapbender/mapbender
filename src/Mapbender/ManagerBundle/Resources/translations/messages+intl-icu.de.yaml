@@ -1,33 +1,33 @@
 mb:
   application:
     create:
-      success: Ihre Anwendung wurde erstellt.
+      success: 'Ihre Anwendung wurde erstellt.'
       failure:
-        create.directory: Anwendungsverzeichnis kann nicht erstellt werden.
+        create.directory: 'Anwendungsverzeichnis kann nicht erstellt werden.'
     save:
-      success: Ihre Anwendung wurde gespeichert.
+      success: 'Ihre Anwendung wurde gespeichert.'
       failure:
-        general: Beim Speichern Ihrer Anwendung ist ein Fehler aufgetreten.
-        create.directory: Ihre Anwendung wurde aktualisiert, aber das Anwendungsverzeichnis konnte nicht erstellt werden.
+        general: 'Beim Speichern Ihrer Anwendung ist ein Fehler aufgetreten.'
+        create.directory: 'Ihre Anwendung wurde aktualisiert, aber das Anwendungsverzeichnis konnte nicht erstellt werden.'
     remove:
-      success: Ihre Anwendung wurde gelöscht.
+      success: 'Ihre Anwendung wurde gelöscht.'
       failure:
-        general: Ihre Anwendung konnte nicht gelöscht werden.
+        general: 'Ihre Anwendung konnte nicht gelöscht werden.'
   layerset:
     create:
-      success: Ihr Layerset wurde erstellt.
+      success: 'Ihr Layerset wurde erstellt.'
     remove:
-      success: Ihr Layerset wurde gelöscht.
-      failure: Ihr Layerset kann nicht gelöscht werden.
+      success: 'Ihr Layerset wurde gelöscht.'
+      failure: 'Ihr Layerset kann nicht gelöscht werden.'
   source:
     instance:
       create:
-        success: Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.
+        success: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
   manager:
     automatic: Automatisch
-    autoActivate: Automatisch aktivieren
-    autoOpen: Automatisch öffnen
-    confirm_form_discard: Änderungen verwerfen?
+    autoActivate: 'Automatisch aktivieren'
+    autoOpen: 'Automatisch öffnen'
+    confirm_form_discard: 'Änderungen verwerfen?'
     popup_height: Dialog-Höhe
     popup_width: Dialog-Breite
     screentype:
@@ -43,16 +43,16 @@ mb:
           left: Links
           right: Rechts
           center: Zentriert
-      generate_button_menu: Schaltflächen zu Menü zusammenfassen
+      generate_button_menu: 'Schaltflächen zu Menü zusammenfassen'
       menu_label: Menütitel
     visibility: Sichtbarkeit
     element:
       screentype:
-        mobile: Auf Mobilgeräten anzeigen
-        desktop: Auf großen Bildschirmen anzeigen
+        mobile: 'Auf Mobilgeräten anzeigen'
+        desktop: 'Auf großen Bildschirmen anzeigen'
     sidepane:
       width: Breite
-      closed: Geschlossen starten
+      closed: 'Geschlossen starten'
       align:
         label: Position
         choice:
@@ -65,33 +65,33 @@ mb:
             one   {Diese Instanz wird von einer Anwendung genutzt}
             other {Diese Instanz wird von # Anwendungen genutzt}
         }
-      convert_to_reusable: In freie Instanz umwandeln
-      convert_to_bound: In private Instanz umwandeln
-      converted_to_bound: Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt
-      reusable_assigned_to_application: Die freie Instanz wurde der Anwendung hinzugefügt
-      create_reusable: Freie Instanz erzeugen
-      created_reusable: Neue freie Instanz erzeugt
+      convert_to_reusable: 'In freie Instanz umwandeln'
+      convert_to_bound: 'In private Instanz umwandeln'
+      converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
+      reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
+      create_reusable: 'Freie Instanz erzeugen'
+      created_reusable: 'Neue freie Instanz erzeugt'
     application:
-      persistentView: Kartenzustand merken
-      splashscreen: Ladescreen anzeigen
-      splashscreen_autohide: Ladescreen automatisch ausblenden
+      persistentView: 'Kartenzustand merken'
+      splashscreen: 'Ladescreen anzeigen'
+      splashscreen_autohide: 'Ladescreen automatisch ausblenden'
     admin:
-      csrf_token_invalid: CSRF-Token ungültig.
+      csrf_token_invalid: 'CSRF-Token ungültig.'
       sources: Datenquellen
       source:
-        add: Datenquelle hinzufügen
-        show_metadata: Metadaten anzeigen
-        delete: Datenquelle entfernen
+        add: 'Datenquelle hinzufügen'
+        show_metadata: 'Metadaten anzeigen'
+        delete: 'Datenquelle entfernen'
         new:
-          add: Datenquelle hinzufügen
-        valid: Quelle valide
-        notvalid: Die Datenquelle ist nicht valide
-        no_source: Keine Datenquelle
-        update: Datenquelle aktualisieren
+          add: 'Datenquelle hinzufügen'
+        valid: 'Quelle valide'
+        notvalid: 'Die Datenquelle ist nicht valide'
+        no_source: 'Keine Datenquelle'
+        update: 'Datenquelle aktualisieren'
         status:
-          ok: Datenquelle OK
-          toupdate: Datenquelle inaktuell
-          unreachable: Die Datenquelle ist nicht erreichbar
+          ok: 'Datenquelle OK'
+          toupdate: 'Datenquelle inaktuell'
+          unreachable: 'Die Datenquelle ist nicht erreichbar'
         embedded_in_applications: |
           {count, plural,
               =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
@@ -99,54 +99,54 @@ mb:
               other {Diese Datenquelle wird von # Anwendungen genutzt}
           }
       map:
-        max_extent: Max. Karten­ausdehnung
-        max_extent.help: Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.
-        start_extent: Initiale Karten­ausdehnung
-        start_extent.help: Bounding Box mit min/max x/y, die den Kartenausschnitt markiert, in dem die Karte startet. Bei Klick auf das Haus in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.
-        base_dpi: Standard-Auflösung [dpi]
-        base_dpi.help: Die Auflösung passt sich auf Basis dieses Wertes an die Auflösung des verwendeten Gerätes an.
+        max_extent: 'Max. Karten­ausdehnung'
+        max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
+        start_extent: 'Initiale Karten­ausdehnung'
+        start_extent.help: 'Bounding Box mit min/max x/y, die den Kartenausschnitt markiert, in dem die Karte startet. Bei Klick auf das Haus in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
+        base_dpi: 'Standard-Auflösung [dpi]'
+        base_dpi.help: 'Die Auflösung passt sich auf Basis dieses Wertes an die Auflösung des verwendeten Gerätes an.'
       element:
         title: Titel
         type: Typ
-        add: Element hinzufügen
+        add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
-        no_element_added: Kein Element vorhanden
+        no_element_added: 'Kein Element vorhanden'
         anchor:
           label: Position
-          left-top: Oben links
-          left-bottom: Unten links
-          right-top: Oben rechts
-          right-bottom: Unten rechts
+          left-top: 'Oben links'
+          left-bottom: 'Unten links'
+          right-top: 'Oben rechts'
+          right-bottom: 'Unten rechts'
       zoombar:
         draggable: Verschiebbar
       overview:
         fix: Fixieren
       layerset:
-        add: Layerset hinzufügen
+        add: 'Layerset hinzufügen'
         title: Titel
         type: Typ
-        edit: Layerset bearbeiten
+        edit: 'Layerset bearbeiten'
         delete:
-          title: Layerset löschen
-          confirm: Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?
+          title: 'Layerset löschen'
+          confirm: 'Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?'
         id: Id
       instance:
-        add: Instanz hinzufügen
-        show_hide: Instanz an/aus
-        edit: Instanz bearbeiten
+        add: 'Instanz hinzufügen'
+        show_hide: 'Instanz an/aus'
+        edit: 'Instanz bearbeiten'
         delete:
-          title: Instanz löschen
-          confirm: Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?
-        no_instance_added: Keine Instanz vorhanden
-        no_layer_added: Keine Ebene hinzugefügt
-        max_input_vars_exceeded: PHP-Einstellung max_input_vars zu niedrig für die Anzahl an Layern in dieser Instanz.
-        update_successful: Die Instanz wurde aktualisiert
-        converted_to_shared: Die Instanz wurde zu einer freien Instanz umgewandelt
+          title: 'Instanz löschen'
+          confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'
+        no_instance_added: 'Keine Instanz vorhanden'
+        no_layer_added: 'Keine Ebene hinzugefügt'
+        max_input_vars_exceeded: 'PHP-Einstellung max_input_vars zu niedrig für die Anzahl an Layern in dieser Instanz.'
+        update_successful: 'Die Instanz wurde aktualisiert'
+        converted_to_shared: 'Die Instanz wurde zu einer freien Instanz umgewandelt'
       template: Vorlage
       application:
         view: Anzeigen
         edit:
-          title: Anwendung bearbeiten
+          title: 'Anwendung bearbeiten'
           base_data: Basisdaten
         screenshot: Vorschaubild
         layouts: Layouts
@@ -154,24 +154,24 @@ mb:
         custom_css: CSS
         security:
           title: Sicherheit
-          public: öffentlicher Zugriff
+          public: 'öffentlicher Zugriff'
         save: Speichern
         cancel: Abbrechen
-        view_this: Anwendung anzeigen
-        duplicate: Anwendung duplizieren
+        view_this: 'Anwendung anzeigen'
+        duplicate: 'Anwendung duplizieren'
         public:
-          on_off: Anwendung publizieren/verbergen
-        delete: Anwendung löschen
-        no_application: Keine Anwendung vorhanden
+          on_off: 'Anwendung publizieren/verbergen'
+        delete: 'Anwendung löschen'
+        no_application: 'Keine Anwendung vorhanden'
         new:
-          title: Anwendung anlegen
-        create_use: Erstellen Sie zunächst eine neue Anwendung mit Basisinformationen. Danach können Sie die Anwendung bearbeiten und Elemente sowie Layersets einzufügen.
+          title: 'Anwendung anlegen'
+        create_use: 'Erstellen Sie zunächst eine neue Anwendung mit Basisinformationen. Danach können Sie die Anwendung bearbeiten und Elemente sowie Layersets einzufügen.'
         btn:
           create: Speichern
           cancel: Abbrechen
         upload:
-          button: Datei auswählen
-          label: Keine Datei ausgewählt...
+          button: 'Datei auswählen'
+          label: 'Keine Datei ausgewählt...'
         export:
           addAcl: Acls
           addSources: Quellen
@@ -184,69 +184,69 @@ mb:
             import: Importieren
         title: Titel
         url:
-          title: URL Titel
+          title: 'URL Titel'
         description: Beschreibung
         template: Vorlage
     source:
       serviceurl: Dienst-URL
       username: Benutzername
       password: Passwort
-      activate_new_layers: Neu hinzugefügte Layer aktivieren
-      select_new_layers: Neu hinzugefügte Layer auswählen
+      activate_new_layers: 'Neu hinzugefügte Layer aktivieren'
+      select_new_layers: 'Neu hinzugefügte Layer auswählen'
       load: Laden
     managerbundle:
-      new_application: Neue Anwendung
-      add_source: Neue Datenquelle
-      add_user_group: Füge Benutzer und Gruppen hinzu
-      acl_element: Acl Element
+      new_application: 'Neue Anwendung'
+      add_source: 'Neue Datenquelle'
+      add_user_group: 'Füge Benutzer und Gruppen hinzu'
+      acl_element: 'Acl Element'
       import_application: Importieren
       export_application: Exportieren
     components:
       popup:
         add_element:
-          title: Element hinzufügen
+          title: 'Element hinzufügen'
         edit_element:
-          title: Element bearbeiten
+          title: 'Element bearbeiten'
         delete_element:
-          title: Löschen bestätigen
+          title: 'Löschen bestätigen'
         add_edit_layerset:
-          title_edit: Layerset bearbeiten
-          title_add: Layerset hinzufügen
+          title_edit: 'Layerset bearbeiten'
+          title_add: 'Layerset hinzufügen'
         delete_layerset:
-          title: Layerset löschen
+          title: 'Layerset löschen'
         add_instance:
-          title: Datenquelle auswählen
+          title: 'Datenquelle auswählen'
         delete_instance:
-          title: Instanz löschen
+          title: 'Instanz löschen'
         delete_user_group:
-          title: Entfernen bestätigen
-          content: Wollen Sie die Gruppe %userGroup% wirklich entfernen?
+          title: 'Entfernen bestätigen'
+          content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
     import:
       application:
-        failed: Anwendung kann nicht importiert werden
-    http_connection_error: Verbindungsaufbau fehlgeschlagen
-    http_error_response: Der kontaktierte Dienst hat eine Fehlermeldung gesendet
-    xml_invalid: Das XML Dokument ist nicht valide
-    xml_malformed: Kein XML oder ungültige XML-Struktur
+        failed: 'Anwendung kann nicht importiert werden'
+    http_connection_error: 'Verbindungsaufbau fehlgeschlagen'
+    http_error_response: 'Der kontaktierte Dienst hat eine Fehlermeldung gesendet'
+    xml_invalid: 'Das XML Dokument ist nicht valide'
+    xml_malformed: 'Kein XML oder ungültige XML-Struktur'
   core:
     admin:
       button:
-        show_label: Beschriftung anzeigen
+        show_label: 'Beschriftung anzeigen'
       element:
         autostart: Autostart
       title: Titel
     entity:
       app:
         screenshotfile:
-          error: Die Datei ist zu groß (%uploadFileSize% bytes). Die maximal zulässige Größe beträgt %maxFileSize% bytes.
-          format_error: Nicht unterstütztes Format
+          error: 'Die Datei ist zu groß (%uploadFileSize% bytes). Die maximal zulässige Größe beträgt %maxFileSize% bytes.'
+          format_error: 'Nicht unterstütztes Format'
           resolution:
-            error: Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.
+            error: 'Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.'
     importjobtype:
       admin:
-        importfile: Datei importieren
+        importfile: 'Datei importieren'
   actions:
-    secureelement: Sicheres Element
+    secureelement: 'Sicheres Element'
   wms:
     wmsloader:
       repo:

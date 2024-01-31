@@ -6,12 +6,12 @@ mb:
           label:
             matrixsets: Matrixsets
             theme: Theme
-            serviceprovidername: Name of service provider
-            serviceprovidersite: Website of service provider
+            serviceprovidername: 'Name of service provider'
+            serviceprovidersite: 'Website of service provider'
         tilematrixset:
           label:
             identifier: Identifier
-            supportedcrs: Supported CRS
+            supportedcrs: 'Supported CRS'
             title: Title
             abstract: Abstract
           matrixes: Matrices
