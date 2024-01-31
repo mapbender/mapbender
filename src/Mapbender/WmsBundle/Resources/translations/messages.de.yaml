@@ -65,15 +65,15 @@ mb:
             'on': an
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
-            layerOrder: Layer-Reihenfolge
-            layerOrder.standard: 'Standard (umgekehrt)'
-            layerOrder.reverse: 'QGIS Style (gleiche Reihenfolge)'
             exceptionformat: Fehlerformat
             infoformat: 'Format der GetFeatureInfo-Anfrage'
             format: 'Format der GetMap-Anfrage'
             dimensions: Dimensions
             vendorspecifics: 'Benutzerdefinierte Parameter'
             layers: Ebenen
+            layerOrder: Layer-Reihenfolge
+            layerOrder.standard: 'Standard (umgekehrt)'
+            layerOrder.reverse: 'QGIS Style (gleiche Reihenfolge)'
           vendorspecific:
             label: 'Vendor specific'
         preview:

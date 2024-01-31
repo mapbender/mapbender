@@ -8,28 +8,13 @@ mb:
             theme: Themen
             serviceprovidername: 'Name des Dienstanbieters'
             serviceprovidersite: 'Webseite des Dienstanbieters'
-        layer:
-          label:
-            identifier: Identifikator
-            formats: Formate
-            abstract: Abstrakt
-            title: Titel
-            latlonbounds: 'Bounding Box'
-            tilematrixsetlinks: TileMatrixSetLinks
         tilematrixset:
           label:
-            title: Titel
-            abstract: Abstrakt
             identifier: Identifikator
             supportedcrs: 'Unterstützte CRS'
+            title: Titel
+            abstract: Abstrakt
           matrixes: Matrizen
-        tilematrix:
-          label:
-            identifier: Identifikator
-            scaledenominator: Maßstabsnenner
-            topleftcorner: 'Top-left corner'
-            tilesize: Kachelgröße
-            matrixsize: Matrixgröße
         theme:
           label:
             identifier: Identifikator
@@ -39,3 +24,18 @@ mb:
         instance:
           label:
             style: Style
+        layer:
+          label:
+            identifier: Identifikator
+            formats: Formate
+            title: Titel
+            abstract: Abstrakt
+            latlonbounds: 'Bounding Box'
+            tilematrixsetlinks: TileMatrixSetLinks
+        tilematrix:
+          label:
+            identifier: Identifikator
+            scaledenominator: Maßstabsnenner
+            topleftcorner: 'Top-left corner'
+            tilesize: Kachelgröße
+            matrixsize: Matrixgröße

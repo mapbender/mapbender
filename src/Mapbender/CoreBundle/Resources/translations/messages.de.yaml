@@ -89,7 +89,6 @@ mb:
       admin:
         configurations: Konfigurationen
         title: Titel
-        title.help: 'Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird'
         placeholder: Platzhalter
         placeholder.help: 'Text, der im Suchfeld angezeigt wird, wenn dieses leer ist. Wird der Platzhalter nicht gesetzt, wird der Titel verwendet.'
         query_url: 'Query URL'
@@ -127,6 +126,7 @@ mb:
         result_icon_url.help: 'URL zu einer Bilddatei, die als Marker für Punktgeometrien verwendet wird. Kann relativ oder absolut sein. Der Standard-Pin liegt unter <code>/bundles/mapbendercore/image/pin_red.png</code>.'
         result_icon_offset: 'Icon Versatz'
         result_icon_offset.help: 'Positionskorrektur des Icons als kommagetrennter x und y-Versatz, z.B. <code>-6,-32</code> für den Standard-Pin'
+        title.help: 'Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird'
       errors:
         invalid_query_format: 'Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!'
         invalid_epsg_code: 'Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein'
@@ -259,10 +259,10 @@ mb:
         metadata: Metadaten
         legend: Legende
         kmlexport: 'KML Export'
-        dimensions: Dimensions
         dimension_onoff: 'An/Aus Dimension'
         dimension: Dimension
         sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
+        dimensions: Dimensions
       class:
         title: Ebenenbaum
         description: 'Baum der Karten-Ebenen'
@@ -583,8 +583,8 @@ mb:
         label: 'Beschriftung anzeigen'
     searchrouterroute:
       admin:
-        title: Titel
         configuration: Konfiguration
+        title: Titel
     instanceset:
       admin:
         title: Titel
