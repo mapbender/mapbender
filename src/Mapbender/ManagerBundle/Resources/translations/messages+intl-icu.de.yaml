@@ -68,13 +68,12 @@ mb:
       convert_to_reusable: 'In freie Instanz umwandeln'
       convert_to_bound: 'In private Instanz umwandeln'
       converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
+      reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
       create_reusable: 'Freie Instanz erzeugen'
       created_reusable: 'Neue freie Instanz erzeugt'
-      reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
     application:
       persistentView: 'Kartenzustand merken'
       splashscreen: 'Ladescreen anzeigen'
-      splashscreen_autohide: 'Ladescreen automatisch ausblenden'
     admin:
       sources: Datenquellen
       csrf_token_invalid: 'CSRF-Token ungültig.'
@@ -100,11 +99,11 @@ mb:
           }
       map:
         max_extent: 'Max. Karten­ausdehnung'
+        max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
         start_extent: 'Initiale Karten­ausdehnung'
+        start_extent.help: 'Bounding Box mit min/max x/y, die den Kartenausschnitt markiert, in dem die Karte startet. Bei Klick auf das Haus in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
         base_dpi: 'Standard-Auflösung [dpi]'
         base_dpi.help: 'Die Auflösung passt sich auf Basis dieses Wertes an die Auflösung des verwendeten Gerätes an.'
-        max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
-        start_extent.help: 'Bounding Box mit min/max x/y, die den Kartenausschnitt markiert, in dem die Karte startet. Bei Klick auf das Haus in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
       element:
         title: Titel
         type: Typ

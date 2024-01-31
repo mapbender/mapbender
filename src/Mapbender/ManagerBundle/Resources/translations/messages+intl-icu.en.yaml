@@ -68,7 +68,7 @@ mb:
       convert_to_reusable: 'Convert to shared instance'
       convert_to_bound: 'Convert to bound instance'
       converted_to_bound: 'A bound copy of the shared instance has been added to the application'
-      reusable_added_to_application: 'The shared instance has been added to the application'
+      reusable_assigned_to_application: 'The shared instance has been added to the application'
       create_reusable: 'Create shared instance'
       created_reusable: 'A new shared instance has been created'
     application:
@@ -99,7 +99,9 @@ mb:
           }
       map:
         max_extent: 'Max. extent'
+        max_extent.help: 'Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
         start_extent: 'Start extent'
+        start_extent.help: 'Bounding Box (min/max x/y) that is initially displayed when loading the map. When clicking on the home icon, the map zooms to this extent.'
         base_dpi: 'Default Resolution [dpi]'
         base_dpi.help: 'The resolution adapts to the screen resolution based on the configured value'
       element:

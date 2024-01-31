@@ -89,6 +89,7 @@ mb:
       admin:
         configurations: Configurations
         title: Title
+        title.help: 'Text shown in the configurations dropdown'
         placeholder: Placeholder
         placeholder.help: 'Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.'
         query_url: 'Query URL'
@@ -581,7 +582,7 @@ mb:
         label: 'Show label'
     searchrouterroute:
       admin:
-        'title''': Title
+        title: Title
         configuration: Configuration
     instanceset:
       admin:
@@ -649,3 +650,8 @@ mb:
         instancelayerform:
           label:
             title: Title
+'Bad credentials.': 'Bad credentials.'
+'User account is locked.': 'User account is locked.'
+'User account is disabled.': 'User account is disabled.'
+'User account has expired.': 'User account has expired.'
+'User credentials have expired.': 'User credentials have expired.'
