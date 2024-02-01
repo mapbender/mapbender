@@ -52,6 +52,8 @@ mb:
         desktop: 'Auf großen Bildschirmen anzeigen'
     sidepane:
       width: Breite
+      resizable: 'Größe veränderbar'
+      resizable_help: 'Falls aktiviert, kann der Nutzer die Größe der Sidepane durch Halten und Ziehen am rechten Rand verändern. Die maximale/minimale Breite lässt sich per Benutzerdefiniertem CSS bearbeiten (min-width/max-width auf .sidePane.resizable)'
       closed: 'Geschlossen starten'
       align:
         label: Position

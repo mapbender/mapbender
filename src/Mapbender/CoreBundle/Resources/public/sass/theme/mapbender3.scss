@@ -231,6 +231,19 @@ ul.toolBar, .toolBar > ul {
     }
   }
 }
+
+.sidePane.resizable::after {
+    content: '';
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    cursor: ew-resize;
+}
+
 .metadataDialog{
   .popupContent {
     height: 100%;
