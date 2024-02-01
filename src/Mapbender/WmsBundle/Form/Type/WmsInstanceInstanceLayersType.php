@@ -119,14 +119,14 @@ class WmsInstanceInstanceLayersType extends AbstractType
         if ($this->exposeLayerOrder) {
             $layerOrderChoices = array();
             foreach (WmsInstance::validLayerOrderChoices() as $validChoice) {
-                $translationKey = "mb.wms.wmsloader.repo.instance.label.layerOrder.$validChoice";
+                $translationKey = "mb.wms.wmsloader.repo.instance.label.layerorder.$validChoice";
                 $layerOrderChoices[$translationKey] = $validChoice;
             }
             $builder->add('layerOrder', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
                 'choices' => $layerOrderChoices,
                 'required' => true,
                 'auto_initialize' => true,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.layerOrder',
+                'label' => 'mb.wms.wmsloader.repo.instance.label.layerorder',
             ));
         }
     }

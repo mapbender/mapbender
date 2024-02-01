@@ -65,9 +65,9 @@ mb:
             'on': attivo
             ratio: fattore BBOX
             buffer: Tile buffer
-            layerOrder: Ordine dei Layers
-            layerOrder.standard: standard
-            layerOrder.reverse: QGIS
+            layerorder: Ordine dei Layers
+            layerorder.standard: standard
+            layerorder.reverse: QGIS
           vendorspecific:
             label: specifiche per Vendor
         preview:

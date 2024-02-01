@@ -65,9 +65,9 @@ mb:
             'on': Включити
             ratio: BBOX фактор
             buffer: Буфер
-            layerOrder: Порядок шарів
-            layerOrder.standard: Стандартний
-            layerOrder.reverse: QGIS
+            layerorder: Порядок шарів
+            layerorder.standard: Стандартний
+            layerorder.reverse: QGIS
           vendorspecific:
             label: певний Vendor
         preview:
