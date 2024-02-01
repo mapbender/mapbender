@@ -23,52 +23,52 @@ mb:
       singular: Source
       plural: Sources
     layerset:
-      singular: Layer set
-      plural: Layer sets
+      singular: 'Layer set'
+      plural: 'Layer sets'
     sourceinstance:
       singular: Instance
       plural: Instances
       typed:
         singular: '%type% instance'
       reusable:
-        singular: Shared instance
-        plural: Shared instances
+        singular: 'Shared instance'
+        plural: 'Shared instances'
       bound:
-        singular: Bound instance
-        plural: Bound instances
+        singular: 'Bound instance'
+        plural: 'Bound instances'
     security: Security
   form:
-    choice_required: Choose one
+    choice_required: 'Choose one'
     choice_optional: None
-    unnamed_entry: Unnamed Entry
+    unnamed_entry: 'Unnamed Entry'
   states:
     active: active
     inactive: inactive
   core:
     featureinfo:
       error:
-        nolayer: No feature info layer exists.
-        unknownoption: Unknown or unhandled option %key% for %namespace%.%widgetname%.
-        noresult: no result
+        nolayer: 'No feature info layer exists.'
+        unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
+        noresult: 'no result'
       class:
         title: FeatureInfo
         description: FeatureInfo
       admin:
-        maxcount: Max count
+        maxcount: 'Max count'
         height: Height
         width: Width
-        displaytype: Display type
+        displaytype: 'Display type'
         tabs: Tabs
         accordion: Accordion
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: learn more about Mapbender
-        linktitle: Visit our official Mapbender website
+        learnmore: 'learn more about Mapbender'
+        linktitle: 'Visit our official Mapbender website'
         website: website
       class:
-        title: About dialog
-        description: Shows an about dialog
+        title: 'About dialog'
+        description: 'Shows an about dialog'
       tag:
         help: help
         info: info
@@ -77,66 +77,67 @@ mb:
         tooltip: About
     simplesearch:
       input:
-        searchterm: Search term
+        searchterm: 'Search term'
         search: Search
         clear: Clear
       class:
-        title: Simple Search
-        description: Single field search on JSON sources (e.g. Solr)
+        title: 'Simple Search'
+        description: 'Single field search on JSON sources (e.g. Solr)'
       error:
         geometry:
-          missing: The selected entry does not contain a geometry.
+          missing: 'The selected entry does not contain a geometry.'
       admin:
         configurations: Configurations
         title: Title
+        title.help: 'Text shown in the configurations dropdown'
         placeholder: Placeholder
-        placeholder.help: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.
-        query_url: Query URL
-        query_url.help: Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)
-        query_key: Query URL parameter key
-        query_key.help: The query parameter key to append (e.g. <code>q</code>)
-        query_ws_replace: Query Whitespace replacement pattern
-        query_ws_replace.help: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>
-        query_format: Query key format
-        query_format.help: Format for PHP's <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected
+        placeholder.help: 'Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.'
+        query_url: 'Query URL'
+        query_url.help: 'Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)'
+        query_key: 'Query URL parameter key'
+        query_key.help: 'The query parameter key to append (e.g. <code>q</code>)'
+        query_ws_replace: 'Query Whitespace replacement pattern'
+        query_ws_replace.help: 'If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>'
+        query_format: 'Query key format'
+        query_format.help: 'Format for PHP''s <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected'
         token_regex: 'Tokenizer: Split Regex'
         token_regex.help: 'The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)'
         token_regex_in: 'Tokenizer: Search Regex'
-        token_regex_in.help: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".
+        token_regex_in.help: 'Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".'
         token_regex_out: 'Tokenizer: Replacement Regex'
-        token_regex_out.help: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.
-        collection_path: Results Path
-        collection_path.help: Path pointing to the array of results within the search url's response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)
-        label_attribute: Label Attribute
-        label_attribute.help: Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>
-        geom_attribute: Geometry Attribute
-        geom_attribute.help: Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)
-        geom_format: Geometry Format
-        geom_format.help: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
-        sourceSrs: Source SRS
-        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.
-        delay: Search Delay [ms]
+        token_regex_out.help: 'Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.'
+        collection_path: 'Results Path'
+        collection_path.help: 'Path pointing to the array of results within the search url''s response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)'
+        label_attribute: 'Label Attribute'
+        label_attribute.help: 'Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>'
+        geom_attribute: 'Geometry Attribute'
+        geom_attribute.help: 'Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)'
+        geom_format: 'Geometry Format'
+        geom_format.help: 'Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
+        sourceSrs: 'Source SRS'
+        sourceSrs.help: '<a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.'
+        delay: 'Search Delay [ms]'
         delay.help: 'The automatic search will trigger that many milliseconds after the last key input. Default: 300ms'
-        result_buffer: Result Buffer [map units]
-        result_buffer.help: Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.
-        result_minscale: Minimum Scale [Denominator]
+        result_buffer: 'Result Buffer [map units]'
+        result_buffer.help: 'Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.'
+        result_minscale: 'Minimum Scale [Denominator]'
         result_minscale.help: 'Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale.'
-        result_maxscale: Maximum Scale [Denominator]
-        result_icon_url: Icon URL
-        result_icon_url.help: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.
-        result_icon_offset: Icon Offset
-        result_icon_offset.help: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin
+        result_maxscale: 'Maximum Scale [Denominator]'
+        result_icon_url: 'Icon URL'
+        result_icon_url.help: 'URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'Icon Offset'
+        result_icon_offset.help: 'Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin'
       errors:
-        invalid_query_format: The specified query format does not contain placeholders. Read the help text!
-        invalid_epsg_code: The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234
-        no_configuration_added: Please add at least one configuration
+        invalid_query_format: 'The specified query format does not contain placeholders. Read the help text!'
+        invalid_epsg_code: 'The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234'
+        no_configuration_added: 'Please add at least one configuration'
     searchrouter:
-      no_results: No results found.
+      no_results: 'No results found.'
       result_counter: 'Results: %count%'
-      exportcsv: Export results to CSV.
+      exportcsv: 'Export results to CSV.'
       class:
-        title: Search router
-        description: Configurable search routing element
+        title: 'Search router'
+        description: 'Configurable search routing element'
       tag:
         search: search
         router: router
@@ -145,29 +146,29 @@ mb:
         height: Height
         routes: Routes
     poi:
-      sharepoi: Share POI
+      sharepoi: 'Share POI'
       text:
-        snippet: You can use the following snippet in an email to send the POI
+        snippet: 'You can use the following snippet in an email to send the POI'
       popup:
         btn:
           position: Positioning
       class:
         title: POI
-        description: Create a POI for sharing
+        description: 'Create a POI for sharing'
       label:
         text: Text
       admin:
         body: Body
         gps: GPS
-        placeholder: Please take a look at this POI
+        placeholder: 'Please take a look at this POI'
     basesourceswitcher:
       error:
-        sourcenotavailable: A source with id %id% is not available.
+        sourcenotavailable: 'A source with id %id% is not available.'
       class:
-        title: Base source switcher
-        Description: Change the map's background sources.
+        title: 'Base source switcher'
+        Description: 'Change the map''s background sources.'
       form:
-        mesage: No basesource set is defined.
+        mesage: 'No basesource set is defined.'
         instancesets: Instancesets
       admin:
         tooltip: Tooltip
@@ -176,23 +177,23 @@ mb:
     legend:
       class:
         title: Legend
-        description: The legend shows the legend of the map's layers
+        description: 'The legend shows the legend of the map''s layers'
     ruler:
       create_error: 'Ruler: Type must be line or area.'
       class:
-        title: Line/Area Ruler
-        description: Ruler to draw a line/area and display length/area in a dialog
+        title: 'Line/Area Ruler'
+        description: 'Ruler to draw a line/area and display length/area in a dialog'
       tag:
         line: line
         area: area
         measure: measure
-      help: Double-click to end drawing
+      help: 'Double-click to end drawing'
       admin:
         type: Geometry
         help: Helptext
-        help_help: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user's language
-        stroke_width_while_drawing: Line width while drawing
-        only_for_area: only relevant if geometry is set to <i>Area</i>
+        help_help: 'The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user''s language'
+        stroke_width_while_drawing: 'Line width while drawing'
+        only_for_area: 'only relevant if geometry is set to <i>Area</i>'
         style: Style
     printclient:
       label:
@@ -200,86 +201,86 @@ mb:
         quality: Quality
         scale: Scale
         rotation: Rotation
-        legend: Print legend
+        legend: 'Print legend'
       class:
-        title: Print client
-        description: Renders a Print dialog
+        title: 'Print client'
+        description: 'Renders a Print dialog'
       btn:
-        deactivate: Deactivate Print Frame
-        activate: Activate Print Frame
+        deactivate: 'Deactivate Print Frame'
+        activate: 'Activate Print Frame'
     overview:
-      nolayer: The overview element has no layer.
+      nolayer: 'The overview element has no layer.'
       class:
         title: Overview
-        description: Renders a small overview map
+        description: 'Renders a small overview map'
       tag:
         overview: overview
         map: map
       admin:
-        visibility.closed_initially: Initially closed
-        visibility.open_initially: Initially open
-        visibility.open_permanent: Permanently open
+        visibility.closed_initially: 'Initially closed'
+        visibility.open_initially: 'Initially open'
+        visibility.open_permanent: 'Permanently open'
         layerset: Layerset
     metadata:
       popup:
         title: Metadata
     gpsposition:
       error:
-        notsupported: Geolocation services are not supported by your browser.
-        nosignal: Currently it's not possible to locate your position.
+        notsupported: 'Geolocation services are not supported by your browser.'
+        nosignal: 'Currently it''s not possible to locate your position.'
       class:
-        title: GPS Position
-        description: Renders a button to show the GPS Position
+        title: 'GPS Position'
+        description: 'Renders a button to show the GPS Position'
       tag:
-        gpsposition: GPS Position
+        gpsposition: 'GPS Position'
         gps: GPS
         position: position
         button: button
       admin:
         average: Average
         follow: Follow
-        centeronfirstposition: Center on first position
-        zoomtoaccuracyonfirstposition: Zoom to accuracy on first position
+        centeronfirstposition: 'Center on first position'
+        zoomtoaccuracyonfirstposition: 'Zoom to accuracy on first position'
     layertree:
       const:
-        outofscale: Layer out of scale
-        outofbounds: Layer out of bounds
-        parentinvisible: Parent layer invisible
+        outofscale: 'Layer out of scale'
+        outofbounds: 'Layer out of bounds'
+        parentinvisible: 'Parent layer invisible'
       tooltip:
-        sublayers_openclose: Sublayers open/close
-        removelayer: Remove layer
+        sublayers_openclose: 'Sublayers open/close'
+        removelayer: 'Remove layer'
         menu:
           close: Close
       label:
-        visibility_onoff: Visibility on/off
-        featureinfo_onoff: Featureinfo on/off
+        visibility_onoff: 'Visibility on/off'
+        featureinfo_onoff: 'Featureinfo on/off'
         opacity: Opacity
-        zoomtolayer: Zoom to layer
+        zoomtolayer: 'Zoom to layer'
         metadata: Metadata
         legend: Legend
-        kmlexport: KML export
-        dimension_onoff: On/Off Dimension
+        kmlexport: 'KML export'
+        dimension_onoff: 'On/Off Dimension'
         dimension: Dimension
-        sourcevisibility_onoff: Show sources
+        sourcevisibility_onoff: 'Show sources'
       class:
-        title: Layer tree
-        description: Tree of map's layers
+        title: 'Layer tree'
+        description: 'Tree of map''s layers'
       admin:
-        layerremove: Remove layer
+        layerremove: 'Remove layer'
         opacity: Opacity
-        zoomtolayer: Zoom to layer
+        zoomtolayer: 'Zoom to layer'
         metadata: Metadata
         dimension: Dimension
     zoombar:
-      zoombybox: Zoom by box
-      zoombyworld: Zoom by world
-      zoom_home: Back to start
+      zoombybox: 'Zoom by box'
+      zoombyworld: 'Zoom by world'
+      zoom_home: 'Back to start'
       zoomHomeRestoresLayers: '"Back to start" also resets layer settings'
-      zoomin: Zoom in
-      zoomout: Zoom out
+      zoomin: 'Zoom in'
+      zoomout: 'Zoom out'
       class:
-        title: Navigation toolbar
-        description: The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.
+        title: 'Navigation toolbar'
+        description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
       tag:
         zoom: zoom
         pan: pan
@@ -289,22 +290,22 @@ mb:
       admin:
         components: Components
         rotation: Rotation
-        zoommax: Zoom to maximum extent
-        zoominout: Zoom in and out
-        zoomslider: Zoom slider
+        zoommax: 'Zoom to maximum extent'
+        zoominout: 'Zoom in and out'
+        zoomslider: 'Zoom slider'
     activityindicator:
       class:
-        title: Activity indicator
-        description: Shows HTTP activity
+        title: 'Activity indicator'
+        description: 'Shows HTTP activity'
       tag:
         activity: activity
         indicator: indicator
       admin:
         tooltip: Tooltip
-        activityclass: CSS-Class General Activity
-        ajaxactivityclass: CSS-Class Background Activity
-        ajaxactivityclass_help: CSS-Class that is set while an action is active in the background (like a search being performed)
-        tileactivityclass: CSS-Class Map Loading
+        activityclass: 'CSS-Class General Activity'
+        ajaxactivityclass: 'CSS-Class Background Activity'
+        ajaxactivityclass_help: 'CSS-Class that is set while an action is active in the background (like a search being performed)'
+        tileactivityclass: 'CSS-Class Map Loading'
     button:
       class:
         title: Button
@@ -317,20 +318,20 @@ mb:
         deactivate: Deactivate
     controlbutton:
       class:
-        description: Controls another element
+        description: 'Controls another element'
       admin:
         group: Group
         target: Target
     linkbutton:
       class:
         title: Link
-        description: Link to external URL
+        description: 'Link to external URL'
       admin:
-        click: Target URL
+        click: 'Target URL'
     coordinatesdisplay:
       class:
-        title: Coordinates display
-        description: The coordinates display shows your mouse position in map coordinates.
+        title: 'Coordinates display'
+        description: 'The coordinates display shows your mouse position in map coordinates.'
       tag:
         coordinates: coordinates
         display: display
@@ -339,7 +340,7 @@ mb:
     copyright:
       class:
         title: Copyright
-        description: Shows terms of use
+        description: 'Shows terms of use'
       tag:
         copyright: Copyright
         dialog: dialog
@@ -348,46 +349,46 @@ mb:
     map:
       class:
         title: Map
-        description: OpenLayers based map
+        description: 'OpenLayers based map'
       tag:
         map: map
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: SRS properties for %srslist% are not found
+      srsnotfound: 'SRS properties for %srslist% are not found'
       admin:
-        fixedZoomSteps: Fixed zoom steps
+        fixedZoomSteps: 'Fixed zoom steps'
         layersets: Layersets
-        tilesize: Tile size
+        tilesize: 'Tile size'
         SRS: SRS
-        scales: Scales (comma-separated)
-        othersrs: Other SRS
+        scales: 'Scales (comma-separated)'
+        othersrs: 'Other SRS'
         srs: SRS
     scalebar:
       class:
-        title: Scale bar
-        description: The scalebar displays a small line indicator representing the current map scale.
+        title: 'Scale bar'
+        description: 'The scalebar displays a small line indicator representing the current map scale.'
       tag:
         scale: scale
         bar: bar
       admin:
-        maxwidth: Maximum width
+        maxwidth: 'Maximum width'
         units: Unit
     scaledisplay:
       label: Scale
       scale_prefix: Prefix
-      scale_prefix.help: Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user's language.
-      unit_prefix: Shorten scale
-      unit_prefix.help: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.
+      scale_prefix.help: 'Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user''s language.'
+      unit_prefix: 'Shorten scale'
+      unit_prefix.help: 'If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.'
       class:
-        title: Scale display
-        description: Displays the current map scale
+        title: 'Scale display'
+        description: 'Displays the current map scale'
       tag:
         scale: scale
         display: display
     scaleselector:
       class:
-        title: Scale selector
-        description: Displays and changes a map scale
+        title: 'Scale selector'
+        description: 'Displays and changes a map scale'
       tag:
         scale: scale
         selector: selector
@@ -395,117 +396,117 @@ mb:
         tooltip: Tooltip
     srsselector:
       class:
-        title: SRS selector
-        description: The spatial reference system selector changes the map's spatial reference system
+        title: 'SRS selector'
+        description: 'The spatial reference system selector changes the map''s spatial reference system'
       tag:
         srs: SRS
         selector: selector
       admin:
-        srsselector: SRS selector
+        srsselector: 'SRS selector'
         tooltip: Tooltip
     ShareUrl:
       class:
-        title: Share URL
-        description: Share current map view via url
-      copied_to_clipboard: URL copied to clipboard
+        title: 'Share URL'
+        description: 'Share current map view via url'
+      copied_to_clipboard: 'URL copied to clipboard'
     viewManager:
       class:
-        title: View manager
-        description: Saves map states for later restoration
-      saveAsPublic: Save as public
+        title: 'View manager'
+        description: 'Saves map states for later restoration'
+      saveAsPublic: 'Save as public'
       recordStatus:
-        public: Public entry
-        private: Private entry
-      confirmDelete: Confirm deletion
-      no_data: No data
+        public: 'Public entry'
+        private: 'Private entry'
+      confirmDelete: 'Confirm deletion'
+      no_data: 'No data'
       title: Title
       date: Date
-      enter_title: Enter title
+      enter_title: 'Enter title'
       apply: Apply
       replace: Replace
-      details: Show details
+      details: 'Show details'
       admin:
-        access.none: Do not show
-        access.ro: Read only
-        access.rw: Allow saving
-        access.rwd: Allow saving and deletion
-        publicEntries: Public list
-        privateEntries: Show private list
+        access.none: 'Do not show'
+        access.ro: 'Read only'
+        access.rw: 'Allow saving'
+        access.rwd: 'Allow saving and deletion'
+        publicEntries: 'Public list'
+        privateEntries: 'Show private list'
         adminDeleteHint: 'Note: the administrator can always delete public entries'
-        allowAnonymousSave: Allow saving to anonymous users
-        showDate: Show date
+        allowAnonymousSave: 'Allow saving to anonymous users'
+        showDate: 'Show date'
     coordinatesutility:
       class:
-        title: Coordinates utility
-        description: Transform coordinates in different SRS. Navigate to coordinates on the map.
+        title: 'Coordinates utility'
+        description: 'Transform coordinates in different SRS. Navigate to coordinates on the map.'
       widget:
         error:
-          noSrs: No SRS is defined
-          invalidCoordinates: Invalid coordinates
+          noSrs: 'No SRS is defined'
+          invalidCoordinates: 'Invalid coordinates'
       view:
         srs:
-          title: Coordinate system
-          tooltip: Coordinate system
+          title: 'Coordinate system'
+          tooltip: 'Coordinate system'
         transformedCoordinates:
-          tooltip: Transformed coordinates
+          tooltip: 'Transformed coordinates'
         copytoclipboard:
-          tooltip: Copy to clipboard
+          tooltip: 'Copy to clipboard'
         originCoordinates:
-          title: Coordinate in map reference system
-          tooltip: read only
+          title: 'Coordinate in map reference system'
+          tooltip: 'read only'
         button:
-          search: Coordinate search
-          centermap: Center map
+          search: 'Coordinate search'
+          centermap: 'Center map'
       backend:
-        addMapSrsList: Add map's srs list
+        addMapSrsList: 'Add map''s srs list'
       admin:
-        srslist: SRS List
-        zoomlevel: Zoom level
+        srslist: 'SRS List'
+        zoomlevel: 'Zoom level'
     admin:
       poi:
         label:
-          usemailto: Use Mailto
+          usemailto: 'Use Mailto'
       legend:
         label:
-          hideemptylayers: Hide empty layers
-          generatelegendurl: Generate legend url
-          showsourcetitle: Show source title
-          showlayertitle: Show layer title
-          showgroupedlayertitle: Show grouped layer title
+          hideemptylayers: 'Hide empty layers'
+          generatelegendurl: 'Generate legend url'
+          showsourcetitle: 'Show source title'
+          showlayertitle: 'Show layer title'
+          showgroupedlayertitle: 'Show grouped layer title'
       featureinfo:
         label:
-          deactivateonclose: Deactivate on close
-          onlyvalid: Only valid
+          deactivateonclose: 'Deactivate on close'
+          onlyvalid: 'Only valid'
           highlighting_group: Highlighting
-          highlighting: Highlighting enabled
+          highlighting: 'Highlighting enabled'
           default_group: Default
-          hover_group: On hover
-          fillColor: Fill color
-          strokeColor: Stroke color
-          opacity_pct: Opacity (%)
-          stroke_width_px: Stroke width (pixels)
-          fontColor: Font color
-          fontSize: Font size
+          hover_group: 'On hover'
+          fillColor: 'Fill color'
+          strokeColor: 'Stroke color'
+          opacity_pct: 'Opacity (%)'
+          stroke_width_px: 'Stroke width (pixels)'
+          fontColor: 'Font color'
+          fontSize: 'Font size'
       printclient:
         label:
           rotatable: Rotatable
-          legend: Print legend
-          legend_default_behaviour: Legend checkbox active
-          required_fields_first: Display required fields first
+          legend: 'Print legend'
+          legend_default_behaviour: 'Legend checkbox active'
+          required_fields_first: 'Display required fields first'
       layertree:
         label:
-          showbasesources: Show base sources
-          showlayerremove: Show layer remove
-          usetheme: Thematic layer
+          showbasesources: 'Show base sources'
+          showlayerremove: 'Show layer remove'
+          usetheme: 'Thematic layer'
           themes: Themes
           theme:
             opened: opened
-            activate: Enabling Layer Add / Remove
-            useTheme: Theme show
-            label: theme name
-          hidenottoggleable: Hide not toggleable
-          hideselect: Hide visibility by folders
-          hideinfo: Hide info
+            activate: 'Enabling Layer Add / Remove'
+            useTheme: 'Theme show'
+            label: 'theme name'
+          hidenottoggleable: 'Hide not toggleable'
+          hideselect: 'Hide visibility by folders'
+          hideinfo: 'Hide info'
           menu: Menu
       template:
         sidepane:
@@ -516,7 +517,7 @@ mb:
               accordion: Accordion
               unstyled: Unstyled
       button:
-        show_label: Show label
+        show_label: 'Show label'
         label: Label
       layerset:
         label:
@@ -525,7 +526,7 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: Add some HTML
+        description: 'Add some HTML'
       admin:
         content: Content
         classes: Classes
@@ -545,43 +546,43 @@ mb:
         radius: Radius
       geometry:
         action:
-          remove: Remove geometry
-          edit: Edit geometry
-          zoom: Zoom to geometry
-          stop_drawing: Stop drawing
+          remove: 'Remove geometry'
+          edit: 'Edit geometry'
+          zoom: 'Zoom to geometry'
+          stop_drawing: 'Stop drawing'
       class:
         title: Sketches
-        description: Drawing tool
+        description: 'Drawing tool'
       admin:
-        deactivate_on_close: Deactivate on close
+        deactivate_on_close: 'Deactivate on close'
         colors: Colors
-        allow_custom_color: Allow custom color
-        geometrytypes: Geometry types
+        allow_custom_color: 'Allow custom color'
+        geometrytypes: 'Geometry types'
     redlining:
       class:
         title: Sketches
     resetView:
       class:
-        title: Reset view
-        description: Restores initial map view and source settings
+        title: 'Reset view'
+        description: 'Restores initial map view and source settings'
       admin:
-        resetDynamicSources: Remove dynamically loaded sources
+        resetDynamicSources: 'Remove dynamically loaded sources'
     applicationSwitcher:
       class:
-        title: Application switcher
-        description: Switches to another application while maintaining current map position
+        title: 'Application switcher'
+        description: 'Switches to another application while maintaining current map position'
       admin:
-        open_in_new_tab: Open in new tab
+        open_in_new_tab: 'Open in new tab'
     coordinesdisplay:
       admin:
-        numdigits: Number of decimal places
+        numdigits: 'Number of decimal places'
         empty: Empty
         prefix: Prefix
         separator: Separator
-        label: Show label
+        label: 'Show label'
     searchrouterroute:
       admin:
-        title': Title
+        title: Title
         configuration: Configuration
     instanceset:
       admin:
@@ -596,16 +597,16 @@ mb:
     icon:
       mb:
         about: Information
-        layer_tree: Layer tree
-        feature_info: Feature Info
-        area_ruler: Area ruler
+        layer_tree: 'Layer tree'
+        feature_info: 'Feature Info'
+        area_ruler: 'Area ruler'
         polygon: Polygon
-        line_ruler: Line ruler
-        image_export: Image Export
+        line_ruler: 'Line ruler'
+        image_export: 'Image Export'
         legend: Legend
       fa:
         about: Group
-        info: Information (inverted)
+        info: 'Information (inverted)'
         pin: Marker
         home: Home
         legend: List
@@ -625,27 +626,32 @@ mb:
         refresh: Refresh
         earth: Earth
         map: Map
-        pin_alt: Pin (Alternative)
+        pin_alt: 'Pin (Alternative)'
         help: Help
   template:
-    toolbar_menu_tooltip: Toggle menu
+    toolbar_menu_tooltip: 'Toggle menu'
     region:
-      toolbar: Top toolbar
+      toolbar: 'Top toolbar'
       footer: Footer
       sidepane: Sidepane
-      content: Map area
+      content: 'Map area'
   demoapps:
     themes: Themes
-    backgroundThemes: Background themes
-    baseMaps: Base maps
-    aerialView: Aerial view
-    noBackground: No background
-    poi: Please take a look at this POI
-    search: Search location
-    about: About Mapbender
+    backgroundThemes: 'Background themes'
+    baseMaps: 'Base maps'
+    aerialView: 'Aerial view'
+    noBackground: 'No background'
+    poi: 'Please take a look at this POI'
+    search: 'Search location'
+    about: 'About Mapbender'
   wms:
     wmsloader:
       repo:
         instancelayerform:
           label:
             title: Title
+'Bad credentials.': 'Bad credentials.'
+'User account is locked.': 'User account is locked.'
+'User account is disabled.': 'User account is disabled.'
+'User account has expired.': 'User account has expired.'
+'User credentials have expired.': 'User credentials have expired.'

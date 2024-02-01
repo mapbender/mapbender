@@ -54,8 +54,8 @@ mb:
             transparency: Transparenz
             tiled: gekachelt
             title: Titel
-            minsc: Minimaler Maßstab
-            maxsc: Maximaler Maßstab
+            minsc: 'Minimaler Maßstab'
+            maxsc: 'Maximaler Maßstab'
             active: aktiv
             select: ausgewählt
             info: Info
@@ -65,20 +65,20 @@ mb:
             'on': an
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
-            layerOrder: Layer-Reihenfolge
-            layerOrder.standard: Standard (umgekehrt)
-            layerOrder.reverse: QGIS Style (gleiche Reihenfolge)
+            layerorder: Layer-Reihenfolge
+            layerorder.standard: 'Standard (umgekehrt)'
+            layerorder.reverse: 'QGIS Style (gleiche Reihenfolge)'
             exceptionformat: Fehlerformat
-            infoformat: Format der GetFeatureInfo-Anfrage
-            format: Format der GetMap-Anfrage
+            infoformat: 'Format der GetFeatureInfo-Anfrage'
+            format: 'Format der GetMap-Anfrage'
             dimensions: Dimensions
-            vendorspecifics: Benutzerdefinierte Parameter
+            vendorspecifics: 'Benutzerdefinierte Parameter'
             layers: Ebenen
           vendorspecific:
-            label: Vendor specific
+            label: 'Vendor specific'
         preview:
           title:
-            servicerepository: Dienste Repository
+            servicerepository: 'Dienste Repository'
           label:
             load: Laden
         layer:
@@ -89,10 +89,10 @@ mb:
             queryable: abfragbar
             cascaded: kaskadiert
             opaque: undurchsichtig
-            nosubset: Keine Untergruppe
-            fixedwidth: feste Breite
-            fixedheight: feste Höhe
-            latlonbounds: LatLon Grenzen
+            nosubset: 'Keine Untergruppe'
+            fixedwidth: 'feste Breite'
+            fixedheight: 'feste Höhe'
+            latlonbounds: 'LatLon Grenzen'
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
@@ -116,35 +116,35 @@ mb:
         instancelayerform:
           label:
             layerstitle: Layer-Titel
-            minscale: Minimaler Maßstab
-            maxsclase: Maximaler Maßstab
+            minscale: 'Minimaler Maßstab'
+            maxsclase: 'Maximaler Maßstab'
             active: aktiv
-            allowselecttoc: Erlaubt Auswahl im Layerbaum
+            allowselecttoc: 'Erlaubt Auswahl im Layerbaum'
             selectedtoc: 'Layerset beim Start der Anwendung auswählen. Achtung: Checkbox aktiv lassen, falls keine thematischen Ebenen verwendet werden'
-            selectedtoc.help: Das Layerset ist beim Start der Anwendung im Ebenenbaum aktiv. Einstellung sollte nur geändert werden, wenn thematische Ebenen verwendet werden
+            selectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum aktiv. Einstellung sollte nur geändert werden, wenn thematische Ebenen verwendet werden'
             unselectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum inaktiv. Achtung: Falls thematische Ebenen nicht verwendet werden, ist das Layerset dann nicht aufrufbar'
-            allowinfotoc: Erlaubt FeatureInfo im Layerbaum
-            infotoc: FeatureInfo im Layerbaum
-            allowtoggletoc: Erlaubt umschalten im Layerbaum
-            toggletoc: Umschalten im Layerbaum
-            allowreordertoc: Erlaubt sortieren im Layerbaum
-            moreinfo: Weitere Informationen
+            allowinfotoc: 'Erlaubt FeatureInfo im Layerbaum'
+            infotoc: 'FeatureInfo im Layerbaum'
+            allowtoggletoc: 'Erlaubt umschalten im Layerbaum'
+            toggletoc: 'Umschalten im Layerbaum'
+            allowreordertoc: 'Erlaubt sortieren im Layerbaum'
+            moreinfo: 'Weitere Informationen'
             id:
               title: ID
               description: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Name
             style: Style
       class:
-        title: WMS laden
-        description: Lädt einen WMS per getCapabilities-Request
+        title: 'WMS laden'
+        description: 'Lädt einen WMS per getCapabilities-Request'
       admin:
         label:
-          splitlayers: Layer aufteilen
+          splitlayers: 'Layer aufteilen'
     repository:
       parser:
-        couldnotparse: Das XML Dokument kann  nicht geparst werden.
-        not_supported_document: Das XML Dokument ist nicht unterstützt.
-        not_supported_version: Die WMS Version ist nicht unterstützt.
+        couldnotparse: 'Das XML Dokument kann  nicht geparst werden.'
+        not_supported_document: 'Das XML Dokument ist nicht unterstützt.'
+        not_supported_version: 'Die WMS Version ist nicht unterstützt.'
     metadata:
       section:
         common:
@@ -165,9 +165,9 @@ mb:
     dimhandler:
       class:
         title: Dimensions-Handler
-        description: Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen
+        description: 'Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen'
     dimensionsets:
-      no_dimension: Keine Dimension vorhanden.
+      no_dimension: 'Keine Dimension vorhanden.'
   core:
     dimensionset:
       admin:
@@ -191,7 +191,7 @@ mb:
         onlineresource: Online-Ressource
       vendorspecifictype:
         hidden: Versteckt
-        setdefaults: Standardwerte festlegen
+        setdefaults: 'Standardwerte festlegen'
     vendorspecifictype:
       admin:
         vstype: Parameter-Typ

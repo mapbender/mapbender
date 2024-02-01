@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Example
-          wmsurl: Service URL
+          wmsurl: 'Service URL'
           wmsuser: User
           wmspass: Password
       error:
@@ -22,12 +22,12 @@ mb:
             title: Title
             name: Name
             version: Version
-            originurl: Origin URL
+            originurl: 'Origin URL'
             abstract: Abstract
-            onlineresource: Online Resource
-            exceptionformats: Exception Formats
+            onlineresource: 'Online Resource'
+            exceptionformats: 'Exception Formats'
             fees: Fees
-            accessconstraints: Access Constraints
+            accessconstraints: 'Access Constraints'
             person: Person
             organization: Organization
             position: Position
@@ -47,7 +47,7 @@ mb:
             save: Save
             cancel: Cancel
           label:
-            originurl: Origin URL
+            originurl: 'Origin URL'
             visible: Visible
             basesource: BaseSource
             proxy: Proxy
@@ -63,22 +63,22 @@ mb:
             reorder: reorder
             allow: allow
             'on': 'on'
-            ratio: BBOX factor
-            buffer: Tile buffer
-            layerorder: Layer ordering
+            ratio: 'BBOX factor'
+            buffer: 'Tile buffer'
+            layerorder: 'Layer ordering'
             layerorder.standard: standard
             layerorder.reverse: QGIS
-            exceptionformat: Exception format
-            infoformat: Format of GetFeatureInfo request
-            format: Format of the GetMap request
+            exceptionformat: 'Exception format'
+            infoformat: 'Format of GetFeatureInfo request'
+            format: 'Format of the GetMap request'
             dimensions: Dimensions
-            vendorspecifics: Vendor specific parameters
+            vendorspecifics: 'Vendor specific parameters'
             layers: Layers
           vendorspecific:
-            label: Vendor specifics
+            label: 'Vendor specifics'
         preview:
           title:
-            servicerepository: Service Repository
+            servicerepository: 'Service Repository'
           label:
             load: Load
         layer:
@@ -96,78 +96,78 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: Legend URL
+            legendurl: 'Legend URL'
             scale: Scale
             min: Min
             max: Max
             scalehint: Scalehint
             attribution: Attribution
-            onlineresource: Online Resource
-            logourl: Logo URL
+            onlineresource: 'Online Resource'
+            logourl: 'Logo URL'
             identifier: Identifier
             authority: Authority
             url: URL
             value: Value
-            metadataurl: Metadata URL
+            metadataurl: 'Metadata URL'
             dimension: Dimension
             extent: Extent
-            dataurl: Data URL
-            featurelisturl: Featurelist URL
+            dataurl: 'Data URL'
+            featurelisturl: 'Featurelist URL'
         instancelayerform:
           label:
-            layerstitle: Layer's Title
+            layerstitle: 'Layer''s Title'
             minscale: Minscale
             maxsclase: Maxsclase
             active: active
-            allowselecttoc: Allow Select at TOC
+            allowselecttoc: 'Allow Select at TOC'
             selectedtoc: 'Select layer on startup. Caution: Leave this checkbox checked if you are not using thematic layers'
-            selectedtoc.help: The layerset is active upon startup. The setting should only be changed if thematic layers are used.
+            selectedtoc.help: 'The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
             unselectedtoc.help: 'The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
-            allowinfotoc: Allow FeatureInfo at TOC
-            infotoc: FeatureInfo at TOC
-            allowtoggletoc: Allow Toggle at TOC
-            toggletoc: Toggle at TOC
-            allowreordertoc: Allow Reorder at TOC
-            moreinfo: More information
+            allowinfotoc: 'Allow FeatureInfo at TOC'
+            infotoc: 'FeatureInfo at TOC'
+            allowtoggletoc: 'Allow Toggle at TOC'
+            toggletoc: 'Toggle at TOC'
+            allowreordertoc: 'Allow Reorder at TOC'
+            moreinfo: 'More information'
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Layer's Name
+            layersname: 'Layer''s Name'
             style: Style
       class:
-        title: WMS loader
-        description: Loads a WMS via the getCapabilities-Request
+        title: 'WMS loader'
+        description: 'Loads a WMS via the getCapabilities-Request'
       admin:
         label:
-          splitlayers: Split layers
+          splitlayers: 'Split layers'
     repository:
       parser:
-        couldnotparse: Could not parse CapabilitiesDocument
-        not_supported_document: Not supported CapabilitiesDocument
-        not_supported_version: The WMS version is not supported
+        couldnotparse: 'Could not parse CapabilitiesDocument'
+        not_supported_document: 'Not supported CapabilitiesDocument'
+        not_supported_version: 'The WMS version is not supported'
     metadata:
       section:
         common:
-          title: General information
+          title: 'General information'
         contact:
           title: Contact
         items:
           title: Layer
           name: Name
         useconditions:
-          title: Terms of use
+          title: 'Terms of use'
       popup:
-        title: Meta data
+        title: 'Meta data'
     repo:
       instance:
         label:
           dimensions: Dimensions
     dimhandler:
       class:
-        title: Dimensions handler
-        description: DimensionsHandler groups and calls the dimension supported instances at the map
+        title: 'Dimensions handler'
+        description: 'DimensionsHandler groups and calls the dimension supported instances at the map'
     dimensionsets:
-      no_dimension: no dimension
+      no_dimension: 'no dimension'
   core:
     dimensionset:
       admin:
@@ -180,21 +180,21 @@ mb:
         dimensionsets: Dimensionsets
     wmsloader:
       admin:
-        defaultformat: Default format
-        defaultinfoformat: Default info format
+        defaultformat: 'Default format'
+        defaultinfoformat: 'Default info format'
       onlineresource:
         format: Format
         href: href
       legendurltype:
         width: Width
         height: Height
-        onlineresource: Online resource
+        onlineresource: 'Online resource'
       vendorspecifictype:
         hidden: Hidden
-        setdefaults: Set defaults
+        setdefaults: 'Set defaults'
     vendorspecifictype:
       admin:
-        vstype: Parameter type
+        vstype: 'Parameter type'
         name: Name
-        default: Default value
+        default: 'Default value'
         hidden: Hidden

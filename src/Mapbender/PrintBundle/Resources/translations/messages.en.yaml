@@ -6,11 +6,11 @@ mb:
           ok: Export
           cancel: Cancel
       info:
-        noactivelayer: No active layer!
-      chooseformat: Choose Export Format
+        noactivelayer: 'No active layer!'
+      chooseformat: 'Choose Export Format'
       class:
-        title: Image export
-        description: Image Export allows you to export your current mapview. You can choose png or jpeg format.
+        title: 'Image export'
+        description: 'Image Export allows you to export your current mapview. You can choose png or jpeg format.'
       tag:
         image: image
         export: export
@@ -18,8 +18,8 @@ mb:
         png: png
     printclient:
       tab:
-        settings: Job settings
-        joblist: Recent jobs
+        settings: 'Job settings'
+        joblist: 'Recent jobs'
       joblist:
         header:
           id: '#'
@@ -32,7 +32,7 @@ mb:
         open: open
         delete: delete
         cancel: Cancel
-        nodata: no data
+        nodata: 'no data'
         loading: loading
     admin:
       printclient:
@@ -42,19 +42,19 @@ mb:
             direct: direct
             queued: queued
         queueAccess:
-          label: Job queue
+          label: 'Job queue'
           choice:
             global: global
             private: private
   core:
     printclient:
       admin:
-        scales: Scales (comma-separated)
-        fileprefix: File prefix
-        optionalfields: Optional fields
-        replacepattern: Replace pattern
+        scales: 'Scales (comma-separated)'
+        fileprefix: 'File prefix'
+        optionalfields: 'Optional fields'
+        replacepattern: 'Replace pattern'
         templates: Templates
-        qualitylevels: Quality levels
+        qualitylevels: 'Quality levels'
       label:
         quality: Quality
       class:
@@ -69,5 +69,5 @@ mb:
     admin:
       printclient:
         label:
-          qualitylevels: Quality levels
+          qualitylevels: 'Quality levels'
           templates: Templates

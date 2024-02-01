@@ -16,6 +16,7 @@ Features:
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
+* New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * [Button] Allow customization of the icons available for selection in the button edit form. See PR description for details. ([PR#1518](https://github.com/mapbender/mapbender/pull/1518))

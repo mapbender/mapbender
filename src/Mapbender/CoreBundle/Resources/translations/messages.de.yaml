@@ -31,30 +31,30 @@ mb:
       typed:
         singular: '%type%-Instanz'
       reusable:
-        singular: Freie Instanz
-        plural: Freie Instanzen
+        singular: 'Freie Instanz'
+        plural: 'Freie Instanzen'
       bound:
-        singular: Private Instanz
-        plural: Private Instanzen
+        singular: 'Private Instanz'
+        plural: 'Private Instanzen'
     security: Sicherheit
   form:
-    choice_required: Auswahl erforderlich
-    choice_optional: Nichts ausgewählt
-    unnamed_entry: Unbenannter Eintrag
+    choice_required: 'Auswahl erforderlich'
+    choice_optional: 'Nichts ausgewählt'
+    unnamed_entry: 'Unbenannter Eintrag'
   states:
     active: aktiv
     inactive: inaktiv
   core:
     featureinfo:
       error:
-        nolayer: Informationsebene existiert nicht.
-        unknownoption: Unbekannte Option %key% für %namespace%.%widgetname%.
-        noresult: kein Ergebnis
+        nolayer: 'Informationsebene existiert nicht.'
+        unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
+        noresult: 'kein Ergebnis'
       class:
         title: Information
         description: Information
       admin:
-        maxcount: Max. Anzahl
+        maxcount: 'Max. Anzahl'
         height: Höhe
         width: Breite
         displaytype: Anzeigetyp
@@ -64,11 +64,11 @@ mb:
       content:
         versionprefix: Version
         learnmore: 'Lernen Sie Mapbender kennen '
-        linktitle: Besuchen Sie die offizielle Mapbender Webseite.
+        linktitle: 'Besuchen Sie die offizielle Mapbender Webseite.'
         website: '- zur Webseite'
       class:
         title: Über-Mapbender-Dialog
-        description: Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.
+        description: 'Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.'
       tag:
         help: Hilfe
         info: Info
@@ -79,65 +79,65 @@ mb:
       input:
         searchterm: Suchbegriff
         search: Suchen
-        clear: Eingabe löschen
+        clear: 'Eingabe löschen'
       class:
-        title: Einfache Suche
-        description: Einfeldsuche über JSON-Daten (z.B. Solr)
+        title: 'Einfache Suche'
+        description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
       error:
         geometry:
-          missing: Der ausgewählte Eintrag enthält keine Geometrie.
+          missing: 'Der ausgewählte Eintrag enthält keine Geometrie.'
       admin:
         configurations: Konfigurationen
         title: Titel
-        title.help: Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird
+        title.help: 'Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird'
         placeholder: Platzhalter
-        placeholder.help: Text, der im Suchfeld angezeigt wird, wenn dieses leer ist. Wird der Platzhalter nicht gesetzt, wird der Titel verwendet.
-        query_url: Query URL
-        query_url.help: Solr bzw. Nominatim URL, an die der eingegebene Suchbegriff gesendet wird (z.B. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>).
-        query_key: Query URL-Parameter
-        query_key.help: Der URL Parameter, der mit dem eingebenen Suchbegriff befüllt wird (z.B. <code>q</code>)
-        query_ws_replace: Query Whitespace Ersetzung
-        query_ws_replace.help: Falls angegeben, werden Leerzeichen und Zeilenumbrüche in der Suchanfrage hierdurch ersetzt, z.B. <code>+</code> oder <code>%20</code>
-        query_format: Query Key Format
-        query_format.help: Format für PHPs <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-Funktion, mit dem der Suchbegriff formatiert wird, z.B. <code>%s</code> (Standard) wenn der Suchbegriff als Zeichenkette interpretiert werden soll, <code>%d</code> wenn die Suche eine Zahl erwartet
+        placeholder.help: 'Text, der im Suchfeld angezeigt wird, wenn dieses leer ist. Wird der Platzhalter nicht gesetzt, wird der Titel verwendet.'
+        query_url: 'Query URL'
+        query_url.help: 'Solr bzw. Nominatim URL, an die der eingegebene Suchbegriff gesendet wird (z.B. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>).'
+        query_key: 'Query URL-Parameter'
+        query_key.help: 'Der URL Parameter, der mit dem eingebenen Suchbegriff befüllt wird (z.B. <code>q</code>)'
+        query_ws_replace: 'Query Whitespace Ersetzung'
+        query_ws_replace.help: 'Falls angegeben, werden Leerzeichen und Zeilenumbrüche in der Suchanfrage hierdurch ersetzt, z.B. <code>+</code> oder <code>%20</code>'
+        query_format: 'Query Key Format'
+        query_format.help: 'Format für PHPs <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-Funktion, mit dem der Suchbegriff formatiert wird, z.B. <code>%s</code> (Standard) wenn der Suchbegriff als Zeichenkette interpretiert werden soll, <code>%d</code> wenn die Suche eine Zahl erwartet'
         token_regex: 'Tokenizer: Split Regex'
         token_regex.help: 'Mit dem Tokenizer ist es möglich, Suchbegriffe zu verändern, bevor sie an die Such-URL gesendet werden. Der Split Regex sollte alle Zeichen matchen, die ein neues Token (i.d.R. neues Wort) einleiten. Standard: <code> </code> (Leerzeichen)'
         token_regex_in: 'Tokenizer: Such-Regex'
-        token_regex_in.help: Innerhalb jedes Tokens (siehe Split Regex) wird nach diesem regulären Ausdruck gesucht und mit dem Wert aus "Ersetzungs-Regex" ersetzt.
+        token_regex_in.help: 'Innerhalb jedes Tokens (siehe Split Regex) wird nach diesem regulären Ausdruck gesucht und mit dem Wert aus "Ersetzungs-Regex" ersetzt.'
         token_regex_out: 'Tokenizer: Ersetzungs-Regex'
-        token_regex_out.help: Innerhalb jedes Tokens (siehe Split Regex) wird der regulären Ausdruck aus "Such-Regex" mit diesem Wert ersetzt. Gefundene Gruppen werden mit <code>$</code> durchnummeriert referenziert. Beispielsweise würde <code>$1*</code> an jedes Suchwort ein Stern ergänzen.
-        collection_path: Pfad zu den Ergebnissen
-        collection_path.help: Pfad zu der Liste an Ergebnissen innerhalb der Antwort der Such-URL. Jede Hierarchie-Ebene ist durch einen Punkt getrennt, z.B. <code>response.docs</code> (Solr-Standard), <code>features</code> (GeoJSON)
-        label_attribute: Attribut für Beschriftung
-        label_attribute.help: Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, das als Beschriftung angezeigt werden soll, z.B. <code>label</code>. Alternativ kann ein String-Template angegeben werden, z.B. <code>Stadt ${properties.address.city} - ${properties.address.road}</code>
-        geom_attribute: Attribut für Geometrie
-        geom_attribute.help: Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, in dem die Geometrie verfügbar ist, z.B. <code>geom</code>, <code>geometry</code> (GeoJSON)
+        token_regex_out.help: 'Innerhalb jedes Tokens (siehe Split Regex) wird der regulären Ausdruck aus "Such-Regex" mit diesem Wert ersetzt. Gefundene Gruppen werden mit <code>$</code> durchnummeriert referenziert. Beispielsweise würde <code>$1*</code> an jedes Suchwort ein Stern ergänzen.'
+        collection_path: 'Pfad zu den Ergebnissen'
+        collection_path.help: 'Pfad zu der Liste an Ergebnissen innerhalb der Antwort der Such-URL. Jede Hierarchie-Ebene ist durch einen Punkt getrennt, z.B. <code>response.docs</code> (Solr-Standard), <code>features</code> (GeoJSON)'
+        label_attribute: 'Attribut für Beschriftung'
+        label_attribute.help: 'Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, das als Beschriftung angezeigt werden soll, z.B. <code>label</code>. Alternativ kann ein String-Template angegeben werden, z.B. <code>Stadt ${properties.address.city} - ${properties.address.road}</code>'
+        geom_attribute: 'Attribut für Geometrie'
+        geom_attribute.help: 'Pfad (innerhalb eines einzelnen Ergebnisses) zu dem Attribut, in dem die Geometrie verfügbar ist, z.B. <code>geom</code>, <code>geometry</code> (GeoJSON)'
         geom_format: Geometrie-Format
-        geom_format.help: Format, in dem die Geometrie verfügbar ist, entweder <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>
+        geom_format.help: 'Format, in dem die Geometrie verfügbar ist, entweder <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
         sourceSrs: Quell-SRS
-        sourceSrs.help: <a href="https://epsg.io/" target="_blank">EPSG-Code</a> der in der Such-URL verwendeten Projektion, inklusive des Präfixes <code>EPSG:</code>, z.B. <code>EPSG:25832</code>. Falls nicht angegeben, wird angenommen, dass die Ergebnisse in der Standard-Kartenprojektion vorliegen.
-        delay: Such-Verzögerung [ms]
+        sourceSrs.help: '<a href="https://epsg.io/" target="_blank">EPSG-Code</a> der in der Such-URL verwendeten Projektion, inklusive des Präfixes <code>EPSG:</code>, z.B. <code>EPSG:25832</code>. Falls nicht angegeben, wird angenommen, dass die Ergebnisse in der Standard-Kartenprojektion vorliegen.'
+        delay: 'Such-Verzögerung [ms]'
         delay.help: 'Zeit in Millisekunden, die nach der letzten Tasteneingabe gewartet wird, bis die Suche automatisch ausgeführt wird. Standard: 300ms'
-        result_buffer: Ergebnis-Puffer [Karteneinheiten]
-        result_buffer.help: Bestimmt indirekt die Zoomstufe, die nach Auswählen eines Ergebnisses erscheint. Um die Geometrie herum ist mindestens der ausgewählte Bereich sichtbar. Die Einheit Karteneinheiten variiert je nach Projektion, meist sind es Meter. Eine Kombination zu Maßstab (min/max) ist grundsätzlich möglich, kann aber zu unerwünschten Ergebnissen führen.
-        result_minscale: minimaler Maßstab [Nenner]
+        result_buffer: 'Ergebnis-Puffer [Karteneinheiten]'
+        result_buffer.help: 'Bestimmt indirekt die Zoomstufe, die nach Auswählen eines Ergebnisses erscheint. Um die Geometrie herum ist mindestens der ausgewählte Bereich sichtbar. Die Einheit Karteneinheiten variiert je nach Projektion, meist sind es Meter. Eine Kombination zu Maßstab (min/max) ist grundsätzlich möglich, kann aber zu unerwünschten Ergebnissen führen.'
+        result_minscale: 'minimaler Maßstab [Nenner]'
         result_minscale.help: 'Alternative Angabe der Zoomstufe. Je nach Größe der Zielgeometrie wird ein Maßstab zwischen <code>min</code> und <code>max</code> eingestellt. Bei einem Maßstab <code>1 : 1000</code> muss nur <code>1000</code> eingegeben werden. Für einen festen Maßstab genügt die Eingabe des minimalen Maßstabs.'
-        result_maxscale: maximaler Maßstab [Nenner]
-        result_icon_url: Icon URL
-        result_icon_url.help: URL zu einer Bilddatei, die als Marker für Punktgeometrien verwendet wird. Kann relativ oder absolut sein. Der Standard-Pin liegt unter <code>/bundles/mapbendercore/image/pin_red.png</code>.
-        result_icon_offset: Icon Versatz
-        result_icon_offset.help: Positionskorrektur des Icons als kommagetrennter x und y-Versatz, z.B. <code>-6,-32</code> für den Standard-Pin
+        result_maxscale: 'maximaler Maßstab [Nenner]'
+        result_icon_url: 'Icon URL'
+        result_icon_url.help: 'URL zu einer Bilddatei, die als Marker für Punktgeometrien verwendet wird. Kann relativ oder absolut sein. Der Standard-Pin liegt unter <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'Icon Versatz'
+        result_icon_offset.help: 'Positionskorrektur des Icons als kommagetrennter x und y-Versatz, z.B. <code>-6,-32</code> für den Standard-Pin'
       errors:
-        invalid_query_format: Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!
-        invalid_epsg_code: Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein
-        no_configuration_added: Bitte fügen Sie mindestens eine Konfiguration hinzu
+        invalid_query_format: 'Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!'
+        invalid_epsg_code: 'Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein'
+        no_configuration_added: 'Bitte fügen Sie mindestens eine Konfiguration hinzu'
     searchrouter:
-      no_results: Keine Ergebnisse gefunden.
+      no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
-      exportcsv: Export der Trefferliste als CSV.
+      exportcsv: 'Export der Trefferliste als CSV.'
       class:
         title: Suchen
-        description: Ermöglicht die Konfiguration von individuellen Suchen
+        description: 'Ermöglicht die Konfiguration von individuellen Suchen'
       tag:
         search: Suchen
         router: Router
@@ -146,29 +146,29 @@ mb:
         height: Höhe
         routes: Routen
     poi:
-      sharepoi: Treffpunkt vereinbaren
+      sharepoi: 'Treffpunkt vereinbaren'
       text:
-        snippet: Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.
+        snippet: 'Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.'
       popup:
         btn:
           position: Positionierung
       class:
-        title: MeetingPoint (POI)
-        description: Element über das eine Treffpunkt generiert und verschickt werden kann.
+        title: 'MeetingPoint (POI)'
+        description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
       label:
-        text: Bearbeiten Sie den Text
+        text: 'Bearbeiten Sie den Text'
       admin:
         body: Text
         gps: GPS
-        placeholder: Bitte schauen Sie sich diesen POI an
+        placeholder: 'Bitte schauen Sie sich diesen POI an'
     basesourceswitcher:
       error:
-        sourcenotavailable: Der Dienst mit der ID %id% ist nicht vorhanden.
+        sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden.'
       class:
-        title: Hintergrund wechseln
-        Description: Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.
+        title: 'Hintergrund wechseln'
+        Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
       form:
-        mesage: Keine Hintergrund Definitionen vorhanden.
+        mesage: 'Keine Hintergrund Definitionen vorhanden.'
         instancesets: Instancesets
       admin:
         tooltip: Tooltip
@@ -177,7 +177,7 @@ mb:
     legend:
       class:
         title: Legende
-        description: Zeigt die Legende zu den aktiven Themen der Karte an.
+        description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
     ruler:
       create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
       class:
@@ -187,13 +187,13 @@ mb:
         line: Linie
         area: Fläche
         measure: Messen
-      help: Doppelklicken zum Beenden
+      help: 'Doppelklicken zum Beenden'
       admin:
         type: Geometrie
         help: Hilfetext
-        help_help: Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers
-        stroke_width_while_drawing: Linienstärke während des Zeichnens
-        only_for_area: nur relevant, wenn <i>Fläche</i> als Geometrie ausgewählt ist
+        help_help: 'Der Standardwert <code>mb.core.ruler.help</code> bedeutet "Doppelklicken zum Beenden" in der Sprache des Nutzers'
+        stroke_width_while_drawing: 'Linienstärke während des Zeichnens'
+        only_for_area: 'nur relevant, wenn <i>Fläche</i> als Geometrie ausgewählt ist'
         style: Stil
     printclient:
       label:
@@ -201,36 +201,36 @@ mb:
         quality: Qualität
         scale: Maßstab
         rotation: Drehung
-        legend: Legende drucken
+        legend: 'Legende drucken'
       class:
         title: Druck
-        description: Druck Dialog
+        description: 'Druck Dialog'
       btn:
-        deactivate: Druckrahmen deaktivieren
-        activate: Druckrahmen aktivieren
+        deactivate: 'Druckrahmen deaktivieren'
+        activate: 'Druckrahmen aktivieren'
     overview:
-      nolayer: Die Übersicht enthält keine Ebene.
+      nolayer: 'Die Übersicht enthält keine Ebene.'
       class:
-        title: Übersicht (overview)
-        description: Zeigt eine kleine Übersichtskarte (overview) an.
+        title: 'Übersicht (overview)'
+        description: 'Zeigt eine kleine Übersichtskarte (overview) an.'
       tag:
         overview: Übersicht
-        map: Karte (overview)
+        map: 'Karte (overview)'
       admin:
-        visibility.closed_initially: Initial geschlossen
-        visibility.open_initially: Initial offen
-        visibility.open_permanent: Dauerhaft offen
+        visibility.closed_initially: 'Initial geschlossen'
+        visibility.open_initially: 'Initial offen'
+        visibility.open_permanent: 'Dauerhaft offen'
         layerset: Layerset
     metadata:
       popup:
         title: Metadaten
     gpsposition:
       error:
-        notsupported: Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.
-        nosignal: Es ist nicht möglich Ihre Position zu bestimmen.
+        notsupported: 'Der Geolocation Dienst wird von Ihrem Browser nicht unterstützt.'
+        nosignal: 'Es ist nicht möglich Ihre Position zu bestimmen.'
       class:
         title: GPS-Position
-        description: Übergibt einen Button um die GPS-Position anzuzeigen.
+        description: 'Übergibt einen Button um die GPS-Position anzuzeigen.'
       tag:
         gpsposition: GPS-Position
         gps: GPS
@@ -239,49 +239,48 @@ mb:
       admin:
         average: Durchschnitt
         follow: Folge
-        centeronfirstposition: Zentriere auf die erste Position
-        zoomtoaccuracyonfirstposition: Zoom auf Genauigkeit der ersten Position
+        centeronfirstposition: 'Zentriere auf die erste Position'
+        zoomtoaccuracyonfirstposition: 'Zoom auf Genauigkeit der ersten Position'
     layertree:
       const:
-        outofscale: Ebene außerhalb des Maßstabs
-        outofbounds: Ebene außerhalb der BoundingBox
-        parentinvisible: Eltern Ebene nicht sichtbar
+        outofscale: 'Ebene außerhalb des Maßstabs'
+        outofbounds: 'Ebene außerhalb der BoundingBox'
+        parentinvisible: 'Eltern Ebene nicht sichtbar'
       tooltip:
         sublayers_openclose: öffnen/schließen
-        removelayer: Ebene entfernen
+        removelayer: 'Ebene entfernen'
         menu:
           close: Schließen
       label:
-        visibility_onoff: Sichtbarkeit an/aus
-        featureinfo_onoff: Information an/aus
+        visibility_onoff: 'Sichtbarkeit an/aus'
+        featureinfo_onoff: 'Information an/aus'
         opacity: Deckkraft
-        zoomtolayer: Zoom auf Ebene
+        zoomtolayer: 'Zoom auf Ebene'
         metadata: Metadaten
         legend: Legende
-        kmlexport: KML Export
-        dimensions: Dimensions
-        dimension_onoff: An/Aus Dimension
+        kmlexport: 'KML Export'
+        dimension_onoff: 'An/Aus Dimension'
         dimension: Dimension
-        sourcevisibility_onoff: Dienste anzeigen/ausblenden
+        sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
       class:
         title: Ebenenbaum
-        description: Baum der Karten-Ebenen
+        description: 'Baum der Karten-Ebenen'
       admin:
-        layerremove: Ebene entfernen
+        layerremove: 'Ebene entfernen'
         opacity: Deckkraft
-        zoomtolayer: Auf Ebene zoomen
+        zoomtolayer: 'Auf Ebene zoomen'
         metadata: Metadaten
         dimension: Abmessung
     zoombar:
-      zoombybox: Ausschnitt aufziehen
-      zoombyworld: Zoom auf gesamte Ausdehnung
-      zoom_home: Zurück zum Anfang
+      zoombybox: 'Ausschnitt aufziehen'
+      zoombyworld: 'Zoom auf gesamte Ausdehnung'
+      zoom_home: 'Zurück zum Anfang'
       zoomHomeRestoresLayers: '"Zurück zum Anfang" setzt Dienstezustände zurück'
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:
         title: Navigationswerkzeug
-        description: Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.
+        description: 'Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.'
       tag:
         zoom: Zoom
         pan: Verschieben
@@ -291,22 +290,22 @@ mb:
       admin:
         components: Komponenten
         rotation: Drehen
-        zoommax: Zoom auf maximale Ausdehnung
-        zoominout: Rein- und Rauszoomen
+        zoommax: 'Zoom auf maximale Ausdehnung'
+        zoominout: 'Rein- und Rauszoomen'
         zoomslider: Zoom-Schieberegler
     activityindicator:
       class:
         title: Aktivitätsanzeige
-        description: Zeigt HTTP-Aktivität an.
+        description: 'Zeigt HTTP-Aktivität an.'
       tag:
         activity: Aktivität
         indicator: Indikator
       admin:
         tooltip: Tooltip
-        activityclass: CSS-Klasse Aktivität generell
-        ajaxactivityclass: CSS-Klasse bei Hintergrundaktivität
-        ajaxactivityclass_help: CSS-Klasse, die gesetzt wird, wenn eine Aktion im Hintergrund ausgeführt wird, z.B. wenn eine Suche durchgeführt wird
-        tileactivityclass: CSS-Klasse bei Laden der Karte
+        activityclass: 'CSS-Klasse Aktivität generell'
+        ajaxactivityclass: 'CSS-Klasse bei Hintergrundaktivität'
+        ajaxactivityclass_help: 'CSS-Klasse, die gesetzt wird, wenn eine Aktion im Hintergrund ausgeführt wird, z.B. wenn eine Suche durchgeführt wird'
+        tileactivityclass: 'CSS-Klasse bei Laden der Karte'
     button:
       class:
         title: Button
@@ -319,20 +318,20 @@ mb:
         deactivate: Deaktivieren
     controlbutton:
       class:
-        description: Steuert ein anderes Element
+        description: 'Steuert ein anderes Element'
       admin:
         group: Gruppe
         target: Ziel
     linkbutton:
       class:
         title: Link
-        description: Link zu externer URL
+        description: 'Link zu externer URL'
       admin:
         click: Ziel-URL
     coordinatesdisplay:
       class:
         title: Koordinatenanzeige
-        description: Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.
+        description: 'Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.'
       tag:
         coordinates: Koordinaten
         display: Anzeige
@@ -341,7 +340,7 @@ mb:
     copyright:
       class:
         title: Copyright
-        description: Zeigt Nutzungsbedingungen an.
+        description: 'Zeigt Nutzungsbedingungen an.'
       tag:
         copyright: Copyright
         dialog: Dialog
@@ -350,46 +349,46 @@ mb:
     map:
       class:
         title: Karte
-        description: Hauptkarte basiernd auf OpenLayers
+        description: 'Hauptkarte basiernd auf OpenLayers'
       tag:
         map: Karte
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: SRS Eigenschaften für %srslist% wurden nicht gefunden.
+      srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
       admin:
-        fixedZoomSteps: Feste Maßstabsstufen
+        fixedZoomSteps: 'Feste Maßstabsstufen'
         layersets: Layersets
         tilesize: Kachelgröße
         SRS: SRS
-        scales: Maßstäbe (komma-separiert)
-        othersrs: Andere SRS
+        scales: 'Maßstäbe (komma-separiert)'
+        othersrs: 'Andere SRS'
         srs: SRS
     scalebar:
       class:
         title: Maßstabsleiste
-        description: Maßstabsleiste, die den aktuellen Maßstab anzeigt.
+        description: 'Maßstabsleiste, die den aktuellen Maßstab anzeigt.'
       tag:
         scale: Maßstab
         bar: Leiste
       admin:
-        maxwidth: Maximale Breite
+        maxwidth: 'Maximale Breite'
         units: Einheit
     scaledisplay:
       label: Maßstab
       scale_prefix: Präfix
-      scale_prefix.help: Bezeichnung, die vor der Maßstabsangabe steht. Der Standard <code>mb.core.scaledisplay.label</code> wird als <code>Maßstab</code> in der Sprache des Benutzers gerendert.
-      unit_prefix: Maßstab abkürzen
-      unit_prefix.help: Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.
+      scale_prefix.help: 'Bezeichnung, die vor der Maßstabsangabe steht. Der Standard <code>mb.core.scaledisplay.label</code> wird als <code>Maßstab</code> in der Sprache des Benutzers gerendert.'
+      unit_prefix: 'Maßstab abkürzen'
+      unit_prefix.help: 'Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.'
       class:
         title: Maßstabsanzeige
-        description: Der aktuelle Maßstab wird angezeigt.
+        description: 'Der aktuelle Maßstab wird angezeigt.'
       tag:
         scale: Maßstab
         display: Anzeige
     scaleselector:
       class:
         title: Maßstabsauswahl
-        description: Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.
+        description: 'Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.'
       tag:
         scale: Maßstab
         selector: Auswahl
@@ -397,8 +396,8 @@ mb:
         tooltip: Tooltip
     srsselector:
       class:
-        title: SRS Auswahl
-        description: Nach der Auswahl eines räumlichen Referenzsystems (SRS) ändert sich das SRS in der Karte.
+        title: 'SRS Auswahl'
+        description: 'Nach der Auswahl eines räumlichen Referenzsystems (SRS) ändert sich das SRS in der Karte.'
       tag:
         srs: SRS
         selector: Auswahl
@@ -407,107 +406,107 @@ mb:
         tooltip: Tooltip
     ShareUrl:
       class:
-        title: URL teilen
-        description: Teilt die aktuelle Kartenansicht über eine URL
-      copied_to_clipboard: URL in Zwischenablage kopiert
+        title: 'URL teilen'
+        description: 'Teilt die aktuelle Kartenansicht über eine URL'
+      copied_to_clipboard: 'URL in Zwischenablage kopiert'
     viewManager:
       class:
         title: Ansichtsverwaltung
-        description: Speichert Kartenzustände zum späteren Abruf
-      saveAsPublic: Als öffentlichen Eintrag speichern
+        description: 'Speichert Kartenzustände zum späteren Abruf'
+      saveAsPublic: 'Als öffentlichen Eintrag speichern'
       recordStatus:
-        public: Öffentlicher Eintrag
-        private: Privater Eintrag
-      confirmDelete: Eintrag wirklich löschen?
-      no_data: Keine Daten
+        public: 'Öffentlicher Eintrag'
+        private: 'Privater Eintrag'
+      confirmDelete: 'Eintrag wirklich löschen?'
+      no_data: 'Keine Daten'
       title: Titel
       date: Datum
-      enter_title: Titel eingeben
+      enter_title: 'Titel eingeben'
       apply: Abrufen
       replace: Überschreiben
-      details: Details anzeigen
+      details: 'Details anzeigen'
       admin:
-        access.none: Nicht anzeigen
-        access.ro: Nur lesen
-        access.rw: Speichern erlauben
-        access.rwd: Speichern und löschen erlauben
-        publicEntries: Öffentliche Liste
-        privateEntries: Private Liste anzeigen
+        access.none: 'Nicht anzeigen'
+        access.ro: 'Nur lesen'
+        access.rw: 'Speichern erlauben'
+        access.rwd: 'Speichern und löschen erlauben'
+        publicEntries: 'Öffentliche Liste'
+        privateEntries: 'Private Liste anzeigen'
         adminDeleteHint: 'Hinweis: Administratoren dürfen öffentliche Einträge immer löschen'
-        allowAnonymousSave: Anonyme Besucher dürfen speichern
-        showDate: Datum anzeigen
+        allowAnonymousSave: 'Anonyme Besucher dürfen speichern'
+        showDate: 'Datum anzeigen'
     coordinatesutility:
       class:
         title: Koordinaten-Werkzeug
-        description: Koordinaten-Transformation. Navigation zu Koordinaten auf der Karte.
+        description: 'Koordinaten-Transformation. Navigation zu Koordinaten auf der Karte.'
       widget:
         error:
-          noSrs: Kein SRS ist definiert
-          invalidCoordinates: Ungültige Koordinaten
+          noSrs: 'Kein SRS ist definiert'
+          invalidCoordinates: 'Ungültige Koordinaten'
       view:
         srs:
           title: Koordinatensystem
           tooltip: Koordinatensystem
         transformedCoordinates:
-          tooltip: Transformierte Koordinaten
+          tooltip: 'Transformierte Koordinaten'
         copytoclipboard:
-          tooltip: Koordinaten in die Zwischenablage kopieren
+          tooltip: 'Koordinaten in die Zwischenablage kopieren'
         originCoordinates:
-          title: Koordinaten im Anzeige-Koordinatensystem der Karte
-          tooltip: nicht editierbar
+          title: 'Koordinaten im Anzeige-Koordinatensystem der Karte'
+          tooltip: 'nicht editierbar'
         button:
           search: Koordinatensuche
-          centermap: Karte zentrieren
+          centermap: 'Karte zentrieren'
       backend:
-        addMapSrsList: Koordinatensysteme von der Karte hinzufügen
+        addMapSrsList: 'Koordinatensysteme von der Karte hinzufügen'
       admin:
         srslist: SRS-Liste
         zoomlevel: Zoomstufe
     admin:
       poi:
         label:
-          usemailto: Versenden per Mail - Mailclient öffnen
+          usemailto: 'Versenden per Mail - Mailclient öffnen'
       legend:
         label:
-          hideemptylayers: Ebenen ohne Objekte ausblenden
-          generatelegendurl: Legenden-URL generieren
-          showsourcetitle: Titel der Datenquelle anzeigen
-          showlayertitle: Titel der Ebene anzeigen
-          showgroupedlayertitle: Titel der gruppierten Ebene anzeigen
+          hideemptylayers: 'Ebenen ohne Objekte ausblenden'
+          generatelegendurl: 'Legenden-URL generieren'
+          showsourcetitle: 'Titel der Datenquelle anzeigen'
+          showlayertitle: 'Titel der Ebene anzeigen'
+          showgroupedlayertitle: 'Titel der gruppierten Ebene anzeigen'
       featureinfo:
         label:
-          deactivateonclose: Beim Schließen deaktivieren
-          onlyvalid: Nur valide zeigen
+          deactivateonclose: 'Beim Schließen deaktivieren'
+          onlyvalid: 'Nur valide zeigen'
           highlighting_group: Highlighting
-          highlighting: Highlighting aktiv
+          highlighting: 'Highlighting aktiv'
           default_group: Standard
           hover_group: Hover
           fillColor: Füllfarbe
           strokeColor: Strichfarbe
-          opacity_pct: Deckkraft (%)
-          stroke_width_px: Linienstärke (Pixel)
+          opacity_pct: 'Deckkraft (%)'
+          stroke_width_px: 'Linienstärke (Pixel)'
           fontColor: Schriftfarbe
           fontSize: Schriftgröße
       printclient:
         label:
           rotatable: Drehbar
-          legend: Legende drucken
-          legend_default_behaviour: Legenden Checkbox aktiv
-          required_fields_first: Pflichtfelder ganz oben anzeigen
+          legend: 'Legende drucken'
+          legend_default_behaviour: 'Legenden Checkbox aktiv'
+          required_fields_first: 'Pflichtfelder ganz oben anzeigen'
       layertree:
         label:
-          showbasesources: BaseSources anzeigen
+          showbasesources: 'BaseSources anzeigen'
           showlayerremove: '"Layer entfernen" anzeigen'
-          usetheme: Thematischer Layer
+          usetheme: 'Thematischer Layer'
           themes: Themen
           theme:
-            opened: Thema geöffnet/geschlossen
-            activate: Aktivieren von Layers hinzufügen/entfernen
-            useTheme: Thema anzeigen
+            opened: 'Thema geöffnet/geschlossen'
+            activate: 'Aktivieren von Layers hinzufügen/entfernen'
+            useTheme: 'Thema anzeigen'
             label: Themenname
-          hidenottoggleable: Nicht aufklappbare Ordner ausblenden
-          hideselect: Visibility bei Ordnern ausblenden
-          hideinfo: Info ausblenden
+          hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
+          hideselect: 'Visibility bei Ordnern ausblenden'
+          hideinfo: 'Info ausblenden'
           menu: Menü
       template:
         sidepane:
@@ -518,7 +517,7 @@ mb:
               accordion: Akkordeon
               unstyled: Unformatiert
       button:
-        show_label: Beschriftung anzeigen
+        show_label: 'Beschriftung anzeigen'
         label: Beschriftung
       layerset:
         label:
@@ -527,14 +526,14 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: HTML hinzufügen
+        description: 'HTML hinzufügen'
       admin:
         content: Inhalt
         classes: Klassen
     entity:
       app:
         screenshotfile:
-          error: Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.
+          error: 'Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.'
     sketch:
       geometrytype:
         point: Punkt
@@ -547,40 +546,40 @@ mb:
         radius: Radius
       geometry:
         action:
-          remove: Entfernen der Geometrie
-          edit: Editieren der Geometrie
-          zoom: Zoom auf die Geometrie
-          stop_drawing: Zeichnen abbrechen
+          remove: 'Entfernen der Geometrie'
+          edit: 'Editieren der Geometrie'
+          zoom: 'Zoom auf die Geometrie'
+          stop_drawing: 'Zeichnen abbrechen'
       class:
         title: Skizzen
         description: Zeichenwerkzeug
       admin:
-        deactivate_on_close: Beim Schließen deaktivieren
+        deactivate_on_close: 'Beim Schließen deaktivieren'
         colors: Farben
-        allow_custom_color: Farbanpassung erlauben
+        allow_custom_color: 'Farbanpassung erlauben'
         geometrytypes: Geometrie-Typen
     redlining:
       class:
         title: Skizzen
     resetView:
       class:
-        title: Ansicht zurücksetzen
-        description: Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her
+        title: 'Ansicht zurücksetzen'
+        description: 'Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her'
       admin:
-        resetDynamicSources: Hinzugeladene Quellen entfernen
+        resetDynamicSources: 'Hinzugeladene Quellen entfernen'
     applicationSwitcher:
       class:
-        title: Anwendung wechseln
-        description: Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung
+        title: 'Anwendung wechseln'
+        description: 'Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung'
       admin:
-        open_in_new_tab: In neuem Tab öffnen
+        open_in_new_tab: 'In neuem Tab öffnen'
     coordinesdisplay:
       admin:
-        numdigits: Anzahl der Nachkommastellen
-        empty: Leere Anzeige
+        numdigits: 'Anzahl der Nachkommastellen'
+        empty: 'Leere Anzeige'
         prefix: Präfix
         separator: Trennzeichen
-        label: Beschriftung anzeigen
+        label: 'Beschriftung anzeigen'
     searchrouterroute:
       admin:
         title: Titel
@@ -599,15 +598,15 @@ mb:
       mb:
         about: Information
         layer_tree: Ebenenbaum
-        feature_info: Feature Info
-        area_ruler: Fläche messen
+        feature_info: 'Feature Info'
+        area_ruler: 'Fläche messen'
         polygon: Polygon
-        line_ruler: Strecke messen
+        line_ruler: 'Strecke messen'
         image_export: Bildexport
         legend: Legende
       fa:
         about: Gruppe
-        info: Information (invertiert)
+        info: 'Information (invertiert)'
         pin: Marker
         home: Startseite
         legend: Liste
@@ -624,15 +623,15 @@ mb:
         copyright: Copyright
         share: Teilen
         forward: Weiterleiten
-        refresh: Neu laden
+        refresh: 'Neu laden'
         earth: Erdkugel
         map: Karte
-        pin_alt: Stecknadel (Alternative)
+        pin_alt: 'Stecknadel (Alternative)'
         help: Hilfe
   template:
-    toolbar_menu_tooltip: Menü öffnen
+    toolbar_menu_tooltip: 'Menü öffnen'
     region:
-      toolbar: Obere Werkzeugleiste
+      toolbar: 'Obere Werkzeugleiste'
       footer: Fußzeile
       sidepane: Sidepane
       content: Kartenbereich
@@ -641,18 +640,18 @@ mb:
     backgroundThemes: Hintergrundthemen
     baseMaps: Karten
     aerialView: Luftbilder
-    noBackground: kein Hintergrund
-    poi: Bitte werfen Sie einen Blick auf diesen POI
-    search: Ort suchen
-    about: Über Mapbender
+    noBackground: 'kein Hintergrund'
+    poi: 'Bitte werfen Sie einen Blick auf diesen POI'
+    search: 'Ort suchen'
+    about: 'Über Mapbender'
   wms:
     wmsloader:
       repo:
         instancelayerform:
           label:
             title: Titel
-Bad credentials.: Authentifizierung fehlgeschlagen.
-User account is locked.: Benutzerkonto ist gesperrt.
-User account is disabled.: Benutzerkonto ist deaktiviert.
-User account has expired.: Benutzerkonto ist abgelaufen.
-User credentials have expired.: Anmeldedaten sind abgelaufen.
+'Bad credentials.': 'Authentifizierung fehlgeschlagen.'
+'User account is locked.': 'Benutzerkonto ist gesperrt.'
+'User account is disabled.': 'Benutzerkonto ist deaktiviert.'
+'User account has expired.': 'Benutzerkonto ist abgelaufen.'
+'User credentials have expired.': 'Anmeldedaten sind abgelaufen.'

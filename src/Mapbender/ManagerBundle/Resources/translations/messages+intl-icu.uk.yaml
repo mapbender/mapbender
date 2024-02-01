@@ -66,7 +66,7 @@ mb:
       convert_to_reusable: Перетворити на спільний екземпляр
       convert_to_bound: Перетворити на зв''язаний екземпляр
       converted_to_bound: Зв''язану копію спільного екземпляра додано до застосунку
-      reusable_added_to_application: Спільний екземпляр додано до застосунку
+      reusable_assigned_to_application: Спільний екземпляр додано до застосунку
       create_reusable: Створити спільний екземпляр
       created_reusable: Створено новий спільний екземпляр
     application:

@@ -63,5 +63,10 @@
             <argument type="service" id="doctrine" />
             <argument>%kernel.project_dir%</argument>
         </service>
+        <service id="Mapbender\CoreBundle\Command\TranslationCommand"
+                 class="Mapbender\CoreBundle\Command\TranslationCommand">
+            <tag name="console.command" command="mapbender:normalize-translations" />
+            <argument type="service" id="Symfony\Component\HttpKernel\KernelInterface" />
+        </service>
     </services>
 </container>
