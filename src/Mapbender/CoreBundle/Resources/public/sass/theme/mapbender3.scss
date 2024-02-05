@@ -232,6 +232,10 @@ ul.toolBar, .toolBar > ul {
   }
 }
 
+.sidePane.resizable {
+    touch-action: pan-y;
+}
+
 .sidePane.resizable::after {
     content: '';
     position: absolute;

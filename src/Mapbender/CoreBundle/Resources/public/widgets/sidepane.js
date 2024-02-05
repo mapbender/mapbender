@@ -4,8 +4,8 @@ $(function () {
     const sidePane = $sidePane[0];
     const sidePaneLeft = $sidePane.hasClass('left');
 
-    let mousePosition = 0;
-    const BORDER_SIZE = 6;
+    let pointerPosition = 0;
+    const BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
     // if you want to customize the max/min size use custom css (min-width/max-width on .sidePane.resizable),
     const MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
     const MIN_SIZE_PX = 120;
@@ -41,28 +41,35 @@ $(function () {
     const sidePaneWidth = function () {
         return parseInt(getComputedStyle(sidePane, '').width);
     }
+
     const resize = function (e) {
         if (e.buttons === 0) {
-            // catch mouse released outside the window
-            document.removeEventListener("mousemove", resize, false);
+            // catch pointer released outside the window
+            document.removeEventListener("pointermove", resize, false);
             return;
         }
 
-        const dx = mousePosition - e.x;
-        mousePosition = e.x;
+        // some touch devices do not expose e.x in pointerdown, so use the first pointermove event as reference
+        if (pointerPosition === undefined) {
+            pointerPosition = e.x;
+            return;
+        }
+
+        const dx = pointerPosition - e.x;
+        pointerPosition = e.x;
         let calculatedWidth = sidePaneWidth() + (sidePaneLeft ? -1 : 1) * dx;
 
         // make sure sidepane does not become unreasonably big or small
         if (calculatedWidth > Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE)) {
             const overflow = calculatedWidth - Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE);
             calculatedWidth -= overflow;
-            mousePosition -= overflow;
+            pointerPosition -= overflow;
         }
 
         if (calculatedWidth < MIN_SIZE_PX) {
             const underflow = MIN_SIZE_PX - calculatedWidth;
             calculatedWidth += underflow;
-            mousePosition += underflow;
+            pointerPosition += underflow;
         }
 
         sidePane.style.width = calculatedWidth + "px";
@@ -78,14 +85,15 @@ $(function () {
     // make sure sidebar is resizable even when making the window smaller
     window.addEventListener("resize", constrainSize, false);
 
-    $(document).on('mousedown', '.sidePane.resizable', function (e) {
+    $(document).on('pointerdown', '.sidePane.resizable', function (e) {
         if ((sidePaneLeft && sidePaneWidth() - e.offsetX < BORDER_SIZE) || (!sidePaneLeft && e.offsetX < BORDER_SIZE)) {
-            mousePosition = e.x;
-            document.addEventListener("mousemove", resize, false);
+            pointerPosition = e.x;
+            document.addEventListener("pointermove", resize);
         }
+
+        $(document).one('pointercancel pointerup', function (e) {
+            document.removeEventListener("pointermove", resize);
+        });
     });
 
-    $(document).on('mouseup', '.sidePane.resizable', function (e) {
-        document.removeEventListener("mousemove", resize, false);
-    });
 });
