@@ -2,6 +2,7 @@ $(function () {
     const $switchButton = $(".toggleSideBar");
     const $sidePane = $switchButton.closest("div.sidePane");
     const sidePane = $sidePane[0];
+    const sidePaneLeft = $sidePane.hasClass('left');
 
     let mousePosition = 0;
     const BORDER_SIZE = 6;
@@ -49,7 +50,7 @@ $(function () {
 
         const dx = mousePosition - e.x;
         mousePosition = e.x;
-        let calculatedWidth = sidePaneWidth() - dx;
+        let calculatedWidth = sidePaneWidth() + (sidePaneLeft ? -1 : 1) * dx;
 
         // make sure sidepane does not become unreasonably big or small
         if (calculatedWidth > Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE)) {
@@ -78,7 +79,7 @@ $(function () {
     window.addEventListener("resize", constrainSize, false);
 
     $(document).on('mousedown', '.sidePane.resizable', function (e) {
-        if (sidePaneWidth() - e.offsetX < BORDER_SIZE) {
+        if ((sidePaneLeft && sidePaneWidth() - e.offsetX < BORDER_SIZE) || (!sidePaneLeft && e.offsetX < BORDER_SIZE)) {
             mousePosition = e.x;
             document.addEventListener("mousemove", resize, false);
         }

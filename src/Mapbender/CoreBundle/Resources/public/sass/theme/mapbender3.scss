@@ -234,14 +234,21 @@ ul.toolBar, .toolBar > ul {
 
 .sidePane.resizable::after {
     content: '';
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
     position: absolute;
-    right: 0;
     top: 0;
-    width: 4px;
+    width: 3px;
     height: 100%;
     cursor: ew-resize;
+}
+
+.sidePane.left.resizable::after {
+    border-left: 1px solid #ccc;
+    right: 0;
+}
+
+.sidePane.right.resizable::after {
+    border-right: 1px solid #ccc;
+    left: 0;
 }
 
 .metadataDialog{
