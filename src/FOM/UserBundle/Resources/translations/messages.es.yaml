@@ -1,8 +1,8 @@
 fom:
   acl:
     group_label:
-      anonymous: 'TRANSLATE: Anonymous users'
-      authenticated: 'TRANSLATE: All authenticated users'
+      anonymous: 'Usuarios anónimos'
+      authenticated: 'Todos los usuarios autentificados'
   user:
     registration:
       email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, clic <a href="%url%">aqui</a>.</p>'
@@ -10,21 +10,21 @@ fom:
         title: Registro
         congratulations: Felicitaciones!
         account_activated: 'Tu cuenta ha sido satisfactoriamente activada y esta lista para usarla.'
-        back_to_login: 'Regresar al login'
+        back_to_login: 'Regresar al inicio de sesión'
       form:
         title: Registro
-        choose_password: 'Escoger clave'
-        confirm_password: 'Confirmar clave'
+        choose_password: 'Escoger contraseña'
+        confirm_password: 'Confirmar contraseña'
         email: Email
-        back_to_login: 'Regresar al login'
+        back_to_login: 'Regresar al inicio de sesión'
         register: Registrar
       email_subject: 'Tu registro'
       send:
         title: Registro
         account_created: |-
           Tu cuenta ha sido creada. Un email con tu codigo de activación
-                      y enlace ha sido enviado a la dirección proveída.
-        back_to_login: 'Regresar al login'
+                      y enlace ha sido enviado a la dirección proporcionada.
+        back_to_login: 'Regresar al inicio de sesión'
       email_body_text: 'Hola %user_username%, Acabas de registrarte. Para concluir con el registro, favor, llama en tu navegador el enlace %url%.'
     group:
       index:
@@ -34,7 +34,7 @@ fom:
         description: Descripción
         edit_group: 'Editar grupo'
         delete_group: 'Borrar grupo'
-        no_groups_available: 'No disponibilidad de grupos.'
+        no_groups_available: 'No hay grupos disponibles.'
       form:
         edit_group: 'Editar Grupo'
         new_group: 'Nuevo Grupo'
@@ -42,27 +42,27 @@ fom:
         base_data: 'Dato base'
         users: Usuarios
         users_of_selected: 'usuarios de %users_count% seleccionados'
-        no_user_exists: 'No existe usuario.'
+        no_user_exists: 'No existe el usuario.'
     login:
       error_tockenexp:
-        title: 'Clave Reiniciada'
+        title: 'Contraseña restablecida'
         sorry: 'Lo siento!'
         registration_token_expired: 'Tu token de registro ha expirado. Desafortunadamente, tienes que solicitar un nuevo token.'
         request_new_token: 'Solicitar nuevo token'
-        back_to_login: 'Regresar al login'
+        back_to_login: 'Regresar al inicio de sesión'
       login:
-        title: Login
+        title: 'Inicio de sesión'
         username: Usuario
-        password: Clave
+        password: Contraseña
         register: Registrar
-        forgot_password: 'Clave olvidada'
-        login: Login
+        forgot_password: 'Contraseña olvidada'
+        login: 'Inicio de sesión'
       error_notocken:
-        password_reset: 'Reiniciar clave'
+        password_reset: 'Restablecer contraseña'
         sorry: 'Lo siento!'
         no_such_tocken: 'El token no se encuentra. Si piensas que es un error, favor contacta al admnistrador del sitio.'
         contact: 'Contacto administrador'
-        back_to_login: 'Regresar al login'
+        back_to_login: 'Regresar al inicio de sesión'
     user:
       index:
         title: Usuarios
@@ -83,8 +83,8 @@ fom:
         profile: Perfil
         groups: Grupos
         security: Seguridad
-        choose_password: 'Escoge clave'
-        confirm_password: 'Confirma clave'
+        choose_password: 'Escoge contraseña'
+        confirm_password: 'Confirma contraseña'
         name: Nombre
         users_of_selected: 'grupos de %users_count% seleccionados'
         no_groups_defined: 'No hay grupos definidos'
@@ -97,7 +97,7 @@ fom:
         name: Nombre
         class: Clase
         edit: Editar
-      required: 'Campos requeridos son marcados con etiquetas oscuras, mientras que campos opcionales tienen etiquetas claras.'
+      required: 'Los campos requeridos son marcados con etiquetas oscuras, mientras que los campos opcionales tienen etiquetas claras.'
       edit:
         edit_class_acl: 'Editar Class ACL para %name%'
       groups_users:
@@ -105,28 +105,28 @@ fom:
         no_goups_users: 'No están definidos grupos y usuarios.'
     password:
       email_body_html: |-
-        &lt;p&gt;Hola %user_username%,&lt;/p&gt;&lt;p&gt;Has solicitado una nueva clave.
+        &lt;p&gt;Hola %user_username%,&lt;/p&gt;&lt;p&gt;Has solicitado una nueva contraseña.
         &lt;br /&gt;Favor clic &lt;a href="%url%"&gt;aqui&lt;/a&gt;.
       done:
-        password_reset: 'Reiniciar Clave'
+        password_reset: 'Restablecer contraseña'
         congratulations: Felicitaciones!
-        password_been_reset: 'Clave satisfactoriamente reiniciada.'
-        back_to_login: 'Regresar al login'
+        password_been_reset: 'Contraseña satisfactoriamente restablecida.'
+        back_to_login: 'Regresar al inicio de sesión'
       reset:
-        title: 'Reiniciar clave'
-        btn: 'Reiniciar clave'
+        title: 'Restablecer contraseña'
+        btn: 'Restablecer contraseña'
       form:
-        message: 'To reset your password please provide your username or your e-mail address.'
-        title: 'Clave olvidada'
+        message: 'Para restablecer tu contraseña, indica tu nombre de usuario o tu dirección de correo electrónico.'
+        title: 'Contraseña olvidada'
         username_email: 'Usuario o Email'
-        back_to_login: 'Regresar al login'
-        require_password: 'Clave requerida'
-      email_subject: 'Clave olvidada'
+        back_to_login: 'Regresar al inicio de sesión'
+        require_password: 'Contraseña requerida'
+      email_subject: 'Contraseña olvidada'
       send:
-        title: 'Reiniciar Clave'
-        email_been_sent: 'Un email con su codigo de reinicio y enlace ha sido enviado a la dirección proveída.'
-        back_to_login: 'Regresar al login'
-      email_body_text: 'Hola %user_username%, Has solicitado una nueva clave. Llama en tu navegado al link "%url%".'
+        title: 'Restablecer contraseña'
+        email_been_sent: 'Se ha enviado un email con un código de reinicio y un enlace a la dirección proporcionada.'
+        back_to_login: 'Regresar al inicio de sesión'
+      email_body_text: 'Hola %user_username%, Has solicitado una nueva contraseña. Sigue este enlace para cambiarlo "%url%".'
     userbundle:
       user_control: 'Control de usuario'
       users: Usuarios
