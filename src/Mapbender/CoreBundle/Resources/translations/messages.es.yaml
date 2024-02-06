@@ -10,7 +10,7 @@ mb:
     filter: Filtrar
     print: Imprimir
     refresh: Actualizar
-    remove: Remover
+    remove: Eliminar
     reset: Reiniciar
     save: Guardar
     search: Buscar
@@ -130,7 +130,7 @@ mb:
       errors:
         invalid_query_format: 'El formato de consulta especificado no contiene marcadores de posición. ¡Lea el texto de ayuda!'
         invalid_epsg_code: 'El texto ingresado no es un código EPSG válido. Ingrese el código en el formato EPSG:1234'
-        no_configuration_added: 'Por favor, añada al menos una configuración'
+        no_configuration_added: 'Por favor, añade al menos una configuración'
     searchrouter:
       no_results: 'No hay resultados'
       result_counter: 'Resultados: %count%'
@@ -187,11 +187,11 @@ mb:
         line: 'línea'
         area: 'área'
         measure: 'medida'
-      help: 'Por favor, haga doble clic para finalizar el dibujo'
+      help: 'Por favor, haz doble clic para finalizar el dibujo'
       admin:
         type: 'Geometría'
         help: 'Texto de ayuda'
-        help_help: 'El valor predeterminado <code>mb.core.ruler.help</code> se traduce como "Por favor, haga doble clic para finalizar el dibujo" en el idioma del usuario'
+        help_help: 'El valor predeterminado <code>mb.core.ruler.help</code> se traduce como "Por favor, haz doble clic para finalizar el dibujo" en el idioma del usuario'
         stroke_width_while_drawing: 'Ancho de línea mientras se dibuja'
         only_for_area: 'Solo relevante si la geometría está configurada como <i>Área</i>'
         style: 'Estilo'
@@ -290,7 +290,7 @@ mb:
       admin:
         components: 'Componentes'
         rotation: 'Rotación'
-        zoommax: 'Acercamiento al extensión máxima'
+        zoommax: 'Acercamiento a la extensión máxima'
         zoominout: 'Acercamiento y alejamiento'
         zoomslider: 'Deslizador de acercamiento'
     activityindicator:
