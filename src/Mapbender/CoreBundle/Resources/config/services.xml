@@ -140,6 +140,7 @@
         </service>
         <service id="form.type.template.sidepane_settings" class="Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType">
             <tag name="form.type" />
+            <argument type="service" id="translator"/>
             <argument>%mapbender.responsive.containers%</argument>
         </service>
         <service id="mb.coordsutility.form.srslist" class="Mapbender\CoreBundle\Element\Type\CoordinatesUtilitySrsListType" >

@@ -6,7 +6,7 @@
     <title>{% block title %}{{ pagetitle | default(title | default(fom.server_name)) }}{% endblock %}</title>
     <meta name="description" content="Mapbender" />
 {% block mobilejs %}
-    {%- set scaleFactor = scaleFactor|default('0.7') -%}
+    {%- set scaleFactor = scaleFactor|default('1.0') -%}
     <meta name="viewport" content="width=device-width, initial-scale={{ scaleFactor }}, maximum-scale={{ scaleFactor }}, minimum-scale={{ scaleFactor }}, user-scalable=no"/>
 {% endblock %}
     <link rel="stylesheet" type="text/css" href="{{ asset('components/cookieconsent/build/cookieconsent.min.css') }}"/>

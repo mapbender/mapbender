@@ -3,18 +3,23 @@
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
+use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
+use Mapbender\ManagerBundle\Form\Type\ScreentypeType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class SidepaneSettingsType extends AbstractType
 {
-    protected $allowResponsiveContainers;
+    use MapbenderTypeTrait;
 
-    public function __construct($allowResponsiveContainers)
+    public function __construct(private TranslatorInterface $translator, private bool $allowResponsiveContainers)
     {
-        $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
     public function getParent()
@@ -36,22 +41,27 @@ class SidepaneSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneTypeType', array(
+        $builder->add('name', SidepaneTypeType::class, array(
             'label' => 'mb.core.admin.template.sidepane.type.label',
         ));
         if ($this->allowResponsiveContainers) {
-            $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(
+            $builder->add('screenType', ScreentypeType::class, array(
                 'label' => 'mb.manager.screentype.label',
             ));
         }
-        $builder->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        $builder->add('width', TextType::class, array(
             'required' => false,
             'attr' => array(
                 'placeholder' => '350px',   // HACK: this is implicitly the default (via CSS)
             ),
             'label' => 'mb.manager.sidepane.width',
         ));
-        $builder->add('align', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+        $builder->add('resizable', CheckboxType::class, $this->createInlineHelpText([
+            'required' => false,
+            'label' => 'mb.manager.sidepane.resizable',
+            'help' => 'mb.manager.sidepane.resizable_help',
+        ], $this->translator, false));
+        $builder->add('align', ChoiceType::class, array(
             'required' => false,
             'choices' => array(
                 'mb.manager.sidepane.align.choice.left' => 'left',
@@ -61,7 +71,7 @@ class SidepaneSettingsType extends AbstractType
             'placeholder' => false,
             'empty_data' => 'left',
         ));
-        $builder->add('closed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+        $builder->add('closed', CheckboxType::class, array(
             'required' => false,
             'label' => 'mb.manager.sidepane.closed',
         ));

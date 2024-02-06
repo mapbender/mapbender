@@ -21,6 +21,7 @@ Features:
 * [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * [Button] Allow customization of the icons available for selection in the button edit form. See PR description for details. ([PR#1518](https://github.com/mapbender/mapbender/pull/1518))
 * [FeatureInfo] Tabs in the feature info window are now sorted in the order they appear in the layer tree ([PR#1534](https://github.com/mapbender/mapbender/pull/1534))
+* [Sidebar] Sidebar is now user-resizable (configurable but active per default) ([PR#1539](https://github.com/mapbender/mapbender/pull/1539))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))

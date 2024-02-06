@@ -13,12 +13,13 @@ trait MapbenderTypeTrait
      * @param array $typeConfiguration
      * @return array
      */
-    public function createInlineHelpText(array $typeConfiguration, TranslatorInterface $trans): array
+    public function createInlineHelpText(array $typeConfiguration, TranslatorInterface $trans, bool $showAsPopover = true): array
     {
         if (empty($typeConfiguration['help'])) return $typeConfiguration;
-        $typeConfiguration['help'] = '<i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="'
-            . htmlspecialchars( $trans->trans($typeConfiguration['help']))
-            . '" data-bs-placement="left" data-bs-html="true"></i>';
+        $content = htmlspecialchars($trans->trans($typeConfiguration['help']));
+        $typeConfiguration['help'] = $showAsPopover
+            ? '<i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="'.$content . '" data-bs-placement="left" data-bs-html="true"></i>'
+            : '<i class="fas fa-question-circle" title="'.$content . '"></i>';
         $typeConfiguration['help_html'] = true;
         $helpAttr = array_key_exists('help_attr', $typeConfiguration) ? $typeConfiguration['help_attr'] : [];
         $typeConfiguration['help_attr'] = $helpAttr;

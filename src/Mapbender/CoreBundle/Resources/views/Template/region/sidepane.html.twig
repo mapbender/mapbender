@@ -1,5 +1,4 @@
-<div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}"
-     {# @todo: provide default sidepane width not just at the CSS level; correct initial display of closed sidepane requires a known width #}
+<div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}{% if region_props.resizable %} resizable{% endif %}"
      {%- if region_props.width | default('') -%}
          {%- if region_props.closed | default(false) -%}
              {{ ' ' }}style="width: {{ region_props.width }}; {{ 'left' in region_class ? 'left' : 'right' }}: -{{ region_props.width }};"
