@@ -56,7 +56,7 @@ mb:
       admin:
         maxcount: 'Número máximo'
         height: Altura
-        width: Ancho
+        width: Anchura
         displaytype: 'Tipo de visualización'
         tabs: Pestañas
         accordion: Acordeón
@@ -67,7 +67,7 @@ mb:
         linktitle: 'Visita nuestro sitio oficial de Mapbender'
         website: website
       class:
-        title: 'Diálogo Acerca de'
+        title: 'Diálogo acerca de'
         description: 'Mostrar un diálogo acerca de'
       tag:
         help: ayuda
@@ -142,8 +142,8 @@ mb:
         search: 'Búsqueda'
         router: 'Ruteador'
       admin:
-        width: 'Ancho'
-        height: 'Alto'
+        width: 'Anchura'
+        height: 'Altura'
         routes: 'Rutas'
     poi:
       sharepoi: 'Compartir POI'
@@ -272,8 +272,8 @@ mb:
         metadata: 'Metadatos'
         dimension: 'Dimensión'
     zoombar:
-      zoombybox: 'Acercamiento por recuadro'
-      zoombyworld: 'Acercamiento global'
+      zoombybox: 'Zoom por recuadro'
+      zoombyworld: 'Zoom global'
       zoom_home: 'Regresar al inicio'
       zoomHomeRestoresLayers: 'El "Regresar al inicio" también restablece la configuración de capas'
       zoomin: 'Acercar'
@@ -282,7 +282,7 @@ mb:
         title: 'Barra de navegación'
         description: 'El elemento de la barra de navegación proporciona un control flotante para la panorámica y el acercamiento, similar al control de PanZoomBar de OpenLayers'
       tag:
-        zoom: 'Acercamiento'
+        zoom: 'Zoom'
         pan: 'Panorama'
         control: 'Control'
         navigation: 'Navegación'
@@ -290,9 +290,9 @@ mb:
       admin:
         components: 'Componentes'
         rotation: 'Rotación'
-        zoommax: 'Acercamiento a la extensión máxima'
+        zoommax: 'Zoom a la extensión máxima'
         zoominout: 'Acercamiento y alejamiento'
-        zoomslider: 'Deslizador de acercamiento'
+        zoomslider: 'Deslizador de zoom'
     activityindicator:
       class:
         title: 'Indicador de actividad'

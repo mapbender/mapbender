@@ -22,26 +22,26 @@ mb:
             title: Título
             name: Nombre
             version: Versión
-            originurl: 'Origen del URL'
+            originurl: 'Origen de la URL'
             abstract: Abstracto
             onlineresource: 'Recurso en línea'
-            exceptionformats: 'Formatos de Excepción'
+            exceptionformats: 'Formatos de excepción'
             fees: Cuotas
-            accessconstraints: 'Restricciones de Acceso'
+            accessconstraints: 'Restricciones de acceso'
             person: Persona
             organization: Organización
             position: Posición
             telephone: Teléfono
-            facsimile: Facsímil
+            facsimile: Fax
             email: Email
             address: Dirección
-            addresstype: 'Tipo Dirección'
+            addresstype: 'Tipo de dirección'
             city: Ciudad
             state: Estado
-            postcode: 'Código Postal'
+            postcode: 'Código postal'
             country: País
           message:
-            cautionscalehint: 'Precaución: Calculos de escala están sujetos a limitaciones de resolución ScaleHint en WMS 1.1.1!'
+            cautionscalehint: 'Precaución: Los calculos de escala están sujetos a las limitaciones de resolución ScaleHint en WMS 1.1.1!'
         instance:
           btn:
             save: Guardar
@@ -65,27 +65,27 @@ mb:
             'on': 'on'
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
-            layerorder: 'TRANSLATE: Layer ordering'
-            layerorder.standard: 'TRANSLATE: standard'
-            layerorder.reverse: 'TRANSLATE: QGIS'
-            exceptionformat: 'TRANSLATE: Exception format'
-            infoformat: 'TRANSLATE: Format of GetFeatureInfo request'
-            format: 'TRANSLATE: Format of the GetMap request'
-            dimensions: 'TRANSLATE: Dimensions'
-            vendorspecifics: 'TRANSLATE: Vendor specific parameters'
-            layers: 'TRANSLATE: Layers'
+            layerorder: 'Orden de capas'
+            layerorder.standard: 'estándar'
+            layerorder.reverse: QGIS
+            exceptionformat: 'Formato de excepción'
+            infoformat: 'Formato de la solicitud GetFeatureInfo'
+            format: 'Formato de la solicitud GetMap'
+            dimensions: 'Dimensiones'
+            vendorspecifics: 'Parámetros específicos de vendor'
+            layers: 'Capas'
           vendorspecific:
-            label: 'Vendor specific'
+            label: 'Vendor specífico'
         preview:
           title:
-            servicerepository: 'Repositorio de Servicio'
+            servicerepository: 'Repositorio de servicio'
           label:
             load: Cargar
         layer:
           label:
             name: Nombre
             title: Título
-            abstract: Abstracto
+            abstract: Resumen
             queryable: Consultable
             cascaded: 'En cascada'
             opaque: Opaco
@@ -110,19 +110,19 @@ mb:
             value: Valor
             metadataurl: 'Metadata URL'
             dimension: Dimensión
-            extent: Extención
+            extent: Extensión
             dataurl: 'Datos URL'
             featurelisturl: 'Featurelist URL'
         instancelayerform:
           label:
-            layerstitle: 'Título de las Capas'
+            layerstitle: 'Título de las capas'
             minscale: Minscale
             maxsclase: Maxsclase
             active: activo
             allowselecttoc: 'Permitir Seleccionar en TOC'
             selectedtoc: 'Seleccionado en TOC'
-            selectedtoc.help: 'TRANSLATE: The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
-            unselectedtoc.help: 'TRANSLATE: The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
+            selectedtoc.help: 'El conjunto de capas se activa al iniciarse. Sólo debe modificarse si se utilizan capas temáticas..'
+            unselectedtoc.help: 'El conjunto de capas está inactivo al inicio. Atención: Si no se utilizan capas temáticas, no se podrá acceder a este conjunto de capas.'
             allowinfotoc: 'Permitir FeatureInfo en TOC'
             infotoc: 'FeatureInfo en TOC'
             allowtoggletoc: 'Permitir Toggle en TOC'
@@ -132,14 +132,13 @@ mb:
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nombre de las Capas'
+            layersname: 'Nombre de las capas'
             style: Estilo
       class:
-        title: 'WMS cargador'
-        description: 'Cargar un WMS via getCapabilities-Request'
+        title: 'Cargador WMS'
+        description: 'Carga un WMS via getCapabilities-Request'
       admin:
         label:
-          splitlayers: 'Partir las capas'
     repository:
       parser:
         couldnotparse: null
@@ -155,9 +154,9 @@ mb:
           title: Layer
           name: Nombre
         useconditions:
-          title: 'TRANSLATE: Terms of use'
+          title: 'Condiciones de uso'
       popup:
-        title: 'TRANSLATE: Meta data'
+        title: 'Metadatos'
     repo:
       instance:
         label:
@@ -171,30 +170,30 @@ mb:
   core:
     dimensionset:
       admin:
-        title: 'TRANSLATE: Title'
-        group: 'TRANSLATE: Group'
-        extent: 'TRANSLATE: Extent'
+        title: Título
+        group: Grupo
+        extent: Extensión
     dimensionshandler:
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        dimensionsets: 'TRANSLATE: Dimensionsets'
+        tooltip: 'Información sobre herramientas (Tooltip)'
+        dimensionsets: 'Conjuntos de dimensiones'
     wmsloader:
       admin:
-        defaultformat: 'TRANSLATE: Default format'
-        defaultinfoformat: 'TRANSLATE: Default info format'
+        defaultformat: 'Formato predeterminado'
+        defaultinfoformat: 'Formato de información predeterminado'
       onlineresource:
-        format: 'TRANSLATE: Format'
-        href: 'TRANSLATE: href'
+        format: Formato
+        href: href
       legendurltype:
-        width: 'TRANSLATE: Width'
-        height: 'TRANSLATE: Height'
-        onlineresource: 'TRANSLATE: Online resource'
+        width: Anchura
+        height: Altura
+        onlineresource: 'Recurso en línea'
       vendorspecifictype:
-        hidden: 'TRANSLATE: Hidden'
-        setdefaults: 'TRANSLATE: Set defaults'
+        hidden: Oculto
+        setdefaults: 'Establecer valores predeterminados'
     vendorspecifictype:
       admin:
-        vstype: 'TRANSLATE: Parameter type'
-        name: 'TRANSLATE: Name'
-        default: 'TRANSLATE: Default value'
-        hidden: 'TRANSLATE: Hidden'
+        vstype: 'Tipo de parámetro'
+        name: 'Nombre'
+        default: 'Valor predeterminado'
+        hidden: 'Oculto'
