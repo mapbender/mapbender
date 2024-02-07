@@ -38,11 +38,18 @@
 - Swiftmailer replaced by built-in symfony/mailer:
 	- Changed classes see https://github.com/rectorphp/rector-symfony/blob/main/config/sets/swiftmailer/swiftmailer-to-symfony-mailer.php
 	- Configuration moved from swiftmailer to framework.mailer
-	- Parameters `mailer_transport`, `mailer_host`, `mailer_user` and `mailer_password` merged into a single parameter 
-      `mailer_dsn` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See https://symfony.com/doc/current/mailer.html#using-built-in-transports for details
+	- Parameters `mailer_transport`, `mailer_host`, `mailer_user` and `mailer_password` replaced by an environment variable
+      `MAILER_DSN` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See https://symfony.com/doc/current/mailer.html#using-built-in-transports for details
+      Configure it by adding it in your .env.local file
 - Doctrine: updated ORM from 2.10 to 2.15 and DBAL from 2.11 to 3
 	- Type `json_array` was replaced by `json`. Run `bin/console mapbender:database:upgrade` if you were using the `json_array` database type
-
+    - Parameters `database_driver`, `database_host`, `database_port`, `database_name`, `database_path`, `database_user`, `database_password` 
+      replaced by an environment variable `MAPBENDER_DATABASE_URL` containing the entire connect string, 
+      e.g. `postgresql://dbuser:dbpassword@localhost:5432/dbname?serverVersion=14&charset=utf8`. 
+      See https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html#connecting-using-a-url for details
+      Configure it by adding it in your .env.local file. If you have multiple connections, use one env variable per connection and configure
+      these in the config/packages/doctrine.yaml file
+- parameter `app_secret` replaced by the environment variable `APP_SECRET`. Override it in your .env.local file. 
 
 
 ### Twig: Updated from v2 to v3 (https://twig.symfony.com/doc/2.x/deprecated.html#tags)

@@ -149,7 +149,7 @@
         </service>
 
         <service id="signer" class="%signer.class%">
-            <argument>%secret%</argument>
+            <argument>%env(APP_SECRET)%</argument>
         </service>
 
         <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
