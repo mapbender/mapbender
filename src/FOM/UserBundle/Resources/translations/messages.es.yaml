@@ -2,13 +2,13 @@ fom:
   acl:
     group_label:
       anonymous: 'Usuarios anónimos'
-      authenticated: 'Todos los usuarios autentificados'
+      authenticated: 'Todos los usuarios registrados'
   user:
     registration:
-      email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, clic <a href="%url%">aqui</a>.</p>'
+      email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, haz clic <a href="%url%">aqui</a>.</p>'
       done:
         title: Registro
-        congratulations: Felicitaciones!
+        congratulations: '¡Felicidades!'
         account_activated: 'Tu cuenta ha sido satisfactoriamente activada y esta lista para usarla.'
         back_to_login: 'Regresar al inicio de sesión'
       form:
@@ -21,11 +21,9 @@ fom:
       email_subject: 'Tu registro'
       send:
         title: Registro
-        account_created: |-
-          Tu cuenta ha sido creada. Un email con tu codigo de activación
-                      y enlace ha sido enviado a la dirección proporcionada.
+        account_created: 'Tu cuenta ha sido creada. Se ha enviado un email con tu código de activación y un enlace a la dirección de email proporcionada.'
         back_to_login: 'Regresar al inicio de sesión'
-      email_body_text: 'Hola %user_username%, Acabas de registrarte. Para concluir con el registro, favor, llama en tu navegador el enlace %url%.'
+      email_body_text: 'Hola, %user_username%, acabas de registrarte. Para concluir con el registro, por favor, abre en tu navegador el siguiente enlace %url%.'
     group:
       index:
         groups: Grupos
@@ -39,28 +37,28 @@ fom:
         edit_group: 'Editar Grupo'
         new_group: 'Nuevo Grupo'
       container:
-        base_data: 'Dato base'
+        base_data: 'Información básica'
         users: Usuarios
-        users_of_selected: 'usuarios de %users_count% seleccionados'
+        users_of_selected: 'Usuarios de %users_count% seleccionados'
         no_user_exists: 'No existe el usuario.'
     login:
       error_tockenexp:
         title: 'Contraseña restablecida'
-        sorry: 'Lo siento!'
+        sorry: '¡Lo sentimos!'
         registration_token_expired: 'Tu token de registro ha expirado. Desafortunadamente, tienes que solicitar un nuevo token.'
-        request_new_token: 'Solicitar nuevo token'
+        request_new_token: 'Solicitar un nuevo token'
         back_to_login: 'Regresar al inicio de sesión'
       login:
         title: 'Inicio de sesión'
         username: Usuario
         password: Contraseña
         register: Registrar
-        forgot_password: 'Contraseña olvidada'
-        login: 'Inicio de sesión'
+        forgot_password: '¿Contraseña olvidada'
+        login: 'Iniciar sesión'
       error_notocken:
         password_reset: 'Restablecer contraseña'
-        sorry: 'Lo siento!'
-        no_such_tocken: 'El token no se encuentra. Si piensas que es un error, favor contacta al admnistrador del sitio.'
+        sorry: '¡Lo sentimos!'
+        no_such_tocken: 'El token no se encuentra. Si piensas que es un error, por favor, contacta con el admnistrador del sitio.'
         contact: 'Contacto administrador'
         back_to_login: 'Regresar al inicio de sesión'
     user:
@@ -79,62 +77,60 @@ fom:
         edit_user: 'Editar Usuario'
         new_user: 'Nuevo Usuario'
       container:
-        base_data: 'Dato base'
+        base_data: 'Información básica'
         profile: Perfil
         groups: Grupos
         security: Seguridad
         choose_password: 'Escoge contraseña'
         confirm_password: 'Confirma contraseña'
         name: Nombre
-        users_of_selected: 'grupos de %users_count% seleccionados'
+        users_of_selected: 'Grupos de %users_count% seleccionados'
         no_groups_defined: 'No hay grupos definidos'
         username: Usuario
         description: Description
-        activated: activated
+        activated: Activado
     acl:
       index:
-        access_control_lists: 'Lista de Control de Acceso Globales'
+        access_control_lists: 'Lista de control de acceso global (ACL)'
         name: Nombre
         class: Clase
         edit: Editar
       required: 'Los campos requeridos son marcados con etiquetas oscuras, mientras que los campos opcionales tienen etiquetas claras.'
       edit:
-        edit_class_acl: 'Editar Class ACL para %name%'
+        edit_class_acl: 'Editar clase ACL para %name%'
       groups_users:
         name: Nombre
-        no_goups_users: 'No están definidos grupos y usuarios.'
+        no_goups_users: 'No hay grupos y usuarios definidos.'
     password:
-      email_body_html: |-
-        &lt;p&gt;Hola %user_username%,&lt;/p&gt;&lt;p&gt;Has solicitado una nueva contraseña.
-        &lt;br /&gt;Favor clic &lt;a href="%url%"&gt;aqui&lt;/a&gt;.
+      email_body_html: '<p>Hola, %user_username%,</p><p> se ha solicitado una nueva contraseña para Mapbender. <p>Ckica aquí, por favor, <a href="%url%">hier</a>, para cambiar tu contraseña.</p>'
       done:
         password_reset: 'Restablecer contraseña'
-        congratulations: Felicitaciones!
-        password_been_reset: 'Contraseña satisfactoriamente restablecida.'
-        back_to_login: 'Regresar al inicio de sesión'
+        congratulations: '¡Felicidades!'
+        password_been_reset: 'Contraseña restablecida correctamente.'
+        back_to_login: 'Regresar al inicio de sesión.'
       reset:
         title: 'Restablecer contraseña'
         btn: 'Restablecer contraseña'
       form:
         message: 'Para restablecer tu contraseña, indica tu nombre de usuario o tu dirección de correo electrónico.'
         title: 'Contraseña olvidada'
-        username_email: 'Usuario o Email'
+        username_email: 'Usuario o email'
         back_to_login: 'Regresar al inicio de sesión'
-        require_password: 'Contraseña requerida'
+        require_password: 'Solicitar contraseña'
       email_subject: 'Contraseña olvidada'
       send:
         title: 'Restablecer contraseña'
-        email_been_sent: 'Se ha enviado un email con un código de reinicio y un enlace a la dirección proporcionada.'
+        email_been_sent: 'Se ha enviado un email con un código de reinicio y un enlace a la dirección de email proporcionada.'
         back_to_login: 'Regresar al inicio de sesión'
-      email_body_text: 'Hola %user_username%, Has solicitado una nueva contraseña. Sigue este enlace para cambiarlo "%url%".'
+      email_body_text: 'Hola, %user_username%, has solicitado una nueva contraseña. Sigue este enlace para cambiarla "%url%".'
     userbundle:
-      user_control: 'Control de usuario'
+      user_control: 'Administración de usuarios'
       users: Usuarios
       new_user: 'Nuevo usuario'
       groups: Grupos
       new_group: 'Nuevo grupo'
       classes:
-        acls: ACLs
+        acls: 'Autorizaciones ACL'
         users: Usuarios
         groups: grupos
       roles:
@@ -144,13 +140,13 @@ IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:
-      firstname: null
-      lastName: null
-      notes: null
-      phone: null
-      organizationName: null
-      organizationRole: null
-      street: null
-      zipCode: null
-      city: null
-      country: null
+      firstname: Nombre
+      lastName: Apellidos
+      notes: Notas
+      phone: 'Número de teléfono'
+      organizationName: Organización
+      organizationRole: Posición
+      street: Calle
+      zipCode: 'Código postal'
+      city: Ciudad
+      country: País

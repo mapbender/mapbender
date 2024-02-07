@@ -26,7 +26,7 @@ mb:
             abstract: Abstracto
             onlineresource: 'Recurso en línea'
             exceptionformats: 'Formatos de excepción'
-            fees: Cuotas
+            fees: Tasas
             accessconstraints: 'Restricciones de acceso'
             person: Persona
             organization: Organización
@@ -78,7 +78,7 @@ mb:
             label: 'Vendor specífico'
         preview:
           title:
-            servicerepository: 'Repositorio de servicio'
+            servicerepository: 'Repositorio de servicios'
           label:
             load: Cargar
         layer:
@@ -89,18 +89,18 @@ mb:
             queryable: Consultable
             cascaded: 'En cascada'
             opaque: Opaco
-            nosubset: NoSubconjunto
-            fixedwidth: FixedWidth
-            fixedheight: FixedHeight
-            latlonbounds: LatLonBounds
+            nosubset: 'No hay subconjunto'
+            fixedwidth: 'Anchura fija'
+            fixedheight: 'Altura fija'
+            latlonbounds: 'Límites de latitud y longitud'
             boundingbox: BoundingBox
             srs: SRS
             styles: Estilos
-            legendurl: 'Leyenda URL'
+            legendurl: 'URL de la leyenda'
             scale: Escala
             min: Min
             max: Max
-            scalehint: Scalehint
+            scalehint: 'Nota sobre la escala'
             attribution: Atribución
             onlineresource: 'Recurso en línea'
             logourl: 'Logo URL'
@@ -111,47 +111,48 @@ mb:
             metadataurl: 'Metadata URL'
             dimension: Dimensión
             extent: Extensión
-            dataurl: 'Datos URL'
-            featurelisturl: 'Featurelist URL'
+            dataurl: 'URL de los datos'
+            featurelisturl: 'URL de Featurelist'
         instancelayerform:
           label:
             layerstitle: 'Título de las capas'
-            minscale: Minscale
-            maxsclase: Maxsclase
+            minscale: 'Escala mínima'
+            maxsclase: 'Escala máxima'
             active: activo
-            allowselecttoc: 'Permitir Seleccionar en TOC'
-            selectedtoc: 'Seleccionado en TOC'
-            selectedtoc.help: 'El conjunto de capas se activa al iniciarse. Sólo debe modificarse si se utilizan capas temáticas..'
-            unselectedtoc.help: 'El conjunto de capas está inactivo al inicio. Atención: Si no se utilizan capas temáticas, no se podrá acceder a este conjunto de capas.'
-            allowinfotoc: 'Permitir FeatureInfo en TOC'
-            infotoc: 'FeatureInfo en TOC'
-            allowtoggletoc: 'Permitir Toggle en TOC'
-            toggletoc: 'Toggle en TOC'
-            allowreordertoc: 'Permitir Reordenar en TOC'
+            allowselecttoc: 'Permitir seleccionar en el árbol de capas'
+            selectedtoc: 'Seleccione el conjunto de capas al iniciar la aplicación. Atención: Deje la casilla activa si no se utilizan capas temáticas.'
+            selectedtoc.help: 'El conjunto de capas se activa al iniciarse la apliación. Sólo debe modificarse si se utilizan capas temáticas.'
+            unselectedtoc.help: 'El conjunto de capas no se activa al iniciarse la apliación. Atención: Si no se utilizan capas temáticas, no se podrá acceder a este conjunto de capas.'
+            allowinfotoc: 'Permitir FeatureInfo en el árbol de capas'
+            infotoc: 'FeatureInfo en el árbol de capas'
+            allowtoggletoc: 'Permitir Toggle en el árbol de capas'
+            toggletoc: 'Toggle en el árbol de capas'
+            allowreordertoc: 'Permitir reordenar en el árbol de capas'
             moreinfo: 'Más información'
             id:
               title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+              description: 'Id de instancia de capa en la forma: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: 'Nombre de las capas'
             style: Estilo
       class:
-        title: 'Cargador WMS'
+        title: 'Cargar WMS'
         description: 'Carga un WMS via getCapabilities-Request'
       admin:
         label:
+            splitlayers: 'Separar las capas'
     repository:
       parser:
-        couldnotparse: null
-        not_supported_document: null
-        not_supported_version: null
+        couldnotparse: 'No se puede analizar el documento XML.'
+        not_supported_document: 'El documento XML no es compatible.'
+        not_supported_version: 'La versión del WMS no es compatible.'
     metadata:
       section:
         common:
-          title: Common
+          title: 'Información general'
         contact:
-          title: Contact
+          title: Contacto
         items:
-          title: Layer
+          title: Capa
           name: Nombre
         useconditions:
           title: 'Condiciones de uso'
@@ -160,13 +161,13 @@ mb:
     repo:
       instance:
         label:
-          dimensions: Dimensions
+          dimensions: Dimensiones
     dimhandler:
       class:
-        title: 'Dimensions handler'
-        description: null
+        title: 'Gestor de dimensiones temporales'
+        description: 'Agrupa las fuentes de datos con dimensión temporal añadidas al mapa'
     dimensionsets:
-      no_dimension: 'no dimension'
+      no_dimension: 'No dimension'
   core:
     dimensionset:
       admin:
@@ -175,7 +176,7 @@ mb:
         extent: Extensión
     dimensionshandler:
       admin:
-        tooltip: 'Información sobre herramientas (Tooltip)'
+        tooltip: Tooltip
         dimensionsets: 'Conjuntos de dimensiones'
     wmsloader:
       admin:
