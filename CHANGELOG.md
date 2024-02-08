@@ -32,6 +32,8 @@ Other:
 * \*.yml file extension changed to \*.yaml for consistency with symfony core ([PR#1513](https://github.com/mapbender/mapbender/pull/1513))
 * [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
+* [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
+
 
 ## v3.3.5
 Features:
