@@ -4,9 +4,9 @@ fom:
       popup:
         delete_user_group:
           title: 'Confirmar eliminar'
-          content: 'Realmente eliminar %userGroup%?'
+          content: '¿Realmente desdeas eliminar %userGroup%?'
           btn:
             cancel: Cancelar
             ok: Acpetar
     fields:
-      no_user_group_defined: 'No definido grupo de usuario.'
+      no_user_group_defined: 'Gupo de usuario no definido.'
