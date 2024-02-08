@@ -396,6 +396,10 @@
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
+        /**
+         * initalise a layer menu, called when the burger menu is clicked
+         * @param $layerNode jQuery
+         */
         _initMenu: function ($layerNode) {
             var layer = $layerNode.data('layer');
             var source = layer.source;
@@ -404,14 +408,18 @@
             if (layer.getParent()) {
                 $('.layer-control-root-only', menu).remove();
             }
-            var atLeastOne = !!$('.layer-remove-btn', menu).length;
+
+            const activeMenuItems = this._filterMenu(layer);
+            if (!activeMenuItems.length) {
+                menu.remove();
+                return;
+            }
 
             // element must be added to dom and sized before Dragdealer init...
             $('.leaveContainer:first', $layerNode).after(menu);
 
             var $opacityControl = $('.layer-control-opacity', menu);
             if ($opacityControl.length) {
-                atLeastOne = true;
                 var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
                 new Dragdealer($('.layer-opacity-bar', $opacityControl).get(0), {
@@ -431,14 +439,11 @@
             }
             var $zoomControl = $('.layer-zoom', menu);
             if ($zoomControl.length && layer.hasBounds()) {
-                atLeastOne = true;
                 $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
             } else {
                 $zoomControl.remove();
             }
-            if (layer.options.metadataUrl && $('.layer-metadata', menu).length) {
-                atLeastOne = true;
-            } else {
+            if (!layer.options.metadataUrl || !$('.layer-metadata', menu).length) {
                 $('.layer-metadata', menu).remove();
             }
 
@@ -446,12 +451,8 @@
             var $dimensionsControl = $('.layer-control-dimensions', menu);
             if (dims.length && $dimensionsControl.length) {
                 this._initDimensionsMenu($layerNode, menu, dims, source);
-                atLeastOne = true;
             } else {
                 $dimensionsControl.remove();
-            }
-            if (!atLeastOne) {
-                menu.remove();
             }
         },
         _toggleMenu: function (e) {
@@ -464,8 +465,20 @@
             return false;
         },
         _filterMenu: function (layer) {
-            var enabled = this.options.menu;
-            var supported = ['layerremove'];
+            const enabled = this.options.menu;
+            const supported = this._getSupportedMenuOptions(layer);
+
+            return supported.filter(function (name) {
+                return -1 !== enabled.indexOf(name);
+            });
+        },
+        /**
+         * returns a list of supported menu options for this layer. Override this if you have a custom menu option
+         * @param layer Mapbender.SourceLayer
+         * @returns {string[]}
+         */
+        _getSupportedMenuOptions(layer) {
+            const supported = ['layerremove'];
             if (layer.options.metadataUrl) {
                 supported.push('metadata');
             }
@@ -479,10 +492,7 @@
             if (layer.hasBounds()) {
                 supported.push('zoomtolayer');
             }
-
-            return supported.filter(function (name) {
-                return -1 !== enabled.indexOf(name);
-            });
+            return supported;
         },
         _initDimensionsMenu: function ($element, menu, dims, source) {
             var self = this;
