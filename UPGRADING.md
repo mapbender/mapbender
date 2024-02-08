@@ -19,7 +19,8 @@
 	- app/web => public
 	- app/web/app.php, app/web/app_dev.php, app/web/app_test.php => public/index.php - 
       :warning: Make sure to also update your apache vhosts accordingly! 
-      Environment can now be set using the environment variable APP_ENV.
+      Environment can now be set using the environment variable APP_ENV.   
+      `index_dev.php` is still available as an alternative for accessing the dev environment on remote servers.
 	- app/AppKernel.php => src/Kernel.php. Unless you are doing any custom logic, the Kernel can now stay blank when it's 
       inheriting from Mapbender\BaseKernel. Make sure to define your bundles in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html).
 - Changes in configuration:
@@ -50,6 +51,7 @@
       Configure it by adding it in your .env.local file. If you have multiple connections, use one env variable per connection and configure
       these in the config/packages/doctrine.yaml file
 - parameter `app_secret` replaced by the environment variable `APP_SECRET`. Override it in your .env.local file. 
+- several configuration options added/replaced in the `parameters.yaml` file. Check the `parameters.yaml.dist` file and adjust your configuration accordingly
 
 
 ### Twig: Updated from v2 to v3 (https://twig.symfony.com/doc/2.x/deprecated.html#tags)
