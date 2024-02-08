@@ -368,8 +368,8 @@
             ;
         },
         _toggleSelected: function (e) {
-            var $target = $(e.currentTarget);
-            var newState = $target.toggleClass('active').hasClass('active');
+            const $target = $(e.currentTarget);
+            const newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
             var layer = $target.closest('li.leave').data('layer');
             var source = layer && layer.source;
@@ -387,8 +387,36 @@
                 }
             }
 
+            if (newState) {
+                this._updateParentState($(e.currentTarget).closest('li.leave'));
+            }
+
             return false;
         },
+        /**
+         * ensure all parent layers become visible when toggling a child layer
+         */
+        _updateParentState: function ($target) {
+            const $parentTarget = $target.parent().closest('li.leave, li.themeContainer');
+            const $parentCheckbox = $parentTarget.find('> .leaveContainer > .-fn-toggle-selected');
+
+            const layer = $parentTarget.data('layer');
+            const source = layer && layer.source;
+            const themeId = !source && $parentTarget.closest('.themeContainer').attr('data-layersetid');
+
+            // already in root level, no parents left to check
+            if (!(layer && layer.source) && !themeId) return;
+
+            if ($parentCheckbox.hasClass('active')) {
+                // recursively check the next higher hierarchy level
+                this._updateParentState($parentTarget);
+            } else {
+                // only trigger checkbox click when it was not checked before
+                // _toggleSelected will take care of checking for the higher hierarchy levels
+                $parentCheckbox.trigger('click');
+            }
+        },
+
         _toggleInfo: function (e) {
             var $target = $(e.currentTarget);
             var newState = $target.toggleClass('active').hasClass('active');
