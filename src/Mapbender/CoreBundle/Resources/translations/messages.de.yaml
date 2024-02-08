@@ -505,7 +505,6 @@ mb:
             useTheme: 'Thema anzeigen'
             label: Themenname
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
-          hideselect: 'Visibility bei Ordnern ausblenden'
           hideinfo: 'Info ausblenden'
           menu: Menü
       template:

@@ -278,7 +278,6 @@ mb:
             useTheme: null
             label: null
           hidenottoggleable: null
-          hideselect: null
           hideinfo: null
     htmlelement:
       class:
