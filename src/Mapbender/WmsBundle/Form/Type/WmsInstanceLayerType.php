@@ -44,10 +44,12 @@ class WmsInstanceLayerType extends AbstractType
             ->add('minScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.minscale',
+                'attr' => ['class' => 'minScale'],
             ))
             ->add('maxScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.maxsclase',   // sic!
+                'attr' => ['class' => 'maxScale'],
             ))
             ->add('priority', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
                 'required' => true,
@@ -81,12 +83,8 @@ class WmsInstanceLayerType extends AbstractType
             $form['allowinfo']->setData(false);
         }
         if ($layer && $layer->getSourceItem()) {
-            $view['minScale']->vars['attr'] = array(
-                'placeholder' => $layer->getInheritedMinScale(),
-            );
-            $view['maxScale']->vars['attr'] = array(
-                'placeholder' => $layer->getInheritedMaxScale(),
-            );
+            $view['minScale']->vars['attr']['placeholder'] = $layer->getInheritedMinScale();
+            $view['maxScale']->vars['attr']['placeholder'] = $layer->getInheritedMaxScale();
             $view['displayName']->vars['value'] = $layer->getSourceItem()->getName();
         }
         $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
