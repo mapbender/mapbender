@@ -147,7 +147,7 @@ $(function() {
     $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
         var $this = $(this);
         var $cb = $('input[type="checkbox"]', this);
-        $cb.trigger('click');
+        $cb.prop('checked', !$cb.prop('checked'));
         $this.toggleClass('active', !!$cb.prop('checked'));
         var scope = $this.closest('table');
         setPermissionsRootState($this.attr("data-perm-type"), scope);
