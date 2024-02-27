@@ -505,7 +505,6 @@ mb:
             useTheme: 'Theme show'
             label: 'theme name'
           hidenottoggleable: 'Hide not toggleable'
-          hideselect: 'Hide visibility by folders'
           hideinfo: 'Hide info'
           menu: Menu
       template:

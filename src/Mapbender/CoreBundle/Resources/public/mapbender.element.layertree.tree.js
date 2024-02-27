@@ -5,7 +5,6 @@
             target: null,
             showBaseSource: true,
             allowReorder: true,
-            hideSelect: false,
             hideInfo: false,
             themes: null,
             menu: []
@@ -226,9 +225,6 @@
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
             if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
-                if (this.options.hideSelect && treeOptions.selected && !treeOptions.allow.selected) {
-                    $('.-fn-toggle-selected', $li).remove();
-                }
                 for (var j = layer.children.length - 1; j >= 0; j--) {
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }

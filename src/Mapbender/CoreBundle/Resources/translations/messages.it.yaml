@@ -302,7 +302,6 @@ mb:
             useTheme: Mostra tema
             label: nome del tema
           hidenottoggleable: Funzione nascondi non modificabile
-          hideselect: Nascondi la visibilità per le cartelle
           hideinfo: Nascondi info
     htmlelement:
       class:
