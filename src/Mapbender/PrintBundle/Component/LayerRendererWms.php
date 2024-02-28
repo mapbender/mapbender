@@ -132,7 +132,7 @@ class LayerRendererWms extends LayerRenderer
         if (count($grid->getTiles()) === 1) {
             // Single-tile grid can trivially be resolved with a single request, avoiding the temporary
             // image used for tile merging.
-            $layerImage = $this->imageTransport->downloadImage($baseUrl, $layerDef['opacity']);
+            $layerImage = $this->imageTransport->downloadImage($baseUrl, $layerDef['opacity'], $this->logger);
         } else {
             $layerImage = imagecreatetruecolor($grid->getWidth(), $grid->getHeight());
             imagesavealpha($layerImage, true);
@@ -145,7 +145,7 @@ class LayerRendererWms extends LayerRenderer
                 $params = $this->getBboxAndSizeParams($tileExtent, $offsetBox->getWidth(), $offsetBox->getHeight(), $flipXy);
                 $tileUrl = UrlUtil::validateUrl($baseUrl, $params);
                 // echo "Next tile request to {$tileUrl}\n";
-                $tileImage = $this->imageTransport->downloadImage($tileUrl, $layerDef['opacity']);
+                $tileImage = $this->imageTransport->downloadImage($tileUrl, $layerDef['opacity'], $this->logger);
                 if (!$tileImage) {
                     continue;
                 }

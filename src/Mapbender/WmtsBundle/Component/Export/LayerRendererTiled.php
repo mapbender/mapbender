@@ -67,7 +67,7 @@ abstract class LayerRendererTiled extends LayerRenderer
     {
         foreach ($imageTiles as $imageTile) {
             $tileUrl = $tileMatrix->getTileUrl($imageTile->getTileX(), $imageTile->getTileY());
-            $tileImage = $this->imageTransport->downloadImage($tileUrl, $opacity);
+            $tileImage = $this->imageTransport->downloadImage($tileUrl, $opacity, $this->logger);
             if ($tileImage) {
                 imagecopyresampled($image, $tileImage,
                     $imageTile->getOffsetX(), $imageTile->getOffsetY(),

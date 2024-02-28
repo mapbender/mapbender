@@ -3,6 +3,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Psr\Log\LoggerInterface;
 use Mapbender\PrintBundle\Component\Legend\LegendBlock;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
@@ -43,6 +44,8 @@ class LegendHandler
     protected $legendPageFontName = 'Arial';
     /** @var float */
     protected $legendPageFontSize = 11;
+    /** @var LoggerInterface */
+    protected $logger = null;
 
     /**
      * @param ImageTransport $imageTransport
@@ -54,6 +57,14 @@ class LegendHandler
         $this->imageTransport = $imageTransport;
         $this->resourceDir = $resourceDir;
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print_legend');
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -234,7 +245,7 @@ class LegendHandler
      */
     public function prepareUrlBlock($title, $url)
     {
-        $image = $this->imageTransport->downloadImage($url);
+        $image = $this->imageTransport->downloadImage($url, 1.0, $this->logger);
         if ($image) {
             return new LegendBlock($image, $title);
         } else {

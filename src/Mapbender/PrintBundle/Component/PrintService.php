@@ -60,6 +60,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $this->templateParser = $templateParser;
         $this->imageTransport = $imageTransport;
         $this->legendHandler = $legendHandler;
+        $this->legendHandler->setLogger($logger);
 
         $this->pluginHost = $pluginHost;
         $this->resourceDir = $resourceDir;
