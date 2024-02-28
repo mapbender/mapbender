@@ -6,21 +6,20 @@ namespace Mapbender\PrintBundle\Component\Transport;
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\PrintBundle\Util\GdUtil;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bridge between http transport and GD image resource.
  */
 class ImageTransport
 {
-    /** @var HttpTransportInterface */
-    protected $baseTransport;
+    protected HttpTransportInterface $baseTransport;
+    protected LoggerInterface $logger;
 
-    /**
-     * @param HttpTransportInterface $baseTransport
-     */
-    public function __construct(HttpTransportInterface $baseTransport)
+    public function __construct(HttpTransportInterface $baseTransport, LoggerInterface $logger)
     {
         $this->baseTransport = $baseTransport;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,6 +35,12 @@ class ImageTransport
         try {
             $response = $this->baseTransport->getUrl($url);
             $image = imagecreatefromstring($response->getContent());
+            if ($image === false) {
+                // If $image is false, the download probably failed, most likely because
+                // of network issues or restrictions (such as a HTTP proxy) (see #1549)
+                $this->logger->error('Could not download image from url {url}');
+                return null;
+            }
             imagesavealpha($image, true);
             if ($opacity <= (1.0 - 1 / 127)) {
                 $multipliedImage = GdUtil::multiplyAlpha($image, $opacity);

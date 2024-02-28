@@ -69,6 +69,7 @@
         </service>
         <service id="mapbender.imageexport.image_transport.service" class="%mapbender.imageexport.image_transport.service.class%">
             <argument type="service" id="mapbender.http_transport.service" />
+            <argument type="service" id="logger" />
         </service>
         <service id="mapbender.imageexport.renderer.wms" class="%mapbender.imageexport.renderer.wms.class%">
             <argument type="service" id="mapbender.imageexport.image_transport.service" />

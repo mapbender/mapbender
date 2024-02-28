@@ -28,6 +28,8 @@ Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
+* [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 
 Other:
 * \*.yml file extension changed to \*.yaml for consistency with symfony core ([PR#1513](https://github.com/mapbender/mapbender/pull/1513))
@@ -48,7 +50,6 @@ Bugfixes:
 * Fix WMS configuration cannot be unserialized when updating from mapbender <3.2.4 versions in PHP >= 8.2 ([PR#1477](https://github.com/mapbender/mapbender/pull/1477))
 * Do not crash application after a layerset has been removed and the map element has not yet been saved ([PR#1482](https://github.com/mapbender/mapbender/pull/1482))
 * Correctly handle removal of GetFeatureInfo capability when refreshing sources ([#1480](https://github.com/mapbender/mapbender/issues/1480), [PR#1488](https://github.com/mapbender/mapbender/pull/1488))
-* Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * [FeatureInfo][Mobile Template] Auto-activate did not work in mobile template; empty popups are now prevented when triggering the FeatureInfo via a button ([#1467](https://github.com/mapbender/mapbender/issues/1467), [PR#1471](https://github.com/mapbender/mapbender/pull/1471))
 * [Map element] Make base dpi configurable to circumvent discrepancies in Mapbender and WMS resolutions ([PR#1486](https://github.com/mapbender/mapbender/pull/1486))
 * [LayerTree] Correctly show folder state (opened/closed) when thematic layers are active ([PR#1478](https://github.com/mapbender/mapbender/pull/1478))
