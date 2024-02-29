@@ -4,14 +4,11 @@
 namespace Mapbender\WmsBundle\Command;
 
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Controller\SourceInstanceController;
 use Mapbender\WmsBundle\Component\Wms\Importer;
-use Mapbender\WmsBundle\Entity\WmsSource;
-use setasign\Fpdi\PdfParser\CrossReference\ReaderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,6 +27,7 @@ class SourceAssignCommand extends AbstractSourceCommand
 
     public const ARGUMENT_APPLICATION = "application";
     public const ARGUMENT_SOURCE = "source";
+    public const ARGUMENT_LAYERSET = "layerset";
 
     protected function configure()
     {
@@ -39,6 +37,7 @@ class SourceAssignCommand extends AbstractSourceCommand
             ->setDescription('Assigns a WMS source to an application')
             ->addArgument(self::ARGUMENT_APPLICATION, InputArgument::REQUIRED, "id or slug of the application")
             ->addArgument(self::ARGUMENT_SOURCE, InputArgument::REQUIRED, "id of the wms source")
+            ->addArgument(self::ARGUMENT_LAYERSET, InputArgument::OPTIONAL, "id or name of the layerset. Defaults to 'main' or the first layerset in the application.")
         ;
     }
 
@@ -46,6 +45,21 @@ class SourceAssignCommand extends AbstractSourceCommand
     {
         $io = new SymfonyStyle($input, $output);
 
+        $application = $this->findApplication($input, $io);
+        if (!$application) return Command::FAILURE;
+
+        $layerset = $this->findLayerset($input, $io, $application);
+        if (!$layerset) return Command::FAILURE;
+
+        $sourceId = $input->getArgument(self::ARGUMENT_SOURCE);
+
+        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager());
+        $io->success("New source instance added.");
+        return Command::SUCCESS;
+    }
+
+    private function findApplication(InputInterface $input, SymfonyStyle $io): ?Application
+    {
         $applicationIdOrSlug = $input->getArgument(self::ARGUMENT_APPLICATION);
         $criteria = [];
         if (is_numeric($applicationIdOrSlug)) {
@@ -57,16 +71,27 @@ class SourceAssignCommand extends AbstractSourceCommand
 
         if (!$application) {
             $io->error("Could not find application $applicationIdOrSlug");
-            return Command::FAILURE;
+            return null;
+        }
+        return $application;
+    }
+
+    private function findLayerset(InputInterface $input, SymfonyStyle $io, Application $application): ?Layerset
+    {
+        $layersetIdOrSlug = $input->getArgument(self::ARGUMENT_LAYERSET);
+        $layersets = $this->getEntityManager()->getRepository(Layerset::class)->findBy(['application' => $application]);
+
+        if ($layersetIdOrSlug) {
+            $layersetFiltered = array_filter($layersets, fn(Layerset $l) => $l->getId() == $layersetIdOrSlug || $l->getTitle() == $layersetIdOrSlug);
+            if (count($layersetFiltered) < 1) {
+                $io->error("Could not find layerset $layersetIdOrSlug in application {$application->getTitle()}");
+                return null;
+            }
+            return reset($layersetFiltered);
         }
 
-        $layersets = $this->getEntityManager()->getRepository(Layerset::class)->findBy(['application' => $application]);
-        var_dump($layersets);
-
-        return Command::SUCCESS;
-        $sourceId = $input->getArgument(self::ARGUMENT_SOURCE);
-        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layersetId, $this->getEntityManager());
-        return Command::SUCCESS;
+        $mainLayerset = array_filter($layersets, fn(Layerset $l) => $l->getTitle() == 'main');
+        return count($mainLayerset) > 0 ? reset($mainLayerset) : reset($layersets);
     }
 
 
