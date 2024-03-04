@@ -47,7 +47,7 @@ abstract class AbstractSourceCommand extends Command
     protected function showSource(OutputInterface $output, WmsSource $source): void
     {
         $layerCount = count($source->getLayers());
-        $output->writeln("Source describes $layerCount layers:");
+        $output->writeln("Source describes $layerCount layers (origin url: {$source->getOriginUrl()}):");
         $this->showLayers($output, array($source->getRootlayer()), 1);
     }
 
