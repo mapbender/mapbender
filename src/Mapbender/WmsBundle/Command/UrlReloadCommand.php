@@ -36,6 +36,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
             $em->persist($target);
             $em->flush();
             $em->commit();
+            $output->writeln("Updated source #$targetId");
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
