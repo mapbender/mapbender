@@ -11,12 +11,10 @@ class UrlValidateCommand extends UrlParseCommand
 {
     protected function configure()
     {
+        parent::configure();
         $this
             ->setName('mapbender:wms:validate:url')
             ->setDescription('Loads, validates and parses a GetCapabilities document by url.')
-            ->addArgument('serviceUrl', InputArgument::REQUIRED, 'URL to WMS')
-            ->addOption('user', null, InputOption::VALUE_REQUIRED, 'Username (basicauth)', '')
-            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Password (basic auth)', '')
         ;
     }
 
