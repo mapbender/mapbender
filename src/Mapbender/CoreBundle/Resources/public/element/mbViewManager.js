@@ -251,6 +251,7 @@
             var isUpdate = !!recordId;
             if (isUpdate) {
                 $content.append(this.updateContent);
+                $('input[name="title"]', $content).removeAttr("disabled");
             } else {
                 $content.append(this.infoContent);
             }
