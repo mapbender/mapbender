@@ -9,6 +9,7 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -21,6 +22,7 @@ class SourceShowCommand extends AbstractSourceCommand
             ->setName('mapbender:wms:show')
             ->setDescription('Displays layer information of a persisted WMS source')
             ->addArgument('id', InputArgument::OPTIONAL, 'Id or url of the source. If omitted, all sources are shown')
+            ->addOption('json', null, InputOption::VALUE_NONE, 'if set, output is formatted as json')
         ;
     }
 
@@ -28,11 +30,11 @@ class SourceShowCommand extends AbstractSourceCommand
     {
         $idOrUrl = $input->getArgument('id');
         if (!$idOrUrl) {
-            return $this->showAllSources($output);
+            return $this->showAllSources($input, $output);
         }
 
         if (is_numeric($idOrUrl)) {
-            return $this->showSourceById($idOrUrl, $output);
+            return $this->showSourceById($idOrUrl, $input, $output);
         }
 
         return $this->showSourceByUrl($idOrUrl, $input, $output);
@@ -40,30 +42,55 @@ class SourceShowCommand extends AbstractSourceCommand
 
     private function showSourceByUrl(string $url, InputInterface $input, OutputInterface $output): int
     {
-        $source = $this->getEntityManager()->getRepository(WmsSource::class)->findOneBy(['originUrl' => $url]);
-        if ($source === null) {
+        $json = $input->getOption('json');
+        $sources = $this->getEntityManager()->getRepository(WmsSource::class)->findBy(['originUrl' => $url]);
+        if (empty($sources) && !$json) {
             $io = new SymfonyStyle($input, $output);
             $io->error("Could not find a wms with origin url $url");
             return Command::FAILURE;
         }
-        $this->showSource($output, $source);
+
+        if ($json) {
+            $output->writeln(json_encode(array_map(function($source) {
+                return $this->getSourceDetails($source);
+            }, $sources), JSON_PRETTY_PRINT));
+        } else {
+            foreach ($sources as $source) {
+                $this->showSource($output, $source);
+                $output->writeln('');
+            }
+        }
         return Command::SUCCESS;
     }
 
-    private function showSourceById(int $id, OutputInterface $output): int
+    private function showSourceById(int $id, InputInterface $input, OutputInterface $output): int
     {
         $source = $this->getSourceById($id);
-        $this->showSource($output, $source);
+        $json = $input->getOption('json');
+        if ($json) {
+            $output->writeln(json_encode($this->getSourceDetails($source), JSON_PRETTY_PRINT));
+        } else {
+            $this->showSource($output, $source);
+        }
         return Command::SUCCESS;
     }
 
-    private function showAllSources(OutputInterface $output): int
+    private function showAllSources(InputInterface $input, OutputInterface $output): int
     {
+        $json = $input->getOption('json');
         $sources = $this->getEntityManager()->getRepository(Source::class)->findAll();
-        foreach ($sources as $source) {
-            $this->showSource($output, $source);
-            $output->writeln('');
+
+        if ($json) {
+            $output->writeln(json_encode(array_map(function ($source) {
+                return $this->getSourceDetails($source);
+            }, $sources), JSON_PRETTY_PRINT));
+        } else {
+            foreach ($sources as $source) {
+                $this->showSource($output, $source, $json);
+                $output->writeln('');
+            }
         }
+
         return Command::SUCCESS;
     }
 }

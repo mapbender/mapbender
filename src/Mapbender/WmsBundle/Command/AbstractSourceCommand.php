@@ -19,7 +19,7 @@ abstract class AbstractSourceCommand extends Command
     protected Importer $importer;
 
     public function __construct(ManagerRegistry $managerRegistry,
-                                Importer $importer)
+                                Importer        $importer)
     {
         parent::__construct();
         $this->managerRegistry = $managerRegistry;
@@ -44,6 +44,16 @@ abstract class AbstractSourceCommand extends Command
         return $source;
     }
 
+    protected function getSourceDetails(WmsSource $source): array
+    {
+        return [
+            "id" => $source->getId(),
+            "layer_count" => count($source->getLayers()),
+            "origin_url" => $source->getOriginUrl(),
+            "children" => $this->getLayerDetails([$source->getRootlayer()])
+        ];
+    }
+
     protected function showSource(OutputInterface $output, WmsSource $source): void
     {
         $layerCount = count($source->getLayers());
@@ -61,6 +71,17 @@ abstract class AbstractSourceCommand extends Command
             $output->writeln("$prefix$name $title");
             $this->showLayers($output, $layer->getSublayer(), $level + 1);
         }
+    }
+
+    protected function getLayerDetails($layers): array
+    {
+        return array_map(function (WmsLayerSource $layer) {
+            return [
+                "title" => $layer->getTitle(),
+                "name" => $layer->getName(),
+                "children" => $this->getLayerDetails($layer->getSublayer())
+            ];
+        }, iterator_to_array($layers));
     }
 
     protected function getEntityManager(): EntityManagerInterface
