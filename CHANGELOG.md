@@ -9,6 +9,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
 * Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * Removed underscore.js. Some functions are replaced by native JS functions, some are replaced by Mapbender.Util functions ([PR#1514](https://github.com/mapbender/mapbender/pull/1514))
+* Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 
 Features:
 * PHP 8.2 is now fully supported.

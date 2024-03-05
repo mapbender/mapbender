@@ -65,8 +65,16 @@ class SourceShowCommand extends AbstractSourceCommand
 
     private function showSourceById(int $id, InputInterface $input, OutputInterface $output): int
     {
-        $source = $this->getSourceById($id);
+        try {
+            $source = $this->getSourceById($id);
+        } catch (\LogicException $e) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error("Could not find a wms with id $id");
+            return Command::FAILURE;
+        }
+
         $json = $input->getOption('json');
+
         if ($json) {
             $output->writeln(json_encode($this->getSourceDetails($source), JSON_PRETTY_PRINT));
         } else {
