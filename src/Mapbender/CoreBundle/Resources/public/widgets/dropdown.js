@@ -118,17 +118,37 @@ $(function () {
         var $list = $choice.closest('.dropdownList');
         var $dropdown = $list.closest('.dropdown');
         var $select = $('>select', $dropdown);
-        var val = $choice.attr('data-value');
-        var opt = $('option[value="' + val.replace(/"/g, '\\"').replace(/\\/g, '\\\\') + '"]', $select);
+        var choiceValue = $choice.attr('data-value');
+        var choiceText = $choice.text().trim();
+
+        var $matchingValueOptions = $select.find('option').filter(function() {
+            return $(this).val() === choiceValue;
+        });
+
+        if ($matchingValueOptions.length > 1) {
+            $matchingValueOptions = $matchingValueOptions.filter(function() {
+                return $(this).text().trim() === choiceText;
+            });
+        }
+
+        if ($matchingValueOptions.length > 0) {
+            var matchedIndex = $matchingValueOptions.first().index();
+            $select.prop('selectedIndex', matchedIndex).trigger('change');
+        }
+
         var $valueDisplay = $('>.dropdownValue', $dropdown);
-        if (!$valueDisplay.hasClass('hide-value')) $valueDisplay.html(opt.html());
-        $select.val(opt.val());
-        $select.trigger('change');
+        if (!$valueDisplay.hasClass('hide-value')) {
+            $valueDisplay.html(choiceText);
+        }
+
         $list.hide();
         $list.find('.choice').removeClass('choice-selected');
         $choice.addClass('choice-selected');
+
         return false;
     }
+
+
     $('.dropdown').each(function () {
         initDropdown.call(this);
     });
