@@ -1,10 +1,12 @@
 # Mapbender terminal commands
+
 Mapbender uses [Composer](https://getcomposer.org/) for package dependency management. For deployment convenience, we already
 bundle a version of Composer with the repository in `application/bin/composer`. Of course you may also use a system-installed version of Composer.
 
 All following example command lines assume your current working directory is `application`.
 
 ## Basic composer commands
+
 We will only briefly document the most commonly used commands here.
 
 Please see [the official documentation](https://getcomposer.org/doc/03-cli.md) for full composer usage instructions.
@@ -12,6 +14,7 @@ Please see [the official documentation](https://getcomposer.org/doc/03-cli.md) f
 Note that active package requirement maintenance will also require git and unfettered internet access.
 
 ### Install dependencies
+
 The [`install` command](https://getcomposer.org/doc/03-cli.md#install-i) uses the information in composer.lock to install the exact same combination
 of package versions as committed to the repository by the developers. This ensures repeatable results and is the way to go for reliable deployment.
 
@@ -28,6 +31,7 @@ php bin/composer install
 ```
 
 ### Update dependencies
+
 The [`update` command](https://getcomposer.org/doc/03-cli.md#update-u) scans [the online package index](https://packagist.org/) for updated package
 versions, and replaces them accordingly. It also supports the `--no-dev` switch.
 
@@ -44,6 +48,7 @@ php bin/composer update --no-dev mapbender/mapbender mapbender/owsproxy symfony/
 ```
 
 ### Add or modify dependency
+
 The [`require` command](https://getcomposer.org/doc/03-cli.md#require) marks one or several packages as required for your installation to work and will attempt to install them.
 You can optionally specify explicit version constraints for every package named.
 
@@ -59,9 +64,11 @@ php bin/composer require 'mapbender/fom:3.1.2'
 ```
 
 ## Mapbender-specific commands
+
 In Mapbender-Starter, the list of Composer commands has been extended with some custom functionality.
 
 ### Create Mapbender archive
+
 It is possible to create a filesystem copy of your current Mapbender project with the ```build``` command. The result will be saved in the `dist /` directory of the project.
 
 ```bash
@@ -71,6 +78,7 @@ php bin/composer build
 The default format for the generated archive is `.tar.gz`.
 
 #### Choosing format explicitly
+
 You can pass the desired format as an extra argument. Valid choices are `zip` and `tar.gz`.
 
 ```bash

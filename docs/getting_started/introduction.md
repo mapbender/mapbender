@@ -12,18 +12,19 @@ There are a couple of things you should be familiar with in order to contribute 
 
 ## Installation
 
-The installation procedure from Git is described under :ref:`installation_git`.
+The installation procedure from Git is described in [Mapbender User Documentation](https://doc.mapbender.org/en/installation/installation_git.html)
 
 ## Modules and bundles
 
-Please refer to the respective sections in the `CONTRIBUTING.md` guide to understand what `modules <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#modules>`_ and what `bundles <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#bundles>`_ are, and how the latter can be `created <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#bundle-creation>`_.
+Please refer to the respective sections in the `CONTRIBUTING.md` guide to understand what `modules <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#modules>` and what `bundles <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#bundles>` are, and how the latter can be `created <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#bundle-creation>`_.
 
 ## Twig
 
-Symfony follows the template approach and we use this in Mapbender. Symfony uses a templating engine to generate HTML, CSS or other content. 
+Symfony follows the template approach and we use this in Mapbender. Symfony uses a templating engine to generate HTML, CSS or other content.
 A template is a text file that can generate any text based format like HTML, XML. It is used to express presentation and not programm logic.
 You can use them to create a layout. You can create a base layout and then overwrite or append any of your layout blocks with individual templates.
-Read more about Templates in Mapbender at :ref:`templates` or in the `Contributing Guide <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#generate-translations>`_ and find a good introduction about Twig in the `Symfony Template documentation <https://symfony.com/doc/current/templates.html>`_.
+Read more about Templates in Mapbender at [Templates](/CONTRIBUTING.md#Templates)
+or in the `Contributing Guide <https://github.com/mapbender/mapbender-starter/blob/master/CONTRIBUTING.md#generate-translations>` and find a good introduction about Twig in the `Symfony Template documentation <https://symfony.com/doc/current/templates.html>`_.
 
 ## Getting Help
 
@@ -44,10 +45,10 @@ Libraries and frameworks:
 .. toctree::
    :maxdepth: 1
 
-   backend
-   conventions
-   elements
-   frontend
-   getting_started
-   requestresponse
-   security
+   backend -> controllers
+   conventions -> getting started
+   elements -> elements
+   frontend -> workflows
+   getting_started -> introduction
+   requestresponse -> workflows
+   security -> security

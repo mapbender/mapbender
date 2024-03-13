@@ -1,33 +1,14 @@
 # Mapbender Development Documentation
 
-## Getting Started
+## Table of Contents
 
-Get started fast with the Mapbender :doc:`Getting Started <getting_started/index>`:
-
-* :doc:`getting_started/introduction`
-
-Topics
-------
-
-.. toctree::
-    :maxdepth: 1
-
-    best_practices
-    bundles
-    cache
-    console
-    doctrine
-    deployment
-    frontend
-    http_client
-    logging
-    performance
-    routing
-    security
-    session
-    setup
-    testing
-    translation
-    validation
-    workflow
-
+- [Commands](workflows/commands.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Controllers](frontend/controllers.md)
+- [Conventions](workflows/conventions.md)
+- [Elements](elements/elements.md)
+- [Installation](/installation/installation.md)
+- [Introduction](getting_started/introduction.md)
+- [Request/Response Worklow](workflows/requestresponse.md)
+- [Security](security/security.md)
+- [Testing](workflows/testing.md)

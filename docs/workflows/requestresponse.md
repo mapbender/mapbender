@@ -1,4 +1,4 @@
-# Request / Response Workflow
+# Request/Response Workflow
 
 This document explains the request/response workflow used in Mapbender.
 Essentially there are three workflows you should be familiar with:
@@ -7,7 +7,7 @@ Essentially there are three workflows you should be familiar with:
 * Element rendering and callback workflow
 * Manager module workflow
 
-# Application Workflow
+## Application Workflow
 
 The standard application controller /application/{slug} is routed the the
 Mapbender\\CoreBundle\\Controller\\Application::applicationAction($slug) function
@@ -19,7 +19,7 @@ in the database and only if none can be found it looks in the applications
 defined in the YAML configuration.
 
 The thus loaded entity of class Mapbender\\CoreBundle\\Entity\\Application is
-tagged with it's origin in the source attribute which is either
+tagged with its origin in the source attribute which is either
 Mapbender\\CoreBundle\\Entity\\Application::SOURCE_YAML or
 Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB.
 
@@ -28,15 +28,15 @@ of class Mapbender\\CoreBundle\\Component\\Application which has all the logic
 while the entity holds all the data.
 
 Access checks are not done in the mapbender service, entity or application
-object but in the controller's getApplication function - keep in mind if you
+object but in the controller's getApplication function - keep this in mind if you
 develop your own controller.
 
 .. image:: ../../figures/http_workflow_application.png
 
-# Element Rendering Workflow
+## Element Rendering Workflow
 
 Upon application rendering, every element is asked to render itself. The workflow
-is a little tangled but, basically the application asks it's template to render
+is a little tangled, but basically the application asks its template to render
 itself which includes the template iterating over each element and calling the
 elements render function.
 
@@ -56,7 +56,7 @@ To sum up, the elements configurations are available:
 * In the element's widget methods as "this->options".
 * In the Mapbender.configuration.elements JavaScript variable (for all elements)
 
-# Element Callback Workflow
+## Element Callback Workflow
 
 The standard element callback /application/{slug}/element/{id}/{action} is
 routed to the
@@ -84,8 +84,7 @@ element class.
 Element widgets can construct the callback URL for use in their Ajax calls
 by using their element id and the path provided in the Mapbender variable:
 
-.. code-block:: js
-
+```javascript
     (function($) {
         $.widget('mapbender.mbDemo', {
             elementUrl: null,
@@ -102,8 +101,9 @@ by using their element id and the path provided in the Mapbender variable:
             }
         });
     })(jQuery);
+```
 
-# Manager Workflow
+## Manager Workflow
 
 Manager modules are plain Symfony controller classes. To ensure their routes
 are prefixed with /manager - or whatever prefix is configured for the manager
@@ -115,8 +115,7 @@ ManagerBundle to enforce the prefix.
 It is best practice to use the Route annotation under a different name to make
 it visually easier to debug the controller for the use of the right annotation:
 
-.. code-block:: html+php
-
+```php
     <?php
 
     namespace Acme\DemoBundle\Controller;
@@ -134,4 +133,4 @@ it visually easier to debug the controller for the use of the right annotation:
             /* ... */
          }
     }
-
+```

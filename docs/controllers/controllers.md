@@ -4,14 +4,13 @@ This pages gives a quick overview of the controllers used in a Mapbender applica
 
 ## The Front Controller - Using Routes
 
-In Symfony, each HTTP request goes trough the (one-and-only) front end controller (app.php in the web directory) which determines the controller function to pass it to.
+In Symfony, each HTTP request goes through the (one-and-only) front end controller (app.php in the web directory) which determines the controller function to pass it to.
 
 The mapping from request path to controller function is basically done in the configuration, where the routing.yml defines these mappings - called routes - or imports their definitions from bundles (or other files).
 
 To get an overview off all defined routes by using the console command.
 
-.. code-block:: yaml
-
+```console
  cd mapbender/application
  app/console router:debug
 
@@ -38,11 +37,11 @@ To get an overview off all defined routes by using the console command.
  mapbender_manager_application_create        POST   /manager/application
  mapbender_manager_application_view          ANY    /manager/application/{id}
  [ and so on... ]
+```
 
 The command lists all routes with their names, allowed methods and URL pattern. To get more information about a particular route, give it's name to the command:
 
-.. code-block:: yaml
-
+```console
  app/console router:debug mapbender_core_user_login
 
  [router] Route "mapbender_core_user_login"
@@ -50,41 +49,42 @@ The command lists all routes with their names, allowed methods and URL pattern. 
  Pattern      /user/login
  Class        Symfony\Component\Routing\CompiledRoute
  Defaults     _controller: Mapbender\CoreBundle\Controller\UserController::loginAction
- Requirements 
+ Requirements
  Options      compiler_class: Symfony\Component\Routing\RouteCompiler
  Regex        #^
                  /user/login
              $#x
+```
 
 To learn more about routing, read the `Symfony Book <http://symfony.com/doc/current/book/index.html>`_.
 
-
-## Defining routes using annotations
+### Defining routes using annotations
 
 In Mapbender we use a decentralized route definitions: Instead of writing each and every route in the routing.yml, we import their definition from the controller classes in the activated bundles. This has the advantage of having the definition with the controller function. This should usually be fine and can be - if need arises - easily overwritten by adapting the routing.yml.
 Using the Symfony with the SE bundles like Mapbender does, routes can therefore be written using annotation comments for each controller function. You can read about the annotation syntax over at the `Symfony documentation <http://symfony.com/doc/current/book/index.html>`_.
 
-# Mapbender Controllers
+## Mapbender Controllers
 
 A Mapbender installation uses a particular set of controller classes and functions. This chapter will give a short list of these, so you can inspect them more easily.
 
-## Frontend
+### Frontend
 
-The frontend is basically "the application" (or GUI as it has been called in Mapbender 2 - and even there this term was incorrect). Each application is routed to the ApplicationController class of the CoreBundle:
+The frontend is basically "the application" (or GUI as it has been called in Mapbender 2 - and even there, this term was incorrect). Each application is routed to the ApplicationController class of the CoreBundle:
 
-.. code-block:: yaml
-
+```console
  /application/{slug} => Mapbender\CoreBundle\Controller\ApplicationController->applicationAction($slug)
+
+```
 
 Elements of an application can provide Ajax endpoints for their client side widgets. These are routed as follows:
 
-.. code-block:: yaml
-
+```console
  /application/{slug}/element/{id}/{action} => Mapbender\CoreBundle\Controller\ApplicationController->elementAction($slug, $id, $action)
+```
 
 **Note:** This controller calls the **httpAction** method if the element class and passes the $action parameter and returns the response given by that function. So for the real magic for element Ajax behaviour take a look at the httpAction method of the elements.
 
-## Backend
+### Backend
 
 The backend is handled by the ManagerBundle, which provides (will provide) a consistent backend for managing all aspects of a Mapbender application: applications, layers, elements, users, settings.
 
