@@ -2,18 +2,18 @@
 
 ## Code conventions
 
-* variable names / way of coding
+* Variable names / way of coding
 * Code documentation
-* trans convention - where to put translation
-* **document** the steps on the way to a new functionality
+* [Translation convention](#translation-convention)
+* document the steps on the way to a new functionality
   * define the topic
   * create a ticket
   * create a workflow
-  * discuss the workflow with the core team and find a final solution
+  * discuss the workflow with the Mapbender team and find a final solution
   * do the programming
-  * insert License
-  * test
-  * documentation in mapbender-documentation --> rst
+  * insert a license
+  * test the feature
+  * document the new feature in the mapbender-documentation repository
   * close the ticket
 * where to put a module/element
 * naming vor files (referred to symfony convention)
@@ -52,46 +52,41 @@ What to keep in mind, when you create a layout
 
 ## Translation convention
 
-* conventions to put the files? Groß-Kleinschreibung/welche Übersetzungen werden generell gepflegt? en/de weitere?
-* also have a look at `Translation in Mapbender <../translation.rst>`
+* also have a look at the [translation user documentation](https://doc.mapbender.org/en/architecture/translation.html)
 
 ## Issue conventions
 
-Issues (bugs and features) are administrated in the **mapbender**-repository at:
+Issues (bugs and features) are administrated in the [Mapbender repository issue tracker](https://github.com/mapbender/mapbender/issues).
 
-* <https://github.com/mapbender/mapbender/issues>
-
-We create a milestone for every version of Mapbender:
-
-* <https://github.com/mapbender/mapbender/milestones>
+We create a [GitHub milestone](https://github.com/mapbender/mapbender/milestones) for every version of Mapbender.
 
 There are some rules you should keep in mind:
 
-* **Write understandable tickets:**
+**Write understandable issues:**
 
-* **Write your title** so that the issue is already described in the title:
-  * Browser - Backend/Frontend - element - issue
-  * like: Firefox - Frontend - layertree - option visible is not handled in frontend
-  * see ticket <https://github.com/mapbender/mapbender/issues/48>
-* Write **comments** with all necessary information:
-  * for bugs: describe step by step how the error can be reproduced
-  * for features: describe feature and functionality
-* When you create a new ticket do not assign it to a milestone or developer, if you are not sure
-* **Add labels** to your ticket
+* Write a **title** that summarizes the problem.
+  * `Browser - Backend/Frontend - element - issue`
+  * like: `Firefox - Frontend - layertree - option visible is not handled in frontend`
+  * see [example](https://github.com/mapbender/mapbender/issues/48)
+* Write **comments** with all necessary information.
+  * for *bugs*: describe step by step how the error can be reproduced.
+  * for *features*: describe feature and functionality.
+* When you create a new issue, do not assign it to a milestone or developer yourself.
+* **Add labels** to your issue
   * Bug - describes a bug that orrurs in a special version of Mapbender (add info about the version)
   * Feature - new feature
   * Enhancement - stands for feature enhancement
   * WIP - work in progress
-* When you work on a ticket or close it please **assign a user and milestone**
-* **When you close a ticket**, please:
-  * add a comment in the ticket and **refer to the commit**,
-  * refer to the documentation at <https://doc.mapbender.org> or a demo if possibile.
+* When you work on a issue or close it please **assign** a user and milestone
+* When you successfully **close** an issue, please:
+  * add a comment in the issue and **refer to the commit**,
+  * refer to the documentation or a demo if possibile.
 
 ## Versioning conventions
 
 The Mapbender version is defined by a four digit numbering system, seperated by dots.
 
-3.0.10.20
+4.0.10.20
 
 * The **first** digit is constant and represents the Mapbender software cycle.
 
@@ -101,26 +96,25 @@ The Mapbender version is defined by a four digit numbering system, seperated by 
 
 * The **fourth** digit represents only bugfixes and micro changes.
 
-Increase a digit means always a reset for all digits before. For example - 3.0.10.20 -> 3.1.0.0
+Increase a digit means always a reset for all digits before. For example - 4.0.10.20 -> 4.1.0.0
 
 This numbering system started with Mapbender version 3.0.0.0
 
 ## Release
 
-* check whether all tickets are done
-* build a build - check documentation -> How to build a new Mapbender build
-* update Roadmap and milestones
-* update demo.mapbender.org
-* write release mail (mapbender-user / mapbender-dev / major releases osgeo-announce)
-* twitter
+* check whether all relevant issues are completed,
+* build a [Mapbender build](#how-to-build-a-new-mapbender-build),
+* update the Roadmap and its milestones,
+* update the [Demo](https://demo.mapbender.org),
+* write a release mail (mapbender-user / mapbender-dev / major releases osgeo-announce),
+* post about the release on social media channels.
 
 ## How to build a new Mapbender build
 
-* Resolve and close all tickets for the relevant milestone: <https://github.com/mapbender/mapbender/milestones>
-* Update <https://doc.mapbender.org/en/book/versions.html>
-* Update Changelog.md for mapbender-starter, mapbender, owsproxy, fom.
-* Update version number in parameters.yml.dist and push
-* Update version number in composer.json
+* Resolve and close all tickets for the relevant [milestone](https://github.com/mapbender/mapbender/milestones).
+* Update the Changelog.md.
+* Update version number in `parameters.yaml.dist` and push
+* Update version number in `composer.json`
 * **Tagging**: Tag at Github. You have nice capabilities for creating good tags and descriptions.
   * Mapbender
   * OWSProxy
@@ -137,47 +131,46 @@ This numbering system started with Mapbender version 3.0.0.0
 * Clone the source-code from the release branch
 
 ```console
-                  git clone -b release/3.0.6 git@github.com:mapbender/mapbender-starter
+git clone -b release/3.0.6 git@github.com:mapbender/mapbender-starter
 ```
 
 * Change to the directory
 
 ```console
-                   cd mapbender-starter
+cd mapbender-starter
 ```
 
 * Bootstrap
 
 ```console
-                  sh bootstrap
+sh bootstrap
 ```
 
 * Change to the directory
 
 ```console
-                   cd application
+cd application
 ```
 
 * Generate the docs
 
 ```console
-                  bin/composer docs
+bin/composer docs
 ```
 
 * Create the ZIP/Tar.gz
 
 ```console
-                  bin/composer build
-
-                  bin/composer build zip
+bin/composer build
+bin/composer build zip
 ```
   
 * Move TAR.GZ and ZIP file to /sites/www.mapbender.org/builds
-* Update symbolic links ("version".zip and "version".tar.gz and current.tar.gz and current.zip)
+* Update symbolic links (version.zip and version.tar.gz and current.tar.gz and current.zip)
 * Move current doc to docs.mapbender.org (get it from web/docs. Remove the api folder).
-* Edit actual release link <https://mapbender.org/en/download> (english) and <https://mapbender.org/mapbender-herunterladen/> (german)
+* Edit the actual release link ([english](https://mapbender.org/en/download)) and [german](https://mapbender.org/mapbender-herunterladen/)
 * Write release mail to mapbender-user and mapbender-dev
 * Only for major releases write release mail to <news_item@osgeo.org> (see also <https://www.osgeo.org/about/faq/osgeo-mailing-lists/>)
 * Twitter on <https://twitter.com/mapbender>
 * Update <https://demo.mapbender.org> and <https://sandbox.mapbender.org>
-* Create a version based installation <https://version.mapbender.org>
+* Create a [version based installation](https://version.mapbender.org)

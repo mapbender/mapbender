@@ -1,12 +1,8 @@
-# Developer Guide
+# Contributing Guide
 
 The Mapbender team welcomes contributions from all members - so you are welcome to join us in the development!
 
-Third-party patches are essential for the preservation of high standards in [Mapbender].
-
-We simply cannot access the huge number of platforms and myriad configurations that run [Mapbender].
-
-We want it as easy as possible to carry out changes to get the [modules] in your environment to run.
+Third-party patches are essential for the preservation of high standards in Mapbender. We simply cannot access the huge number of platforms and myriad configurations that run Mapbender. We want it as easy as possible to carry out changes to get the [modules] in your environment to run.
 
 Therefore, we provide a few [guidelines][rules] as an overview for contributors to Mapbender.
 
@@ -529,7 +525,7 @@ Here are some good explanations:
 bin/phpunit -c app vendor/mapbender
 ```
 
-* Test unique [bundle]:
+* Test a unique [bundle]:
 
 ```bash
 bin/phpunit -c app vendor/mapbender/digitizer
@@ -562,7 +558,7 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 [bundle]: #bundles "Bundle"
 [bundles]: #bundles "Bundle"
 [tests]: #tests "Tests"
-[features]: #features
+[features]: #features "Features"
 [elements]: #elements
 [element]: #elements
 [templates]: #templates
@@ -591,7 +587,7 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 [DOM]: "http://www.w3schools.com/js/js_htmldom.asp" "HTML DOM"
 [SCSS]: http://sass-lang.com/guide "SCSS"
 [CSS]: http://www.w3schools.com/css/css_intro.asp "CSS"
-[TWIG]: http://twig.sensiolabs.org/ "TWIG"
+[TWIG]: https://twig.symfony.com/ "TWIG"
 [pull-request]: https://help.github.com/articles/creating-a-pull-request/ "Pull requests"
 [Resolve git conflicts]: https://help.github.com/articles/resolving-a-merge-conflict-on-github/ "Resolve git conflicts"
 [Mapbender]: https://mapbender3.org/  "Mapbender3"
