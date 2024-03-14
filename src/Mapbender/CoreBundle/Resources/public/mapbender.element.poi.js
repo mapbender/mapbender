@@ -118,14 +118,14 @@
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.accept'),
-                        cssClass: 'button',
+                        cssClass: 'btn btn-sm btn-primary',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'popupClose button critical'
+                        cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]
             };

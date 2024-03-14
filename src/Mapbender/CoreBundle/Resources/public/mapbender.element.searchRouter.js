@@ -111,17 +111,17 @@
                         buttons: [
                             {
                                 label: Mapbender.trans("mb.actions.search"),
-                                cssClass: 'button',
+                                cssClass: 'btn btn-sm btn-primary',
                                 callback: $.proxy(this._search, this)
                             },
                             {
                                 label: Mapbender.trans('mb.actions.reset'),
-                                cssClass: 'button',
+                                cssClass: 'btn btn-sm btn-light',
                                 callback: $.proxy(this._reset, this)
                             },
                             {
                                 label: Mapbender.trans('mb.actions.close'),
-                                cssClass: 'popupClose button critical'
+                                cssClass: 'btn btn-sm btn-light popupClose'
                             }
                         ]
                     });
