@@ -623,7 +623,7 @@
                         height: !useModal && 600 || null,
                         buttons: [{
                             label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'button popupClose critical'
+                            cssClass: 'btn btn-sm btn-light popupClose critical'
                         }]
                     });
                     if (initTabContainer) {
@@ -673,7 +673,7 @@
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'button popupClose'
+                        cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]
             };
