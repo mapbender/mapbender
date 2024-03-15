@@ -238,7 +238,7 @@ $(function() {
                 startEditElement($(this).attr('href'), editStrings, [
                     {
                         label: Mapbender.trans('mb.actions.back'),
-                        cssClass: 'btn btn-warning btn-sm pull-left',
+                        cssClass: 'btn btn-light btn-sm pull-left',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
                                 $(this).closest('.modal').modal('hide');
