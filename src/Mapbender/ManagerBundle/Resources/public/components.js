@@ -162,7 +162,7 @@ $(function() {
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'btn btn-success btn-sm',
+                            cssClass: 'btn btn-primary btn-sm',
                             callback: function() {
                                 appendAces($targetTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
                                 $modal.modal('hide');
@@ -254,7 +254,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.add'),
-                    cssClass: 'btn btn-success btn-sm buttonAdd hidden',
+                    cssClass: 'btn btn-primary btn-sm buttonAdd hidden',
                     callback: function() {
                         $(".contentItem:first", $modal).removeClass('hidden');
                         if ($(".contentItem", $modal).length > 1) {
@@ -268,7 +268,7 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans('mb.actions.save'),
-                    cssClass: 'btn btn-success btn-sm buttonOk',
+                    cssClass: 'btn btn-primary btn-sm buttonOk',
                     callback: function() {
                         $("form", $modal).submit();
                     }

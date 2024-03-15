@@ -137,7 +137,7 @@ $(function() {
             buttons: (extraButtons || []).slice().concat([
                 {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                    cssClass: 'btn btn-success btn-sm',
+                    cssClass: 'btn btn-primary btn-sm',
                     callback: function() {
                         elementFormSubmit(this.$element, formUrl)
                             .then(function(data) {
@@ -297,7 +297,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
-                        cssClass: 'btn btn-success btn-sm',
+                        cssClass: 'btn btn-primary btn-sm',
                         type: 'submit',
                         callback: function() {
                             $("form", $modal).submit();
