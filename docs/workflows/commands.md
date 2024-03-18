@@ -1,9 +1,9 @@
 # Mapbender terminal commands
 
 Mapbender uses [Composer](https://getcomposer.org/) for package dependency management. For deployment convenience, we already
-bundle a version of Composer with the repository in `application/bin/composer`. Of course you may also use a system-installed version of Composer.
+bundle a version of Composer with the repository in *application/bin/composer*. Of course you may also use a system-installed version of Composer.
 
-All following example command lines assume your current working directory is `application`.
+All following example command lines assume your current working directory is *application*.
 
 ## Basic composer commands
 

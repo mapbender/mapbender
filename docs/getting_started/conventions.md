@@ -20,9 +20,7 @@
 
 ## Git branch conventions
 
-We follow the Git Flow branching model (Read more about it in the
-`original document <https://nvie.com/posts/a-successful-git-branching-model/>`_
-describing it). Basically that boils down to having at least two branches:
+We follow the Git Flow branching model (Read more about it in the [original document](https://nvie.com/posts/a-successful-git-branching-model) describing it). Basically that boils down to having at least two branches:
 
 * develop - for the daily work, always has the latest merged commits, and is
   equal to or ahead of the latest release
@@ -52,7 +50,7 @@ What to keep in mind, when you create a layout
 
 ## Translation convention
 
-* also have a look at the [translation user documentation](https://doc.mapbender.org/en/architecture/translation.html)
+* Also have a look at [Translation](../workflows/translation.md).
 
 ## Issue conventions
 
@@ -62,7 +60,7 @@ We create a [GitHub milestone](https://github.com/mapbender/mapbender/milestones
 
 There are some rules you should keep in mind:
 
-**Write understandable issues:**
+### Write understandable issues
 
 * Write a **title** that summarizes the problem.
   * `Browser - Backend/Frontend - element - issue`

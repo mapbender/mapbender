@@ -176,7 +176,7 @@ You have to answer some questions before the element will be created:
  Confirm automatic update of the Routing [yes]? yes
 ```
 
-After these steps, your new bundle is available at `src`. The bundle is already registered in the File `AppKernel.php`. In the file `routing.yml` you will find a new entry for the bundle.
+After these steps, your new bundle is available at `src`. The bundle is already registered in the file *AppKernel.php*. In *routing.yml*, you will find a new entry for the bundle.
 
 ### Use app/console to generate a new element
 
@@ -245,7 +245,7 @@ Note that the configuration for your generated element is done in YAML syntax. I
 
 ## Change the action on Click event
 
-When you generate a map-click element, you get an event on click and an action. The action can be modified. Have a look in the JQuery widget file (`mapbender/src/Workshop/DemoBundle/Resources/public/mapbender.element.mapklick.js`).
+When you generate a map-click element, you get an event on click and an action. The action can be modified. Have a look in the JQuery widget file (*mapbender/src/Workshop/DemoBundle/Resources/public/mapbender.element.mapklick.js*).
 
 You will find the function *_mapClickHandler()* that determines the coordinates from the click event and passes them to the function *_mapClickWorker()*. The new generated element will show the coordinates of the click event in an alert box.
 

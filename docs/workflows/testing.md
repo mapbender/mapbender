@@ -57,7 +57,7 @@ bin/run_tests-dev.sh --help
 
 ## Authoring tests
 
-By default, `application/src` (suite "Project") and the `mapbender/fom/owsproxy` trinity of directories are scanned for *Test classes. They can be located anywhere, inside or outside of bundles, phpunit will find them.
+By default, *application/src* (suite "Project") and the *mapbender/fom/owsproxy* trinity of directories are scanned for *Test classes. They can be located anywhere, inside or outside of bundles, phpunit will find them.
 
 Please [annotate your tests with `@group`](https://phpunit.de/manual/5.7/en/appendixes.annotations.html#appendixes.annotations.group) to appropriately preclassify them as either `unit` or `functional`. Additional groups may be stacked on top (a test case can be placed into more than one group).
 

@@ -30,13 +30,13 @@ Here you find some libraries.
 
 ## mapbender
 
-Directory of the `Mapbender submodule <https://github.com/mapbender/mapbender>`_. Provides the Mapbender specific bundles and the Mapbender code.
+Directory of the [Mapbender submodule](https://github.com/mapbender/mapbender). Provides the Mapbender specific bundles and the Mapbender code.
 
 ### mapbender/...../translations
 
-Directory: mapbender/src/Mapbender/CoreBundle/Resources/translations/
+Directory: *mapbender/src/Mapbender/CoreBundle/Resources/translations/*
 
-The translations are stored in YAML files. Every language needs an YAML-file like messages.en.yaml for the English translation.
+The translations are stored in YAML files. Every language needs an YAML-file like *messages.en.yaml* for the English translation.
 
 ## public
 
@@ -56,7 +56,7 @@ It controls:
      bin/console assets:install --symlink --relative public
 ```
 
-If you use Windows, you cannot create symbolic links and therefore have to run the command (**bin/console assets:install public**) to copy the files to the directory after every change in the code.
+If you use Windows, you cannot create symbolic links and therefore have to run the command `bin/console assets:install public` to copy the files to the directory after every change in the code.
 
 ## src
 

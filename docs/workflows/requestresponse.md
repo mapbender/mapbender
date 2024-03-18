@@ -1,7 +1,7 @@
 # Request/Response Workflow
 
 This document explains the request/response workflow used in Mapbender.
-Essentially there are three workflows you should be familiar with:
+Essentially, there are three workflows you should be familiar with:
 
 * Application workflow
 * Element rendering and callback workflow
