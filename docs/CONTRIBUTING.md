@@ -24,7 +24,7 @@ For example, it is possible to create an application which only uses map view an
 
 Future [Mapbender] releases may be able to exclude any additional modules apart from the core application.
 
-In the past, the development bundles were part of the git [submodules].
+In the past, the development bundles were part of the git submodules.
 
 Today, each module should be in its own git repository
 and reuse the same directory structure.
@@ -48,7 +48,7 @@ Each module should have:
 * own [license] file
 * own function description [README] file
 * own [CONTRIBUTING].md that describes how other developers should install, setup and contribute in it
-* own [tests] relevant to new [features], [elements] or functionality
+* own [tests] relevant to new features, [elements] or functionality
 
 Write your code using PSR-2, a coding [style guide] standard.
 
@@ -84,7 +84,7 @@ A Bundle contains a special set of folders and files:
 * __LICENSE__  - Contains [LICENSE] text.
 * __README.md__ - Contains [README] text.
 * __CONTRIBUTING.md__ - Contains [CONTRIBUTING] text.
-* __MapbenderNameBundle.php__ - Bundle description file, this registers and makes available bundle [elements], [templates], [manager controllers] and [layers] register.
+* __MapbenderNameBundle.php__ - Bundle description file, this registers and makes available bundle [elements], [templates], manager controllers and layers register.
 
 Read more about best practices for reusable [bundles] [here](http://symfony.com/doc/2.3/cookbook/bundles/best_practices.html).
 
@@ -558,7 +558,6 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 [bundle]: #bundles "Bundle"
 [bundles]: #bundles "Bundle"
 [tests]: #tests "Tests"
-[features]: #features "Features"
 [elements]: #elements
 [element]: #elements
 [templates]: #templates
@@ -566,9 +565,6 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 [translations]: #translations
 [modules]: #modules
 [module]: #modules
-[Git submodules]: #submodules
-[manager controllers]: #manager-controllers
-[layers]: #layers
 [services]: http://symfony.com/doc/2.3/book/service_container.html "Symfony Services"
 [components]: http://symfony.com/doc/current/components/index.html
 [style guide]: http://www.php-fig.org/psr/psr-2/
