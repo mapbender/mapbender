@@ -69,7 +69,7 @@ A Mapbender installation uses a particular set of controller classes and functio
 
 ### Frontend
 
-The frontend is basically "the application" (or GUI as it has been called in Mapbender 2 - and even there, this term was incorrect). Each application is routed to the ApplicationController class of the CoreBundle:
+The frontend is basically the application view of your Mapbender installation. This includes the application list and each application view. It's what your users will interact with. Each application is routed to the ApplicationController class of the CoreBundle:
 
 ```console
  /application/{slug} => Mapbender\CoreBundle\Controller\ApplicationController->applicationAction($slug)
@@ -86,7 +86,7 @@ Elements of an application can provide Ajax endpoints for their client side widg
 
 ### Backend
 
-The backend is handled by the ManagerBundle, which provides a consistent backend for managing all aspects of a Mapbender application: applications, layers, elements, users, and settings.
+The backend is where you configure your Mapbender installation. It is handled by the ManagerBundle and allows your admins to manage settings for users, roles, services, applications and elements.
 
 For each section an own controller class exists within this bundle:
 

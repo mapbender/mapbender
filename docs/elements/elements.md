@@ -1,10 +1,15 @@
-# Understanding Elements
+# Elements
 
-## Parts of an element
+## Understanding elements
 
- <!-- ### PHP Class
+Elements are the building blocks of every application. Each element provides some functionality and can interact with other elements. The map element is probably the element you face most of the time as it provides all map viewing capabilities.
 
-TODO -->
+Each element consists of four parts itself:
+
+* PHP class: Describes the element with it's capabilities and also can provide an Ajax callback point, so that the client-side widget can execute database queries display the result.
+* Twig Template: HTML the element is using. In the most basic version, this would just be a DIV, but it can be as complex as is needed.
+* JavaScript Widget: this is the client side part of an element. It is everything you do and interact with on your screen. Using Ajax, it can call its server-side counterpart to do things like database queries.
+* CSS: Most elements want some style, so they may provide their own.
 
 ### Twig Template
 
@@ -173,7 +178,7 @@ You have to answer some questions before the element will be created:
 
 After these steps, your new bundle is available at `src`. The bundle is already registered in the File `AppKernel.php`. In the file `routing.yml` you will find a new entry for the bundle.
 
-## Use app/console to generate a new element
+### Use app/console to generate a new element
 
 Find out more about the command with help:
 
@@ -270,6 +275,6 @@ Alternatively, you could open a new window with an URL and add the coordinates a
     }
 ```
 
-[↑ Back to top](#understanding-elements)
+[↑ Back to top](#elements)
 
 [← Back to README](../README.md)
