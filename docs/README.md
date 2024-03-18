@@ -2,19 +2,22 @@
 
 ## Introduction
 
-Welcome to the Mapbender Development Documentation! This documentation is targeted at Mapbender developers and will cover useful topics not needed by administrators or users of Mapbender installations. It provides in-depth knowledge on how to contribute to (and tinker with) Mapbender's open source code. Before you start, please check out our [Conventions](getting_started/conventions.md). If you want to dive deep on a single page, please read the [Mapbender Contributing Guide](CONTRIBUTING.md).
+Welcome to the Mapbender Development Documentation! This documentation is targeted at Mapbender developers and will cover useful topics not needed by administrators or users of Mapbender installations. It provides in-depth knowledge on how to contribute to (and tinker with) Mapbender's open source code. Before you start, please check out our [Conventions](getting_started/conventions.md). If you want to dive deep on a single page, please read the [Contributing Guide](CONTRIBUTING.md).
 
 ## Table of Contents
 
 - [Commands](workflows/commands.md)
-- [Contributing](CONTRIBUTING.md)
+- [Components](architecture/components.md)
+- [Contributing Guide](CONTRIBUTING.md)
 - [Controllers](controllers/controllers.md)
 - [Conventions](getting_started/conventions.md)
+- [Directory structure](architecture/directory_structure.md)
 - [Elements](elements/elements.md)
 - [Request/Response Workflow](workflows/requestresponse.md)
 - [Security](security/security.md)
 - [Styleguides](style/)
 - [Testing](workflows/testing.md)
+- [Translation](workflows/translation.md)
 
 ## Things to consider
 
