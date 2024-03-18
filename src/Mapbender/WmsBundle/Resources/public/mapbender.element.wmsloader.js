@@ -72,7 +72,7 @@
                             }
                         },
                         {
-                            label: Mapbender.trans('mb.actions.cancel'),
+                            label: Mapbender.trans('mb.actions.close'),
                             cssClass: 'btn btn-sm btn-light popupClose'
                         }
                     ]
