@@ -118,3 +118,7 @@ Distributed to: /home/XX/Projekte/Mapbender/mapbender-starter-commands/dist/mapb
 > ComposerBootstrap::build
 27M     /home/XX/Projekte/Mapbender/mapbender-starter-commands/dist/mapbender-starter-current.tar.gz
 ```
+
+[↑ Back to top](#mapbender-terminal-commands)
+
+[← Back to README](../README.md)

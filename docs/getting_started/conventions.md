@@ -174,3 +174,7 @@ bin/composer build zip
 * Twitter on <https://twitter.com/mapbender>
 * Update <https://demo.mapbender.org> and <https://sandbox.mapbender.org>
 * Create a [version based installation](https://version.mapbender.org)
+
+[↑ Back to top](#conventions-for-mapbender)
+
+[← Back to README](../README.md)

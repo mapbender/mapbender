@@ -269,3 +269,7 @@ Alternatively, you could open a new window with an URL and add the coordinates a
         window.open('https://www.openstreetmap.org/export#map=15/' + coordinates.world.y + '/' + coordinates.world.x);
     }
 ```
+
+[↑ Back to top](#understanding-elements)
+
+[← Back to README](../README.md)

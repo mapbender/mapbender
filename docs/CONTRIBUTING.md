@@ -594,3 +594,7 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 [github]: https://github.com/ "GitHub"
 [phpunit]: https://phpunit.de/getting-started.html "PHPUnit"
 [versioning]: http://semver.org/
+
+[↑ Back to top](#contributing-guide)
+
+[← Back to README](../README.md)
