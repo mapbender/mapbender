@@ -23,6 +23,8 @@ Features:
 * [FeatureInfo] Tabs in the feature info window are now sorted in the order they appear in the layer tree ([PR#1534](https://github.com/mapbender/mapbender/pull/1534))
 * [Sidebar] Sidebar is now user-resizable (configurable but active per default) ([PR#1539](https://github.com/mapbender/mapbender/pull/1539))
 * [LayerTree] When activating a layer, all its parent layers are also activated ([PR#1544](https://github.com/mapbender/mapbender/pull/1544))
+* [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
+
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
