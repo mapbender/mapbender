@@ -162,7 +162,6 @@ In order to be able to get changes that others do to the main repository, you ne
 
 ```console
 git remote add upstream <https://github.com/mapbender/mapbender>
-
 ```
 
 On MS Windows systems, install TortoiseGit, which extends Windows Explorer to include git commands.
@@ -178,7 +177,7 @@ On MS Windows systems, install TortoiseGit, which extends Windows Explorer to in
     cd mapbender
   ```
 
-2.Pull any updates from upstream project:
+2. Pull any updates from upstream project:
 
   ```console
     git pull upstream master
