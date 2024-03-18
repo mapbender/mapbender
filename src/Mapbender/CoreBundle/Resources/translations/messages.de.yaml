@@ -161,6 +161,7 @@ mb:
         body: Text
         gps: GPS
         placeholder: 'Bitte schauen Sie sich diesen POI an'
+      accept: 'Erstellen'
     basesourceswitcher:
       error:
         sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden.'

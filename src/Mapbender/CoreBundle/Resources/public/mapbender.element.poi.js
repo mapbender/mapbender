@@ -117,14 +117,14 @@
                 content: $('.input', this.element).first().html(),
                 buttons: [
                     {
-                        label: Mapbender.trans('mb.actions.accept'),
+                        label: Mapbender.trans('mb.core.poi.accept'),
                         cssClass: 'btn btn-sm btn-primary',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
-                        label: Mapbender.trans('mb.actions.cancel'),
+                        label: Mapbender.trans('mb.actions.close'),
                         cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]

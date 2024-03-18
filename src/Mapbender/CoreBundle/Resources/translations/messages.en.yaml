@@ -161,6 +161,7 @@ mb:
         body: Body
         gps: GPS
         placeholder: 'Please take a look at this POI'
+      accept: 'Create'
     basesourceswitcher:
       error:
         sourcenotavailable: 'A source with id %id% is not available.'
