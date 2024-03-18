@@ -35,7 +35,7 @@ php bin/composer install
 The [`update` command](https://getcomposer.org/doc/03-cli.md#update-u) scans [the online package index](https://packagist.org/) for updated package
 versions, and replaces them accordingly. It also supports the `--no-dev` switch.
 
-By default, `update` will look for updated versions of _all_ currently installed packages. You can
+By default, `update` will look for updated versions of *all* currently installed packages. You can
 pass a (list of) package name(s) to restrict updating to a desired set.
 
 ```bash

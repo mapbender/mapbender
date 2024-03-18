@@ -160,7 +160,10 @@ In order to be able to get and send changes to your public repository, you need 
 
 In order to be able to get changes that others do to the main repository, you need to manually link to that using:
 
+```console
 git remote add upstream <https://github.com/mapbender/mapbender>
+
+```
 
 On MS Windows systems, install TortoiseGit, which extends Windows Explorer to include git commands.
 
