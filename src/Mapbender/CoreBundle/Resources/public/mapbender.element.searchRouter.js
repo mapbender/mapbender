@@ -21,6 +21,8 @@
             });
         },
 
+
+
         /**
          * Remove last search results
          */
@@ -394,7 +396,10 @@
                 }
                 this.currentFeature = feature;
             }
-            feature.setStyle(this.featureStyles[style]);
+            let featureStyle = this.featureStyles[style].clone();
+            const label = this._getLabelValue(feature, style);
+            featureStyle.getText().setText(label);
+            feature.setStyle(featureStyle);
         },
         _showResultState: function (results) {
             var element = this.element;
@@ -433,6 +438,41 @@
             }
             this.csvExport.export(features, this.getCurrentRoute().results.headers);
         },
+
+        /**
+         * read the feature map label from feature properties
+         * @param feature
+         * @param style
+         * @returns {string}
+         * @private
+         */
+        _getLabelValue: function (feature, style) {
+            let currentRoute = this.getCurrentRoute();
+            let styleMap = currentRoute.results.styleMap;
+
+            if (style === 'default') {
+                return this._labelReplaceRegex(styleMap.default.label, feature);
+            } else if (style === 'select') {
+                return this._labelReplaceRegex(styleMap.select.label, feature);
+            } else if (style === 'temporary') {
+                return this._labelReplaceRegex(styleMap.temporary.label, feature);
+            } else {
+                throw new Error('No such style!');
+            }
+        },
+
+        _labelReplaceRegex: function(labelWithRegex, feature) {
+            let regex = /\${([^}]+)}/g;
+            let match = [];
+            let label = labelWithRegex;
+
+            while ((match = regex.exec(labelWithRegex)) !== null) {
+                let featureValue = (feature.get(match[1])) ? feature.get(match[1]).toString() : '';
+                label = label.replace(match[0], featureValue);
+            }
+            return label;
+        },
+
         _createStyleMap: function (styles) {
             function _createSingleStyle(options) {
                 var fill = new ol.style.Fill({
@@ -442,6 +482,27 @@
                     color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
                     width: options.strokeWidth || 2
                 });
+                // labeling
+                let fontweight = options.fontWeight  || 'normal';
+                let fontsize = options.fontSize  || '18px';
+                let fontfamily = options.fontFamily  || 'arial';
+                const textfill = new ol.style.Fill({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fontColor', '1')
+                });
+                const textstroke = new ol.style.Stroke({
+                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'labelOutlineColor', '1'),
+                    width: options.labelOutlineWidth || 2
+                });
+                const text = new ol.style.Text({
+                    font: fontweight + ' ' + fontsize + ' ' + fontfamily,
+                    offsetX: options.fontOffsetX || 2,
+                    offsetY: options.fontOffsetY || 2,
+                    placement: options.fontPlacement || 'point',
+                    text: options.label || '',
+                    fill: textfill,
+                    stroke: textstroke,
+                });
+
                 return new ol.style.Style({
                     image: new ol.style.Circle({
                         fill: fill,
@@ -449,7 +510,8 @@
                         radius: options.pointRadius || 5
                     }),
                     fill: fill,
-                    stroke: stroke
+                    stroke: stroke,
+                    text: text
                 });
             }
 
