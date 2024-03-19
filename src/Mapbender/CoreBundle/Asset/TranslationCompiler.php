@@ -22,11 +22,11 @@ class TranslationCompiler
     /** @var Twig\Environment */
     protected $templateEngine;
     /** @var string[]|null */
-    protected ?array $allMessages;
+    protected ?array $allMessages = null;
     /** @var string[]|null */
-    protected ?array $allMessagesFallbackLocale;
+    protected ?array $allMessagesFallbackLocale = null;
 
-    protected ?string $fallbackLocale;
+    protected ?string $fallbackLocale = null;
 
     protected $treatTemplatesAsOptional = true;
 
