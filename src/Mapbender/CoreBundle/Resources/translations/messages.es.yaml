@@ -83,6 +83,7 @@ mb:
         description: Crear un POI para compartir
       label:
         text: Texto
+      accept: 'Crear enlace'
     basesourceswitcher:
       error:
         sourcenotavailable: Una fuente con id %id% no está habilitado

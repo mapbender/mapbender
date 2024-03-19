@@ -83,6 +83,7 @@ mb:
         description: Crea un POI per la condivisione
       label:
         text: Text
+      accept: 'Creare un link'
     basesourceswitcher:
       error:
         sourcenotavailable: Una risorsa con id %id% non è disponibile

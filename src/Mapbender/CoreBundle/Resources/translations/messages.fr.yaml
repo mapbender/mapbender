@@ -83,7 +83,7 @@ mb:
         description: Permet de créer un POI (point d'intérêt) pour le partager
       label:
         text: Text
-      accept: 'créer'
+      accept: 'Création d''un lien'
     basesourceswitcher:
       error:
         sourcenotavailable: La source avec le id %id% n'est pas disponible
