@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Persistence\ObjectManager;
 use FOM\ManagerBundle\Configuration\Route;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -170,13 +171,8 @@ class SourceInstanceController extends ApplicationControllerBase
      *     name="mapbender_manager_application_addinstance",
      *     methods={"GET"})
      *
-     * @param Request $request
-     * @param string $slug of Application
-     * @param int $layersetId
-     * @param int $sourceId
-     * @return Response
      */
-    public function addInstanceAction(Request $request, $slug, $layersetId, $sourceId)
+    public function addInstanceAction(Request $request, string $slug, int $layersetId, int $sourceId): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         /** @var Application|null $application */
@@ -188,24 +184,7 @@ class SourceInstanceController extends ApplicationControllerBase
         } else {
             throw $this->createNotFoundException();
         }
-        $layerset = $this->requireLayerset($layersetId, $application);
-        /** @var Source|null $source */
-        $source = $this->getDoctrine()->getRepository(Source::class)->find($sourceId);
-        $newInstance = $this->typeDirectory->createInstance($source);
-        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
-            /** @var SourceInstanceAssignment $otherAssignment */
-            $otherAssignment->setWeight($index + 1);
-            $entityManager->persist($otherAssignment);
-        }
-
-        $newInstance->setWeight(0);
-        $newInstance->setLayerset($layerset);
-        $layerset->getInstances()->add($newInstance);
-
-        $entityManager->persist($application);
-        $application->setUpdated(new \DateTime('now'));
-
-        $entityManager->flush();
+        $newInstance = $this->createNewSourceInstance($application, $sourceId, $layersetId, $entityManager);
         $this->addFlash('success', 'mb.source.instance.create.success');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $slug,
@@ -469,5 +448,28 @@ class SourceInstanceController extends ApplicationControllerBase
         /** @var ApplicationRepository $repository */
         $repository = $this->getDoctrine()->getRepository(Application::class);
         return $repository;
+    }
+
+    public function createNewSourceInstance(Application $application, int $sourceId, int $layersetId, ObjectManager $entityManager): SourceInstance
+    {
+        $layerset = $this->requireLayerset($layersetId, $application);
+        /** @var Source|null $source */
+        $source = $this->getDoctrine()->getRepository(Source::class)->find($sourceId);
+        $newInstance = $this->typeDirectory->createInstance($source);
+        foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
+            /** @var SourceInstanceAssignment $otherAssignment */
+            $otherAssignment->setWeight($index + 1);
+            $entityManager->persist($otherAssignment);
+        }
+
+        $newInstance->setWeight(0);
+        $newInstance->setLayerset($layerset);
+        $layerset->getInstances()->add($newInstance);
+
+        $entityManager->persist($application);
+        $application->setUpdated(new \DateTime('now'));
+
+        $entityManager->flush();
+        return $newInstance;
     }
 }

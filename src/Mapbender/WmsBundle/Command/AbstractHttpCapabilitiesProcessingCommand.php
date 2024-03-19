@@ -23,8 +23,6 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
             ->addOption('user', null, InputOption::VALUE_REQUIRED, 'Username (basicauth)', '')
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'Password (basic auth)', '')
             ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
-            ->addOption(self::OPTION_DEACTIVATE_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.')
-            ->addOption(self::OPTION_DESELECT_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deselected in existing instances. Deselected layers are not visible on the map by default, but appear in the layer tree and can be selected by users.')
         ;
     }
 
@@ -49,10 +47,10 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
         $origin->setUsername($input->getOption('user'));
         $origin->setPassword($input->getOption('password'));
 
-        if ($input->getOption(self::OPTION_DESELECT_NEW_LAYERS)) {
+        if ($input->hasOption(self::OPTION_DESELECT_NEW_LAYERS) && $input->getOption(self::OPTION_DESELECT_NEW_LAYERS)) {
             $origin->setSelectNewLayers(false);
         }
-        if ($input->getOption(self::OPTION_DEACTIVATE_NEW_LAYERS)) {
+        if ($input->hasOption(self::OPTION_DEACTIVATE_NEW_LAYERS) && $input->getOption(self::OPTION_DEACTIVATE_NEW_LAYERS)) {
             $origin->setActivateNewLayers(false);
         }
         return $origin;
