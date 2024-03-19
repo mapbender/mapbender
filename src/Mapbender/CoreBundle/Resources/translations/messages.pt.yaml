@@ -83,7 +83,7 @@ mb:
         description: Elemento sobre o que pode-se gerar e mandar um ponto de encontro.
       label:
         text: null
-      accept: 'Utwórz link'
+      accept: 'Criar ligação'
     basesourceswitcher:
       error:
         sourcenotavailable: O serviço com ID %id% não está disponível.
