@@ -22,7 +22,11 @@ class TranslationCompiler
     /** @var Twig\Environment */
     protected $templateEngine;
     /** @var string[]|null */
-    protected $allMessages;
+    protected ?array $allMessages;
+    /** @var string[]|null */
+    protected ?array $allMessagesFallbackLocale;
+
+    protected ?string $fallbackLocale;
 
     protected $treatTemplatesAsOptional = true;
 
@@ -30,13 +34,14 @@ class TranslationCompiler
      * @param TranslatorInterface $translator
      * @param Twig\Environment $templateEngine
      */
-    public function __construct(TranslatorInterface $translator, Twig\Environment $templateEngine)
+    public function __construct(TranslatorInterface $translator, Twig\Environment $templateEngine, ?string $fallbackLocale = null)
     {
         if (!($translator instanceof TranslatorBagInterface)) {
             throw new \InvalidArgumentException("Given translator does not implement required TranslatorBagInterface");
         }
         $this->translator = $translator;
         $this->templateEngine = $templateEngine;
+        $this->fallbackLocale = $fallbackLocale ?? "en";
     }
 
     /**
@@ -89,19 +94,26 @@ class TranslationCompiler
      * @param string $input translation key or prefix pattern ending in '.*'
      * @return string[]
      */
-    protected function translatePattern($input)
+    protected function translatePattern($input, $locale = null)
     {
         $values = array();
         if (preg_match('/\*$/', $input)) {
             $wildcardPrefix = rtrim($input, '*');
-            if (!$wildcardPrefix || false !== strpos($wildcardPrefix, '*')) {
+            if (!$wildcardPrefix || str_contains($wildcardPrefix, '*')) {
                 throw new \RuntimeException("Invalid translation key input " . print_r($input, true));
             }
             if ($this->allMessages === null) {
                 $this->allMessages = $this->translator->getCatalogue()->all('messages');
+                $this->allMessagesFallbackLocale = $this->translator->getCatalogue($this->fallbackLocale)->all('messages');
             }
+
             foreach ($this->allMessages as $translationKey => $message) {
-                if (0 === strpos($translationKey, $wildcardPrefix)) {
+                if (str_starts_with($translationKey, $wildcardPrefix)) {
+                    $values[$translationKey] = $message;
+                }
+            }
+            foreach ($this->allMessagesFallbackLocale as $translationKey => $message) {
+                if (str_starts_with($translationKey, $wildcardPrefix) && !array_key_exists($translationKey, $values)) {
                     $values[$translationKey] = $message;
                 }
             }
