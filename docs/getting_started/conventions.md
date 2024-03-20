@@ -39,20 +39,7 @@ git command shortcuts to use the merge/branch model of Git Flow without having
 to do everything by yourself (which is still possible and you should always know
 how Git Flow uses plain git to achieve things).
 
-## Layout conventions
-
-What to keep in mind, when you create a layout
-
-* naming conventions
-* where to put the css
-* where to put the twig
-* where to put the images / should be possible to easy switch an image collection an get other buttons
-
-## Translation convention
-
-* Also have a look at [Translation](../workflows/translation.md).
-
-## Issue conventions
+## Git issue conventions
 
 Issues (bugs and features) are administrated in the [Mapbender repository issue tracker](https://github.com/mapbender/mapbender/issues).
 
@@ -80,6 +67,84 @@ There are some rules you should keep in mind:
   * add a comment in the issue and **refer to the commit**,
   * refer to the documentation or a demo if possibile.
 
+## Layout conventions
+
+What to keep in mind, when you create a layout
+
+* naming conventions
+* where to put the css
+* where to put the twig
+* where to put the images / should be possible to easy switch an image collection an get other buttons
+
+## Release conventions
+
+* check whether all relevant issues are completed,
+* build a [Mapbender build](#how-to-build-a-new-mapbender-build),
+* update the Roadmap and its milestones,
+* update the [Demo](https://demo.mapbender.org),
+* write a release mail (mapbender-user / mapbender-dev / major releases osgeo-announce),
+* post about the release on social media channels.
+
+### How to build a new Mapbender build
+
+* Resolve and close all tickets for the relevant [milestone](https://github.com/mapbender/mapbender/milestones).
+* Update the Changelog.md.
+* Update version number in `parameters.yaml.dist` and push.
+* Update version number in `composer.json`.
+* **Tagging**: Tag at Github. You have nice capabilities for creating good tags and descriptions.
+* Create **Pull requests** to merge the release branch into master.
+
+* Clone the source code from the release branch
+
+```console
+git clone -b release/3.0.6 git@github.com:mapbender/mapbender-starter
+```
+
+* Change to the directory
+
+```console
+cd mapbender-starter
+```
+
+* Run bootstrap
+
+```console
+sh bootstrap
+```
+
+* Change the directory
+
+```console
+cd application
+```
+
+* Generate the docs
+
+```console
+bin/composer docs
+```
+
+* Create the ZIP/tar.gz
+
+```console
+bin/composer build
+bin/composer build zip
+```
+  
+* Move TAR.GZ and ZIP file to /sites/www.mapbender.org/builds
+* Update symbolic links (version.zip and version.tar.gz and current.tar.gz and current.zip)
+* Move current doc to docs.mapbender.org (get it from web/docs. Remove the api folder).
+* Edit the actual release link ([english](https://mapbender.org/en/download)) and [german](https://mapbender.org/mapbender-herunterladen/)
+* Write release mail to mapbender-user and mapbender-dev
+* Only for major releases write release mail to <news_item@osgeo.org> (see also <https://www.osgeo.org/about/faq/osgeo-mailing-lists/>)
+* Twitter on <https://twitter.com/mapbender>
+* Update <https://demo.mapbender.org> and <https://sandbox.mapbender.org>
+* Create a [version based installation](https://version.mapbender.org)
+
+## Translation convention
+
+* Also have a look at [Translation](../workflows/translation.md).
+
 ## Versioning conventions
 
 The Mapbender version is defined by a four digit numbering system, seperated by dots.
@@ -97,81 +162,6 @@ The Mapbender version is defined by a four digit numbering system, seperated by 
 Increase a digit means always a reset for all digits before. For example - 4.0.10.20 -> 4.1.0.0
 
 This numbering system started with Mapbender version 3.0.0.0
-
-## Release
-
-* check whether all relevant issues are completed,
-* build a [Mapbender build](#how-to-build-a-new-mapbender-build),
-* update the Roadmap and its milestones,
-* update the [Demo](https://demo.mapbender.org),
-* write a release mail (mapbender-user / mapbender-dev / major releases osgeo-announce),
-* post about the release on social media channels.
-
-## How to build a new Mapbender build
-
-* Resolve and close all tickets for the relevant [milestone](https://github.com/mapbender/mapbender/milestones).
-* Update the Changelog.md.
-* Update version number in `parameters.yaml.dist` and push
-* Update version number in `composer.json`
-* **Tagging**: Tag at Github. You have nice capabilities for creating good tags and descriptions.
-  * Mapbender
-  * OWSProxy
-  * FOM
-  * Mapbender-starter
-  * Documentation
-* Create **Pull requests** to merge release branch into master
-  * Mapbender
-  * OWSProxy
-  * FOM
-  * Mapbender-starter
-  * Documentation
-
-* Clone the source-code from the release branch
-
-```console
-git clone -b release/3.0.6 git@github.com:mapbender/mapbender-starter
-```
-
-* Change to the directory
-
-```console
-cd mapbender-starter
-```
-
-* Bootstrap
-
-```console
-sh bootstrap
-```
-
-* Change to the directory
-
-```console
-cd application
-```
-
-* Generate the docs
-
-```console
-bin/composer docs
-```
-
-* Create the ZIP/Tar.gz
-
-```console
-bin/composer build
-bin/composer build zip
-```
-  
-* Move TAR.GZ and ZIP file to /sites/www.mapbender.org/builds
-* Update symbolic links (version.zip and version.tar.gz and current.tar.gz and current.zip)
-* Move current doc to docs.mapbender.org (get it from web/docs. Remove the api folder).
-* Edit the actual release link ([english](https://mapbender.org/en/download)) and [german](https://mapbender.org/mapbender-herunterladen/)
-* Write release mail to mapbender-user and mapbender-dev
-* Only for major releases write release mail to <news_item@osgeo.org> (see also <https://www.osgeo.org/about/faq/osgeo-mailing-lists/>)
-* Twitter on <https://twitter.com/mapbender>
-* Update <https://demo.mapbender.org> and <https://sandbox.mapbender.org>
-* Create a [version based installation](https://version.mapbender.org)
 
 [↑ Back to top](#conventions-for-mapbender)
 
