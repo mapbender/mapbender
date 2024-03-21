@@ -276,14 +276,14 @@
         _getPopupButtonOptions: function () {
             var buttons = [{
                 label: Mapbender.trans('mb.actions.close'),
-                cssClass: 'button critical popupClose'
+                cssClass: 'btn btn-sm btn-light popupClose'
             }];
             if (this.options.printResult) {
                 var self = this;
                 buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
-                    cssClass: 'button',
+                    cssClass: 'btn btn-sm btn-primary',
                     callback: function () {
                         self._printContent();
                     }

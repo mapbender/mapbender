@@ -76,7 +76,7 @@
                      buttons: [
                          {
                              label: Mapbender.trans('mb.actions.close'),
-                             cssClass: 'popupClose btn btn-sm btn-success'
+                             cssClass: 'popupClose btn btn-sm btn-primary'
                          }
                      ]
                  });

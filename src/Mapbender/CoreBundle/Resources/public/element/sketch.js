@@ -191,7 +191,7 @@
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'button popupClose'
+                        cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]
             };
@@ -262,22 +262,19 @@
                 features: new ol.Collection([feature])
             });
             this.mbMap.getModel().olMap.addInteraction(this.editControl);
-            if (this.useDialog_) {
-                formScope = this.element;
-            } else {
-                var $popoverContent = $($.parseHTML(this.editContent_));
-                $('[data-toolnames]', $popoverContent).each(function() {
-                    var $this = $(this);
-                    var allowed = $this.attr('data-toolnames').split(',');
-                    if (-1 === allowed.indexOf(toolName)) {
-                        $this.remove();
-                    }
-                });
-                formScope = $popoverContent;
-                this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
-                this.trackRadiusInput_($('input[name="radius"]', $popoverContent));
-                this._showRecordPopover($row, $popoverContent);
-            }
+            var $popoverContent = $($.parseHTML(this.editContent_));
+            $('[data-toolnames]', $popoverContent).each(function() {
+                var $this = $(this);
+                var allowed = $this.attr('data-toolnames').split(',');
+                if (-1 === allowed.indexOf(toolName)) {
+                    $this.remove();
+                }
+            });
+            formScope = $popoverContent;
+            this.trackLabelInput_($('input[name="label-text"]', $popoverContent));
+            this.trackRadiusInput_($('input[name="radius"]', $popoverContent));
+            this._showRecordPopover($row, $popoverContent);
+
             $('input[name="label-text"]', formScope)
                 .prop('disabled', false)
                 .val(this._getFeatureAttribute(feature, 'label') || '')

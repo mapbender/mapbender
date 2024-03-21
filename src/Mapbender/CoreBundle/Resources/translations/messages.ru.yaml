@@ -83,6 +83,7 @@ mb:
         description: Создать POI для обмена
       label:
         text: Текст
+      accept: 'Создать ссылку'
     basesourceswitcher:
       error:
         sourcenotavailable: Источник с идентификатором %%d% не доступен

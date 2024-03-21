@@ -74,6 +74,7 @@ class POI extends AbstractElementService
             ),
             'trans' => array(
                 'mb.core.poi.popup.*',
+                'mb.core.poi.accept'
             ),
         );
     }

@@ -83,6 +83,7 @@ mb:
         description: Maak een bijzondere plaats (POI) aan om te delen
       label:
         text: Tekst
+      accept: 'Link maken'
     basesourceswitcher:
       error:
         sourcenotavailable: Bron met ID %id% is niet beschikbaar

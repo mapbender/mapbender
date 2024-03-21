@@ -94,6 +94,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
         $view = new TemplateView('@MapbenderCore/Element/coordinatesutility.html.twig');
         $view->attributes['class'] = 'mb-element-coordinatesutility';
         $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();
+        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
         return $view;
     }
 

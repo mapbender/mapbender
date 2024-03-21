@@ -83,6 +83,7 @@ mb:
         description: Paylaşmak için İlgi noktası (POI) oluştur
       label:
         text: Metin
+      accept: 'Bağlantı oluştur'
     basesourceswitcher:
       error:
         sourcenotavailable: Kimliği %id% olan bir kaynak bulunamadı.
