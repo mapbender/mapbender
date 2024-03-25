@@ -14,6 +14,7 @@ Welcome to the Mapbender Development Documentation! This documentation is target
 - [Directory structure](architecture/directory_structure.md)
 - [Elements](elements/elements.md)
 - [FAQs](getting_started/faq.md)
+- [Project Setup Guide](workflows/setup.md)
 - [Request/Response Workflow](workflows/requestresponse.md)
 - [Security](security/security.md)
 - [Styleguides](style/)
