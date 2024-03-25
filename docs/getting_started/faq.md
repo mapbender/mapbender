@@ -151,6 +151,6 @@ _anyMethod: function() {
 }
 ```
 
-[↑ Back to top](#faq)
+[↑ Back to top](#frequently-asked-questions)
 
 [← Back to README](../README.md)
