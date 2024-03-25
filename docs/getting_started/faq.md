@@ -150,3 +150,7 @@ _anyMethod: function() {
     alert("This thing is a " + this.externalWidget.element.get(0).nodeName);
 }
 ```
+
+[↑ Back to top](#faq)
+
+[← Back to README](../README.md)

@@ -466,4 +466,4 @@ Common symptom when not updating schema:
 
 [↑ Back to top](#upgrading-guide)
 
-[← Back to README](docs/README.md)
+[← Back to README](README.md)
