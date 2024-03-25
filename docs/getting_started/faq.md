@@ -18,9 +18,9 @@ The platform in the *composer.json* of the launcher must be set to e.g. 7.1.9, o
 
 ### How do I install Mapbender on my workstation?
 
-* [Note system requirements](https://github.com/mapbender/mapbender-starter#requirements)
+* [Note system requirements](https://github.com/mapbender/mapbender-starter#requirements),
 
-* [Cloning and bootstrapping](https://github.com/mapbender/mapbender-starter#getting-the-code)
+* [Clone and bootstrap](https://github.com/mapbender/mapbender-starter#getting-the-code).
 
 ### How do I solve file system access errors in Apache and/or on the console?
 
@@ -36,7 +36,7 @@ The weaker alternative is to approach Apache by joining the `www-data` group.
 > This is different for each distribution and version.
 
 ```console
-sudo usermod -aG <euer-account-name> www-data
+sudo usermod -aG <your-account-name> www-data
 ```
 
 ### How do I get my Mapbender development onto a server?
@@ -137,16 +137,16 @@ The element should also be retrieved via the element registry instead of a simpl
 ```php
 _create: function() {
    var self = this;
-   Mapbender.elementRegistry.waitReady(this.options.any_target).then(function(fremdesWidget) {
-      self.fremdesWidget = fremdesWidget;
+   Mapbender.elementRegistry.waitReady(this.options.any_target).then(function(externalWidget) {
+      self.externalWidget = externalWidget;
    });
 },
 _anyMethod: function() {
     // Access to widget instance
-    this.fremdesWidget.deactivate();
+    this.externalWidget.deactivate();
     // Access to markup via jQuery
-    this.fremdesWidget.element.addClass('test').show();
+    this.externalWidget.element.addClass('test').show();
     // Access to naked DOM node
-    alert("This thing is a " + this.fremdesWidget.element.get(0).nodeName);
+    alert("This thing is a " + this.externalWidget.element.get(0).nodeName);
 }
 ```
