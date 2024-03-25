@@ -19,6 +19,7 @@ Welcome to the Mapbender Development Documentation! This documentation is target
 - [Styleguides](style/)
 - [Testing](workflows/testing.md)
 - [Translation](workflows/translation.md)
+- [Upgrading Guide](UPGRADING.md)
 
 ## Things to consider
 

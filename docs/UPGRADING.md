@@ -1,4 +1,4 @@
-# Upgrading Mapbender
+# Upgrading Guide
 
 ## next major release (v4.0)
 
@@ -455,9 +455,7 @@ Requires a `doctrine:schema:update`. Common symptom when skipping update:
 
 ## v3.0.6.x / v3.0.5.x => v3.0.7.x
 
-Mapbender v3.0.7.x requires changes from Mapbender Starter. A forked starter should be
-merged up to at least v3.0.7.3 when updating Mapbender.  
-Mapbender v3.0.7.x requires running a `doctrine:schema:update`.
+Mapbender v3.0.7.x requires changes from Mapbender Starter. A forked starter should be merged up to at least v3.0.7.3 when updating Mapbender. Mapbender v3.0.7.x requires running a `doctrine:schema:update`.
 
 Common symptoms when not updating / merging starter:
 
@@ -465,3 +463,7 @@ Common symptoms when not updating / merging starter:
 - CI / build process failures
 Common symptom when not updating schema:
 - Exceptions noting a missing `layerOrder` column in WmsInstance entity
+
+[↑ Back to top](#upgrading-guide)
+
+[← Back to README](docs/README.md)

@@ -597,4 +597,4 @@ bin/phpunit -c app vendor/mapbender/digitizer/Mapbender/DigitizerBundle/Tests/Fe
 
 [↑ Back to top](#contributing-guide)
 
-[← Back to README](../README.md)
+[← Back to README](docs/README.md)
