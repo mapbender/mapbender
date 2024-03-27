@@ -78,7 +78,7 @@ mapbender.asset_overrides:
     "@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss": "@@MyBundle/Resources/public/sass/element/custom_featureinfo.scss"
 ```
 
-> [NOTE!]
+> [!NOTE]
 > Note that the `@` sign in the replacement key needs to be escaped by another `@@` sign, otherwise Symfony tries (and fails) to resolve the file as a service.
 
 #### Overriding Templates
@@ -380,6 +380,108 @@ You *may* explicitly specify the canonical content of the `mb_core_element` tabl
 ```
 
 IOW, "replaces" maps the value in the `mb_core_element` "class" column to the PHP class implementing the Element logic, while "canonical" controls what is written into the `mb_core_element` "class" column.
+
+### [1352](https://github.com/mapbender/mapbender/pull/1352)
+
+Adds a Controller to serve `/components/` urls, to allow safe removal of e.g. (abandoned) [robloach/component-installer](https://packagist.org/packages/robloach/component-installer). Note that if a file actually exists inside `web/components`, the web server will handle the request internally. PHP will not be invoked, and this Controller will not be invoked.  
+Only files not present in web/components will invoke this Controller. Contents will be served from an appropriate location inside `/vendor/`. Browser caching is supported.
+
+Currently targets 5 packages of common interest for delivery:
+
+- debugteam/bootstrap-colorpicker
+- wheregroup/open-sans
+- mapbender/mapbender-icons
+- components/font-awesome
+- components/bootstrap
+
+Other packages with a "component" vendor may or may not work. This depends on if/how the file structure inside vendor is altered when a "component installer" copies files into `web/components`.
+
+> [!TIP]
+> Though not strictly necessary, for optimal performance the firewall should be bypassed on the `/components/` url prefix. This requires an extra url exclusion configuration in Mapbender Starter. See [4c362e3](https://github.com/mapbender/mapbender-starter/commit/4c362e35520bb0774a16d31c7727052cd6de2655).
+
+### [1343](https://github.com/mapbender/mapbender/pull/1343)
+
+Replaces all checkboxes generated via form theme with the appropriate Bootstrap markup (template blocks imported from original Symfony Bootstrap form theme). Legacy custom checkbox widget remains in proper use in Layertree frontend only.
+
+Default form layout is now block style, i.e. the label and widget are displayed on separate rows, both on full width. Layouts where labels and widgets should appear side by side must now wrap themselves inside a [Bootstrap `.form-horizontal`](https://getbootstrap.com/docs/3.4/css/#forms-horizontal) container.
+
+### [1317](https://github.com/mapbender/mapbender/pull/1317)
+
+Allows suppressing Element types from showing up in frontend and backend via configuration.
+
+This mechanism can fix errors when rendering or editing an application that holds references to Elements that are outdated, unsafe, or completely gone from the code base. In turn, it allows to safely remove types of Elements from the code entirely without causing hard errors. This is also useful to prevent operators from adding Elements that are no longer safe to use, or that have been superseded by project-level solutions.
+
+Adds a new configuration parameter `mapbender.disabled_elements` (list of strings, default empty). Contained element types are fully qualified class names of the element component.
+
+Example usage (suppresses all Layertree Elements in all applications).
+
+```yaml
+parameters:
+    mapbender.disabled_elements:
+        - Mapbender\CoreBundle\Element\Layertree
+```
+
+This suppression via configuration has no permanent effects on the persisted structure of the application. I.e., if you later change your mind and remove the `Layertree` entry again, all previously suppressed Layertree Elements will pop back into existence.
+
+Button/ControlButton Elements targetting a disabled type of Element will also be suppressed.
+
+### [1306](https://github.com/mapbender/mapbender/pull/1306)
+
+Resolves [vis-ui.js](https://github.com/mapbender/vis-ui.js) dependency on abandoned robloach/component-installer transparently via Mapbender asset integration.
+
+Extends previous asset reference rewriting infrastructure from hard 1:1 remapping to allow expansion of single-file references to lists of individual files.
+This is then used to expand vis-ui.js-built.js reference to a list of references to its individual source files. All vis-ui.js source files are read directly from vendor/mapbender/vis-ui.js/src.
+
+Deduplication is extended to fully support mixed references to individual files + reference(s) to the ...-built.js version.
+
+Adds lenience to ignore missing asset file references that resolved to the /vendor/ path. Exceptions for missing files in /vendor/ are suppressed.
+
+As a result,
+
+1) vis-ui script can now be required by Element and Template classes with or without robloach/component-installer present
+2) vis-ui script dependencies now properly deduplicate even when total application requirements reference a mix of individual files and the legacy ...-built.js
+3) vis-ui script dependencies from (custom) Template and Element classes can now safely be changed to reference individual vis-ui.js source files, without requiring a synchronized multi-repository effort
+4) Highly deprecated individual vis-ui.js script components (StringHelper, DataUtil) can gradually be removed without breaking Mapbender asset infrastructure
+
+As a collateral, the informational comments produced in /assets/js and /assets/css routes in the dev environment have been extended to include more detailed deduplication and expansion information, and will notify about ignored missing files.
+
+### [1297](https://github.com/mapbender/mapbender/pull/1297)
+
+Extracts view access control checks for elements into two new [voter](https://symfony.com/doc/3.4/security/voters.html#the-voter-interface) services, `mb_core.security.voter.db_application_element` and `mb_core.security.voter.yaml_application_element`, making grants checks globally reusable and customizable via DI.
+
+Grants checks produce the same results as before, but are significantly faster due to the separation between Yaml-defined and database applications. Grants checks in database applications now use bulk-prefetching of element ACLs, which has been observed to improve overall Element VIEW grants check time by up to 10x for a typical application.
+
+Yaml-defined applications completely skip the attempt to look up (unassignable) object ACLs, which also saves some performance.
+
+### [1296](https://github.com/mapbender/mapbender/pull/1296)
+
+Extracts two new voter services `mb_core.security.voter.yaml_application` and `mb_core.security.voter.db_application`. This extraction
+
+1) makes the application view grants checks available throughout the system (previously directly built into certain controllers) and
+2) makes it customizable on a project level via DI.
+
+### [1294](https://github.com/mapbender/mapbender/pull/1294)
+
+Splits Button Element into LinkButton and ControlButton. Leaves Button class in place for existing project-level child classes, but no longer allows it to be used directly in applications. Existing applications will have their button elements automatically ported to either LinkButton (if they have a "click" setting) or ControlButton.
+
+When adding a new Button element to a database application, the "Button" element can no longer accept a "click" setting. Select the "Link" element instead to create links.
+
+As a collateral the nondescript element description texts have been updated from "Button" to "Controls another element" (ControlButton) and "Link to external URL" (LinkButton) respectively.
+The field label for "click" has also been updated to read "Target URL".
+
+It is no longer possible to assign deprecated and unnecessary `action` and `deactivate` settings. All controllable JavaScript widgets must implement deactivate and activate methods. Legacy aliasing support of activate to defaultAction remains in place. All controllable elements currently shipped with Mapbender implement this API correctly.
+
+This fixes [Issue 571](https://github.com/mapbender/mapbender/issues/571).
+
+#### Rationale
+
+Separating the quite ControlButton concept from misc other Button class use cases removes headaches in developing QoL / design advancements in its intended, central function of controlling other elements. E.g. after this separation it will be much easier to:
+
+- actually require a target Element and check for its presence (previously not required because it might just have been a link)
+- automatically provide appropriate default label / tooltip depending on target element, and resolve related translation issues
+- automatically suppress button markup if its target is missing (e.g. after Element grants filtering)
+- automatically suppress of button markup it its target is generally uncontrollable / not currently controllable by a button (e.g. if the target is placed in a sidepane)
+- automatically reform toolbar contents into compact menus in certain ongoing frontend templating concepts
 
 [↑ Back to top](#git-archive)
 
