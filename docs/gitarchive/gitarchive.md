@@ -50,3 +50,5 @@ FQCN of the *MarkupCache* class. Change if you want to customise the class that 
 `default:`false`` The default markup cache caches an application based on application slug, locale, map engine code and element id that are visible to the user. This means however, that two people with the same rights will be delivdered the same markup. Usually that's fine, if however you display user-specific information, like their email address, in the frontend, set this new parameter to true to avoid them receiving the same markup. Note that for each user and application a file will be created on the server. Consider your application logic if you have a lot of users.
 
 ### [1483](https://github.com/mapbender/mapbender/pull/1483)
+
+- Refer to the [UPGRADING.md](../UPGRADING.md#Removed-OpenLayers-2-support) document to learn about the removal of OpenLayers 2 and method renaming.
