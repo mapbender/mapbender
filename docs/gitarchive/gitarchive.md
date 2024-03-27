@@ -71,7 +71,7 @@ class MyBundle extends Bundle
 
 ##### Option 2: use the configuration
 
-Within your `paramaters.yml` file add the following:
+Within your `parameters.yaml` file, add the following:
 
 ```yml
 mapbender.asset_overrides:
@@ -82,7 +82,7 @@ Note that the `@` sign in the replacement key needs to be escaped by another `@@
 
 #### Overriding Templates
 
-Templates within bundles can be overridden by placing a twig file with the same name in `templates/bundles/<bundlename>`. If, for example, you want to customise the coordinates display (original source: `Resources/views/Element/coordinatesdisplay.html.twig` within the Mapbender CoreBundle, place a replacement file in `templates/bundles/MapbenderCoreBundle/Element/coordinatesdisplay.html.twig`. The new file will be used instead of the original one. See <https://symfony.com/doc/5.4/bundles/override.html> for details
+Templates within bundles can be overridden by placing a twig file with the same name in `templates/bundles/<bundlename>`. If, for example, you want to customise the coordinates display (original source: *Resources/views/Element/coordinatesdisplay.html.twig* within the Mapbender CoreBundle, place a replacement file in *templates/bundles/MapbenderCoreBundle/Element/coordinatesdisplay.html.twig*. The new file will be used instead of the original one. See the [Symfony documentation](https://symfony.com/doc/5.4/bundles/override.html) for more details.
 
 #### Misc
 
@@ -101,12 +101,12 @@ Templates within bundles can be overridden by placing a twig file with the same 
 
 #### Added new parameter `mapbender.markup_cache.class`
 
-default: `Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache`.
+Default: `Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache`.
 FQCN of the *MarkupCache* class. Change if you want to customise the class that is responsible for caching the markup of frontend applications
 
 #### Added new parameter `mapbender.markup_cache.include_session_id`
 
-`default:`false`` The default markup cache caches an application based on application slug, locale, map engine code and element id that are visible to the user. This means however, that two people with the same rights will be delivdered the same markup. Usually that's fine, if however you display user-specific information, like their email address, in the frontend, set this new parameter to true to avoid them receiving the same markup. Note that for each user and application a file will be created on the server. Consider your application logic if you have a lot of users.
+`default:false`: The default markup cache caches an application based on application slug, locale, map engine code and element id that are visible to the user. This means however, that two people with the same rights will be delivdered the same markup. Usually that's fine, if however you display user-specific information, like their email address, in the frontend, set this new parameter to true to avoid them receiving the same markup. Note that for each user and application a file will be created on the server. Consider your application logic if you have a lot of users.
 
 ### [1468](https://github.com/mapbender/mapbender/pull/1468)
 
@@ -115,7 +115,7 @@ To greatly improve debugging experience in Mapbender, the generated js and css f
 Limitations:
 
 - does only work in local installations since the source files are not publicly exposed
-- works in chrome, not flawlessly in firefox though. The file protocol is weakly supported there
+- works in Chrome, not flawlessly in Firefox though. The file protocol is weakly supported there.
 
 ### [1461](https://github.com/mapbender/mapbender/pull/1461)
 
