@@ -241,8 +241,9 @@
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
             return {
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
-                layersetsDiff: diff.layersets,
-                sourcesDiff: diff.sources,
+                // Auskommentiert um in branch userlayersettings und viewparams zu trennen
+                // layersetsDiff: diff.layersets,
+                // sourcesDiff: diff.sources,
                 token: this.csrfToken,
             };
         },
@@ -401,9 +402,9 @@
         },
         _apply: function(diff) {
             var settings = this.mbMap.getModel().mergeSettings(this.referenceSettings, diff);
-
             this.mbMap.getModel().applyViewParams(diff.viewParams);
-            this.mbMap.getModel().applySettings(settings);
+            // Auskommentiert um in branch userlayersettings und viewparams zu trennen
+            //this.mbMap.getModel().applySettings(settings);
         },
         _flash: function($el, color) {
             $el.css({
