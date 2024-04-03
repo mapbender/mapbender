@@ -210,7 +210,6 @@ class RepositoryController extends ApplicationControllerBase
         ));
 
         $dummyForm = $this->createForm(FormType::class, null, array(
-            'method' => 'DELETE',
             'action' => $this->generateUrl('mapbender_manager_repository_delete', array(
                 'sourceId' => $sourceId,
             )),

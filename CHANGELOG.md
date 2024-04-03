@@ -9,6 +9,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
 * Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * Removed underscore.js. Some functions are replaced by native JS functions, some are replaced by Mapbender.Util functions ([PR#1514](https://github.com/mapbender/mapbender/pull/1514))
+* Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 
 Features:
 * PHP 8.2 is now fully supported.
@@ -17,6 +18,8 @@ Features:
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
+* New console command `mapbender:wms:assign` to add a wms source instance to an application ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
+* Modified command `mapbender:wms:show`: parameter id is now optional, if omitted all sources are shown; id can be replaced by origin url; added option `--json` for json output. ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * [Button] Allow customization of the icons available for selection in the button edit form. See PR description for details. ([PR#1518](https://github.com/mapbender/mapbender/pull/1518))
@@ -31,6 +34,7 @@ Bugfixes:
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * Dropdown Element can now handle two options with the same value ([PR#1557](https://github.com/mapbender/mapbender/pull/1557))
 * Wildcard translations added in elements now correctly use the fallback language if not defined in the target language ([PR#1559](https://github.com/mapbender/mapbender/pull/1559))
