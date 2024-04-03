@@ -21,14 +21,16 @@
             ]
         };
         var $modal = Mapbender.bootstrapModal(popupContent || defaultContent, popupOptions);
-        if ($('form > .modal-footer', $modal).length) {
+        const $form = $modal.find('form');
+        if ($form.length) {
             // This is actually a form that can be submitted.
             // Form submit, unlike jQuery / XMLHttpRequest-based Ajax, can follow redirects properly
             // This is useful for delete requests starting from an item view page, where on success, the
             // item is deleted, and the previous URL becomes a 404.
+            console.log('huiii');
             $('button.-js-confirm', $modal)
                 .removeClass('-js-confirm')
-                .attr('type', 'submit')
+                .one('click', () => $form[0].submit())
             ;
         }
         $modal.on('click', '.-js-confirm', function() {

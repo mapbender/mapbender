@@ -17,8 +17,8 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
             ->setName('mapbender:wms:reload:url')
             ->setDescription('Reloads a WMS source from given url')
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
-            ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
-            ->addOption('validate', null, InputOption::VALUE_NONE, 'Run xml schema validation (slow)')
+            ->addOption(self::OPTION_DEACTIVATE_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.')
+            ->addOption(self::OPTION_DESELECT_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deselected in existing instances. Deselected layers are not visible on the map by default, but appear in the layer tree and can be selected by users.')
         ;
         parent::configure();
     }
@@ -36,6 +36,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
             $em->persist($target);
             $em->flush();
             $em->commit();
+            $output->writeln("Updated source #$targetId");
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
