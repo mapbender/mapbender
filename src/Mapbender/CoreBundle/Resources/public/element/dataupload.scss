@@ -1,0 +1,30 @@
+.mb-element-dataupload {
+    .dropFileArea {
+        border: 3px dashed grey;
+        width: 100%;
+        height: 105px;
+        border-radius: 15px;
+    }
+    .highlight {
+        border: 3px dashed black;
+        color: black;
+    }
+    .unhighlight {
+        border: 3px dashed grey;
+        color: #333;
+    }
+    table .overflow {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 215px;
+        height: 1.2em;
+        white-space: nowrap;
+    }
+    table .text-end i {
+        cursor: pointer;
+        opacity: 0.65;
+    }
+    table .text-end i:hover {
+        opacity: 1;
+    }
+}
