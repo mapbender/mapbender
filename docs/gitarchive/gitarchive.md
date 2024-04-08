@@ -691,7 +691,7 @@ Some of the documented limitations and quirks of the external bundle have been r
 
 To enable WMTS and TMS source support, even with this branch integrated, two additional steps are required:
 
-1) The bundle must be added to the [application kernel's bundle registration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/AppKernel.php#L11), like so:
+- The bundle must be added to the [application kernel's bundle registration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/AppKernel.php#L11), like so:
 
 ```diff
 --- a/application/app/AppKernel.php
@@ -706,7 +706,7 @@ To enable WMTS and TMS source support, even with this branch integrated, two add
              new Mapbender\MobileBundle\MapbenderMobileBundle(),
 ```
 
-1) The bundle's controller namespace must be added to [the routing configuration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/config/routing.yml), like so:
+- The bundle's controller namespace must be added to [the routing configuration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/config/routing.yml), like so:
 
 ```diff
 --- a/application/app/config/routing.yml
@@ -723,6 +723,111 @@ To enable WMTS and TMS source support, even with this branch integrated, two add
      resource: "@MapbenderCoordinatesUtilityBundle/Controller/"
      type: annotation
 ```
+
+### [1110](https://github.com/mapbender/mapbender/pull/1110)
+
+Absorbs bundle iteration for Element classes into a new service.  
+
+Adds [a DI compiler entry point to completely replace an Element with another](https://github.com/mapbender/mapbender/blob/9ab9cabfa5dd8ba4c9ce5ddeb5431bf8fcb1e76b/src/Mapbender/CoreBundle/Component/ElementInventoryService.php#L51), thus allowing a project to turn all instances of the base Element into their customized versions automatically.  
+The same mechanism can also be used to mark Elements as ~"migrated somewhere else". The service comes with [a built-in curated list of such migrations](https://github.com/mapbender/mapbender/blob/9ab9cabfa5dd8ba4c9ce5ddeb5431bf8fcb1e76b/src/Mapbender/CoreBundle/Component/ElementInventoryService.php#L14).
+
+Adds [a separate DI compiler entry point to prevent creation of specific Element classes](https://github.com/mapbender/mapbender/blob/9ab9cabfa5dd8ba4c9ce5ddeb5431bf8fcb1e76b/src/Mapbender/CoreBundle/Component/ElementInventoryService.php#L76), thus supporting projects that wish to turn off a built-in Element completely, without having to hack any built-in bundle code.
+
+### [1108](https://github.com/mapbender/mapbender/pull/1108)
+
+Mapbender does now render marker layers in ImageExport or print.
+Supports blended marker layers (opacity << 1), icon offsets, arbitrary dpi scaling.  
+Does **not** support icon images located outside of `/bundles/`.
+
+### [1106](https://github.com/mapbender/mapbender/pull/1106)
+
+Ends edit mode when
+
+- deleting the currently edited feature; fixes #1040
+- deactivating (sidepane visibility off or popup closed)
+- adjusting layer z index (this was found to break the edit control's interactions)
+
+### [1101](https://github.com/mapbender/mapbender/pull/1101)
+
+#### Behavioral fixes
+
+Keeps the current selection rectangle across selection deactivation + reactivation.  
+Meaning, in "Dialog" mode, closing and reopening the dialog; in "Element" mode, cycling the "(De)Activate Print Frame" button.
+
+The selection rectangle owned by the PrintClient Element will fully reinitialize only if either
+
+1) the same Element hadn't created a selection rectangle before
+or
+2) a previous selection rectangle exists but would be completely off screen on the current main map view
+
+Full reinitialization means centering the rectangle around the current center of the main map view, and adopting the current map view's scale as the print selection scale, limited to the range of scales configured on the PrintClient Element.
+
+In all other cases the selection rectangle will retain its old center and its old scale. In "Element" mode, the scale can still be manually changed via dropdown while the selection rectangle is actually inactive and invisible. If you do that, the selection rectangle will reflect your manually updated scale once you activate it again.
+
+#### Technical fixes
+
+Removes JS errors when cycling printclient selection rectangle on / off "too fast" (=opening/closing the dialog in Dialog mode, clicking "(De)Activate Print Frame" in Element mode).  
+Reduces likelihood of JS errors when activating printclient selection rectangle "too early" by deferring layer + drag control initialization until feature display.  
+
+Synchronicity fixes around the `getTemplateSize` request.
+
+1) Prevent a print selection rectangle opened "too early" from being just a tiny dot. This happened because, before `getTemplateSize` comes back with the actual template dimensions, that's the "default" template site.
+2) Resolve issue where where "too fast" consecutive template changes didn't apply properly.
+
+Reduces total Ajax requests back to server.
+
+1) No longer requests template size when *closing* the print client dialog.
+2) Buffers already retrieved template sizes for the rest of the session.
+
+### [1100](https://github.com/mapbender/mapbender/pull/1100)
+
+Isolates legend handling in print into a separately DI-rewirable component, and introduces a bunch of related objects to ease further work.  
+
+Separates legend handling into three logical phases:
+
+- collecting all legends (fetch images + titles into LegendBlock objects)
+- rendering "first page" legends
+- rendering all unrendered legends onto spill pages
+
+LegendBlocks remember if they are already rendered, so phase 3 is actually the same as phase 2, except it is allowed to introduce page breaks.
+Having this separation allows a clean break after the first page, so other custom code (plugins etc) can freely add pages to the PDF before the legend rendering process resumes.
+
+### [1097](https://github.com/mapbender/mapbender/pull/1097)
+
+This change ties a knot between MapbenderContainerInfo and [the recent attempt at more uniform sidepane element control](https://github.com/mapbender/mapbender/blob/0e0506118f4cd7721c7b258c66a9aba3adc5d0fd/src/Mapbender/CoreBundle/Resources/public/init/element-sidepane.js). MCI instances are punched into the element node data if present, and provisions are made to invoke those callbacks, even though MCI itself no longer does any of this itself.
+
+The immediate benefit is that Element widgets relying on MapbenderContainerInfo now behave properly in a `buttons`-style sidepane. Most prominently, Digitizer now correctly switches itself on and off. This was previously only possible in an `accordion`-style sidepane.
+
+### [1096](https://github.com/mapbender/mapbender/pull/1096)
+
+The purpose of the Mapbender Button is to toggle Elements on and off. Doing this properly can be a complex task.
+
+Some Elements that have nothing at all to do with controlling other Elements are seen to inherit from Button in both the PHP and JavaScript worlds. Most commonly so they blend into the toolbar visually without trying to reinvent the markup for that, and to get the base functionality of a toggling highlight.
+
+Recent changes to the Button as a control device for other Elements have posed compatibility issues for those "I just want to look like a Button" non-controlling Elements.
+
+To resolve this conflict of goals, the Button JavaScript widget has been split, offering a plain, just-for-looks button under the old name mapbender.mbButton, while spinning off all functionality related to Element control into a new mapbender.mbControlButton.
+
+The decision which to initialize is based on inheritance:
+
+- If the Button is just the Button, it will be initialized as an mbControlButton
+- If the Button is a child class of the Button, it will be initialized as an mbButton
+
+> [!NOTE]
+> Of course, any PHP child class of the Button can override get getWidgetName method and thus overrule this logic. We expect most existing Button children already do this anyway.
+
+### [1095](https://github.com/mapbender/mapbender/pull/1095)
+
+This makes Buttons controlling other Elements work even if the backend `activate`/`deactivate` configuration is completely empty. The "correct" settings for these options can be [non-intuitive](https://github.com/mapbender/mapbender/issues/1050#issuecomment-463119829) and figuring that out is better left to [a piece of code](https://github.com/mapbender/mapbender/commit/d8be3b5dc64decfe752f054c45a99ceecda52ab4#diff-47bf66afd39ec612d69958ee81aafcb8R85).  
+
+> [!NOTE]
+> If there are any backend `activate` / `deactivate` settings they are respected insofar as they are the highest-priority picks of methods to use to control the target element *but only if* the target widget has such a method. This retains administrative control and the option to call entirely non-standard, randomly named methods.
+
+On the other hand, it auto-heals any erroneous configurations by finding something that works. So the straightforward approach of leaving those backend values completely empty, will now just work.
+
+One positive side effect is that the button highlighting machinery now works automatically as well. Highlighting hacks (assigning a button to a unique group, where no other buttons have the same group value) are no longer necessary.
+
+Because the highlighting machinery is generally coming back alive with these changes, logic has also been added to set an appropriate [initial highlight state for targets with `autoOpen` (or similar) options](https://github.com/mapbender/mapbender/pull/1095/commits/04b50b5b392106d817ca49847a365bb821769565#diff-47bf66afd39ec612d69958ee81aafcb8R173).
 
 [↑ Back to top](#git-archive)
 
