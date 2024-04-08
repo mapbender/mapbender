@@ -1,6 +1,8 @@
 fom:
   acl:
-    group_label: {  }
+    group_label:
+      anonymous: 'TRANSLATE: Anonymous users'
+      authenticated: 'TRANSLATE: All authenticated users'
   user:
     registration:
       email_body_html: '<p>Ciao %user_username%,</p><p> Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, clicca <a href="%url%">here</a>.</p>'

@@ -32,16 +32,24 @@ mb:
     popup_width: 'TRANSLATE: Dialog width'
     screentype:
       label: 'TRANSLATE: Screen type'
-      choice: {  }
+      choice:
+        all: 'TRANSLATE: Any'
+        mobile: 'TRANSLATE: Mobile'
+        desktop: 'TRANSLATE: Desktop'
     toolbar:
       alignment:
         label: 'TRANSLATE: Alignment'
-        choice: {  }
+        choice:
+          left: 'TRANSLATE: Left'
+          right: 'TRANSLATE: Right'
+          center: 'TRANSLATE: Center'
       generate_button_menu: 'TRANSLATE: Generate menu for buttons'
       menu_label: 'TRANSLATE: Menu label'
     visibility: 'TRANSLATE: Visibility'
     element:
-      screentype: {  }
+      screentype:
+        mobile: 'TRANSLATE: Show on mobile screens'
+        desktop: 'TRANSLATE: Show on desktop screens'
     sidepane:
       width: 'TRANSLATE: Width'
       resizable: 'TRANSLATE: Resizable'
@@ -49,9 +57,25 @@ mb:
       closed: 'TRANSLATE: Initially closed'
       align:
         label: 'TRANSLATE: Position'
-        choice: {  }
-    sourceinstance: {  }
-    application: {  }
+        choice:
+          left: 'TRANSLATE: Left'
+          right: 'TRANSLATE: Right'
+    sourceinstance:
+      embedded_in_applications: |
+        TRANSLATE: {count, plural,
+            =0    {This instance is not used in any application}
+            one   {This instance is used in one application}
+            other {This instance is used in # applications}
+        }
+      convert_to_reusable: 'TRANSLATE: Convert to shared instance'
+      convert_to_bound: 'TRANSLATE: Convert to bound instance'
+      converted_to_bound: 'TRANSLATE: A bound copy of the shared instance has been added to the application'
+      reusable_assigned_to_application: 'TRANSLATE: The shared instance has been added to the application'
+      create_reusable: 'TRANSLATE: Create shared instance'
+      created_reusable: 'TRANSLATE: A new shared instance has been created'
+    application:
+      persistentView: 'TRANSLATE: Persistent map state'
+      splashscreen: 'TRANSLATE: Show Splashscreen'
     admin:
       sources: Risorse
       csrf_token_invalid: 'TRANSLATE: Invalid CSRF token.'
@@ -88,7 +112,12 @@ mb:
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
         no_element_added: 'Nessun elemento aggiunto'
-        anchor: {  }
+        anchor:
+          label: 'TRANSLATE: Position'
+          left-top: 'TRANSLATE: Top left'
+          left-bottom: 'TRANSLATE: Bottom left'
+          right-top: 'TRANSLATE: Top right'
+          right-bottom: 'TRANSLATE: Bottom right'
       zoombar:
         draggable: Trascinabile
       overview:
@@ -215,10 +244,14 @@ mb:
           resolution:
             error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
     importjobtype:
-      admin: {  }
-  actions: {  }
+      admin:
+        importfile: 'TRANSLATE: Import file'
+  actions:
+    secureelement: 'TRANSLATE: Secure element'
   wms:
     wmsloader:
       repo:
         instance:
-          label: {  }
+          label:
+            title: 'TRANSLATE: Title'
+            opacity: 'TRANSLATE: Opacity'

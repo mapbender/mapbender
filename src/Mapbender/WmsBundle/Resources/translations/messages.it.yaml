@@ -160,7 +160,8 @@ mb:
         useconditions:
           title: 'TRANSLATE: Terms of use'
           _title: 'Condizioni d''uso'
-      popup: {  }
+      popup:
+        title: 'TRANSLATE: Meta data'
     repo:
       instance:
         label:
@@ -173,13 +174,31 @@ mb:
       no_dimension: 'nessuna dimensione'
   core:
     dimensionset:
-      admin: {  }
+      admin:
+        title: 'TRANSLATE: Title'
+        group: 'TRANSLATE: Group'
+        extent: 'TRANSLATE: Extent'
     dimensionshandler:
-      admin: {  }
+      admin:
+        tooltip: 'TRANSLATE: Tooltip'
+        dimensionsets: 'TRANSLATE: Dimensionsets'
     wmsloader:
-      admin: {  }
-      onlineresource: {  }
-      legendurltype: {  }
-      vendorspecifictype: {  }
+      admin:
+        defaultformat: 'TRANSLATE: Default format'
+        defaultinfoformat: 'TRANSLATE: Default info format'
+      onlineresource:
+        format: 'TRANSLATE: Format'
+        href: 'TRANSLATE: href'
+      legendurltype:
+        width: 'TRANSLATE: Width'
+        height: 'TRANSLATE: Height'
+        onlineresource: 'TRANSLATE: Online resource'
+      vendorspecifictype:
+        hidden: 'TRANSLATE: Hidden'
+        setdefaults: 'TRANSLATE: Set defaults'
     vendorspecifictype:
-      admin: {  }
+      admin:
+        vstype: 'TRANSLATE: Parameter type'
+        name: 'TRANSLATE: Name'
+        default: 'TRANSLATE: Default value'
+        hidden: 'TRANSLATE: Hidden'
