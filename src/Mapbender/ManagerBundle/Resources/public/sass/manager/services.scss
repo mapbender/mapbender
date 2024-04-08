@@ -98,6 +98,11 @@
   td.itemType, .checkboxColumn {
     width: 1%;    // Contract as far as possible
   }
+  td {
+    .minScale, .maxScale {
+      width: 90px;
+    }
+  }
   .form-check-input {
       text-align: center;
       float: none;

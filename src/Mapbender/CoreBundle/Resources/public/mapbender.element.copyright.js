@@ -28,7 +28,7 @@
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.accept'),
-                            cssClass: 'button popupClose'
+                            cssClass: 'btn btn-sm btn-primary popupClose'
                         }
                     ]
                 });

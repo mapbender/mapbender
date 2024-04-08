@@ -286,7 +286,7 @@
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'button popupClose'
+                        cssClass: 'btn btn-sm btn-success popupClose'
                     }
                 ]
             };

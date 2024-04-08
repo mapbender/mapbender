@@ -76,7 +76,6 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
         return array(
             "autoOpen" => false,
             "showBaseSource" => true,
-            "hideSelect" => false,
             "hideInfo" => false,
             "menu" => array(),
             "useTheme" => false,

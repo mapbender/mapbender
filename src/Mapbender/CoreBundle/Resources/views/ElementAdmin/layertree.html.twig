@@ -8,10 +8,7 @@
     {%- if form.configuration.target is defined -%}{{- form_row(form.configuration.target) -}}{%- endif -%}
     {{ form_row(form.configuration.menu) }}
     <div class="mb-3">
-        {{ form_widget(form.configuration.hideSelect, {'label_attr': {'class': 'checkbox-inline'}}) }}
         {{ form_widget(form.configuration.hideInfo, {'label_attr': {'class': 'checkbox-inline'}}) }}
-    </div>
-    <div class="mb-3">
         {{ form_widget(form.configuration.useTheme, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
     {% if form.configuration.themes is defined %}

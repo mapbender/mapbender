@@ -52,6 +52,8 @@ mb:
         desktop: 'Show on desktop screens'
     sidepane:
       width: Width
+      resizable: Resizable
+      resizable_help: 'If checked, the user can resize the sidebar by dragging on its right edge. If you want to constrain the min/max width, use custom css (min-width/max-width on .sidePane.resizable).'
       closed: 'Initially closed'
       align:
         label: Position

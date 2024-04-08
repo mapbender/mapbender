@@ -356,7 +356,6 @@ mb:
             useTheme: Показати тему
             label: назва теми
           hidenottoggleable: Приховати папки, що не перемикаються
-          hideselect: Приховати видимість за папками
           hideinfo: Приховати інформацію
       template:
         sidepane:

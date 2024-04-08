@@ -35,10 +35,6 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
             ))
-            ->add('hideSelect', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
-                'required' => false,
-                'label' => 'mb.core.admin.layertree.label.hideselect',
-            ))
             ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.menu',

@@ -302,7 +302,6 @@ mb:
             useTheme: Показать рубрики
             label: Рубрика
           hidenottoggleable: Скрыть не переключаемые папки
-          hideselect: Скрыть видимость у папок
           hideinfo: Скрыть информацию
       template:
         sidepane:

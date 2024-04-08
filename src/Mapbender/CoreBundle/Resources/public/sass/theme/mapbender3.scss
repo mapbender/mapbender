@@ -231,6 +231,30 @@ ul.toolBar, .toolBar > ul {
     }
   }
 }
+
+.sidePane.resizable {
+    touch-action: pan-y;
+}
+
+.sidePane.resizable::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    cursor: ew-resize;
+}
+
+.sidePane.left.resizable::after {
+    border-left: 1px solid #ccc;
+    right: 0;
+}
+
+.sidePane.right.resizable::after {
+    border-right: 1px solid #ccc;
+    left: 0;
+}
+
 .metadataDialog{
   .popupContent {
     height: 100%;
@@ -267,6 +291,9 @@ ul.toolBar, .toolBar > ul {
     tbody th {
       font-weight: 600;
     }
+  }
+  td {
+    overflow-wrap: anywhere;
   }
 }
 

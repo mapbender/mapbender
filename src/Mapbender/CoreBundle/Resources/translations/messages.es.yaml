@@ -505,7 +505,6 @@ mb:
             useTheme: 'Mostrar tema'
             label: 'Nombre del tema'
           hidenottoggleable: 'Ocultar carpetas que no se pueden expandir'
-          hideselect: 'Ocultar la visibilidad de las carpetas'
           hideinfo: 'Ocultar información'
           menu: Menú
       template:

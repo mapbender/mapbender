@@ -4,6 +4,8 @@ namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType;
+use Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 /**
@@ -88,7 +90,7 @@ class Fullscreen extends Template
                 );
             case 'js':
                 return array(
-                    '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
+                    '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
                 );
             case 'trans':
@@ -123,10 +125,10 @@ class Fullscreen extends Template
     {
         switch ($regionName) {
             case 'sidepane':
-                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\SidepaneSettingsType';
+                return SidepaneSettingsType::class;
             case 'toolbar':
             case 'footer':
-                return 'Mapbender\CoreBundle\Form\Type\Template\Fullscreen\ToolbarSettingsType';
+                return ToolbarSettingsType::class;
             default:
                 return null;
         }
@@ -146,6 +148,7 @@ class Fullscreen extends Template
                     'name' => 'accordion',
                     'align' => 'left',
                     'closed' => false,
+                    'resizable' => true,
                 );
             default:
                 return parent::getRegionPropertiesDefaults($regionName);

@@ -58,7 +58,7 @@
             this._toggleEnabled(true);
         },
         _toggleEnabled: function(enabled) {
-            $('.-fn-save-new', this.element.prop('disabled', !enabled));
+            $('.-fn-save-new', this.element).prop('disabled', !enabled);
             $('.-js-viewmanager-new-name', this.element).prop('disabled', !enabled);
         },
         open: function(callback) {
