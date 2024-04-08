@@ -6,10 +6,10 @@ mb:
           ok: Экспорт
           cancel: Отменить
       info:
-        noactivelayer: Нет активного слоя!
+        noactivelayer: 'Нет активного слоя!'
       chooseformat: Формат
       class:
-        title: Экспорт изображения
+        title: 'Экспорт изображения'
         description: |
           Позволяет экспортировать текущее отображение карты.
           Доступны PNG и JPEG форматы.
@@ -18,3 +18,58 @@ mb:
         export: Экспорт
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: 'TRANSLATE: Job settings'
+        joblist: 'TRANSLATE: Recent jobs'
+      joblist:
+        header:
+          id: 'TRANSLATE: #'
+          ctime: 'TRANSLATE: created'
+          status: 'TRANSLATE: status'
+        status:
+          pending: 'TRANSLATE: waiting'
+          processing: 'TRANSLATE: processing'
+          finished: 'TRANSLATE: finished'
+        open: 'TRANSLATE: open'
+        delete: 'TRANSLATE: delete'
+        cancel: 'TRANSLATE: Cancel'
+        nodata: 'TRANSLATE: no data'
+        loading: 'TRANSLATE: loading'
+    admin:
+      printclient:
+        renderMode:
+          label: 'TRANSLATE: Mode'
+          choice:
+            direct: 'TRANSLATE: direct'
+            queued: 'TRANSLATE: queued'
+        queueAccess:
+          label: 'TRANSLATE: Job queue'
+          choice:
+            global: 'TRANSLATE: global'
+            private: 'TRANSLATE: private'
+  core:
+    printclient:
+      admin:
+        scales: 'TRANSLATE: Scales (comma-separated)'
+        fileprefix: 'TRANSLATE: File prefix'
+        optionalfields: 'TRANSLATE: Optional fields'
+        replacepattern: 'TRANSLATE: Replace pattern'
+        templates: 'TRANSLATE: Templates'
+        qualitylevels: 'TRANSLATE: Quality levels'
+      label:
+        quality: 'TRANSLATE: Quality'
+      class:
+        title: 'TRANSLATE: Print'
+    printclienttemplate:
+      admin:
+        template: 'TRANSLATE: Template'
+        label: 'TRANSLATE: Label'
+    printclientquality:
+      admin:
+        label: 'TRANSLATE: Label'
+    admin:
+      printclient:
+        label:
+          qualitylevels: 'TRANSLATE: Quality levels'
+          templates: 'TRANSLATE: Templates'

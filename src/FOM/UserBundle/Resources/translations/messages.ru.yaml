@@ -1,137 +1,145 @@
 fom:
+  acl:
+    group_label:
+      anonymous: 'TRANSLATE: Anonymous users'
+      authenticated: 'TRANSLATE: All authenticated users'
   user:
     registration:
-      email_body_html: <p>Здравствуй %user_username%,</p><p>вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, нажмите <a href="%url%">здесь</a>.</p>
+      email_body_html: '<p>Здравствуй %user_username%,</p><p>вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, нажмите <a href="%url%">здесь</a>.</p>'
       done:
         title: Регистрация
-        congratulations: Поздравляем, регистрация прошла успешно!
-        account_activated: Ваш аккаунт успешно активирован и готов к использованию.
-        back_to_login: Вернуться на страницу входа
+        congratulations: 'Поздравляем, регистрация прошла успешно!'
+        account_activated: 'Ваш аккаунт успешно активирован и готов к использованию.'
+        back_to_login: 'Вернуться на страницу входа'
       form:
         title: Регистрация
-        choose_password: Выберите пароль
-        confirm_password: Подтвердите Пароль
+        choose_password: 'Выберите пароль'
+        confirm_password: 'Подтвердите Пароль'
         email: E-mail
-        back_to_login: Вернуться на страницу входа
+        back_to_login: 'Вернуться на страницу входа'
         register: Регистрация
-      email_subject: Ваша регистрация
+      email_subject: 'Ваша регистрация'
       send:
         title: Регистрация
-        account_created: Ваш аккаунт был создан. E-mail с кодом активации и ссылкой отправлен на указанный Вами адрес.
-        back_to_login: Вернуться на страницу входа
-      email_body_text: Здравствуй %user_username%, вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, откройте в вашем браузере ссылку %url%.
+        account_created: 'Ваш аккаунт был создан. E-mail с кодом активации и ссылкой отправлен на указанный Вами адрес.'
+        back_to_login: 'Вернуться на страницу входа'
+      email_body_text: 'Здравствуй %user_username%, вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, откройте в вашем браузере ссылку %url%.'
     group:
       index:
         groups: Группы
-        add_new_group: Добавить новую группу
+        add_new_group: 'Добавить новую группу'
         title: Название
         description: Описание
-        edit_group: Изменить группу
-        delete_group: Удалить группу
-        no_groups_available: Нет доступных групп.
+        edit_group: 'Изменить группу'
+        delete_group: 'Удалить группу'
+        no_groups_available: 'Нет доступных групп.'
       form:
-        edit_group: Изменить группу
-        new_group: Новая группа
+        edit_group: 'Изменить группу'
+        new_group: 'Новая группа'
       container:
-        base_data: Базовые данные
+        base_data: 'Базовые данные'
         users: Пользователи
         users_of_selected: 'Пользователей выбрано: %users_count%'
-        no_user_exists: Нет пользователя.
+        no_user_exists: 'Нет пользователя.'
     login:
       error_tockenexp:
-        title: Восстановление Пароля
+        title: 'Восстановление Пароля'
         sorry: Извените!
-        registration_token_expired: К сожалению временный период подтверждения Вашей регистрации истёк, попробуйте запросить новый регистрационный токен.
-        request_new_token: Запросить новый токен
-        back_to_login: Вернуться на страницу входа
+        registration_token_expired: 'К сожалению временный период подтверждения Вашей регистрации истёк, попробуйте запросить новый регистрационный токен.'
+        request_new_token: 'Запросить новый токен'
+        back_to_login: 'Вернуться на страницу входа'
       login:
         title: Войти
         username: Имя
         password: Пароль
         register: Регистрация
-        forgot_password: Забыли пароль
+        forgot_password: 'Забыли пароль'
         login: Войти
       error_notocken:
-        password_reset: Восстановление пароля
+        password_reset: 'Восстановление пароля'
         sorry: Извините!
-        no_such_tocken: Токен не верный. Если вы полагаете, что произошла ошибка, пожалуйста, свяжитесь с администратором приложения.
-        contact: Связаться с администратором
-        back_to_login: Вернуться на страницу входа
+        no_such_tocken: 'Токен не верный. Если вы полагаете, что произошла ошибка, пожалуйста, свяжитесь с администратором приложения.'
+        contact: 'Связаться с администратором'
+        back_to_login: 'Вернуться на страницу входа'
     user:
       index:
         title: Пользователи
-        add_new_user: Добавить нового пользователя
+        add_new_user: 'Добавить нового пользователя'
         name: Имя
         email: E-Mail
         groups: Группы
-        edit_user: Редактирование пользователя
-        contact_user: Связаться с пользователем по электронной почте
-        edit_group: Изменить группу
-        delete_user: Удалить пользователя
-        no_users_available: Нет доступных пользователей.
+        edit_user: 'Редактирование пользователя'
+        contact_user: 'Связаться с пользователем по электронной почте'
+        edit_group: 'Изменить группу'
+        delete_user: 'Удалить пользователя'
+        no_users_available: 'Нет доступных пользователей.'
       form:
-        edit_user: Редактировать пользователя
-        new_user: Новый Пользователь
+        edit_user: 'Редактировать пользователя'
+        new_user: 'Новый Пользователь'
       container:
-        base_data: Базовые данные
+        base_data: 'Базовые данные'
         profile: Профиль
         groups: Группы
         security: Безопасность
-        choose_password: Выберите пароль
-        confirm_password: Подтвердите пароль
+        choose_password: 'Выберите пароль'
+        confirm_password: 'Подтвердите пароль'
         name: Имя
-        users_of_selected: groups of %users_count% selected
-        no_groups_defined: Нет групп
-        username: Имя пользователя
+        users_of_selected: 'groups of %users_count% selected'
+        no_groups_defined: 'Нет групп'
+        username: 'Имя пользователя'
         description: Описание
         activated: активирован
     acl:
       index:
-        access_control_lists: Глобальные списки контроля доступа
+        access_control_lists: 'Глобальные списки контроля доступа'
         name: Имя
         class: Класс
         edit: Редактировать
-      required: Обязательные поля помечены темными метками, а необязательные светлым цветом.
+      required: 'Обязательные поля помечены темными метками, а необязательные светлым цветом.'
       edit:
-        edit_class_acl: Редактировать класса ACL для %name%
+        edit_class_acl: 'Редактировать класса ACL для %name%'
       groups_users:
         name: Имя
-        no_goups_users: Нет групп и пользователей.
+        no_goups_users: 'Нет групп и пользователей.'
     password:
-      email_body_html: "\n          <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.\n          <br/>Нажмите, пожалуйста, <a href=\"%url%\">сюда</a>.\n        "
+      email_body_html: |2-
+
+                  <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.
+                  <br/>Нажмите, пожалуйста, <a href="%url%">сюда</a>.
+                
       done:
-        password_reset: Восстановление пароля
+        password_reset: 'Восстановление пароля'
         congratulations: Поздравляем!
-        password_been_reset: Ваш пароль был успешно восстановлен.
-        back_to_login: Вернуться на страницу входа
+        password_been_reset: 'Ваш пароль был успешно восстановлен.'
+        back_to_login: 'Вернуться на страницу входа'
       reset:
-        title: Восстановление пароля
-        btn: Восстановление пароля
+        title: 'Восстановление пароля'
+        btn: 'Восстановление пароля'
       form:
-        message: Для восстановления пароля, пожалуйста, введите Ваше имя пользователя или адрес электронной почты.
-        title: Забыли пароль
-        username_email: Имя пользователя или адрес электронной почты
-        back_to_login: Вернуться на страницу входа
-        require_password: Требуется пароль
-      email_subject: Забыли пароль
+        message: 'Для восстановления пароля, пожалуйста, введите Ваше имя пользователя или адрес электронной почты.'
+        title: 'Забыли пароль'
+        username_email: 'Имя пользователя или адрес электронной почты'
+        back_to_login: 'Вернуться на страницу входа'
+        require_password: 'Требуется пароль'
+      email_subject: 'Забыли пароль'
       send:
-        title: Восстановление пароля
-        email_been_sent: E-mail сброса пароля был отправлен на указанный Вами адрес.
-        back_to_login: Вернуться на страницу входа
-      email_body_text: Здравствуйте %user_username%, Вы запросили новый пароль. Откройте в браузере ссылку "%url%".
+        title: 'Восстановление пароля'
+        email_been_sent: 'E-mail сброса пароля был отправлен на указанный Вами адрес.'
+        back_to_login: 'Вернуться на страницу входа'
+      email_body_text: 'Здравствуйте %user_username%, Вы запросили новый пароль. Откройте в браузере ссылку "%url%".'
     userbundle:
-      user_control: Контроль пользователя
+      user_control: 'Контроль пользователя'
       users: Пользователи
-      new_user: Новый пользователь
+      new_user: 'Новый пользователь'
       groups: Группы
-      new_group: Новая группа
+      new_group: 'Новая группа'
       classes:
         acls: ACLs
         users: Пользователи
         groups: Группы
       roles:
-        super_admin: Может управлять всем (супер-администратор)
-        user_admin: Может управлять пользователями и группами
+        super_admin: 'Может управлять всем (супер-администратор)'
+        user_admin: 'Может управлять пользователями и группами'
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
@@ -143,6 +151,6 @@ form:
       organizationName: Организация
       organizationRole: должность
       street: Улица
-      zipCode: Почтовый индекс
+      zipCode: 'Почтовый индекс'
       city: Город
       country: Страна
