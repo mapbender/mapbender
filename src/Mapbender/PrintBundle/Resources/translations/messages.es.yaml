@@ -6,13 +6,68 @@ mb:
           ok: Exportar
           cancel: Cancelar
       info:
-        noactivelayer: No hay capa activa!
-      chooseformat: Escoger formato para exportar
+        noactivelayer: 'No hay capa activa!'
+      chooseformat: 'Escoger formato para exportar'
       class:
-        title: Exportar imagen
-        description: Exportar imagen le permite exportar la vista actual del mapa. Puede escoger formato png o jpeg.
+        title: 'Exportar imagen'
+        description: 'Exportar imagen permite exportar la vista actual del mapa. Puede escoger formato png o jpeg.'
       tag:
         image: imagen
         export: exportar
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: Configuración
+        joblist: 'Tareas de impresión recientes'
+      joblist:
+        header:
+          id: '#'
+          ctime: Creado
+          status: Estado
+        status:
+          pending: 'En espera'
+          processing: Procesando
+          finished: Terminado
+        open: Abrir
+        delete: Eliminar
+        cancel: Cancelar
+        nodata: 'No hay datos'
+        loading: Cargando
+    admin:
+      printclient:
+        renderMode:
+          label: Modo
+          choice:
+            direct: Directo
+            queued: 'En cola'
+        queueAccess:
+          label: 'Cola de tareas'
+          choice:
+            global: Global
+            private: Privado
+  core:
+    printclient:
+      admin:
+        scales: 'Escalas (separadas por comas)'
+        fileprefix: 'Prefijo del archivo'
+        optionalfields: 'Campos opcionales'
+        replacepattern: 'Sustituir plantilla'
+        templates: Modelos
+        qualitylevels: 'Niveles de calidad'
+      label:
+        quality: Calidad
+      class:
+        title: Imprimir
+    printclienttemplate:
+      admin:
+        template: Plantillas
+        label: Etiqueta
+    printclientquality:
+      admin:
+        label: Etiqueta
+    admin:
+      printclient:
+        label:
+          qualitylevels: 'Niveles de calidad'
+          templates: Plantillas
