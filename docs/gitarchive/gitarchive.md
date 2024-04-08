@@ -743,7 +743,7 @@ Does **not** support icon images located outside of `/bundles/`.
 
 Ends edit mode when
 
-- deleting the currently edited feature; fixes #1040
+- deleting the currently edited feature; fixes [Issue #1040](https://github.com/mapbender/mapbender/issues/1040)
 - deactivating (sidepane visibility off or popup closed)
 - adjusting layer z index (this was found to break the edit control's interactions)
 
@@ -752,21 +752,20 @@ Ends edit mode when
 #### Behavioral fixes
 
 Keeps the current selection rectangle across selection deactivation + reactivation.  
-Meaning, in "Dialog" mode, closing and reopening the dialog; in "Element" mode, cycling the "(De)Activate Print Frame" button.
+Meaning, in *Dialog* mode, closing and reopening the dialog; in *Element* mode, cycling the `(De)Activate Print Frame` button.
 
 The selection rectangle owned by the PrintClient Element will fully reinitialize only if either
 
-1) the same Element hadn't created a selection rectangle before
-or
+1) the same Element hadn't created a selection rectangle before, or
 2) a previous selection rectangle exists but would be completely off screen on the current main map view
 
 Full reinitialization means centering the rectangle around the current center of the main map view, and adopting the current map view's scale as the print selection scale, limited to the range of scales configured on the PrintClient Element.
 
-In all other cases the selection rectangle will retain its old center and its old scale. In "Element" mode, the scale can still be manually changed via dropdown while the selection rectangle is actually inactive and invisible. If you do that, the selection rectangle will reflect your manually updated scale once you activate it again.
+In all other cases the selection rectangle will retain its old center and its old scale. In *Element* mode, the scale can still be manually changed via dropdown while the selection rectangle is actually inactive and invisible. If you do that, the selection rectangle will reflect your manually updated scale once you activate it again.
 
 #### Technical fixes
 
-Removes JS errors when cycling printclient selection rectangle on / off "too fast" (=opening/closing the dialog in Dialog mode, clicking "(De)Activate Print Frame" in Element mode).  
+Removes JS errors when cycling printclient selection rectangle on / off "too fast" (=opening/closing the dialog in Dialog mode, clicking `(De)Activate Print Frame` in Element mode).  
 Reduces likelihood of JS errors when activating printclient selection rectangle "too early" by deferring layer + drag control initialization until feature display.  
 
 Synchronicity fixes around the `getTemplateSize` request.
@@ -796,7 +795,7 @@ Having this separation allows a clean break after the first page, so other custo
 
 This change ties a knot between MapbenderContainerInfo and [the recent attempt at more uniform sidepane element control](https://github.com/mapbender/mapbender/blob/0e0506118f4cd7721c7b258c66a9aba3adc5d0fd/src/Mapbender/CoreBundle/Resources/public/init/element-sidepane.js). MCI instances are punched into the element node data if present, and provisions are made to invoke those callbacks, even though MCI itself no longer does any of this itself.
 
-The immediate benefit is that Element widgets relying on MapbenderContainerInfo now behave properly in a `buttons`-style sidepane. Most prominently, Digitizer now correctly switches itself on and off. This was previously only possible in an `accordion`-style sidepane.
+The immediate benefit is that Element widgets relying on MapbenderContainerInfo now behave properly in a `Buttons`-style sidepane. Most prominently, Digitizer now correctly switches itself on and off. This was previously only possible in an `Accordion`-style sidepane.
 
 ### [1096](https://github.com/mapbender/mapbender/pull/1096)
 
@@ -821,7 +820,7 @@ The decision which to initialize is based on inheritance:
 This makes Buttons controlling other Elements work even if the backend `activate`/`deactivate` configuration is completely empty. The "correct" settings for these options can be [non-intuitive](https://github.com/mapbender/mapbender/issues/1050#issuecomment-463119829) and figuring that out is better left to [a piece of code](https://github.com/mapbender/mapbender/commit/d8be3b5dc64decfe752f054c45a99ceecda52ab4#diff-47bf66afd39ec612d69958ee81aafcb8R85).  
 
 > [!NOTE]
-> If there are any backend `activate` / `deactivate` settings they are respected insofar as they are the highest-priority picks of methods to use to control the target element *but only if* the target widget has such a method. This retains administrative control and the option to call entirely non-standard, randomly named methods.
+> If there are any backend `activate`/`deactivate` settings they are respected insofar as they are the highest-priority picks of methods to use to control the target element *but only if* the target widget has such a method. This retains administrative control and the option to call entirely non-standard, randomly named methods.
 
 On the other hand, it auto-heals any erroneous configurations by finding something that works. So the straightforward approach of leaving those backend values completely empty, will now just work.
 
