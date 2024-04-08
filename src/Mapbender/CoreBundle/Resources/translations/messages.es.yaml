@@ -161,6 +161,7 @@ mb:
         body: Cuerpo
         gps: GPS
         placeholder: 'Por favor, echa un vistazo a este POI'
+      accept: 'Crear enlace'
     basesourceswitcher:
       error:
         sourcenotavailable: 'La fuente con ID %id% no está habilitada'

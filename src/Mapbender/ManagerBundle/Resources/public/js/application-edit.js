@@ -137,7 +137,7 @@ $(function() {
             buttons: (extraButtons || []).slice().concat([
                 {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
-                    cssClass: 'btn btn-success btn-sm',
+                    cssClass: 'btn btn-primary btn-sm',
                     callback: function() {
                         elementFormSubmit(this.$element, formUrl)
                             .then(function(data) {
@@ -238,7 +238,7 @@ $(function() {
                 startEditElement($(this).attr('href'), editStrings, [
                     {
                         label: Mapbender.trans('mb.actions.back'),
-                        cssClass: 'btn btn-warning btn-sm pull-left',
+                        cssClass: 'btn btn-light btn-sm pull-left',
                         callback: function(e) {
                             if (confirmDiscard.call(e.target, e)) {
                                 $(this).closest('.modal').modal('hide');
@@ -297,7 +297,7 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans(confirmText),
-                        cssClass: 'btn btn-success btn-sm',
+                        cssClass: 'btn btn-primary btn-sm',
                         type: 'submit',
                         callback: function() {
                             $("form", $modal).submit();

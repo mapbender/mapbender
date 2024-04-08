@@ -5,6 +5,7 @@ mb:
         btn:
           ok: Exportieren
           cancel: Abbrechen
+          close: Schließen
       info:
         noactivelayer: 'Keine aktive Ebene!'
       chooseformat: 'Exportformat auswählen'
