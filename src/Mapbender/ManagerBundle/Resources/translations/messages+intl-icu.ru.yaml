@@ -62,10 +62,10 @@ mb:
           right: 'TRANSLATE: Right'
     sourceinstance:
       embedded_in_applications: |
-        TRANSLATE: {count, plural,
-            =0    {This instance is not used in any application}
-            one   {This instance is used in one application}
-            other {This instance is used in # applications}
+        {count, plural,
+            =0    {TRANSLATE: This instance is not used in any application}
+            one   {TRANSLATE: This instance is used in one application}
+            other {TRANSLATE: This instance is used in # applications}
         }
       convert_to_reusable: 'TRANSLATE: Convert to shared instance'
       convert_to_bound: 'TRANSLATE: Convert to bound instance'
