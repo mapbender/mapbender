@@ -44,6 +44,7 @@ Other:
 * [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
+* Revision of the Italian translation ([PR#1561](https://github.com/mapbender/mapbender/pull/1561))
 
 
 ## v3.3.5
