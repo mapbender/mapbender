@@ -11,7 +11,7 @@ mb:
         tilematrixset:
           label:
             identifier: 'TRANSLATE: Identifier'
-            supportedcrs: 'TRANSLATE: 'Supported CRS''
+            supportedcrs: 'TRANSLATE: Supported CRS'
             title: 'TRANSLATE: Title'
             abstract: 'TRANSLATE: Abstract'
           matrixes: 'TRANSLATE: Matrices'
