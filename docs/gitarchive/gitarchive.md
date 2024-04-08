@@ -235,7 +235,7 @@ Finally, if a currently undefined template class is loaded from the application 
 
 ### [1393](https://github.com/mapbender/mapbender/pull/1393)
 
-Adds a new frontend Template method `getSassVariablesAssets` to simplify customization of colors / fonts etc in project specific templates.
+Adds a new frontend Template method `getSassVariablesAssets` to simplify customization of colors/fonts etc in project specific templates.
 
 Replaces Sass-level `@import` of the files defining these variables.
 
@@ -280,7 +280,7 @@ This pull adds new infrastructure to allow writing Elements that will work on Sy
 
 Conformant Element classes must implement Mapbender\Component\Element\ElementServiceInterface (alternatively extend Mapbender\Component\Element\AbstractElementService, which implements the interface already).
 
-Conformant Element classes must be registered as a service and tagged with `mapbender.element`. Use [standard Symfony DI](https://symfony.com/doc/4.4/service_container.html#service-parameters) to pass services / global configuration parameters into the constructor. E.g.:
+Conformant Element classes must be registered as a service and tagged with `mapbender.element`. Use [standard Symfony DI](https://symfony.com/doc/4.4/service_container.html#service-parameters) to pass services/global configuration parameters into the constructor. E.g.:
 
 ```xml
         <service id="mapbender.element.main_map" class="Mapbender\CoreBundle\Element\Map">
@@ -301,12 +301,12 @@ Element services retain some of the static API from legacy Component\Element. Na
 
 Non-static method `getWidgetName` now receives the Element entity as the first argument (same name).
 
-Non-static method `getRequiredAssets` (renamed for clarity / signature sanity) receives the Element entity as the first argument, and functionally replaces both Component\Element::getAssets and (super legacy) static listAssets.
+Non-static method `getRequiredAssets` (renamed for clarity/signature sanity) receives the Element entity as the first argument, and functionally replaces both Component\Element::getAssets and (super legacy) static listAssets.
 
 > [!NOTE]
 > Service-type elements do not support legacy automatic bundle name amending ('file.js' => '@MagicallyInflectedBundle/Resources/public/file.js') for their asset requirements. References to required assets must be returned in properly qualified form. Magic bundle scope inflection of assets has been deprecated since Mapbender v3.0.8-beta1.
 
-Non-static method `getClientConfiguration` (renamed for clarity / signature sanity) receives the Element entity as the first argument, and functionally replaces Component\Element::getPublicConfiguration
+Non-static method `getClientConfiguration` (renamed for clarity/signature sanity) receives the Element entity as the first argument, and functionally replaces Component\Element::getPublicConfiguration
 
 Non-static method `getView` receives the Element entity as the first argument, and must return either a StaticView ([empty or trivially prerendered content](https://github.com/mapbender/mapbender/pull/1368/commits/b394d233d03b8c770e5a66268845d38feadcb401#diff-1e17ace4a0eefe8ede2f71066a44444dec3fcaf3ad85d43a8d889a354dc9ad9bR77)) *or* a TemplateView, *or* a falsy PHP value. This functionally replaces Component\Element's `getFrontendTemplatePath`, `getFrontendTemplateVars` and `render` methods.
 
@@ -316,7 +316,7 @@ There are no longer any "utility methods" (getTitle, getId, getEntity, getConfig
 
 Service-type Elements are rendered by the system, according to what they return from `getView`. Accessing the (twig) templating engine from inside the Element implementation is discouraged.
 
-Service-type Element frontend templates *should* drop wrapping `<div id="..." class="mb-element ..." ...` tags. The outer tag is generated as appropriate for the enclosing region. E.g. `<li id="..." class="mb-element toolBarItem">` is generated in footers / headers; divs elsewhere.
+Service-type Element frontend templates *should* drop wrapping `<div id="..." class="mb-element ..." ...` tags. The outer tag is generated as appropriate for the enclosing region. E.g. `<li id="..." class="mb-element toolBarItem">` is generated in footers/headers; divs elsewhere.
 ElementView has a public `$attributes` array property that *should* be used to add any additional required attributes (e.g. `title` for tooltips, `class` to tie in extra CSS rules).  
 
 > [!NOTE]
@@ -324,11 +324,11 @@ ElementView has a public `$attributes` array property that *should* be used to a
 
 There is no longer any predetermined set of variables injected into templates. Any variables required to render the Element markup via (twig) template must be explicitly placed into the TemplateView's `$variables` (public array property).
 
-The `getView` method *may* return false to suppress frontend markup entirely. This is useful for Elements that, after dynamically inspecting configuration / Application circumstances, cannot reasonably function and should not render at all (e.g. control buttons with disabled target Elements; ViewManager with grants settings that disallow any interaction for the current user).
+The `getView` method *may* return false to suppress frontend markup entirely. This is useful for Elements that, after dynamically inspecting configuration/Application circumstances, cannot reasonably function and should not render at all (e.g. control buttons with disabled target Elements; ViewManager with grants settings that disallow any interaction for the current user).
 
 #### Http handling changes
 
-Http request handling is frequently the most complex part of any Element, with many service / parameter dependencies. To reduce common initialization overhead, http handling is now inflected via the `getHttpHandler` method. `getHttpHandler` should return the (DI'ed) http handling service or a falsy PHP value if no requests are handled.
+Http request handling is frequently the most complex part of any Element, with many service/parameter dependencies. To reduce common initialization overhead, http handling is now inflected via the `getHttpHandler` method. `getHttpHandler` should return the (DI'ed) http handling service or a falsy PHP value if no requests are handled.
 
 The handler must implement `ElementHttpHandlerInterface`, requiring a `handleRequest` method. `handleRequest` receives the Element entity and the (Symfony) Request object as arguments.
 
@@ -351,7 +351,7 @@ This functionally replaces Component\Element's `denormalizeConfiguration` method
 
 The `<tag name="mapbender.element" />` allows a `replaces` property, which must, if present, contain (a comma-separated list of) previous Element class FQCN(s).
 
-This will indicate that the Element service will handle those other class names. This allows replacing Element legacy / undesired default, or even no longer existant Element implementations, that will only take effect if the defining configuration (=most likely the bundle containing it) is currently loaded.
+This will indicate that the Element service will handle those other class names. This allows replacing Element legacy/undesired default, or even no longer existant Element implementations, that will only take effect if the defining configuration (=most likely the bundle containing it) is currently loaded.
 
 E.g.
 
@@ -475,12 +475,12 @@ This fixes [Issue 571](https://github.com/mapbender/mapbender/issues/571).
 
 #### Rationale
 
-Separating the quite ControlButton concept from misc other Button class use cases removes headaches in developing QoL / design advancements in its intended, central function of controlling other elements. E.g. after this separation it will be much easier to:
+Separating the quite ControlButton concept from misc other Button class use cases removes headaches in developing QoL/design advancements in its intended, central function of controlling other elements. E.g. after this separation it will be much easier to:
 
 - actually require a target Element and check for its presence (previously not required because it might just have been a link)
-- automatically provide appropriate default label / tooltip depending on target element, and resolve related translation issues
+- automatically provide appropriate default label/tooltip depending on target element, and resolve related translation issues
 - automatically suppress button markup if its target is missing (e.g. after Element grants filtering)
-- automatically suppress of button markup it its target is generally uncontrollable / not currently controllable by a button (e.g. if the target is placed in a sidepane)
+- automatically suppress of button markup it its target is generally uncontrollable/not currently controllable by a button (e.g. if the target is placed in a sidepane)
 - automatically reform toolbar contents into compact menus in certain ongoing frontend templating concepts
 
 ### [1291](https://github.com/mapbender/mapbender/pull/1291)
@@ -498,6 +498,9 @@ We internally agreed that this is not a significant downside, and working around
 
 > [!NOTE]
 > Integrating this closes the loss of ZoomBar history navigation, which had no working implementation on Openlayers 4/6, and was removed in Mapbender 3.2. It also closes the loss of the SuggestMap, WmcEditor/WmcLoader and WmcList elements, as far as sharing the pure view parameters is concerned.
+
+Great, what's the catch?
+
 > [!IMPORTANT]
 > The shared map view exclusively encompasses the center, scale, rotation, and CRS. It does not incorporate alterations in layer selection or sorting, runtime additions of sources via WmsLoader, or even currently visible geometric features.
 
@@ -552,6 +555,174 @@ If present, the following drop-in template replacements (in `app/resources`) wil
 
 - `FOMUserBundle/views/Login/box.html.twig` => `MapbenderCoreBundle/views/Login/box.html.twig`
 - `FOMUserBundle/views/Login/login.html.twig` => `MapbenderCoreBundle/views/Login/login.html.twig`
+
+### [1146](https://github.com/mapbender/mapbender/pull/1146)
+
+Adds `Mapbender.Model.zoomToFeature`, with support for buffering and scale limits.  
+Replaces (near identical) zoom-to-feature logic in SearchRouter, SimpleSearch and Redlining/Sketch with a call to the new method. This should ease porting to new map engines down the road.
+
+### [1140](https://github.com/mapbender/mapbender/pull/1140)
+
+Update **JavaScript-side `Mapbender.Util.Url` processing** to no longer rely on OpenLayers 2 utility methods, and resolves some collaterals.
+
+1) Avoid undesired special treatment of get parameters that are comma-separated lists, inherited from OpenLayers 2 method. All extracted parameters are now scalars. No known usage of `Mapbender.Util.Url` expects or handles Array-style parameters.
+
+2) Decode username/password and all parameters on parsing, reencode on reconstruction. This should fix any issues where these properties are modified between parsing and reconstruction, such as WmsLoader adding username and password, then reconstructing the url.
+
+3) Fix loss of parameters-in-parameters on parsing + reconstruction. E.g. the `url` parameter in Owsproxy-style URLs bares an internal `_sginature` parameter, which would previously not survive `Util.Url` processing. Now it does.
+
+4) Repeated or nested sequences of `(new Mapbender.Util.Url(someUrl)).asString()` are now idempotent. The first reconstruction may produce small inconsequential deviations (such as escaped forward slashes in query parameters where that is not strictly required). Every further repeat of the sequence, and every nesting depth (`(new Mapbender.Util.Url((new Mapbender.Util.Url(someUrl)).asString())).asString()`) now yields the same result as the input.
+
+5) Add RFC 1738-conformant support for empty-valued query parameters (`scheme://host/?hat&cat&quaternion`)
+
+6) Fix quadruple slash `file:////something` generated when reconstructing a parsed file-scheme URL.
+
+### [1122](https://github.com/mapbender/mapbender/pull/1122)
+
+**HTMLElement** was used as a stomping ground for certain developments before vis-ui.js and data-source were spun off. It has accumulated a lot of logic that is only really relevant for Digitizer and certain other data-sourcey Mapbender Elements.
+
+[Data Source 0.1.11](https://github.com/mapbender/data-source/releases/tag/0.1.11) has everything it needs to keep even quite old Digitizer versions running happily, with no more need for any supporting magic in HTMLElement. In fact, as of 0.1.11, DataSource's BaseElement doesn't inherit from HTMLElement anymore.
+
+As such, it is now safe to restore HTMLElement to its original purpose: a thing that renders a piece of markup.
+
+#### Removals
+
+This pull removes data-sourcey configuration preprocessing magic prepareItem, prepareItems, isAssoc.
+
+This pull removes the Ajax entry point handler (single action `configuration`).
+
+This pull removes processing logic for `jsSrc` and `css` options. These have never actually been configurable. Through the entire history of the repository, the HTMLElement form type has never defined form fields with these names. We can only speculate that a child class or two may have defined them, but never HTMLElement itself. [UPGRADING.md](https://github.com/mapbender/mapbender/blob/93d6458fe6ff56931fa3b96f5c84658762793c4b/UPGRADING.md#htmlelement-inheritance) now has instructions on what to do in these cases.
+
+#### Other changes
+
+This pull restores
+
+- Explicit `getType` implementation (backend form type class)
+- Explicit `getFormTemplate` implementation (backend form twig)
+
+This pull changes the rendering logic for `html-element-inline` to emit a span instead of a div. This resolved certain CSS gotchas, and actually allowed the complete removal of the HTMLElement CSS rules.
+
+The remaining HTMLElement only renders the markup defined in its `content` option, which may also use Twig functionality. It doesn't have a JavaScript widget constructor, and it doesn't have any predefined CSS rules.
+
+### [1120](https://github.com/mapbender/mapbender/pull/1120)
+
+#### BC impact
+
+Drop-replacements for manager.html.twig (in app/Resources) will have to be moved (or safer yet, duplicated) to a new directory structure to remain effective.
+
+- A customized `app/Resources/FOM/ManagerBundle/Resources/views/manager.html.twig` should be duplicated to `app/Resources/Mapbender/ManagerBundle/Resources/views/manager.html.twig`
+
+- A customized `app/Resources/FOM/CoreBundle/Resources/views/Form/fields.html.twig` should be duplicated to `app/Resources/Mapbender/CoreBundle/Resources/views/form/fields.html.twig`
+
+- A customized `app/Resources/FOM/CoreBundle/Resources/views/Manager/menu.html.` should be duplicated to `app/Resources/Mapbender/ManagerBundle/Resources/views/menu.html.twig`
+
+Twig `extends` and `include` clauses for manager.html.twig will be kept safe and working. The other two templates `fields.html.twig` and `menu.html.twig` will vanish completely from their original locations.
+
+#### Change summary
+
+This brings in the following assets from FOM v3.0.6.3:
+
+- fields.html.twig (the default form theme)
+- manager.html.twig (the backend layout)
+- menu.html.twig (skin for the backend sidepane menu)
+- checkbox.js
+- dropdown.js
+- radiobuttonExtended.js
+- collection.js
+- components.js
+- tabcontainer.js
+- sidepane.js
+
+It also brings in the `FOM\ManagerBundle\ManagerController`, renamed to `Mapbender\ManagerBundle\IndexController`.
+
+##### Updating of references
+
+There is generally no need to manually update anything on the project level, except for cases of drop-in twig replacements already described on top.
+
+Includes of the twigs in Mapbender scope have been updated manually.
+
+The form theme is carefully auto-rewritten based on [previous work](https://github.com/mapbender/mapbender/pull/1030). This change of default theme location only happens if the configured default theme was FOM's.  
+Enterprising types who have already configured their system with, say, a Bootstrap 3 form theme, will not be impacted in any way.
+Doing this automatically frees us from attempting a "simultaneous" commit into the Mapbender Starter repository.
+
+References to the JavaScript assets are auto-updated on the AssetFactory level. This ensures custom Element and Template classes will move along automatically, with no need to rewrite the asset references.
+
+Standard Mapbender routing configuration loads Mapbender ManagerBundle controllers before FOM ManagerBundle controllers, so the adopted new IndexController will take precedence automatically.
+
+This change can coexist with older FOM versions. They will continue to wrap the "Users", "Groups" and "ACLs" sections in their their own backend twigs (general layout skeleton and menu). Mapbender's version of the form theme (whichever way it will develop from here) will take effect though.
+
+##### Rationale for this change
+
+1) Nothing in FOM even references any of the JavaScript assets. They are only referenced by the manager template *in Mapbender*, frontend Templates also *in Mapbender* and assorted Elements, of which FOM has no concept at all. As such, it makes no sense that FOM should control how these widgets work.
+2) FOM only has a tiny bit of backend section of its own, for users and ACLs. The bulk of the backend is in Mapbender's ManagerBundle. As such it makes no sense that FOM should control the layout of the Mapbender backend.
+3) FOM's form theme has numerous limitations and quirks that can only reasonably be fixed in conjunction with its CSS, which is in Mapbender, along with the vast majority of form types and form templates.
+
+### [1116](https://github.com/mapbender/mapbender/pull/1116)
+
+Reintegrates [the external Wmts bundle](https://github.com/mapbender/wmts) with Mapbender to allow ongoing architectural work on source and source instance handling to proceed in a unified fashion.
+
+Side-by-side installation of the external bundle with this branch is not possible. This is a full displacement, using the same PHP namespace. An appropriate package conflict rule will be added to prevent simultaneous installation.
+Some of the documented limitations and quirks of the external bundle have been resolved, but enough remain that this is still an experimental feature that we cannot reasonably enable by default.
+
+### Known limitations/quirks
+
+- Only a single layer can be enabled per WMTS/TMS instance. To get different layers from the source to display, additional instances need to be added to the same application
+- WMTS/TMS sources cannot be "opened" in the Layertree, they are either on or off with no further control possible
+- There is currently no support for Metadata via Layertree sub-menu.
+- There is currently no support for FeatureInfo
+- There is currently no support for vendorspecifics or dimensions
+- What appears as the root layer in the instance configuration will fail to save its various checkbox settings, most notably the initially enabled state of the source. This means that WMTS/TMS instances added to an application will always start out enabled.
+- WMTS/TMS sources will magically self-disable when switching to an incompatible SRS. Layertree checkboxes will uncheck themselves. Depending on current SRS, Layertree visual may become inconsistent when you click on the source
+- There is no integration with any WmcBundle functionality (SuggestMap, WmcLoader, WmcEditor et al). Having active WMTS or TMS instances in the same application as these Elements may lead to incomplete states getting saved, generation of states that are incompatible with other applications, and other errors.
+- There is no mechanism to add WMTS or TMS sources to YAML-defined Applications. Only database Applications can have them.
+- WMTS and TMS sources cannot be reloaded. To effectively "update" them, you will need to delete it, load it as a new source, and create new instances.
+
+### Resolved limitations (vs [external bundle documentation](https://github.com/mapbender/wmts/blob/master/README.md))
+
+- There are no restrictions on the Map Element's dpi and scales settings. As with any fixed raster source, do note however that going off the "ideal" values may induce tile rescaling, and thus reduce visual quality.
+- There are no restrictions on the Map Element's max extent
+- There are no restrictions on the Map Element's initial `SRS` and switchable `Other SRS` setting
+- There are no restrictions on the Map Element's tile size setting. Tile sizes for WMTS/TMS are predetermined by the source, are automatically selected as appropriate, and cannot be configured. The Map's tile size setting remains functional for WMS tiling and can be set to any desired value.
+- "Zoom to layer" via the Layertree sub-menu is supported
+- Current layer opacity is applied when exporting/printing
+- Print scale is respected in the same way as for WMS sources
+
+### Enabling
+
+To enable WMTS and TMS source support, even with this branch integrated, two additional steps are required:
+
+1) The bundle must be added to the [application kernel's bundle registration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/AppKernel.php#L11), like so:
+
+```diff
+--- a/application/app/AppKernel.php
++++ b/application/app/AppKernel.php
+@@ -30,6 +30,7 @@ class AppKernel extends Mapbender\BaseKernel
+             // Optional Mapbender bundles
+             new Mapbender\WmcBundle\MapbenderWmcBundle(),
+             new Mapbender\WmsBundle\MapbenderWmsBundle(),
++            new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
+             new Mapbender\ManagerBundle\MapbenderManagerBundle(),
+             new Mapbender\PrintBundle\MapbenderPrintBundle(),
+             new Mapbender\MobileBundle\MapbenderMobileBundle(),
+```
+
+1) The bundle's controller namespace must be added to [the routing configuration](https://github.com/mapbender/mapbender-starter/blob/v3.0.8-beta1/application/app/config/routing.yml), like so:
+
+```diff
+--- a/application/app/config/routing.yml
++++ b/application/app/config/routing.yml
+@@ -15,6 +15,10 @@ mapbender_wmsbundle:
+     resource: "@MapbenderWmsBundle/Controller/"
+     type: annotation
+ 
++mapbender_wmtsbundle:
++    resource: "@MapbenderWmtsBundle/Controller/"
++    type: annotation
++
+ mapbender_coordinatesutilitybundle:
+     resource: "@MapbenderCoordinatesUtilityBundle/Controller/"
+     type: annotation
+```
 
 [↑ Back to top](#git-archive)
 
