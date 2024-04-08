@@ -1,0 +1,41 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: 'TRANSLATE: Matrixsets'
+            theme: 'TRANSLATE: Theme'
+            serviceprovidername: 'TRANSLATE: Name of service provider'
+            serviceprovidersite: 'TRANSLATE: Website of service provider'
+        tilematrixset:
+          label:
+            identifier: 'TRANSLATE: Identifier'
+            supportedcrs: 'TRANSLATE: Supported CRS'
+            title: 'TRANSLATE: Title'
+            abstract: 'TRANSLATE: Abstract'
+          matrixes: 'TRANSLATE: Matrices'
+        theme:
+          label:
+            identifier: 'TRANSLATE: Identifier'
+            title: 'TRANSLATE: Title'
+            abstract: 'TRANSLATE: Abstract'
+            layerrefs: 'TRANSLATE: Layerrefs'
+        instance:
+          label:
+            style: 'TRANSLATE: Style'
+        layer:
+          label:
+            identifier: 'TRANSLATE: Identifier'
+            formats: 'TRANSLATE: Formats'
+            title: 'TRANSLATE: Title'
+            abstract: 'TRANSLATE: Abstract'
+            latlonbounds: 'TRANSLATE: LatLonBounds'
+            tilematrixsetlinks: 'TRANSLATE: TileMartixSetLinks'
+        tilematrix:
+          label:
+            identifier: 'TRANSLATE: Identifier'
+            scaledenominator: 'TRANSLATE: ScaleDenominator'
+            topleftcorner: 'TRANSLATE: TopLeftCorner'
+            tilesize: 'TRANSLATE: TileSize'
+            matrixsize: 'TRANSLATE: MatrixSize'
