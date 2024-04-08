@@ -483,6 +483,76 @@ Separating the quite ControlButton concept from misc other Button class use case
 - automatically suppress of button markup it its target is generally uncontrollable / not currently controllable by a button (e.g. if the target is placed in a sidepane)
 - automatically reform toolbar contents into compact menus in certain ongoing frontend templating concepts
 
+### [1291](https://github.com/mapbender/mapbender/pull/1291)
+
+Automatically decorates frontend application url with a url hash/fragment that encodes the current view parameters center, scale, rotation and CRS. Taking this url to a new browser tab will restore this view. Browser back/forward buttons can now undo/redo map navigation steps, including SrsSwitcher interactions.
+
+This trivially allows **mobile browser share** functionality (which operates on the url), or showing a **specific view of the map** to another user simply by sending the complete url via email/chat or any other text-capable system.
+
+There is no extra configuration for this functionality. It is currently always on.
+
+This means hitting F5 to reload a Mapbender application will now send you back to the same part of the map. It will *not* send you to the configured initial map view (defined by Map element start extent), as it did before. To return to the configured map start extent, you must now either open the application again from the application list, or manually cut off the hash of the application url.
+
+We considered the impact of this effect on application reloading via F5. Supporting previous expectation of returning to configured map start extent on reloading a browser tab would have required either an explicit "Reset view" helper Element, an Application-level off switch, or both.
+We internally agreed that this is not a significant downside, and working around it is not immediately necessary. We will continue to monitor project demand, but for now, we will integrate the new feature without a guided "Reset view" helper.
+
+> [!NOTE]
+> Integrating this closes the loss of ZoomBar history navigation, which had no working implementation on Openlayers 4/6, and was removed in Mapbender 3.2. It also closes the loss of the SuggestMap, WmcEditor/WmcLoader and WmcList elements, as far as sharing the pure view parameters is concerned.
+> [!IMPORTANT]
+> The shared map view exclusively encompasses the center, scale, rotation, and CRS. It does not incorporate alterations in layer selection or sorting, runtime additions of sources via WmsLoader, or even currently visible geometric features.
+
+### [1219](https://github.com/mapbender/mapbender/pull/1219)
+
+Replaces sassc compiler dependency with [wheregroup/assetic-filter-sassc](https://packagist.org/packages/wheregroup/assetic-filter-sassc) plus [wheregroup/sassc-binaries](https://packagist.org/packages/wheregroup/sassc-binaries).
+
+Allows using native sassc, e.g. available on Debian/Ubuntu via `apt get`. Set the path to your desired binary via parameter `mapbender.asset.sassc_binary_path`, usually to `/usr/bin/sassc`. This disables autopicking of the binary from one of the bundled ones.
+
+> [!IMPORTANT]
+> On Linux, outside of prod, results are identical (as per md5sum). This change needs verification on Windows and MacOS.  
+The compiler is also used to validate the Application CSS form field in the backend. This should be reverified with/without deliberate errors in the CSS input.
+
+### [1208](https://github.com/mapbender/mapbender/pull/1208)
+
+JavaScript translations now support inputs beyond `.json.twig`, reducing the risk of errors caused by maintenance and translation key mapping mismatches.
+
+This pull adds optional support for `Element::getAssets` and `Template::getAssets` to include in their return value list for `trans` assets:
+
+1) direct translation keys, e.g. `mb.core.featureinfo.error.nolayer`
+2) translation key prefixes ending in a `*` wildcard, e.g. `mb.core.featureinfo.*` or even `mb.core.f*`
+
+Wildcard prefixes expand to a list of every available translation where the key starts with that prefix. This allows extending available messages for Elements simply by adding more messages with the appropriate prefix to a catalog file (*messages.en.yml* and other relevant files in any activated bundle).
+
+> [!CAUTION]
+> A direct key translation causes an error if the result is the same as the input to detect untranslatable messages.
+
+### [1158](https://github.com/mapbender/mapbender/pull/1158)
+
+Adds machinations to emit configurable site links to the backend and login layouts.  
+Site links are configured by setting the `mapbender.sitelinks` parameter. An expected value is a collection of items with `link` and `text` keys. E.g. you could put the following into *parameters.yml*:
+
+```yaml
+     mapbender.sitelinks:
+       - link: https://some-domain.org/
+         text: External absolute link
+       - link: relative-path/something.png
+         text: Relative link under application/web
+       - link: /absolute-path/something-else.html
+         text: Absolute link to something on the same host
+```
+
+Site link item `text` values are piped through the twig translation filter to support localization.
+
+By default, there are no site links configured. This machinery can be used to link to existing imprint and site meta information pages.
+
+#### Customization impact
+
+The implementation takes the LoginController and the relevant base templates from FOM into Mapbender, similar to the [recent adoption of the manager.html.twig template](https://github.com/mapbender/mapbender/pull/1120). This may cause some surprises with customization to the login template, or its outer box template.
+
+If present, the following drop-in template replacements (in `app/resources`) will need to be reviewed and copied to the new paths:
+
+- `FOMUserBundle/views/Login/box.html.twig` => `MapbenderCoreBundle/views/Login/box.html.twig`
+- `FOMUserBundle/views/Login/login.html.twig` => `MapbenderCoreBundle/views/Login/login.html.twig`
+
 [↑ Back to top](#git-archive)
 
 [← Back to README](../README.md)
