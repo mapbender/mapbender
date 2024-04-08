@@ -6,13 +6,43 @@ mb:
           ok: Esporta
           cancel: Cancella
       info:
-        noactivelayer: Nessun layer attivo!
-      chooseformat: Scegli il formato di esportazione
+        noactivelayer: 'Nessun layer attivo!'
+      chooseformat: 'Scegli il formato di esportazione'
       class:
-        title: Esporta immagine
-        description: Esporta Immagine permette di esportare la vista corrente della mappa. Puoi scegliere tra il formato png e jpeg.
+        title: 'Esporta immagine'
+        description: 'Esporta Immagine permette di esportare la vista corrente della mappa. Puoi scegliere tra il formato png e jpeg.'
       tag:
         image: immagine
         export: esporta
         jpeg: jpeg
         png: png
+    printclient:
+      tab: {  }
+      joblist:
+        header: {  }
+        status: {  }
+        open: 'TRANSLATE: open'
+        delete: 'TRANSLATE: delete'
+        cancel: 'TRANSLATE: Cancel'
+        nodata: 'TRANSLATE: no data'
+        loading: 'TRANSLATE: loading'
+    admin:
+      printclient:
+        renderMode:
+          label: 'TRANSLATE: Mode'
+          choice: {  }
+        queueAccess:
+          label: 'TRANSLATE: Job queue'
+          choice: {  }
+  core:
+    printclient:
+      admin: {  }
+      label: {  }
+      class: {  }
+    printclienttemplate:
+      admin: {  }
+    printclientquality:
+      admin: {  }
+    admin:
+      printclient:
+        label: {  }

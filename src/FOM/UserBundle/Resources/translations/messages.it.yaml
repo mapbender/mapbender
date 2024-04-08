@@ -1,137 +1,141 @@
 fom:
+  acl:
+    group_label: {  }
   user:
     registration:
-      email_body_html: <p>Ciao %user_username%,</p><p> Ti sei appena registrato all'istanza di Mapbender3. Per concludere la registrazione, clicca <a href="%url%">here</a>.</p>
+      email_body_html: '<p>Ciao %user_username%,</p><p> Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, clicca <a href="%url%">here</a>.</p>'
       done:
         title: Registrazione
         congratulations: Congratulazioni!
-        account_activated: Il tuo account è stato attivato con successo ed è pronto per l'uso.
-        back_to_login: Torna alla login
+        account_activated: 'Il tuo account è stato attivato con successo ed è pronto per l''uso.'
+        back_to_login: 'Torna alla login'
       form:
         title: Registrazione
-        choose_password: Scegli la password
-        confirm_password: Conferma la password
+        choose_password: 'Scegli la password'
+        confirm_password: 'Conferma la password'
         email: Email
-        back_to_login: Torna alla login
+        back_to_login: 'Torna alla login'
         register: Registrati
-      email_subject: Tua registrazione
+      email_subject: 'Tua registrazione'
       send:
         title: Registrazione
-        account_created: "Il tuo account è stato creato. Un''email con il tuo codice di attivazione \n e il link sono stati inviati all''indirizzo che hai fornito."
-        back_to_login: Torna alla login
-      email_body_text: Ciao %user_username%, Ti sei appena registrato all'istanza di Mapbender3. Per concludere la registrazione, si prega di chiamare nel browser il link %url%.
+        account_created: |-
+          Il tuo account è stato creato. Un''email con il tuo codice di attivazione 
+           e il link sono stati inviati all''indirizzo che hai fornito.
+        back_to_login: 'Torna alla login'
+      email_body_text: 'Ciao %user_username%, Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, si prega di chiamare nel browser il link %url%.'
     group:
       index:
         groups: Gruppi
-        add_new_group: Aggiungi nuovo gruppo
+        add_new_group: 'Aggiungi nuovo gruppo'
         title: Titolo
         description: Descrizione
-        edit_group: Edita il gruppo
-        delete_group: Rimuovi gruppo
-        no_groups_available: Nessun gruppo disponibile.
+        edit_group: 'Edita il gruppo'
+        delete_group: 'Rimuovi gruppo'
+        no_groups_available: 'Nessun gruppo disponibile.'
       form:
-        edit_group: Edita il gruppo
-        new_group: Nuovo gruppo
+        edit_group: 'Edita il gruppo'
+        new_group: 'Nuovo gruppo'
       container:
-        base_data: Dati di base
+        base_data: 'Dati di base'
         users: Utenti
-        users_of_selected: Utenti di %users_count% selezionati
-        no_user_exists: Nessun utente esistente.
+        users_of_selected: 'Utenti di %users_count% selezionati'
+        no_user_exists: 'Nessun utente esistente.'
     login:
       error_tockenexp:
-        title: Reimpostazione della password
+        title: 'Reimpostazione della password'
         sorry: Scusa!
-        registration_token_expired: Il tuo token di registrazione è scaduto. Sfortunatamente, dovrai richiedere un nuovo token.
-        request_new_token: Richiedi nuovo token
-        back_to_login: Torna al login
+        registration_token_expired: 'Il tuo token di registrazione è scaduto. Sfortunatamente, dovrai richiedere un nuovo token.'
+        request_new_token: 'Richiedi nuovo token'
+        back_to_login: 'Torna al login'
       login:
         title: Login
-        username: Nome utente
+        username: 'Nome utente'
         password: Password
         register: Registrati
-        forgot_password: Password dimenticata
+        forgot_password: 'Password dimenticata'
         login: Login
       error_notocken:
-        password_reset: Reimpostazione della password
+        password_reset: 'Reimpostazione della password'
         sorry: Scusa!
-        no_such_tocken: Non è possibile trovare alcun token di questo tipo. Se ritieni che si tratti di un errore, contatta l'amministratore del sito.
-        contact: Contatta l'amministratore
-        back_to_login: Torna alla login
+        no_such_tocken: 'Non è possibile trovare alcun token di questo tipo. Se ritieni che si tratti di un errore, contatta l''amministratore del sito.'
+        contact: 'Contatta l''amministratore'
+        back_to_login: 'Torna alla login'
     user:
       index:
         title: Utente
-        add_new_user: Aggiungi nuovo utente
+        add_new_user: 'Aggiungi nuovo utente'
         name: Nome
         email: E-Mail
         groups: Gruppi
-        edit_user: Edita utente
-        contact_user: Contatta utente via e-mail
-        edit_group: Edita gruppa
-        delete_user: Elimina utente
-        no_users_available: Nessun utente disponibile.
+        edit_user: 'Edita utente'
+        contact_user: 'Contatta utente via e-mail'
+        edit_group: 'Edita gruppa'
+        delete_user: 'Elimina utente'
+        no_users_available: 'Nessun utente disponibile.'
       form:
-        edit_user: Modifica utente
-        new_user: Aggiungi utente
+        edit_user: 'Modifica utente'
+        new_user: 'Aggiungi utente'
       container:
-        base_data: Dati di base
+        base_data: 'Dati di base'
         profile: Profilo
         groups: Grouppi
         security: Sicurezza
-        choose_password: Scegli la password
-        confirm_password: Conferma password
+        choose_password: 'Scegli la password'
+        confirm_password: 'Conferma password'
         name: Nome
-        users_of_selected: gruppi di %users_count% selected
-        no_groups_defined: Nessun gruppo definito
-        username: Nome utente
+        users_of_selected: 'gruppi di %users_count% selected'
+        no_groups_defined: 'Nessun gruppo definito'
+        username: 'Nome utente'
         description: Descrizione
         activated: attivato
     acl:
       index:
-        access_control_lists: Elenchi di controllo di accesso globale
+        access_control_lists: 'Elenchi di controllo di accesso globale'
         name: Nome
         class: Classe
         edit: Modifica
-      required: I campi obbligatori sono contrassegnati con etichette scure, mentre i campi facoltativi hanno etichette più chiare.
+      required: 'I campi obbligatori sono contrassegnati con etichette scure, mentre i campi facoltativi hanno etichette più chiare.'
       edit:
-        edit_class_acl: Modifica classe ACL per %name%
+        edit_class_acl: 'Modifica classe ACL per %name%'
       groups_users:
         name: Name
-        no_goups_users: Nessun gruppo e utente definito.
+        no_goups_users: 'Nessun gruppo e utente definito.'
     password:
-      email_body_html: <p>Ciao %user_username%,</p><p>Hai richiesto una nuova password per il tuo account Mapbender3.<a href="%url%"> qui per cambiarlo.</p>
+      email_body_html: '<p>Ciao %user_username%,</p><p>Hai richiesto una nuova password per il tuo account Mapbender3.<a href="%url%"> qui per cambiarlo.</p>'
       done:
-        password_reset: Reimpostazione della password
+        password_reset: 'Reimpostazione della password'
         congratulations: Congratulazioni!
-        password_been_reset: La tua password è stata resettata con successo.
-        back_to_login: Torna alla login
+        password_been_reset: 'La tua password è stata resettata con successo.'
+        back_to_login: 'Torna alla login'
       reset:
-        title: Reimpostazione della password
-        btn: Reimpostazione della password
+        title: 'Reimpostazione della password'
+        btn: 'Reimpostazione della password'
       form:
-        message: Per ripristinare la password, fornire il proprio nome utente o il proprio indirizzo e-mail.
-        title: Ha dimenticato la password
-        username_email: Nome utente o email
-        back_to_login: Torna alla login
-        require_password: Richiedi password
-      email_subject: Ha dimenticato la password
+        message: 'Per ripristinare la password, fornire il proprio nome utente o il proprio indirizzo e-mail.'
+        title: 'Ha dimenticato la password'
+        username_email: 'Nome utente o email'
+        back_to_login: 'Torna alla login'
+        require_password: 'Richiedi password'
+      email_subject: 'Ha dimenticato la password'
       send:
-        title: Reimpostazione della password
-        email_been_sent: An email with your reset code and link has been sent to the address you provided.
-        back_to_login: Torna alla login
+        title: 'Reimpostazione della password'
+        email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
+        back_to_login: 'Torna alla login'
       email_body_text: 'Ciao %user_username%, hai richiesto una nuova password per il tuo account Mapbender3. Si prega di seguire questo link per cambiarlo: "%url%".'
     userbundle:
-      user_control: Controllo dell'utente
+      user_control: 'Controllo dell''utente'
       users: Users
-      new_user: Nuovo utente
+      new_user: 'Nuovo utente'
       groups: Groups
-      new_group: Nuovo gruppo
+      new_group: 'Nuovo gruppo'
       classes:
         acls: ACLs
         users: Utenti
         groups: gruppi
       roles:
-        super_admin: Può amministrare tutto (super admin)
-        user_admin: Può amministrare utenti e gruppi
+        super_admin: 'Può amministrare tutto (super admin)'
+        user_admin: 'Può amministrare utenti e gruppi'
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
