@@ -586,7 +586,7 @@ mb:
         text:
             filearea: 'Drop file'
             fileupload: 'or choose your file(s)'
-            projection: 'Choose projection'
+            projection: 'Determine projection automatically'
         error:
             filesize: 'Max. filesize exceeded!'
             filetype: 'Unsupported file type:'
