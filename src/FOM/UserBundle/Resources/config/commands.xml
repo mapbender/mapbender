@@ -14,5 +14,9 @@
             <tag name="console.command" />
             <argument type="service" id="FOM\UserBundle\Service\FixAceOrderService" />
         </service>
+        <service id="mapbender:security:migrate-from-acl" class="FOM\UserBundle\Command\MigrateACLCommand">
+            <tag name="console.command" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
     </services>
 </container>
