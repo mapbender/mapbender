@@ -57,7 +57,7 @@ class DataUpload extends AbstractElementService
     {
         return array(
             'maxFileSize' => 10,
-            'helpText' => 'mb.core.dataupload.admin.helpLabel',
+            'helpText' => 'mb.core.dataupload.admin.helpText',
         );
     }
 
@@ -86,7 +86,8 @@ class DataUpload extends AbstractElementService
     {
         $view = new TemplateView('@MapbenderCore/Element/dataupload.html.twig');
         $view->variables['title'] = $element->getTitle();
-        $view->attributes['class'] = 'mb-element-dataupload';
+        $view->variables['helpText'] = $element->getConfiguration()['helpText'];
+        $view->attributes['class'] = 'mb-element-dataupload me-3';
         $view->attributes['data-title'] = $element->getTitle();
         return $view;
     }

@@ -1,14 +1,14 @@
-<p>{{ 'mb.core.dataupload.admin.helpText' | trans }}</p>
+<p>{{ helpText | trans }}</p>
 <form enctype="multipart/form-data">
     <div id="dropFileArea" class="dropFileArea text-center mb-3 pt-3">
         <p class="mb-2">
-            <i class="fa-regular fa-xl fa-file"></i>
+            <i class="fa-regular fa-lg fa-file"></i>
         </p>
-        <p class="h4 mb-2">
+        <p class="mb-2">
             {{ 'mb.core.dataupload.text.filearea' | trans }}
         </p>
         <p class="small mb-2">
-            <a id="fileUploadLink" href="#">
+            <a id="fileUploadLink" class="link-primary" href="#">
                 {{ 'mb.core.dataupload.text.fileupload' | trans }}
             </a>
         </p>
@@ -26,9 +26,12 @@
 </form>
 <div class="table-responsive d-none">
     <table id="filesTable" class="table table-striped mt-3 my-1">
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
     </table>
 </div>

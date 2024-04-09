@@ -582,10 +582,10 @@ mb:
     dataupload:
       class:
         title: 'Daten laden'
-        description: 'Datei Import für GeoJSON, KML, GML, GPX'
+        description: 'Laden von Dateien im den Formaten GeoJSON, KML, GML und GPX.'
       text:
         filearea: 'Datei ablegen'
-        fileupload: 'Oder hier auswählen'
+        fileupload: 'oder hier auswählen'
         projection: 'Projektion automatisch wählen'
       error:
         filesize: 'Max. Dateigröße überschritten!'
@@ -595,8 +595,8 @@ mb:
       admin:
         maxFileSize: 'Max. Dateigröße (MB)'
         helpLabel: 'Hilfetext'
-        helpText: 'Hier können Sie Dateien im Format GeoJSON, KML, GML und GPX hochladen.'
-        helpInfo: 'Der Standardwert <code>mb.core.fileupload.helpText</code> bedeutet "Hier können Sie Dateien im Format GeoJSON, KML, GML und GPX hochladen." in der Sprache des Nutzers'
+        helpText: 'Es können Dateien im Format GeoJSON, KML, GML und GPX hochgeladen werden.'
+        helpInfo: 'Der Standardwert <code>mb.core.dataupload.admin.helpText</code> bedeutet "Hier können Sie Dateien im Format GeoJSON, KML, GML und GPX hochladen." in der Sprache des Nutzers'
     searchrouterroute:
       admin:
         title: Titel
