@@ -131,8 +131,9 @@
             ([...files]).forEach(function (file, idx) {
                 var reader = new FileReader();
                 reader.addEventListener('load', function () {
-                    if (file.size > 10000000) {
-                        var msg = Mapbender.trans('mb.core.dataupload.error.filesize');
+                    var maxFileSize = parseInt(self.options.maxFileSize) * 1000000;
+                    if (file.size > maxFileSize) {
+                        var msg = Mapbender.trans('mb.core.dataupload.error.filesize') + ' (' + self.options.maxFileSize + 'MB)';
                         Mapbender.error(msg);
                         return;
                     }

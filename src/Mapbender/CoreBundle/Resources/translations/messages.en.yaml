@@ -588,11 +588,12 @@ mb:
             fileupload: 'Or choose your files'
             projection: 'Choose projection'
         error:
-            filesize: 'Max. filesize of 10 MB exceeded!'
+            filesize: 'Max. filesize exceeded!'
             filetype: 'Unsupported file type:'
             gml: 'GML format could not be identified!'
             projection: 'Projection could not be identified'
         admin:
+            maxFileSize: 'Max. filesize (MB)'
             helpLabel: 'Help text'
             helpText: 'Here you can upload files in GeoJSON, KML, GML and GPX format.'
             helpInfo: 'The default value <code>mb.core.fileupload.helpText</code> means "Here you can upload files in GeoJSON, KML, GML and GPX format." in the language of the user'

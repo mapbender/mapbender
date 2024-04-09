@@ -56,6 +56,7 @@ class DataUpload extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
+            'maxFileSize' => 10,
             'helpText' => 'mb.core.dataupload.admin.helpLabel',
         );
     }
