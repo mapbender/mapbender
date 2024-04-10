@@ -3,6 +3,13 @@
 namespace FOM\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
+use FOM\UserBundle\Security\Permission\AttributeDomainElement;
+use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
+use FOM\UserBundle\Security\Permission\SubjectDomainGroup;
+use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
+use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
+use FOM\UserBundle\Security\Permission\SubjectDomainUser;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,48 +21,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Permission
 {
-    const SUBJECT_DOMAIN_PUBLIC = "public";
-    const SUBJECT_DOMAIN_REGISTERED = "registered";
-    const SUBJECT_DOMAIN_USER = "user";
-    const SUBJECT_DOMAIN_GROUP = "group";
-
-    const ATTRIBUTE_DOMAIN_INSTALLATION = "installation";
-    const ATTRIBUTE_DOMAIN_APPLICATION = "application";
-    const ATTRIBUTE_DOMAIN_ELEMENT = "element";
-
-
-    const PERMISSION_CREATE_APPLICATIONS = "create_applications";
-    const PERMISSION_VIEW_ALL_APPLICATIONS = "view_all_applications";
-    const PERMISSION_EDIT_ALL_APPLICATIONS = "edit_all_applications";
-    const PERMISSION_DELETE_ALL_APPLICATIONS = "delete_all_applications";
-    const PERMISSION_OWN_ALL_APPLICATIONS = "own_all_applications";
-
-    const PERMISSION_VIEW_SOURCES = "view_sources";
-    const PERMISSION_CREATE_SOURCES = "create_sources";
-    const PERMISSION_REFRESH_SOURCES = "refresh_sources";
-    const PERMISSION_EDIT_FREE_INSTANCES = "edit_free_instances";
-    const PERMISSION_DELETE_SOURCES = "delete_sources";
-
-    const PERMISSION_MANAGE_PERMISSION = "manage_permissions";
-
-    const PERMISSION_VIEW_USERS = "view_users";
-    const PERMISSION_CREATE_USERS = "create_users";
-    const PERMISSION_EDIT_USERS = "edit_users";
-    const PERMISSION_DELETE_USERS = "delete_users";
-
-    const PERMISSION_VIEW_GROUPS = "view_groups";
-    const PERMISSION_CREATE_GROUPS = "create_groups";
-    const PERMISSION_EDIT_GROUPS = "edit_groups";
-    const PERMISSION_DELETE_GROUPS = "delete_groups";
-
-
-    const PERMISSION_APPLICATION_VIEW = "view";
-    const PERMISSION_APPLICATION_EDIT = "edit";
-    const PERMISSION_APPLICATION_DELETE = "delete";
-    const PERMISSION_APPLICATION_MANAGE_PERMISSIONS = "manage_permissions";
-
-    const PERMISSION_ELEMENT_VIEW = "view";
-
 
     /**
      * @ORM\Id
@@ -69,10 +34,10 @@ class Permission
      * @Assert\NotBlank()
      * stores the type of subject this right is granted to.
      * default mapbender supports (refer to SUBJECT_DOMAIN_* constants)
-     * - public: Right granted to everyone, logged in or not
-     * - registered: Right granted to every logged in user
-     * - group: Right granted to a specific group, @see Group)
-     * - user: Right granted to a specific user, @see User
+     * - public: Right granted to everyone, logged in or not, @see SubjectDomainPublic
+     * - registered: Right granted to every logged in user, @see SubjectDomainRegistered
+     * - group: Right granted to a specific group, @see SubjectDomainGroup
+     * - user: Right granted to a specific user, @see SubjectDomainUser
      * might be extended for custom requirements
      */
     protected ?string $subjectDomain = null;
@@ -80,14 +45,14 @@ class Permission
     /**
      * @ORM\ManyToOne(targetEntity="User", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the user if subjectDomain is "user"
+     * References the user for @see SubjectDomainUser
      */
     protected ?User $user = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Group", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the group if subjectDomain is "group"
+     * References the group  for @see SubjectDomainGroup
      */
     protected ?Group $group = null;
 
@@ -104,9 +69,9 @@ class Permission
      * @Assert\NotBlank()
      * stores the attribute domain of this right.
      * default mapbender supports
-     * - installation: Installation-wide validity, like "create_application"
-     * - application: right is valid for a specific application, @see Application
-     * - element: right is valid for a specific element, @see Element
+     * - installation: Installation-wide validity, like "create_application", @see AttributeDomainInstallation
+     * - application: right is valid for a specific application, @see AttributeDomainApplication
+     * - element: right is valid for a specific element, @see AttributeDomainElement
      * might be extended for custom requirements
      */
     protected ?string $attributeDomain = null;
@@ -114,14 +79,14 @@ class Permission
     /**
      * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Element", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the element if attributeDomain is "element"
+     * References the element for attributeDomain @see AttributeDomainElement
      */
     protected ?Element $element = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Application", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the application if attributeDomain is "application"
+     * References the application for attributeDomain @see AttributeDomainApplication
      */
     protected ?Application $application = null;
 
