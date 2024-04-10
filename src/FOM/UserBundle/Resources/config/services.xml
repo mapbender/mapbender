@@ -80,6 +80,50 @@
             <argument type="service" id="security.acl.provider" />
         </service>
 
+        <service id="fom.security.permission_manager"
+                 class="FOM\UserBundle\Security\Permission\PermissionManager">
+        </service>
+        <service id="fom.security.permission_voter"
+                 class="FOM\UserBundle\Security\Permission\PermissionVoter"
+                 lazy="true">
+            <tag name="security.voter" priority="255" />
+            <!-- initialized by compiler pass -->
+            <!-- will contain all services tagged with "fom.security.attribute_domain", sorted by priority -->
+            <argument type="collection" />
+            <!-- will contain all services tagged with "fom.security.subject_domain", sorted by priority -->
+            <argument type="collection" />
+        </service>
+
+        <service id="fom.security.attribute_domain.application"
+                 class="FOM\UserBundle\Security\Permission\AttributeDomainApplication">
+            <tag name="fom.security.attribute_domain" priority="1" />
+        </service>
+        <service id="fom.security.attribute_domain.element"
+                 class="FOM\UserBundle\Security\Permission\AttributeDomainElement">
+            <tag name="fom.security.attribute_domain" priority="1" />
+        </service>
+        <service id="fom.security.attribute_domain.installation"
+                 class="FOM\UserBundle\Security\Permission\AttributeDomainInstallation">
+            <tag name="fom.security.attribute_domain" priority="1" />
+        </service>
+
+        <service id="fom.security.subject_domain.public"
+                 class="FOM\UserBundle\Security\Permission\SubjectDomainPublic">
+            <tag name="fom.security.subject_domain" priority="1" />
+        </service>
+        <service id="fom.security.subject_domain.registered"
+                 class="FOM\UserBundle\Security\Permission\SubjectDomainRegistered">
+            <tag name="fom.security.subject_domain" priority="1" />
+        </service>
+        <service id="fom.security.subject_domain.user"
+                 class="FOM\UserBundle\Security\Permission\SubjectDomainUser">
+            <tag name="fom.security.subject_domain" priority="1" />
+        </service>
+        <service id="fom.security.subject_domain.group"
+                 class="FOM\UserBundle\Security\Permission\SubjectDomainGroup">
+            <tag name="fom.security.subject_domain" priority="1" />
+        </service>
+
         <service id="fom.identities.provider" class="%fom.identities.provider.class%">
             <argument type="service" id="doctrine" />
             <argument type="service" id="fom.ldap_user_identities_provider" />
