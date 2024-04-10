@@ -79,7 +79,8 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
 
         foreach ($entries as $entry) {
             $newEntry = new Permission();
-            $this->populateSubject($newEntry, $entry);
+            $newEntry = $this->populateSubject($newEntry, $entry);
+            if ($newEntry === null) continue;
             $this->populateAttributeAndSave($newEntry, $entry);
         }
         $this->doctrine->flush();
@@ -139,7 +140,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, Permission::PERMISSION_DELETE_ALL_APPLICATIONS);
             }
-            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || $mask & MaskBuilder::MASK_MASTER > 0 || $mask & MaskBuilder::MASK_OWNER > 0) {
+            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
                 $this->saveEntry($newEntry, Permission::PERMISSION_OWN_ALL_APPLICATIONS);
             }
             return;
@@ -164,7 +165,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, Permission::PERMISSION_APPLICATION_DELETE);
             }
-            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || $mask & MaskBuilder::MASK_MASTER > 0 || $mask & MaskBuilder::MASK_OWNER > 0) {
+            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
                 $this->saveEntry($newEntry, Permission::PERMISSION_APPLICATION_MANAGE_PERMISSIONS);
             }
             return;
@@ -217,16 +218,16 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         echo "WARNING: Invalid class type " . $entry["class_type"] . "(object identifier " . $entry["object_identifier"] . ") for entry id " . $entry["id"] . "\n";
     }
 
-    private function populateSubject(Permission $newEntry, array $entry): void
+    private function populateSubject(Permission $newEntry, array $entry): ?Permission
     {
         if ($entry["identifier"] === 'IS_AUTHENTICATED_ANONYMOUSLY') {
             $newEntry->setSubjectDomain(Permission::SUBJECT_DOMAIN_PUBLIC);
-            return;
+            return $newEntry;
         }
 
         if ($entry["identifier"] === 'ROLE_USER') {
             $newEntry->setSubjectDomain(Permission::SUBJECT_DOMAIN_REGISTERED);
-            return;
+            return $newEntry;
         }
 
         if (str_starts_with($entry["identifier"], 'FOM\UserBundle\Entity\User-')) {
@@ -237,11 +238,11 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             }
             if (!$user) {
                 echo "WARNING: could not find user $username, defined in entry id " . $entry["id"] . "\n";
-                return;
+                return $newEntry;
             }
             $newEntry->setSubjectDomain(Permission::SUBJECT_DOMAIN_USER);
             $newEntry->setUser($user);
-            return;
+            return $newEntry;
         }
 
         if (str_starts_with($entry["identifier"], 'ROLE_GROUP_')) {
@@ -255,20 +256,20 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             if (is_array($group)) $group = count($group) > 0 ? $group[0] : null;
             if (!$group) {
                 echo "WARNING: could not find group $groupName, defined in entry id " . $entry["id"] . "\n";
-                return;
+                return $newEntry;
             }
             $newEntry->setSubjectDomain(Permission::SUBJECT_DOMAIN_GROUP);
             $newEntry->setGroup($group);
-            return;
+            return $newEntry;
         }
 
         echo "WARNING: Invalid identifier " . $entry["identifier"] . " for entry id " . $entry["id"] . "\n";
-
+        return null;
     }
 
     private function saveEntry(Permission $newEntry, string $permission)
     {
-        // ignore rights for super user, they can do everything anyway
+        // ignore rights for superuser, they can do everything anyway
         if ($newEntry->getSubjectDomain() === Permission::SUBJECT_DOMAIN_USER && $newEntry->getUser()?->getId() === 1) return;
         $entry = clone $newEntry;
         $entry->setPermission($permission);
