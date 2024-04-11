@@ -1363,8 +1363,8 @@ This brings the Profiler timing down to 1.6ms.
 
 ### [765](https://github.com/mapbender/mapbender/pull/765)
 
-[!NOTE]
-This trojan-horses pull #764.
+> [!NOTE]
+> This trojan-horses pull #764.
 
 This pull moves the Wms loading machinery out of the WmsBundle RepositoryController actions into an "Importer" component that is demonstrably reusable.
 It also introduces
@@ -1442,8 +1442,8 @@ But with these methods in place, child classes can hook onto them and filter / t
 
 New CLI command mapbender:inspect:element:classes as development QoL and for verification of issue #639 and pull #743.
 
-[!NOTE]
-technically, this trojan-horses pull 743 because it's based off of the fix/element-inheritance-639-noconfig branch, not off release
+> [!NOTE]
+> Technically, this trojan-horses pull 743 because it's based off of the fix/element-inheritance-639-noconfig branch, not off release
 
 C&P from doc comment: Will detect / specially highlight:
 
