@@ -35,7 +35,11 @@ class ImageTransport
     {
         try {
             $response = $this->baseTransport->getUrl($url);
-            $image = imagecreatefromstring($response->getContent());
+            $content = $response->getContent();
+            $image = imagecreatefromstring($content);
+            if (!$image) {
+                throw new \Exception("Could not create Image:\n URL:".$url."\n RETURNS:".$content);
+            }
             imagesavealpha($image, true);
             if ($opacity <= (1.0 - 1 / 127)) {
                 $multipliedImage = GdUtil::multiplyAlpha($image, $opacity);
