@@ -18,11 +18,13 @@
         },
 
         _setup: function(mbMap) {
+            var self = this;
             this.map = mbMap.map.olMap;
             this.dropArea = document.getElementById('dropFileArea');
             this.setupProjSelection();
             this.setupDropArea();
             this.setupFileUploadForm();
+            $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
         },
 
         open: function(callback) {
@@ -349,11 +351,15 @@
             return false;
         },
 
-        removeLayers: function () {
-            var self = this;
-            var layers = this.map.getLayers().getArray().filter(function (layer) {
+        getLayers: function () {
+            return this.map.getLayers().getArray().filter(function (layer) {
                 return layer.hasOwnProperty('id');
             });
+        },
+
+        removeLayers: function () {
+            var self = this;
+            var layers = this.getLayers();
             if (layers.length > 0) {
                 layers.forEach(function (layer) {
                     self.map.removeLayer(layer);
@@ -364,6 +370,20 @@
         removeTable: function () {
             $('#filesTable tbody').find('tr').remove();
             $('.table-responsive').addClass('d-none');
+        },
+
+        _onSrsChanged: function (event, data) {
+            var layers = this.getLayers();
+            if (layers.length > 0) {
+                layers.forEach(function (layer) {
+                    layer.getSource().getFeatures().forEach(function (f) {
+                        var geometry = f.getGeometry();
+                        if (geometry) {
+                            geometry.transform(data.from, data.to);
+                        }
+                    });
+                });
+            }
         }
     });
 })(jQuery);

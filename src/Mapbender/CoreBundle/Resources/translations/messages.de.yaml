@@ -585,8 +585,10 @@ mb:
         description: 'Laden von Dateien im den Formaten GeoJSON, KML, GML und GPX.'
       text:
         filearea: 'Datei ablegen'
-        fileupload: 'oder hier auswählen'
+        fileupload: 'oder Datei/en auswählen'
         projection: 'Projektion automatisch wählen'
+        tablehead:
+          name: 'Name'
       error:
         filesize: 'Max. Dateigröße überschritten!'
         filetype: 'Nicht unterstützter Dateityp:'

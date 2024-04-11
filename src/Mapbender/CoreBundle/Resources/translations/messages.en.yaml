@@ -585,8 +585,10 @@ mb:
             description: 'Data upload for files in GeoJSON, KML, GML or GPX format.'
         text:
             filearea: 'Drop file'
-            fileupload: 'or choose your file(s)'
+            fileupload: 'or choose your file/s'
             projection: 'Determine projection automatically'
+            tablehead:
+              name: 'Name'
         error:
             filesize: 'Max. filesize exceeded!'
             filetype: 'Unsupported file type:'
