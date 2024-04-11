@@ -828,6 +828,699 @@ One positive side effect is that the button highlighting machinery now works aut
 
 Because the highlighting machinery is generally coming back alive with these changes, logic has also been added to set an appropriate [initial highlight state for targets with `autoOpen` (or similar) options](https://github.com/mapbender/mapbender/pull/1095/commits/04b50b5b392106d817ca49847a365bb821769565#diff-47bf66afd39ec612d69958ee81aafcb8R173).
 
+### [1093](https://github.com/mapbender/mapbender/pull/1093)
+
+Resolves issues where a non-root administrator with assigned global Source ACLs is denied from editing a Source.
+
+Updated grant checking logic requires either a global Source grant (=access to all Source objects) or an object-particular grant on the specific Source.
+
+### [1087](https://github.com/mapbender/mapbender/pull/1087)
+
+Technical basis for fixing systemic sidepane element visibility issues such as #992.
+Coalesces FOM .tabContainerAlt and .accordion event behaviour into a single flow, which long story short ends up calling either a 'reveal' or 'hide' method on an mbBaseElement widget living in a sidepane.
+
+The effect felt by the mbBaseElement is the same for both Button and Accordeon sidepane types. When a sidepane tab or accordeon slice opens that contains Mapbender Element widgets, reveal will be called on them. When it closes, hide will be called. Order is hide first, reveal second.
+
+Sidepanes are required to carry the sideContent CSS class for this to work, because that's how they are recognized. Highly customized project templates may want to check for this precondition.
+
+Nothing at all will happen to Element widget instances not living inside a sidepane.
+Nothing at all will happen to Element widgets not implementing hide or reveal methods.
+Nothing at all will happen to Element widget instances living inside an unstructured None-type sidepane.
+Nothing at all will happen to Application templates that do not emit a DOM node matching .sideContent.
+Nothing at all will happen to .sideContent nodes nested into other .sideContent nodes.
+
+The naming hide and reveal was chosen in part to get away from the highly inconsistent usage of activate and deactivate in existing element widgets. Also because it is envisioned that at some point there can be some utility even for non-sidepane (popup-style) widgets.
+Widgets should be able to clearly separate in their lifecycle:
+
+- Showing themselves in a ready-and-waiting for usage state (e.g. showing a form or a list of items)
+- Enabling map and general event manipulation (running a drawing tool, waiting for map clicks etc)
+- Opening a popup
+- Plus the reverse stages
+
+### [1086](https://github.com/mapbender/mapbender/pull/1086)
+
+Fix for testing cycle v3.0.7.8: mobile template initialization.
+Reverts removal of Component\Application::getConfiguration.
+Adds a relevant deprecation warning (which goes to the log) and documents "replacement" strategy (which is simply removal of a script fragment from the twig.
+Cleans up the redundant (and ill-described) Assetic StringAsset usage as to not reintroduce a dependency which will cause conflicts later down the roadmap.
+
+### [1083](https://github.com/mapbender/mapbender/pull/1083)
+
+Fixes non-repeatable behaviour in handling of 'declarative' links that dynamically add or update Wms sources with explicit layers via mb-wms-layers attribute and (default) mb-wms-merge "1". Previously, the performed operations on the source were different for newly added sources and already loaded sources. Now a repeated click on the same declarative link performs the same incremental (mb-layer-merge omitted or "1") or total (mb-layer-merge "0") set of changes to the source.
+
+Supports mb-layer-merge attribute on 'declarative' links as documented. Previously the code respected only the mb-wms-layer-merge attribute, which wasn't documented. Now it supports both equivalently.
+
+Enhanced support for activating layers explicitly even on sources with intermediate group or root layers with empty names. Previously such layers could not be acted upon distinctly, because mb-wms-layers can only identify layers with distinct names. Now the 'declarative' mb-wms-layers interaction implicitly activates also the parents of the named layers (including the root layers).
+
+### [1070](https://github.com/mapbender/mapbender/pull/1070)
+
+Optionally diverts print jobs into a database table to be picked up and executed by a console command.
+This decouples job execution from the request context, and thus enables strictly serialized execution of demanding jobs with high resource limits without the risk of resource spikes.
+
+This requires a bit of outside configuration which may be hard to accomplish depending on the OS, web server configuration and other platform factors. Web server and CLI will compete for cache regeneration and will have to share files, so they absolutely must be configured to run as compatible users.
+Because we cannot assume clean user and system configuration, the queued printing behaviour is actually completely dormant unless the new mapbender.print.queueable parameter is set to true.
+
+After enabling the global parameter, PrintClient Element backend forms gain a new renderMode dropdown ("direct" or "queued"; "direct" remains the default). I.e. you can still have direct-mode PrintClients. You can switch on an Application basis as appropriate, and you can even have direct-mode and queued-mode PrintClient Elements side by side in the same Application if you want.
+
+For any jobs to get executed the mapbender:print:queue:next CLI must be run in one of three potential approaches:
+
+1. An endless loop. This can be accomplished in several ways, among them the Unix watch command. By default, each invocation processes at most one job before it exits, so there are no options to consider for this approach.
+2. As a potentially infinitely running single process `app/console mapbender:print:queue:next --max-jobs=0 --max-time=0`
+3. As a longer-lived, but still regularly exiting cronjob. Each invocation should exit a little bit before the next one starts to avoid overlapping multiple processes executing resource-intensive jobs simultaneously. This opens a window of time where no jobs will get pulled out of the database for execution. This window should sit in a low-expectation period, like the middle of the night. Here are the options to run jobs (any number of them) for a whole day minus five minutes before process exit:
+
+app/console mapbender:print:queue:next --max-jobs=0 --max-time=86100
+
+Two additional container parameters are introduced:
+
+1. mapbender.print.queue.storage_dir specifies an absolute path for the generated PDF files
+2. mapbender.print.queue.memory_limit can extend (never reduce) the PHP memory limit at runtime, specifically for queued print job execution
+
+### [1049](https://github.com/mapbender/mapbender/pull/1049)
+
+Remaining known issues:
+New DimensionsHandler Element can still not be configured properly before saving once. Full initialization of the form requires the DimensionsHandler to be saved once with the Map target has been selected.
+A "DimensionSet", once configured, cannot be deactivated by deselecting the last controlled source; the backend slider remains active with the previous valid extent; the DimensionSet has to be deleted (x icon).
+"Open ended" or "incomplete" (though fully valid) Dimension specs such as "2016-01/2018-11" still throw errors. Only Wms dimensions with explicit start + end + resolution ("2016-01/2018-11/P1M") are fully supported.
+Backend form does not show required fields and does not show error messages when required fields are missing. The backend form only saves successfully if each "DimensionSet" has a title, extent range, and controls at least one source.
+
+### [1047](https://github.com/mapbender/mapbender/pull/1047)
+
+Separates VendorSpecific from Dimension inheritance chain.
+Removes unevaluated, functionless attributes extent / origextent / origextentextent and type (single / interval / multiple) from VendorSpecific class, along with the related backend form fields and processing.
+
+Cherry-picks 467ed54 from feature/refactorDimension and continues removal of JOII dependencies from mapbender.wms.dimension.js JavaScript classes.
+
+### [1043](https://github.com/mapbender/mapbender/pull/1043)
+
+Followup to 3.0.7.5 PrintClient frontend form order change.
+PrintClient backend gains a new checkbox that controls ordering of required optional_fields relative to rest of the form. Default value is pre-3.0.7.5 behavior (required fields render together with non-required fields near the bottom of the form, before the legend checkbox).
+
+Frontend form comparison screenshot shows new default behavior to the left, behavior with new checkbox checked on the right.
+
+### [1042](https://github.com/mapbender/mapbender/pull/1042)
+
+Pull adds "declarative" link support for FeatureInfo responses loaded as iframes.
+
+FeatureInfo responses are displayed in iframes if backend checkbox "show original" is checked.
+
+### [1041](https://github.com/mapbender/mapbender/pull/1041)
+
+Switches Mapbender.ElementRegistry internal machinations to use promises as implemented by jQuery.Deferred.
+
+Maintains previous public API (listWidgets, onElementReady) while adding new promise-returning methods.
+waitCreated returns a promise that resolves after widget construction.
+waitReady returns a promise that resolves after the widget fires its ready event.
+
+#### Benefits
+
+- Resolve handler receives widget instance as argument
+
+```php
+Mapbender.elementRegistry.waitReady(this.options.target).then(function(mapWidget) {
+    console.log("Map widget is ready", mapWidget);
+    console.log("Map widget dom element:", mapWidget.element);
+    console.log("Map widget options:", mapWidget.options);
+   <...>
+});
+```
+
+- Can register error callbacks; either as second argument to .then (Promise spec) or .fail (jQuery API)
+
+```php
+// Errback as second argument to .then (Promises/A+)
+Mapbender.elementRegistry.waitReady(this.options.target).then(function(mapWidget) {
+    console.log("Map is ready", mapWidget);
+}, function() {
+    console.log("Map failed to initialize");
+});
+
+
+// Errback registered via .fail (jQuery Deferred extension)
+Mapbender.elementRegistry.waitReady(this.options.target).then(function(mapWidget) {
+    console.log("Map is ready", mapWidget);
+}).fail(function() {
+    console.log("Map failed to initialize");
+});
+```
+
+- Can separately react to widget construction before ready event comes up
+
+```php
+Mapbender.elementRegistry.waitCreated(this.options.target).then(function(targetWidget) {
+    console.log("Target created", targetWidget);
+    self.targetState = targetWidget.options.autoOpen;
+});
+Mapbender.elementRegistry.waitReady(this.options.target).then(function(targetWidget) {
+    console.log("Target is now ready", targetWidget);
+}, function() {
+    console.log("Error in target initialization, will not become ready");
+    self.targetState = false;
+});
+```
+
+- Element lifecycle events can now be mixed with other asynchronous operations in a single $.when. This opens opportunities to start element-dependent loading operations both earlier and with greater parallelism. E.g.:
+
+```php
+$.when(
+    Mapbender.elementRegistry.waitReady(this.options.target),   // map must be ready before we can draw
+    this.loadStyles(),      // Ajax request; starts immediately
+    this.loadFeatures()   // Ajax request; starts immediately
+).then(function(mapWidget, styleResponse, featureResponse) {
+    // only called after all three promises have resolved
+    self.redraw(...);
+}, function() {
+   // called if any of the above three promises failed
+});
+```
+
+- Can alternatively wait for / register handlers on a Mapbender Element by class name
+
+```php
+Mapbender.elementRegistry.waitCreated('.mb-element-overview').then(function(overviewWidget) {
+    console.log("Found an overview widget", overviewWidget);
+});
+```
+
+#### Motivation
+
+1. Previous architecture offered no support for soft error handling in dependencies, such as GPS Element integration into other elements when browser location API is disabled.
+2. Previous architecture did not support "scanning for element" / "scanning other element options" use cases without also delaying code execution until the ready event of the inspected element; impediment to implementing client-side plugin models
+3. Previous architecture favoured "map ready first" approach, delaying asynchronous loads, slowing down final client application initialization
+4. Previous architecture offered no support for waiting on multiple elements
+
+### [1038](https://github.com/mapbender/mapbender/pull/1038)
+
+Completely separates job data collection from form mangling / job submission (both ImageExport and PrintClient JavaScript) to facilitate alternative submission methods (non-form Ajax etc).
+
+PrintClient JavaScript widget now inherits from ImageExport JavaScript widget and common logic is reused.
+
+Job data collection has been split up into multiple methods to facilitate customization of specific portions.
+
+ImageExport widget JS gains the following discrete methods related to job data collection:
+
+- _filterGeometryLayer
+- _filterFeature
+- _extractFeatureGeometry
+- _filterFeatureGeometry
+- _extractGeometryLayerData
+- _getRasterSourceDefs
+- _collectRasterLayerData
+- _collectGeometryLayers
+- _collectJobData
+
+PrintClient widget JS gains / extends the following methods related to job data collection:
+
+- _collectOverview
+- _collectLegends
+- _getRasterVisibilityInfo
+- _filterGeometryLayer
+- _filterFeature
+- _collectRasterLayerData
+- _collectGeometryLayers
+- _collectJobData
+
+Forms for both ImageExport and PrintClient are now rendered completely, including action url, method and target, on the server.
+
+Collateral fixes:
+
+- empty feature geometries are filtered out on the client and not sent to the server for rendering
+- dialog-type PrintClient now updates itself when reopened to react to zoom changes properly
+
+### [1035](https://github.com/mapbender/mapbender/pull/1035)
+
+Pull adopts FOM's Mapbender.Popup2 global JavaScript method into Mapbender as Mapbender.Popup.
+Pull assumes FOM v3.0.6.2 for no-conflict JavaScript and distinct CSS class on FOM's Popup to steer style separation.
+Pull cleans up markup and styling of adopted Mapbender.Popup to replace excessive position:absolute usage.
+
+### [1029](https://github.com/mapbender/mapbender/pull/1029)
+
+Many many many Element frontend scripts have adopted a completely dysfunctional readyCallback processing machinery.
+
+These Elements can only successfully initialize if nobody registers a ready callback through this machinery before they finish initializing. If there is at least one deferred callback, these Elements will attempt to invoke an integer (the list index of the readyCallbacks) as a function and fail to flag themselves ready.
+
+As per Chrome console:
+
+```bash
+> var cbs = [function() { console.log("Hello I am a callback"); }, function() { console.log("I am a second callback"); }];
+< undefined
+> for (callback in cbs) { callback(); }
+< Uncaught TypeError: callback is not a function
+    at <anonymous>:1:25
+
+> for (callback in cbs) { console.log(callback); }
+< 0
+< 1
+< undefined
+```
+
+Because they can only initialize if there are no deferred callbacks, it's safe to assume that in any currently working application, this mechanism is not used on these Elements. For this reason, deferred callback registration has not been fixed on these Elements, but has been removed entirely.
+
+Self-managed element ready callbacks are a long-deprecated legacy mechanism. Modernish Elements should let the ElementRegistry handle this.
+
+### [1022](https://github.com/mapbender/mapbender/pull/1022)
+
+Replaces JavaScript-level hardcoded element popup sizes in the backend with css, from variables.
+
+Replaces JavaScript-level hardcoded "new instance" popup sizing with CSS, using a percentage rule.
+
+Replaces various anti-bottom-margin workaround hacks with a follower rule. Popup bodies no longer overflow into a scroll unless their content size warrants it.
+
+### [1012](https://github.com/mapbender/mapbender/pull/1012)
+
+A new compiler pass displaces fom: server_version et al as the authoritive source of the Mapbender version. Mapbender gains version knowledge inside itself.
+
+Any server_version or server_name values configured in FOM that follow certain well-treaded patterns are dropped on the floor and replaced by Mapbender's own. If they deviate significantly from historic default values used in vanilla Github versions of Mapbender Starter, we treat them as desired project-specific overrides and leave them alone.
+
+We also add new parameter keys for direct project-specific overrides of name, version and logo. These will always win out, even if they happen to say "Mapbender3" "v3.0pre2" (which would be ignored if it appeared under fom : server_*).
+
+### [852](https://github.com/mapbender/mapbender/pull/852)
+
+Layer order self-reset on scroll / dynamic layer de-/reactivation has been resolved.
+
+We had some issues with dynamic layer reordering in combination with "Reversed (QGIS style)" layer order in some applications.
+
+The changes on this branch make setting the desired layer order per source a one-shot bulk operation, and remove the incremental single-layer "move" operations.
+
+The layertree was adapted to use the bulk layer order setter on the geosource, so the result will remain consistent with the visible DOM order of the layers.
+The "sourceMoved" event is still fired but without the old structured "changed" payload, which would have been excrutiatingly hard to emulate. The only known consumer of this event (inside our own codebase) is the legend widget, which does not access this information at all.
+
+The layer ordering ended up as global state (keyed on source id), which is fugly. I resorted to this because JOII would not let me access parent-declared object properties in a child instance.
+
+### [846](https://github.com/mapbender/mapbender/pull/846)
+
+Remove default for null columns from Entity getLayerOrder.
+
+A/B testing on Postgres revealed that for reasons not entirely understood the entity does not update in the database if the only changed column is layerOrder as long as the getter provides a default. Removing the default (i.e. getLayerOrder returns plain attribute, whatever it is) restores reliable database updates.
+
+Add back the (configurable) default into the frontend config emission machinery.
+
+### [812](https://github.com/mapbender/mapbender/pull/812)
+
+This plugs a performance regression introduced in the context of plugging security issues related to "instance tunneling" getLegendGraphic requests.
+
+We introduce machinery to cache arbitrary application-specific data. The cache is self-managing / self-invalidating. Based on Application updated and time of the last container compilation, values are stale with no outside interaction (i.e. no deletion of cache files). Get is fully atomic. Put is nearly atomic, save for a potential mkdir vs external deletion race, but any errors this might produce are caught and processing is stopped.
+
+Config caching is generally less aggressive than the existing caching systems for js and css assets, so the amount of manual cache clears should not increase.
+
+Config caching can be disabled via parameter cachable.mapbbender.application.config.
+
+On my X230, config response latency improves anywhere between 40% and 850%, depending on application complexity. Configs are identical (md5sum and all that). Configs still update as expected when editing the application in the backend. Yaml applications update immediately in app_dev, and require a (Symfony) cache clear in "prod" (same as before).
+
+#### caching off
+
+##### bigger application (144kB config)
+
+```bash
+ron@flake:~$ wrk -c 2 -t 2 -d 20s 'http://305.mapbender.local/app.php/application/teh-grids/config'
+Running 20s test @ http://305.mapbender.local/app.php/application/teh-grids/config
+  2 threads and 2 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    94.61ms    5.69ms 175.83ms   99.29%
+    Req/Sec    10.57      2.42    20.00     93.47%
+  422 requests in 20.02s, 59.64MB read
+Requests/sec:     21.08
+Transfer/sec:      2.98MB
+```
+
+##### smaller application (10kB config)
+
+```bash
+ron@flake:~$ wrk -c 2 -t 2 -d 20s 'http://305.mapbender.local/app.php/application/mapbender_mobile/config'
+Running 20s test @ http://305.mapbender.local/app.php/application/mapbender_mobile/config
+  2 threads and 2 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    13.67ms    1.12ms  32.01ms   95.80%
+    Req/Sec    73.19      6.35    80.00     56.75%
+  2928 requests in 20.01s, 27.38MB read
+Requests/sec:    146.30
+Transfer/sec:      1.37MB
+```
+
+#### caching on
+
+##### larger application (144kB config)
+
+```bash
+ron@flake:~$ wrk -c 2 -t 2 -d 20s 'http://305.mapbender.local/app.php/application/teh-grids/config'
+Running 20s test @ http://305.mapbender.local/app.php/application/teh-grids/config
+  2 threads and 2 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     9.96ms    1.18ms  26.11ms   91.96%
+    Req/Sec   100.85      9.62   111.00     79.25%
+  4022 requests in 20.03s, 564.37MB read
+Requests/sec:    200.79
+Transfer/sec:     28.18MB
+```
+
+##### small application (10kB config)
+
+```bash
+ron@flake:~$ wrk -c 2 -t 2 -d 20s 'http://305.mapbender.local/app.php/application/mapbender_mobile/config'
+Running 20s test @ http://305.mapbender.local/app.php/application/mapbender_mobile/config
+  2 threads and 2 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     9.19ms    1.24ms  40.81ms   94.18%
+    Req/Sec   109.39      9.57   121.00     78.50%
+  4360 requests in 20.01s, 40.77MB read
+Requests/sec:    217.88
+Transfer/sec:      2.04MB
+```
+
+#### Related
+
+Basing cache invalidation also on container compilation time goes beyond existing caching mechanisms for js / css assets, which only look at the updated time on the Application entity, but don't consider system configuration changes.
+
+Those systems are also pretty much hard-wired to Assetic and Twig embedding, making them difficult to expand upon.
+
+Strategically, caching systems should unify on top of the simplest implementation.
+
+The machinery introduced here is basic and bare bones and makes few assumptions about intended usage. The cache deals only with raw strings and offers prepackaged retrieval as Response object only as an extra convenience.
+
+Caching of StringAsset types etc could easily be layered on top of this.
+
+### [811](https://github.com/mapbender/mapbender/pull/811)
+
+This is development QoL.
+
+Avoids errors when editing applications that may contain Elements not present in the code (on the current branch etc).
+
+When editing any Element that can control a "target" (Button, FeatureInfo etc), the backend generates a list of potential targets by scanning all Elements (including inactive ones) present in the Application.
+
+Previously, any dangling class references would lead to an exception. I.e. editing any controlling-type Element in the backend "Layouts" section would fail building the form with an HTTP 500 status.
+
+This pull introduces a change mirroring already present existance checks for the concrete Element class found elsewhere:
+
+- Layout section itself displays the Element with an empty title
+- Application frontend rendering and config generation skips processing the Element altogether
+
+This pull only touches one class (the TargetElementType form type), which is identical between 3.0.5 and 3.0.6. Because the class is barely getting touched, I took the opportunity to do some c&p folding and fix the formatting.
+
+Dummy Application component instantiation was redundant and has been removed.
+
+The significant logic change is entirely in the final commit.
+
+### [794](https://github.com/mapbender/mapbender/pull/794)
+
+exploring a new "technical preview" delivery for not-quite-ready features that are already in the main code base.
+
+DimensionsHandler has been sleeping in the code base for a while, but it's not ready yet for public consumption. Some projects do use it though, even on older 3.0.5 versions, so we can't just remove it or break it out into its own repository without risking upgrade continuity.
+
+This pull does not enable anything new by default. DimensionsHandler is still kept "hidden". Meaning:
+
+- doesn't show up in the list of addable elements when you edit your application layout
+- doesn't show up in LayerTree "menu" choices
+
+This simply changes the method of exposure. Before:
+
+- Projects would have to hack their MapbenderWmsBundle::getElements
+- Projects would have to hack their Element\Type\LayerTreeAdminType
+
+This may actually have led to forks.
+
+After:
+
+- Projects can at their own risk enable DimensionsHandler it with a single parameters.yml entry
+
+```bash
+parameters:
+    <...>
+    mapbender.preview.element.dimensionshandler: true
+```
+
+### [790](https://github.com/mapbender/mapbender/pull/790)
+
+This is a backwards-compatible change dissolving dependencies on EntityHandler while interacting with sources, source instances, their layers, and related objects.
+
+The public APIs of all EntityHandler child classes has been maintained including all quirks. Old-style instantiation and usage is fully supported, many repository-internal usages have been updated though.
+
+#### Reason
+
+The EntityHandler hierarchy is an embodiment of three anti-patterns that make maintaining and extending the behaviors incredibly complex
+
+- explicitly runtime-instantiated service
+- non-reusable service prebound to single task
+- intransparent string name concatenation of concrete class
+
+#### Instantiation, IDE introspection
+
+EntityHandler instantiation has been simplified and clarified, replacing instances of EntityHandler::createHandler with a plain old new whenever the resulting class is deterministic, and a move to a more concrete e.g. SourceInstanceEntityHandler::createHandler wherever some polymorphism is possible. This greatly improves IDE type knowledge, making the using code easier to understand and maintain.
+
+Superfluous instantiations of EntityHandler have also been removed wherever possible. E.g. internal cases of EntityHandler classes creating, basically, themselves again have been reduced to simple recursive calls
+
+#### Recursive relational object deletion without EntityHandler interaction
+
+EntityHandler-driven recursive remove has been cut back. This is already ensured by cascade=remove declarations in the entities. This change has been verified against services with populated contact and keyword relations.
+
+- Tables have been counted
+- complex WMS source has been added, instance has been attached to application
+- Source has been deleted.
+- I observed that the instance vanished, all attached layers and all attached keywords and contacts vanished. The table counts matched exactly the state before adding the source.
+
+#### Freeing up WmsInstance::configuration
+
+The last important change is stopping frontend config being smeared into WmsInstance::configuration, previously requiring, again, creation of a WmsInstanceEntityHandler and a call to generateConfiguration whenever something relating to frontend config had changed.
+
+This was effectively a caching layer built into a core entity, which was a horrenduous anti-pattern. The payload we had been caching was the result of
+
+- calling ~20 getters on the WmsInstance
+- serializing Bounding Boxes, Dimensions and Vendorspecifics to arrays
+- converting ratio and opacity to float
+
+This payload is ~constant time, it does not grow with the layer count, only slightly with Dimensions. It's not worth breaking entity semantics to cache it, and if we still need to cache it, that needs to happen in the presentation layer, perhaps in the scope of caching the entire application config (TBD).
+
+Generated configuration is the same as before. For demonstration, I baked a few monster WMS services into an application and diffed the config 1) with the code right before this branch and 2) at the (current) end of this branch with the added extra of never returning the persisted configuration from before from WmsInstance::getConfiguration. I'm using json_pp with canonical option to ensure JSON keys are sorted and don't appear in random order, so the configs are comparable.
+
+```bash
+## release/3.0.5, parent commit of this branch
+ron@flake:~/proj/mb305/application/mapbender$ git checkout -q ef7e083e39d82324cd04281beda06188e168c6e2
+ron@flake:~/proj/mb305/application/mapbender$ rm -rf `find ../app/cache/{dev,prod} -mindepth 1 -maxdepth 1 -not -name 'sessions'`
+ron@flake:~/proj/mb305/application/mapbender$ curl -s 'http://305.mapbender.local/app_dev.php/application/teh-grids/config' | json_pp -json_opt=pretty,ascii,canonical > teh-grids.config.ef7e083e39d82324cd04281beda06188e168c6e2.json
+
+## last config-significant commit on this branch
+ron@flake:~/proj/mb305/application/mapbender$ git checkout -q fbb9e44f0a3344b3d07e6d8525f9ec29bab49bce
+
+## manually disable WmsInstance::getConfiguration (not committed) ..., then
+ron@flake:~/proj/mb305/application/mapbender$ git diff src/
+diff --git a/src/Mapbender/WmsBundle/Entity/WmsInstance.php b/src/Mapbender/WmsBundle/Entity/WmsInstance.php
+index daf58bd..26b0d14 100644
+--- a/src/Mapbender/WmsBundle/Entity/WmsInstance.php
++++ b/src/Mapbender/WmsBundle/Entity/WmsInstance.php
+@@ -201,6 +201,7 @@ class WmsInstance extends SourceInstance
+      */
+     public function getConfiguration()
+     {
++        return array();
+         return $this->configuration;
+     }
+
+ron@flake:~/proj/mb305/application/mapbender$ rm -rf `find ../app/cache/{dev,prod} -mindepth 1 -maxdepth 1 -not -name 'sessions'`
+ron@flake:~/proj/mb305/application/mapbender$ curl -s 'http://305.mapbender.local/app_dev.php/application/teh-grids/config' | json_pp -json_opt=pretty,ascii,canonical > teh-grids.config.fbb9e44f0a3344b3d07e6d8525f9ec29bab49bce.json
+
+## now finally compare the configs
+ron@flake:~/proj/mb305/application/mapbender$ diff -uw teh-grids.config.a44a91aa62100215ab0bc6bc6f8d7604766b5a32.json teh-grids.config.fbb9e44f0a3344b3d07e6d8525f9ec29bab49bce.json
+ron@flake:~/proj/mb305/application/mapbender$
+```
+
+The diff is empty => the configs delivered to the client are 100% unchanged.
+
+The pretty-printed json configuration is ~780kB (8 active WMS instances). The local WmsInstance configurations made up 2.5% of the data volume and 12% of the total generation time. The practical impact of no longer caching these portions is smaller, because the instance is now more compact and loads faster.
+
+#### Strategy
+
+The ultimate goal (beyond the scope of this pull) is to no longer depend on the EntityManager hierarchy at all. Recursive persistence, removal, attaching related objects can and should be performed entirely by Doctrine EntityManager. What the EM cannot do should move into compartmentalized services (proper services). Namely:
+
+- reformatting entity data into a configuration array fit for the frontend (presentation layer)
+- merging a new entity into an old entity, e.g. refresh WmsSource in backend updates related WmsInstances (Repository layer)
+
+### [788](https://github.com/mapbender/mapbender/pull/788)
+
+DimensionsHandler used to rewrite the DimensionInst entities attached to the WmsInstance every time you saved its config in the backend. This was only done so its updated configuration could be embedded into the config generated for a loading application.
+
+This behavior has been removed.
+
+The equivalent replacement behavior is to use the existing app config rewriting mechanism similarly to earlier changes in BaseSourceSwitcher.
+
+Initial motivation / bigger picture:
+
+- resolving abuse of core entities as dumping ground for precached frontend config
+- removing paths that potentially modify entities in getters
+- reducing interactions with *EntityHandler classes before long overdue cleanups
+
+### [775](https://github.com/mapbender/mapbender/pull/775)
+
+The mapaxisorder.js file contains a list of 1885 EPSG codes for which the WMS 1.3 BBOX axis order reverseral applies.
+
+The Chrome JavaScript profiler tells me the original version took 10ms to evaluate.
+
+What I did in the first commit was to run a multiline regex search and replace
+
+from true\}\s*\},\s*\{\s*\" to true\},\n\t\t\"
+
+Then I had one object.
+Next I eliminated the loop.
+
+This brings the Profiler timing down to 1.6ms.
+
+### [765](https://github.com/mapbender/mapbender/pull/765)
+
+[!NOTE]
+This trojan-horses pull #764.
+
+This pull moves the Wms loading machinery out of the WmsBundle RepositoryController actions into an "Importer" component that is demonstrably reusable.
+It also introduces
+
+- a new (and trivial) WmsOrigin Entity that bundles url and the optional user + password for basic auth protected services
+- a new (and similarly trivial) Importer Response that carries the parsing results along with an (optional) ignored validation exception, so it can still be displayed as a warning if the user chose to ignore structural errors in the source's GetCapabilities
+
+Used like this:
+
+```bash
+$importer = new Importer($this->container);  // @todo: symfony service :p
+$origin = new WmsOrigin($url, $userName, $password);
+$importerResponse = $importer->evaluateServer($origin, false);
+/** @var \Exception|null $validationError */
+$validationError = $importerResponse->getValidationError();
+/** @var \Mapbender\WmsBundle\Entity\WmsSource $wmsSource */
+$wmsSource = $importerResponse->getWmsSourceEntity();
+```
+
+This pull also resolves some issues concerning storage of temporary schema downloads in the XmlValidator. These used to go into the web folder, which may not even be writable depending on deployment details. Worse, if web wasn't writable, an infinite loop was triggered.
+The solution was to distinguish "shipping" schemas (packed in with mapbender, considered static and an optimization) from "ad-hoc" schemas that must be downloaded because the document that is currently being validated references them.
+
+The "ad-hoc" schemas now go into sys_get_temp_dir().'/mapbender/xmlschemas'. Better than web. They are deleted when processing completes, either successfully or throwing.
+The "shipped" schemas remain in web/xmlschemas where they have been. I have confirmed that they are still picked up and used.
+
+#### CLI / testing
+
+As a proof of concept, there is a new mapbender:wms:validate:url CLI command that accepts an URL. It either bubbles any occuring exceptions, or trivially displays the detected layers when all went well.
+
+### [760](https://github.com/mapbender/mapbender/pull/760)
+
+Unit tests in mapbender CoreBundle have naive minor-version checks that will falsely identify PHP7.3 as PHP 5.3 and fail the tests.
+
+This pull fixes the version check to require PHP >= 5.4.
+
+This pull also adds a check in the Python/Selenium test that skips the test if no Python or no selenium Python module can be loaded.
+
+This pull also changes the failure mode of preconditions to use a SkippedTestError instead of (previously) IncompleteTestError, following PHPUnit's conventions and internal behaviour on what kind of error to throw when a test can't execute.
+
+### [748](https://github.com/mapbender/mapbender/pull/748)
+
+New CLI command mapbender:inspect:source:usage
+
+Place a new MapbenderInspectionBundle(), into your AppKernel if you don't get it automagically.
+
+Shows relations between applications and sources and source instances (--by-app, default) or the other way around (--by-source).
+
+Specially highlights disabled source instances and unpublished applications.
+
+Completely unused sources are listed separately.
+
+### [747](https://github.com/mapbender/mapbender/pull/747)
+
+Protected attribute $url removed, unused factory method create removed. Serialization result becomes valid, storage to database (when adding the WMS as a new source) works, reload works, no more exception on Postgres driver.
+
+Previous database values remain corrupted. View / refresh / delete still not possible with fix. Manual cleanup required.
+
+Recommend identifying the id of the affected source (it's in the backend listing and also in the URLs where you would see the exception), and running
+
+```SQL
+UPDATE mb_wms_wmslayersource SET metadataurl = NULL WHERE wmssource = <your wms id here>;
+```
+
+### [745](https://github.com/mapbender/mapbender/pull/745)
+
+Basic mechanism to separate element template variables from client-visible configuration (for javascript widgets etc) from internally used configuration (from entity, sometimes internally extended to service httpAction needs).
+
+This is only the mechanism. No implementation has been touched. This should be compatible with everything.
+
+The new methods getFrontendTemplateVars and getPublicConfiguration in the Element base class do the same as before: pipe through the entire result of getConfiguration.
+
+But with these methods in place, child classes can hook onto them and filter / transform these values without having to mess with getConfiguration (which may be risky, because it would interfere with exporting applications, and internal httpAction processing).
+
+### [744](https://github.com/mapbender/mapbender/pull/744)
+
+New CLI command mapbender:inspect:element:classes as development QoL and for verification of issue #639 and pull #743.
+
+[!NOTE]
+technically, this trojan-horses pull 743 because it's based off of the fix/element-inheritance-639-noconfig branch, not off release
+
+C&P from doc comment: Will detect / specially highlight:
+
+- missing / empty frontend template file (based on automatic template path calulation!)
+- reimplemented render / getType / getFormTemplate methods
+- missing AdminType class
+- Template not in same bundle as Element (for both frontend + admin template)
+- Element inheriting from other concrete Element
+- (overridden) AdminType class != automatically calculated AdminType class (to detect inheritance issues)
+- (overridden) form template != automatically calculated form template (to detect inheritance / convention issues)
+
+### [743](https://github.com/mapbender/mapbender/pull/734)
+
+This replaces Pull #649. 649 contains a real bug / regression (calculated AdminType class name ends up in wrong namespace, misses Type component) and a few unfortunate choices.
+
+This became clear after analyzing the existing element base.
+
+Differences to 649:
+
+- auto-calculated AdminType class name is in expected namespace (SomeBundle\Element\Type\).
+- adds previously missing getFrontendTemplatePath method; this was previously hard-baked into the render method
+- auto-generation split out of getter logic: getAutomaticTemplatePath, getAutomaticAdminType vs getType, getFormTemplate, (new) getFrontendTemplatePath
+- configration machinery for behaviour of auto-generation vs inheritance has been removed. You can now override the getter directly, which seems more straightforward than adding a static array property; even if you do, the auto-generation is still available for delegation. The auto-generation methods have boolean params to control their awareness and handling of inheritance.
+
+C&P from 649 start:
+This addresses a BC break somewhere in the 3.0.5 timeline where Elements inheriting from each other would at some point require getType, getFormTemplate, potentially render re-implementations, because automagically calculated template paths and admin types would be different from the earlier (always explicit) values coded into each element.
+
+The motivation for that refactoring was to get rid of endless c&p of the three methods mentioned above.
+This pull kind of "concludes" that work. C&P is not necessary for new elements inheriting directly from Element, and no necessity exists to override methods in child classes of concrete elements either, if the (intuitive) inheritance of AdminType and templates is desired. Old-style overrides (just reimplementing any or all of the methods) still works on this branch. Only the automatically generated values are affected at all.
+
+Because this was already a BC break, and this pull is supposed to reestablish BC, its merge target is 3.0.5.
+
+One issue was that there has not been a method to get the template path for the frontend. This logic was so far hard-embedded into the render method(s), and I assume a lot of C&Ping of that render method has been going on for that reason alone that makes it hard to analyze.
+
+To see exactly what's happening, the (not included) Omg639Command code from the original issue #639 may be a good starting point.
+
+### [712](https://github.com/mapbender/mapbender/pull/712)
+
+Instance tunnel is used when a service is secured (username + password) to hide auth details from client code.
+Instance tunnel legend loopholes were closed in #616
+
+This introduced a regression, losing non-GetLegendGraphic modes of retrieving a legend image for tunneled WMS. Namely, pulling a legend image from a layer's `<Style>` block in the capabilities document instead of the top-level `<GetLegendGraphic>`.
+
+This pull breaks out the logic for legend url selection into freestanding methods.
+
+Collateral:
+This pull also extends the `<Style>` legend picking to not always use the last Style node within a Layer, but instead it scans backwards inside the Layer until a Style node with a LegendUrl node is found.
+
+This scanning change was implemented because we have found at least one (secured) WMS service where in the capabilites document the LegendUrl node is omitted in the final Style node of each Layer. This led to no legend image being displayed in the Mapbender Legend element window. This problem was independent of secured vs unsecured, and was also observable pre-pull 616.
+
+Backward scanning will naturally pick the last Style node if it is populated, just like before, so it should be compatible with all previously working cases, and improve legend image picking for previously broken ones.
+
+### [703](https://github.com/mapbender/mapbender/pull/703)
+
+We replace the mb3_logo.png with a new version, but under the same name for now.
+
+In many other places we found no good way to reference centrally configured name, and updated the hard-coded strings in:
+
+- Translation texts referencing Mapbender3
+- ProxyService user agent
+- DrupalIntegrationBundle (various)
+- Readme
+
+We also updated links to mapbender3.org with mapbender.org
+
+Not updated are various package names and descriptions in composer.json, existing changelog entries, mapbender:generate:element CLI help.
+
+### [700](https://github.com/mapbender/mapbender/pull/700)
+
+Updates translations, replaces English / dummy placeholders
+
+This branch changes only messages.*.yml files and src/Mapbender/ManagerBundle/Resources/views/Application/form-layersets.html.twig.
+
+This branch was apparently based on feature/ol-cesium at d11dd2f, which has already been merged to release/3.0.6, but reverted later. This shouldn't cause further issues.
+
+Need this in 3.0.6 because many locales are currently filled with placeholder content, which is worse than not having them included at all.
+
 [↑ Back to top](#git-archive)
 
 [← Back to README](../README.md)
