@@ -92,6 +92,7 @@
             <argument type="collection" />
             <!-- will contain all services tagged with "fom.security.subject_domain", sorted by priority -->
             <argument type="collection" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
         <service id="fom.security.attribute_domain.application"

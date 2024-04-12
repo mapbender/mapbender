@@ -35,4 +35,42 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
         return self::SLUG;
     }
 
+    public function supports(string $permission, mixed $subject): bool
+    {
+        return $subject === null && in_array($permission, $this->getPermissions());
+    }
+
+    public function getPermissions(): array
+    {
+        return [
+            self::PERMISSION_CREATE_APPLICATIONS,
+            self::PERMISSION_VIEW_ALL_APPLICATIONS,
+            self::PERMISSION_EDIT_ALL_APPLICATIONS,
+            self::PERMISSION_DELETE_ALL_APPLICATIONS,
+            self::PERMISSION_OWN_ALL_APPLICATIONS,
+            self::PERMISSION_VIEW_SOURCES,
+            self::PERMISSION_CREATE_SOURCES,
+            self::PERMISSION_REFRESH_SOURCES,
+            self::PERMISSION_EDIT_FREE_INSTANCES,
+            self::PERMISSION_DELETE_SOURCES,
+            self::PERMISSION_MANAGE_PERMISSION,
+            self::PERMISSION_VIEW_USERS,
+            self::PERMISSION_CREATE_USERS,
+            self::PERMISSION_EDIT_USERS,
+            self::PERMISSION_DELETE_USERS,
+            self::PERMISSION_VIEW_GROUPS,
+            self::PERMISSION_CREATE_GROUPS,
+            self::PERMISSION_EDIT_GROUPS,
+            self::PERMISSION_DELETE_GROUPS,
+        ];
+    }
+
+    public function buildWhereClause(string $permission, mixed $subject): ?WhereClauseComponent
+    {
+        return new WhereClauseComponent(
+            whereClause: "p.permission = :permission AND p.attribute_domain = '".self::SLUG."'",
+            variables: ['permission' => $permission]
+        );
+    }
+
 }

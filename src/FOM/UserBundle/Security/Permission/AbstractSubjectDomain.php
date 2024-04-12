@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+
 abstract class AbstractSubjectDomain
 {
     /**
@@ -11,5 +13,14 @@ abstract class AbstractSubjectDomain
      * @return string
      */
     abstract function getSlug(): string;
+
+    /**
+     * Build an SQL where clause that matches the logged-in user.
+     * The permission table is aliased as `p`
+     * The logged-in user is available as argument, if you need information from another service, use dependency injection.
+     * @param UserInterface|null $user
+     * @return ?WhereClauseComponent a wrapper class for the where clause. Variables will be bound using doctrine's bindParam.
+     */
+    abstract public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent;
 
 }

@@ -2,7 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
-use FOM\UserBundle\Security\Permission\AbstractSubjectDomain;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SubjectDomainPublic extends AbstractSubjectDomain
 {
@@ -13,4 +13,8 @@ class SubjectDomainPublic extends AbstractSubjectDomain
         return self::SLUG;
     }
 
+    public function buildWhereClause(?UserInterface $user): WhereClauseComponent
+    {
+        return new WhereClauseComponent("p.subject_domain = '" . self::SLUG . "'");
+    }
 }
