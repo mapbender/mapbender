@@ -207,17 +207,20 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function buildPdf($mapImageName, $templateData, $jobData)
     {
         // @todo: eliminate instance variable $this->pdf
+        // needs a pdf generated via selection
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         $tplidx = $pdf->importPage(1);
-        $pdf->useTemplate($tplidx);
+
         $this->addMapImage($pdf, $mapImageName, $templateData);
         unlink($mapImageName);
 
-        // @todo: reimplement "transparent background pdf" logic? (purpose / testability unknown)
+        $pdf->useTemplate($tplidx);
+
         $this->afterMainMap($pdf, $templateData, $jobData);
 
         return $pdf;
     }
+
 
     /**
      * Returns the binary string representation of the $pdf
