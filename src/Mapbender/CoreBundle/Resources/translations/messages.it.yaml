@@ -107,7 +107,7 @@ mb:
         token_regex_out: 'Espressione regolare di sostituzione dei token'
         token_regex_out.help: 'All''interno di ciascun token (vedi Espressione regolare di suddivisione), l'espressione regolare da "Espressione regolare di ricerca" verrà cercata e sostituita con questo valore. I gruppi trovati verranno riferiti da un <code>$</code> e numeri ascendenti. Ad esempio, <code>$1*</code> aggiungerà un asterisco a ciascuna parola di ricerca.'
         collection_path: 'Percorso dei risultati'
-        collection_path.help: 'Percorso che punta all'array dei risultati all'interno della risposta dell'URL di ricerca. I livelli di gerarchia sono separati da punti. Ad esempio <code>response.docs</code> (Standard Solr), <code>features</code> (GeoJSON)'
+        collection_path.help: 'Percorso che indirizza all'array dei risultati all'interno della risposta dell'URL di ricerca. I layer di gerarchia sono separati da punti. Ad esempio <code>response.docs</code> (Standard Solr), <code>features</code> (GeoJSON)'
         label_attribute: 'Attributo dell'etichetta'
         label_attribute.help: 'Percorso (all'interno di un singolo risultato) all'attributo che verrà utilizzato come etichetta, ad esempio <code>label</code>. In alternativa, è possibile inserire un modello di stringa, ad esempio <code>Città ${properties.address.city} - ${properties.address.road}</code>'
         geom_attribute: 'Attributo della geometria'
@@ -274,8 +274,8 @@ mb:
     zoombar:
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'
-      zoom_home: 'Torna all'inizio'
-      zoomHomeRestoresLayers: '"Torna all'inizio" ripristina anche le impostazioni dei layers'
+      zoom_home: 'Torna all''inizio'
+      zoomHomeRestoresLayers: '"Torna all''inizio" ripristina anche le impostazioni dei layers'
       zoomin: Ingrandisci
       zoomout: Rimpicciolisci
       class:
@@ -304,7 +304,7 @@ mb:
         tooltip: Tooltip
         activityclass: 'Attività generale della classe CSS'
         ajaxactivityclass: 'Attività di sfondo della classe CSS'
-        ajaxactivityclass_help: 'Classe CSS che viene impostata mentre un'azione è attiva in background (come una ricerca in corso)'
+        ajaxactivityclass_help: 'Classe CSS che viene impostata mentre un''azione è attiva in background (come una ricerca in corso)'
         tileactivityclass: 'Caricamento della mappa della classe CSS'
     button:
       class:
@@ -376,7 +376,7 @@ mb:
     scaledisplay:
       label: Scala
       scale_prefix: Prefisso
-      scale_prefix.help: 'Descrizione mostrata prima della scala effettiva. Lo standard <code>mb.core.scaledisplay.label</code> è visualizzato come <code>Scale</code> nella lingua dello user.'
+      scale_prefix.help: 'Descrizione mostrata prima della scala effettiva. Lo standard <code>mb.core.scaledisplay.label</code> è visualizzato come <code>Scale</code> nella lingua dell''utente.'
       unit_prefix: 'Riduci scala'
       unit_prefix.help: 'Se è selezionata, i valori di scala superiori a 1.000 saranno abbreviati con una postposizione <code>K</code> o <code>M</code>.'
       class:
@@ -412,8 +412,8 @@ mb:
     viewManager:
       class:
         title: 'Visualizza il manager'
-        description: 'Salva gli stati della mappa per un successivo ripristino'
-      saveAsPublic: 'Salva come pubblica'
+        description: 'Salva i layer della mappa per un successivo ripristino'
+      saveAsPublic: 'Salva come entry pubblico'
       recordStatus:
         public: 'Entry pubblica'
         private: 'Entry privata'
@@ -432,7 +432,7 @@ mb:
         access.rwd: 'Consenti salvataggio e cancellazione'
         publicEntries: 'Elenco pubblico'
         privateEntries: 'Mostra elenco privato'
-        adminDeleteHint: 'Nota: l'amministratore può sempre cancellare le voci pubbliche'
+        adminDeleteHint: 'Nota: l''amministratore può sempre cancellare le voci pubbliche'
         allowAnonymousSave: 'Consenti il salvataggio a utenti anonimi'
         showDate: 'Mostra la data'
     coordinatesutility:
@@ -569,7 +569,7 @@ mb:
     applicationSwitcher:
       class:
         title: 'Switcher dell''applicazione'
-        description: 'Passa a un'altra applicazione mantenendo la posizione corrente della mappa.'
+        description: 'Passa a un''altra applicazione mantenendo la posizione corrente della mappa.'
       admin:
         open_in_new_tab: 'Apri in un nuovo tab'
     coordinesdisplay:

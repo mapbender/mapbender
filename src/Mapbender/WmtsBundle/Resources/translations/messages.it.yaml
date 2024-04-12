@@ -4,38 +4,38 @@ mb:
       repo:
         view:
           label:
-            matrixsets: 'TRANSLATE: Matrixsets'
-            theme: 'TRANSLATE: Theme'
-            serviceprovidername: 'TRANSLATE: Name of service provider'
-            serviceprovidersite: 'TRANSLATE: Website of service provider'
+            matrixsets: Matrixsets
+            theme: Temi
+            serviceprovidername: 'Nome del fornitore di servizi'
+            serviceprovidersite: 'Sito web del fornitore di servizi'
         tilematrixset:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            supportedcrs: 'TRANSLATE: Supported CRS'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-          matrixes: 'TRANSLATE: Matrices'
+            identifier: Identificatore
+            supportedcrs: 'CRS supportati'
+            title: Titolo
+            abstract: Descrizione
+          matrixes: Matrixes
         theme:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-            layerrefs: 'TRANSLATE: Layerrefs'
+            identifier: Identificatore
+            title: titolo
+            abstract: Descrizione
+            layerrefs: 'Referenze del layer'
         instance:
           label:
-            style: 'TRANSLATE: Style'
+            style: Stile
         layer:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            formats: 'TRANSLATE: Formats'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-            latlonbounds: 'TRANSLATE: LatLonBounds'
-            tilematrixsetlinks: 'TRANSLATE: TileMartixSetLinks'
+            identifier: Identificatore
+            formats: Formati
+            title: Titoli
+            abstract: Descrizione
+            latlonbounds: 'Limiti LatLon'
+            tilematrixsetlinks: TileMartixSetLinks
         tilematrix:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            scaledenominator: 'TRANSLATE: ScaleDenominator'
-            topleftcorner: 'TRANSLATE: TopLeftCorner'
-            tilesize: 'TRANSLATE: TileSize'
-            matrixsize: 'TRANSLATE: MatrixSize'
+            identifier: Identificatore
+            scaledenominator: Denominatore di scala
+            topleftcorner: Angolo superiore sinistro
+            tilesize: 'Dimensione tile'
+            matrixsize: 'Dimensione Matrix'

@@ -24,61 +24,61 @@ mb:
       create:
         success: 'È stata creata una nuova istanza. Si prega di modificarla.'
   manager:
-    automatic: 'TRANSLATE: Automatic'
+    automatic: Automatico
     autoActivate: Auto-attivazione
     autoOpen: 'Apertura automatica'
-    confirm_form_discard: 'TRANSLATE: Discard changes?'
-    popup_height: 'TRANSLATE: Dialog height'
-    popup_width: 'TRANSLATE: Dialog width'
+    confirm_form_discard: 'Cancella le modifiche?'
+    popup_height: 'Altezza della finestra di dialogo'
+    popup_width: 'Larghezza della finestra di dialogo'
     screentype:
-      label: 'TRANSLATE: Screen type'
+      label: 'Tipo di schermo'
       choice:
-        all: 'TRANSLATE: Any'
-        mobile: 'TRANSLATE: Mobile'
-        desktop: 'TRANSLATE: Desktop'
+        all: Qualsiasi
+        mobile: Mobile
+        desktop: Desktop
     toolbar:
       alignment:
-        label: 'TRANSLATE: Alignment'
+        label: Allineamento
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
-          center: 'TRANSLATE: Center'
-      generate_button_menu: 'TRANSLATE: Generate menu for buttons'
-      menu_label: 'TRANSLATE: Menu label'
-    visibility: 'TRANSLATE: Visibility'
+          left: Sinistra
+          right: Destra
+          center: Centro
+      generate_button_menu: 'Genera menu per i pulsanti'
+      menu_label: 'Menu label'
+    visibility: Visibilità
     element:
       screentype:
-        mobile: 'TRANSLATE: Show on mobile screens'
-        desktop: 'TRANSLATE: Show on desktop screens'
+        mobile: Mostra su schermi mobili
+        desktop: Mostra su schermi desktop
     sidepane:
-      width: 'TRANSLATE: Width'
-      resizable: 'TRANSLATE: Resizable'
-      resizable_help: 'TRANSLATE: If checked, the user can resize the sidebar by dragging on its right edge. If you want to constrain the min/max width, use custom css (min-width/max-width on .sidePane.resizable).'
-      closed: 'TRANSLATE: Initially closed'
+      width: Larghezza
+      resizable: Ridimensionabile
+      resizable_help: 'Se è selezionata, l'utente può ridimensionare la barra laterale trascinandola sul bordo destro. Se si desidera limitare la larghezza minima e massima, utilizzare i CSS personalizzati (min-width/max-width su .sidePane.resizable).'
+      closed: 'Inizialmente chiuso'
       align:
-        label: 'TRANSLATE: Position'
+        label: Posizione
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
+          left: Sinistra
+          right: Destra
     sourceinstance:
       embedded_in_applications: |
         {count, plural,
-            =0    {TRANSLATE: This instance is not used in any application}
-            one   {TRANSLATE: This instance is used in one application}
-            other {TRANSLATE: This instance is used in # applications}
+            =0    {Questa istanza non è utilizzata in nessuna applicazione}
+            one   {Questa istanza è utilizzata in un''applicazione}
+            other {Questa istanza non è utilizzata in # applicazioni}
         }
-      convert_to_reusable: 'TRANSLATE: Convert to shared instance'
-      convert_to_bound: 'TRANSLATE: Convert to bound instance'
-      converted_to_bound: 'TRANSLATE: A bound copy of the shared instance has been added to the application'
-      reusable_assigned_to_application: 'TRANSLATE: The shared instance has been added to the application'
-      create_reusable: 'TRANSLATE: Create shared instance'
-      created_reusable: 'TRANSLATE: A new shared instance has been created'
+      convert_to_reusable: 'Converti in istanza condivisa'
+      convert_to_bound: 'Convertire in istanza vincolata'
+      converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
+      reusable_assigned_to_application: 'L''istanza condivisa è stata aggiunta all''applicazione'
+      create_reusable: 'Crea un'istanza condivisa'
+      created_reusable: 'È stata creata una nuova istanza condivisa'
     application:
-      persistentView: 'TRANSLATE: Persistent map state'
-      splashscreen: 'TRANSLATE: Show Splashscreen'
+      persistentView: 'Stato della mappa persistente'
+      splashscreen: 'Mostra Splashscreen'
     admin:
       sources: Risorse
-      csrf_token_invalid: 'TRANSLATE: Invalid CSRF token.'
+      csrf_token_invalid: 'Token CSRF non valido.'
       source:
         add: 'Aggiungi risorsa'
         show_metadata: 'Mostra metadati'
@@ -94,18 +94,18 @@ mb:
           toupdate: 'Risorsa non più attuale'
           unreachable: 'Risorsa irraggiungibile'
         embedded_in_applications: |
-          TRANSLATE: {count, plural,
+          {count, plural,
               =0    {This source is not used in any application}
               one   {This source is used in one application}
               other {This source is used in # applications}
           }
       map:
         max_extent: 'Max. estensione'
-        max_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
+        max_extent.help: 'Bounding Box (min/max x/y) in cui l'utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
         start_extent: 'Estensione iniziale'
-        start_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) that is initially displayed when loading the map. When clicking on the home icon, the map zooms to this extent.'
-        base_dpi: 'TRANSLATE: Default Resolution [dpi]'
-        base_dpi.help: 'TRANSLATE: The resolution adapts to the screen resolution based on the configured value'
+        start_extent.help: 'Bounding Box (min/max x/y) che viene visualizzato inizialmente al caricamento della mappa. Facendo clic sull'icona della home, la mappa viene ingrandita in questa estensione.'
+        base_dpi: 'Risoluzione predefinita [dpi]'
+        base_dpi.help: 'La risoluzione si adatta alla risoluzione dello schermo in base al valore configurato'
       element:
         title: Titolo
         type: Tipo
@@ -113,11 +113,11 @@ mb:
         show_hide: 'Alterna mostra/nascondi elemento'
         no_element_added: 'Nessun elemento aggiunto'
         anchor:
-          label: 'TRANSLATE: Position'
-          left-top: 'TRANSLATE: Top left'
-          left-bottom: 'TRANSLATE: Bottom left'
-          right-top: 'TRANSLATE: Top right'
-          right-bottom: 'TRANSLATE: Bottom right'
+          label: 'Posizione'
+          left-top: 'In alto a sinistra'
+          left-bottom: 'In basso a sinistra'
+          right-top: 'In alto a destra'
+          right-bottom: 'In basso a destra'
       zoombar:
         draggable: Trascinabile
       overview:
@@ -140,9 +140,9 @@ mb:
           confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Nessuna istanza aggiunta'
         no_layer_added: 'Nessun layer aggiunto'
-        max_input_vars_exceeded: 'TRANSLATE: PHP setting max_input_vars too low for the number of layers in this instance.'
-        update_successful: 'TRANSLATE: Your instance has been updated.'
-        converted_to_shared: 'TRANSLATE: The instance has been converted to a shared instance.'
+        max_input_vars_exceeded: 'PHP ha impostato max_input_vars troppo basso per il numero di layer in questa istanza.'
+        update_successful: 'La tua istanza è stata aggiornata.'
+        converted_to_shared: 'L'istanza è stata convertita in istanza condivisa.'
       template: Template
       application:
         view: Vedi
@@ -192,8 +192,8 @@ mb:
       serviceurl: 'URL del Servizio'
       username: 'Nome utente'
       password: Password
-      activate_new_layers: 'TRANSLATE: Activate newly added layers'
-      select_new_layers: 'TRANSLATE: Select newly added layers'
+      activate_new_layers: 'Attiva i layer appena aggiunti'
+      select_new_layers: 'Seleziona i livelli appena aggiunti'
       load: Carica
     managerbundle:
       new_application: 'Nuova applicazione'
@@ -225,33 +225,33 @@ mb:
     import:
       application:
         failed: 'L''applicazione non può essere importata'
-    http_connection_error: 'TRANSLATE: Connection failed'
-    http_error_response: 'TRANSLATE: The remote server responded with an error message'
+    http_connection_error: 'Connessione non riuscita'
+    http_error_response: 'Il server remoto ha risposto con un messaggio di errore'
     xml_invalid: 'Il documento non è valido'
-    xml_malformed: 'Il documento non è valido'
+    xml_malformed: 'Il documento XML o la struttura XML non sono valide'
   core:
     admin:
       button:
         show_label: 'Mostra label'
       element:
         autostart: Autostart
-      title: 'TRANSLATE: Title'
+      title: Titolo
     entity:
       app:
         screenshotfile:
-          error: 'Il file è troppo grande (% uploadFileSize% bytes). La dimensione massima consentita è% maxFileSize% bytes.'
+          error: 'Il file è troppo grande (%uploadFileSize% bytes). La dimensione massima consentita è% maxFileSize% bytes.'
           format_error: 'Questo formato non è supportato!'
           resolution:
-            error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel  o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
+            error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
     importjobtype:
       admin:
-        importfile: 'TRANSLATE: Import file'
+        importfile: 'Importazione del file'
   actions:
-    secureelement: 'TRANSLATE: Secure element'
+    secureelement: 'Elemento sicuro'
   wms:
     wmsloader:
       repo:
         instance:
           label:
-            title: 'TRANSLATE: Title'
-            opacity: 'TRANSLATE: Opacity'
+            title: Titolo
+            opacity: Opacità
