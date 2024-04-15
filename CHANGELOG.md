@@ -28,6 +28,7 @@ Features:
 * [Sidebar] Sidebar is now user-resizable (configurable but active per default) ([PR#1539](https://github.com/mapbender/mapbender/pull/1539))
 * [LayerTree] When activating a layer, all its parent layers are also activated ([PR#1544](https://github.com/mapbender/mapbender/pull/1544))
 * [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
+* [Map] visiblelayers parameter now supports also rootlayer and layer name (not only sourceinstanceid, instanceid) ([PR#1565](https://github.com/mapbender/mapbender/pull/1565))
 
 
 Bugfixes:
