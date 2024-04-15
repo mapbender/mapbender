@@ -15,6 +15,7 @@ Features:
 * PHP 8.2 is now fully supported.
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
+* New element "Data Upload" that allows mapbender to be used as a non-persistent file viewer for various spatal formats ([PR#1560](https://github.com/mapbender/mapbender/pull/1560))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
