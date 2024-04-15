@@ -2,7 +2,7 @@
 
     $.widget('mapbender.mbDataUpload', {
         options: {
-            deactivate_on_close: true,
+            maxFileSize: 10,
         },
         map: null,
         popup: null,
@@ -133,8 +133,8 @@
             ([...files]).forEach(function (file, idx) {
                 var reader = new FileReader();
                 reader.addEventListener('load', function () {
-                    var maxFileSize = parseInt(self.options.maxFileSize) * 1000000;
-                    if (file.size > maxFileSize) {
+                    var maxFileSizeBytes = parseInt(self.options.maxFileSize) * 1000000;
+                    if (file.size > maxFileSizeBytes) {
                         var msg = Mapbender.trans('mb.core.dataupload.error.filesize') + ' (' + self.options.maxFileSize + 'MB)';
                         Mapbender.error(msg);
                         return;
@@ -148,32 +148,13 @@
         },
 
         renderFeatures: function (file, uploadId, result) {
-            var format = {};
             var featureProjection = this.map.getView().getProjection().getCode();
-            var dataProjection = featureProjection;
 
-            switch (file.type) {
-                case 'application/geo+json':
-                case 'application/json':
-                    format = new ol.format.GeoJSON();
-                    dataProjection = this.findGeoJsonProjection(result);
-                    break;
-                case 'application/vnd.google-earth.kml+xml':
-                    format = new ol.format.KML();
-                    dataProjection = 'EPSG:4326';
-                    break;
-                case 'application/gml+xml':
-                    format = this.findGmlFormat(result);
-                    dataProjection = this.findProjection();
-                    break;
-                case 'application/gpx+xml':
-                    format = new ol.format.GPX();
-                    dataProjection = 'EPSG:4326';
-                    break;
-                default:
-                    var msg = Mapbender.trans('mb.core.dataupload.error.filetype') + ' ' + file.type;
-                    Mapbender.error(msg);
-                    throw new Error(msg);
+            const [format, dataProjection] = this.findFormatByType(file, result);
+            if (!format || !dataProjection) {
+                var msg = Mapbender.trans('mb.core.dataupload.error.filetype') + ' ' + file.type;
+                Mapbender.error(msg);
+                throw new Error(msg);
             }
 
             var features = format.readFeatures(result, {
@@ -191,6 +172,26 @@
             this.map.getView().fit(extent, {
                 padding: [75, 75, 75, 75],
             });
+        },
+
+        /**
+         * @param {File} file
+         * @param {string | ArrayBuffer | null} result FileReader result
+         * @returns {[ol.format.*,string]} An array containing the openlayers format and the appropriate projection
+         */
+        findFormatByType: function(file, result) {
+            switch (file.type) {
+                case 'application/geo+json':
+                case 'application/json':
+                    return [new ol.format.GeoJSON(), this.findGeoJsonProjection(result)];
+                case 'application/vnd.google-earth.kml+xml':
+                    return [new ol.format.KML(), 'EPSG:4326'];
+                case 'application/gml+xml':
+                    return [this.findGmlFormat(result), this.findProjection()];
+                case 'application/gpx+xml':
+                    return [new ol.format.GPX(), 'EPSG:4326'];
+            }
+            return [null, null];
         },
 
         findProjection: function () {
