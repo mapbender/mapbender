@@ -508,13 +508,14 @@ window.Mapbender.MapModelBase = (function() {
         },
 
         findSourceAndLayerIdByName: function (sourceName, layerName) {
-            var sourceAndLayerId = {};
+            const sourceAndLayerId = {};
             this.getSources().forEach(function (source) {
-                var config = source.children[0];
-                if (config.options.name === sourceName) {
+                if (!source.children || !source.children.length) return;
+                const config = source.children[0];
+                if (config.options.name === sourceName || config.options.title === sourceName) {
                     sourceAndLayerId.sourceId = config.source.id;
                     config.children.forEach(function (child) {
-                        if (child.options.name === layerName) {
+                        if (child.options.name === layerName || child.options.title === layerName) {
                             sourceAndLayerId.layerId = child.options.id;
                         }
                     });
