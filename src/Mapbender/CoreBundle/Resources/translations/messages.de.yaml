@@ -582,7 +582,7 @@ mb:
     dataupload:
       class:
         title: 'Daten laden'
-        description: 'Laden von Dateien im den Formaten GeoJSON, KML, GML und GPX.'
+        description: 'Laden von Dateien in den Formaten GeoJSON, KML, GML und GPX.'
       text:
         filearea: 'Datei ablegen'
         fileupload: 'oder Datei/en auswählen'

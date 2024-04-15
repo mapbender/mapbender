@@ -130,6 +130,8 @@
 
         handleFileUpload: function (files) {
             var self = this;
+            let extent = undefined;
+
             ([...files]).forEach(function (file, idx) {
                 var reader = new FileReader();
                 reader.addEventListener('load', function () {
@@ -140,7 +142,18 @@
                         return;
                     }
                     var uploadId = Date.now() + '_' + idx;
-                    self.renderFeatures(file, uploadId, reader.result);
+
+                    // zoom to the bounding box of all recently uploaded files
+                    const createdSource = self.renderFeatures(file, uploadId, reader.result);
+                    if (extent) {
+                        ol.extent.extend(extent, createdSource.getExtent());
+                    } else {
+                        extent = createdSource.getExtent();
+                    }
+                    self.map.getView().fit(extent, {
+                        padding: [75, 75, 75, 75],
+                    });
+
                     self.renderTable(file, uploadId);
                 });
                 reader.readAsText(file);
@@ -168,10 +181,7 @@
             });
             layer.id = uploadId;
             this.map.addLayer(layer);
-            var extent = source.getExtent();
-            this.map.getView().fit(extent, {
-                padding: [75, 75, 75, 75],
-            });
+            return source;
         },
 
         /**
