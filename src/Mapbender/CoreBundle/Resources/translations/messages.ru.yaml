@@ -14,7 +14,7 @@ mb:
     reset: Сброс
     save: Сохранить
     search: Поиск
-    duplicate: 'TRANSLATE: Duplicate'
+    duplicate: 'Дублировать'
   terms:
     application:
       singular: Приложение
@@ -31,16 +31,16 @@ mb:
       typed:
         singular: '%type% экземпляр'
       reusable:
-        singular: 'TRANSLATE: Shared instance'
-        plural: 'TRANSLATE: Shared instances'
+        singular: 'Общедоступный экземпляр'
+        plural: 'Общедоступный экземпляры'
       bound:
-        singular: 'TRANSLATE: Bound instance'
-        plural: 'TRANSLATE: Bound instances'
+        singular: 'Приватный экземпляр'
+        plural: 'Приватные экземпляры'
     security: Безопасность
   form:
-    choice_required: 'TRANSLATE: Choose one'
-    choice_optional: 'TRANSLATE: None'
-    unnamed_entry: 'TRANSLATE: Unnamed Entry'
+    choice_required: 'Выбор обязателен'
+    choice_optional: 'Ничего не выбрано'
+    unnamed_entry: 'Без названия'
   states:
     active: активный
     inactive: неактивный
@@ -54,12 +54,12 @@ mb:
         title: Инфосвойства
         description: Инфосвойства
       admin:
-        maxcount: 'TRANSLATE: Max count'
-        height: 'TRANSLATE: Height'
-        width: 'TRANSLATE: Width'
-        displaytype: 'TRANSLATE: Display type'
-        tabs: 'TRANSLATE: Tabs'
-        accordion: 'TRANSLATE: Accordion'
+        maxcount: 'Максимальное количество'
+        height: 'Высота'
+        width: 'Ширина'
+        displaytype: 'Тип дисплея'
+        tabs: 'Вкладки'
+        accordion: 'Вкладки'
     aboutdialog:
       content:
         versionprefix: v.
@@ -74,12 +74,12 @@ mb:
         info: инфо
         about: 'о программе'
       admin:
-        tooltip: 'TRANSLATE: About'
+        tooltip: 'О'
     simplesearch:
       input:
-        searchterm: 'TRANSLATE: Search term'
+        searchterm: 'Поисковый запрос'
         search: Поиск
-        clear: 'TRANSLATE: Clear'
+        clear: 'Очистить'
       class:
         title: 'Простой Поиск'
         description: 'Поле поиска источников (например Solr)'
@@ -87,50 +87,50 @@ mb:
         geometry:
           missing: 'Выбраный объект не содержит геометрии.'
       admin:
-        configurations: 'TRANSLATE: Configurations'
-        title: 'TRANSLATE: Title'
-        title.help: 'TRANSLATE: Text shown in the configurations dropdown'
-        placeholder: 'TRANSLATE: Placeholder'
-        placeholder.help: 'TRANSLATE: Text to display when the search field is empty. If a placeholder is not defined, the content of the title is used instead.'
-        query_url: 'TRANSLATE: Query URL'
-        query_url.help: 'TRANSLATE: Solr or Nominatim URL for the search (e.g. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)'
-        query_key: 'TRANSLATE: Query URL parameter key'
-        query_key.help: 'TRANSLATE: The query parameter key to append (e.g. <code>q</code>)'
-        query_ws_replace: 'TRANSLATE: Query Whitespace replacement pattern'
-        query_ws_replace.help: 'TRANSLATE: If set, spaces and line breaks in the search query will be replaced hereby, e.g. <code>+</code> or <code>%20</code>'
-        query_format: 'TRANSLATE: Query key format'
-        query_format.help: 'TRANSLATE: Format for PHP''s <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>-function. The search term will be interpreted using this format. E.g. <code>%s</code> (default) if a string is expected, <code>%d</code> if an integer is expected'
-        token_regex: 'TRANSLATE: Tokenizer: Split Regex'
-        token_regex.help: 'TRANSLATE: The tokenizer allows to modify search terms before they are sent to the search url. The split regex should match all characters that separate tokens (usually words). Default: <code> </code> (space)'
-        token_regex_in: 'TRANSLATE: Tokenizer: Search Regex'
-        token_regex_in.help: 'TRANSLATE: Within each token (see Split Regex) this regular expression will be searched and replaced by the value of "Replacement Regex".'
-        token_regex_out: 'TRANSLATE: Tokenizer: Replacement Regex'
-        token_regex_out.help: 'TRANSLATE: Within each token (see Split Regex) the regular expression from "Search Regex" will be searched and replaced by this value. Found groups will be referenced by a <code>$</code> and ascending numbes. E.g. <code>$1*</code> will append an asterisk to each search word.'
-        collection_path: 'TRANSLATE: Results Path'
-        collection_path.help: 'TRANSLATE: Path pointing to the array of results within the search url''s response. Hierarchy levels are separated by dots. E.g. <code>response.docs</code> (Solr Standard), <code>features</code> (GeoJSON)'
-        label_attribute: 'TRANSLATE: Label Attribute'
-        label_attribute.help: 'TRANSLATE: Path (within a single result) to the attribute which will be used as label, e.g. <code>label</code>. Alternatively, a string template can be entered, e.g. <code>City ${properties.address.city} - ${properties.address.road}</code>'
-        geom_attribute: 'TRANSLATE: Geometry Attribute'
-        geom_attribute.help: 'TRANSLATE: Path (within a single result) to the attribute which provides the geometry, e.g. <code>geom</code>, <code>geometry</code> (GeoJSON)'
-        geom_format: 'TRANSLATE: Geometry Format'
-        geom_format.help: 'TRANSLATE: Provided geometry format, either <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> oder <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
-        sourceSrs: 'TRANSLATE: Source SRS'
-        sourceSrs.help: 'TRANSLATE: <a href="https://epsg.io/" target="_blank">EPSG code</a> of the projection used in the search url, including the prefix <code>EPSG:</code>, e.g. <code>EPSG:25832</code>. If unset, the results are assumed to be in the default map projection.'
-        delay: 'TRANSLATE: Search Delay [ms]'
-        delay.help: 'TRANSLATE: The automatic search will trigger that many milliseconds after the last key input. Default: 300ms'
-        result_buffer: 'TRANSLATE: Result Buffer [map units]'
-        result_buffer.help: 'TRANSLATE: Indirectly determines the zoom level that appears after selecting a result. At least the selected area is visible around the geometry. The unit map units vary depending on the projection, in most cases it equals metres. A combination with the scale (min/max) parameters is possible, but can lead to undesired results.'
-        result_minscale: 'TRANSLATE: Minimum Scale [Denominator]'
-        result_minscale.help: 'TRANSLATE: Alternative to specifying the zoom level. Depending on the bounds of the target geometry, a scale between <code>min</code> and <code>max</code> is set. With a scale <code>1 : 1000</code>, only <code>1000</code> must be entered. For a fixed scale, it is sufficient to enter the minimum scale.'
-        result_maxscale: 'TRANSLATE: Maximum Scale [Denominator]'
-        result_icon_url: 'TRANSLATE: Icon URL'
-        result_icon_url.help: 'TRANSLATE: URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
-        result_icon_offset: 'TRANSLATE: Icon Offset'
-        result_icon_offset.help: 'TRANSLATE: Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin'
+        configurations: 'Настройки'
+        title: 'Заголовок'
+        title.help: 'Текст, который показывается в выпадающем меню настроек.'
+        placeholder: 'Временный текст [placeholder]'
+        placeholder.help: 'Текст, который показывается в поле поиска, когда оно пустое. Если замещающий текст не указан, используется заголовок.'
+        query_url: 'URL-адрес источника'
+        query_url.help: 'Solr или номинативный URL-адрес для заданного поиска (например <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>).'
+        query_key: 'URL-параметр источника'
+        query_key.help: 'URL-параметр, дополняющий заданный поиск (например <code>q</code>).'
+        query_ws_replace: 'Замена пробела'
+        query_ws_replace.help: 'Если значение задано, то пробелы и переносы строк в поисковом запросе будут заменены на данное значение (например <code>+</code> oder <code>%20</code>).'
+        query_format: 'Формат параметра источника'
+        query_format.help: 'Формат для PHP <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>. Поисковый запрос будет форматирован с применением данного формата. Например <code>%s</code> (стандартный), если поисковый запрос должен быть интерпретирован как строка, либо <code>%d</code> – если строка поиска ожидает число.'
+        token_regex: 'Tokenizer: 'Разбитое' регулярное выражение'
+        token_regex.help: 'Tokenizer дает возможность разбить поисковой запрос на токены перед тем, как он будет отправлен на поисковый URL-адрес. Все знаки в регулярном выражении должны совпадать со знаками, которые содержатся в отдельных токенах (обычно слова). Стандарт: <code> </code> (Пробел)'
+        token_regex_in: 'Tokenizer: Регулярное выражение поиска'
+        token_regex_in.help: 'В каждом токене (смотрите "Разбитое" регулярное выражение) будет произведен поиск данного регулярного выражения и заменено значением из "Регулярного выражения-замены".'
+        token_regex_out: 'Tokenizer: Замена регулярного выражения'
+        token_regex_out.help: 'В каждом токене (смотрите 'Разбитое' регулярное выражение) регулярное выражение поиска будет заменено этим значением. Найденные группы будут пронумерованы в помощью <code>$</code>. Напривер <code>$1*</code> дополнит каждое поисковое слово звездочкой.'
+        collection_path: 'Путь к результатам'
+        collection_path.help: 'Путь к спису результатов внутри ответа поискового URL-адреса. Каждый уровень иерархии отделен точкой, например <code>response.docs</code> (Solr-стандарт), <code>features</code> (GeoJSON).'
+        label_attribute: Атрибут подписи
+        label_attribute.help: 'Путь (в рамках одного результата) к атрибубу, который должен быть показан как подпись, например <code>label</code>. Как альтернатива могут применяться шаблонные строки, например <code>Stadt ${properties.address.city} - ${properties.address.road}</code>.'
+        geom_attribute: 'Атрибут геометрии'
+        geom_attribute.help: 'Путь (в рамках одного результата) к атрибубу, который предоставляет геометрию, например <code>geom</code>, <code>geometry</code> (GeoJSON).'
+        geom_format: 'Формат геометрии'
+        geom_format.help: 'Формат, который предоставляет геометрию. Либо <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a>, либо <a href="https://geojson.org/" target="_blank">GeoJSON</a>.'
+        sourceSrs: 'SRS (пространственная система отсчета) источника'
+        sourceSrs.help: '<a href="https://epsg.io/" target="_blank">EPSG-Code</a> проекция, используемая в URL-адресе поиска, включая префикс <code>EPSG:</code>, например <code>EPSG:25832</code>. Если проекция не задана, то результаты будут предоставленны в стандартной картографической проекции.'
+        delay: 'Отсрочка поиска [мс]'
+        delay.help: 'Время в миллисекундах, которое должно пройти после последнего ввода символа, до того как поиск начнется автоматически. Стандарт: 300мс'
+        result_buffer: 'Буфер результатов [Единицы карты]'
+        result_buffer.help: 'Косвенно определяет уровень масштабирования, который появляется после выбора результата. Вокруг геометрии будет видна вся выбранная область. Значение единицы карты отличается в соответствии с проекцией, чаще всего это метр. Сочетание в масштабе (min/max) возможно, но может привести к нежелательным результатам.'
+        result_minscale: 'минимальный масштаб [знаменатель]'
+        result_minscale.help: 'Альтернативное указание уровня масштабирования. Масштаб устанавливается в диапазоне от <code>min</code> до <code>max</code> в зависимости от размера целевой геометрии. При масштабе <code>1 : 1000</code> должно быть указано только <code>1000</code>. Для фиксированного масштаба достаточно указать минимальный масштаб.'
+        result_maxscale: 'максимальный масштаб [знаменатель]'
+        result_icon_url: 'Иконка URL-адреса'
+        result_icon_url.help: 'URL-адрес к файлу изображения, который используется в качестве маркера для точечной геометрии. Может быть как относительным, так и абсолютным. В качестве стандартного маркера точечной геометрии используйте <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'Иконка смещения'
+        result_icon_offset.help: 'Смещение маркера задается в виде смещения x- и y-координат через запятую, например <code>-6,-32</code> для стандартного маркера.'
       errors:
-        invalid_query_format: 'TRANSLATE: The specified query format does not contain placeholders. Read the help text!'
-        invalid_epsg_code: 'TRANSLATE: The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234'
-        no_configuration_added: 'TRANSLATE: Please add at least one configuration'
+        invalid_query_format: 'Указанный формат запроса не содержит временного текста. Смотрите примечание!'
+        invalid_epsg_code: 'Введенный текст не является действительным EPSG-Кодом. Введите код в формате EPSG:1234.'
+        no_configuration_added: 'Пожалуйста, добавьте хотя бы одну конфигурацию.'
     searchrouter:
       no_results: 'Не найдено результатов.'
       result_counter: 'Результаты: %count%'
@@ -142,25 +142,25 @@ mb:
         search: поиск
         router: маршрут
       admin:
-        width: 'TRANSLATE: Width'
-        height: 'TRANSLATE: Height'
-        routes: 'TRANSLATE: Routes'
+        width: 'Ширина'
+        height: 'Высота'
+        routes: 'Маршруты'
     poi:
       sharepoi: 'Поделиться POI'
       text:
         snippet: 'Вы можете использовать следующий фрагмент кода в электронной почте, чтобы отправить POI'
       popup:
         btn:
-          position: 'TRANSLATE: Positioning'
+          position: 'Позиционирование'
       class:
         title: POI
         description: 'Создать POI для обмена'
       label:
         text: Текст
       admin:
-        body: 'TRANSLATE: Body'
-        gps: 'TRANSLATE: GPS'
-        placeholder: 'TRANSLATE: Please take a look at this POI'
+        body: 'Текст'
+        gps: 'GPS'
+        placeholder: 'Пожалуйста, посмотрите этот POI'
     basesourceswitcher:
       error:
         sourcenotavailable: 'Источник с идентификатором %%d% не доступен'
@@ -171,9 +171,9 @@ mb:
         mesage: 'Нет исходного набора.'
         instancesets: 'Наборы экземпляров'
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        instances: 'TRANSLATE: Instances'
-        instancesets: 'TRANSLATE: Instancesets'
+        tooltip: 'Всплывающая подсказка'
+        instances: 'Экземпляры'
+        instancesets: 'Наборы экземпляров'
     legend:
       class:
         title: Легенда
@@ -187,14 +187,14 @@ mb:
         line: линия
         area: область
         measure: мера
-      help: 'TRANSLATE: Double-click to end drawing'
+      help: Двойной клик чтобы закончить
       admin:
-        type: 'TRANSLATE: Geometry'
-        help: 'TRANSLATE: Helptext'
-        help_help: 'TRANSLATE: The default value <code>mb.core.ruler.help</code> translates to "Double-click to end drawing" in the user''s language'
-        stroke_width_while_drawing: 'TRANSLATE: Line width while drawing'
-        only_for_area: 'TRANSLATE: only relevant if geometry is set to <i>Area</i>'
-        style: 'TRANSLATE: Style'
+        type: 'Геометрия'
+        help: 'Примечание'
+        help_help: 'Стандартно <code>mb.core.ruler.help</code>  означает "Двойной клик чтобы закончить" на языке пользователя.'
+        stroke_width_while_drawing: 'Толщина линии рисования'
+        only_for_area: 'актуально, только если <i>Fläche</i> выбрана как геометрия'
+        style: 'Стиль'
     printclient:
       label:
         template: Шаблон
@@ -206,8 +206,8 @@ mb:
         title: Печать
         description: 'Отображает диалоговое окно печати'
       btn:
-        deactivate: null
-        activate: null
+        deactivate: 'Убрать рамку печати'
+        activate: 'Показать рамку печати'
     overview:
       nolayer: 'Обзор элемента не имеет слоя.'
       class:
@@ -217,10 +217,10 @@ mb:
         overview: обзор
         map: карта
       admin:
-        visibility.closed_initially: 'TRANSLATE: Initially closed'
-        visibility.open_initially: 'TRANSLATE: Initially open'
-        visibility.open_permanent: 'TRANSLATE: Permanently open'
-        layerset: 'TRANSLATE: Layerset'
+        visibility.closed_initially: 'Изначально закрыт'
+        visibility.open_initially: 'Изначально открыт'
+        visibility.open_permanent: 'Длительно открыт'
+        layerset: 'Набор слоев'
     metadata:
       popup:
         title: Метаданные
@@ -237,10 +237,10 @@ mb:
         position: положение
         button: кнопка
       admin:
-        average: 'TRANSLATE: Average'
-        follow: 'TRANSLATE: Follow'
-        centeronfirstposition: 'TRANSLATE: Center on first position'
-        zoomtoaccuracyonfirstposition: 'TRANSLATE: Zoom to accuracy on first position'
+        average: 'Средний'
+        follow: 'Подписаться'
+        centeronfirstposition: 'Центрирован на первой позиции'
+        zoomtoaccuracyonfirstposition: 'Увеличьте масштаб до точности первой позиции'
     layertree:
       const:
         outofscale: 'Слой вне масштаба'
@@ -266,16 +266,16 @@ mb:
         title: 'Дерево слоев'
         description: 'Дерево слоев карты'
       admin:
-        layerremove: 'TRANSLATE: Remove layer'
-        opacity: 'TRANSLATE: Opacity'
-        zoomtolayer: 'TRANSLATE: Zoom to layer'
-        metadata: 'TRANSLATE: Metadata'
-        dimension: 'TRANSLATE: Dimension'
+        layerremove: 'Удалить слой'
+        opacity: 'Непрозрачность'
+        zoomtolayer: 'Масштабирование до слоя'
+        metadata: 'Метаданные'
+        dimension: 'Измерение'
     zoombar:
       zoombybox: Масштаб
       zoombyworld: Кругозор
-      zoom_home: 'TRANSLATE: Back to start'
-      zoomHomeRestoresLayers: 'TRANSLATE: "Back to start" also resets layer settings'
+      zoom_home: 'Обратно к началу'
+      zoomHomeRestoresLayers: '"Обратно к началу" сбрасывает состояния служб.'
       zoomin: Приблизить
       zoomout: Отдалить
       class:
@@ -288,11 +288,11 @@ mb:
         navigation: навигация
         panel: панель
       admin:
-        components: 'TRANSLATE: Components'
-        rotation: 'TRANSLATE: Rotation'
-        zoommax: 'TRANSLATE: Zoom to maximum extent'
-        zoominout: 'TRANSLATE: Zoom in and out'
-        zoomslider: 'TRANSLATE: Zoom slider'
+        components: 'Компоненты'
+        rotation: 'Вращение'
+        zoommax: 'Увеличьте масштаб до максимального значения'
+        zoominout: 'Увеличивать и уменьшать масштаб'
+        zoomslider: 'Ползунок масштабирования'
     activityindicator:
       class:
         title: 'Индикатор активности'
@@ -301,11 +301,11 @@ mb:
         activity: активности
         indicator: индикатор
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        activityclass: 'TRANSLATE: CSS-Class General Activity'
-        ajaxactivityclass: 'TRANSLATE: CSS-Class Background Activity'
-        ajaxactivityclass_help: 'TRANSLATE: CSS-Class that is set while an action is active in the background (like a search being performed)'
-        tileactivityclass: 'TRANSLATE: CSS-Class Map Loading'
+        tooltip: 'Всплывающая подсказка'
+        activityclass: 'CSS-класс для общей активности'
+        ajaxactivityclass: 'CSS-Class для фотовой активности'
+        ajaxactivityclass_help: 'CSS-класс, который устанавливается, когда действие выполняется в фоновом режиме, например, когда выполняется поиск'
+        tileactivityclass: 'CSS-класс при загрузке карты'
     button:
       class:
         title: Кнопка
@@ -313,21 +313,21 @@ mb:
       tag:
         button: кнопка
       admin:
-        click: 'TRANSLATE: Click'
-        action: 'TRANSLATE: Action'
-        deactivate: 'TRANSLATE: Deactivate'
+        click: 'Клик'
+        action: 'Действие'
+        deactivate: 'Отключить'
     controlbutton:
       class:
-        description: 'TRANSLATE: Controls another element'
+        description: 'Управляет другим элементом'
       admin:
-        group: 'TRANSLATE: Group'
-        target: 'TRANSLATE: Target'
+        group: 'Группа'
+        target: 'Цель'
     linkbutton:
       class:
-        title: 'TRANSLATE: Link'
-        description: 'TRANSLATE: Link to external URL'
+        title: 'Ссылка'
+        description: 'Ссылка на сторонний URL-адрес'
       admin:
-        click: 'TRANSLATE: Target URL'
+        click: 'Целевой URL-адрес'
     coordinatesdisplay:
       class:
         title: 'Отображение координат '
@@ -345,7 +345,7 @@ mb:
         copyright: Copyright
         dialog: Раздел
       admin:
-        content: 'TRANSLATE: Content'
+        content: 'Контент'
     map:
       class:
         title: Карта
@@ -356,13 +356,13 @@ mb:
         openlayers: OpenLayers
       srsnotfound: 'SRS свойства для  %srslist% не найдены'
       admin:
-        fixedZoomSteps: 'TRANSLATE: Fixed zoom steps'
-        layersets: 'TRANSLATE: Layersets'
-        tilesize: 'TRANSLATE: Tile size'
-        SRS: 'TRANSLATE: SRS'
-        scales: 'TRANSLATE: Scales (comma-separated)'
-        othersrs: 'TRANSLATE: Other SRS'
-        srs: 'TRANSLATE: SRS'
+        fixedZoomSteps: 'Фиксированные шаги масштабирования'
+        layersets: 'Набор слоев'
+        tilesize: 'Размер плитки'
+        SRS: 'SRS'
+        scales: 'Масштабы (разделенные запятой)'
+        othersrs: 'Другие SRS'
+        srs: 'SRS'
     scalebar:
       class:
         title: 'Масштабная линейка'
@@ -371,14 +371,14 @@ mb:
         scale: масштаб
         bar: bar
       admin:
-        maxwidth: 'TRANSLATE: Maximum width'
-        units: 'TRANSLATE: Unit'
+        maxwidth: 'Максимальная ширина'
+        units: 'Единица измерения'
     scaledisplay:
-      label: 'TRANSLATE: Scale'
-      scale_prefix: 'TRANSLATE: Prefix'
-      scale_prefix.help: 'TRANSLATE: Description shown before the actual scale. The standard <code>mb.core.scaledisplay.label</code> is rendered as <code>Scale</code> in the user''s language.'
-      unit_prefix: 'TRANSLATE: Shorten scale'
-      unit_prefix.help: 'TRANSLATE: If checked, scale numbers higher than 1,000 will be shortened with a postpositioned <code>K</code> or <code>M</code>.'
+      label: 'Масштаб'
+      scale_prefix: 'Префикс'
+      scale_prefix.help: 'Обозначение, которое предшествует указанию масштаба. Стандартно <code>mb.core.scaledisplay.label</code> будет заменено на <code>Масштаб</code> на языке пользователя.'
+      unit_prefix: Maßstab abkürzen
+      unit_prefix.help: Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.
       class:
         title: 'Масштаб отображения'
         description: 'Отображает текущий масштаб карты'
@@ -393,7 +393,7 @@ mb:
         scale: масштаб
         selector: выбор
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
+        tooltip: 'Всплывающая подсказка'
     srsselector:
       class:
         title: 'SRS '
@@ -402,39 +402,39 @@ mb:
         srs: SRS
         selector: выбор
       admin:
-        srsselector: 'TRANSLATE: SRS selector'
-        tooltip: 'TRANSLATE: Tooltip'
+        srsselector: 'SRS селектор'
+        tooltip: 'Всплывающая подсказка'
     ShareUrl:
       class:
-        title: 'TRANSLATE: Share URL'
-        description: 'TRANSLATE: Share current map view via url'
-      copied_to_clipboard: 'TRANSLATE: URL copied to clipboard'
+        title: 'Поделиться URL-ссылкой'
+        description: 'Создает URL-ссылку для текущего фрагмента карты'
+      copied_to_clipboard: 'URL-ссылка скопированна в буфер обмена'
     viewManager:
       class:
-        title: 'TRANSLATE: View manager'
-        description: 'TRANSLATE: Saves map states for later restoration'
-      saveAsPublic: 'TRANSLATE: Save as public'
+        title: 'Управление видами'
+        description: 'Сохраняет фрагменты карты для дальнейшего использования'
+      saveAsPublic: 'Сохранить как общедоступную запись'
       recordStatus:
-        public: 'TRANSLATE: Public entry'
-        private: 'TRANSLATE: Private entry'
-      confirmDelete: 'TRANSLATE: Confirm deletion'
-      no_data: 'TRANSLATE: No data'
-      title: 'TRANSLATE: Title'
-      date: 'TRANSLATE: Date'
-      enter_title: 'TRANSLATE: Enter title'
-      apply: 'TRANSLATE: Apply'
-      replace: 'TRANSLATE: Replace'
-      details: 'TRANSLATE: Show details'
+        public: 'Общедоступная запись'
+        private: 'Приватная запись'
+      confirmDelete: 'Подтвердите удаление'
+      no_data: 'Нет данных'
+      title: 'Заголовок'
+      date: 'Дата'
+      enter_title: 'Введите заголовок'
+      apply: 'Вызвать'
+      replace: 'Перезаписать'
+      details: 'Показать детали'
       admin:
-        access.none: 'TRANSLATE: Do not show'
-        access.ro: 'TRANSLATE: Read only'
-        access.rw: 'TRANSLATE: Allow saving'
-        access.rwd: 'TRANSLATE: Allow saving and deletion'
-        publicEntries: 'TRANSLATE: Public list'
-        privateEntries: 'TRANSLATE: Show private list'
-        adminDeleteHint: 'TRANSLATE: Note: the administrator can always delete public entries'
-        allowAnonymousSave: 'TRANSLATE: Allow saving to anonymous users'
-        showDate: 'TRANSLATE: Show date'
+        access.none: 'Не показывать'
+        access.ro: 'Только чтение'
+        access.rw: 'Разрешить сохранение'
+        access.rwd: 'Разрешить сохранение и удадение'
+        publicEntries: 'Общедоступный список'
+        privateEntries: 'Показать приватный список'
+        adminDeleteHint: 'Примечание: администраторы всегда могут удалять общедоступные записи'
+        allowAnonymousSave: 'Анонимным пользователям разрешено сохранять'
+        showDate: 'Показать дату'
     coordinatesutility:
       class:
         title: 'Утилита координат'
@@ -460,8 +460,8 @@ mb:
       backend:
         addMapSrsList: 'Добавить системы координат карты'
       admin:
-        srslist: 'TRANSLATE: SRS List'
-        zoomlevel: 'TRANSLATE: Zoom level'
+        srslist: 'SRS список'
+        zoomlevel: 'Уровень масштабирования'
     admin:
       poi:
         label:
@@ -477,22 +477,22 @@ mb:
         label:
           deactivateonclose: 'Деактивировать при закрытии'
           onlyvalid: 'Только действительные'
-          highlighting_group: 'TRANSLATE: Highlighting'
-          highlighting: null
-          default_group: 'TRANSLATE: Default'
-          hover_group: 'TRANSLATE: On hover'
-          fillColor: 'TRANSLATE: Fill color'
-          strokeColor: 'TRANSLATE: Stroke color'
-          opacity_pct: 'TRANSLATE: Opacity (%)'
-          stroke_width_px: 'TRANSLATE: Stroke width (pixels)'
-          fontColor: 'TRANSLATE: Font color'
-          fontSize: 'TRANSLATE: Font size'
+          highlighting_group: 'Выделение'
+          highlighting: 'Выделение активно'
+          default_group: 'Стандартный'
+          hover_group: 'Наведение курсора'
+          fillColor: 'Цвет заливки'
+          strokeColor: 'Цвет обводки'
+          opacity_pct: 'Непрозрачность (%)'
+          stroke_width_px: 'Толщина линии (Pixel)'
+          fontColor: 'Цвет шрифта'
+          fontSize: 'Размер шрифта'
       printclient:
         label:
           rotatable: Поворачиваемые
           legend: Легенда
           legend_default_behaviour: 'Legend checkbox active'
-          required_fields_first: 'TRANSLATE: Display required fields first'
+          required_fields_first: 'Отображать обязательные поля вверху'
       layertree:
         label:
           showbasesources: 'Показать базу источника'
@@ -506,29 +506,22 @@ mb:
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideinfo: 'Скрыть информацию'
-          menu: 'TRANSLATE: Menu'
+          menu: 'Меню'
       template:
         sidepane:
           type:
-            label: null
+            label: 'Тип'
             choice:
               tabs: Вкладки
-              accordion: null
-              unstyled: 'TRANSLATE: Unstyled'
-      button:
-        show_label: 'TRANSLATE: Show label'
-        label: 'TRANSLATE: Label'
-      layerset:
-        label:
-          title: 'TRANSLATE: Title'
-          selected: 'TRANSLATE: Selected'
+              accordion: Вкладки
+              unstyled: 'Неформатированный'
     htmlelement:
       class:
         title: HTML
         description: 'Добавить тэги HTML'
       admin:
-        content: 'TRANSLATE: Content'
-        classes: 'TRANSLATE: Classes'
+        content: 'Контент'
+        classes: 'Классы'
     entity:
       app:
         screenshotfile:
@@ -541,114 +534,114 @@ mb:
         rectangle: Прямоугольник
         circle: Круг
       inputs:
-        label: 'TRANSLATE: Label'
-        radius: 'TRANSLATE: Radius'
+        label: 'Надпись'
+        radius: 'Радиус'
       geometry:
         action:
           remove: 'Удалить геометрию'
           edit: 'Редактировать геометрию'
           zoom: 'Показать геометрию'
-          stop_drawing: 'TRANSLATE: Stop drawing'
+          stop_drawing: 'Прекратить рисование'
       class:
-        title: null
-        description: null
+        title: 'Эскизы'
+        description: 'Инструмент рисования'
       admin:
         deactivate_on_close: 'Деактивировать при закрытии'
-        colors: 'TRANSLATE: Colors'
-        allow_custom_color: 'TRANSLATE: Allow custom color'
-        geometrytypes: 'TRANSLATE: Geometry types'
+        colors: 'Цвета'
+        allow_custom_color: 'Разрешить мененять цвет'
+        geometrytypes: 'Типы геометрии'
     redlining:
       class:
-        title: 'TRANSLATE: Sketches'
+        title: 'Эскизы'
     resetView:
       class:
-        title: 'TRANSLATE: Reset view'
-        description: 'TRANSLATE: Restores initial map view and source settings'
+        title: 'Сбросить вид'
+        description: 'Восстанавливает исходный фрагмент карты и настройки'
       admin:
-        resetDynamicSources: 'TRANSLATE: Remove dynamically loaded sources'
+        resetDynamicSources: 'Удаление добавленных ранее источников'
     applicationSwitcher:
       class:
-        title: 'TRANSLATE: Application switcher'
-        description: 'TRANSLATE: Switches to another application while maintaining current map position'
+        title: 'Переключение приложений'
+        description: 'Переключается на другое приложение, сохраняя текущее положение карты'
       admin:
-        open_in_new_tab: 'TRANSLATE: Open in new tab'
+        open_in_new_tab: 'Открыть в новой вкладке'
     coordinesdisplay:
       admin:
-        numdigits: 'TRANSLATE: Number of decimal places'
-        empty: 'TRANSLATE: Empty'
-        prefix: 'TRANSLATE: Prefix'
-        separator: 'TRANSLATE: Separator'
-        label: 'TRANSLATE: Show label'
+        numdigits: 'Количество знаков после запятой'
+        empty: 'Пусто'
+        prefix: 'Префикс'
+        separator: 'Разделитель'
+        label: 'Показать подпись'
     searchrouterroute:
       admin:
-        title: 'TRANSLATE: Title'
-        configuration: 'TRANSLATE: Configuration'
+        title: 'Заголовок'
+        configuration: 'Конфигурация'
     instanceset:
       admin:
-        title: 'TRANSLATE: Title'
-        group: 'TRANSLATE: Group'
-        instances: 'TRANSLATE: Instances'
-        instancesets: 'TRANSLATE: Instancesets'
+        title: 'Название'
+        group: 'Группа'
+        instances: 'Экземпляры'
+        instancesets: 'Наборы экземпляров'
     basebutton:
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        icon: 'TRANSLATE: Icon'
+        tooltip: 'Всплывающая подсказка'
+        icon: 'Символ'
     icon:
       mb:
-        about: 'TRANSLATE: Information'
-        layer_tree: 'TRANSLATE: Layer tree'
-        feature_info: 'TRANSLATE: Feature Info'
-        area_ruler: 'TRANSLATE: Area ruler'
-        polygon: 'TRANSLATE: Polygon'
-        line_ruler: 'TRANSLATE: Line ruler'
-        image_export: 'TRANSLATE: Image Export'
-        legend: 'TRANSLATE: Legend'
+        about: 'Информация'
+        layer_tree: 'Дерево слоев'
+        feature_info: 'Информация о возможностях'
+        area_ruler: 'Измерить площадь'
+        polygon: 'Полигон'
+        line_ruler: 'Измерить расстояние'
+        image_export: 'Экспорт изображений'
+        legend: 'Легенда'
       fa:
-        about: 'TRANSLATE: Group'
-        info: 'TRANSLATE: Information (inverted)'
-        pin: 'TRANSLATE: Marker'
-        home: 'TRANSLATE: Home'
-        legend: 'TRANSLATE: List'
-        print: 'TRANSLATE: Print'
-        search: 'TRANSLATE: Search'
-        layer_tree: 'TRANSLATE: Hierarchy'
-        logout: 'TRANSLATE: Logout'
-        wms: 'TRANSLATE: Globe'
-        edit: 'TRANSLATE: Edit'
-        wmc: 'TRANSLATE: Folder'
-        coordinates: 'TRANSLATE: Coordinates'
-        poi: 'TRANSLATE: Pin'
-        camera: 'TRANSLATE: Camera'
-        copyright: 'TRANSLATE: Copyright'
-        share: 'TRANSLATE: Share'
-        forward: 'TRANSLATE: Forward'
-        refresh: 'TRANSLATE: Refresh'
-        earth: 'TRANSLATE: Earth'
-        map: 'TRANSLATE: Map'
-        pin_alt: 'TRANSLATE: Pin (Alternative)'
-        help: 'TRANSLATE: Help'
+        about: 'Группа'
+        info: 'Информация (перевернутая)'
+        pin: 'Маркер'
+        home: 'Домой'
+        legend: 'Список'
+        print: 'Печать'
+        search: 'Поиск'
+        layer_tree: 'Иерархия'
+        logout: 'Выход'
+        wms: 'Глобус'
+        edit: 'Редактировать'
+        wmc: 'Папка'
+        coordinates: 'Координаты'
+        poi: 'Pin'
+        camera: 'Камера'
+        copyright: 'Copyright'
+        share: 'Поделиться'
+        forward: 'Переслать'
+        refresh: 'Обновить'
+        earth: 'Земной шар'
+        map: 'Карта'
+        pin_alt: 'Pin (альтернатива)'
+        help: 'Помощь'
   template:
-    toolbar_menu_tooltip: 'TRANSLATE: Toggle menu'
+    toolbar_menu_tooltip: 'Открыть меню'
     region:
-      toolbar: 'TRANSLATE: Top toolbar'
-      footer: 'TRANSLATE: Footer'
-      sidepane: 'TRANSLATE: Sidepane'
-      content: 'TRANSLATE: Map area'
+      toolbar: 'Верхняя панель инструментов'
+      footer: 'Подвал'
+      sidepane: 'Боковая панель'
+      content: 'Область карты'
   demoapps:
-    themes: 'TRANSLATE: Themes'
-    backgroundThemes: 'TRANSLATE: Background themes'
-    baseMaps: 'TRANSLATE: Base maps'
-    aerialView: 'TRANSLATE: Aerial view'
-    noBackground: 'TRANSLATE: No background'
-    poi: 'TRANSLATE: Please take a look at this POI'
-    search: 'TRANSLATE: Search location'
-    about: 'TRANSLATE: About Mapbender'
+    themes: 'Темы'
+    backgroundThemes: 'Темы фона'
+    baseMaps: 'Карты'
+    aerialView: 'Аэрофотоснимки'
+    noBackground: 'Без фона'
+    poi: 'Пожалуйста, взгляните на это POI'
+    search: 'Поиск местоположения'
+    about: 'О Mapbender'
   wms:
     wmsloader:
       repo:
         instancelayerform:
           label:
-            title: 'TRANSLATE: Title'
+            title: 'Заголовок'
 'Bad credentials.': 'Ошибка аутентификации'
 'User account is locked.': 'Учетная запись заблокирована.'
 'User account is disabled.': 'Учетная запись деактивирована.'

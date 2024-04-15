@@ -20,56 +20,56 @@ mb:
         png: png
     printclient:
       tab:
-        settings: 'TRANSLATE: Job settings'
-        joblist: 'TRANSLATE: Recent jobs'
+        settings: 'Настройки'
+        joblist: 'На печать'
       joblist:
         header:
-          id: 'TRANSLATE: #'
-          ctime: 'TRANSLATE: created'
-          status: 'TRANSLATE: status'
+          id: '#'
+          ctime: 'Cозданный'
+          status: 'Статус'
         status:
-          pending: 'TRANSLATE: waiting'
-          processing: 'TRANSLATE: processing'
-          finished: 'TRANSLATE: finished'
-        open: 'TRANSLATE: open'
-        delete: 'TRANSLATE: delete'
-        cancel: 'TRANSLATE: Cancel'
-        nodata: 'TRANSLATE: no data'
-        loading: 'TRANSLATE: loading'
+          pending: 'в очереди'
+          processing: 'отрабатывается'
+          finished: 'готово'
+        open: 'Открыть'
+        delete: 'Удалить'
+        cancel: 'Отмена'
+        nodata: 'нет данных'
+        loading: 'загрузка'
     admin:
       printclient:
         renderMode:
-          label: 'TRANSLATE: Mode'
+          label: 'Режим'
           choice:
-            direct: 'TRANSLATE: direct'
-            queued: 'TRANSLATE: queued'
+            direct: 'Непосредственно'
+            queued: 'Очередь'
         queueAccess:
-          label: 'TRANSLATE: Job queue'
+          label: 'Очередь'
           choice:
-            global: 'TRANSLATE: global'
-            private: 'TRANSLATE: private'
+            global: 'глобально'
+            private: 'приватно'
   core:
     printclient:
       admin:
-        scales: 'TRANSLATE: Scales (comma-separated)'
-        fileprefix: 'TRANSLATE: File prefix'
-        optionalfields: 'TRANSLATE: Optional fields'
-        replacepattern: 'TRANSLATE: Replace pattern'
-        templates: 'TRANSLATE: Templates'
-        qualitylevels: 'TRANSLATE: Quality levels'
+        scales: 'Масштабы (разделенные запятыми)'
+        fileprefix: 'Префикс файла'
+        optionalfields: 'Необязательные поля'
+        replacepattern: 'Заменить шаблон'
+        templates: 'Черновики'
+        qualitylevels: 'Уровни качества'
       label:
-        quality: 'TRANSLATE: Quality'
+        quality: 'Качество'
       class:
-        title: 'TRANSLATE: Print'
+        title: 'Печать'
     printclienttemplate:
       admin:
-        template: 'TRANSLATE: Template'
-        label: 'TRANSLATE: Label'
+        template: 'Черновик'
+        label: 'Обозначение'
     printclientquality:
       admin:
-        label: 'TRANSLATE: Label'
+        label: 'Обозначение'
     admin:
       printclient:
         label:
-          qualitylevels: 'TRANSLATE: Quality levels'
-          templates: 'TRANSLATE: Templates'
+          qualitylevels: 'Уровни качества'
+          templates: 'Черновики'

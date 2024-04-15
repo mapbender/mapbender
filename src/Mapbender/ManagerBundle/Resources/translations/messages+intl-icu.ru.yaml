@@ -24,61 +24,58 @@ mb:
       create:
         success: 'Новый образец был создан, но его нужно отредактировать.'
   manager:
-    automatic: 'TRANSLATE: Automatic'
+    automatic: 'Автоматически'
     autoActivate: Автоактивирование
     autoOpen: 'Открывать автоматически'
-    confirm_form_discard: 'TRANSLATE: Discard changes?'
-    popup_height: 'TRANSLATE: Dialog height'
-    popup_width: 'TRANSLATE: Dialog width'
+    confirm_form_discard: 'Отклонить изменения?'
+    popup_height: 'Высота диалогового окна'
+    popup_width: 'Ширина диалогового окна'
     screentype:
-      label: 'TRANSLATE: Screen type'
+      label: 'Тип монитора'
       choice:
-        all: 'TRANSLATE: Any'
-        mobile: 'TRANSLATE: Mobile'
-        desktop: 'TRANSLATE: Desktop'
+        all: 'Все'
+        mobile: 'Мобильный'
+        desktop: 'Монитор'
     toolbar:
       alignment:
-        label: 'TRANSLATE: Alignment'
+        label: 'Ориентация'
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
-          center: 'TRANSLATE: Center'
-      generate_button_menu: 'TRANSLATE: Generate menu for buttons'
-      menu_label: 'TRANSLATE: Menu label'
-    visibility: 'TRANSLATE: Visibility'
+          left: 'Слева'
+          right: 'Справа'
+          center: 'По центру'
+      generate_button_menu: 'Объединять кнопки в меню'
+      menu_label: 'Заголовок меню'
+    visibility: 'Видимость'
     element:
       screentype:
-        mobile: 'TRANSLATE: Show on mobile screens'
-        desktop: 'TRANSLATE: Show on desktop screens'
+        mobile: 'Просмотр на мобильных устройствах'
+        desktop: 'Показывать на экранах'
     sidepane:
-      width: 'TRANSLATE: Width'
-      resizable: 'TRANSLATE: Resizable'
-      resizable_help: 'TRANSLATE: If checked, the user can resize the sidebar by dragging on its right edge. If you want to constrain the min/max width, use custom css (min-width/max-width on .sidePane.resizable).'
-      closed: 'TRANSLATE: Initially closed'
+      width: 'Ширина'
+      closed: 'Закрыт при старте'
       align:
-        label: 'TRANSLATE: Position'
+        label: 'Позиция'
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
+          left: 'Слева'
+          right: 'Справа'
     sourceinstance:
       embedded_in_applications: |
         {count, plural,
-            =0    {TRANSLATE: This instance is not used in any application}
-            one   {TRANSLATE: This instance is used in one application}
-            other {TRANSLATE: This instance is used in # applications}
+            =0    {Этот экземпляр не используется ни одним приложением}
+            one   {Этот экземпляр используется одним приложением}
+            other {Этот экземпляр используется # приложениями}
         }
-      convert_to_reusable: 'TRANSLATE: Convert to shared instance'
-      convert_to_bound: 'TRANSLATE: Convert to bound instance'
-      converted_to_bound: 'TRANSLATE: A bound copy of the shared instance has been added to the application'
-      reusable_assigned_to_application: 'TRANSLATE: The shared instance has been added to the application'
-      create_reusable: 'TRANSLATE: Create shared instance'
-      created_reusable: 'TRANSLATE: A new shared instance has been created'
+      convert_to_reusable: 'Преобразовать в общедоступный экземпляр'
+      convert_to_bound: 'Преобразовать в приватный экземпляр' 
+      converted_to_bound: 'Приватная копия общедоступного экземпляра была добавлена в приложение'
+      reusable_assigned_to_application: 'Общедоступный экземпляр был добавлен в приложение'
+      create_reusable: 'Создать общедоступный экземпляр'
+      created_reusable: 'Создать новый общедоступный экземпляр'
     application:
-      persistentView: 'TRANSLATE: Persistent map state'
-      splashscreen: 'TRANSLATE: Show Splashscreen'
+      persistentView: 'Запоминать состояние карты'
     admin:
       sources: Источники
-      csrf_token_invalid: 'TRANSLATE: Invalid CSRF token.'
+      csrf_token_invalid: 'CSRF-токен недействителен.'
       source:
         add: 'Добавить источник'
         show_metadata: 'Показать метаданные'
@@ -94,18 +91,18 @@ mb:
           toupdate: 'Источник больше не является текущим'
           unreachable: 'Источник недоступен'
         embedded_in_applications: |
-          TRANSLATE: {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
+          {count, plural,
+              =0    {Ни одно приложение не использует этот источник данных}
+              one   {Одно приложение использует этот источник данных}
+              other {Этот источник данных используется в # приложениях}
           }
       map:
         max_extent: 'Макс. область'
-        max_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
+        max_extent.help: 'Ограничительная рамка с min/max значением x/y, обозначающая разрешенный участок карты, по которому пользователь может перемещаться. При нажатии на глобус на шкале масштаб увеличивается до этого размера.'
         start_extent: 'Начало области'
-        start_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) that is initially displayed when loading the map. When clicking on the home icon, the map zooms to this extent.'
-        base_dpi: 'TRANSLATE: Default Resolution [dpi]'
-        base_dpi.help: 'TRANSLATE: The resolution adapts to the screen resolution based on the configured value'
+        start_extent.help: 'Ограничительная рамка с min/max значением x/y, обозначающая участок карты, с которого начинается карта. При нажатии на дом на шкале масштаб увеличивается до этого размера.'
+        base_dpi: 'Стандартное разрешение [dpi]'
+        base_dpi.help: 'Разрешение регулируется в соответствии с разрешением используемого устройства на основе этого значения.'
       element:
         title: Название
         type: Тип
@@ -113,11 +110,11 @@ mb:
         show_hide: 'Вкл/выкл элемент'
         no_element_added: 'Элемент не добавлен'
         anchor:
-          label: 'TRANSLATE: Position'
-          left-top: 'TRANSLATE: Top left'
-          left-bottom: 'TRANSLATE: Bottom left'
-          right-top: 'TRANSLATE: Top right'
-          right-bottom: 'TRANSLATE: Bottom right'
+          label: 'Позиция'
+          left-top: 'Вверху слева'
+          left-bottom: 'Внизу слева'
+          right-top: 'Вверху справа'
+          right-bottom: 'Внизу справа'
       zoombar:
         draggable: Перетаскиваемый
       overview:
@@ -140,9 +137,9 @@ mb:
           confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Образец не добавлен'
         no_layer_added: 'Слой не добавлен'
-        max_input_vars_exceeded: 'TRANSLATE: PHP setting max_input_vars too low for the number of layers in this instance.'
-        update_successful: 'TRANSLATE: Your instance has been updated.'
-        converted_to_shared: 'TRANSLATE: The instance has been converted to a shared instance.'
+        max_input_vars_exceeded: 'Параметр PHP max_input_vars слишком низкий для количества слоев в этом экземпляре.'
+        update_successful: 'Образец актуализирован'
+        converted_to_shared: 'Образец был преобразован в общедоступный образец.'
       template: Шаблон
       application:
         view: Обзор
@@ -187,13 +184,13 @@ mb:
         url:
           title: 'URL заголовок'
         description: Описание
-        template: Template
+        template: Шаблон
     source:
       serviceurl: 'Сервис URL'
       username: 'Имя пользователя'
       password: Пароль
-      activate_new_layers: 'TRANSLATE: Activate newly added layers'
-      select_new_layers: 'TRANSLATE: Select newly added layers'
+      activate_new_layers: 'Активировать новый добавленный слой'
+      select_new_layers: 'Выбрать новый добавленный слой'
       load: Загрузить
     managerbundle:
       new_application: 'Новое приложение'
@@ -225,8 +222,8 @@ mb:
     import:
       application:
         failed: 'Приложение не может быть импортировано'
-    http_connection_error: 'TRANSLATE: Connection failed'
-    http_error_response: 'TRANSLATE: The remote server responded with an error message'
+    http_connection_error: 'Не удалось установить соединение'
+    http_error_response: 'Удаленный сервер выдал сообщение об ошибке'
     xml_invalid: 'Документ не действует'
     xml_malformed: 'Документ не действует'
   core:
@@ -235,7 +232,7 @@ mb:
         show_label: 'Показать отметку'
       element:
         autostart: Автозапуск
-      title: 'TRANSLATE: Title'
+      title: 'Заголовок'
     entity:
       app:
         screenshotfile:
@@ -245,13 +242,13 @@ mb:
             error: 'Минимально возможное изображение должно быть равно или больше чем %screenshotHeight% х %screenshotWidth% пикселей. Загруженное Вами соответствует размеру в %uploadWidth% х %uploadHeighth%.'
     importjobtype:
       admin:
-        importfile: 'TRANSLATE: Import file'
+        importfile: 'Импортировать файл'
   actions:
-    secureelement: 'TRANSLATE: Secure element'
+    secureelement: 'Безопасный элемент'
   wms:
     wmsloader:
       repo:
         instance:
           label:
-            title: 'TRANSLATE: Title'
-            opacity: 'TRANSLATE: Opacity'
+            title: 'Заголовок'
+            opacity: 'Непрозрачность'

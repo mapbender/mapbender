@@ -4,38 +4,38 @@ mb:
       repo:
         view:
           label:
-            matrixsets: 'TRANSLATE: Matrixsets'
-            theme: 'TRANSLATE: Theme'
-            serviceprovidername: 'TRANSLATE: Name of service provider'
-            serviceprovidersite: 'TRANSLATE: Website of service provider'
+            matrixsets: 'Наборы матриц'
+            theme: 'Тема'
+            serviceprovidername: 'Название поставщика служб'
+            serviceprovidersite: 'Веб-сайт поставщика служб'
         tilematrixset:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            supportedcrs: 'TRANSLATE: Supported CRS'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-          matrixes: 'TRANSLATE: Matrices'
+            identifier: 'Идентификатор'
+            supportedcrs: 'Поддерживаемый CRS'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+          matrixes: 'Матрицы'
         theme:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-            layerrefs: 'TRANSLATE: Layerrefs'
+            identifier: 'Идентификатор'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+            layerrefs: 'Ссылки на слои'
         instance:
           label:
-            style: 'TRANSLATE: Style'
+            style: 'Стиль'
         layer:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            formats: 'TRANSLATE: Formats'
-            title: 'TRANSLATE: Title'
-            abstract: 'TRANSLATE: Abstract'
-            latlonbounds: 'TRANSLATE: LatLonBounds'
-            tilematrixsetlinks: 'TRANSLATE: TileMartixSetLinks'
+            identifier: 'Идентификатор'
+            formats: 'Форматы'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+            latlonbounds: 'Ограничительная рамка'
+            tilematrixsetlinks: 'Ссылки на набор плиточных матриц'
         tilematrix:
           label:
-            identifier: 'TRANSLATE: Identifier'
-            scaledenominator: 'TRANSLATE: ScaleDenominator'
-            topleftcorner: 'TRANSLATE: TopLeftCorner'
-            tilesize: 'TRANSLATE: TileSize'
-            matrixsize: 'TRANSLATE: MatrixSize'
+            identifier: 'Идентификатор'
+            scaledenominator: 'Знаменатель масштаба'
+            topleftcorner: 'Верхний левый угол'
+            tilesize: 'Размер плитки'
+            matrixsize: 'Размер матрицы'

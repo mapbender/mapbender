@@ -41,7 +41,7 @@ mb:
             postcode: 'Почтовые индекс'
             country: Страна
           message:
-            cautionscalehint: 'TRANSLATE: Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!'
+            cautionscalehint: 'Внимание: при расчетах в масштабе используется ограниченное разрешение ScaleHint in WMS 1.1.1!'
         instance:
           btn:
             save: Сохранить
@@ -65,15 +65,15 @@ mb:
             'on': Включи
             ratio: 'BBOX фактор'
             buffer: 'Кафель буфер'
-            layerorder: 'TRANSLATE: Layer ordering'
-            layerorder.standard: 'TRANSLATE: standard'
-            layerorder.reverse: 'TRANSLATE: QGIS'
-            exceptionformat: 'TRANSLATE: Exception format'
-            infoformat: 'TRANSLATE: Format of GetFeatureInfo request'
-            format: 'TRANSLATE: Format of the GetMap request'
-            dimensions: 'TRANSLATE: Dimensions'
-            vendorspecifics: 'TRANSLATE: Vendor specific parameters'
-            layers: 'TRANSLATE: Layers'
+            layerorder: 'Порядок слоев'
+            layerorder.standard: 'Стандарт (в обратном порядке)'
+            layerorder.reverse: 'QGIS-стиль (в том же порядке)'
+            exceptionformat: 'Формат ошибки'
+            infoformat: 'Формат запроса GetFeatureInfo'
+            format: 'Формат запроса GetMap'
+            dimensions: 'Измерение'
+            vendorspecifics: 'Пользовательские параметры'
+            layers: 'Слои'
           vendorspecific:
             label: 'Vendor определенный'
           message:
@@ -123,8 +123,8 @@ mb:
             active: Активный
             allowselecttoc: 'Разрешить Выберите в TOC'
             selectedtoc: 'Выбранный на TOC'
-            selectedtoc.help: 'TRANSLATE: The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
-            unselectedtoc.help: 'TRANSLATE: The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
+            selectedtoc.help: 'Набор слоев активен при запуске. Настройки следует изменять только в том случае, если используются тематические слои.'
+            unselectedtoc.help: 'Набор слоев неактивен при запуске. Внимание: если тематические слои не используются, этот набор слоев будет недоступен.'
             allowinfotoc: 'Allow FeatureInfo at TOC'
             infotoc: 'FeatureInfo at TOC'
             allowtoggletoc: 'Allow Toggle at TOC'
@@ -150,24 +150,24 @@ mb:
     metadata:
       section:
         common:
-          title: 'TRANSLATE: General information'
+          title: 'Общая информация'
           _title: общий
         contact:
-          title: 'TRANSLATE: Contact'
+          title: 'Контакт'
           _title: контакт
         items:
-          title: 'TRANSLATE: Layer'
+          title: 'Слой'
           name: Имя
           _title: Слой
         useconditions:
-          title: 'TRANSLATE: Terms of use'
+          title: 'Условия использования'
           _title: 'условия использования'
       popup:
-        title: 'TRANSLATE: Meta data'
+        title: 'Метаданные'
     repo:
       instance:
         label:
-          dimensions: Dimensions
+          dimensions: Измерения
     dimhandler:
       class:
         title: 'Размеры проводник'
@@ -177,30 +177,30 @@ mb:
   core:
     dimensionset:
       admin:
-        title: 'TRANSLATE: Title'
-        group: 'TRANSLATE: Group'
-        extent: 'TRANSLATE: Extent'
+        title: 'Заголовок'
+        group: 'Группа'
+        extent: 'Размер'
     dimensionshandler:
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        dimensionsets: 'TRANSLATE: Dimensionsets'
+        tooltip: 'Всплывающая подсказка'
+        dimensionsets: 'Наборы измерений'
     wmsloader:
       admin:
-        defaultformat: 'TRANSLATE: Default format'
-        defaultinfoformat: 'TRANSLATE: Default info format'
+        defaultformat: 'Фотмат по умолчанию'
+        defaultinfoformat: 'Информационный фотмат по умолчанию'
       onlineresource:
-        format: 'TRANSLATE: Format'
-        href: 'TRANSLATE: href'
+        format: 'Фотмат'
+        href: 'href'
       legendurltype:
-        width: 'TRANSLATE: Width'
-        height: 'TRANSLATE: Height'
-        onlineresource: 'TRANSLATE: Online resource'
+        width: 'Ширина'
+        height: 'Высота'
+        onlineresource: 'Online-ресурс'
       vendorspecifictype:
-        hidden: 'TRANSLATE: Hidden'
-        setdefaults: 'TRANSLATE: Set defaults'
+        hidden: 'Cкрыто'
+        setdefaults: 'Установить по умолчанию'
     vendorspecifictype:
       admin:
-        vstype: 'TRANSLATE: Parameter type'
-        name: 'TRANSLATE: Name'
-        default: 'TRANSLATE: Default value'
-        hidden: 'TRANSLATE: Hidden'
+        vstype: 'Тип параметра'
+        name: 'Имя'
+        default: 'Значение по умолчанию'
+        hidden: 'Cкрыто'

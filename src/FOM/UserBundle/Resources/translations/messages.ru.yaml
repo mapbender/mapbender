@@ -1,8 +1,8 @@
 fom:
   acl:
     group_label:
-      anonymous: 'TRANSLATE: Anonymous users'
-      authenticated: 'TRANSLATE: All authenticated users'
+      anonymous: 'Анонимный пользователь'
+      authenticated: 'Все зарегистрированные пользователи'
   user:
     registration:
       email_body_html: '<p>Здравствуй %user_username%,</p><p>вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, нажмите <a href="%url%">здесь</a>.</p>'
