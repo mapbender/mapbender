@@ -65,12 +65,4 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
         ];
     }
 
-    public function buildWhereClause(string $permission, mixed $subject): ?WhereClauseComponent
-    {
-        return new WhereClauseComponent(
-            whereClause: "p.permission = :permission AND p.attribute_domain = '".self::SLUG."'",
-            variables: ['permission' => $permission]
-        );
-    }
-
 }

@@ -41,11 +41,34 @@ abstract class AbstractAttributeDomain
      */
     abstract function supports(string $permission, mixed $subject): bool;
 
-     /**
-     * Build an SQL where clause that matches the subject.
-     * The permission table is aliased as `p`
-     * @return ?WhereClauseComponent a wrapper class for the where clause. Variables will be bound using doctrine's bindParam.
+    /**
+     * @param array{permission: string, attribute_domain: string, attribute: ?string, element_id: ?int, application_id: ?int} $permission
+     * @param string $permissionName
+     * @param mixed $subject
+     * @return bool
      */
-    abstract public function buildWhereClause(string $permission, mixed $subject): ?WhereClauseComponent;
+    public function matchesPermission(array $permission, string $permissionName, mixed $subject): bool
+    {
+        return $permission["attribute_domain"] === $this->getSlug() && (
+            $this->isHierarchical()
+                ? in_array($permissionName, $this->inheritedPermissions($permission["permission"]))
+                : $permissionName === $permission["permission"]
+            );
+    }
+
+    /**
+     * @param string $permission
+     * @return string[]
+     */
+    public function inheritedPermissions(string $permission): array
+    {
+        if (!$this->isHierarchical()) return [$permission];
+        $hierarchy = [];
+        foreach ($this->getPermissions() as $perm) {
+            $hierarchy[] = $perm;
+            if ($perm === $permission) return $hierarchy;
+        }
+        return [];
+    }
 
 }

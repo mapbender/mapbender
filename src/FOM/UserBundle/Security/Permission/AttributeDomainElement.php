@@ -25,12 +25,11 @@ class AttributeDomainElement extends AbstractAttributeDomain
         return [self::PERMISSION_VIEW];
     }
 
-    public function buildWhereClause(string $permission, mixed $subject): ?WhereClauseComponent
+    public function matchesPermission(array $permission, string $permissionName, mixed $subject): bool
     {
         /** @var Element $subject */
-        return new WhereClauseComponent(
-            whereClause: "p.permission = :permission AND p.attribute_domain = '".self::SLUG."' AND p.element_id : :element_id",
-            variables: ['permission' => $permission, 'element_id' => $subject->getId()]
-        );
+        return parent::matchesPermission($permission, $permissionName, $subject)
+            && $permission["element_id"] === $subject->getId();
     }
+
 }
