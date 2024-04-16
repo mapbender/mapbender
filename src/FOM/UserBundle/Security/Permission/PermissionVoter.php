@@ -43,6 +43,9 @@ class PermissionVoter extends Voter
      * @return array{permission: string, attribute_domain: string, attribute: ?string, element_id: ?int, application_id: ?int}
      */
     protected function getPermissionsForToken(TokenInterface $token): array {
+        $userIdentifier = $token->getUser()->getUserIdentifier();
+        if (in_array($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
+
         $subjectWhereComponents = [];
         $variables = [];
         foreach ($this->subjectDomains as $subjectDomain) {
@@ -54,7 +57,9 @@ class PermissionVoter extends Voter
 
         $sql = 'SELECT p.permission, p.attribute_domain, p.attribute, p.element_id, p.application_id FROM fom_permission p';
         if (count($subjectWhereComponents) > 0) $sql .= ' WHERE (' . implode(' OR ', $subjectWhereComponents) . ")";
-        return $this->doctrine->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
+        $permissions = $this->doctrine->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
+        $this->cache[$userIdentifier] = $permissions;
+        return $permissions;
     }
 
     protected function getAttributeDomain(string $attribute, mixed $subject): ?AbstractAttributeDomain
