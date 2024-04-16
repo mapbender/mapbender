@@ -12,6 +12,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 
 Features:
+* fix sorting issue in layertree (https://github.com/mapbender/mapbender/issues/1567) ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
 * PHP 8.2 is now fully supported.
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
