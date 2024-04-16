@@ -12,7 +12,7 @@ mb:
       repo:
         macros:
           label:
-            formats: Формиат
+            formats: Формат
         view:
           label:
             metadata: Метаданные
@@ -22,10 +22,10 @@ mb:
             title: Название
             name: Имя
             version: Версия
-            originurl: '>Оригинал URL'
-            abstract: Абстрактный
+            originurl: 'Оригинальный URL'
+            abstract: Кратко
             onlineresource: 'Интернет ресурс'
-            exceptionformats: 'Формат Исключение'
+            exceptionformats: 'Форматы-исключения'
             fees: Сборы
             accessconstraints: 'Ограничения доступа'
             person: Человек
@@ -137,7 +137,7 @@ mb:
             layersname: 'Имя слоя'
             style: Style
       class:
-        title: 'WMS loader'
+        title: 'Загрузить WMS'
         description: 'Загружает WMS через GetCapabilities-Request'
       admin:
         label:

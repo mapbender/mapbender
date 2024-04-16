@@ -7,7 +7,7 @@ mb:
     close: Закрыть
     delete: Удалить
     edit: Редактировать
-    filter: Фильтровать
+    filter: Поиск
     print: Печать
     refresh: Обновить
     remove: Удалить
@@ -32,7 +32,7 @@ mb:
         singular: '%type% экземпляр'
       reusable:
         singular: 'Общедоступный экземпляр'
-        plural: 'Общедоступный экземпляры'
+        plural: 'Общедоступные экземпляры'
       bound:
         singular: 'Приватный экземпляр'
         plural: 'Приватные экземпляры'
@@ -72,9 +72,9 @@ mb:
       tag:
         help: справка
         info: инфо
-        about: 'о программе'
+        about: 'О программе'
       admin:
-        tooltip: 'О'
+        tooltip: 'О программе'
     simplesearch:
       input:
         searchterm: 'Поисковый запрос'
@@ -146,21 +146,21 @@ mb:
         height: 'Высота'
         routes: 'Маршруты'
     poi:
-      sharepoi: 'Поделиться POI'
+      sharepoi: 'Поделиться достопримечательностью'
       text:
-        snippet: 'Вы можете использовать следующий фрагмент кода в электронной почте, чтобы отправить POI'
+        snippet: 'Вы можете использовать следующий фрагмент кода в электронной почте, чтобы поделиться достопримечательностью'
       popup:
         btn:
           position: 'Позиционирование'
       class:
-        title: POI
-        description: 'Создать POI для обмена'
+        title: Достопримечательность
+        description: 'Создать достопримечательность для обмена'
       label:
         text: Текст
       admin:
         body: 'Текст'
         gps: 'GPS'
-        placeholder: 'Пожалуйста, посмотрите этот POI'
+        placeholder: 'Пожалуйста, посмотри на эту достопримечательность'
     basesourceswitcher:
       error:
         sourcenotavailable: 'Источник с идентификатором %%d% не доступен'
@@ -184,10 +184,10 @@ mb:
         title: Линейка/Зона
         description: 'Линейку, чтобы нарисовать линию/зону и расчитать длина/площадь в окне'
       tag:
-        line: линия
-        area: область
-        measure: мера
-      help: Двойной клик чтобы закончить
+        line: Линия
+        area: Область
+        measure: Мера
+      help: Двойной клик чтобы закончить.
       admin:
         type: 'Геометрия'
         help: 'Примечание'
@@ -200,7 +200,7 @@ mb:
         template: Шаблон
         quality: Качество
         scale: Масштаб
-        rotation: Вращение
+        rotation: Угол поворота
         legend: Легенда
       class:
         title: Печать
@@ -254,7 +254,7 @@ mb:
       label:
         visibility_onoff: 'Видимость вкл/выкл'
         featureinfo_onoff: 'Инфосвойства вкл/выкл'
-        opacity: Прозрачность
+        opacity: Непрозрачность
         zoomtolayer: 'Масштаб по слоюr'
         metadata: Метаданные
         legend: Легенда
@@ -289,7 +289,7 @@ mb:
         panel: панель
       admin:
         components: 'Компоненты'
-        rotation: 'Вращение'
+        rotation: 'Угол поворота'
         zoommax: 'Увеличьте масштаб до максимального значения'
         zoominout: 'Увеличивать и уменьшать масштаб'
         zoomslider: 'Ползунок масштабирования'
@@ -452,7 +452,7 @@ mb:
         copytoclipboard:
           tooltip: 'Копировать в буфер обмена'
         originCoordinates:
-          title: 'Координаты с системе координат карты'
+          title: 'Координаты в системе координат карты'
           tooltip: 'редактирование невоможно'
         button:
           search: 'Поиск координат'
@@ -530,7 +530,7 @@ mb:
       geometrytype:
         point: Точка
         line: Линия
-        polygon: Полигон
+        polygon: Область
         rectangle: Прямоугольник
         circle: Круг
       inputs:
@@ -540,7 +540,7 @@ mb:
         action:
           remove: 'Удалить геометрию'
           edit: 'Редактировать геометрию'
-          zoom: 'Показать геометрию'
+          zoom: 'Приблизить геометрию'
           stop_drawing: 'Прекратить рисование'
       class:
         title: 'Эскизы'
@@ -592,7 +592,7 @@ mb:
         layer_tree: 'Дерево слоев'
         feature_info: 'Информация о возможностях'
         area_ruler: 'Измерить площадь'
-        polygon: 'Полигон'
+        polygon: 'Область'
         line_ruler: 'Измерить расстояние'
         image_export: 'Экспорт изображений'
         legend: 'Легенда'
@@ -600,7 +600,7 @@ mb:
         about: 'Группа'
         info: 'Информация (перевернутая)'
         pin: 'Маркер'
-        home: 'Домой'
+        home: 'Обратно к началу'
         legend: 'Список'
         print: 'Печать'
         search: 'Поиск'
@@ -610,7 +610,7 @@ mb:
         edit: 'Редактировать'
         wmc: 'Папка'
         coordinates: 'Координаты'
-        poi: 'Pin'
+        poi: 'Маркер достопримечательности'
         camera: 'Камера'
         copyright: 'Copyright'
         share: 'Поделиться'
@@ -618,13 +618,13 @@ mb:
         refresh: 'Обновить'
         earth: 'Земной шар'
         map: 'Карта'
-        pin_alt: 'Pin (альтернатива)'
+        pin_alt: 'Маркер достопримечательности (альтернатива)'
         help: 'Помощь'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:
       toolbar: 'Верхняя панель инструментов'
-      footer: 'Подвал'
+      footer: 'Нижняя панель инструментов'
       sidepane: 'Боковая панель'
       content: 'Область карты'
   demoapps:

@@ -182,7 +182,7 @@ mb:
             import: Импорт
         title: Название
         url:
-          title: 'URL заголовок'
+          title: 'URL'
         description: Описание
         template: Шаблон
     source:
