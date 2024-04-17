@@ -161,6 +161,7 @@ mb:
         body: Testo
         gps: GPS
         placeholder: 'Controlla POI'
+      accept: 'Crea un link'
     basesourceswitcher:
       error:
         sourcenotavailable: 'Una risorsa con id %id% non è disponibile'

@@ -15,6 +15,7 @@ Features:
 * PHP 8.2 is now fully supported.
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
+* New element "Data Upload" that allows mapbender to be used as a non-persistent file viewer for various spatal formats ([PR#1560](https://github.com/mapbender/mapbender/pull/1560))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
@@ -27,6 +28,7 @@ Features:
 * [Sidebar] Sidebar is now user-resizable (configurable but active per default) ([PR#1539](https://github.com/mapbender/mapbender/pull/1539))
 * [LayerTree] When activating a layer, all its parent layers are also activated ([PR#1544](https://github.com/mapbender/mapbender/pull/1544))
 * [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
+* [Map] visiblelayers parameter now supports also rootlayer and layer name (not only sourceinstanceid, instanceid) ([PR#1565](https://github.com/mapbender/mapbender/pull/1565))
 
 
 Bugfixes:
@@ -44,9 +46,10 @@ Other:
 * [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
+* Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558))
 * Revision of the Spanish translation ([PR#1563](https://github.com/mapbender/mapbender/pull/1563))
+* Revision of the Russian translation ([PR#1562](https://github.com/mapbender/mapbender/pull/1562))
 * Revision of the Italian translation ([PR#1561](https://github.com/mapbender/mapbender/pull/1561))
-
 
 ## v3.3.5
 Features:
