@@ -226,19 +226,6 @@ $(function() {
                     }
                 },
                 {
-                    label: Mapbender.trans('mb.actions.back'),
-                    cssClass: 'btn btn-light btn-sm buttonBack hidden pull-left',
-                    callback: function() {
-                        $('.contentItem', $modal).not($initialView).remove();
-                        $initialView.removeClass('hidden');
-
-                        $(".buttonAdd,.buttonBack,.buttonRemove", $modal).addClass('hidden');
-                        $(".buttonOk", $modal).removeClass('hidden');
-                        $(".buttonCancel", $modal).removeClass('hidden');
-                        $('.buttonReset', $modal).toggleClass('hidden', !isModified);
-                    }
-                },
-                {
                     label: Mapbender.trans('mb.actions.remove'),
                     cssClass: 'btn btn-danger btn-sm buttonRemove hidden',
                     callback: function(evt) {
@@ -251,6 +238,19 @@ $(function() {
 
                         $(".buttonAdd,.buttonRemove,.buttonBack", $modal).addClass('hidden');
                         $(".buttonOk,.buttonReset,.buttonCancel", $modal).removeClass('hidden');
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.actions.back'),
+                    cssClass: 'btn btn-light btn-sm buttonBack hidden pull-left',
+                    callback: function() {
+                        $('.contentItem', $modal).not($initialView).remove();
+                        $initialView.removeClass('hidden');
+
+                        $(".buttonAdd,.buttonBack,.buttonRemove", $modal).addClass('hidden');
+                        $(".buttonOk", $modal).removeClass('hidden');
+                        $(".buttonCancel", $modal).removeClass('hidden');
+                        $('.buttonReset', $modal).toggleClass('hidden', !isModified);
                     }
                 },
                 {
