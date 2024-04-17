@@ -23,7 +23,7 @@ mb:
             name: Имя
             version: Версия
             originurl: 'Оригинальный URL'
-            abstract: Кратко
+            abstract: Описание
             onlineresource: 'Интернет ресурс'
             exceptionformats: 'Форматы-исключения'
             fees: Сборы
@@ -49,7 +49,7 @@ mb:
           label:
             originurl: 'Оригинал URL'
             visible: Видимый
-            basesource: 'База Источник'
+            basesource: 'Базовый источник'
             proxy: Прокси
             transparency: Прозрачность
             tiled: Плиточный
@@ -64,10 +64,10 @@ mb:
             allow: Позволять
             'on': Включи
             ratio: 'BBOX фактор'
-            buffer: 'Кафель буфер'
+            buffer: 'Буфер плиток'
             layerorder: 'Порядок слоев'
             layerorder.standard: 'Стандарт (в обратном порядке)'
-            layerorder.reverse: 'QGIS-стиль (в том же порядке)'
+            layerorder.reverse: 'QGIS-стиль (в прямом порядке)'
             exceptionformat: 'Формат ошибки'
             infoformat: 'Формат запроса GetFeatureInfo'
             format: 'Формат запроса GetMap'
@@ -75,7 +75,7 @@ mb:
             vendorspecifics: 'Пользовательские параметры'
             layers: 'Слои'
           vendorspecific:
-            label: 'Vendor определенный'
+            label: 'Vendor-определенный'
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
         preview:
@@ -100,8 +100,8 @@ mb:
             styles: Styles
             legendurl: 'Легенда URL'
             scale: Шкала
-            min: Минимальный
-            max: максимальная
+            min: Минимальная
+            max: Максимальная
             scalehint: 'Масштаб Примечание'
             attribution: Атрибуция
             onlineresource: 'Интернет ресурсов'
@@ -119,7 +119,7 @@ mb:
           label:
             layerstitle: 'Название слоя'
             minscale: 'Минимальная шкала'
-            maxsclase: 'Максимальная Шкала'
+            maxsclase: 'Максимальная шкала'
             active: Активный
             allowselecttoc: 'Разрешить Выберите в TOC'
             selectedtoc: 'Выбранный на TOC'
@@ -196,11 +196,11 @@ mb:
         height: 'Высота'
         onlineresource: 'Online-ресурс'
       vendorspecifictype:
-        hidden: 'Cкрыто'
+        hidden: 'Cкрыть'
         setdefaults: 'Установить по умолчанию'
     vendorspecifictype:
       admin:
         vstype: 'Тип параметра'
         name: 'Имя'
         default: 'Значение по умолчанию'
-        hidden: 'Cкрыто'
+        hidden: 'Cкрыть'
