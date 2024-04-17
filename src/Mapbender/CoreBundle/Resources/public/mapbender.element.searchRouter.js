@@ -316,7 +316,8 @@
                     const sortBy = $(e.target).attr('data-column');
                     const sortOrder = ($(e.target).attr('data-order') === 'asc') ? 'desc' : 'asc';
                     $(e.target).attr('data-order', sortOrder);
-                    self.sortResults(features, sortBy, sortOrder);
+                    const results = self.sortResults(features, sortBy, sortOrder);
+                    this._searchResultsTable(results);
                 });
                 $headers.append(th);
             }
@@ -337,6 +338,11 @@
                 var container = $('.search-results', this.element);
                 if ($('table', container).length === 0) {
                     this._prepareResultTable(container);
+                }
+                if (currentRoute.results.hasOwnProperty('sortBy')) {
+                    const sortBy = currentRoute.results.sortBy;
+                    const sortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
+                    results = this.sortResults(results, sortBy, sortOrder);
                 }
                 this._searchResultsTable(results);
             }
@@ -608,7 +614,7 @@
         },
 
         sortResults: function (results, sortBy, sortOrder = 'asc') {
-            const sortedResults = results.sort((a, b) => {
+            return results.sort((a, b) => {
                 a = (a.get(sortBy)) ? a.get(sortBy) : '';
                 b = (b.get(sortBy)) ? b.get(sortBy) : '';
                 let result = a.toString().localeCompare(b.toString(), undefined, {
@@ -623,7 +629,6 @@
                 }
                 return 0;
             });
-            this._searchResultsTable(sortedResults);
         },
 
         __dummy__: null
