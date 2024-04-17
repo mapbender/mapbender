@@ -47,8 +47,9 @@ Other:
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
 * Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558))
-* Revision of the Russian translation ([PR#1562](https://github.com/mapbender/mapbender/pull/1562))
 * Revision of the Spanish translation ([PR#1563](https://github.com/mapbender/mapbender/pull/1563))
+* Revision of the Russian translation ([PR#1562](https://github.com/mapbender/mapbender/pull/1562))
+* Revision of the Italian translation ([PR#1561](https://github.com/mapbender/mapbender/pull/1561))
 
 ## v3.3.5
 Features:

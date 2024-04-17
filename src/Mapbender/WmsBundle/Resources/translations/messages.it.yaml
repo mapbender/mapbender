@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Esempio
-          wmsurl: URL del Servizio
+          wmsurl: 'URL del Servizio'
           wmsuser: Utente
           wmspass: Password
       error:
@@ -22,12 +22,12 @@ mb:
             title: Titolo
             name: Nome
             version: Versione
-            originurl: Origine URL
+            originurl: 'Origine URL'
             abstract: Abstract
-            onlineresource: Risorsa Online
-            exceptionformats: Eccezione nel formato
+            onlineresource: 'Risorsa Online'
+            exceptionformats: 'Eccezione nel formato'
             fees: Fees
-            accessconstraints: Limiti all'accesso
+            accessconstraints: 'Limiti all''accesso'
             person: Persona
             organization: Organizzazione
             position: Posizione
@@ -35,10 +35,10 @@ mb:
             facsimile: Facsimile
             email: Email
             address: Indirizzo
-            addresstype: Tipo di indirizzo
+            addresstype: 'Tipo di indirizzo'
             city: Città
             state: Stato
-            postcode: Codice postale
+            postcode: 'Codice postale'
             country: Nazione
           message:
             cautionscalehint: 'Attenzione: i calcoli per la scala sono soggetti a una limitata risoluzione in WMS 1.1.1!'
@@ -47,7 +47,7 @@ mb:
             save: Salva
             cancel: Cancella
           label:
-            originurl: Origine URL
+            originurl: 'Origine URL'
             visible: Visibile
             basesource: BaseSource
             proxy: Proxy
@@ -63,13 +63,19 @@ mb:
             reorder: riordina
             allow: permetti
             'on': attivo
-            ratio: fattore BBOX
-            buffer: Tile buffer
-            layerorder: Ordine dei Layers
+            ratio: 'fattore BBOX'
+            buffer: 'Tile buffer'
+            layerorder: 'Ordine dei Layers'
             layerorder.standard: standard
             layerorder.reverse: QGIS
+            exceptionformat: 'Formato di eccezione'
+            infoformat: 'Formato della richiesta GetFeatureInfo'
+            format: 'Formato della richiesta GetMap'
+            dimensions: 'Dimensioni'
+            vendorspecifics: 'Parametri specifici del produttore'
+            layers: 'Layers'
           vendorspecific:
-            label: specifiche per Vendor
+            label: 'specifiche per il produttore'
         preview:
           title:
             servicerepository: Repository
@@ -81,80 +87,118 @@ mb:
             title: Titolo
             abstract: Astratto
             queryable: Interrogabile
-            cascaded: In Cascata
+            cascaded: 'In Cascata'
             opaque: Opaco
-            nosubset: Nessun Subset
-            fixedwidth: Larghezza Fissa
-            fixedheight: Altezza Fissa
+            nosubset: 'Nessun Subset'
+            fixedwidth: 'Larghezza Fissa'
+            fixedheight: 'Altezza Fissa'
             latlonbounds: LatLonBounds
             boundingbox: BoundingBox
             srs: SRS
             styles: Stili
-            legendurl: URL della Legenda
+            legendurl: 'URL della Legenda'
             scale: Scala
             min: Min
             max: Max
             scalehint: scala
             attribution: Attributi
-            onlineresource: Risorsa Online
-            logourl: URL del Logo
+            onlineresource: 'Risorsa Online'
+            logourl: 'URL del Logo'
             identifier: Identificatore
             authority: Autorità
             url: URL
             value: Valore
-            metadataurl: URL del Metadato
+            metadataurl: 'URL del Metadato'
             dimension: Dimensione
             extent: Estendi
-            dataurl: URL del Dato
-            featurelisturl: URL della Featurelist
+            dataurl: 'URL del Dato'
+            featurelisturl: 'URL della Featurelist'
         instancelayerform:
           label:
-            layerstitle: Titolo del Layer
-            minscale: Scala minima
-            maxsclase: Scala massima
+            layerstitle: 'Titolo del Layer'
+            minscale: 'Scala minima'
+            maxsclase: 'Scala massima'
             active: attivo
-            allowselecttoc: Permetti la Selezione nel TOC
-            selectedtoc: Selezionato nel TOC
-            allowinfotoc: Permetti FeatureInfo nel TOC
-            infotoc: FeatureInfo nel TOC
-            allowtoggletoc: Permetti Alterna nel TOC
-            toggletoc: Alterna nel TOC
-            allowreordertoc: Permetti Riordina nel TOC
-            moreinfo: Più Informazioni
+            allowselecttoc: 'Permetti la Selezione nel TOC'
+            selectedtoc: 'Selezionato nel TOC'
+            selectedtoc.help: 'Il layerset è attivo all'avvio. L'impostazione deve essere modificata solo se si utilizzano layer tematici.'
+            unselectedtoc.help: 'Il layerset è inattivo all''avvio. Attenzione: Se non si utilizzano layer tematici, questo layerset non sarà accessibile.'
+            allowinfotoc: 'Permetti FeatureInfo nel TOC'
+            infotoc: 'FeatureInfo nel TOC'
+            allowtoggletoc: 'Permetti Alterna nel TOC'
+            toggletoc: 'Alterna nel TOC'
+            allowreordertoc: 'Permetti Riordina nel TOC'
+            moreinfo: 'Più Informazioni'
             id:
               title: ID
               description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Nome del Layer
+            layersname: 'Nome del Layer'
             style: Stile
       class:
-        title: loader WMS
-        description: Carica un WMS attraverso la getCapabilities-Request
+        title: 'loader WMS'
+        description: 'Carica un WMS attraverso la getCapabilities-Request'
       admin:
         label:
-          splitlayers: Dividi layers
+          splitlayers: 'Dividi layers'
     repository:
       parser:
-        couldnotparse: Non possibile il parse di CapabilitiesDocument
-        not_supported_document: CapabilitiesDocument non supportato
-        not_supported_version: La versione WMS non supportata
+        couldnotparse: 'Non possibile il parse di CapabilitiesDocument'
+        not_supported_document: 'CapabilitiesDocument non supportato'
+        not_supported_version: 'La versione WMS non supportata'
     metadata:
       section:
         common:
+          title: 'Informazioni generali'
           _title: Comune
-        useconditions:
-          _title: Condizioni d'uso
         contact:
+          title: Contatto
           _title: Contatti
         items:
-          _title: Layer
+          title: Layer
           name: Nome
+          _title: Layer
+        useconditions:
+          title: 'Termine d''uso'
+          _title: 'Condizioni d''uso'
+      popup:
+        title: 'Meta data'
     repo:
       instance:
         label:
           dimensions: Dimensioni
     dimhandler:
       class:
-        title: Dimensioni del handler
-        description: DimensionsHandler raggruppa e chiama le istanze supportate dalla dimensione sulla mappa
+        title: 'Dimensioni del handler'
+        description: 'DimensionsHandler raggruppa e chiama le istanze supportate dalla dimensione sulla mappa'
     dimensionsets:
-      no_dimension: nessuna dimensione
+      no_dimension: 'nessuna dimensione'
+  core:
+    dimensionset:
+      admin:
+        title: Titolo
+        group: Gruppo
+        extent: Estensione
+    dimensionshandler:
+      admin:
+        tooltip: Tooltip
+        dimensionsets: 'Sets della dimensione'
+    wmsloader:
+      admin:
+        defaultformat: 'Formato predefinito'
+        defaultinfoformat: 'Formato predefinito info'
+      onlineresource:
+        format: Formato
+        href: href
+      legendurltype:
+        width: Larghezza
+        height: Altezza
+        onlineresource: 'Resorsa online'
+      vendorspecifictype:
+        hidden: Nascosto
+        setdefaults: 'Set defaults'
+    vendorspecifictype:
+      admin:
+        vstype: 'Tipo parametro'
+        name: Nome
+        default: 'Valore predefinito'
+        hidden: Nascosto
