@@ -36,6 +36,8 @@ class MapbenderFrameworkBundle extends Bundle
         $container->addCompilerPass(new RegisterIconPackagesPass('mapbender.icon_index'));
         /** @see \FOM\UserBundle\Security\Permission\PermissionVoter */
         $container->addCompilerPass(new RegisterPermissionDomainsPass('fom.security.permission_voter'));
+        /** @see \FOM\UserBundle\Security\Permission\PermissionManager */
+        $container->addCompilerPass(new RegisterPermissionDomainsPass('fom.security.permission_manager'));
     }
 
     public function getContainerExtension(): ?ExtensionInterface

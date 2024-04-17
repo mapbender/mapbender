@@ -10,6 +10,7 @@
             <argument type="service" id="mapbender.application_template_registry" />
             <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="mapbender.uploads_manager.service" />
+            <argument type="service" id="fom.security.permission_manager" />
             <argument>%mapbender.responsive.elements%</argument>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>

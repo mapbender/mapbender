@@ -1,9 +1,14 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\AclManager;
+use FOM\UserBundle\Form\Type\PermissionListType;
+use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
+use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
+use FOM\UserBundle\Security\Permission\PermissionManager;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -15,18 +20,17 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\ManagerBundle\Component\UploadScreenshot;
+use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -40,27 +44,14 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
-    /** @var MutableAclProviderInterface */
-    protected $aclProvider;
-    /** @var ApplicationTemplateRegistry  */
-    protected $templateRegistry;
-    /** @var AclManager */
-    protected $aclManager;
-    /** @var UploadsManager */
-    protected $uploadsManager;
-    protected $enableResponsiveElements;
-
-    public function __construct(MutableAclProviderInterface $aclProvider,
-                                ApplicationTemplateRegistry $templateRegistry,
-                                AclManager $aclManager,
-                                UploadsManager $uploadsManager,
-                                $enableResponsiveElements)
+    public function __construct(protected MutableAclProviderInterface $aclProvider,
+                                protected ApplicationTemplateRegistry $templateRegistry,
+                                protected AclManager                  $aclManager,
+                                protected UploadsManager              $uploadsManager,
+                                protected PermissionManager           $permissionManager,
+                                protected bool                        $enableResponsiveElements,
+    )
     {
-        $this->aclProvider = $aclProvider;
-        $this->templateRegistry = $templateRegistry;
-        $this->aclManager = $aclManager;
-        $this->uploadsManager = $uploadsManager;
-        $this->enableResponsiveElements = $enableResponsiveElements;
     }
 
     /**
@@ -129,8 +120,8 @@ class ApplicationController extends ApplicationControllerBase
         }
 
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
-            'application'         => $application,
-            'form'                => $form->createView(),
+            'application' => $application,
+            'form' => $form->createView(),
             'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
     }
@@ -149,9 +140,9 @@ class ApplicationController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
-        $oldSlug          = $application->getSlug();
+        $oldSlug = $application->getSlug();
 
-        $form             = $this->createApplicationForm($application);
+        $form = $this->createApplicationForm($application);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getEntityManager();
@@ -201,9 +192,9 @@ class ApplicationController extends ApplicationControllerBase
         // restore old slug to keep urls working
         $application->setSlug($oldSlug);
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
-            'application'         => $application,
+            'application' => $application,
             'regions' => $template->getRegions(),
-            'form'                => $form->createView(),
+            'form' => $form->createView(),
             'template_name' => $template->getTitle(),
             'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
         ));
@@ -329,7 +320,7 @@ class ApplicationController extends ApplicationControllerBase
          * @todo: finding the right assignment requires more information than is currently passed on by
          * @see RepositoryController::instanceAction. We simply remove all assignments of the instance.
          */
-        $reusablePartitions = $layerset->getReusableInstanceAssignments()->partition(function($_, $assignment) use ($instance) {
+        $reusablePartitions = $layerset->getReusableInstanceAssignments()->partition(function ($_, $assignment) use ($instance) {
             /** @var SourceInstanceAssignment $assignment */
             return $assignment->getInstance() !== $instance;
         });
@@ -399,8 +390,8 @@ class ApplicationController extends ApplicationControllerBase
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete", methods={"POST"})
      *
      * @param string $slug
-     * @param int   $layersetId
-     * @param int   $instanceId
+     * @param int $layersetId
+     * @param int $instanceId
      * @return Response
      * @throws \Exception
      */
@@ -510,47 +501,27 @@ class ApplicationController extends ApplicationControllerBase
         }
     }
 
-    /**
-     * Create the application form, set extra options needed
-     *
-     * @param Application $application
-     * @return FormInterface
-     */
-    private function createApplicationForm(Application $application)
+    private function createApplicationForm(Application $application): FormInterface
     {
-        $form = $this->createForm('Mapbender\ManagerBundle\Form\Type\ApplicationType', $application);
-        if ($this->allowAclEditing($application)) {
-            $aclOptions = array();
-            if ($application->getId()) {
-                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($application);
-            } else {
-                $aclOptions['data'] = array(
-                    array(
-                        'sid' => UserSecurityIdentity::fromToken($this->getUserToken()),
-                        'mask' => MaskBuilder::MASK_OWNER,
-                    ),
-                );
-            }
-            $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
+        $form = $this->createForm(ApplicationType::class, $application);
+        if ($this->allowPermissionEditing($application)) {
+            $attributeDomain = $this->permissionManager->findAttributeDomainFor($application);
+            $form->add('acl', PermissionListType::class, [
+                'attribute_domain' => $attributeDomain,
+                'attribute' => $application,
+                'entry_options' => [
+                    'attribute_domain' => $attributeDomain,
+                ]
+            ]);
         }
         return $form;
     }
 
-    /**
-     * @param Application $application
-     * @return bool
-     */
-    protected function allowAclEditing(Application $application)
+    protected function allowPermissionEditing(Application $application): bool
     {
-        if (!$application->getId()) {
-            // current user will become owner of the new application
-            return true;
-        } elseif ($this->isGranted('OWNER', $application)) {
-            return true;
-        } else {
-            $aclOid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
-            return $this->isGranted('EDIT', $aclOid);
-        }
+        return !$application->getId() // current user will become owner of the new application
+            || $this->isGranted(AttributeDomainApplication::PERMISSION_MANAGE_PERMISSIONS, $application)
+            || $this->isGranted(AttributeDomainInstallation::PERMISSION_EDIT_ALL_APPLICATIONS);
     }
 
     /**

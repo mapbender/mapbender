@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="fom.identities.provider.class">FOM\UserBundle\Component\FOMIdentitiesProvider</parameter>
         <parameter key="fom.user_helper.service.class">FOM\UserBundle\Component\UserHelperService</parameter>
@@ -83,7 +83,27 @@
 
         <service id="fom.security.permission_manager"
                  class="FOM\UserBundle\Security\Permission\PermissionManager">
+            <!-- initialized by compiler pass -->
+            <!-- will contain all services tagged with "fom.security.attribute_domain", sorted by priority -->
+            <argument type="collection" />
+            <!-- will contain all services tagged with "fom.security.subject_domain", sorted by priority -->
+            <argument type="collection" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
+
+        <service id="fom.security.form.model_transformer" class="FOM\UserBundle\Form\DataTransformer\PermissionDataTransformer">
+        </service>
+
+        <service id="fom.security.type.permission" class="FOM\UserBundle\Form\Type\PermissionType">
+            <argument type="service" id="fom.security.form.model_transformer" />
+            <tag name="form.type" />
+        </service>
+
+        <service id="fom.security.type.permission_list" class="FOM\UserBundle\Form\Type\PermissionListType">
+            <argument type="service" id="fom.security.permission_manager" />
+            <tag name="form.type" />
+        </service>
+
         <service id="fom.security.permission_voter"
                  class="%fom.security.permission_voter.class%"
                  lazy="true">

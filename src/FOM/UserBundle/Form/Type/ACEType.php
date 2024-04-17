@@ -1,6 +1,7 @@
 <?php
 namespace FOM\UserBundle\Form\Type;
 
+use FOM\ManagerBundle\Form\Type\TagboxType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,7 +42,7 @@ class ACEType extends AbstractType
             if ($options['mask'] & (1 << $bit)) {
                 $name = $this->getPermissionName(1 << $bit);
                 $builder
-                    ->add('permission_' . $bit, 'FOM\ManagerBundle\Form\Type\TagboxType', array(
+                    ->add('permission_' . $bit, TagboxType::class, array(
                         'property_path' => '[permissions][' . ($bit + 1) . ']',
                         'attr' => array(
                             'class' => $name
