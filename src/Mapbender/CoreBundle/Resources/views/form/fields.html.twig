@@ -242,7 +242,10 @@
   {% endapply %}
 {% endblock form_rest %}
 
-{% block acl_widget %}
+
+{# Security #}
+
+{% block permission_list_widget %}
   {% apply spaceless %}
   <div class="ace-collection" {{ block('widget_container_attributes') }}>
     {%- if form.vars.allow_add -%}
@@ -270,8 +273,8 @@
         </tr>
       </thead>
       <tbody>
-        {% for ace in form %}
-          {{ form_widget(ace) }}
+        {% for permission in form %}
+          {{ form_widget(permission) }}
         {% endfor %}
       </tbody>
     </table>
@@ -292,7 +295,7 @@
   {% endapply %}
 {% endblock tagbox_widget %}
 
-{% block ace_widget %}
+{% block permission_widget %}
     {%- set _sid_value = form.sid.vars.value -%}
     {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
     <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">

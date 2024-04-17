@@ -28,6 +28,11 @@ class PermissionListType extends AbstractType
         return CollectionType::class;
     }
 
+    public function getBlockPrefix()
+    {
+        return 'permission_list';
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

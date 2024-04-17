@@ -148,10 +148,10 @@ $(function() {
         });
     });
 
-    $(document).on('click', '.ace-collection .-fn-add-permission[data-url]', function(event) {
+    $(document).on('click', '.permission-collection .-fn-add-permission[data-url]', function(event) {
         var $this = $(this);
         var url = $this.attr('data-url');
-        var $targetTable = $('table', $this.closest('.ace-collection'));
+        var $targetTable = $('table', $this.closest('.permission-collection'));
 
         if (url.length > 0) {
             $.ajax({

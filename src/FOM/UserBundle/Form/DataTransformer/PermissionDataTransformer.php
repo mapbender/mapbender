@@ -23,9 +23,11 @@ class PermissionDataTransformer implements DataTransformerInterface
 
     public function transform(mixed $value): array
     {
+        // TODO: actual transformation
         /** @var ?Permission $value */
         return array(
-            'permissions' => $value === null ? ["view"] : [$value->getPermission()],
+            'permissions' => $value === null ? [true, false, true, true, false] : [true, true, false, true, false],
+            'sid' => 'u:' . ($value === null ? 'u' : $value->getSubjectDomain() . ' ' . $value->getUser()?->getUserIdentifier())
         );
     }
 
