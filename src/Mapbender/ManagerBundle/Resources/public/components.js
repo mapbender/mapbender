@@ -234,6 +234,7 @@ $(function() {
 
                         $(".buttonAdd,.buttonBack,.buttonRemove", $modal).addClass('hidden');
                         $(".buttonOk", $modal).removeClass('hidden');
+                        $(".buttonCancel", $modal).removeClass('hidden');
                         $('.buttonReset', $modal).toggleClass('hidden', !isModified);
                     }
                 },
@@ -263,7 +264,7 @@ $(function() {
                         }
                         isModified = true;
                         $(".buttonAdd,.buttonBack", $modal).addClass('hidden');
-                        $(".buttonOk,.buttonReset", $modal).removeClass('hidden');
+                        $(".buttonOk,.buttonReset,.buttonCancel", $modal).removeClass('hidden');
                     }
                 },
                 {
@@ -295,7 +296,7 @@ $(function() {
                 url: url,
                 type: "GET",
                 success: function(data) {
-                    $(".contentItem:first,.buttonOk,.buttonReset", $modal).addClass('hidden');
+                    $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", $modal).addClass('hidden');
                     $(".buttonAdd,.buttonBack", $modal).removeClass('hidden');
                     addContent(filterSidContent(data, $permissionsTable));
                 }
