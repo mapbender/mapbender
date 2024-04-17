@@ -22,7 +22,7 @@ mb:
   source:
     instance:
       create:
-        success: 'Новый образец был создан, но его нужно отредактировать.'
+        success: 'Новый элемент был создан, но его нужно отредактировать.'
   manager:
     automatic: 'Автоматически'
     autoActivate: Автоактивирование
@@ -48,7 +48,7 @@ mb:
     visibility: 'Видимость'
     element:
       screentype:
-        mobile: 'Просмотр на мобильных устройствах'
+        mobile: 'Показывать на мобильных устройствах'
         desktop: 'Показывать на экранах'
     sidepane:
       width: 'Ширина'
@@ -129,17 +129,17 @@ mb:
           confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
         id: Id
       instance:
-        add: 'Добавить образец'
-        show_hide: 'Вкл/выкл образец'
-        edit: 'Редактировать образец'
+        add: 'Добавить'
+        show_hide: 'Вкл/выкл'
+        edit: 'Редактировать'
         delete:
-          title: 'Удалить образец'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Образец не добавлен'
+          title: 'Удалить'
+          confirm: 'Вы действительно хотите удалить элемент с заголовком <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Элемент не добавлен'
         no_layer_added: 'Слой не добавлен'
         max_input_vars_exceeded: 'Параметр PHP max_input_vars слишком низкий для количества слоев в этом экземпляре.'
-        update_successful: 'Образец актуализирован'
-        converted_to_shared: 'Образец был преобразован в общедоступный образец.'
+        update_successful: 'Элемент актуализирован'
+        converted_to_shared: 'Элемент был преобразован в общедоступный.'
       template: Шаблон
       application:
         view: Обзор
@@ -244,7 +244,7 @@ mb:
       admin:
         importfile: 'Импортировать файл'
   actions:
-    secureelement: 'Безопасный элемент'
+    secureelement: 'Безопасность элемента'
   wms:
     wmsloader:
       repo:

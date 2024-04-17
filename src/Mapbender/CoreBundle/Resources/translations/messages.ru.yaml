@@ -202,6 +202,7 @@ mb:
         scale: Масштаб
         rotation: Угол поворота
         legend: Легенда
+        title: Заголовок
       class:
         title: Печать
         description: 'Отображает диалоговое окно печати'

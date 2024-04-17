@@ -61,10 +61,10 @@ mb:
             info: Информация
             toggle: Переключатель
             reorder: 'Изменения порядка'
-            allow: Позволять
-            'on': Включи
+            allow: Разрешить
+            'on': Вкл.
             ratio: 'BBOX фактор'
-            buffer: 'Буфер плиток'
+            buffer: 'Буфер плитки'
             layerorder: 'Порядок слоев'
             layerorder.standard: 'Стандарт (в обратном порядке)'
             layerorder.reverse: 'QGIS-стиль (в прямом порядке)'
@@ -121,15 +121,15 @@ mb:
             minscale: 'Минимальная шкала'
             maxsclase: 'Максимальная шкала'
             active: Активный
-            allowselecttoc: 'Разрешить Выберите в TOC'
-            selectedtoc: 'Выбранный на TOC'
+            allowselecttoc: 'Разрешить выбор в TOC'
+            selectedtoc: 'Выбранный в TOC'
             selectedtoc.help: 'Набор слоев активен при запуске. Настройки следует изменять только в том случае, если используются тематические слои.'
             unselectedtoc.help: 'Набор слоев неактивен при запуске. Внимание: если тематические слои не используются, этот набор слоев будет недоступен.'
-            allowinfotoc: 'Allow FeatureInfo at TOC'
-            infotoc: 'FeatureInfo at TOC'
-            allowtoggletoc: 'Allow Toggle at TOC'
-            toggletoc: 'Toggle at TOC'
-            allowreordertoc: 'Разрешить Упорядочить по ТОС'
+            allowinfotoc: 'Разрешить инфосвойства в TOC'
+            infotoc: 'Инфосвойства в TOC'
+            allowtoggletoc: 'Разрешить переключать в TOC'
+            toggletoc: 'Переключить в TOC'
+            allowreordertoc: 'Разрешить упорядочить по ТОС'
             moreinfo: 'Больше информации'
             id:
               title: Id
