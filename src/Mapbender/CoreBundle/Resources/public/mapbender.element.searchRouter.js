@@ -302,16 +302,28 @@
          * @returns {HTMLElement|jQuery}
          */
         renderTable: function (routeConfig) {
+            const self = this;
             var headers = routeConfig.results.headers;
             var $headers = $(document.createElement('tr'));
-
             var table = $(document.createElement('table')).addClass('table table-condensed table-striped table-hover');
 
-            for (var header in headers) {
-                $headers.append($(document.createElement('th')).text(headers[header]));
+            for (let header in headers) {
+                let th = $('<th data-column="' + header + '" data-order=""></th>');
+                th.text(headers[header]);
+                th.css('cursor', 'pointer');
+                th.on('click', (e) => {
+                    const features = self.highlightLayer.getNativeLayer().getSource().getFeatures();
+                    const sortBy = $(e.target).attr('data-column');
+                    const sortOrder = ($(e.target).attr('data-order') === 'asc') ? 'desc' : 'asc';
+                    $(e.target).attr('data-order', sortOrder);
+                    self.sortResults(features, sortBy, sortOrder);
+                });
+                $headers.append(th);
             }
+
             table.append($(document.createElement('thead')).append($headers));
             table.append($('<tbody></tbody>'));
+
             return table;
         },
 
@@ -594,6 +606,26 @@
         _hideMobile: function () {
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
+
+        sortResults: function (results, sortBy, sortOrder = 'asc') {
+            const sortedResults = results.sort((a, b) => {
+                a = (a.get(sortBy)) ? a.get(sortBy) : '';
+                b = (b.get(sortBy)) ? b.get(sortBy) : '';
+                let result = a.toString().localeCompare(b.toString(), undefined, {
+                    numeric: true,
+                    sensivity: 'base'
+                });
+                if (result === 1) {
+                    return (sortOrder === 'asc') ? 1 : -1;
+                }
+                if (result === -1) {
+                    return (sortOrder === 'asc') ? -1 : 1;
+                }
+                return 0;
+            });
+            this._searchResultsTable(sortedResults);
+        },
+
         __dummy__: null
     });
 })(jQuery);
