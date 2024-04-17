@@ -27,7 +27,6 @@
             // Form submit, unlike jQuery / XMLHttpRequest-based Ajax, can follow redirects properly
             // This is useful for delete requests starting from an item view page, where on success, the
             // item is deleted, and the previous URL becomes a 404.
-            console.log('huiii');
             $('button.-js-confirm', $modal)
                 .removeClass('-js-confirm')
                 .one('click', () => $form[0].submit())

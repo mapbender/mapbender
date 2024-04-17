@@ -161,6 +161,7 @@ mb:
         body: 'Текст'
         gps: 'GPS'
         placeholder: 'Пожалуйста, посмотри на эту достопримечательность'
+      accept: 'Создать ссылку'
     basesourceswitcher:
       error:
         sourcenotavailable: 'Источник с идентификатором %%d% не доступен'

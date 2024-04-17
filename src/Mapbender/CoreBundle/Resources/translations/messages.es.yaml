@@ -1,6 +1,6 @@
 mb:
   actions:
-    accept: Ok
+    accept: Aceptar
     add: Añadir
     back: Atrás
     cancel: Cancelar
@@ -10,295 +10,649 @@ mb:
     filter: Filtrar
     print: Imprimir
     refresh: Actualizar
-    remove: Remover
+    remove: Eliminar
     reset: Reiniciar
     save: Guardar
     search: Buscar
+    duplicate: Duplicar
   terms:
     application:
       singular: Aplicación
-      plural: Aplicaciónes
+      plural: Aplicaciones
     source:
-      singular: Fuente
-      plural: Fuentes
+      singular: 'Fuente de datos'
+      plural: 'Fuentes de datos'
     layerset:
-      singular: Conjunto de capas
-      plural: Conjuntos de capas
+      singular: 'Conjunto de capas'
+      plural: 'Conjuntos de capas'
     sourceinstance:
       singular: Instancia
       plural: Instancias
       typed:
-        singular: '%type% instancia'
+        singular: 'Instancia %type%'
+      reusable:
+        singular: 'Instancia pública'
+        plural: 'Instancias públicas'
+      bound:
+        singular: 'Instancia privada'
+        plural: 'Instancias privadas'
     security: Seguridad
+  form:
+    choice_required: 'Selecciona uno'
+    choice_optional: 'Ninguno'
+    unnamed_entry: 'Entrada sin nombre'
   states:
     active: activo
     inactive: inactivo
   core:
     featureinfo:
       error:
-        nolayer: No existe feature info de la capa.
-        unknownoption: Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.
-        noresult: no result
+        nolayer: 'No existe información de la capa.'
+        unknownoption: 'Opción desconocida o no manejable %key% para %namespace%.%widgetname%.'
+        noresult: 'Sin resultados'
       class:
-        title: FeatureInfo
-        description: FeatureInfo
+        title: 'Información del objeto espacial'
+        description: 'Muestra la información del objeto espacial'
+      admin:
+        maxcount: 'Número máximo'
+        height: Altura
+        width: Anchura
+        displaytype: 'Tipo de visualización'
+        tabs: Pestañas
+        accordion: Acordeón
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: aprende mas sobre Mapbender
-        linktitle: Visita nuestri sitio oficial de Mapbender
+        learnmore: 'Aprende más sobre Mapbender'
+        linktitle: 'Visita nuestro sitio oficial de Mapbender'
         website: website
       class:
-        title: Diálogo Acerca de
-        description: Mostrar un diálogo acerca de
+        title: 'Diálogo acerca de'
+        description: 'Mostrar un diálogo acerca de'
       tag:
-        help: ayuda
-        info: info
-        about: acerca de
+        help: Ayuda
+        info: Información
+        about: 'Acerca de'
+      admin:
+        tooltip: 'Acerca de'
     simplesearch:
       input:
+        searchterm: 'Término de búsqueda'
         search: Buscar
+        clear: Limpiar
       class:
-        title: Búsqueda Simple
-        description: Campo de búsqueda sencillo en base JSON (e.g. Solr)
+        title: 'Búsqueda simple'
+        description: 'Búsqueda de un solo campo mediante datos JSON (por ejemplo, Solr)'
       error:
         geometry:
-          missing: null
+          missing: 'La entrada seleccionada no contiene ninguna geometría.'
+      admin:
+        configurations: Configuraciones
+        title: Título
+        title.help: 'Texto mostrado en el menú desplegable de configuraciones'
+        placeholder: 'Marcador de posición'
+        placeholder.help: 'Texto a mostrar cuando el campo de búsqueda está vacío. Si no se define un marcador de posición, se usará el contenido del título en su lugar.'
+        query_url: 'URL de consulta'
+        query_url.help: 'URL de Solr o Nominatim para la búsqueda (por ejemplo, <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>)'
+        query_key: 'Clave del parámetro de URL de consulta'
+        query_key.help: 'La clave del parámetro de consulta para añadir (por ejemplo, <code>q</code>)'
+        query_ws_replace: 'Patrón de reemplazo de espacios en blanco en la consulta'
+        query_ws_replace.help: 'Si se establece, los espacios y saltos de línea en la consulta de búsqueda serán reemplazados de este modo, por ejemplo, <code>+</code> o <code>%20</code>'
+        query_format: 'Formato de clave de consulta'
+        query_format.help: 'Formato para la función <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a> de PHP. El término de búsqueda se interpretará utilizando este formato. Por ejemplo, <code>%s</code> (predeterminado) si se espera una cadena, <code>%d</code> si se espera un entero.'
+        token_regex: 'Tokenizador: Separar Regex'
+        token_regex.help: 'El tokenizador permite modificar los términos de búsqueda antes de enviarlos a la URL de búsqueda. El regex de separación debe coincidir con todos los caracteres que separan los tokens (generalmente palabras). Predeterminado: <code> </code> (espacio)'
+        token_regex_in: 'Tokenizador: Regex de búsqueda'
+        token_regex_in.help: 'Dentro de cada token (ver Separar Regex), se buscará y reemplazará esta expresión regular por el valor de "Regex de reemplazo".'
+        token_regex_out: 'Tokenizador: Regex de reemplazo'
+        token_regex_out.help: 'Dentro de cada token (ver Separar Regex), la expresión regular de "Regex de búsqueda" se buscará y reemplazará por este valor. Los grupos encontrados se referenciarán con un <code>$</code> y números ascendentes. Por ejemplo, <code>$1*</code> agregará un asterisco a cada palabra de búsqueda.'
+        collection_path: 'Ruta de resultados'
+        collection_path.help: 'Ruta que señala al array de resultados dentro de la respuesta de la URL de búsqueda. Los niveles jerárquicos están separados por puntos. Por ejemplo, <code>response.docs</code> (Solr estándar), <code>features</code> (GeoJSON)'
+        label_attribute: 'Atributo de etiqueta'
+        label_attribute.help: 'Ruta (dentro de un solo resultado) al atributo que se utilizará como etiqueta, por ejemplo, <code>label</code>. Alternativamente, se puede ingresar una plantilla de cadena, por ejemplo, <code>Ciudad ${properties.address.city} - ${properties.address.road}</code>'
+        geom_attribute: 'Atributo de geometría'
+        geom_attribute.help: 'Ruta (dentro de un solo resultado) al atributo que proporciona la geometría, por ejemplo, <code>geom</code>, <code>geometry</code> (GeoJSON)'
+        geom_format: 'Formato de geometría'
+        geom_format.help: 'Formato de geometría proporcionado, ya sea <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a> o <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
+        sourceSrs: 'SRS de origen'
+        sourceSrs.help: '<a href="https://epsg.io/" target="_blank">Código EPSG</a> de la proyección utilizada en la URL de búsqueda, incluyendo el prefijo <code>EPSG:</code>, por ejemplo, <code>EPSG:25832</code>. Si no se establece, se asume que los resultados están en la proyección predeterminada para el mapa.'
+        delay: 'Retardo de búsqueda [ms]'
+        delay.help: 'La búsqueda automática se activará tantos milisegundos después de la última entrada de tecla. Predeterminado: 300 ms'
+        result_buffer: 'Búfer de resultados [unidades de mapa]'
+        result_buffer.help: 'Determina indirectamente el nivel de zoom que aparecerá después de seleccionar un resultado. Al menos, el área seleccionada es visible alrededor de la geometría. La unidad de unidades de mapa varía según la proyección, en la mayoría de los casos equivale a metros. Es posible una combinación con los parámetros de escala (mín./máx.), pero puede dar lugar a resultados no deseados.'
+        result_minscale: 'Escala mínima [Denominador]'
+        result_minscale.help: 'Alternativa para especificar el nivel de zoom. Dependiendo de los límites de la geometría objetivo, se establece una escala entre <code>min</code> y <code>max</code>. Con una escala <code>1 : 1000</code>, solo es necesario ingresar <code>1000</code>. Para una escala fija, es suficiente con ingresar la escala mínima.'
+        result_maxscale: 'Escala máxima [Denominador]'
+        result_icon_url: 'URL del icono'
+        result_icon_url.help: 'URL a un archivo de imagen que se utilizará como marcador para geometrías de punto. Puede ser relativa o absoluta. Para el pin estándar, use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'Desplazamiento del icono'
+        result_icon_offset.help: 'Corrección de posición para el icono como desplazamiento de x e y separados por coma, por ejemplo, <code>-6,-32</code> para el pin estándar'
+      errors:
+        invalid_query_format: 'El formato de consulta especificado no contiene marcadores de posición. ¡Lea el texto de ayuda!'
+        invalid_epsg_code: 'El texto ingresado no es un código EPSG válido. Ingrese el código en el formato EPSG:1234'
+        no_configuration_added: 'Por favor, añade al menos una configuración'
     searchrouter:
-      no_results: No results
-      result_counter: 'Results: %count%'
-      exportcsv: Exporte los resultados a CSV.
+      no_results: 'No hay resultados'
+      result_counter: 'Resultados: %count%'
+      exportcsv: 'Exportar los resultados a CSV.'
       class:
-        title: Buscar ruteador
-        description: Búsqueda configurable del elemeteo de ruteo
+        title: Búsqueda
+        description: 'Permite configurar búsquedas personalizadas'
       tag:
-        search: búsqueda
-        router: ruteador
+        search: Búsqueda
+        router: Ruteador
+      admin:
+        width: Anchura
+        height: Altura
+        routes: Rutas
     poi:
-      sharepoi: Compartir POI
+      sharepoi: 'Compartir POI'
       text:
-        snippet: Puedes usar el siguiente fragmento en un email para enviar el POI
+        snippet: 'Puedes usar el siguiente fragmento en un correo electrónico para enviar el POI'
+      popup:
+        btn:
+          position: 'Posicionamiento'
       class:
         title: POI
-        description: Crear un POI para compartir
+        description: 'Crear un POI para compartir'
       label:
         text: Texto
+      admin:
+        body: Cuerpo
+        gps: GPS
+        placeholder: 'Por favor, echa un vistazo a este POI'
+      accept: 'Crear enlace'
     basesourceswitcher:
       error:
-        sourcenotavailable: Una fuente con id %id% no está habilitado
+        sourcenotavailable: 'La fuente con ID %id% no está habilitada'
       class:
-        title: null
-        Description: Change the map's background sources
+        title: 'Cambiar mapa base'
+        Description: 'Permite definir diferentes mapas base. Se puede cambiar entre ellos en la aplicación.'
       form:
-        mesage: No fuentebase seteada esta definida.
-        instancesets: Instancesets
+        mesage: 'No hay mapas base definidos.'
+        instancesets: 'Conjuntos de instancias'
+      admin:
+        tooltip: Tooltip
+        instances: 'Instancias'
+        instancesets: 'Conjuntos de instancias'
     legend:
       class:
         title: Leyenda
-        description: La leyenda muestra la leyenda de las capas del mapa
+        description: 'La leyenda muestra la leyenda de las capas del mapa'
     ruler:
-      create_error: 'Regla: Tipo debe ser línea o área.'
+      create_error: 'Regla: El tipo debe ser línea o área.'
       class:
-        title: Regla Línear/Área
-        description: Regla para dibujar una línea/área y presentar la longitud/área en un diálogo
+        title: 'Regla Línear/Área'
+        description: 'Regla para dibujar una línea/área y presentar la longitud/área en un diálogo'
       tag:
-        line: línea
-        area: área
-        measure: medida
+        line: 'Medir línea'
+        area: 'Medir área'
+        measure: Medida
+      help: 'Por favor, haz doble clic para finalizar el dibujo'
+      admin:
+        type: Geometría
+        help: 'Texto de ayuda'
+        help_help: 'El valor predeterminado <code>mb.core.ruler.help</code> se traduce como "Por favor, haz doble clic para finalizar el dibujo" en el idioma del usuario'
+        stroke_width_while_drawing: 'Ancho de línea mientras se dibuja'
+        only_for_area: 'Solo relevante si la geometría está configurada como <i>Área</i>'
+        style: Estilo
     printclient:
       label:
         template: Plantilla
         quality: Calidad
         scale: Escala
         rotation: Rotación
-        legend: null
+        legend: 'Imprimir leyenda'
       class:
-        title: Cliente de Impresión
-        description: Renders un diálogo de Impresión
+        title: 'Cliente de impresión'
+        description: 'Renderiza un diálogo de impresión'
       btn:
-        deactivate: null
-        activate: null
+        deactivate: 'Desactivar marco de impresión'
+        activate: 'Activar marco de impresión'
     overview:
-      nolayer: El elemento overview no tiene capa.
+      nolayer: 'El elemento mapa general (overview) no tiene capas.'
       class:
-        title: Overview
-        description: Renders un pequeño mapa overview
+        title: 'Mapa general (overview)'
+        description: 'Renderiza un pequeño mapa general (overview)'
       tag:
-        overview: overview
-        map: mapa
+        overview: 'Mapa general (overview)'
+        map: Mapa
+      admin:
+        visibility.closed_initially: 'Inicialmente cerrada'
+        visibility.open_initially: 'Inicialmente abierta'
+        visibility.open_permanent: 'Permanentemente abierta'
+        layerset: 'Conjunto de capas'
     metadata:
       popup:
-        title: Metadata
+        title: Metadatos
     gpsposition:
       error:
-        notsupported: Los servicios de geolocalización no son soportados por su navegador.
-        nosignal: Actualmente no es posible localizar su posición.
+        notsupported: 'El servicio de geolocalización no es compatible con su navegador.'
+        nosignal: 'Actualmente no es posible localizar su posición.'
       class:
-        title: Posición GPS
-        description: Renders un botón para mostrar la Posición del GPS
+        title: 'Posición GPS'
+        description: 'Renderiza un botón para mostrar la posición del GPS'
       tag:
-        gpsposition: Posición GPS
+        gpsposition: 'Posición GPS'
         gps: GPS
-        position: posición
-        button: botón
+        position: Posición
+        button: Botón
+      admin:
+        average: Promedio
+        follow: Seguir
+        centeronfirstposition: 'Centrar en la primera posición'
+        zoomtoaccuracyonfirstposition: 'Zoom a la precisión de la primera posición'
     layertree:
       const:
-        outofscale: Capa fuera de la escala
-        outofbounds: Capa fuera de límites
-        parentinvisible: Capa pariente invisible
+        outofscale: 'Capa fuera de la escala'
+        outofbounds: 'Capa fuera de límites'
+        parentinvisible: 'Capa de origen invisible'
       tooltip:
-        sublayers_openclose: Subcapas abrit/cerrar
-        removelayer: Remover capa
+        sublayers_openclose: 'Abrir/Cerrar subcapas'
+        removelayer: 'Eliminar capa'
         menu:
-          close: Close
+          close: Cerrar
       label:
-        visibility_onoff: Visibilidad prender/apagar
-        featureinfo_onoff: Featureinfo prender/apagar
-        opacity: Opacity
-        zoomtolayer: Aumento a la capa
-        metadata: Metadata
+        visibility_onoff: 'Activar/desactivar visibilidad'
+        featureinfo_onoff: 'Activar/desactivar  información de objetos'
+        opacity: Opacidad
+        zoomtolayer: 'Zoom a la capa'
+        metadata: Metadatos
         legend: Leyenda
-        kmlexport: Exportar Kml
-        dimension_onoff: null
-        dimension: null
-        sourcevisibility_onoff: null
+        kmlexport: 'Exportar KML'
+        dimension_onoff: 'Activar/desactivar dimensión'
+        dimension: Dimensión
+        sourcevisibility_onoff: 'Mostrar/ocultar servicios'
       class:
-        title: Árbol de capa
-        description: Árbol de las capas del mapa
+        title: Capas
+        description: 'Árbol de las capas del mapa'
+      admin:
+        layerremove: 'Eliminar capa'
+        opacity: Opacidad
+        zoomtolayer: 'Zoom a la capa'
+        metadata: Metadatos
+        dimension: Dimensión
     zoombar:
-      zoombybox: Acercamiento por recuadro
-      zoombyworld: Acercamiento global
+      zoombybox: 'Zoom por recuadro'
+      zoombyworld: 'Zoom a la extensión máxima'
+      zoom_home: 'Regresar a la configuración predeterminada'
+      zoomHomeRestoresLayers: '"Regresar al inicio" también restablece la configuración de capas'
       zoomin: Acercar
       zoomout: Alejar
       class:
-        title: Barra de navegación
-        description: El elemento de barra de navegación provee un control flotante para la panorámica y acercamiento, similar al control de PanZoomBar de OpenLayers
+        title: 'Barra de navegación'
+        description: 'El elemento de la barra de navegación proporciona un control flotante para la panorámica y el acercamiento, similar al control de PanZoomBar de OpenLayers'
       tag:
-        zoom: acercamiento
-        pan: panorama
-        control: control
-        navigation: navegación
-        panel: panel
+        zoom: Zoom
+        pan: 'Desplazar mapa'
+        control: Control
+        navigation: Navegación
+        panel: Panel
+      admin:
+        components: Componentes
+        rotation: Rotación
+        zoommax: 'Zoom a la extensión máxima'
+        zoominout: 'Acercamiento y alejamiento'
+        zoomslider: 'Deslizador de zoom'
     activityindicator:
       class:
-        title: Indicador de actividad
-        description: Mostrar actividad HTTP
+        title: 'Indicador de actividad'
+        description: 'Muestra la actividad HTTP'
       tag:
-        activity: actividad
-        indicator: indicador
+        activity: Actividad
+        indicator: Indicador
+      admin:
+        tooltip: Tooltip
+        activityclass: 'Clase CSS de actividad general'
+        ajaxactivityclass: 'Clase CSS de actividad en segundo plano'
+        ajaxactivityclass_help: 'Clase CSS que se establece mientras una acción está activa en segundo plano (como una búsqueda en curso)'
+        tileactivityclass: 'Clase CSS al cargar el mapa'
     button:
       class:
         title: Botón
         description: Botón
       tag:
-        button: botón
+        button: Botón
+      admin:
+        click: Clic
+        action: Acción
+        deactivate: Desactivar
+    controlbutton:
+      class:
+        description: 'Controla otro elemento'
+      admin:
+        group: Grupo
+        target: Objetivo
+    linkbutton:
+      class:
+        title: Enlace
+        description: 'Enlace a URL externa'
+      admin:
+        click: 'URL de destino'
     coordinatesdisplay:
       class:
-        title: Mostrar coordenadas
-        description: Las coordenadas mostradas muestran tu posición del mouse en coordenadas del mapa.
+        title: 'Mostrar coordenadas'
+        description: 'Las coordenadas mostradas representan la posición del ratón en coordenadas del mapa.'
       tag:
-        coordinates: coordenadas
-        display: muestra
-        mouse: mouse
-        position: posición
+        coordinates: Coordenadas
+        display: Mostrar
+        mouse: Ratón
+        position: Posición
     copyright:
       class:
-        title: Derechos de Autor
-        description: Muestra términos de uso
+        title: 'Derechos de Autor'
+        description: 'Muestra los términos de uso'
       tag:
-        copyright: Derechos de Autor
-        dialog: diálogo
+        copyright: 'Derechos de Autor'
+        dialog: Diálogo
+      admin:
+        content: Contenido
     map:
       class:
         title: Mapa
-        description: OpenLayers mapa basado
+        description: 'Mapa principal basado en OpenLayers'
       tag:
-        map: mapa
+        map: Mapa
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: Propiedades SRS para %srslist% no se encontraron
+      srsnotfound: 'No se encontraron propiedades SRS para %srslist% '
+      admin:
+        fixedZoomSteps: 'Niveles de zoom fijos'
+        layersets: 'Conjuntos de capas'
+        tilesize: 'Tamaño de la tesela (tile)'
+        SRS: SRS
+        scales: 'Escalas (separadas por comas)'
+        othersrs: 'Otros SRS'
+        srs: SRS
     scalebar:
       class:
-        title: Barra de escala
-        description: La barra de escala muestra un indicador de línea pequeño representando la escala actual del mapa.
-      tag:
-        scale: escala
-        bar: barra
-    scaledisplay:
-      class:
-        title: Mostrar la escala
-        description: Muestra la escala actual del mapa
+        title: 'Barra de escala'
+        description: 'Barra de escala que muestra la escala actual del mapa'
       tag:
         scale: Escala
-        display: mostrar
+        bar: Barra
+      admin:
+        maxwidth: 'Ancho máximo'
+        units: Unidad
+    scaledisplay:
+      label: Escala
+      scale_prefix: 'Prefijo de escala'
+      scale_prefix.help: 'Designación que precede a la indicación de escala. La etiqueta estándar <code>mb.core.scaledisplay.label</code> se muestra como <code>Escala</code> en el idioma del usuario.'
+      unit_prefix: 'Acortar escala'
+      unit_prefix.help: 'Si está activado, los números de escala mayores a 1.000 se acortarán con un sufijo <code>K</code> o <code>M</code>.'
+      class:
+        title: 'Indicador de escala'
+        description: 'Muestra la escala actual del mapa'
+      tag:
+        scale: Escala
+        display: Mostrar
     scaleselector:
       class:
-        title: Selector de escala
-        description: Muestra y cambia la escala del mapa
+        title: 'Selección de escala'
+        description: 'Cuadro de selección con las escalas disponibles para cambiar la escala. Muestra la escala actual.'
       tag:
-        scale: escala
-        selector: selector
+        scale: Escala
+        selector: Selector
+      admin:
+        tooltip: Tooltip
     srsselector:
       class:
-        title: null
-        description: El selector del sistema de referencia espacial cambia el sistema de referecia espacial del mapa
+        title: 'Selección de SRS'
+        description: 'Tras seleccionar un sistema de referencia espacial (SRS), cambia el SRS cambia del mapa'
       tag:
         srs: SRS
-        selector: selector
+        selector: Selector
+      admin:
+        srsselector: 'Selector de SRS'
+        tooltip: Tooltip
+    ShareUrl:
+      class:
+        title: 'Compartir URL'
+        description: 'Compartir la vista actual del mapa a través de URL'
+      copied_to_clipboard: 'URL copiada al portapapeles'
+    viewManager:
+      class:
+        title: 'Administrador de vistas'
+        description: 'Guarda las configuraciones del mapa para su posterior restauración'
+      saveAsPublic: 'Guardar como público'
+      recordStatus:
+        public: 'Entrada pública'
+        private: 'Entrada privada'
+      confirmDelete: '¿Realmente deseas borrar la entrada?'
+      no_data: Sin datos
+      title: Título
+      date: Fecha
+      enter_title: 'Introducir título'
+      apply: Aplicar
+      replace: Reemplazar
+      details: 'Mostrar detalles'
+      admin:
+        access.none: 'No mostrar'
+        access.ro: 'Solo lectura'
+        access.rw: 'Permitir guardar'
+        access.rwd: 'Permitir guardar y eliminar'
+        publicEntries: 'Lista pública'
+        privateEntries: 'Mostrar lista privada'
+        adminDeleteHint: 'Nota: el administrador siempre puede eliminar entradas públicas'
+        allowAnonymousSave: 'Permitir a usuarios anónimos guardar entradas'
+        showDate: 'Mostrar fecha'
+    coordinatesutility:
+      class:
+        title: 'Transformación y búsqueda de coordenadas'
+        description: 'Transforma coordenadas a diferentes SRS. Navega a coordenadas en el mapa'
+      widget:
+        error:
+          noSrs: 'No se ha definido ningún SRS'
+          invalidCoordinates: 'Coordenadas no válidas'
+      view:
+        srs:
+          title: 'Sistema de coordenadas'
+          tooltip: 'Sistema de coordenadas'
+        transformedCoordinates:
+          tooltip: 'Coordenadas transformadas'
+        copytoclipboard:
+          tooltip: 'Copiar coordenadas en el portapapeles'
+        originCoordinates:
+          title: 'Coordenada en el sistema de referencia del mapa'
+          tooltip: 'Solo lectura'
+        button:
+          search: 'Búsqueda de coordenadas'
+          centermap: 'Centrar mapa'
+      backend:
+        addMapSrsList: 'Añadir lista de SRS del mapa'
+      admin:
+        srslist: 'Lista de SRS'
+        zoomlevel: 'Nivel de zoom'
     admin:
       poi:
         label:
-          usemailto: Usar Email a
+          usemailto: 'Enviar por email'
       legend:
         label:
-          hideemptylayers: Ocultar capas vacías
-          generatelegendurl: Generar leyenda url
-          showsourcetitle: Mostrar título de fuente
-          showlayertitle: Mostrar título de capa
-          showgroupedlayertitle: Mostrar titulo de capa agrupado
+          hideemptylayers: 'Ocultar capas vacías'
+          generatelegendurl: 'Generar URL de leyenda'
+          showsourcetitle: 'Mostrar título de la fuente de los datos'
+          showlayertitle: 'Mostrar título de capa'
+          showgroupedlayertitle: 'Mostrar título del grupo de capas'
       featureinfo:
         label:
-          deactivateonclose: Desactivar al cerrar
-          onlyvalid: null
-          highlighting: null
+          deactivateonclose: 'Desactivar al cerrar'
+          onlyvalid: 'Mostrar sólo válidos'
+          highlighting_group: Destacar
+          highlighting: 'Destacar activo'
+          default_group: Predeterminado
+          hover_group: 'Al pasar el ratón'
+          fillColor: 'Color de relleno'
+          strokeColor: 'Color del contorno'
+          opacity_pct: 'Opacidad (%)'
+          stroke_width_px: 'Ancho del contorno (píxeles)'
+          fontColor: 'Color de fuente'
+          fontSize: 'Tamaño de fuente'
       printclient:
         label:
-          rotatable: null
-          legend: null
-          legend_default_behaviour: null
+          rotatable: Giratorio
+          legend: 'Imprimir leyenda'
+          legend_default_behaviour: 'Casilla de leyenda activa'
+          required_fields_first: 'Mostrar los campos obligatorios primero'
       layertree:
         label:
-          showbasesources: Mostar fuentes bases
-          showlayerremove: Mostrar quitar capa
-          usetheme: null
-          themes: null
+          showbasesources: 'Mostrar BaseSources'
+          showlayerremove: 'Mostrar "eliminar capa"'
+          usetheme: 'Capa temática'
+          themes: Temas
           theme:
-            opened: opened
-            activate: null
-            useTheme: null
-            label: null
-          hidenottoggleable: null
-          hideinfo: null
+            opened: 'Tema abierto/cerrado'
+            activate: 'Activar añadir/eliminar capas'
+            useTheme: 'Mostrar tema'
+            label: 'Nombre del tema'
+          hidenottoggleable: 'Ocultar carpetas que no se pueden expandir'
+          hideinfo: 'Ocultar información'
+          menu: Menú
+      template:
+        sidepane:
+          type:
+            label: Tipo
+            choice:
+              tabs: Botones
+              accordion: Acordeón
+              unstyled: 'Sin estilo'
+      button:
+        show_label: 'Mostrar etiqueta'
+        label: Etiqueta
+      layerset:
+        label:
+          title: Título
+          selected: Seleccionado
     htmlelement:
       class:
-        title: null
-        description: null
+        title: HTML
+        description: 'Añadir HTML'
+      admin:
+        content: Contenido
+        classes: Clases
     entity:
       app:
         screenshotfile:
-          error: null
+          error: 'El fichero es demasiado grande. El tamaño máximo permitido es %limit% bytes.'
     sketch:
       geometrytype:
-        point: null
-        line: null
-        polygon: null
-        rectangle: null
-        circle: Circulo
+        point: Punto
+        line: Línea
+        polygon: Polígono
+        rectangle: Rectángulo
+        circle: Círculo
+      inputs:
+        label: Etiqueta
+        radius: Radio
       geometry:
         action:
-          remove: null
-          edit: null
-          zoom: null
+          remove: 'Eliminar la geometría'
+          edit: 'Editar la geometría'
+          zoom: 'Zoom a la geometría'
+          stop_drawing: 'Dejar de dibujar'
       class:
-        title: null
-        description: null
+        title: Bocetos
+        description: 'Herramienta de dibujo'
+      admin:
+        deactivate_on_close: 'Desactivar al cerrar'
+        colors: Colores
+        allow_custom_color: 'Permitir el ajuste personalizado de colores'
+        geometrytypes: 'Tipos de geometría'
+    redlining:
+      class:
+        title: Bocetos
+    resetView:
+      class:
+        title: 'Restablecer vista'
+        description: 'Restaura la vista inicial del mapa y la configuración original de los servicios'
+      admin:
+        resetDynamicSources: 'Eliminar las fuentes añadidas'
+    applicationSwitcher:
+      class:
+        title: 'Cambiar de aplicación'
+        description: 'Cambia a otra aplicación manteniendo la posición actual del mapa'
+      admin:
+        open_in_new_tab: 'Abrir en una nueva pestaña'
+    coordinesdisplay:
+      admin:
+        numdigits: 'Número de decimales'
+        empty: Vacío
+        prefix: Prefijo
+        separator: Separador
+        label: 'Mostrar etiqueta'
+    searchrouterroute:
+      admin:
+        title: Título
+        configuration: Configuración
+    instanceset:
+      admin:
+        title: Título
+        group: Grupo
+        instances: Instancias
+        instancesets: 'Conjuntos de instancias'
+    basebutton:
+      admin:
+        tooltip: Tooltip
+        icon: Icono
+    icon:
+      mb:
+        about: Información
+        layer_tree: Capas
+        feature_info: 'Información del objeto espacial'
+        area_ruler: 'Medir área'
+        polygon: Polígono
+        line_ruler: 'Medir línea'
+        image_export: 'Exportar imagen'
+        legend: Leyenda
+      fa:
+        about: Grupo
+        info: 'Información (invertida)'
+        pin: Marcador
+        home: Inicio
+        legend: Lista
+        print: Imprimir
+        search: Buscar
+        layer_tree: Jerarquía
+        logout: 'Cerrar sesión'
+        wms: Globo
+        edit: Editar
+        wmc: Carpeta
+        coordinates: Coordenadas
+        poi: Pin
+        camera: Cámara
+        copyright: 'Derechos de autor'
+        share: Compartir
+        forward: Reenviar
+        refresh: Actualizar
+        earth: Globo
+        map: Mapa
+        pin_alt: 'Pin (Alternativo)'
+        help: Ayuda
+  template:
+    toolbar_menu_tooltip: 'Abrir menú'
+    region:
+      toolbar: 'Barra de herramientas superior'
+      footer: 'Pie de página'
+      sidepane: 'Panel lateral'
+      content: 'Área del mapa'
+  demoapps:
+    themes: Temas
+    backgroundThemes: 'Temas de fondo'
+    baseMaps: 'Mapas base'
+    aerialView: 'Vista aérea'
+    noBackground: 'Sin fondo'
+    poi: 'Por favor, echa un vistazo a este POI'
+    search: 'Buscar ubicación'
+    about: 'Acerca de Mapbender'
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Título
+'Bad credentials.': 'Credenciales incorrectas.'
+'User account is locked.': 'La cuenta de usuario está bloqueada.'
+'User account is disabled.': 'La cuenta de usuario está deshabilitada.'
+'User account has expired.': 'La cuenta de usuario ha caducado.'
+'User credentials have expired.': 'Las credenciales del usuario han caducado.'
+
