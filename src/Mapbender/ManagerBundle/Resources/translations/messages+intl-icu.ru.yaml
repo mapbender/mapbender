@@ -1,0 +1,254 @@
+mb:
+  application:
+    create:
+      success: 'Приложение создано.'
+      failure:
+        create.directory: 'Невозможно создать директорию приложения.'
+    save:
+      success: 'Приложение сохранено.'
+      failure:
+        general: 'Произошла ошибка при сохранении приложения.'
+        create.directory: 'Приложение было сохранено, но невозможно создать для него директорию.'
+    remove:
+      success: 'Приложение удалено.'
+      failure:
+        general: 'Невозможно удалить приложение.'
+  layerset:
+    create:
+      success: 'Набор слоев создан.'
+    remove:
+      success: 'Набор слоев удален.'
+      failure: 'Произошла ошибка при удалении набора слоев.'
+  source:
+    instance:
+      create:
+        success: 'Новый элемент был создан, но его нужно отредактировать.'
+  manager:
+    automatic: 'Автоматически'
+    autoActivate: Автоактивирование
+    autoOpen: 'Открывать автоматически'
+    confirm_form_discard: 'Отклонить изменения?'
+    popup_height: 'Высота диалогового окна'
+    popup_width: 'Ширина диалогового окна'
+    screentype:
+      label: 'Тип монитора'
+      choice:
+        all: 'Все'
+        mobile: 'Мобильный'
+        desktop: 'Монитор'
+    toolbar:
+      alignment:
+        label: 'Ориентация'
+        choice:
+          left: 'Слева'
+          right: 'Справа'
+          center: 'По центру'
+      generate_button_menu: 'Объединять кнопки в меню'
+      menu_label: 'Заголовок меню'
+    visibility: 'Видимость'
+    element:
+      screentype:
+        mobile: 'Показывать на мобильных устройствах'
+        desktop: 'Показывать на экранах'
+    sidepane:
+      width: 'Ширина'
+      closed: 'Закрыт при старте'
+      align:
+        label: 'Позиция'
+        choice:
+          left: 'Слева'
+          right: 'Справа'
+    sourceinstance:
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Этот экземпляр не используется ни одним приложением}
+            one   {Этот экземпляр используется одним приложением}
+            other {Этот экземпляр используется # приложениями}
+        }
+      convert_to_reusable: 'Преобразовать в общедоступный экземпляр'
+      convert_to_bound: 'Преобразовать в приватный экземпляр' 
+      converted_to_bound: 'Приватная копия общедоступного экземпляра была добавлена в приложение'
+      reusable_assigned_to_application: 'Общедоступный экземпляр был добавлен в приложение'
+      create_reusable: 'Создать общедоступный экземпляр'
+      created_reusable: 'Создать новый общедоступный экземпляр'
+    application:
+      persistentView: 'Запоминать состояние карты'
+    admin:
+      sources: Источники
+      csrf_token_invalid: 'CSRF-токен недействителен.'
+      source:
+        add: 'Добавить источник'
+        show_metadata: 'Показать метаданные'
+        delete: 'Удалить источник'
+        new:
+          add: 'Добавить источник'
+        valid: 'Источник действительный'
+        notvalid: 'Источник не действительный'
+        no_source: 'Нет доступного источника'
+        update: 'Обновить источник'
+        status:
+          ok: 'Источник OK'
+          toupdate: 'Источник больше не является текущим'
+          unreachable: 'Источник недоступен'
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Ни одно приложение не использует этот источник данных}
+              one   {Одно приложение использует этот источник данных}
+              other {Этот источник данных используется в # приложениях}
+          }
+      map:
+        max_extent: 'Макс. область'
+        max_extent.help: 'Ограничительная рамка с min/max значением x/y, обозначающая разрешенный участок карты, по которому пользователь может перемещаться. При нажатии на глобус на шкале масштаб увеличивается до этого размера.'
+        start_extent: 'Начало области'
+        start_extent.help: 'Ограничительная рамка с min/max значением x/y, обозначающая участок карты, с которого начинается карта. При нажатии на дом на шкале масштаб увеличивается до этого размера.'
+        base_dpi: 'Стандартное разрешение [dpi]'
+        base_dpi.help: 'Разрешение регулируется в соответствии с разрешением используемого устройства на основе этого значения.'
+      element:
+        title: Название
+        type: Тип
+        add: 'Добавить новый элемент в'
+        show_hide: 'Вкл/выкл элемент'
+        no_element_added: 'Элемент не добавлен'
+        anchor:
+          label: 'Позиция'
+          left-top: 'Вверху слева'
+          left-bottom: 'Внизу слева'
+          right-top: 'Вверху справа'
+          right-bottom: 'Внизу справа'
+      zoombar:
+        draggable: Перетаскиваемый
+      overview:
+        fix: Закрепить
+      layerset:
+        add: 'Добавить слои'
+        title: Название
+        type: Тип
+        edit: 'Редактировать слои'
+        delete:
+          title: 'Удалить слои'
+          confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
+        id: Id
+      instance:
+        add: 'Добавить'
+        show_hide: 'Вкл/выкл'
+        edit: 'Редактировать'
+        delete:
+          title: 'Удалить'
+          confirm: 'Вы действительно хотите удалить элемент с заголовком <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Элемент не добавлен'
+        no_layer_added: 'Слой не добавлен'
+        max_input_vars_exceeded: 'Параметр PHP max_input_vars слишком низкий для количества слоев в этом экземпляре.'
+        update_successful: 'Элемент актуализирован'
+        converted_to_shared: 'Элемент был преобразован в общедоступный.'
+      template: Шаблон
+      application:
+        view: Обзор
+        edit:
+          title: 'Редактировать приложение'
+          base_data: 'Базовые данные'
+        screenshot: Скриншот
+        layouts: 'Панели инструментов'
+        layersets: Слои
+        custom_css: CSS
+        security:
+          title: Безопасность
+          public: 'публичный доступ'
+        save: Сохранить
+        cancel: Отменить
+        view_this: 'Показать приложение'
+        duplicate: 'Создать копию приложения'
+        public:
+          on_off: 'Вкл/выкл публикацию приложения'
+        delete: 'Удалить приложение'
+        no_application: 'Нет доступных приложений'
+        new:
+          title: 'Новое приложение'
+        create_use: 'Заполните основную информацию при создании нового приложения, а затем используйте режим редактирования, чтобы добавить элементы и слои.'
+        btn:
+          create: Создать
+          cancel: Отменить
+        upload:
+          button: 'Выбрать файл'
+          label: 'Файл не выбран'
+        export:
+          addAcl: ACLs
+          addSources: Источники
+          btn:
+            export: Экспорт
+        import:
+          addAcl: ACLs
+          addSources: Источники
+          btn:
+            import: Импорт
+        title: Название
+        url:
+          title: 'URL'
+        description: Описание
+        template: Шаблон
+    source:
+      serviceurl: 'Сервис URL'
+      username: 'Имя пользователя'
+      password: Пароль
+      activate_new_layers: 'Активировать новый добавленный слой'
+      select_new_layers: 'Выбрать новый добавленный слой'
+      load: Загрузить
+    managerbundle:
+      new_application: 'Новое приложение'
+      add_source: 'Добавить источник'
+      add_user_group: 'Добавить пользователей и группы'
+      acl_element: 'Acl элемент'
+      import_application: Импорт
+      export_application: Экспорт
+    components:
+      popup:
+        add_element:
+          title: 'Добавить элемент'
+        edit_element:
+          title: 'Редактировать элемент'
+        delete_element:
+          title: 'Подтвердить удаление'
+        add_edit_layerset:
+          title_edit: 'Редактировать слои'
+          title_add: 'Добавить слои'
+        delete_layerset:
+          title: 'Удалить слои'
+        add_instance:
+          title: 'Выбрать источник'
+        delete_instance:
+          title: 'Подтвердить удаления'
+        delete_user_group:
+          title: 'Подтвердите удаление'
+          content: 'Действительно удалить%userGroup%?'
+    import:
+      application:
+        failed: 'Приложение не может быть импортировано'
+    http_connection_error: 'Не удалось установить соединение'
+    http_error_response: 'Удаленный сервер выдал сообщение об ошибке'
+    xml_invalid: 'Документ не действует'
+    xml_malformed: 'Документ не действует'
+  core:
+    admin:
+      button:
+        show_label: 'Показать отметку'
+      element:
+        autostart: Автозапуск
+      title: 'Заголовок'
+    entity:
+      app:
+        screenshotfile:
+          error: 'Файл слишком большой (% uploadFileSize% байт). Допускается максимальный размер% MaxFileSize% байт.'
+          format_error: 'Этот формат не поддерживается!'
+          resolution:
+            error: 'Минимально возможное изображение должно быть равно или больше чем %screenshotHeight% х %screenshotWidth% пикселей. Загруженное Вами соответствует размеру в %uploadWidth% х %uploadHeighth%.'
+    importjobtype:
+      admin:
+        importfile: 'Импортировать файл'
+  actions:
+    secureelement: 'Безопасность элемента'
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: 'Заголовок'
+            opacity: 'Непрозрачность'
