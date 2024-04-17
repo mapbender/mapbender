@@ -145,6 +145,7 @@ mb:
         width: Breite
         height: Höhe
         routes: Routen
+        zoomToResultExtent: 'Zoom auf Ergebnisse'
     poi:
       sharepoi: 'Treffpunkt vereinbaren'
       text:

@@ -345,6 +345,12 @@
                     results = this.sortResults(results, sortBy, sortOrder);
                 }
                 this._searchResultsTable(results);
+                if (results.length > 1 && this.options.hasOwnProperty('zoomToResultExtent') && this.options.zoomToResultExtent) {
+                    let extent = this.highlightLayer.getNativeLayer().getSource().getExtent();
+                    this.mbMap.map.olMap.getView().fit(extent, {
+                        padding: [75, 75, 75, 75],
+                    });
+                }
             }
             this._showResultState(results);
 

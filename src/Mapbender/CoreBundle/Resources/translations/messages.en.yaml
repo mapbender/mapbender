@@ -145,6 +145,7 @@ mb:
         width: Width
         height: Height
         routes: Routes
+        zoomToResultExtent: 'Zoom to result extent'
     poi:
       sharepoi: 'Share POI'
       text:

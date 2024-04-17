@@ -17,6 +17,10 @@ class SearchRouterAdminType extends AbstractType
             ->add('height', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
                 'label' => 'mb.core.searchrouter.admin.height',
             ))
+            ->add('zoomToResultExtent', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', [
+                'label' => 'mb.core.searchrouter.admin.zoomToResultExtent',
+                'required' => false,
+            ])
             ->add('routes', SortableCollectionType::class, array(
                 'entry_type' => 'Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType',
                 'label' => 'mb.core.searchrouter.admin.routes',
