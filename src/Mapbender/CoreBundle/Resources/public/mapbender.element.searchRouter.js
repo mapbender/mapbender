@@ -401,6 +401,8 @@
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
+                    $('tbody tr', this.element).removeClass('table-primary');
+                    $(this).addClass('table-primary');
                 })
                 .on('mouseenter', 'tbody tr', function () {
                     var feature = $(this).data('feature');
