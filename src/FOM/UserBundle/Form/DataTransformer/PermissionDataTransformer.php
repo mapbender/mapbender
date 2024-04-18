@@ -22,17 +22,18 @@ class PermissionDataTransformer implements DataTransformerInterface
     {
         /** @var ?Permission[] $value */
         if (empty($value)) return [];
+        $permissionEntity = $value[0];
 
         $allPermissions = $this->attributeDomain->getPermissions();
-        $subjectDomain = $this->permissionManager->findSubjectDomainFor($value[0]);
+        $subjectDomain = $this->permissionManager->findSubjectDomainFor($permissionEntity);
         $permissionList = array_map(fn(Permission $permission) => $permission->getPermission(), $value);
         $permissionMap = array_map(fn(string $permission) => in_array($permission, $permissionList), $allPermissions);
-        $a = array(
+        return array(
             'permissions' => $permissionMap,
             'icon' => $subjectDomain->getIconClass(),
-            'title' => $subjectDomain->getTitle($value[0]),
+            'title' => $subjectDomain->getTitle($permissionEntity),
+            'subjectJson' => $permissionEntity->getSubjectJson(),
         );
-        return $a;
     }
 
     /**

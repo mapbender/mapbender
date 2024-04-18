@@ -49,6 +49,7 @@ class PermissionType extends AbstractType
         ];
         $builder->add('icon', HiddenType::class, $hiddenOptions);
         $builder->add('title', HiddenType::class, $hiddenOptions);
+        $builder->add('subjectJson', HiddenType::class, $hiddenOptions);
 
 
         /** @var AbstractAttributeDomain $attribute_domain */

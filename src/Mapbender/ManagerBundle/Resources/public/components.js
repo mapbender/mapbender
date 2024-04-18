@@ -83,10 +83,10 @@ $(function() {
             var newEl = $(proto.replace(/__name__/g, count++));
             newEl.addClass('bg-success');
             newEl.attr('data-sid', sid);
-            newEl.attr('data-sid-label', text);
+            newEl.attr('data-subject-label', text);
             var $sidInput = $('input[type="hidden"]', newEl).first();
             $sidInput.attr('value', sid);
-            $('.sid-label', newEl).text(text);
+            $('.subject-label', newEl).text(text);
             body.prepend(newEl);
 
             (defaultPermissions || []).map(function(permissionName) {
@@ -182,7 +182,7 @@ $(function() {
     });
     $(".permissionsTable").on("click", '.-fn-delete', function() {
         var $row = $(this).closest('tr');
-        var sidLabel = $row.attr('data-sid-label');
+        var sidLabel = $row.attr('data-subject-label');
         var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
 
         var content = [
@@ -305,7 +305,7 @@ $(function() {
         });
         $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
-            var sidLabel = $row.attr('data-sid-label');
+            var sidLabel = $row.attr('data-subject-label');
             addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
                 'userGroup': sidLabel
             }));

@@ -299,11 +299,12 @@
     <tr class="filterItem" {{ block('widget_container_attributes') }}>
       <td>
         <i class="userType {{ form.icon.vars.value }}"></i>&nbsp;
-        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ form.title.vars.value }}</span>
+        <span class="subject-label">{# no particular styling, but .sid-label required by script #}{{ form.title.vars.value }}</span>
+        {{ form_row(form.subjectJson) }}
       </td>
 
       {%- for child in form -%}
-        {% if child.vars.name != 'icon' and child.vars.name != 'title' %}
+        {% if child.vars.name != 'icon' and child.vars.name != 'title' and child.vars.name != 'subjectJson' %}
           <td>
             {{ form_widget(child) }}
           </td>
