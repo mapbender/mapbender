@@ -8,6 +8,7 @@
         popup: null,
         mbMap: null,
         useDialog_: null,
+        trHighlightClass: 'table-primary',
 
         _create: function () {
             var self = this;
@@ -383,6 +384,9 @@
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
+                if (feature.get('highlighted') === true) {
+                    row.addClass(this.trHighlightClass);
+                }
                 row.data('feature', feature);
                 var props = Mapbender.mapEngine.getFeatureProperties(feature);
                 Object.keys(headers).map(function (header) {
@@ -401,8 +405,7 @@
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
-                    $('tbody tr', this.element).removeClass('table-primary');
-                    $(this).addClass('table-primary');
+                    self._highlightTableRow($(this));
                 })
                 .on('mouseenter', 'tbody tr', function () {
                     var feature = $(this).data('feature');
@@ -637,6 +640,13 @@
                 }
                 return 0;
             });
+        },
+
+        _highlightTableRow: function (tr) {
+            $('tbody tr', this.element).removeClass(this.trHighlightClass);
+            tr.addClass(this.trHighlightClass);
+            this.highlightLayer.getNativeLayer().getSource().getFeatures().map(feature => feature.set('highlighted', false));
+            tr.data('feature').set('highlighted', true);
         },
 
         __dummy__: null
