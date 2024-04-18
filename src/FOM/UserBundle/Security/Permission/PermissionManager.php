@@ -60,4 +60,16 @@ class PermissionManager
         throw new \InvalidArgumentException("No subject domain registered for '{$permission->getSubjectDomain()}'");
     }
 
+    /**
+     * @return AssignableSubject[]
+     */
+    public function getAssignableSubjects(): array
+    {
+        $subjects = [];
+        foreach ($this->subjectDomains as $subjectDomain) {
+            array_push($subjects, ...$subjectDomain->getAssignableSubjects());
+        }
+        return $subjects;
+    }
+
 }

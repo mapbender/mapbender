@@ -2,9 +2,10 @@
 
 namespace FOM\UserBundle\Controller;
 
+use FOM\ManagerBundle\Configuration\Route;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
-use FOM\ManagerBundle\Configuration\Route;
+use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,19 +14,12 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class ACLController extends AbstractController
 {
-    /** @var AclManager */
-    protected $aclManager;
-    /** @var AssignableSecurityIdentityFilter */
-    protected $sidFilter;
-    protected $aclClasses;
-
-    public function __construct(AclManager $aclManager,
-                                AssignableSecurityIdentityFilter $sidFilter,
-                                array $aclClasses)
+    public function __construct(protected AclManager                       $aclManager,
+                                protected AssignableSecurityIdentityFilter $sidFilter,
+                                protected PermissionManager                $permissionManager,
+                                protected array                            $aclClasses,
+    )
     {
-        $this->aclManager = $aclManager;
-        $this->sidFilter = $sidFilter;
-        $this->aclClasses = $aclClasses;
     }
 
     /**
@@ -81,8 +75,7 @@ class ACLController extends AbstractController
     public function overviewAction()
     {
         return $this->render('@FOMUser/ACL/groups-and-users.html.twig', array(
-            'groups' => $this->sidFilter->getAssignableGroups(),
-            'users' => $this->sidFilter->getAssignableUsers(),
+            'subjects' => $this->permissionManager->getAssignableSubjects()
         ));
     }
 }

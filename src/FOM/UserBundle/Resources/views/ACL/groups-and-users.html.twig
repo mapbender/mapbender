@@ -1,4 +1,4 @@
-{% if (users|length > 0) or (groups|length > 0) %}
+{% if (subjects|length > 0) %}
   {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterGroupsAndUsers'} %}
 
   <table id="listFilterGroupsAndUsers" class="table table-outlined">
@@ -8,28 +8,15 @@
       </tr>
     </thead>
     <tbody>
-      {% for user in users %}
+      {% for subject in subjects %}
+          {# @var subject \FOM\UserBundle\Security\Permission\AssignableSubject #}
         <tr class="filterItem">
           <td>
             <div class="checkbox">
               <label>
-                <input type="checkbox" data-label="{{ user.getUsername }}"
-                       value="u:{{ user.getUsername }}{{ user.getClass is defined ? (':'~user.getClass()) : '' }}" />
-                <i class="fas fa-user"></i>&nbsp;{{ user.getUsername }}
-              </label>
-            </div>
-          </td>
-        </tr>
-      {% endfor %}
-      {% for group in groups %}
-        <tr class="filterItem">
-          <td>
-            <div class="checkbox">
-              <label>
-                {%- set _group_title = group.getTitle() | trans -%}
-                <input type="checkbox" data-label="{{ _group_title }}"
-                       value="r:{{ group.getRole() }}" />
-                <i class="fas fa-user-group"></i>&nbsp;{{ _group_title }}
+                <input type="checkbox" data-label="{{ subject.title }}"
+                       value="{{ subject.subjectJson }}" />
+                <i class="{{ subject.iconClass }}"></i>&nbsp;{{ subject.title }}
               </label>
             </div>
           </td>

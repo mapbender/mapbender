@@ -2,8 +2,9 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
-use FOM\UserBundle\Entity\Permission;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SubjectDomainGroup extends AbstractSubjectDomain
@@ -13,6 +14,11 @@ class SubjectDomainGroup extends AbstractSubjectDomain
     public function getSlug(): string
     {
         return self::SLUG;
+    }
+
+    public function __construct(private EntityManagerInterface $doctrine, protected bool $isAssignable)
+    {
+
     }
 
     public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent
@@ -32,8 +38,23 @@ class SubjectDomainGroup extends AbstractSubjectDomain
     }
 
 
-    function getTitle(Permission $subject): string
+    function getTitle(SubjectInterface $subject): string
     {
         return $subject->getGroup()->getTitle();
+    }
+
+    public function getAssignableSubjects(): array
+    {
+        if (!$this->isAssignable) return [];
+        $groups = $this->doctrine->getRepository(Group::class)->findBy([], ['title' => 'ASC']);
+        return array_map(
+            fn(Group $group) => new AssignableSubject(
+                self::SLUG,
+                $group->getTitle(),
+                $this->getIconClass(),
+                group: $group
+            ),
+            $groups
+        );
     }
 }

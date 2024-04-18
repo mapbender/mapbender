@@ -35,6 +35,8 @@ abstract class AbstractSubjectDomain
     /**
      * returns the title that should be used for representing this subject in a backend list
      */
-    abstract function getTitle(Permission $subject): string;
+    abstract function getTitle(SubjectInterface $subject): string;
 
+    /** @return SubjectInterface[] */
+    abstract function getAssignableSubjects(): array;
 }

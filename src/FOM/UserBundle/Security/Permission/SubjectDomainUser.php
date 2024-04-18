@@ -2,13 +2,19 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
-use FOM\UserBundle\Entity\Permission;
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SubjectDomainUser extends AbstractSubjectDomain
 {
     const SLUG = "user";
+
+
+    public function __construct(private EntityManagerInterface $doctrine, protected bool $isAssignable)
+    {
+
+    }
 
     public function getSlug(): string
     {
@@ -26,8 +32,23 @@ class SubjectDomainUser extends AbstractSubjectDomain
         return null;
     }
 
-    public function getTitle(Permission $subject): string
+    public function getTitle(SubjectInterface $subject): string
     {
         return $subject->getUser()->getUserIdentifier();
+    }
+
+    public function getAssignableSubjects(): array
+    {
+        if (!$this->isAssignable) return [];
+        $users = $this->doctrine->getRepository(User::class)->findBy([], ['username' => 'ASC']);
+        return array_map(
+            fn(User $user) => new AssignableSubject(
+                self::SLUG,
+                $user->getUserIdentifier(),
+                $this->getIconClass(),
+                user: $user
+            ),
+            $users
+        );
     }
 }

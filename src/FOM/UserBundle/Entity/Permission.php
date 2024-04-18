@@ -10,6 +10,8 @@ use FOM\UserBundle\Security\Permission\SubjectDomainGroup;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
 use FOM\UserBundle\Security\Permission\SubjectDomainUser;
+use FOM\UserBundle\Security\Permission\SubjectInterface;
+use FOM\UserBundle\Security\Permission\SubjectTrait;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,8 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @ORM\Table(name="fom_permission")
  */
-class Permission
+class Permission implements SubjectInterface
 {
+    use SubjectTrait;
 
     /**
      * @ORM\Id
@@ -205,16 +208,5 @@ class Permission
     {
         $this->permission = $permission;
     }
-
-    public function getSubjectJson(): string
-    {
-        return json_encode([
-            'domain' => $this->getSubjectDomain(),
-            'user_id' => $this->getUser()?->getId(),
-            'group_id' => $this->getGroup()?->getId(),
-            'subject' => $this->getSubject()
-        ]);
-    }
-
 
 }
