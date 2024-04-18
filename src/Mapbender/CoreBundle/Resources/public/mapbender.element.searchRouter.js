@@ -311,15 +311,10 @@
             for (let header in headers) {
                 let th = $('<th data-column="' + header + '" data-order=""></th>');
                 th.text(headers[header]);
+                let sortIcon = '<span class="sortIcon ms-1"><i class="fa fa-sort" aria-hidden="true"></i></span>';
+                th.append(sortIcon);
                 th.css('cursor', 'pointer');
-                th.on('click', (e) => {
-                    const features = self.highlightLayer.getNativeLayer().getSource().getFeatures();
-                    const sortBy = $(e.target).attr('data-column');
-                    const sortOrder = ($(e.target).attr('data-order') === 'asc') ? 'desc' : 'asc';
-                    $(e.target).attr('data-order', sortOrder);
-                    const results = self.sortResults(features, sortBy, sortOrder);
-                    this._searchResultsTable(results);
-                });
+                th.on('click', (e) => self.onTableHeadClick(e));
                 $headers.append(th);
             }
 
@@ -622,6 +617,18 @@
 
         _hideMobile: function () {
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
+        },
+
+        onTableHeadClick: function (e) {
+            let th = $(e.currentTarget);
+            const features = this.highlightLayer.getNativeLayer().getSource().getFeatures();
+            const sortBy = th.attr('data-column');
+            const sortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
+            th.attr('data-order', sortOrder);
+            $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
+            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + sortOrder);
+            const results = this.sortResults(features, sortBy, sortOrder);
+            this._searchResultsTable(results);
         },
 
         sortResults: function (results, sortBy, sortOrder = 'asc') {
