@@ -23,16 +23,31 @@ class PermissionManager
     }
 
 
+    /**
+     * @return Permission[]
+     */
     public function findPermissions(AbstractAttributeDomain $attribute_domain, mixed $attribute): array
     {
         $repository = $this->doctrine->getRepository(Permission::class);
-        return $repository->findAll();
+        $query = $repository->createQueryBuilder('p')->select('p');
+        $attribute_domain->buildWhereClause($query, $attribute);
+        return $query->getQuery()->getResult();
     }
 
     public function findAttributeDomainFor(mixed $attribute): AbstractAttributeDomain
     {
-        // TODO
-        return $this->attributeDomains[0];
+        foreach ($this->attributeDomains as $attributeDomain) {
+            if ($attributeDomain->supports($attribute)) return $attributeDomain;
+        }
+        throw new \InvalidArgumentException("No attribute domain registered that can handle attribute '$attribute' (type " . $attribute::class . ")");
+    }
+
+    public function findSubjectDomainFor(Permission $permission): AbstractSubjectDomain
+    {
+        foreach ($this->subjectDomains as $subjectDomain) {
+            if ($subjectDomain->getSlug() === $permission->getSubjectDomain()) return $subjectDomain;
+        }
+        throw new \InvalidArgumentException("No subject domain registered for '{$permission->getSubjectDomain()}'");
     }
 
 }

@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Entity\Permission;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SubjectDomainGroup extends AbstractSubjectDomain
@@ -23,5 +24,16 @@ class SubjectDomainGroup extends AbstractSubjectDomain
             );
         }
         return null;
+    }
+
+    function getIconClass(): string
+    {
+        return "fas fa-users";
+    }
+
+
+    function getTitle(Permission $subject): string
+    {
+        return $subject->getGroup()->getTitle();
     }
 }

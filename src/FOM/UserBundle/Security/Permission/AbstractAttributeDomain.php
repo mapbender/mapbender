@@ -2,8 +2,13 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
+
 abstract class AbstractAttributeDomain
 {
+    const CSS_CLASS_SUCCESS = "success";
+    const CSS_CLASS_WARNING = "warning";
+    const CSS_CLASS_DANGER = "danger";
     /**
      * returns the unique slug for this attribute domain that will be saved
      * in the database's "attribute_domain" column within the fom_permission table.
@@ -34,14 +39,16 @@ abstract class AbstractAttributeDomain
     }
 
     /**
-     * determines if the attribute domain supports a given permission on a subject
-     * @param string $permission
+     * determines if the attribute domain supports a given subject and (optionally) a given permission
      * @param mixed|null $subject
+     * @param string|null $permission
      * @return bool
      */
-    abstract function supports(string $permission, mixed $subject): bool;
+    abstract function supports(mixed $subject, ?string $permission = null): bool;
 
     /**
+     * checks if a permission entry (attribute-related subset of fom_permission entity) applies to the fiven permission name and subject
+     * this is used for isGranted checks, where all permissions for a user are cached to minimize calls to the database
      * @param array{permission: string, attribute_domain: string, attribute: ?string, element_id: ?int, application_id: ?int} $permission
      * @param string $permissionName
      * @param mixed $subject
@@ -57,6 +64,13 @@ abstract class AbstractAttributeDomain
     }
 
     /**
+     * Build an SQL where clause that matches the supplied subject
+     * The permission table is aliased as `p`
+     * The permission subject is available as argument, if you need information from another service, use dependency injection.
+     */
+    abstract public function buildWhereClause(QueryBuilder $q, mixed $subject): void;
+
+    /**
      * @param string $permission
      * @return string[]
      */
@@ -69,6 +83,11 @@ abstract class AbstractAttributeDomain
             if ($perm === $permission) return $hierarchy;
         }
         return [];
+    }
+
+    public function getCssClassForPermission(string $permission): string
+    {
+        return self::CSS_CLASS_SUCCESS;
     }
 
 }

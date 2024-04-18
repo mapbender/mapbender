@@ -189,13 +189,13 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 
     &.active {
       color:white;
-      &.view {
+      &.success {
         background-color: #8DCA35;
       }
-      &.edit, &.delete, &.create {
+      &.warning {
         background-color: #FFAB00;
       }
-      &.operator, &.master, &.owner {
+      &.danger {
         background-color: #FF702A;
       }
     }

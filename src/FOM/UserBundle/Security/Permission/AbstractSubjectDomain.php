@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use FOM\UserBundle\Entity\Permission;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractSubjectDomain
@@ -22,5 +23,18 @@ abstract class AbstractSubjectDomain
      * @return ?WhereClauseComponent a wrapper class for the where clause. Variables will be bound using doctrine's bindParam.
      */
     abstract public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent;
+
+    /**
+     * returns the css class that should be used for representing this subject in a backend list
+     */
+    function getIconClass(): string
+    {
+        return "fas fa-user";
+    }
+
+    /**
+     * returns the title that should be used for representing this subject in a backend list
+     */
+    abstract function getTitle(Permission $subject): string;
 
 }

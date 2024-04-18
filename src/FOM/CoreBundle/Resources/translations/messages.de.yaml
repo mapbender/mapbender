@@ -10,3 +10,7 @@ fom:
             ok: Speichern
     fields:
       no_user_group_defined: 'Kein/e Benutzer/Gruppe ist definiert.'
+  security:
+      domain:
+          public: 'Öffentlicher Zugriff'
+          registered: 'Alle angemeldeten Nutzer'

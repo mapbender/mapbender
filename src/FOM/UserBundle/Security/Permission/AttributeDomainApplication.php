@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
 use Mapbender\CoreBundle\Entity\Application;
 
 class AttributeDomainApplication extends AbstractAttributeDomain
@@ -28,9 +29,10 @@ class AttributeDomainApplication extends AbstractAttributeDomain
         ];
     }
 
-    public function supports(string $permission, mixed $subject): bool
+    public function supports(mixed $subject, ?string $permission = null): bool
     {
-        return $subject instanceof Application && in_array($permission, $this->getPermissions());
+        return $subject instanceof Application
+            && ($permission === null || in_array($permission, $this->getPermissions()));
     }
 
     public function isHierarchical(): bool
@@ -44,5 +46,21 @@ class AttributeDomainApplication extends AbstractAttributeDomain
 
         return parent::matchesPermission($permission, $permissionName, $subject)
             && $permission["application_id"] === $subject->getId();
+    }
+
+    public function buildWhereClause(QueryBuilder $q, mixed $subject): void
+    {
+        /** @var Application $subject */
+        $q->orWhere("(p.application = :application AND p.attributeDomain = '" . self::SLUG . "')")
+            ->setParameter('application', $subject);
+    }
+
+    public function getCssClassForPermission(string $permission): string
+    {
+        return match ($permission) {
+            self::PERMISSION_VIEW => self::CSS_CLASS_SUCCESS,
+            self::PERMISSION_EDIT => self::CSS_CLASS_WARNING,
+            default => self::CSS_CLASS_DANGER,
+        };
     }
 }

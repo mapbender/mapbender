@@ -91,12 +91,9 @@
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
-        <service id="fom.security.form.model_transformer" class="FOM\UserBundle\Form\DataTransformer\PermissionDataTransformer">
-        </service>
-
         <service id="fom.security.type.permission" class="FOM\UserBundle\Form\Type\PermissionType">
-            <argument type="service" id="fom.security.form.model_transformer" />
             <tag name="form.type" />
+            <argument type="service" id="fom.security.permission_manager" />
         </service>
 
         <service id="fom.security.type.permission_list" class="FOM\UserBundle\Form\Type\PermissionListType">
@@ -133,10 +130,12 @@
         <service id="fom.security.subject_domain.public"
                  class="FOM\UserBundle\Security\Permission\SubjectDomainPublic">
             <tag name="fom.security.subject_domain" priority="1" />
+            <argument type="service" id="translator" />
         </service>
         <service id="fom.security.subject_domain.registered"
                  class="FOM\UserBundle\Security\Permission\SubjectDomainRegistered">
             <tag name="fom.security.subject_domain" priority="1" />
+            <argument type="service" id="translator" />
         </service>
         <service id="fom.security.subject_domain.user"
                  class="FOM\UserBundle\Security\Permission\SubjectDomainUser">

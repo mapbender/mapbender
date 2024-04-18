@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
+
 class AttributeDomainInstallation extends AbstractAttributeDomain
 {
     const SLUG = "installation";
@@ -35,9 +37,10 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
         return self::SLUG;
     }
 
-    public function supports(string $permission, mixed $subject): bool
+    public function supports(mixed $subject, ?string $permission = null): bool
     {
-        return $subject === null && in_array($permission, $this->getPermissions());
+        return $subject === null &&
+            ($permission === null || in_array($permission, $this->getPermissions()));
     }
 
     public function getPermissions(): array
@@ -65,4 +68,14 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
         ];
     }
 
+    public function buildWhereClause(QueryBuilder $q, mixed $subject): void
+    {
+        $q->orWhere("p.attribute_domain = '" . self::SLUG . "'");
+    }
+
+    public function getCssClassForPermission(string $permission): string
+    {
+        // TODO
+        return parent::getCssClassForPermission($permission);
+    }
 }

@@ -65,7 +65,7 @@ class PermissionVoter extends Voter
     protected function getAttributeDomain(string $attribute, mixed $subject): ?AbstractAttributeDomain
     {
         foreach ($this->attributeDomains as $attributeDomain) {
-            if ($attributeDomain->supports($attribute, $subject)) return $attributeDomain;
+            if ($attributeDomain->supports($subject, $attribute)) return $attributeDomain;
         }
         return null;
     }

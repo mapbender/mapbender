@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
 use Mapbender\CoreBundle\Entity\Element;
 
 class AttributeDomainElement extends AbstractAttributeDomain
@@ -15,9 +16,10 @@ class AttributeDomainElement extends AbstractAttributeDomain
         return self::SLUG;
     }
 
-    public function supports(string $permission, mixed $subject): bool
+    public function supports(mixed $subject, ?string $permission = null): bool
     {
-        return $subject instanceof Element && in_array($permission, $this->getPermissions());
+        return $subject instanceof Element &&
+            ($permission === null || in_array($permission, $this->getPermissions()));
     }
 
     public function getPermissions(): array
@@ -30,6 +32,13 @@ class AttributeDomainElement extends AbstractAttributeDomain
         /** @var Element $subject */
         return parent::matchesPermission($permission, $permissionName, $subject)
             && $permission["element_id"] === $subject->getId();
+    }
+
+    public function buildWhereClause(QueryBuilder $q, mixed $subject): void
+    {
+        /** @var Element $subject */
+        $q->orWhere("(p.element = :element AND p.attributeDomain = '" . self::SLUG . "')")
+            ->setParameter('element', $subject);
     }
 
 }

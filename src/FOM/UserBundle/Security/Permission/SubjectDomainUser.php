@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -23,5 +24,10 @@ class SubjectDomainUser extends AbstractSubjectDomain
             );
         }
         return null;
+    }
+
+    public function getTitle(Permission $subject): string
+    {
+        return $subject->getUser()->getUserIdentifier();
     }
 }

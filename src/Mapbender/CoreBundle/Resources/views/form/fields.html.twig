@@ -265,7 +265,7 @@
           {% for child in form.vars.prototype %}
             {% if child.vars.attr.class is defined %}
               <th>
-                <div data-perm-type="{{ child.vars.attr.class }}" class="tagbox {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
+                <div data-perm-type="{{ child.vars.attr['data-permission-name'] }}" class="tagbox {{ child.vars.attr.class }}">{{ child.vars.attr['data-permission-name'] }}</div>
               </th>
             {% endif %}
           {% endfor %}
@@ -288,28 +288,25 @@
 
 {% block tagbox_widget %}
   {% apply spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
-      {{- form.vars.attr.class -}}
+    <div data-perm-type="{{ form.vars.attr['data-permission-name'] }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
+      {{- form.vars.attr['data-permission-name'] -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endapply %}
 {% endblock tagbox_widget %}
 
 {% block permission_widget %}
-    {%- set _sid_value = form.sid.vars.value -%}
-    {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
+    <tr class="filterItem" {{ block('widget_container_attributes') }}>
       <td>
-        <i class="userType fa fas {{ form.sid.vars.value|slice(0, 1) == "u" ? 'fa-user' : 'fa-group' }}"></i>&nbsp;
-        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ _sid_label }}</span>
-          {{ form_row(form.sid) }}
+        <i class="userType {{ form.icon.vars.value }}"></i>&nbsp;
+        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ form.title.vars.value }}</span>
       </td>
 
       {%- for child in form -%}
-        {% if child != (form.sid) %}
+        {% if child.vars.name != 'icon' and child.vars.name != 'title' %}
           <td>
             {{ form_widget(child) }}
-        </td>
+          </td>
         {% endif %}
       {%- endfor -%}
       <td class="iconColumn">

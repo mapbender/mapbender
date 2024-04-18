@@ -4,31 +4,34 @@ namespace FOM\UserBundle\Form\DataTransformer;
 
 use FOM\UserBundle\Component\Ldap;
 use FOM\UserBundle\Entity\Permission;
+use FOM\UserBundle\Security\Permission\AbstractAttributeDomain;
+use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
-/**
- * Service registered as form.ace.model_transformer
- * If you rewire fom.identities.provider to produce different types of users / groups for ACE assignments,
- * you should also rewire this service so it can process the new types properly.
- */
 class PermissionDataTransformer implements DataTransformerInterface
 {
-    public function __construct()
+    public function __construct(private AbstractAttributeDomain $attributeDomain, private PermissionManager $permissionManager)
     {
     }
 
     public function transform(mixed $value): array
     {
-        // TODO: actual transformation
         /** @var ?Permission $value */
-        return array(
-            'permissions' => $value === null ? [true, false, true, true, false] : [true, true, false, true, false],
-            'sid' => 'u:' . ($value === null ? 'u' : $value->getSubjectDomain() . ' ' . $value->getUser()?->getUserIdentifier())
+        if ($value === null) return [];
+
+        $allPermissions = $this->attributeDomain->getPermissions();
+        $subjectDomain = $this->permissionManager->findSubjectDomainFor($value);
+        $permissionMap = array_map(fn(string $permission) => $permission === $value->getPermission(), $allPermissions);
+        $a = array(
+            'permissions' => $permissionMap,
+            'icon' => $subjectDomain->getIconClass(),
+            'title' => $subjectDomain->getTitle($value),
         );
+        return $a;
     }
 
     /**
