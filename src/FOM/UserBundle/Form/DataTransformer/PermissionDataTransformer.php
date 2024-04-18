@@ -39,13 +39,14 @@ class PermissionDataTransformer implements DataTransformerInterface
     /**
      * Transforms an ACEType result into an ACE
      *
-     * @param object $data
-     * @return array
+     * @param array $value
+     * @return array{subjectJson: string, permissions: bool[]}
      */
-    public function reverseTransform(mixed $value): Permission
+    public function reverseTransform(mixed $value): array
     {
-        /** @var array $value */
-        return new Permission();
+        unset($value["icon"]);
+        unset($value["title"]);
+        return $value;
     }
 
 }

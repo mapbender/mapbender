@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
+use FOM\UserBundle\Entity\Permission;
 use Mapbender\CoreBundle\Entity\Element;
 
 class AttributeDomainElement extends AbstractAttributeDomain
@@ -39,6 +40,13 @@ class AttributeDomainElement extends AbstractAttributeDomain
         /** @var Element $subject */
         $q->orWhere("(p.element = :element AND p.attributeDomain = '" . self::SLUG . "')")
             ->setParameter('element', $subject);
+    }
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        /** @var Element $subject */
+        parent::populatePermission($permission, $subject);
+        $permission->setElement($subject);
     }
 
 }

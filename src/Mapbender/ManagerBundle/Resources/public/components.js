@@ -149,7 +149,6 @@ $(function() {
     });
 
     $(document).on('click', '.permission-collection .-fn-add-permission[data-url]', function(event) {
-        console.log('keks');
         var $this = $(this);
         var url = $this.attr('data-url');
         var $targetTable = $('table', $this.closest('.permission-collection'));

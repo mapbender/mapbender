@@ -3,7 +3,9 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
+use FOM\UserBundle\Entity\User;
 
 /**
  * Permission utility service; registered as 'fom.security.permission_manager'
@@ -17,7 +19,7 @@ class PermissionManager
         private array                  $attributeDomains,
         /** @var AbstractSubjectDomain[] */
         private array                  $subjectDomains,
-        private EntityManagerInterface $doctrine,
+        private EntityManagerInterface $doctrineEM,
     )
     {
     }
@@ -26,13 +28,15 @@ class PermissionManager
     /**
      * @return Permission[]
      */
-    public function findPermissions(AbstractAttributeDomain $attribute_domain, mixed $attribute): array
+    public function findPermissions(AbstractAttributeDomain $attribute_domain, mixed $attribute, bool $group = true): array
     {
-        $repository = $this->doctrine->getRepository(Permission::class);
+        $repository = $this->doctrineEM->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
         $attribute_domain->buildWhereClause($query, $attribute);
         /** @var Permission[] $permissionsUngrouped */
-        $permissionsUngrouped =  $query->getQuery()->getResult();
+        $permissionsUngrouped = $query->getQuery()->getResult();
+
+        if (!$group) return $permissionsUngrouped;
 
         $permissionsGrouped = [];
         foreach ($permissionsUngrouped as $permission) {
@@ -70,6 +74,41 @@ class PermissionManager
             array_push($subjects, ...$subjectDomain->getAssignableSubjects());
         }
         return $subjects;
+    }
+
+    /**
+     * @param mixed $subject
+     * @param array{subjectJson: string, permissions: bool[]} $permissionData
+     * @return void
+     */
+    public function savePermissions(mixed $subject, array $permissionData): void
+    {
+        $attributeDomain = $this->findAttributeDomainFor($subject);
+        $availablePermissions = $attributeDomain->getPermissions();
+
+        // TODO: smarter method than deleting old permissions and adding new
+        $oldPermissions = $this->findPermissions($attributeDomain, $subject, false);
+        $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
+        $this->doctrineEM->getRepository(Permission::class)->createQueryBuilder('p')
+            ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)
+            ->getQuery()->execute();
+
+        foreach ($permissionData as $newPermission) {
+            $json = json_decode($newPermission['subjectJson'], true);
+            for ($i = 0; $i < min(count($newPermission['permissions']), count($availablePermissions)); $i++) {
+                if ($newPermission['permissions'][$i] === true) {
+                    $permissionEntity = new Permission();
+                    $permissionEntity->setPermission($availablePermissions[$i]);
+                    $permissionEntity->setGroup($json["group_id"] ? $this->doctrineEM->getReference(Group::class, $json["group_id"]) : null);
+                    $permissionEntity->setUser($json["user_id"] ? $this->doctrineEM->getReference(User::class, $json["user_id"]) : null);
+                    $permissionEntity->setSubject($json["subject"]);
+                    $permissionEntity->setSubjectDomain($json["domain"]);
+                    $attributeDomain->populatePermission($permissionEntity, $subject);
+                    $this->doctrineEM->persist($permissionEntity);
+                }
+            }
+        }
+        $this->doctrineEM->flush();
     }
 
 }

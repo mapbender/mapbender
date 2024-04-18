@@ -4,7 +4,6 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
 use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
@@ -30,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -44,9 +42,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ApplicationController extends ApplicationControllerBase
 {
-    public function __construct(protected MutableAclProviderInterface $aclProvider,
-                                protected ApplicationTemplateRegistry $templateRegistry,
-                                protected AclManager                  $aclManager,
+    public function __construct(protected ApplicationTemplateRegistry $templateRegistry,
                                 protected UploadsManager              $uploadsManager,
                                 protected PermissionManager           $permissionManager,
                                 protected bool                        $enableResponsiveElements,
@@ -55,13 +51,13 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * Render a list of applications the current logged in user has access to.
+     * Render a list of applications the current logged-in user has access to.
      *
      * @ManagerRoute("/applications", methods={"GET"})
      * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         return $this->redirectToRoute('mapbender_core_welcome_list');
     }
@@ -70,10 +66,8 @@ class ApplicationController extends ApplicationControllerBase
      * Shows form for creating new applications
      *
      * @ManagerRoute("/application/new", methods={"GET","POST"})
-     * @param Request $request
-     * @return Response
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request): Response
     {
         $application = new Application();
         $oid = new ObjectIdentity('class', get_class($application));
@@ -95,8 +89,8 @@ class ApplicationController extends ApplicationControllerBase
             $em->beginTransaction();
             $em->persist($application);
             $em->flush();
-            if ($form->has('acl')) {
-                $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
+            if ($form->has('security')) {
+                $this->permissionManager->savePermissions($application, $form->get('security')->getData());
             }
             $scFile = $form->get('screenshotFile')->getData();
 
@@ -130,12 +124,10 @@ class ApplicationController extends ApplicationControllerBase
      * Edit application
      *
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
-     * @param $request Request
      * @param string $slug Application name
-     * @return Response
      * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
-    public function editAction(Request $request, $slug)
+    public function editAction(Request $request, $slug): Response
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
@@ -167,8 +159,8 @@ class ApplicationController extends ApplicationControllerBase
                 }
                 $em->persist($application);
                 $em->flush();
-                if ($form->has('acl')) {
-                    $this->aclManager->setObjectACEs($application, $form->get('acl')->getData());
+                if ($form->has('security')) {
+                    $this->permissionManager->savePermissions($application, $form->get('security')->getData());
                 }
                 $em->commit();
                 $this->addFlash('success', 'mb.application.save.success');
@@ -247,7 +239,6 @@ class ApplicationController extends ApplicationControllerBase
         try {
             $em = $this->getEntityManager();
             $em->beginTransaction();
-            $this->aclProvider->deleteAcl(ObjectIdentity::fromDomainObject($application));
             $em->remove($application);
             $em->flush();
             $em->commit();
@@ -506,7 +497,7 @@ class ApplicationController extends ApplicationControllerBase
         $form = $this->createForm(ApplicationType::class, $application);
         if ($this->allowPermissionEditing($application)) {
             $attributeDomain = $this->permissionManager->findAttributeDomainFor($application);
-            $form->add('acl', PermissionListType::class, [
+            $form->add('security', PermissionListType::class, [
                 'attribute_domain' => $attributeDomain,
                 'attribute' => $application,
                 'entry_options' => [

@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
+use FOM\UserBundle\Entity\Permission;
 use Mapbender\CoreBundle\Entity\Application;
 
 class AttributeDomainApplication extends AbstractAttributeDomain
@@ -52,7 +53,8 @@ class AttributeDomainApplication extends AbstractAttributeDomain
     {
         /** @var Application $subject */
         $q->orWhere("(p.application = :application AND p.attributeDomain = '" . self::SLUG . "')")
-            ->setParameter('application', $subject);
+            ->setParameter('application', $subject)
+        ;
     }
 
     public function getCssClassForPermission(string $permission): string
@@ -62,5 +64,12 @@ class AttributeDomainApplication extends AbstractAttributeDomain
             self::PERMISSION_EDIT => self::CSS_CLASS_WARNING,
             default => self::CSS_CLASS_DANGER,
         };
+    }
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        /** @var Application $subject */
+        parent::populatePermission($permission, $subject);
+        $permission->setApplication($subject);
     }
 }

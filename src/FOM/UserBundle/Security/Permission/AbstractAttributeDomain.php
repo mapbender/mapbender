@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
+use FOM\UserBundle\Entity\Permission;
 
 abstract class AbstractAttributeDomain
 {
@@ -88,6 +89,11 @@ abstract class AbstractAttributeDomain
     public function getCssClassForPermission(string $permission): string
     {
         return self::CSS_CLASS_SUCCESS;
+    }
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        $permission->setAttributeDomain($this->getSlug());
     }
 
 }
