@@ -345,7 +345,7 @@
                     results = this.sortResults(results, sortBy, sortOrder);
                 }
                 this._searchResultsTable(results);
-                if (results.length > 1 && this.options.hasOwnProperty('zoomToResultExtent') && this.options.zoomToResultExtent) {
+                if (results.length > 1 && currentRoute.results.hasOwnProperty('zoomToResultExtent') && currentRoute.results.zoomToResultExtent) {
                     let extent = this.highlightLayer.getNativeLayer().getSource().getExtent();
                     this.mbMap.map.olMap.getView().fit(extent, {
                         padding: [75, 75, 75, 75],
