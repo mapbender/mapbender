@@ -1,15 +1,15 @@
 fom:
   acl:
     group_label:
-      anonymous: 'TRANSLATE: Anonymous users'
-      authenticated: 'TRANSLATE: All authenticated users'
+      anonymous: 'Usuários Anônimos'
+      authenticated: 'Todos os usuários autenticados'
   user:
     registration:
-      email_body_html: '<p>Olá %user_username%,</p><p> você recentemente criou uma conta. Para completar o seu registo, por favor clique <a href="%url%">aqui</a>.</p>'
+      email_body_html: '<p>Olá %user_username%,</p><p> você recentemente criou uma conta. Para completar o seu registro, por favor clique <a href="%url%">aqui</a>.</p>'
       done:
         title: Registo
         congratulations: Parabéns!
-        account_activated: 'A sua conta foi activada com sucesso e está pronta para uso.'
+        account_activated: 'A sua conta foi ativada com sucesso e está pronta para uso.'
         back_to_login: 'Voltar à página de login'
       form:
         title: Registo
@@ -21,9 +21,9 @@ fom:
       email_subject: 'Seu registo'
       send:
         title: Registo
-        account_created: 'A sua conta foi criada. Um e-mail de activação foi enviado para o seu email.'
+        account_created: 'A sua conta foi criada. Um e-mail de ativação foi enviado para o seu email.'
         back_to_login: 'Voltar à página de login'
-      email_body_text: 'Olá %user_username%. Você recentemente criou uma conta. Para completar o seu registo, por favor clique no link ao seu browser %url%.'
+      email_body_text: 'Olá %user_username%. Você recentemente criou uma conta. Para completar o seu registro, por favor clique no link ao seu browser %url%.'
     group:
       index:
         groups: Grupos
@@ -45,7 +45,7 @@ fom:
       error_tockenexp:
         title: 'Nova senha'
         sorry: Desculpa!
-        registration_token_expired: 'O seu registo expirou. Infelizmente, você tem que solicitar um novo token.'
+        registration_token_expired: 'O seu registro expirou. Infelizmente, você tem que solicitar um novo token.'
         request_new_token: 'Solicitar novo token'
         back_to_login: 'Voltar à página de login'
       login:
@@ -58,7 +58,7 @@ fom:
       error_notocken:
         password_reset: 'Nova senha'
         sorry: Desculpa!
-        no_such_tocken: 'Token não foi encontrado. Se detectar um erro, por favor entre em contato com o administrador do site.'
+        no_such_tocken: 'Token não encontrado. Se detectar um erro, por favor entre em contato com o administrador do site.'
         contact: 'Contactar o Administrador'
         back_to_login: 'Voltar à página de login'
     user:
@@ -88,14 +88,14 @@ fom:
         no_groups_defined: 'Não definia grupos'
         username: Usuário
         description: Description
-        activated: activated
+        activated: ativado
     acl:
       index:
         access_control_lists: 'Global Access Control Lists'
         name: Nome
         class: Classe
         edit: Editar
-      required: 'Campos obrigatoŕios são marcados com rótulos escuros. Required fields are marked with dark labels. Campos opcionais tem rótulos mais ligeiro.'
+      required: 'Campos obrigatórios são marcados com rótulos escuros. Campos opcionais têm rótulos mais claros.'
       edit:
         edit_class_acl: 'Editar classe ACL para %name%'
       groups_users:
@@ -103,8 +103,8 @@ fom:
         no_goups_users: 'Não definia grupos e usuários'
     password:
       email_body_html: |-
-        &lt;p&gt;Olá %user_username%,&lt;/p&gt;&lt;p&gt;Você solicitou uma nova senha.
-        &lt;br /&gt;Por Favor, clique &lt;a href="%url%"&gt;aqui&lt;/a&gt;.
+        <p>Olá %user_username%,</p><p>Você solicitou uma nova senha.
+        <br />Por Favor, clique <a href="%url%">aqui</a>.
       done:
         password_reset: 'Nova senha'
         congratulations: Parabéns!
@@ -114,7 +114,7 @@ fom:
         title: 'Nova senha'
         btn: 'Nova senha'
       form:
-        message: 'Para redefinir a sua senha, por favor introduza o seu nome de usuário e o seu email.'
+        message: 'Para redefinir sua senha, por favor introduza seu nome de usuário e seu email.'
         title: 'Esqueceu a senha'
         username_email: 'Usuário o email'
         back_to_login: 'Voltar à login'
@@ -122,7 +122,7 @@ fom:
       email_subject: 'Esqueceu a senha'
       send:
         title: 'Nova senha'
-        email_been_sent: 'O link para redefinir a sua password foi enviado para o endereço de e-mail desta conta.'
+        email_been_sent: 'O link para redefinir sua senha foi enviado para o endereço de e-mail desta conta.'
         back_to_login: 'Voltar à login'
       email_body_text: 'Olá %user_username%, você solicitou uma nova senha. Clique no link ao seu browser "%url%".'
     userbundle:
@@ -136,7 +136,7 @@ fom:
         users: Usuários
         groups: Grupos
       roles:
-        super_admin: 'Pode adminstrar tudo (super admin)'
+        super_admin: 'Pode administrar tudo (super admin)'
         user_admin: 'Pode administrar usuários e grupos'
 IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:

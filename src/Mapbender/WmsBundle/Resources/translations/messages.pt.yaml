@@ -8,7 +8,7 @@ mb:
           wmsuser: Usuário
           wmspass: Senha
       error:
-        load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
+        load: 'Carregar WMS: Não foi possível carregar o documento de Capacidades WMS!'
       repo:
         macros:
           label:
@@ -65,20 +65,20 @@ mb:
             'on': Ligado
             ratio: 'Factor de BBox'
             buffer: 'Buffer de bloco'
-            layerorder: 'TRANSLATE: Layer ordering'
-            layerorder.standard: 'TRANSLATE: standard'
-            layerorder.reverse: 'TRANSLATE: QGIS'
-            exceptionformat: 'TRANSLATE: Exception format'
-            infoformat: 'TRANSLATE: Format of GetFeatureInfo request'
-            format: 'TRANSLATE: Format of the GetMap request'
-            dimensions: 'TRANSLATE: Dimensions'
-            vendorspecifics: 'TRANSLATE: Vendor specific parameters'
-            layers: 'TRANSLATE: Layers'
+            layerorder: 'Ordem da Camada'
+            layerorder.standard: 'Padrão'
+            layerorder.reverse: 'QGIS'
+            exceptionformat: 'Formato de Exceção'
+            infoformat: 'Formato do pedido GetFeatureInfo'
+            format: 'Formato do pedido GetMap'
+            dimensions: 'Dimensões'
+            vendorspecifics: 'Parâmetros Específicos do Fornecedor'
+            layers: 'Camadas'
           vendorspecific:
-            label: 'Vendor specific'
+            label: 'Específico do Fornecedor'
         preview:
           title:
-            servicerepository: 'Repository de serviços'
+            servicerepository: 'Repositório de Serviços'
           label:
             load: Carregar
         layer:
@@ -101,7 +101,7 @@ mb:
             min: Mínimo
             max: Máximo
             scalehint: 'Dica de escala'
-            attribution: Attribution
+            attribution: Atribuição
             onlineresource: 'Recurso online'
             logourl: 'URL de logotipo'
             identifier: Identificador
@@ -112,89 +112,89 @@ mb:
             dimension: Dimensão
             extent: Extensão
             dataurl: 'URL de dados'
-            featurelisturl: 'URL de Featurelist'
+            featurelisturl: 'URL de Lista de Recursos'
         instancelayerform:
           label:
             layerstitle: 'Título da camada'
             minscale: 'Escala mínima'
             maxsclase: 'Escala máxima'
             active: Ativo
-            allowselecttoc: 'Permite a escolha no árvore de camadas'
-            selectedtoc: 'Escolhido no árvore de camadas'
-            selectedtoc.help: 'TRANSLATE: The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
-            unselectedtoc.help: 'TRANSLATE: The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
-            allowinfotoc: 'Permite FeatureInfo no árvore de camadas'
-            infotoc: 'FeatureInfo no árvore de camadas'
-            allowtoggletoc: 'Permite mudar no árvore de camadas'
-            toggletoc: 'Mudar no árvore de camadas'
-            allowreordertoc: 'Permite organizar no árvore de camadas'
+            allowselecttoc: 'Permitir seleção na árvore de camadas'
+            selectedtoc: 'Selecionado na árvore de camadas'
+            selectedtoc.help: 'O conjunto de camadas está ativo no arranque. A configuração só deve ser alterada se camadas temáticas forem usadas.'
+            unselectedtoc.help: 'O conjunto de camadas está inativo no arranque. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
+            allowinfotoc: 'Permitir FeatureInfo na árvore de camadas'
+            infotoc: 'FeatureInfo na árvore de camadas'
+            allowtoggletoc: 'Permitir alternar na árvore de camadas'
+            toggletoc: 'Alternar na árvore de camadas'
+            allowreordertoc: 'Permitir reordenar na árvore de camadas'
             moreinfo: 'Mais informações'
             id:
               title: ID
-              description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+              description: 'ID da Camada da Instância: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Nome
             style: Estilo
       class:
         title: 'Carregar WMS'
-        description: 'Carrega um WMS sobre getCapabilities-Request '
+        description: 'Carrega um WMS sobre o pedido de Capacidades getCapabilities'
       admin:
         label:
           splitlayers: 'Dividir camadas'
     repository:
       parser:
-        couldnotparse: 'Não pode "parse" o documento XML.'
+        couldnotparse: 'Não foi possível analisar o documento XML.'
         not_supported_document: 'O documento XML não é suportado.'
-        not_supported_version: 'A versão de WMS não é suportado.'
+        not_supported_version: 'A versão WMS não é suportada.'
     metadata:
       section:
         common:
-          title: Common
+          title: Comum
         contact:
-          title: Contacto
+          title: Contato
         items:
           title: Nível
           name: Nome
         useconditions:
-          title: 'Termos de utilização'
+          title: 'Condições de utilização'
       popup:
-        title: 'TRANSLATE: Meta data'
+        title: Metadados
     repo:
       instance:
         label:
           dimensions: Dimensão
     dimhandler:
       class:
-        title: 'Handler de dimensão'
+        title: Manipulador de Dimensões
         description: null
     dimensionsets:
       no_dimension: 'Não existe nenhuma dimensão'
   core:
     dimensionset:
       admin:
-        title: 'TRANSLATE: Title'
-        group: 'TRANSLATE: Group'
-        extent: 'TRANSLATE: Extent'
+        title: 'Título'
+        group: 'Grupo'
+        extent: 'Extensão'
     dimensionshandler:
       admin:
-        tooltip: 'TRANSLATE: Tooltip'
-        dimensionsets: 'TRANSLATE: Dimensionsets'
+        tooltip: 'Dica de Ferramenta'
+        dimensionsets: 'Conjuntos de Dimensões'
     wmsloader:
       admin:
-        defaultformat: 'TRANSLATE: Default format'
-        defaultinfoformat: 'TRANSLATE: Default info format'
+        defaultformat: 'Formato Padrão'
+        defaultinfoformat: 'Formato de Informação Padrão'
       onlineresource:
-        format: 'TRANSLATE: Format'
-        href: 'TRANSLATE: href'
+        format: 'Formato'
+        href: 'Href'
       legendurltype:
-        width: 'TRANSLATE: Width'
-        height: 'TRANSLATE: Height'
-        onlineresource: 'TRANSLATE: Online resource'
+        width: 'Largura'
+        height: 'Altura'
+        onlineresource: 'Recurso Online'
       vendorspecifictype:
-        hidden: 'TRANSLATE: Hidden'
-        setdefaults: 'TRANSLATE: Set defaults'
+        hidden: 'Escondido'
+        setdefaults: 'Definir padrões'
     vendorspecifictype:
       admin:
-        vstype: 'TRANSLATE: Parameter type'
-        name: 'TRANSLATE: Name'
-        default: 'TRANSLATE: Default value'
-        hidden: 'TRANSLATE: Hidden'
+        vstype: 'Tipo de Parâmetro'
+        name: 'Nome'
+        default: 'Valor Padrão'
+        hidden: 'Escondido'

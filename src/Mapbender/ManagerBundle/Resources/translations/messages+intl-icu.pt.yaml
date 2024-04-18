@@ -24,102 +24,102 @@ mb:
       create:
         success: null
   manager:
-    automatic: 'TRANSLATE: Automatic'
-    autoActivate: 'TRANSLATE: Activate automatically'
+    automatic: 'Automático'
+    autoActivate: 'Ativar automaticamente'
     autoOpen: 'Abrir automaticamente'
-    confirm_form_discard: 'TRANSLATE: Discard changes?'
-    popup_height: 'TRANSLATE: Dialog height'
-    popup_width: 'TRANSLATE: Dialog width'
+    confirm_form_discard: 'Descartar alterações?'
+    popup_height: 'Altura da caixa de diálogo'
+    popup_width: 'Largura da caixa de diálogo'
     screentype:
-      label: 'TRANSLATE: Screen type'
+      label: 'Tipo de tela'
       choice:
-        all: 'TRANSLATE: Any'
-        mobile: 'TRANSLATE: Mobile'
-        desktop: 'TRANSLATE: Desktop'
+        all: 'Qualquer'
+        mobile: 'Celular'
+        desktop: 'Desktop'
     toolbar:
       alignment:
-        label: 'TRANSLATE: Alignment'
+        label: 'Alinhamento'
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
-          center: 'TRANSLATE: Center'
-      generate_button_menu: 'TRANSLATE: Generate menu for buttons'
-      menu_label: 'TRANSLATE: Menu label'
-    visibility: 'TRANSLATE: Visibility'
+          left: 'Esquerda'
+          right: 'Direita'
+          center: 'Centro'
+      generate_button_menu: 'Gerar menu para botões'
+      menu_label: 'Rótulo do menu'
+    visibility: 'Visibilidade'
     element:
       screentype:
-        mobile: 'TRANSLATE: Show on mobile screens'
-        desktop: 'TRANSLATE: Show on desktop screens'
+        mobile: 'Mostrar em telas de celular'
+        desktop: 'Mostrar em telas de desktop'
     sidepane:
-      width: 'TRANSLATE: Width'
-      resizable: 'TRANSLATE: Resizable'
-      resizable_help: 'TRANSLATE: If checked, the user can resize the sidebar by dragging on its right edge. If you want to constrain the min/max width, use custom css (min-width/max-width on .sidePane.resizable).'
-      closed: 'TRANSLATE: Initially closed'
+      width: 'Largura'
+      resizable: 'Redimensionável'
+      resizable_help: 'Se marcado, o usuário pode redimensionar o painel lateral arrastando sua borda direita. Se desejar limitar a largura mínima/máxima, use CSS personalizado (min-width/max-width em .sidePane.resizable).'
+      closed: 'Inicialmente fechado'
       align:
-        label: 'TRANSLATE: Position'
+        label: 'Posição'
         choice:
-          left: 'TRANSLATE: Left'
-          right: 'TRANSLATE: Right'
+          left: 'Esquerda'
+          right: 'Direita'
     sourceinstance:
       embedded_in_applications: |
         {count, plural,
-            =0    {TRANSLATE: This instance is not used in any application}
-            one   {TRANSLATE: This instance is used in one application}
-            other {TRANSLATE: This instance is used in # applications}
+            =0    {Esta instância não é usada em nenhuma aplicação}
+            one   {Esta instância é usada em uma aplicação}
+            other {Esta instância é usada em # aplicações}
         }
-      convert_to_reusable: 'TRANSLATE: Convert to shared instance'
-      convert_to_bound: 'TRANSLATE: Convert to bound instance'
-      converted_to_bound: 'TRANSLATE: A bound copy of the shared instance has been added to the application'
-      reusable_assigned_to_application: 'TRANSLATE: The shared instance has been added to the application'
-      create_reusable: 'TRANSLATE: Create shared instance'
-      created_reusable: 'TRANSLATE: A new shared instance has been created'
+      convert_to_reusable: 'Converter para instância compartilhada'
+      convert_to_bound: 'Converter para instância vinculada'
+      converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada à aplicação'
+      reusable_assigned_to_application: 'A instância compartilhada foi adicionada à aplicação'
+      create_reusable: 'Criar instância compartilhada'
+      created_reusable: 'Uma nova instância compartilhada foi criada'
     application:
-      persistentView: 'TRANSLATE: Persistent map state'
-      splashscreen: 'TRANSLATE: Show Splashscreen'
+      persistentView: 'Estado de mapa persistente'
+      splashscreen: 'Mostrar tela de apresentação'
     admin:
-      sources: 'Origens de dados'
-      csrf_token_invalid: 'TRANSLATE: Invalid CSRF token.'
+      sources: 'Fontes de dados'
+      csrf_token_invalid: 'Token CSRF inválido.'
       source:
-        add: 'Adicionar origem de dados'
+        add: 'Adicionar fonte de dados'
         show_metadata: 'Mostrar metadados'
-        delete: 'Remover origem de dados'
+        delete: 'Excluir fonte de dados'
         new:
-          add: 'Adicionar origem de dados'
-        valid: 'Origem de dados válido'
-        notvalid: 'Origem de dados inválido'
-        no_source: 'Origem de dados não existe'
-        update: 'Atualizar origem de dados'
+          add: 'Adicionar fonte de dados'
+        valid: 'Fonte de dados válida'
+        notvalid: 'Fonte de dados inválida'
+        no_source: 'Fonte de dados não existe'
+        update: 'Atualizar fonte de dados'
         status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
+          ok: 'Fonte OK'
+          toupdate: 'Fonte não atualizada mais'
+          unreachable: 'Fonte inacessível'
         embedded_in_applications: |
-          TRANSLATE: {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
+          {count, plural,
+              =0    {Esta fonte não é usada em nenhuma aplicação}
+              one   {Esta fonte é usada em uma aplicação}
+              other {Esta fonte é usada em # aplicações}
           }
       map:
-        max_extent: 'Extensão maxima'
-        max_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
-        start_extent: 'Extensão do princípio'
-        start_extent.help: 'TRANSLATE: Bounding Box (min/max x/y) that is initially displayed when loading the map. When clicking on the home icon, the map zooms to this extent.'
-        base_dpi: 'TRANSLATE: Default Resolution [dpi]'
-        base_dpi.help: 'TRANSLATE: The resolution adapts to the screen resolution based on the configured value'
+        max_extent: 'Extensão máxima'
+        max_extent.help: 'Caixa delimitadora (x/y mínimo/máximo) onde o usuário pode navegar. Ao clicar no ícone do globo, o mapa zooma para esta extensão.'
+        start_extent: 'Extensão inicial'
+        start_extent.help: 'Caixa delimitadora (x/y mínimo/máximo) que é inicialmente exibida ao carregar o mapa. Ao clicar no ícone inicial, o mapa zooma para esta extensão.'
+        base_dpi: 'Resolução padrão [dpi]'
+        base_dpi.help: 'A resolução se adapta à resolução da tela com base no valor configurado'
       element:
         title: Título
         type: Tipo
         add: 'Adicionar elemento'
-        show_hide: Ativo/Inativo
-        no_element_added: 'Nenhum elemento existe'
+        show_hide: 'Mostrar/Ocultar'
+        no_element_added: 'Nenhum elemento adicionado'
         anchor:
-          label: 'TRANSLATE: Position'
-          left-top: 'TRANSLATE: Top left'
-          left-bottom: 'TRANSLATE: Bottom left'
-          right-top: 'TRANSLATE: Top right'
-          right-bottom: 'TRANSLATE: Bottom right'
+          label: 'Posição'
+          left-top: 'Superior esquerdo'
+          left-bottom: 'Inferior esquerdo'
+          right-top: 'Superior direito'
+          right-bottom: 'Inferior direito'
       zoombar:
-        draggable: Deslocar
+        draggable: Arrastável
       overview:
         fix: Fixar
       layerset:
@@ -128,54 +128,54 @@ mb:
         type: Tipo
         edit: 'Editar conjunto de camadas'
         delete:
-          title: 'Remover conjunto de camadas'
+          title: 'Excluir conjunto de camadas'
           confirm: 'Realmente remover conjunto de camadas <span class="italic">%layerset_title%</span> ?'
         id: Id
       instance:
         add: 'Adicionar instância'
-        show_hide: 'Instância ligada/desligada'
+        show_hide: 'Mostrar/Ocultar instância'
         edit: 'Editar instância'
         delete:
-          title: 'Remover instância'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
-        no_instance_added: 'Instância não existe'
-        no_layer_added: 'Não adicionou camada'
-        max_input_vars_exceeded: 'TRANSLATE: PHP setting max_input_vars too low for the number of layers in this instance.'
-        update_successful: 'TRANSLATE: Your instance has been updated.'
-        converted_to_shared: 'TRANSLATE: The instance has been converted to a shared instance.'
+          title: 'Excluir instância'
+          confirm: 'Você realmente deseja remover a instância com o título <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Instância não adicionada'
+        no_layer_added: 'Nenhuma camada adicionada'
+        max_input_vars_exceeded: 'Configuração PHP max_input_vars muito baixa para o número de camadas nesta instância.'
+        update_successful: 'Sua instância foi atualizada.'
+        converted_to_shared: 'A instância foi convertida em uma instância compartilhada.'
       template: Padrão
       application:
-        view: Mostrar
+        view: Visualizar
         edit:
           title: 'Editar aplicação'
           base_data: 'Dados de fundo'
         screenshot: null
-        layouts: Layout
-        layersets: 'Conjunto de camadas'
-        custom_css: CSS
+        layouts: Layouts
+        layersets: 'Conjuntos de camadas'
+        custom_css: CSS personalizado
         security:
           title: Segurança
-          public: 'acesso público'
-        save: Guardar
+          public: 'Acesso público'
+        save: Salvar
         cancel: Cancelar
-        view_this: 'Mostrar aplicação'
+        view_this: 'Visualizar esta aplicação'
         duplicate: 'Duplicar aplicação'
         public:
-          on_off: 'Publicar/ocultar aplicação'
-        delete: 'Remover aplicação'
-        no_application: 'Aplicação não existe'
+          on_off: 'Publicar/Ocultar'
+        delete: 'Excluir aplicação'
+        no_application: 'Aplicação não encontrada'
         new:
           title: 'Criar aplicação'
-        create_use: 'Primeiro crie uma aplicação nova. Em seguida você pode editar a aplicação e adicionar elementos e conjuntos de camadas.'
+        create_use: 'Primeiro crie uma nova aplicação. Em seguida, você pode editá-la e adicionar elementos e conjuntos de camadas.'
         btn:
-          create: Guardar
+          create: Salvar
           cancel: Cancelar
         upload:
-          button: 'Escolher ficheiro'
-          label: 'Nenhum ficheiro escolhido'
+          button: 'Escolher arquivo'
+          label: 'Nenhum arquivo selecionado'
         export:
           addAcl: Acls
-          addSources: Origem
+          addSources: Origens
           btn:
             export: Exportar
         import:
@@ -183,21 +183,21 @@ mb:
           addSources: Origens
           btn:
             import: Importar
-        title: Title
+        title: Título
         url:
-          title: 'URL Title'
-        description: Description
-        template: Template
+          title: 'Título do URL'
+        description: Descrição
+        template: Modelo
     source:
-      serviceurl: 'URL de serviço'
+      serviceurl: 'URL do serviço'
       username: 'Nome de usuário'
       password: Senha
-      activate_new_layers: 'TRANSLATE: Activate newly added layers'
-      select_new_layers: 'TRANSLATE: Select newly added layers'
+      activate_new_layers: 'Ativar novas camadas adicionadas'
+      select_new_layers: 'Selecionar novas camadas adicionadas'
       load: Carregar
     managerbundle:
       new_application: 'Criar aplicação'
-      add_source: 'Adiciona origem de dados'
+      add_source: 'Adicionar fonte de dados'
       add_user_group: 'Adicionar usuários e grupos'
       acl_element: Acl
       import_application: Importar
@@ -209,49 +209,49 @@ mb:
         edit_element:
           title: 'Editar elemento'
         delete_element:
-          title: 'Confirmar eliminação'
+          title: 'Confirmar exclusão'
         add_edit_layerset:
           title_edit: 'Editar conjunto de camadas'
           title_add: 'Adicionar conjunto de camadas'
         delete_layerset:
           title: 'Remover conjunto de camadas'
         add_instance:
-          title: 'Escolher origem de dados'
+          title: 'Escolher fonte de dados'
         delete_instance:
-          title: 'Remover instância'
+          title: 'Excluir instância'
         delete_user_group:
-          title: 'Confirme apagar'
-          content: 'Realmente eliminar %userGroup%?'
+          title: 'Confirmar exclusão'
+          content: 'Tem certeza de que deseja excluir %userGroup%?'
     import:
       application:
-        failed: 'Não pode importar aplicação'
-    http_connection_error: 'TRANSLATE: Connection failed'
-    http_error_response: 'TRANSLATE: The remote server responded with an error message'
-    xml_invalid: 'O documento não é válido'
-    xml_malformed: 'O documento não é válido'
+        failed: 'Não foi possível importar a aplicação'
+    http_connection_error: 'Erro de conexão HTTP'
+    http_error_response: 'O servidor remoto respondeu com uma mensagem de erro'
+    xml_invalid: 'O documento XML não é válido'
+    xml_malformed: 'O documento XML está malformado'
   core:
     admin:
       button:
-        show_label: 'Mostra rótulo'
+        show_label: 'Mostrar rótulo'
       element:
-        autostart: Autostart
-      title: 'TRANSLATE: Title'
+        autostart: Iniciar automaticamente
+      title: 'Título'
     entity:
       app:
         screenshotfile:
-          error: 'O ficheiro é demasiado grande (%uploadFileSize% bytes). O tamanho máximo é %maxFileSize% bytes.'
+          error: 'O arquivo é muito grande (%uploadFileSize% bytes). O tamanho máximo é %maxFileSize% bytes.'
           format_error: 'Formato não suportado.'
           resolution:
-            error: 'O ficheiro precisa de %screenshotHeight% x %screenshotWidth% pixel ou mais. O seu ficheiro tem %uploadWidth% x %uploadHeighth% pixel. '
+            error: 'O arquivo precisa ter %screenshotHeight% x %screenshotWidth% pixels ou mais. Seu arquivo tem %uploadWidth% x %uploadHeighth% pixels.'
     importjobtype:
       admin:
-        importfile: 'TRANSLATE: Import file'
+        importfile: 'Importar arquivo'
   actions:
-    secureelement: 'TRANSLATE: Secure element'
+    secureelement: 'Elemento seguro'
   wms:
     wmsloader:
       repo:
         instance:
           label:
-            title: 'TRANSLATE: Title'
-            opacity: 'TRANSLATE: Opacity'
+            title: 'Título'
+            opacity: 'Opacidade'

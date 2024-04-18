@@ -18,56 +18,56 @@ mb:
         png: png
     printclient:
       tab:
-        settings: 'TRANSLATE: Job settings'
-        joblist: 'TRANSLATE: Recent jobs'
+        settings: Configurações do Trabalho
+        joblist: Trabalhos Recentes
       joblist:
         header:
-          id: 'TRANSLATE: #'
-          ctime: 'TRANSLATE: created'
-          status: 'TRANSLATE: status'
+          id: #
+          ctime: Criado
+          status: Status
         status:
-          pending: 'TRANSLATE: waiting'
-          processing: 'TRANSLATE: processing'
-          finished: 'TRANSLATE: finished'
-        open: 'TRANSLATE: open'
-        delete: 'TRANSLATE: delete'
-        cancel: 'TRANSLATE: Cancel'
-        nodata: 'TRANSLATE: no data'
-        loading: 'TRANSLATE: loading'
+          pending: Aguardando
+          processing: Processando
+          finished: Concluído
+        open: Abrir
+        delete: Excluir
+        cancel: Cancelar
+        nodata: Sem dados
+        loading: Carregando
     admin:
       printclient:
         renderMode:
-          label: 'TRANSLATE: Mode'
+          label: Modo
           choice:
-            direct: 'TRANSLATE: direct'
-            queued: 'TRANSLATE: queued'
+            direct: Direto
+            queued: Enfileirado
         queueAccess:
-          label: 'TRANSLATE: Job queue'
+          label: Fila de Trabalhos
           choice:
-            global: 'TRANSLATE: global'
-            private: 'TRANSLATE: private'
+            global: Global
+            private: Privada
   core:
     printclient:
       admin:
-        scales: 'TRANSLATE: Scales (comma-separated)'
-        fileprefix: 'TRANSLATE: File prefix'
-        optionalfields: 'TRANSLATE: Optional fields'
-        replacepattern: 'TRANSLATE: Replace pattern'
-        templates: 'TRANSLATE: Templates'
-        qualitylevels: 'TRANSLATE: Quality levels'
+        scales: Escalas (separadas por vírgulas)
+        fileprefix: Prefixo do Arquivo
+        optionalfields: Campos Opcionais
+        replacepattern: Padrão de Substituição
+        templates: Modelos
+        qualitylevels: Níveis de Qualidade
       label:
-        quality: 'TRANSLATE: Quality'
+        quality: Qualidade
       class:
-        title: 'TRANSLATE: Print'
+        title: Impressão
     printclienttemplate:
       admin:
-        template: 'TRANSLATE: Template'
-        label: 'TRANSLATE: Label'
+        template: Modelo
+        label: Rótulo
     printclientquality:
       admin:
-        label: 'TRANSLATE: Label'
+        label: Rótulo
     admin:
       printclient:
         label:
-          qualitylevels: 'TRANSLATE: Quality levels'
-          templates: 'TRANSLATE: Templates'
+          qualitylevels: Níveis de Qualidade
+          templates: Modelos
