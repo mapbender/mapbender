@@ -31,7 +31,17 @@ class PermissionManager
         $repository = $this->doctrine->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
         $attribute_domain->buildWhereClause($query, $attribute);
-        return $query->getQuery()->getResult();
+        /** @var Permission[] $permissionsUngrouped */
+        $permissionsUngrouped =  $query->getQuery()->getResult();
+
+        $permissionsGrouped = [];
+        foreach ($permissionsUngrouped as $permission) {
+            $subjectJson = $permission->getSubjectJson();
+            if (!isset($permissionsGrouped[$subjectJson])) $permissionsGrouped[$subjectJson] = [];
+            $permissionsGrouped[$subjectJson][] = $permission;
+        }
+
+        return $permissionsGrouped;
     }
 
     public function findAttributeDomainFor(mixed $attribute): AbstractAttributeDomain

@@ -70,7 +70,7 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
 
     public function buildWhereClause(QueryBuilder $q, mixed $subject): void
     {
-        $q->orWhere("p.attribute_domain = '" . self::SLUG . "'");
+        $q->orWhere("p.attributeDomain = '" . self::SLUG . "'");
     }
 
     public function getCssClassForPermission(string $permission): string

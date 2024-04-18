@@ -48,7 +48,7 @@ class PermissionListType extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
             'prototype' => true,
-            'data' => fn (Options $options) => $this->loadPermissions($options),
+            'data' => fn (Options $options) => array_values($this->loadPermissions($options)),
         ]);
 
         $resolver->setAllowedValues('mapped', [false]);
