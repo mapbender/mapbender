@@ -216,7 +216,7 @@
             if (!layer.getParent()) {
                 $li.addClass("serviceContainer");
             }
-            $li.toggleClass('-js-leafnode', !layer.children || !layer.children.length);
+            $li.toggleClass('-js-leafnode', !layer.children || !layer.children.length || !treeOptions.toggle);
             $li.toggleClass('showLeaves', treeOptions.toggle);
 
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
