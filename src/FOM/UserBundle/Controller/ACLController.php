@@ -5,6 +5,7 @@ namespace FOM\UserBundle\Controller;
 use FOM\ManagerBundle\Configuration\Route;
 use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
+use FOM\UserBundle\Security\Permission\AssignableSubject;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,12 +71,30 @@ class ACLController extends AbstractController
 
     /**
      * @Route("/acl/overview", methods={"GET"})
-     * @return Response
      */
-    public function overviewAction()
+    public function overviewAction(Request $request): Response
     {
+        $assignableSubjects = $this->permissionManager->getAssignableSubjects();
+
+        $existingSubjectsJson = $this->readExistingSubjectsJson($request);
+        if ($existingSubjectsJson) {
+            $assignableSubjects = array_filter(
+                $assignableSubjects,
+                fn(AssignableSubject $subject) => !in_array($subject->getSubjectJson(), $existingSubjectsJson)
+            );
+        }
+
         return $this->render('@FOMUser/ACL/groups-and-users.html.twig', array(
-            'subjects' => $this->permissionManager->getAssignableSubjects()
+            'subjects' => $assignableSubjects
         ));
+    }
+
+    private function readExistingSubjectsJson(Request $request): ?array
+    {
+        $existingSubjects = $request->query->get('subjects');
+        if ($existingSubjects) {
+            return json_decode($existingSubjects, true);
+        }
+        return null;
     }
 }

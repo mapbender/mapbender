@@ -128,34 +128,39 @@ $(function() {
     });
 
     $(document).on('click', '.permission-collection .-fn-add-permission[data-url]', function(event) {
-        var $this = $(this);
-        var url = $this.attr('data-url');
-        var $targetTable = $('table', $this.closest('.permission-collection'));
+        const $addButton = $(event.target).closest('.-fn-add-permission');
+        const url = $addButton.attr('data-url');
+        if (!url || !url.length) return false;
 
-        if (url.length > 0) {
-            $.ajax({
-                url: url
-            }).then(function(response) {
-                var $modal = Mapbender.bootstrapModal(response, {
-                    title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'btn btn-primary btn-sm',
-                            callback: function() {
-                                appendPermissionSubjects($targetTable, $('#listFilterPermissionSubjects', $modal));
-                                $modal.modal('hide');
-                            }
-                        },
-                        {
-                            label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'btn btn-light btn-sm popupClose'
+        const $targetTable = $addButton.closest('.permission-collection').find('table');
+        const subjects = [];
+        $targetTable.find('tbody tr').each((index, element) => subjects.push($(element).find('.-js-subject-json input').val()));
+
+        const subjectURIComponent = encodeURIComponent(JSON.stringify(subjects));
+        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'subjects=' + subjectURIComponent;
+
+        $.ajax({
+            url: fullUrl,
+        }).then(function(response) {
+            var $modal = Mapbender.bootstrapModal(response, {
+                title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.add'),
+                        cssClass: 'btn btn-primary btn-sm',
+                        callback: function() {
+                            appendPermissionSubjects($targetTable, $('#listFilterPermissionSubjects', $modal));
+                            $modal.modal('hide');
                         }
-                    ]
-                });
-                $modal.modal('show');
+                    },
+                    {
+                        label: Mapbender.trans('mb.actions.cancel'),
+                        cssClass: 'btn btn-light btn-sm popupClose'
+                    }
+                ]
             });
-        }
+            $modal.modal('show');
+        });
 
         return false;
     });
