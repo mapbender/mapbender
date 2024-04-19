@@ -279,9 +279,7 @@
       </tbody>
     </table>
 
-    {% if not (form | length) %}
-      <p id="permissionsDescription">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
-    {% endif %}
+    <p class="-js-table-empty {% if form | length %}hidden{% endif %}">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
   </div>
   {% endapply %}
 {% endblock %}
@@ -299,8 +297,10 @@
     <tr class="filterItem" {{ block('widget_container_attributes') }}>
       <td>
         <i class="userType {{ form.icon.vars.value }}"></i>&nbsp;
-        <span class="subject-label">{# no particular styling, but .sid-label required by script #}{{ form.title.vars.value }}</span>
-        {{ form_row(form.subjectJson) }}
+        <span class="-js-subject-label">{{ form.title.vars.value }}</span>
+        <span class="-js-subject-json">
+            {{ form_row(form.subjectJson) }}
+        </span>
       </td>
 
       {%- for child in form -%}

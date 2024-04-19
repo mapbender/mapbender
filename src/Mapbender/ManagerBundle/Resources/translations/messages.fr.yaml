@@ -149,7 +149,7 @@ mb:
           title: Confirmez la suppression
         delete_user_group:
           title: Confirmez la suppression
-          content: Voulez-vous vraiment supprimer %userGroup%?
+          content: Voulez-vous vraiment supprimer %subject%?
     import:
       application:
         failed: Impossible d'importer l'application

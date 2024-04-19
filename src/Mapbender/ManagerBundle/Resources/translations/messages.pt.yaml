@@ -148,7 +148,7 @@ mb:
           title: Remover instância
         delete_user_group:
           title: Confirme apagar
-          content: Realmente eliminar %userGroup%?
+          content: Realmente eliminar %subject%?
     import:
       application:
         failed: Não pode importar aplicação

@@ -149,7 +149,7 @@ mb:
           title: Bevestig verwijderen
         delete_user_group:
           title: Bevestig verwijderen
-          content: '%userGroup% echt verwijderen?'
+          content: '%subject% echt verwijderen?'
     import:
       application:
         failed: Applicatie kan niet geimporteerd

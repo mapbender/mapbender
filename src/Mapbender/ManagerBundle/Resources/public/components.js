@@ -69,53 +69,30 @@ $(function() {
         root.toggleClass("active", !!rowCount && checkedCount === rowCount);
         root.toggleClass("multi", !!(rowCount && checkedCount) && checkedCount < rowCount);
     }
-    function appendAces($permissionsTable, $sidSelector, defaultPermissions) {
-        var body = $("tbody", $permissionsTable);
-        var proto = $("thead", $permissionsTable).attr("data-prototype");
+    function appendPermissionSubjects($targetTable, $subjectList) {
+        const $tbody = $("tbody", $targetTable);
+        const $permissionTrProto = $("thead", $targetTable).attr("data-prototype");
 
-        var count = body.find("tr").length;
-        $('input[type="checkbox"]:checked', $sidSelector).each(function() {
+        let existingPermissionsCount = $tbody.find("tr").length;
+        $subjectList.find('input[type="checkbox"]:checked').each(function(index, element) {
             // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var $checkbox = $(this);
-            var sid = $checkbox.val();
-            var sidType = (sid.split(':')[0]).toUpperCase();
-            var text = $checkbox.attr('data-label');
-            var newEl = $(proto.replace(/__name__/g, count++));
-            newEl.addClass('bg-success');
-            newEl.attr('data-sid', sid);
-            newEl.attr('data-subject-label', text);
-            var $sidInput = $('input[type="hidden"]', newEl).first();
-            $sidInput.attr('value', sid);
-            $('.subject-label', newEl).text(text);
-            body.prepend(newEl);
+            const $checkbox = $(element);
+            const subjectJson = $checkbox.val();
+            const text = $checkbox.attr('data-label');
+            const iconClass = $checkbox.attr('data-icon');
 
-            (defaultPermissions || []).map(function(permissionName) {
-                $('.tagbox[data-perm-type="' + permissionName + '"]', newEl).trigger('click');
-            });
-            $('.userType', newEl)
-                .toggleClass('fa-group', sidType === 'R')
-                .toggleClass('fa-user', sidType === 'U')
-            ;
+            const $newEl = $($permissionTrProto.replace(/__name__/g, existingPermissionsCount++));
+            $newEl.find("i.userType").addClass(iconClass);
+            $newEl.find('.-js-subject-label').text(text);
+            $newEl.find('.-js-subject-json input').val(subjectJson);
+            $tbody.prepend($newEl);
+            // select first permission column per default
+            $newEl.find('.tagbox').first().trigger('click');
         });
+
         // if table was previously empty, reveal it and hide placeholder text
-        $permissionsTable.removeClass('hidden');
-        $('#permissionsDescription', $permissionsTable.closest('.ace-collection')).addClass('hidden');
-    }
-    function filterSidContent(response, $permissionsTable) {
-        var $content = $(response);
-        $('tbody tr.filterItem', $content).each(function() {
-            var groupUserItem = $(this);
-            // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
-            var newItemSid = $('input[type="checkbox"]', groupUserItem).first().val();
-            $('tbody .userType', $permissionsTable).each(function() {
-                var existingRowSid = $(this).closest('tr').attr('data-sid');
-
-                if (existingRowSid === newItemSid) {
-                    groupUserItem.remove();
-                }
-            });
-        });
-        return $content;
+        $targetTable.removeClass('hidden');
+        $targetTable.closest('.permission-collection').find('.-js-table-empty').addClass('hidden');
     }
 
     var initPermissionRoot = function() {
@@ -126,6 +103,7 @@ $(function() {
             setPermissionsRootState($(this).attr("data-perm-type"), $table);
         });
     };
+
     $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
         var $this = $(this);
         var $cb = $('input[type="checkbox"]', this);
@@ -135,6 +113,7 @@ $(function() {
         var scope = $this.closest('table');
         setPermissionsRootState($this.attr("data-perm-type"), scope);
     });
+
     $(document).on('click', '.permissionsTable thead .tagbox[data-perm-type]', function() {
         var $this = $(this);
         var $table = $(this).closest('table');
@@ -157,14 +136,14 @@ $(function() {
             $.ajax({
                 url: url
             }).then(function(response) {
-                var $modal = Mapbender.bootstrapModal(filterSidContent(response, $targetTable), {
+                var $modal = Mapbender.bootstrapModal(response, {
                     title: Mapbender.trans('mb.manager.managerbundle.add_user_group'),
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'btn btn-primary btn-sm',
                             callback: function() {
-                                appendAces($targetTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
+                                appendPermissionSubjects($targetTable, $('#listFilterPermissionSubjects', $modal));
                                 $modal.modal('hide');
                             }
                         },
@@ -180,27 +159,27 @@ $(function() {
 
         return false;
     });
-    $(".permissionsTable").on("click", '.-fn-delete', function() {
-        var $row = $(this).closest('tr');
-        var sidLabel = $row.attr('data-subject-label');
-        var typePrefix = ($row.attr('data-sid') || '').slice(0, 1) === 'u' ? 'user' : 'group';
 
-        var content = [
-            '<div>',
-            Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
-                'userGroup': [typePrefix, sidLabel].join(" ")
-            }),
-            '</div>'
-            ].join('');
+    $(".permissionsTable").on("click", '.-fn-delete', function(e) {
+        const $row = $(e.target).closest('tr');
+        const $table = $row.closest('table');
+        const title = $row.attr('data-title');
+
+        const translationKey = 'mb.manager.components.popup.delete_user_group.content';
+        var content = '<div>' + Mapbender.trans(translationKey, {'subject': title}) + '</div>';
         var labels = {
-            // @todo: bring your own translation string
             title: "mb.manager.components.popup.delete_element.title",
             confirm: "mb.actions.delete",
             cancel: "mb.actions.cancel"
         };
         Mapbender.Manager.confirmDelete(null, null, labels, content).then(function() {
             $row.remove();
+            if ($table.find('tbody tr').length === 0) {
+                $table.closest('.permission-collection').find('.-js-table-empty').removeClass('hidden');
+                $table.addClass('hidden');
+            }
         });
+
     }).each(initPermissionRoot);
 
     // Element security
@@ -258,7 +237,7 @@ $(function() {
                     callback: function() {
                         $(".contentItem:first", $modal).removeClass('hidden');
                         if ($(".contentItem", $modal).length > 1) {
-                            appendAces($permissionsTable, $('#listFilterGroupsAndUsers', $modal), ['view']);
+                            appendPermissionSubjects($permissionsTable, $('#listFilterPermissionSubjects', $modal));
                             $(".contentItem:not(.contentItem:first)", $modal).remove();
                         }
                         isModified = true;
@@ -297,7 +276,7 @@ $(function() {
                 success: function(data) {
                     $(".contentItem:first,.buttonOk,.buttonReset", $modal).addClass('hidden');
                     $(".buttonAdd,.buttonBack", $modal).removeClass('hidden');
-                    addContent(filterSidContent(data, $permissionsTable));
+                    addContent(data);
                 }
             });
             // Suppress call to global handler
@@ -305,9 +284,9 @@ $(function() {
         });
         $permissionsTable.on("click", 'tbody .-fn-delete', function() {
             var $row = $(this).closest('tr');
-            var sidLabel = $row.attr('data-subject-label');
+            var label = $row.attr('data-subject-label');
             addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
-                'userGroup': sidLabel
+                'userGroup': label
             }));
             $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", $modal).addClass('hidden');
             $('.buttonRemove', $modal).data('target-row', $row);

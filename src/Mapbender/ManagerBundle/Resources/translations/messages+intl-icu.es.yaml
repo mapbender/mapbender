@@ -219,7 +219,7 @@ mb:
           title: 'Eliminar instancia'
         delete_user_group:
           title: 'Confirmar eliminación'
-          content: '¿Realmente desdea eliminar el grupo %userGroup%?'
+          content: '¿Realmente desdea eliminar %subject%?'
     import:
       application:
         failed: 'No es posible importar la aplicación'

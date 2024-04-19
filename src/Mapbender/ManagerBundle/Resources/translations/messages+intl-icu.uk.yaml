@@ -206,7 +206,7 @@ mb:
           title: Підтвердити видалення
         delete_user_group:
           title: Підтвердити видалення
-          content: Дійсно видалити %userGroup%?
+          content: Дійсно видалити %subject%?
     import:
       application:
         failed: Застосунок не може бути імпортовано.
