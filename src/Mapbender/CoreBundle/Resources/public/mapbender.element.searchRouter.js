@@ -9,6 +9,8 @@
         mbMap: null,
         useDialog_: null,
         trHighlightClass: 'table-primary',
+        lastSortBy: null,
+        lastSortOrder: null,
 
         _create: function () {
             var self = this;
@@ -336,9 +338,15 @@
                     this._prepareResultTable(container);
                 }
                 if (currentRoute.results.hasOwnProperty('sortBy')) {
-                    const sortBy = currentRoute.results.sortBy;
-                    const sortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
-                    results = this.sortResults(results, sortBy, sortOrder);
+                    this.lastSortBy = (!this.lastSortBy) ? currentRoute.results.sortBy : this.lastSortBy;
+                    if (!this.lastSortOrder) {
+                        this.lastSortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
+                    }
+                    let th = $('th[data-column="' + this.lastSortBy + '"', this.element);
+                    th.attr('data-order', this.lastSortOrder);
+                    $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
+                    th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + this.lastSortOrder);
+                    results = this.sortResults(results, this.lastSortBy, this.lastSortOrder);
                 }
                 this._searchResultsTable(results);
                 if (results.length > 1 && currentRoute.results.hasOwnProperty('zoomToResultExtent') && currentRoute.results.zoomToResultExtent) {
@@ -622,12 +630,12 @@
         onTableHeadClick: function (e) {
             let th = $(e.currentTarget);
             const features = this.highlightLayer.getNativeLayer().getSource().getFeatures();
-            const sortBy = th.attr('data-column');
-            const sortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
-            th.attr('data-order', sortOrder);
+            this.lastSortBy = th.attr('data-column');
+            this.lastSortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
+            th.attr('data-order', this.lastSortOrder);
             $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
-            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + sortOrder);
-            const results = this.sortResults(features, sortBy, sortOrder);
+            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + this.lastSortOrder);
+            const results = this.sortResults(features, this.lastSortBy, this.lastSortOrder);
             this._searchResultsTable(results);
         },
 
