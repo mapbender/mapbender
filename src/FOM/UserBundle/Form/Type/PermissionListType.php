@@ -6,6 +6,8 @@ use FOM\UserBundle\Security\Permission\AbstractAttributeDomain;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -50,9 +52,14 @@ class PermissionListType extends AbstractType
             'prototype' => true,
             'data' => fn (Options $options) => array_values($this->loadPermissions($options)),
         ]);
-
         $resolver->setAllowedValues('mapped', [false]);
         $resolver->setAllowedTypes('attribute_domain', [AbstractAttributeDomain::class]);
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        parent::buildView($view, $form, $options);
+        $view->vars['attribute_domain'] = $options['attribute_domain'];
     }
 
     protected function loadPermissions(Options $options): array

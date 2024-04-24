@@ -105,13 +105,29 @@ $(function() {
     };
 
     $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
-        var $this = $(this);
-        var $cb = $('input[type="checkbox"]', this);
-        const isChecked = $cb.prop('checked');
-        $cb.prop('checked', !isChecked);
-        $this.toggleClass('active', !isChecked);
-        var scope = $this.closest('table');
-        setPermissionsRootState($this.attr("data-perm-type"), scope);
+        const $target = $(this);
+        const $cb = $('input[type="checkbox"]', this);
+        const $tableScope = $target.closest('table');
+        const $collection = $target.closest('.permission-collection');
+        const isHierarchical = $collection.attr('data-hierarchical');
+
+        if (isHierarchical) {
+            const permType = $target.attr('data-perm-type');
+            let permTypeFound = false;
+            $target.closest('tr').find('.tagbox[data-perm-type]').each(function(index, element) {
+                const $element = $(element);
+                $element.find('input[type="checkbox"]').prop('checked', !permTypeFound);
+                $element.toggleClass('active', !permTypeFound);
+                setPermissionsRootState($target.attr("data-perm-type"), $tableScope);
+                if (!permTypeFound) permTypeFound = $element.attr('data-perm-type') === permType;
+            });
+
+        } else {
+            const isChecked = $cb.prop('checked');
+            $cb.prop('checked', !isChecked);
+            $target.toggleClass('active', !isChecked);
+            setPermissionsRootState($target.attr("data-perm-type"), $tableScope);
+        }
     });
 
     $(document).on('click', '.permissionsTable thead .tagbox[data-perm-type]', function() {
@@ -168,7 +184,7 @@ $(function() {
     $(".permissionsTable").on("click", '.-fn-delete', function(e) {
         const $row = $(e.target).closest('tr');
         const $table = $row.closest('table');
-        const title = $row.attr('data-title');
+        const title = $row.find('.-js-subject-label').text();
 
         const translationKey = 'mb.manager.components.popup.delete_user_group.content';
         var content = '<div>' + Mapbender.trans(translationKey, {'subject': title}) + '</div>';
