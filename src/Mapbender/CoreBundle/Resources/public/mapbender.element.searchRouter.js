@@ -9,8 +9,6 @@
         mbMap: null,
         useDialog_: null,
         trHighlightClass: 'table-primary',
-        lastSortBy: null,
-        lastSortOrder: null,
 
         _create: function () {
             var self = this;
@@ -338,15 +336,15 @@
                     this._prepareResultTable(container);
                 }
                 if (currentRoute.results.hasOwnProperty('sortBy')) {
-                    this.lastSortBy = (!this.lastSortBy) ? currentRoute.results.sortBy : this.lastSortBy;
-                    if (!this.lastSortOrder) {
-                        this.lastSortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
+                    currentRoute.lastSortBy = (!currentRoute.hasOwnProperty('lastSortBy')) ? currentRoute.results.sortBy : currentRoute.lastSortBy;
+                    if (!currentRoute.hasOwnProperty('lastSortOrder')) {
+                        currentRoute.lastSortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
                     }
-                    let th = $('th[data-column="' + this.lastSortBy + '"', this.element);
-                    th.attr('data-order', this.lastSortOrder);
+                    let th = $('th[data-column="' + currentRoute.lastSortBy + '"', this.element);
+                    th.attr('data-order', currentRoute.lastSortOrder);
                     $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
-                    th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + this.lastSortOrder);
-                    results = this.sortResults(results, this.lastSortBy, this.lastSortOrder);
+                    th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + currentRoute.lastSortOrder);
+                    results = this.sortResults(results, currentRoute.lastSortBy, currentRoute.lastSortOrder);
                 }
                 this._searchResultsTable(results);
                 if (results.length > 1 && currentRoute.results.hasOwnProperty('zoomToResultExtent') && currentRoute.results.zoomToResultExtent) {
@@ -629,13 +627,14 @@
 
         onTableHeadClick: function (e) {
             let th = $(e.currentTarget);
+            let currentRoute = this.getCurrentRoute();
             const features = this.highlightLayer.getNativeLayer().getSource().getFeatures();
-            this.lastSortBy = th.attr('data-column');
-            this.lastSortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
-            th.attr('data-order', this.lastSortOrder);
+            currentRoute.lastSortBy = th.attr('data-column');
+            currentRoute.lastSortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
+            th.attr('data-order', currentRoute.lastSortOrder);
             $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
-            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + this.lastSortOrder);
-            const results = this.sortResults(features, this.lastSortBy, this.lastSortOrder);
+            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + currentRoute.lastSortOrder);
+            const results = this.sortResults(features, currentRoute.lastSortBy, currentRoute.lastSortOrder);
             this._searchResultsTable(results);
         },
 
