@@ -63,6 +63,7 @@ class PermissionType extends AbstractType
                         'class' => $class,
                         'data-permission-name' => $permission
                     ],
+                    'translation_prefix' => $attribute_domain->getTranslationPrefix(),
                 ])
             ;
             $i++;

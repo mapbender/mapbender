@@ -127,19 +127,6 @@ $(function() {
         }
     });
 
-    $(document).on('click', '.permissionsTable thead .tagbox[data-perm-type]', function() {
-        var $this = $(this);
-        var $table = $(this).closest('table');
-        var permType = $this.attr("data-perm-type");
-        var permElements = $("tbody .tagbox[data-perm-type=" + permType + "]", $table);
-        $this.removeClass('multi');
-        $this.toggleClass('active');
-        var state = $this.hasClass("active");
-        $('input[type="checkbox"]', permElements).prop('checked', state).each(function() {
-            $(this).parent().toggleClass("active", state);
-        });
-    });
-
     $(document).on('click', '.permission-collection .-fn-add-permission[data-url]', function(event) {
         const $addButton = $(event.target).closest('.-fn-add-permission');
         const url = $addButton.attr('data-url');
@@ -199,10 +186,19 @@ $(function() {
         });
 
     }).each(function (index, element) {
-        if ($(element).closest('.permission-collection').attr("data-hierarchical")) {
-            initHierarchicalPermissions($(element));
+        const $table = $(element);
+        if ($table.closest('.permission-collection').attr("data-hierarchical")) {
+            initHierarchicalPermissions($table);
         }
+
+        const popoverTriggerList = $table.find('[data-bs-toggle="popover"]');
+        [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+            html: true,
+            placement: 'left',
+        }));
     });
+
+
 
     // Element security
     function initElementSecurity(response, url) {

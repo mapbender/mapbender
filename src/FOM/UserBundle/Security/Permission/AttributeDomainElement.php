@@ -49,4 +49,10 @@ class AttributeDomainElement extends AbstractAttributeDomain
         $permission->setElement($subject);
     }
 
+
+    function getTranslationPrefix(): string
+    {
+        return "fom.security.attribute.element";
+    }
+
 }

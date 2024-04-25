@@ -27,6 +27,13 @@ abstract class AbstractAttributeDomain
     abstract function getPermissions(): array;
 
     /**
+     * get the prefix for translation strings for the permissions themselves.
+     * e.g. if the prefix is fom.security, the permission "view" will be translated with "fom.security.view"
+     * a help string is additionally suffixed with "_help", e.g. "fom.security.view_help"
+     */
+    abstract function getTranslationPrefix(): string;
+
+    /**
      * determines whether the permissions available in this attribute domain are hierarchical.
      * hierarchical permissions imply, that a weaker permission is automatically granted if a stronger one is
      * (e.g. a user that can edit entries can also view them). Hierarchical permissions result in fewer

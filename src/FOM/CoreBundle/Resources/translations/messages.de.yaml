@@ -11,6 +11,37 @@ fom:
     fields:
       no_user_group_defined: 'Kein/e Benutzer/Gruppe ist definiert.'
   security:
-      domain:
-          public: 'Öffentlicher Zugriff'
-          registered: 'Alle angemeldeten Nutzer'
+    domain:
+      public: 'Öffentlicher Zugriff'
+      registered: 'Alle angemeldeten Nutzer'
+    attribute:
+      installation:
+        create_applications: "create_applications"
+        view_all_applications: "view_all_applications"
+        edit_all_applications: "edit_all_applications"
+        delete_all_applications: "delete_all_applications"
+        own_all_applications: "own_all_applications"
+        view_sources: "view_sources"
+        create_sources: "create_sources"
+        refresh_sources: "refresh_sources"
+        edit_free_instances: "edit_free_instances"
+        delete_sources: "delete_sources"
+        manage_permissions: "manage_permissions"
+        view_users: "view_users"
+        create_users: "create_users"
+        edit_users: "edit_users"
+        delete_users: "delete_users"
+        view_groups: "view_groups"
+        create_groups: "create_groups"
+        edit_groups: "edit_groups"
+        delete_groups: "delete_groups"
+      application:
+        view: "Anzeige"
+        view_help: "Berechtigt den Nutzer/die Gruppe die Anwendung im Frontend anzuschauen und zu benutzen, inklusiver aller Element für die keine gesonderten Rechte definiert sind"
+        edit: "Bearbeiten"
+        edit_help: "Erlaubt das Bearbeiten der Anwendung exklusive des Tabs 'Sicherheit'. Für die Bearbeitung von Layersets muss das entsprechende installationsweite Recht erteilt sein."
+        delete: "Löschen"
+        manage_permissions: "Rechteverwaltung"
+        manage_permissions_help: "Erlaubt das Verwalten von Rechten für diese Anwendung (die aktuelle Seite)"
+      element:
+        view: "Anzeige"

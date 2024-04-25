@@ -72,4 +72,9 @@ class AttributeDomainApplication extends AbstractAttributeDomain
         parent::populatePermission($permission, $subject);
         $permission->setApplication($subject);
     }
+
+    function getTranslationPrefix(): string
+    {
+        return "fom.security.attribute.application";
+    }
 }

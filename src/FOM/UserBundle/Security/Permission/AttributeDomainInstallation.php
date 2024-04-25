@@ -78,4 +78,9 @@ class AttributeDomainInstallation extends AbstractAttributeDomain
         // TODO
         return parent::getCssClassForPermission($permission);
     }
+
+    function getTranslationPrefix(): string
+    {
+        return "fom.security.attribute.installation";
+    }
 }
