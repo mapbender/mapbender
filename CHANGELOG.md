@@ -45,6 +45,7 @@ Other:
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
 * Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558))
+* Further button customisation and style changes
 
 
 ## v3.3.5
