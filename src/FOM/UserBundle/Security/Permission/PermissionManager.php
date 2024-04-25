@@ -127,4 +127,9 @@ class PermissionManager
         $this->doctrineEM->flush();
     }
 
+    public function grant(mixed $attribute, mixed $subject, string $permissionName, bool $isGranted)
+    {
+        // TODO: create this
+    }
+
 }

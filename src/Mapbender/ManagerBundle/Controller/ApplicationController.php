@@ -8,6 +8,7 @@ use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
 use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
 use FOM\UserBundle\Security\Permission\PermissionManager;
+use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -214,6 +215,9 @@ class ApplicationController extends ApplicationControllerBase
         $requestedState = $request->request->get("enabled") === "true";
         $application->setPublished($requestedState);
         $em->flush();
+
+        // TODO: remove upper part after implementing this
+        $this->permissionManager->grant($application, SubjectDomainPublic::SLUG, AttributeDomainApplication::PERMISSION_VIEW, $requestedState);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

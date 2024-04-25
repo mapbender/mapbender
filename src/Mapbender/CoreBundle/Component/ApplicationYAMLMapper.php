@@ -112,9 +112,6 @@ class ApplicationYAMLMapper
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
         ;
-        if (isset($definition['published'])) {
-            $application->setPublished($definition['published']);
-        }
         if (!empty($definition['screenshot'])) {
             $application->setScreenshot($definition['screenshot']);
         }
@@ -147,7 +144,7 @@ class ApplicationYAMLMapper
         }
 
         $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
-        if ($application->isPublished() && !$application->getYamlRoles()) {
+        if (isset($definition['published']) && !$application->getYamlRoles()) {
             $application->setYamlRoles(array(
                'IS_AUTHENTICATED_ANONYMOUSLY',
             ));
