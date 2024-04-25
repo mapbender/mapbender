@@ -3,10 +3,10 @@ fom:
     components:
       popup:
         delete_user_group:
-          title: 'Confirme apagar'
-          content: 'Realmente eliminar %userGroup%?'
+          title: 'Confirmar remoção'
+          content: 'Tem certeza que deseja excluir o grupo %userGroup%?'
           btn:
             cancel: Cancelar
-            ok: OK
+            ok: Salvar
     fields:
-      no_user_group_defined: 'Nenhum usuário o grupo definido.'
+      no_user_group_defined: 'Nenhum usuário ou grupo está definido.'
