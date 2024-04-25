@@ -335,7 +335,7 @@
                 if ($('table', container).length === 0) {
                     this._prepareResultTable(container);
                 }
-                if (currentRoute.results.hasOwnProperty('sortBy')) {
+                if (currentRoute.results.hasOwnProperty('sortBy') || currentRoute.hasOwnProperty('lastSortBy')) {
                     currentRoute.lastSortBy = (!currentRoute.hasOwnProperty('lastSortBy')) ? currentRoute.results.sortBy : currentRoute.lastSortBy;
                     if (!currentRoute.hasOwnProperty('lastSortOrder')) {
                         currentRoute.lastSortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
