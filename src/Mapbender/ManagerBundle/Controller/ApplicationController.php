@@ -502,7 +502,8 @@ class ApplicationController extends ApplicationControllerBase
                 'attribute' => $application,
                 'entry_options' => [
                     'attribute_domain' => $attributeDomain,
-                ]
+                ],
+                'show_public_access' => true,
             ]);
         }
         return $form;

@@ -19,6 +19,7 @@ class PermissionManager
         private array                  $attributeDomains,
         /** @var AbstractSubjectDomain[] */
         private array                  $subjectDomains,
+        private ?SubjectDomainPublic   $publicAccessDomain,
         private EntityManagerInterface $doctrineEM,
     )
     {
@@ -28,7 +29,12 @@ class PermissionManager
     /**
      * @return Permission[]
      */
-    public function findPermissions(AbstractAttributeDomain $attribute_domain, mixed $attribute, bool $group = true): array
+    public function findPermissions(
+        AbstractAttributeDomain $attribute_domain,
+        mixed                   $attribute,
+        bool                    $group = true,
+        bool                    $alwaysAddPublicAccess = false
+    ): array
     {
         $repository = $this->doctrineEM->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
@@ -43,6 +49,15 @@ class PermissionManager
             $subjectJson = $permission->getSubjectJson();
             if (!isset($permissionsGrouped[$subjectJson])) $permissionsGrouped[$subjectJson] = [];
             $permissionsGrouped[$subjectJson][] = $permission;
+        }
+
+        // for e.g. applications the public access right should always be shown, whether a permission is set or not
+        if ($alwaysAddPublicAccess && !$this->publicAccessDomain !== null
+            && !array_key_exists($this->publicAccessDomain->getSubjectJson(), $permissionsGrouped)) {
+            // add a dummy permission that only has the subject domain set
+            $tempPermPublicAccess = new Permission();
+            $tempPermPublicAccess->setSubjectDomain($this->publicAccessDomain->getSlug());
+            $permissionsGrouped = [$this->publicAccessDomain->getSubjectJson() => [$tempPermPublicAccess]] + $permissionsGrouped;
         }
 
         return $permissionsGrouped;
@@ -91,7 +106,8 @@ class PermissionManager
         $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
         $this->doctrineEM->getRepository(Permission::class)->createQueryBuilder('p')
             ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)
-            ->getQuery()->execute();
+            ->getQuery()->execute()
+        ;
 
         foreach ($permissionData as $newPermission) {
             $json = json_decode($newPermission['subjectJson'], true);

@@ -44,4 +44,14 @@ class SubjectDomainPublic extends AbstractSubjectDomain
             $this->getIconClass()
         )];
     }
+
+    public function getSubjectJson(): string
+    {
+        return json_encode([
+            'domain' => self::SLUG,
+            'user_id' => null,
+            'group_id' => null,
+            'subject' => null,
+        ]);
+    }
 }

@@ -42,6 +42,7 @@ class PermissionListType extends AbstractType
             'attribute_domain' => null,
             'attribute' => null,
             'permission_list' => null,
+            'show_public_access' => false,
             // Can never be mapped. Retrieval and storage goes through PermissionManager.
             'mapped' => false,
             'entry_options' => ['attribute_domain' => null],
@@ -64,7 +65,11 @@ class PermissionListType extends AbstractType
 
     protected function loadPermissions(Options $options): array
     {
-        return $this->permissionManager->findPermissions($options['attribute_domain'], $options['attribute']);
+        return $this->permissionManager->findPermissions(
+            $options['attribute_domain'],
+            $options['attribute'],
+            alwaysAddPublicAccess: $options['show_public_access'],
+        );
     }
 
 }
