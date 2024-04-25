@@ -29,7 +29,7 @@ Features:
 * [LayerTree] When activating a layer, all its parent layers are also activated ([PR#1544](https://github.com/mapbender/mapbender/pull/1544))
 * [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
 * [Map] visiblelayers parameter now supports also rootlayer and layer name (not only sourceinstanceid, instanceid) ([PR#1565](https://github.com/mapbender/mapbender/pull/1565))
-
+* [SearchRouter] Sorting for searchresults table ([PR#1572](https://github.com/mapbender/mapbender/pull/1572))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
