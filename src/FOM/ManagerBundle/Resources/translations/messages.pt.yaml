@@ -1,8 +1,8 @@
 fom:
   core:
     manager:
-      logged_as: 'Conectado como'
+      logged_as: 'Logado como'
       you_account: 'Sua conta'
       btn:
-        logout: Logout
-        login: Login
+        logout: Sair
+        login: Entrar
