@@ -21,7 +21,7 @@ fom:
       email_subject: 'Seu registo'
       send:
         title: Registro
-        account_created: 'A sua conta foi criada com suucesso. Um E-mail com o seu código de ativação e link foi enviado para o endereço correio eletrônico fornecido.'
+        account_created: 'Sua conta foi criada com sucesso. Um E-mail com o seu código de ativação e link foi enviado para o endereço eletrônico fornecido.'
         back_to_login: 'Voltar à página de login'
       email_body_text: 'Olá %user_username%, você criou uma conta recentemente. Para completar o seu registro, por favor clique no link no seu navegador %url%.'
     group:
