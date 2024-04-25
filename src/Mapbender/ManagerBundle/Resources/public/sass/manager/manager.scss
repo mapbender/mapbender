@@ -187,7 +187,7 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       background-color:#c1c1c1;
     }
 
-    &.active {
+    &.active, &.active-inherited {
       color:white;
       &.success {
         background-color: #8DCA35;
@@ -198,6 +198,9 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       &.danger {
         background-color: #FF702A;
       }
+    }
+    &.active-inherited {
+        opacity: 0.6;
     }
   }
 }

@@ -51,15 +51,18 @@ class PermissionType extends AbstractType
         $builder->add('title', HiddenType::class, $hiddenOptions);
         $builder->add('subjectJson', HiddenType::class, $hiddenOptions);
 
-
         /** @var AbstractAttributeDomain $attribute_domain */
         $attribute_domain = $options['attribute_domain'];
         $i = 0;
         foreach ($attribute_domain->getPermissions() as $permission) {
+            $class = $attribute_domain->getCssClassForPermission($permission);
             $builder
                 ->add('permission_' . $i, TagboxType::class, [
                     'property_path' => '[permissions][' . $i . ']',
-                    'attr' => ['class' => $attribute_domain->getCssClassForPermission($permission), 'data-permission-name' => $permission],
+                    'attr' => [
+                        'class' => $class,
+                        'data-permission-name' => $permission
+                    ],
                 ])
             ;
             $i++;

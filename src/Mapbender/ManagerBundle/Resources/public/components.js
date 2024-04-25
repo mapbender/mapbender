@@ -15,7 +15,6 @@ $(function() {
     $('#listFilterApplications, #listFilterGroups, #listFilterUsers').on("click", '.-fn-delete[data-url]', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
-            // @todo: bring your own translation string
             title: "mb.manager.components.popup.delete_element.title",
             confirm: "mb.actions.delete",
             cancel: "mb.actions.cancel"
@@ -60,14 +59,19 @@ $(function() {
     });
 
     // init permissions table ----------------------------------------------------------------
-    // set permission root state
-    function setPermissionsRootState(className, scope){
-        var root         = $('thead .tagbox[data-perm-type="' + className + '"]', scope);
-        var permBody     = $("tbody", scope);
-        var rowCount     = permBody.find("tr").length;
-        var checkedCount = permBody.find(".tagbox." + className + ' input[type="checkbox"]:checked').length;
-        root.toggleClass("active", !!rowCount && checkedCount === rowCount);
-        root.toggleClass("multi", !!(rowCount && checkedCount) && checkedCount < rowCount);
+    function initHierarchicalPermissions($table) {
+        $table.find("tbody tr").each(function (index, tr) {
+            const tagboxes = $(tr).find(".tagbox[data-perm-type]").get().reverse();
+            let hasActivePermission = false;
+            for (let tagbox of tagboxes) {
+                const $tagbox = $(tagbox);
+                if ($tagbox.hasClass("active")) {
+                    hasActivePermission = true;
+                } else if (hasActivePermission) {
+                    $tagbox.addClass("active-inherited");
+                }
+            }
+        });
     }
     function appendPermissionSubjects($targetTable, $subjectList) {
         const $tbody = $("tbody", $targetTable);
@@ -95,38 +99,31 @@ $(function() {
         $targetTable.closest('.permission-collection').find('.-js-table-empty').addClass('hidden');
     }
 
-    var initPermissionRoot = function() {
-        var $table = $(this);
-        var $head = $('thead', this);
-
-        $head.find(".tagbox").each(function() {
-            setPermissionsRootState($(this).attr("data-perm-type"), $table);
-        });
-    };
-
     $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
         const $target = $(this);
         const $cb = $('input[type="checkbox"]', this);
-        const $tableScope = $target.closest('table');
         const $collection = $target.closest('.permission-collection');
         const isHierarchical = $collection.attr('data-hierarchical');
 
         if (isHierarchical) {
             const permType = $target.attr('data-perm-type');
-            let permTypeFound = false;
+            const wasActive = $target.hasClass('active');
+            let permTypeFound = wasActive;
+
             $target.closest('tr').find('.tagbox[data-perm-type]').each(function(index, element) {
                 const $element = $(element);
-                $element.find('input[type="checkbox"]').prop('checked', !permTypeFound);
-                $element.toggleClass('active', !permTypeFound);
-                setPermissionsRootState($target.attr("data-perm-type"), $tableScope);
-                if (!permTypeFound) permTypeFound = $element.attr('data-perm-type') === permType;
+                const isCurrentPermType = $element.attr('data-perm-type') === permType;
+
+                $element.find('input[type="checkbox"]').prop('checked', isCurrentPermType && !wasActive);
+                $element.toggleClass('active', isCurrentPermType && !wasActive);
+                $element.toggleClass('active-inherited', !permTypeFound && !isCurrentPermType);
+                if (!permTypeFound && !wasActive) permTypeFound = isCurrentPermType;
             });
 
         } else {
-            const isChecked = $cb.prop('checked');
-            $cb.prop('checked', !isChecked);
-            $target.toggleClass('active', !isChecked);
-            setPermissionsRootState($target.attr("data-perm-type"), $tableScope);
+            const wasChecked = $cb.prop('checked');
+            $cb.prop('checked', !wasChecked);
+            $target.toggleClass('active', !wasChecked);
         }
     });
 
@@ -201,7 +198,11 @@ $(function() {
             }
         });
 
-    }).each(initPermissionRoot);
+    }).each(function (index, element) {
+        if ($(element).closest('.permission-collection').attr("data-hierarchical")) {
+            initHierarchicalPermissions($(element));
+        }
+    });
 
     // Element security
     function initElementSecurity(response, url) {
@@ -287,7 +288,11 @@ $(function() {
             $('.modal-body', $modal).append($wrapper);
         };
         $permissionsTable = $('.permissionsTable', $initialView);
-        $permissionsTable.each(initPermissionRoot);
+        $permissionsTable.each(function(index, element) {
+            if ($(element).closest('.permission-collection').attr("data-hierarchical")) {
+                initHierarchicalPermissions($(element));
+            }
+        });
 
         $('.-fn-add-permission', $initialView).on('click', function(e) {
             var url = $(this).attr('data-url');
