@@ -171,15 +171,23 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 }
 
 .permissionsTable{
+  tbody .tagbox {
+    cursor: pointer;
+  }
+
   .tagbox {
     display: inline-block;
     font-size: 85%;
-    cursor: pointer;
     width: auto;
     padding: 3px .5em;
     margin: 0 .25em;
     user-select: none;
     border-radius: 5px;
+
+    i {
+      cursor: pointer;
+    }
+
     input {
       display: none;
     }
