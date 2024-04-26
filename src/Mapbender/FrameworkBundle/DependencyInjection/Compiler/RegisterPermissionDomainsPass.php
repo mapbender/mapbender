@@ -18,7 +18,7 @@ class RegisterPermissionDomainsPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container)
     {
-        $attributeDomains = $this->findAndSortTaggedServices('fom.security.attribute_domain', $container);
+        $attributeDomains = $this->findAndSortTaggedServices('fom.security.resource_domain', $container);
         $subjectDomains = $this->findAndSortTaggedServices('fom.security.subject_domain', $container);
         $container->getDefinition($this->indexId)
             ->replaceArgument(0, $attributeDomains)

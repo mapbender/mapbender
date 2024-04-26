@@ -4,7 +4,7 @@ namespace FOM\UserBundle\Form\DataTransformer;
 
 use FOM\UserBundle\Component\Ldap;
 use FOM\UserBundle\Entity\Permission;
-use FOM\UserBundle\Security\Permission\AbstractAttributeDomain;
+use FOM\UserBundle\Security\Permission\AbstractResourceDomain;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Security\Acl\Domain\Entry;
@@ -14,7 +14,7 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 class PermissionDataTransformer implements DataTransformerInterface
 {
-    public function __construct(private AbstractAttributeDomain $attributeDomain, private PermissionManager $permissionManager)
+    public function __construct(private AbstractResourceDomain $attributeDomain, private PermissionManager $permissionManager)
     {
     }
 
@@ -24,9 +24,9 @@ class PermissionDataTransformer implements DataTransformerInterface
         if (empty($value)) return [];
         $permissionEntity = $value[0];
 
-        $allPermissions = $this->attributeDomain->getPermissions();
+        $allPermissions = $this->attributeDomain->getActions();
         $subjectDomain = $this->permissionManager->findSubjectDomainFor($permissionEntity);
-        $permissionList = array_map(fn(Permission $permission) => $permission->getPermission(), $value);
+        $permissionList = array_map(fn(Permission $permission) => $permission->getAction(), $value);
         $permissionMap = array_map(fn(string $permission) => in_array($permission, $permissionList), $allPermissions);
         return array(
             'permissions' => $permissionMap,

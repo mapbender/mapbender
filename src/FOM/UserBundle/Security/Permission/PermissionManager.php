@@ -6,17 +6,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * Permission utility service; registered as 'fom.security.permission_manager'
  *
  * This manager is available as a service and can create/read/update/delete permissions.
  */
-class PermissionManager
+class PermissionManager extends Voter
 {
     public function __construct(
-        /** @var AbstractAttributeDomain[] */
-        private array                  $attributeDomains,
+        /** @var AbstractResourceDomain[] */
+        private array                  $resourceDomains,
         /** @var AbstractSubjectDomain[] */
         private array                  $subjectDomains,
         private ?SubjectDomainPublic   $publicAccessDomain,
@@ -25,20 +27,83 @@ class PermissionManager
     {
     }
 
+    private array $cache = [];
+
+    /**
+     * @param string $attribute the action
+     * @param mixed $subject the resource
+     * @return bool
+     */
+    protected function supports(string $attribute, $subject): bool
+    {
+        return $this->getResourceDomain($attribute, $subject) !== null;
+    }
+
+    /**
+     * @param string $attribute the action
+     * @param mixed $subject the resource
+     * @param TokenInterface $token a wrapper for the logged-in user
+     * @return bool
+     */
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    {
+        $permissions = $this->getPermissionsForToken($token);
+        if (empty($permissions)) return false;
+
+        $resourceDomain = $this->getResourceDomain($attribute, $subject);
+        foreach ($permissions as $permission) {
+            if ($resourceDomain->matchesPermission($permission, $attribute, $subject)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @return array{permission: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int}
+     */
+    protected function getPermissionsForToken(TokenInterface $token): array
+    {
+        $userIdentifier = $token->getUser()->getUserIdentifier();
+        if (in_array($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
+
+        $subjectWhereComponents = [];
+        $variables = [];
+        foreach ($this->subjectDomains as $subjectDomain) {
+            $wrapper = $subjectDomain->buildWhereClause($token->getUser());
+            if ($wrapper === null) continue;
+            $subjectWhereComponents[] = '(' . $wrapper->whereClause . ')';
+            $variables = array_merge($variables, $wrapper->variables);
+        };
+
+        $sql = 'SELECT p.action, p.resource_domain, p.resource, p.element_id, p.application_id FROM fom_permission p';
+        if (count($subjectWhereComponents) > 0) $sql .= ' WHERE (' . implode(' OR ', $subjectWhereComponents) . ")";
+        $permissions = $this->doctrineEM->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
+        $this->cache[$userIdentifier] = $permissions;
+        return $permissions;
+    }
+
+    protected function getResourceDomain(string $action, mixed $resource): ?AbstractResourceDomain
+    {
+        foreach ($this->resourceDomains as $resourceDomain) {
+            if ($resourceDomain->supports($resource, $action)) return $resourceDomain;
+        }
+        return null;
+    }
+
 
     /**
      * @return Permission[]
      */
     public function findPermissions(
-        AbstractAttributeDomain $attribute_domain,
-        mixed                   $attribute,
-        bool                    $group = true,
-        bool                    $alwaysAddPublicAccess = false
+        AbstractResourceDomain $resourceDomain,
+        mixed                  $resource,
+        bool                   $group = true,
+        bool                   $alwaysAddPublicAccess = false
     ): array
     {
         $repository = $this->doctrineEM->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
-        $attribute_domain->buildWhereClause($query, $attribute);
+        $resourceDomain->buildWhereClause($query, $resource);
         /** @var Permission[] $permissionsUngrouped */
         $permissionsUngrouped = $query->getQuery()->getResult();
 
@@ -63,12 +128,12 @@ class PermissionManager
         return $permissionsGrouped;
     }
 
-    public function findAttributeDomainFor(mixed $attribute): AbstractAttributeDomain
+    public function findResourceDomainFor(mixed $resource): AbstractResourceDomain
     {
-        foreach ($this->attributeDomains as $attributeDomain) {
-            if ($attributeDomain->supports($attribute)) return $attributeDomain;
+        foreach ($this->resourceDomains as $resourceDomain) {
+            if ($resourceDomain->supports($resource)) return $resourceDomain;
         }
-        throw new \InvalidArgumentException("No attribute domain registered that can handle attribute '$attribute' (type " . $attribute::class . ")");
+        throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
     }
 
     public function findSubjectDomainFor(Permission $permission): AbstractSubjectDomain
@@ -92,17 +157,17 @@ class PermissionManager
     }
 
     /**
-     * @param mixed $subject
+     * @param mixed $resource
      * @param array{subjectJson: string, permissions: bool[]} $permissionData
      * @return void
      */
-    public function savePermissions(mixed $subject, array $permissionData): void
+    public function savePermissions(mixed $resource, array $permissionData): void
     {
-        $attributeDomain = $this->findAttributeDomainFor($subject);
-        $availablePermissions = $attributeDomain->getPermissions();
+        $resourceDomain = $this->findResourceDomainFor($resource);
+        $availableActions = $resourceDomain->getActions();
 
         // TODO: smarter method than deleting old permissions and adding new
-        $oldPermissions = $this->findPermissions($attributeDomain, $subject, false);
+        $oldPermissions = $this->findPermissions($resourceDomain, $resource, false);
         $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
         $this->doctrineEM->getRepository(Permission::class)->createQueryBuilder('p')
             ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)
@@ -111,15 +176,15 @@ class PermissionManager
 
         foreach ($permissionData as $newPermission) {
             $json = json_decode($newPermission['subjectJson'], true);
-            for ($i = 0; $i < min(count($newPermission['permissions']), count($availablePermissions)); $i++) {
+            for ($i = 0; $i < min(count($newPermission['permissions']), count($availableActions)); $i++) {
                 if ($newPermission['permissions'][$i] === true) {
                     $permissionEntity = new Permission();
-                    $permissionEntity->setPermission($availablePermissions[$i]);
+                    $permissionEntity->setAction($availableActions[$i]);
                     $permissionEntity->setGroup($json["group_id"] ? $this->doctrineEM->getReference(Group::class, $json["group_id"]) : null);
                     $permissionEntity->setUser($json["user_id"] ? $this->doctrineEM->getReference(User::class, $json["user_id"]) : null);
                     $permissionEntity->setSubject($json["subject"]);
                     $permissionEntity->setSubjectDomain($json["domain"]);
-                    $attributeDomain->populatePermission($permissionEntity, $subject);
+                    $resourceDomain->populatePermission($permissionEntity, $resource);
                     $this->doctrineEM->persist($permissionEntity);
                 }
             }
@@ -127,7 +192,7 @@ class PermissionManager
         $this->doctrineEM->flush();
     }
 
-    public function grant(mixed $attribute, mixed $subject, string $permissionName, bool $isGranted)
+    public function grant(mixed $subject, mixed $resource, string $action, bool $isGranted = true)
     {
         // TODO: create this
     }

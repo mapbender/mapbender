@@ -34,8 +34,6 @@ class MapbenderFrameworkBundle extends Bundle
         // Forward available icon packages to icon index
         /** @see \Mapbender\FrameworkBundle\Component\IconIndex */
         $container->addCompilerPass(new RegisterIconPackagesPass('mapbender.icon_index'));
-        /** @see \FOM\UserBundle\Security\Permission\PermissionVoter */
-        $container->addCompilerPass(new RegisterPermissionDomainsPass('fom.security.permission_voter'));
         /** @see \FOM\UserBundle\Security\Permission\PermissionManager */
         $container->addCompilerPass(new RegisterPermissionDomainsPass('fom.security.permission_manager'));
     }

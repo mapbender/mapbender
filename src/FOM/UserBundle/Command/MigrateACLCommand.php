@@ -8,9 +8,9 @@ use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
-use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
-use FOM\UserBundle\Security\Permission\AttributeDomainElement;
-use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use FOM\UserBundle\Security\Permission\SubjectDomainGroup;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
@@ -99,64 +99,64 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
     {
         if ($entry["class_type"] === Group::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainInstallation::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_VIEW_GROUPS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_GROUPS);
             }
             if (($mask & MaskBuilder::MASK_CREATE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_CREATE_GROUPS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_GROUPS);
             }
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_EDIT_GROUPS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_GROUPS);
             }
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_DELETE_GROUPS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_GROUPS);
             }
             return;
         }
 
         if ($entry["class_type"] === User::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainInstallation::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_VIEW_USERS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_USERS);
             }
             if (($mask & MaskBuilder::MASK_CREATE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_CREATE_USERS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_USERS);
             }
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_EDIT_USERS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_USERS);
             }
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_DELETE_USERS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_USERS);
             }
             return;
         }
 
         if ($entry["class_type"] === Application::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainInstallation::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_VIEW_ALL_APPLICATIONS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_ALL_APPLICATIONS);
             }
             if (($mask & MaskBuilder::MASK_CREATE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_CREATE_APPLICATIONS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
             }
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_EDIT_ALL_APPLICATIONS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
             }
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_DELETE_ALL_APPLICATIONS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_ALL_APPLICATIONS);
             }
             if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_OWN_ALL_APPLICATIONS);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_OWN_ALL_APPLICATIONS);
             }
             return;
         }
 
         if ($entry["class_type"] === Application::class && $entry["object_identifier"] !== null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainApplication::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainApplication::SLUG);
             $applicationId = $entry["object_identifier"];
             if (!in_array($applicationId, $this->allApplicationIds)) {
                 echo "WARNING: application id $applicationId not found for entry " . $entry["id"] . "\n";
@@ -165,23 +165,23 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             $application = $this->doctrine->getReference(Application::class, $applicationId);
             $newEntry->setApplication($application);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainApplication::PERMISSION_VIEW);
+                $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_VIEW);
             }
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainApplication::PERMISSION_EDIT);
+                $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_EDIT);
             }
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainApplication::PERMISSION_DELETE);
+                $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_DELETE);
             }
             if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainApplication::PERMISSION_MANAGE_PERMISSIONS);
+                $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS);
             }
             return;
         }
 
         if ($entry["class_type"] === Element::class && $entry["object_identifier"] !== null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainElement::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainElement::SLUG);
             $elementId = $entry["object_identifier"];
             if (!in_array($elementId, $this->allElementIds)) {
                 echo "WARNING: element id $elementId not found for entry " . $entry["id"] . "\n";
@@ -190,35 +190,35 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             $element = $this->doctrine->getReference(Element::class, $elementId);
             $newEntry->setElement($element);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainElement::PERMISSION_VIEW);
+                $this->saveEntry($newEntry, ResourceDomainElement::ACTION_VIEW);
             }
             return;
         }
 
         if ($entry["class_type"] === Source::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainInstallation::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_VIEW_SOURCES);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_SOURCES);
             }
             if (($mask & MaskBuilder::MASK_CREATE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_CREATE_SOURCES);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_SOURCES);
             }
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_REFRESH_SOURCES);
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_EDIT_FREE_INSTANCES);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
             }
             if (($mask & MaskBuilder::MASK_DELETE) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_DELETE_SOURCES);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_SOURCES);
             }
             return;
         }
 
         if ($entry["class_type"] === "Symfony\Component\Security\Acl\Domain\Acl" && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
-            $newEntry->setAttributeDomain(AttributeDomainInstallation::SLUG);
+            $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & MaskBuilder::MASK_EDIT) > 0) {
-                $this->saveEntry($newEntry, AttributeDomainInstallation::PERMISSION_MANAGE_PERMISSION);
+                $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
             }
             return;
         }
@@ -280,7 +280,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         // ignore rights for superuser, they can do everything anyway
         if ($newEntry->getSubjectDomain() === SubjectDomainUser::SLUG && $newEntry->getUser()?->getId() === 1) return;
         $entry = clone $newEntry;
-        $entry->setPermission($permission);
+        $entry->setAction($permission);
         $this->doctrine->persist($entry);
     }
 }

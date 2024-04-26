@@ -6,7 +6,7 @@
         <parameter key="fom.identities.provider.class">FOM\UserBundle\Component\FOMIdentitiesProvider</parameter>
         <parameter key="fom.user_helper.service.class">FOM\UserBundle\Component\UserHelperService</parameter>
         <parameter key="fom.ldap_client.class">FOM\UserBundle\Component\Ldap\Client</parameter>
-        <parameter key="fom.security.permission_voter.class">FOM\UserBundle\Security\Permission\PermissionVoter</parameter>
+        <parameter key="fom.security.permission_manager.class">FOM\UserBundle\Security\Permission\PermissionManager</parameter>
         <parameter key="fom.ldap_user_identities_provider.class">FOM\UserBundle\Component\Ldap\UserProvider</parameter>
         <parameter key="fom.acl_assignment.show_users">true</parameter>
         <parameter key="fom.acl_assignment.show_groups">true</parameter>
@@ -82,9 +82,12 @@
         </service>
 
         <service id="fom.security.permission_manager"
-                 class="FOM\UserBundle\Security\Permission\PermissionManager">
+                 class="%fom.security.permission_manager.class%"
+                 lazy="true">
+            <!-- default class: FOM\UserBundle\Security\Permission\PermissionManager -->
+
             <!-- initialized by compiler pass -->
-            <!-- will contain all services tagged with "fom.security.attribute_domain", sorted by priority -->
+            <!-- will contain all services tagged with "fom.security.resource_domain", sorted by priority -->
             <argument type="collection" />
             <!-- will contain all services tagged with "fom.security.subject_domain", sorted by priority -->
             <argument type="collection" />
@@ -102,30 +105,17 @@
             <tag name="form.type" />
         </service>
 
-        <service id="fom.security.permission_voter"
-                 class="%fom.security.permission_voter.class%"
-                 lazy="true">
-            <!-- default class: FOM\UserBundle\Security\Permission\PermissionVoter -->
-            <tag name="security.voter" priority="255" />
-            <!-- initialized by compiler pass -->
-            <!-- will contain all services tagged with "fom.security.attribute_domain", sorted by priority -->
-            <argument type="collection" />
-            <!-- will contain all services tagged with "fom.security.subject_domain", sorted by priority -->
-            <argument type="collection" />
-            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        <service id="fom.security.resource_domain.application"
+                 class="FOM\UserBundle\Security\Permission\ResourceDomainApplication">
+            <tag name="fom.security.resource_domain" priority="1" />
         </service>
-
-        <service id="fom.security.attribute_domain.application"
-                 class="FOM\UserBundle\Security\Permission\AttributeDomainApplication">
-            <tag name="fom.security.attribute_domain" priority="1" />
+        <service id="fom.security.resource_domain.element"
+                 class="FOM\UserBundle\Security\Permission\ResourceDomainElement">
+            <tag name="fom.security.resource_domain" priority="1" />
         </service>
-        <service id="fom.security.attribute_domain.element"
-                 class="FOM\UserBundle\Security\Permission\AttributeDomainElement">
-            <tag name="fom.security.attribute_domain" priority="1" />
-        </service>
-        <service id="fom.security.attribute_domain.installation"
-                 class="FOM\UserBundle\Security\Permission\AttributeDomainInstallation">
-            <tag name="fom.security.attribute_domain" priority="1" />
+        <service id="fom.security.resource_domain.installation"
+                 class="FOM\UserBundle\Security\Permission\ResourceDomainInstallation">
+            <tag name="fom.security.resource_domain" priority="1" />
         </service>
 
         <service id="fom.security.subject_domain.public"

@@ -3,9 +3,9 @@
 namespace FOM\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
-use FOM\UserBundle\Security\Permission\AttributeDomainElement;
-use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use FOM\UserBundle\Security\Permission\SubjectDomainGroup;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
@@ -36,7 +36,7 @@ class Permission implements SubjectInterface
      * @ORM\Column(type="string", name="subject_domain")
      * @Assert\NotBlank()
      * stores the type of subject this right is granted to.
-     * default mapbender supports (refer to SUBJECT_DOMAIN_* constants)
+     * default mapbender supports:
      * - public: Right granted to everyone, logged in or not, @see SubjectDomainPublic
      * - registered: Right granted to every logged in user, @see SubjectDomainRegistered
      * - group: Right granted to a specific group, @see SubjectDomainGroup
@@ -68,45 +68,45 @@ class Permission implements SubjectInterface
     protected ?string $subject = null;
 
     /**
-     * @ORM\Column(type="string", name="attribute_domain")
+     * @ORM\Column(type="string", name="resource_domain")
      * @Assert\NotBlank()
      * stores the attribute domain of this right.
      * default mapbender supports
-     * - installation: Installation-wide validity, like "create_application", @see AttributeDomainInstallation
-     * - application: right is valid for a specific application, @see AttributeDomainApplication
-     * - element: right is valid for a specific element, @see AttributeDomainElement
+     * - installation: Installation-wide validity, like "create_application", @see ResourceDomainInstallation
+     * - application: right is valid for a specific application, @see ResourceDomainApplication
+     * - element: right is valid for a specific element, @see ResourceDomainElement
      * might be extended for custom requirements
      */
-    protected ?string $attributeDomain = null;
+    protected ?string $resourceDomain = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Element", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the element for attributeDomain @see AttributeDomainElement
+     * References the element for resource domain @see ResourceDomainElement
      */
     protected ?Element $element = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Application", cascade={"ALL"})
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the application for attributeDomain @see AttributeDomainApplication
+     * References the application for resource domain @see ResourceDomainApplication
      */
     protected ?Application $application = null;
 
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * Can store an attribute for custom attributeDomains. When using this, make sure to implement a sensible
+     * Can store an attribute for custom resource domains. When using this, make sure to implement a sensible
      * strategy to delete permission entries for deleted attributes
      */
-    protected ?string $attribute = null;
+    protected ?string $resource = null;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * Stores the actual permission for the given attribute domain, like "view" or "edit"
+     * Stores the action for the given resource domain, like "view" or "edit"
      */
-    protected ?string $permission = null;
+    protected ?string $action = null;
 
 
     public function getId(): ?int
@@ -159,14 +159,14 @@ class Permission implements SubjectInterface
         $this->subject = $subject;
     }
 
-    public function getAttributeDomain(): ?string
+    public function getResourceDomain(): ?string
     {
-        return $this->attributeDomain;
+        return $this->resourceDomain;
     }
 
-    public function setAttributeDomain(?string $attributeDomain): void
+    public function setResourceDomain(?string $resourceDomain): void
     {
-        $this->attributeDomain = $attributeDomain;
+        $this->resourceDomain = $resourceDomain;
     }
 
     public function getElement(): ?Element
@@ -189,24 +189,24 @@ class Permission implements SubjectInterface
         $this->application = $application;
     }
 
-    public function getAttribute(): ?string
+    public function getResource(): ?string
     {
-        return $this->attribute;
+        return $this->resource;
     }
 
-    public function setAttribute(?string $attribute): void
+    public function setResource(?string $resource): void
     {
-        $this->attribute = $attribute;
+        $this->resource = $resource;
     }
 
-    public function getPermission(): ?string
+    public function getAction(): ?string
     {
-        return $this->permission;
+        return $this->action;
     }
 
-    public function setPermission(?string $permission): void
+    public function setAction(?string $action): void
     {
-        $this->permission = $permission;
+        $this->action = $action;
     }
 
 }

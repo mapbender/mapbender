@@ -4,7 +4,7 @@ namespace FOM\UserBundle\Form\Type;
 
 use FOM\ManagerBundle\Form\Type\TagboxType;
 use FOM\UserBundle\Form\DataTransformer\PermissionDataTransformer;
-use FOM\UserBundle\Security\Permission\AbstractAttributeDomain;
+use FOM\UserBundle\Security\Permission\AbstractResourceDomain;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -26,15 +26,15 @@ class PermissionType extends AbstractType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'attribute_domain' => null
+            'resource_domain' => null
         ]);
-        $resolver->setAllowedTypes('attribute_domain', [AbstractAttributeDomain::class]);
+        $resolver->setAllowedTypes('resource_domain', [AbstractResourceDomain::class]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new PermissionDataTransformer(
-                $options["attribute_domain"],
+                $options["resource_domain"],
                 $this->permissionManager
             )
         );
@@ -51,19 +51,19 @@ class PermissionType extends AbstractType
         $builder->add('title', HiddenType::class, $hiddenOptions);
         $builder->add('subjectJson', HiddenType::class, $hiddenOptions);
 
-        /** @var AbstractAttributeDomain $attribute_domain */
-        $attribute_domain = $options['attribute_domain'];
+        /** @var AbstractResourceDomain $resourceDomain */
+        $resourceDomain = $options['resource_domain'];
         $i = 0;
-        foreach ($attribute_domain->getPermissions() as $permission) {
-            $class = $attribute_domain->getCssClassForPermission($permission);
+        foreach ($resourceDomain->getActions() as $action) {
+            $class = $resourceDomain->getCssClassForAction($action);
             $builder
                 ->add('permission_' . $i, TagboxType::class, [
                     'property_path' => '[permissions][' . $i . ']',
                     'attr' => [
                         'class' => $class,
-                        'data-permission-name' => $permission
+                        'data-action-name' => $action
                     ],
-                    'translation_prefix' => $attribute_domain->getTranslationPrefix(),
+                    'translation_prefix' => $resourceDomain->getTranslationPrefix(),
                 ])
             ;
             $i++;

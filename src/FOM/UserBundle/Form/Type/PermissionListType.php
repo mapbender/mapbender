@@ -2,7 +2,7 @@
 
 namespace FOM\UserBundle\Form\Type;
 
-use FOM\UserBundle\Security\Permission\AbstractAttributeDomain;
+use FOM\UserBundle\Security\Permission\AbstractResourceDomain;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Form type for editing / assigning permissions.
  *
- * If available permission are not set, all permissions from AbstractAttributeDomain::getPermissions are selectable
+ * If available actions are not set, all actions from AbstractResourceDomain::getActions are selectable
  */
 class PermissionListType extends AbstractType
 
@@ -39,13 +39,13 @@ class PermissionListType extends AbstractType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'attribute_domain' => null,
-            'attribute' => null,
+            'resource_domain' => null,
+            'resource' => null,
             'permission_list' => null,
             'show_public_access' => false,
             // Can never be mapped. Retrieval and storage goes through PermissionManager.
             'mapped' => false,
-            'entry_options' => ['attribute_domain' => null],
+            'entry_options' => ['resource_domain' => null],
             'entry_type' => PermissionType::class,
             'label' => false,
             'allow_add' => true,
@@ -54,20 +54,20 @@ class PermissionListType extends AbstractType
             'data' => fn (Options $options) => array_values($this->loadPermissions($options)),
         ]);
         $resolver->setAllowedValues('mapped', [false]);
-        $resolver->setAllowedTypes('attribute_domain', [AbstractAttributeDomain::class]);
+        $resolver->setAllowedTypes('resource_domain', [AbstractResourceDomain::class]);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
-        $view->vars['attribute_domain'] = $options['attribute_domain'];
+        $view->vars['resource_domain'] = $options['resource_domain'];
     }
 
     protected function loadPermissions(Options $options): array
     {
         return $this->permissionManager->findPermissions(
-            $options['attribute_domain'],
-            $options['attribute'],
+            $options['resource_domain'],
+            $options['resource'],
             alwaysAddPublicAccess: $options['show_public_access'],
         );
     }

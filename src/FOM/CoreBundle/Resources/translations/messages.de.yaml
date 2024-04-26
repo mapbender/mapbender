@@ -14,7 +14,7 @@ fom:
     domain:
       public: 'Öffentlicher Zugriff'
       registered: 'Alle angemeldeten Nutzer'
-    attribute:
+    resource:
       installation:
         create_applications: "create_applications"
         view_all_applications: "view_all_applications"

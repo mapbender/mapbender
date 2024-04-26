@@ -5,8 +5,8 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Form\Type\PermissionListType;
-use FOM\UserBundle\Security\Permission\AttributeDomainApplication;
-use FOM\UserBundle\Security\Permission\AttributeDomainInstallation;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use Mapbender\CoreBundle\Component\UploadsManager;
@@ -217,7 +217,7 @@ class ApplicationController extends ApplicationControllerBase
         $em->flush();
 
         // TODO: remove upper part after implementing this
-        $this->permissionManager->grant($application, SubjectDomainPublic::SLUG, AttributeDomainApplication::PERMISSION_VIEW, $requestedState);
+        $this->permissionManager->grant(SubjectDomainPublic::SLUG, $application, ResourceDomainApplication::ACTION_VIEW, $requestedState);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
@@ -500,12 +500,12 @@ class ApplicationController extends ApplicationControllerBase
     {
         $form = $this->createForm(ApplicationType::class, $application);
         if ($this->allowPermissionEditing($application)) {
-            $attributeDomain = $this->permissionManager->findAttributeDomainFor($application);
+            $resourceDomain = $this->permissionManager->findResourceDomainFor($application);
             $form->add('security', PermissionListType::class, [
-                'attribute_domain' => $attributeDomain,
-                'attribute' => $application,
+                'resource_domain' => $resourceDomain,
+                'resource' => $application,
                 'entry_options' => [
-                    'attribute_domain' => $attributeDomain,
+                    'resource_domain' => $resourceDomain,
                 ],
                 'show_public_access' => true,
             ]);
@@ -516,8 +516,8 @@ class ApplicationController extends ApplicationControllerBase
     protected function allowPermissionEditing(Application $application): bool
     {
         return !$application->getId() // current user will become owner of the new application
-            || $this->isGranted(AttributeDomainApplication::PERMISSION_MANAGE_PERMISSIONS, $application)
-            || $this->isGranted(AttributeDomainInstallation::PERMISSION_EDIT_ALL_APPLICATIONS);
+            || $this->isGranted(ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS, $application)
+            || $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
     }
 
     /**

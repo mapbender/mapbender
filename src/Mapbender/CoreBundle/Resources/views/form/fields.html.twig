@@ -247,7 +247,7 @@
 
 {% block permission_list_widget %}
   {% apply spaceless %}
-  <div class="permission-collection" {{ block('widget_container_attributes') }} data-hierarchical="{{  form.vars.attribute_domain.hierarchical }}">
+  <div class="permission-collection" {{ block('widget_container_attributes') }} data-hierarchical="{{  form.vars.resource_domain.hierarchical }}">
     {%- if form.vars.allow_add -%}
     <div class="form-group text-end">
         <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
@@ -265,9 +265,9 @@
           {% for child in form.vars.prototype %}
             {% if child.vars.attr.class is defined %}
               <th>
-                <div data-perm-type="{{ child.vars.attr['data-permission-name'] }}" class="tagbox {{ child.vars.attr.class }}">
-                    {{ (child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-permission-name']) | trans }}{{ ' ' }}
-                    {% set help_translation_key = child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-permission-name'] ~ '_help' %}
+                <div data-action-name="{{ child.vars.attr['data-action-name'] }}" class="tagbox {{ child.vars.attr.class }}">
+                    {{ (child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-action-name']) | trans }}{{ ' ' }}
+                    {% set help_translation_key = child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-action-name'] ~ '_help' %}
                     {% set help_translated = help_translation_key | trans %}
                     {% if help_translation_key != help_translated %}
                         <i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="{{ help_translated }}" data-bs-placement="left" data-bs-html="true"></i>
@@ -293,8 +293,8 @@
 
 {% block tagbox_widget %}
   {% apply spaceless %}
-    <div data-perm-type="{{ form.vars.attr['data-permission-name'] }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
-      {{- (form.vars.translation_prefix ~ '.' ~ form.vars.attr['data-permission-name']) | trans -}}
+    <div data-action-name="{{ form.vars.attr['data-action-name'] }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
+      {{- (form.vars.translation_prefix ~ '.' ~ form.vars.attr['data-action-name']) | trans -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endapply %}

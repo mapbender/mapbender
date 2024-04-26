@@ -61,7 +61,7 @@ $(function() {
     // init permissions table ----------------------------------------------------------------
     function initHierarchicalPermissions($table) {
         $table.find("tbody tr").each(function (index, tr) {
-            const tagboxes = $(tr).find(".tagbox[data-perm-type]").get().reverse();
+            const tagboxes = $(tr).find(".tagbox[data-action-name]").get().reverse();
             let hasActivePermission = false;
             for (let tagbox of tagboxes) {
                 const $tagbox = $(tagbox);
@@ -99,20 +99,20 @@ $(function() {
         $targetTable.closest('.permission-collection').find('.-js-table-empty').addClass('hidden');
     }
 
-    $(document).on('click', '.permissionsTable tbody .tagbox[data-perm-type]', function() {
+    $(document).on('click', '.permissionsTable tbody .tagbox[data-action-name]', function() {
         const $target = $(this);
         const $cb = $('input[type="checkbox"]', this);
         const $collection = $target.closest('.permission-collection');
         const isHierarchical = $collection.attr('data-hierarchical');
 
         if (isHierarchical) {
-            const permType = $target.attr('data-perm-type');
+            const permType = $target.attr('data-action-name');
             const wasActive = $target.hasClass('active');
             let permTypeFound = wasActive;
 
-            $target.closest('tr').find('.tagbox[data-perm-type]').each(function(index, element) {
+            $target.closest('tr').find('.tagbox[data-action-name]').each(function(index, element) {
                 const $element = $(element);
-                const isCurrentPermType = $element.attr('data-perm-type') === permType;
+                const isCurrentPermType = $element.attr('data-action-name') === permType;
 
                 $element.find('input[type="checkbox"]').prop('checked', isCurrentPermType && !wasActive);
                 $element.toggleClass('active', isCurrentPermType && !wasActive);
