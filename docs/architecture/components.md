@@ -6,16 +6,15 @@ We have a Mapbender core bundle with the Mapbender basic functionalities. And mo
 
 ## Symfony
 
-Symfony is a full object oriented PHP Web Development Framework. It builds blocks for all modern web application needs. It is a collection of software and a development methodology. It relies on the philosophy of building blocks. It is optimized for speed. It uses Byte Code Cache.
+Symfony is a full object-oriented PHP Web Development Framework. It builds blocks for all modern web application needs. It is a collection of software and a development methodology. It relies on the philosophy of building blocks. It is optimized for speed. It uses Byte Code Cache.
 
 Here is a list of some components Symfony offers:
 
-* Symfony config.php to check the prerequisites
-* Symfony Profiler
-* Database abstraction via Doctrine
+* Profiler and Debug Toolbar
+* Database abstraction (object-relation mapping) via Doctrine
 * User authentication, authorization
 * Templating via Twig
-* Translation using xliff-files
+* Translation
 * Logging via Monolog
 * Security
 
@@ -29,14 +28,7 @@ jQuery is a feature-rich JavaScript library. jQuery UI is a set of user interfac
 
 ## Mapbender
 
-Mapbender is a collection of bundles. Only the MapbenderCoreBundle and the FOMBundles are mandatory.
-
-There are optional bundles like:
-
-* WMSBundle
-* WMTSBundle
-* WMCBundle
-* MonitoringBundle
+The Mapbender core consists of a collection of bundles located in the `src` folder.
 
 ### CoreBundle
 
@@ -48,9 +40,9 @@ It provides jQuery, jQuery UI, OpenLayers and MapQuery for all other Mapbender b
 
 Mapbender Starter is Symfony demo project which uses the Mapbender bundles to showcase a Mapbender application.
 
-It contains demo applications which are defined in the mapbender.yaml with WMS, WMTS. It provides a web interface with authentication which provides the possibility to create applications, create users/groups and build up a service repository.
+It contains demo applications which are defined in the mapbender.yaml with WMS and WMTS. It provides a web interface with authentication which provides the possibility to create applications, create users/groups and build up a service repository.
 
-Mapbender Starter can be used as a boiler template to start Mapbender projects.
+Mapbender Starter can be used as a template to start Mapbender projects.
 
 ## External Repositories
 

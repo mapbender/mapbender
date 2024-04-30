@@ -7,7 +7,7 @@ This directory contains:
 * the php-Cache (var/cache)
 * the logs (var/log)
 * the configuration directory (config)
-* the application kernel (src/Kernel.php) (is called by the FrontendControllers and controlls the whole application)
+* the application kernel (src/Kernel.php) (is called by the FrontendControllers and controls the whole application)
 * the Autoloading (autoload.php)
 * the application specific resource directory (Resources)
 * the command line application for maintaining and management tasks (bin/console)
@@ -45,7 +45,7 @@ This directory has to be published by the webserver. The ALIAS has to refer to t
 It controls:
 
 * index.php - the FrontendController (PHP script which can be called).
-* this directory contains the static resoures like css, js, favicon etc.
+* this directory contains the static resources like css, js, favicon etc.
 
 ### public/bundles
 
@@ -60,7 +60,7 @@ If you use Windows, you cannot create symbolic links and therefore have to run t
 
 ## src
 
-Directory for applications specific bundles.
+Directory for application specific bundles.
 
 ## vendor
 
