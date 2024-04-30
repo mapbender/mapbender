@@ -123,5 +123,8 @@
             <tag name="mapbender.element" replaces="Mapbender\CoordinatesUtilityBundle\Element\CoordinatesUtility" />
             <argument type="service" id="doctrine" />
         </service>
+        <service id="mapbender.element.dataupload" class="Mapbender\CoreBundle\Element\DataUpload">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>

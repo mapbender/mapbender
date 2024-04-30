@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Пример
-          wmsurl: Сервис URL
+          wmsurl: 'Сервис URL'
           wmsuser: Пользователь
           wmspass: Пароль
       error:
@@ -12,7 +12,7 @@ mb:
       repo:
         macros:
           label:
-            formats: Формиат
+            formats: Формат
         view:
           label:
             metadata: Метаданные
@@ -22,12 +22,12 @@ mb:
             title: Название
             name: Имя
             version: Версия
-            originurl: '>Оригинал URL'
-            abstract: Абстрактный
-            onlineresource: Интернет ресурс
-            exceptionformats: Формат Исключение
+            originurl: 'Оригинальный URL'
+            abstract: Описание
+            onlineresource: 'Интернет ресурс'
+            exceptionformats: 'Форматы-исключения'
             fees: Сборы
-            accessconstraints: Ограничения доступа
+            accessconstraints: 'Ограничения доступа'
             person: Человек
             organization: Организация
             position: Позиция
@@ -35,21 +35,21 @@ mb:
             facsimile: Телефакс
             email: E-mail
             address: Адрес
-            addresstype: Тип Адреса
+            addresstype: 'Тип Адреса'
             city: Город
             state: Государство
-            postcode: Почтовые индекс
+            postcode: 'Почтовые индекс'
             country: Страна
+          message:
+            cautionscalehint: 'Внимание: при расчетах в масштабе используется ограниченное разрешение ScaleHint in WMS 1.1.1!'
         instance:
           btn:
             save: Сохранить
             cancel: Отменить
           label:
-            originurl: Оригинал URL
-            buffer: Кафель буфер
-            ratio: BBOX фактор
+            originurl: 'Оригинал URL'
             visible: Видимый
-            basesource: База Источник
+            basesource: 'Базовый источник'
             proxy: Прокси
             transparency: Прозрачность
             tiled: Плиточный
@@ -60,16 +60,27 @@ mb:
             select: Выбрать
             info: Информация
             toggle: Переключатель
-            reorder: Изменения порядка
-            allow: Позволять
-            'on': Включи
+            reorder: 'Изменения порядка'
+            allow: Разрешить
+            'on': Вкл.
+            ratio: 'BBOX фактор'
+            buffer: 'Буфер плитки'
+            layerorder: 'Порядок слоев'
+            layerorder.standard: 'Стандарт (в обратном порядке)'
+            layerorder.reverse: 'QGIS-стиль (в прямом порядке)'
+            exceptionformat: 'Формат ошибки'
+            infoformat: 'Формат запроса GetFeatureInfo'
+            format: 'Формат запроса GetMap'
+            dimensions: 'Измерение'
+            vendorspecifics: 'Пользовательские параметры'
+            layers: 'Слои'
           vendorspecific:
-            label: Vendor определенный
+            label: 'Vendor-определенный'
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
         preview:
           title:
-            servicerepository: Обслуживание репозитория
+            servicerepository: 'Обслуживание репозитория'
           label:
             load: Загрузить
         layer:
@@ -80,78 +91,116 @@ mb:
             queryable: Queryable
             cascaded: Каскадная
             opaque: Непрозрачный
-            nosubset: Нет подгруппы
-            fixedwidth: Фиксированная ширина
-            fixedheight: Фиксированная Высота
+            nosubset: 'Нет подгруппы'
+            fixedwidth: 'Фиксированная ширина'
+            fixedheight: 'Фиксированная Высота'
             latlonbounds: LatLonBounds
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: Легенда URL
+            legendurl: 'Легенда URL'
             scale: Шкала
-            min: Минимальный
-            max: максимальная
-            scalehint: Масштаб Примечание
+            min: Минимальная
+            max: Максимальная
+            scalehint: 'Масштаб Примечание'
             attribution: Атрибуция
-            onlineresource: Интернет ресурсов
-            logourl: Logo URL
+            onlineresource: 'Интернет ресурсов'
+            logourl: 'Logo URL'
             identifier: Идентификатор
             authority: Полномочия
             url: URL
             value: Значение
-            metadataurl: Метаданные URL
+            metadataurl: 'Метаданные URL'
             dimension: Измерение
             extent: Экстент
-            dataurl: Data URL
-            featurelisturl: Featurelist URL
+            dataurl: 'Data URL'
+            featurelisturl: 'Featurelist URL'
         instancelayerform:
           label:
-            layerstitle: Название слоя
-            minscale: Минимальная шкала
-            maxsclase: Максимальная Шкала
+            layerstitle: 'Название слоя'
+            minscale: 'Минимальная шкала'
+            maxsclase: 'Максимальная шкала'
             active: Активный
-            allowselecttoc: Разрешить Выберите в TOC
-            selectedtoc: Выбранный на TOC
-            allowinfotoc: Allow FeatureInfo at TOC
-            infotoc: FeatureInfo at TOC
-            allowtoggletoc: Allow Toggle at TOC
-            toggletoc: Toggle at TOC
-            allowreordertoc: Разрешить Упорядочить по ТОС
-            moreinfo: Больше информации
+            allowselecttoc: 'Разрешить выбор в TOC'
+            selectedtoc: 'Выбранный в TOC'
+            selectedtoc.help: 'Набор слоев активен при запуске. Настройки следует изменять только в том случае, если используются тематические слои.'
+            unselectedtoc.help: 'Набор слоев неактивен при запуске. Внимание: если тематические слои не используются, этот набор слоев будет недоступен.'
+            allowinfotoc: 'Разрешить инфосвойства в TOC'
+            infotoc: 'Инфосвойства в TOC'
+            allowtoggletoc: 'Разрешить переключать в TOC'
+            toggletoc: 'Переключить в TOC'
+            allowreordertoc: 'Разрешить упорядочить по ТОС'
+            moreinfo: 'Больше информации'
             id:
               title: Id
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Имя слоя
+            layersname: 'Имя слоя'
             style: Style
+      class:
+        title: 'Загрузить WMS'
+        description: 'Загружает WMS через GetCapabilities-Request'
       admin:
         label:
-          splitlayers: Разделение слои
-      class:
-        title: WMS loader
-        description: Загружает WMS через GetCapabilities-Request
-    dimensionsets:
-      no_dimension: нет размерность
-    dimhandler:
-      class:
-        title: Размеры проводник
-        description: Размеры обработчики группы и называет размерность поддерживается экземпляров на карту
+          splitlayers: 'Разделение слои'
     repository:
       parser:
-        couldnotparse: Не удалось проанализировать CapabilitiesDocument
-        not_supported_document: Не поддерживается CapabilitiesDocument
-        not_supported_version: Версия WMS не поддерживается
+        couldnotparse: 'Не удалось проанализировать CapabilitiesDocument'
+        not_supported_document: 'Не поддерживается CapabilitiesDocument'
+        not_supported_version: 'Версия WMS не поддерживается'
     metadata:
       section:
         common:
+          title: 'Общая информация'
           _title: общий
-        useconditions:
-          _title: условия использования
         contact:
+          title: 'Контакт'
           _title: контакт
         items:
-          _title: Слой
+          title: 'Слой'
           name: Имя
+          _title: Слой
+        useconditions:
+          title: 'Условия использования'
+          _title: 'условия использования'
+      popup:
+        title: 'Метаданные'
     repo:
       instance:
         label:
-          dimensions: Dimensions
+          dimensions: Измерения
+    dimhandler:
+      class:
+        title: 'Размеры проводник'
+        description: 'Размеры обработчики группы и называет размерность поддерживается экземпляров на карту'
+    dimensionsets:
+      no_dimension: 'нет размерность'
+  core:
+    dimensionset:
+      admin:
+        title: 'Заголовок'
+        group: 'Группа'
+        extent: 'Размер'
+    dimensionshandler:
+      admin:
+        tooltip: 'Всплывающая подсказка'
+        dimensionsets: 'Наборы измерений'
+    wmsloader:
+      admin:
+        defaultformat: 'Фотмат по умолчанию'
+        defaultinfoformat: 'Информационный фотмат по умолчанию'
+      onlineresource:
+        format: 'Фотмат'
+        href: 'href'
+      legendurltype:
+        width: 'Ширина'
+        height: 'Высота'
+        onlineresource: 'Online-ресурс'
+      vendorspecifictype:
+        hidden: 'Cкрыть'
+        setdefaults: 'Установить по умолчанию'
+    vendorspecifictype:
+      admin:
+        vstype: 'Тип параметра'
+        name: 'Имя'
+        default: 'Значение по умолчанию'
+        hidden: 'Cкрыть'

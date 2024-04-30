@@ -1,0 +1,41 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: Matrixsets
+            theme: Tema
+            serviceprovidername: 'Nombre del proveedor de servicios'
+            serviceprovidersite: 'Sitio web del proveedor de servicios'
+        tilematrixset:
+          label:
+            identifier: Identificador
+            supportedcrs: CRS compatibles
+            title: Título
+            abstract: Resumen
+          matrixes: Matrices
+        theme:
+          label:
+            identifier: Identificador
+            title: Título
+            abstract: Resumen
+            layerrefs: layerrefs
+        instance:
+          label:
+            style: Estilo
+        layer:
+          label:
+            identifier: Identificador
+            formats: Formatos
+            title: Título
+            abstract: Resumen
+            latlonbounds: Marco límite (bounding box)
+            tilematrixsetlinks: TileMartixSetLinks
+        tilematrix:
+          label:
+            identifier: Identificador
+            scaledenominator: 'Denominador de escala'
+            topleftcorner: 'Esquina superior izquierda'
+            tilesize: 'Tamaño del tile'
+            matrixsize: 'Tamaño de la matriz'
