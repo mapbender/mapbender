@@ -112,6 +112,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.fileimport_admin" class="Mapbender\CoreBundle\Element\Type\DataUploadAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.paint" class="Mapbender\CoreBundle\Element\Type\PaintType">
             <tag name="form.type" />
             <argument type="service" id="translator" />

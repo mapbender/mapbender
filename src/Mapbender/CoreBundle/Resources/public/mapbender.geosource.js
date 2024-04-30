@@ -141,9 +141,12 @@ Mapbender.Geo.SourceHandler = {
             return null;
         };
         var _siblingSort = function(a, b) {
-            var ixA = layerIdOrder.indexOf(_pickChildId(layerIdOrder, a));
-            var ixB = layerIdOrder.indexOf(_pickChildId(layerIdOrder, b));
-            return ixA - ixB;
+            var childA = _pickChildId(layerIdOrder, a);
+            var childB = _pickChildId(layerIdOrder, b);
+            var ixA = layerIdOrder.includes(childA) ? layerIdOrder.indexOf(childA) : Number.MAX_SAFE_INTEGER;
+            var ixB = layerIdOrder.includes(childB) ? layerIdOrder.indexOf(childB) : Number.MIN_SAFE_INTEGER;
+            let ret = parseInt(ixA,10) - parseInt(ixB,10);
+            return ret;
         };
         var parentIdOrder = [];
         for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {

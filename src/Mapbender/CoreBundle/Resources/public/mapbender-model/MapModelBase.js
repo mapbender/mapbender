@@ -488,6 +488,11 @@ window.Mapbender.MapModelBase = (function() {
                 if (idParts.length >= 2) {
                     var sourceId = idParts[0];
                     var layerId = idParts[1];
+                    if (isNaN(sourceId) || isNaN(layerId)) {
+                        var sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
+                        sourceId = sourceAndLayerId.sourceId;
+                        layerId = sourceAndLayerId.layerId;
+                    }
                     console.log("Activating", sourceId, layerId);
                     var source = self.getSourceById(sourceId);
                     var layer = source && source.getLayerById(layerId);
@@ -500,6 +505,23 @@ window.Mapbender.MapModelBase = (function() {
                     }
                 }
             });
+        },
+
+        findSourceAndLayerIdByName: function (sourceName, layerName) {
+            const sourceAndLayerId = {};
+            this.getSources().forEach(function (source) {
+                if (!source.children || !source.children.length) return;
+                const config = source.children[0];
+                if (config.options.name === sourceName || config.options.title === sourceName) {
+                    sourceAndLayerId.sourceId = config.source.id;
+                    config.children.forEach(function (child) {
+                        if (child.options.name === layerName || child.options.title === layerName) {
+                            sourceAndLayerId.layerId = child.options.id;
+                        }
+                    });
+                }
+            });
+            return sourceAndLayerId;
         }
     };
 

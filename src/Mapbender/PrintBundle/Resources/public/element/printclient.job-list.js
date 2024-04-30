@@ -145,7 +145,6 @@ $.widget("mapbender.mbPrintClientJobList", {
         return $table.dataTable().api();
     },
     _renderInterface: function (row) {
-        var loader = null;
         var $icon;
 
         var buttonsEmpty = true;
@@ -164,7 +163,8 @@ $.widget("mapbender.mbPrintClientJobList", {
             $group.append($a);
             buttonsEmpty = false;
         } else {
-            loader = '<span class="loading"><i class="fas fa-gear fa-spin fa-lg"></i></span>';
+            const loaderHtml = '<span class="loading btn btn-light"><i class="fas fa-gear fa-spin fa-lg"></i></span>';
+            $group.append(loaderHtml);
         }
         if (row.deleteUrl) {
             var deleteTitle = row.downloadUrl
@@ -183,11 +183,7 @@ $.widget("mapbender.mbPrintClientJobList", {
             $group.append($deleteSpan);
             buttonsEmpty = false;
         }
-        var html = loader || '';
-        if (!buttonsEmpty) {
-            html = [html, $group.get(0).outerHTML].join('');
-        }
-        return html;
+        return buttonsEmpty ? '' : $group.get(0).outerHTML;
     },
     _deleteHandler: function(evt) {
         var $button = $(evt.currentTarget);

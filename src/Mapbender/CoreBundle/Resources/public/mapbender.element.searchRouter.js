@@ -8,6 +8,7 @@
         popup: null,
         mbMap: null,
         useDialog_: null,
+        trHighlightClass: 'table-primary',
 
         _create: function () {
             var self = this;
@@ -302,16 +303,24 @@
          * @returns {HTMLElement|jQuery}
          */
         renderTable: function (routeConfig) {
+            const self = this;
             var headers = routeConfig.results.headers;
             var $headers = $(document.createElement('tr'));
-
             var table = $(document.createElement('table')).addClass('table table-condensed table-striped table-hover');
 
-            for (var header in headers) {
-                $headers.append($(document.createElement('th')).text(headers[header]));
+            for (let header in headers) {
+                let th = $('<th data-column="' + header + '" data-order=""></th>');
+                th.text(headers[header]);
+                let sortIcon = '<span class="sortIcon ms-1"><i class="fa fa-sort" aria-hidden="true"></i></span>';
+                th.append(sortIcon);
+                th.css('cursor', 'pointer');
+                th.on('click', (e) => self.onTableHeadClick(e));
+                $headers.append(th);
             }
+
             table.append($(document.createElement('thead')).append($headers));
             table.append($('<tbody></tbody>'));
+
             return table;
         },
 
@@ -326,7 +335,24 @@
                 if ($('table', container).length === 0) {
                     this._prepareResultTable(container);
                 }
+                if (currentRoute.results.hasOwnProperty('sortBy') || currentRoute.hasOwnProperty('lastSortBy')) {
+                    currentRoute.lastSortBy = (!currentRoute.hasOwnProperty('lastSortBy')) ? currentRoute.results.sortBy : currentRoute.lastSortBy;
+                    if (!currentRoute.hasOwnProperty('lastSortOrder')) {
+                        currentRoute.lastSortOrder = (currentRoute.results.hasOwnProperty('sortOrder')) ? currentRoute.results.sortOrder : 'asc';
+                    }
+                    let th = $('th[data-column="' + currentRoute.lastSortBy + '"', this.element);
+                    th.attr('data-order', currentRoute.lastSortOrder);
+                    $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
+                    th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + currentRoute.lastSortOrder);
+                    results = this.sortResults(results, currentRoute.lastSortBy, currentRoute.lastSortOrder);
+                }
                 this._searchResultsTable(results);
+                if (results.length > 1 && currentRoute.results.hasOwnProperty('zoomToResultExtent') && currentRoute.results.zoomToResultExtent) {
+                    let extent = this.highlightLayer.getNativeLayer().getSource().getExtent();
+                    this.mbMap.map.olMap.getView().fit(extent, {
+                        padding: [75, 75, 75, 75],
+                    });
+                }
             }
             this._showResultState(results);
 
@@ -359,6 +385,9 @@
             for (var i = 0; i < features.length; ++i) {
                 var feature = features[i];
                 var row = $('<tr/>');
+                if (feature.get('highlighted') === true) {
+                    row.addClass(this.trHighlightClass);
+                }
                 row.data('feature', feature);
                 var props = Mapbender.mapEngine.getFeatureProperties(feature);
                 Object.keys(headers).map(function (header) {
@@ -377,6 +406,7 @@
                     var feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
+                    self._highlightTableRow($(this));
                 })
                 .on('mouseenter', 'tbody tr', function () {
                     var feature = $(this).data('feature');
@@ -594,6 +624,45 @@
         _hideMobile: function () {
             $('.mobileClose', $(this.element).closest('.mobilePane')).click();
         },
+
+        onTableHeadClick: function (e) {
+            let th = $(e.currentTarget);
+            let currentRoute = this.getCurrentRoute();
+            const features = this.highlightLayer.getNativeLayer().getSource().getFeatures();
+            currentRoute.lastSortBy = th.attr('data-column');
+            currentRoute.lastSortOrder = (th.attr('data-order') === 'asc') ? 'desc' : 'asc';
+            th.attr('data-order', currentRoute.lastSortOrder);
+            $('thead .sortIcon i', this.element).attr('class', 'fa fa-sort');
+            th.find('.sortIcon i').attr('class', 'fa fa-sort-amount-' + currentRoute.lastSortOrder);
+            const results = this.sortResults(features, currentRoute.lastSortBy, currentRoute.lastSortOrder);
+            this._searchResultsTable(results);
+        },
+
+        sortResults: function (results, sortBy, sortOrder = 'asc') {
+            return results.sort((a, b) => {
+                a = (a.get(sortBy)) ? a.get(sortBy) : '';
+                b = (b.get(sortBy)) ? b.get(sortBy) : '';
+                let result = a.toString().localeCompare(b.toString(), undefined, {
+                    numeric: true,
+                    sensivity: 'base'
+                });
+                if (result === 1) {
+                    return (sortOrder === 'asc') ? 1 : -1;
+                }
+                if (result === -1) {
+                    return (sortOrder === 'asc') ? -1 : 1;
+                }
+                return 0;
+            });
+        },
+
+        _highlightTableRow: function (tr) {
+            $('tbody tr', this.element).removeClass(this.trHighlightClass);
+            tr.addClass(this.trHighlightClass);
+            this.highlightLayer.getNativeLayer().getSource().getFeatures().map(feature => feature.set('highlighted', false));
+            tr.data('feature').set('highlighted', true);
+        },
+
         __dummy__: null
     });
 })(jQuery);
