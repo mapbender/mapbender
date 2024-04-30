@@ -57,4 +57,32 @@ class BaseKernel extends Kernel
         }
         return $container;
     }
+
+    /**
+     * replace function from symfony's Kernel.php: It looks for a composer.json file
+     * which exists in the mapbender library, this is not the project root though,
+     * therefore replace by "composer.lock"
+     */
+    public function getProjectDir(): string
+    {
+        if (null === @$this->projectDir) {
+            $r = new \ReflectionObject($this);
+
+            if (!is_file($dir = $r->getFileName())) {
+                throw new \LogicException(sprintf('Cannot auto-detect project dir for kernel of class "%s".', $r->name));
+            }
+
+            $dir = $rootDir = \dirname($dir);
+            // MARK: replaced Kernel.php's composer.json by composer.lock
+            while (!is_file($dir.'/composer.lock')) {
+                if ($dir === \dirname($dir)) {
+                    return $this->projectDir = $rootDir;
+                }
+                $dir = \dirname($dir);
+            }
+            $this->projectDir = $dir;
+        }
+
+        return $this->projectDir;
+    }
 }

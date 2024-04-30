@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Tests;
 use Mapbender\CoreBundle\Element\FeatureInfo;
 use PHPUnit\Framework\TestCase;
 
-class TestColorConversion extends TestCase
+class ColorConversionTest extends TestCase
 {
     public function testColorConversion() {
         $this->assertEquals('rgba(0, 0, 0, 0)', FeatureInfo::addOpacityToColor([

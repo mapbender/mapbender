@@ -1,14 +1,14 @@
 <?php
-/*
-* @package bkg_testing
-* @author Karim Malhas <karim@malhas.de>
-*/
+namespace Mapbender\WmsBundle\Tests;
+
+use Mapbender\WmsBundle\Component\Wms\Importer;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  *   Tests the WmsCapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple
  */
-class WmsCapabilitiesParserTest extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
+class WmsCapabilitiesParserTest extends KernelTestCase
 {
     public function testMinimal(){
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
@@ -62,7 +62,7 @@ class WmsCapabilitiesParserTest extends \Symfony\Bundle\FrameworkBundle\Test\Ker
         if (!self::$booted) {
             self::bootKernel();
         }
-        /** @var \Mapbender\WmsBundle\Component\Wms\Importer $importer*/
+        /** @var Importer $importer*/
         $importer = self::$kernel->getContainer()->get('mapbender.importer.source.wms.service');
         return $importer;
     }
