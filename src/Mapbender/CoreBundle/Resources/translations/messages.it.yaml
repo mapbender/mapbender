@@ -580,6 +580,26 @@ mb:
         prefix: Prefisso
         separator: Separatore
         label: 'Mostra label'
+    dataupload:
+      class:
+        title: 'Carica dati'
+        description: 'Caricamento di file nei formati GeoJSON, KML, GML e GPX.'
+      text:
+        filearea: 'Rilascia il file qui'
+        fileupload: 'oppure seleziona il/i file'
+        projection: 'Seleziona la proiezione automaticamente'
+        tablehead:
+          name: 'Nome'
+      error:
+        filesize: 'Dimensione massima del file superata!'
+        filetype: 'Tipo di file non supportato:'
+        gml: 'Formato GML non può essere estratto!'
+        projection: 'Proiezione non può essere determinata'
+      admin:
+        maxFileSize: 'Dimensione massima del file (MB)'
+        helpLabel: 'Testo di aiuto'
+        helpText: 'È possibile caricare file nei formati GeoJSON, KML, GML e GPX.'
+        helpInfo: 'Il valore predefinito <code>mb.core.dataupload.admin.helpText</code> significa "Qui puoi caricare file nei formati GeoJSON, KML, GML e GPX." nella lingua dell'utente'
     searchrouterroute:
       admin:
         title: Titolo

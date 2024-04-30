@@ -574,6 +574,26 @@ mb:
         prefix: 'Префикс'
         separator: 'Разделитель'
         label: 'Показать подпись'
+    dataupload:
+      class:
+        title: 'Загрузка данных'
+        description: 'Загрузка файлов в форматах GeoJSON, KML, GML и GPX.'
+      text:
+        filearea: 'Перетащите файл сюда'
+        fileupload: 'или выберите файл(ы)'
+        projection: 'Выбрать проекцию автоматически'
+        tablehead:
+          name: 'Имя'
+      error:
+        filesize: 'Превышен максимальный размер файла!'
+        filetype: 'Неподдерживаемый тип файла:'
+        gml: 'Формат GML не может быть определен!'
+        projection: 'Не удалось определить проекцию'
+      admin:
+        maxFileSize: 'Максимальный размер файла (MB)'
+        helpLabel: 'Подсказка'
+        helpText: 'Файлы могут быть загружены в форматах GeoJSON, KML, GML и GPX.'
+        helpInfo: 'Стандартное значение <code>mb.core.dataupload.admin.helpText</code> означает: "Здесь вы можете загружать файлы в форматах GeoJSON, KML, GML и GPX" на языке пользователя.'
     searchrouterroute:
       admin:
         title: 'Заголовок'
