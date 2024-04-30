@@ -14,13 +14,10 @@
         text-align: right;
         white-space: nowrap;
         .btn-group {
-          vertical-align: inherit;
+          vertical-align: baseline;
           .btn {
             float: none;
           }
-        }
-        .loading {
-          margin-right: 0.25em;
         }
       }
     }
