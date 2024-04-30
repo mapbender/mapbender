@@ -25,9 +25,9 @@ Welcome to the Mapbender Development Documentation! This documentation is intend
 
 ## Things to consider
 
-To contribute to Mapbender, it is essential to have a solid understanding of PHP's full object orientation and Symfony, the framework we use.
+To contribute to Mapbender, it is essential to have a solid understanding of object oriented PHP and Symfony, the framework we use.
 
-You can find more information about Symfony by reading [The Book](https://symfony.com/doc/current/index.html). We often rely on jQuery, especially the jQuery UI Widget factory, in our JavaScript code to ensure maintainability.
+You can find more information about Symfony by reading [The Book](https://symfony.com/doc/current/index.html). We often rely on jQuery, especially the jQuery UI Widget factory, in our JavaScript code for legacy reasons.
 
 ## Mapbender Installation
 
@@ -40,7 +40,7 @@ Please refer to the respective sections in the [Contributing Guide](CONTRIBUTING
 ## Twig
 
 Symfony follows the template approach that we use in Mapbender. This uses a templating engine to generate HTML, CSS or other content. A template is a text file that can generate any text based format like HTML or XML. It is used to express presentational logic. You can use them to create a layout. You can create a base layout and then overwrite or append any of your layout blocks with individual templates.
-Read more about Templates in Mapbender at [Templates](CONTRIBUTING.md#Templates) or in the [Contributing Guide](CONTRIBUTING.md#generate-translations) and find a good introduction about Twig in the [Symfony Template documentation](https://symfony.com/doc/current/templates.html).
+Read more about Templates in Mapbender in the [Contributing Guide](CONTRIBUTING.md#templates) and find a good introduction about Twig in the [Symfony Template documentation](https://symfony.com/doc/current/templates.html).
 
 ## Getting Help
 
