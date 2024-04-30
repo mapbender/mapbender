@@ -1,28 +1,28 @@
 mb:
   application:
     create:
-      success: null
+      success: Seu aplicativo foi criado.
       failure:
-        create.directory: null
+        create.directory: O diretório do aplicativo não pôde ser criado.
     save:
-      success: null
+      success: Seu aplicativo foi salvo.
       failure:
-        general: null
-        create.directory: null
+        general: Ocorreu um erro ao salvar a seu aplicativo.
+        create.directory: Seu aplicativo foi atualizado, mas o diretório do aplicativo não pôde ser criado.
     remove:
-      success: null
+      success: Seu aplicativo foi deletado.
       failure:
-        general: null
+        general: Seu aplicativo não pôde ser deletado.
   layerset:
     create:
-      success: null
+      success: Seu Layerset foi criado.
     remove:
-      success: null
-      failure: null
+      success: Seu Layerset foi deletado.
+      failure: Seu Layerset não pode ser deletado.
   source:
     instance:
       create:
-        success: null
+        success: Uma nova instância foi criada. Por favor, ajuste-a conforme necessário.
   manager:
     automatic: 'Automático'
     autoActivate: 'Ativar automaticamente'
@@ -33,8 +33,8 @@ mb:
     screentype:
       label: 'Tipo de tela'
       choice:
-        all: 'Qualquer'
-        mobile: 'Celular'
+        all: 'Indiferente'
+        mobile: 'Móvel'
         desktop: 'Desktop'
     toolbar:
       alignment:
@@ -42,19 +42,19 @@ mb:
         choice:
           left: 'Esquerda'
           right: 'Direita'
-          center: 'Centro'
-      generate_button_menu: 'Gerar menu para botões'
+          center: 'Centralizado'
+      generate_button_menu: 'Agrupar botões em um menu'
       menu_label: 'Rótulo do menu'
     visibility: 'Visibilidade'
     element:
       screentype:
-        mobile: 'Mostrar em telas de celular'
+        mobile: 'Mostrar em dispositivos móveis'
         desktop: 'Mostrar em telas de desktop'
     sidepane:
       width: 'Largura'
       resizable: 'Redimensionável'
-      resizable_help: 'Se marcado, o usuário pode redimensionar o painel lateral arrastando sua borda direita. Se desejar limitar a largura mínima/máxima, use CSS personalizado (min-width/max-width em .sidePane.resizable).'
-      closed: 'Inicialmente fechado'
+      resizable_help: 'Se marcado, o usuário pode redimensionar o painel lateral arrastando sua borda interna. Se desejar limitar a largura mínima/máxima, use CSS personalizado (min-width/max-width em .sidePane.resizable).'
+      closed: 'Iniciar fechado'
       align:
         label: 'Posição'
         choice:
@@ -63,18 +63,18 @@ mb:
     sourceinstance:
       embedded_in_applications: |
         {count, plural,
-            =0    {Esta instância não é usada em nenhuma aplicação}
-            one   {Esta instância é usada em uma aplicação}
-            other {Esta instância é usada em # aplicações}
+            =0    {Esta instância não está sendo usada em nenhum aplicativo}
+            one   {Esta instância está sendo usada em um aplicativo}
+            other {Esta instância está sendo usada em # aplicativos}
         }
       convert_to_reusable: 'Converter para instância compartilhada'
       convert_to_bound: 'Converter para instância vinculada'
-      converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada à aplicação'
-      reusable_assigned_to_application: 'A instância compartilhada foi adicionada à aplicação'
+      converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada ao aplicativo'
+      reusable_assigned_to_application: 'A instância compartilhada foi adicionada ao aplicativo'
       create_reusable: 'Criar instância compartilhada'
       created_reusable: 'Uma nova instância compartilhada foi criada'
     application:
-      persistentView: 'Estado de mapa persistente'
+      persistentView: 'Lembrar estado do mapa'
       splashscreen: 'Mostrar tela de apresentação'
     admin:
       sources: 'Fontes de dados'
@@ -90,27 +90,27 @@ mb:
         no_source: 'Fonte de dados não existe'
         update: 'Atualizar fonte de dados'
         status:
-          ok: 'Fonte OK'
-          toupdate: 'Fonte não atualizada mais'
-          unreachable: 'Fonte inacessível'
+          ok: 'Esta fonte de dados está válida'
+          toupdate: 'Esta fonte de dados não está mais atualizada'
+          unreachable: 'Esta fonte de dados está inacessível'
         embedded_in_applications: |
           {count, plural,
-              =0    {Esta fonte não é usada em nenhuma aplicação}
-              one   {Esta fonte é usada em uma aplicação}
-              other {Esta fonte é usada em # aplicações}
+              =0    {Esta fonte não está sendo usada em nenhum aplicativo}
+              one   {Esta fonte está sendo usada em um aplicativo}
+              other {Esta fonte está sendo usada em # aplicativos}
           }
       map:
-        max_extent: 'Extensão máxima'
-        max_extent.help: 'Caixa delimitadora (x/y mínimo/máximo) onde o usuário pode navegar. Ao clicar no ícone do globo, o mapa zooma para esta extensão.'
+        max_extent: 'Extensão máxima do mapa'
+        max_extent.help: 'Bounding Box com mín/máx x/y, marcando o alcance permitido de navegação do usuário. Clicando no globo terrestre na barra de escala, será feito zoom para esta extensão.'
         start_extent: 'Extensão inicial'
-        start_extent.help: 'Caixa delimitadora (x/y mínimo/máximo) que é inicialmente exibida ao carregar o mapa. Ao clicar no ícone inicial, o mapa zooma para esta extensão.'
+        start_extent.help: 'Bounding Box com mín/máx x/y, marcando o alcance inicial em que o mapa é carregado. Clicando na casa na barra de escala, será feito zoom para esta extensão.'
         base_dpi: 'Resolução padrão [dpi]'
-        base_dpi.help: 'A resolução se adapta à resolução da tela com base no valor configurado'
+        base_dpi.help: 'A resolução se ajusta com base nesse valor para a resolução do dispositivo usado.'
       element:
-        title: Título
+        title: Rótulo
         type: Tipo
         add: 'Adicionar elemento'
-        show_hide: 'Mostrar/Ocultar'
+        show_hide: 'ativo/inativo'
         no_element_added: 'Nenhum elemento adicionado'
         anchor:
           label: 'Posição'
@@ -123,13 +123,13 @@ mb:
       overview:
         fix: Fixar
       layerset:
-        add: 'Adicionar conjunto de camadas'
-        title: Título
+        add: 'Adicionar layerset'
+        title: Rótulo
         type: Tipo
-        edit: 'Editar conjunto de camadas'
+        edit: 'Editar layerset'
         delete:
-          title: 'Excluir conjunto de camadas'
-          confirm: 'Realmente remover conjunto de camadas <span class="italic">%layerset_title%</span> ?'
+          title: 'Excluir layerset'
+          confirm: 'Realmente remover o layerset <span class="italic">%layerset_title%</span> ?'
         id: Id
       instance:
         add: 'Adicionar instância'
@@ -139,67 +139,67 @@ mb:
           title: 'Excluir instância'
           confirm: 'Você realmente deseja remover a instância com o título <span class="italic">%instance_title%</span>?'
         no_instance_added: 'Instância não adicionada'
-        no_layer_added: 'Nenhuma camada adicionada'
-        max_input_vars_exceeded: 'Configuração PHP max_input_vars muito baixa para o número de camadas nesta instância.'
+        no_layer_added: 'Nenhuma instância adicionada'
+        max_input_vars_exceeded: 'A configuração max_input_vars do PHP é muito baixa para o número de layers nesta instância.'
         update_successful: 'Sua instância foi atualizada.'
         converted_to_shared: 'A instância foi convertida em uma instância compartilhada.'
       template: Padrão
       application:
         view: Visualizar
         edit:
-          title: 'Editar aplicação'
-          base_data: 'Dados de fundo'
-        screenshot: null
-        layouts: Layouts
-        layersets: 'Conjuntos de camadas'
-        custom_css: CSS personalizado
+          title: 'Editar aplicativo'
+          base_data: 'Dados básicos'
+        screenshot: 'Imagem de pré-visualização'
+        layouts: Elementos
+        layersets: 'Layerset'
+        custom_css: CSS
         security:
           title: Segurança
           public: 'Acesso público'
         save: Salvar
         cancel: Cancelar
-        view_this: 'Visualizar esta aplicação'
-        duplicate: 'Duplicar aplicação'
+        view_this: 'Visualizar aplicativo'
+        duplicate: 'Duplicar aplicativo'
         public:
           on_off: 'Publicar/Ocultar'
-        delete: 'Excluir aplicação'
-        no_application: 'Aplicação não encontrada'
+        delete: 'Excluir aplicativo'
+        no_application: 'Aplicativo não encontrado'
         new:
-          title: 'Criar aplicação'
-        create_use: 'Primeiro crie uma nova aplicação. Em seguida, você pode editá-la e adicionar elementos e conjuntos de camadas.'
+          title: 'Criar aplicativo'
+        create_use: 'Primeiro crie um aplicativo com informações básicas. Em seguida, você pode editá-lo e adicionar elementos e layersets.'
         btn:
           create: Salvar
           cancel: Cancelar
         upload:
-          button: 'Escolher arquivo'
+          button: 'Selecionar arquivo'
           label: 'Nenhum arquivo selecionado'
         export:
-          addAcl: Acls
-          addSources: Origens
+          addAcl: ACLs
+          addSources: Fontes
           btn:
             export: Exportar
         import:
-          addAcl: Acls
-          addSources: Origens
+          addAcl: ACLs
+          addSources: Fontes
           btn:
             import: Importar
         title: Título
         url:
-          title: 'Título do URL'
+          title: 'URL'
         description: Descrição
         template: Modelo
     source:
-      serviceurl: 'URL do serviço'
+      serviceurl: 'URL do serviço de mapa'
       username: 'Nome de usuário'
       password: Senha
-      activate_new_layers: 'Ativar novas camadas adicionadas'
-      select_new_layers: 'Selecionar novas camadas adicionadas'
+      activate_new_layers: 'Ativar novas layers adicionadas'
+      select_new_layers: 'Selecionar novas layers adicionadas'
       load: Carregar
     managerbundle:
-      new_application: 'Criar aplicação'
+      new_application: 'Criar aplicativo'
       add_source: 'Adicionar fonte de dados'
       add_user_group: 'Adicionar usuários e grupos'
-      acl_element: Acl
+      acl_element: Elemento ACL
       import_application: Importar
       export_application: Exportar
     components:
@@ -211,10 +211,10 @@ mb:
         delete_element:
           title: 'Confirmar exclusão'
         add_edit_layerset:
-          title_edit: 'Editar conjunto de camadas'
-          title_add: 'Adicionar conjunto de camadas'
+          title_edit: 'Editar layerset'
+          title_add: 'Adicionar layerset'
         delete_layerset:
-          title: 'Remover conjunto de camadas'
+          title: 'Remover layersets'
         add_instance:
           title: 'Escolher fonte de dados'
         delete_instance:
@@ -224,11 +224,11 @@ mb:
           content: 'Tem certeza de que deseja excluir %userGroup%?'
     import:
       application:
-        failed: 'Não foi possível importar a aplicação'
+        failed: 'Não foi possível importar o aplicativo'
     http_connection_error: 'Erro de conexão HTTP'
-    http_error_response: 'O servidor remoto respondeu com uma mensagem de erro'
+    http_error_response: 'O serviço de mapa remoto respondeu com uma mensagem de erro'
     xml_invalid: 'O documento XML não é válido'
-    xml_malformed: 'O documento XML está malformado'
+    xml_malformed: 'O documento XML está malformado ou é inválido'
   core:
     admin:
       button:
@@ -239,10 +239,10 @@ mb:
     entity:
       app:
         screenshotfile:
-          error: 'O arquivo é muito grande (%uploadFileSize% bytes). O tamanho máximo é %maxFileSize% bytes.'
+          error: 'O arquivo é muito grande (%uploadFileSize% bytes). O tamanho máximo permitido é de %maxFileSize% bytes.'
           format_error: 'Formato não suportado.'
           resolution:
-            error: 'O arquivo precisa ter %screenshotHeight% x %screenshotWidth% pixels ou mais. Seu arquivo tem %uploadWidth% x %uploadHeighth% pixels.'
+            error: 'Apenas arquivos com %screenshotHeight% x %screenshotWidth% pixels ou maiores podem ser carregados. O seu arquivo tem %uploadWidth% x %uploadHeighth% pixels.'
     importjobtype:
       admin:
         importfile: 'Importar arquivo'
@@ -253,5 +253,5 @@ mb:
       repo:
         instance:
           label:
-            title: 'Título'
+            title: 'Rótulo'
             opacity: 'Opacidade'
