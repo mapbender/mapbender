@@ -44,8 +44,7 @@ Other:
 * [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
-* Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558))
-* Further button customisation and style changes ([PR#1574](https://github.com/mapbender/mapbender/pull/1574))
+* Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558), [PR#1574](https://github.com/mapbender/mapbender/pull/1574))
 
 
 ## v3.3.5
