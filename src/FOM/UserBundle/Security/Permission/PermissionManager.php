@@ -8,6 +8,7 @@ use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Permission utility service; registered as 'fom.security.permission_manager'
@@ -29,47 +30,65 @@ class PermissionManager extends Voter
 
     private array $cache = [];
 
-    /**
-     * @param string $attribute the action
-     * @param mixed $subject the resource
-     * @return bool
-     */
-    protected function supports(string $attribute, $subject): bool
-    {
-        return $this->getResourceDomain($attribute, $subject) !== null;
-    }
 
-    /**
-     * @param string $attribute the action
-     * @param mixed $subject the resource
-     * @param TokenInterface $token a wrapper for the logged-in user
-     * @return bool
-     */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    public function isGranted(?UserInterface $user, mixed $resource, string $action): bool
     {
-        $permissions = $this->getPermissionsForToken($token);
+        $permissions = $this->getPermissionsForUser($user);
         if (empty($permissions)) return false;
 
-        $resourceDomain = $this->getResourceDomain($attribute, $subject);
+        $resourceDomain = $this->findResourceDomainFor($resource, $action);
         foreach ($permissions as $permission) {
-            if ($resourceDomain->matchesPermission($permission, $attribute, $subject)) return true;
+            if ($resourceDomain->matchesPermission($permission, $action, $resource)) return true;
         }
         return false;
     }
 
+
+    public function revoke(mixed $subject, mixed $resource, string $action): void
+    {
+        $this->grant($subject, $resource, $action, false);
+    }
+
+    public function grant(mixed $subject, mixed $resource, string $action, bool $isGranted = true): void
+    {
+        $permission = new Permission(action: $action);
+        $this->findSubjectDomainFor($subject)->populatePermission($permission, $subject);
+        $this->findResourceDomainFor($resource)->populatePermission($permission, $resource);
+
+        $existingPermission = $this->doctrineEM->getRepository(Permission::class)->findOneBy([
+            'subjectDomain' => $permission->getSubjectDomain(),
+            'user' => $permission->getUser(),
+            'group' => $permission->getGroup(),
+            'subject' => $permission->getSubject(),
+            'resourceDomain' => $permission->getResourceDomain(),
+            'element' => $permission->getElement(),
+            'application' => $permission->getApplication(),
+            'resource' => $permission->getResource(),
+            'action' => $permission->getAction(),
+        ]);
+
+        if ($existingPermission === null && $isGranted) {
+            $this->doctrineEM->persist($permission);
+            $this->doctrineEM->flush();
+        } elseif ($existingPermission !== null && !$isGranted) {
+            $this->doctrineEM->remove($existingPermission);
+            $this->doctrineEM->flush();
+        }
+    }
+
     /**
-     * @param TokenInterface $token
+     * @param UserInterface $user
      * @return array{permission: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int}
      */
-    protected function getPermissionsForToken(TokenInterface $token): array
+    protected function getPermissionsForUser(UserInterface $user): array
     {
-        $userIdentifier = $token->getUser()->getUserIdentifier();
+        $userIdentifier = $user->getUserIdentifier();
         if (in_array($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
 
         $subjectWhereComponents = [];
         $variables = [];
         foreach ($this->subjectDomains as $subjectDomain) {
-            $wrapper = $subjectDomain->buildWhereClause($token->getUser());
+            $wrapper = $subjectDomain->buildWhereClause($user);
             if ($wrapper === null) continue;
             $subjectWhereComponents[] = '(' . $wrapper->whereClause . ')';
             $variables = array_merge($variables, $wrapper->variables);
@@ -82,14 +101,40 @@ class PermissionManager extends Voter
         return $permissions;
     }
 
-    protected function getResourceDomain(string $action, mixed $resource): ?AbstractResourceDomain
+    public function findResourceDomainFor(mixed $resource, string $action = null): AbstractResourceDomain
     {
         foreach ($this->resourceDomains as $resourceDomain) {
             if ($resourceDomain->supports($resource, $action)) return $resourceDomain;
         }
-        return null;
+        throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
     }
 
+    public function findSubjectDomainFor(mixed $permissionOrSubject, string $action = null): AbstractSubjectDomain
+    {
+        foreach ($this->subjectDomains as $subjectDomain) {
+            if ($permissionOrSubject instanceof Permission) {
+                if ($subjectDomain->getSlug() === $permissionOrSubject->getSubjectDomain()) return $subjectDomain;
+            } elseif ($subjectDomain->supports($permissionOrSubject, $action)) return $subjectDomain;
+        }
+
+        if ($permissionOrSubject instanceof Permission) {
+            throw new \InvalidArgumentException("No subject domain registered for '{$permissionOrSubject->getSubjectDomain()}'");
+        } else {
+            throw new \InvalidArgumentException("No subject domain registered that can handle subject '$permissionOrSubject' (type " . $permissionOrSubject::class . ")");
+        }
+    }
+
+    /**
+     * @return AssignableSubject[]
+     */
+    public function getAssignableSubjects(): array
+    {
+        $subjects = [];
+        foreach ($this->subjectDomains as $subjectDomain) {
+            array_push($subjects, ...$subjectDomain->getAssignableSubjects());
+        }
+        return $subjects;
+    }
 
     /**
      * @return Permission[]
@@ -120,43 +165,18 @@ class PermissionManager extends Voter
         if ($alwaysAddPublicAccess && !$this->publicAccessDomain !== null
             && !array_key_exists($this->publicAccessDomain->getSubjectJson(), $permissionsGrouped)) {
             // add a dummy permission that only has the subject domain set
-            $tempPermPublicAccess = new Permission();
-            $tempPermPublicAccess->setSubjectDomain($this->publicAccessDomain->getSlug());
+            $tempPermPublicAccess = new Permission(subjectDomain: $this->publicAccessDomain->getSlug());
+            // add public access as first entry
             $permissionsGrouped = [$this->publicAccessDomain->getSubjectJson() => [$tempPermPublicAccess]] + $permissionsGrouped;
         }
 
         return $permissionsGrouped;
     }
 
-    public function findResourceDomainFor(mixed $resource): AbstractResourceDomain
-    {
-        foreach ($this->resourceDomains as $resourceDomain) {
-            if ($resourceDomain->supports($resource)) return $resourceDomain;
-        }
-        throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
-    }
-
-    public function findSubjectDomainFor(Permission $permission): AbstractSubjectDomain
-    {
-        foreach ($this->subjectDomains as $subjectDomain) {
-            if ($subjectDomain->getSlug() === $permission->getSubjectDomain()) return $subjectDomain;
-        }
-        throw new \InvalidArgumentException("No subject domain registered for '{$permission->getSubjectDomain()}'");
-    }
 
     /**
-     * @return AssignableSubject[]
-     */
-    public function getAssignableSubjects(): array
-    {
-        $subjects = [];
-        foreach ($this->subjectDomains as $subjectDomain) {
-            array_push($subjects, ...$subjectDomain->getAssignableSubjects());
-        }
-        return $subjects;
-    }
-
-    /**
+     * Save permissions for a resource. Should be called from a controller's "save" method
+     * after validating the form data
      * @param mixed $resource
      * @param array{subjectJson: string, permissions: bool[]} $permissionData
      * @return void
@@ -178,12 +198,13 @@ class PermissionManager extends Voter
             $json = json_decode($newPermission['subjectJson'], true);
             for ($i = 0; $i < min(count($newPermission['permissions']), count($availableActions)); $i++) {
                 if ($newPermission['permissions'][$i] === true) {
-                    $permissionEntity = new Permission();
-                    $permissionEntity->setAction($availableActions[$i]);
-                    $permissionEntity->setGroup($json["group_id"] ? $this->doctrineEM->getReference(Group::class, $json["group_id"]) : null);
-                    $permissionEntity->setUser($json["user_id"] ? $this->doctrineEM->getReference(User::class, $json["user_id"]) : null);
-                    $permissionEntity->setSubject($json["subject"]);
-                    $permissionEntity->setSubjectDomain($json["domain"]);
+                    $permissionEntity = new Permission(
+                        subjectDomain: $json["domain"],
+                        user: $json["user_id"] ? $this->doctrineEM->getReference(User::class, $json["user_id"]) : null,
+                        group: $json["group_id"] ? $this->doctrineEM->getReference(Group::class, $json["group_id"]) : null,
+                        subject: $json["subject"],
+                        action: $availableActions[$i],
+                    );
                     $resourceDomain->populatePermission($permissionEntity, $resource);
                     $this->doctrineEM->persist($permissionEntity);
                 }
@@ -192,9 +213,32 @@ class PermissionManager extends Voter
         $this->doctrineEM->flush();
     }
 
-    public function grant(mixed $subject, mixed $resource, string $action, bool $isGranted = true)
+
+    /** START Wrapper for symfony's VoterInterface */
+
+    /**
+     * @param string $attribute the action
+     * @param mixed $subject the resource
+     * @return bool
+     */
+    protected function supports(string $attribute, $subject): bool
     {
-        // TODO: create this
+        return $this->findResourceDomainFor($subject, $attribute) !== null;
     }
+
+    /**
+     * @param string $attribute the action
+     * @param mixed $subject the resource
+     * @param TokenInterface $token a wrapper for the logged-in user
+     * @return bool
+     */
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    {
+        $user = $token->getUser();
+        return $this->isGranted($user, $subject, $attribute);
+    }
+
+    /** END Wrapper for symfony's VoterInterface */
+
 
 }

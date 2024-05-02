@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -50,5 +51,16 @@ class SubjectDomainUser extends AbstractSubjectDomain
             ),
             $users
         );
+    }
+
+    public function supports(mixed $subject, ?string $action = null): bool
+    {
+        return $subject instanceof User;
+    }
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        parent::populatePermission($permission, $subject);
+        $permission->setUser($subject);
     }
 }

@@ -48,4 +48,9 @@ class SubjectDomainRegistered extends AbstractSubjectDomain
             $this->getIconClass()
         )];
     }
+
+    public function supports(mixed $subject, ?string $action = null): bool
+    {
+        return $subject === self::SLUG;
+    }
 }

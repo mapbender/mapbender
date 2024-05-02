@@ -95,6 +95,8 @@
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
+        <service id="FOM\UserBundle\Security\Permission\PermissionManager" alias="fom.security.permission_manager" />
+
         <service id="fom.security.type.permission" class="FOM\UserBundle\Form\Type\PermissionType">
             <tag name="form.type" />
             <argument type="service" id="fom.security.permission_manager" />

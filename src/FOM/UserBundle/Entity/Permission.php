@@ -109,6 +109,29 @@ class Permission implements SubjectInterface
     protected ?string $action = null;
 
 
+    public function __construct(?string      $subjectDomain = null,
+                                ?User        $user = null,
+                                ?Group       $group = null,
+                                ?string      $subject = null,
+                                ?string      $resourceDomain = null,
+                                ?Element     $element = null,
+                                ?Application $application = null,
+                                ?string      $resource = null,
+                                ?string      $action = null,
+    )
+    {
+        $this->subjectDomain = $subjectDomain;
+        $this->user = $user;
+        $this->group = $group;
+        $this->subject = $subject;
+        $this->resourceDomain = $resourceDomain;
+        $this->element = $element;
+        $this->application = $application;
+        $this->resource = $resource;
+        $this->action = $action;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

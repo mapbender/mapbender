@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -56,5 +57,16 @@ class SubjectDomainGroup extends AbstractSubjectDomain
             ),
             $groups
         );
+    }
+
+    public function supports(mixed $subject, ?string $action = null): bool
+    {
+        return $subject instanceof Group;
+    }
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        parent::populatePermission($permission, $subject);
+        $permission->setGroup($subject);
     }
 }

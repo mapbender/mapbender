@@ -54,4 +54,9 @@ class SubjectDomainPublic extends AbstractSubjectDomain
             'subject' => null,
         ]);
     }
+
+    public function supports(mixed $subject, ?string $action = null): bool
+    {
+        return $subject === self::SLUG;
+    }
 }

@@ -39,4 +39,18 @@ abstract class AbstractSubjectDomain
 
     /** @return SubjectInterface[] */
     abstract function getAssignableSubjects(): array;
+
+    /**
+     * determines if the subject domain applies to a given subject class and (optionally) a given action
+     * @param mixed|null $subject
+     * @param string|null $action
+     * @return bool
+     */
+    abstract function supports(mixed $subject, ?string $action = null): bool;
+
+
+    public function populatePermission(Permission $permission, mixed $subject): void
+    {
+        $permission->setSubjectDomain($this->getSlug());
+    }
 }
