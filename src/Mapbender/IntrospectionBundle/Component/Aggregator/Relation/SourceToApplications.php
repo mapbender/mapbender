@@ -116,10 +116,7 @@ class SourceToApplications
             'enabled' => array(),
             'disabled'=> array(),
         );
-        $this->appRelations = array(
-            'published' => array(),
-            'unpublished' => array(),
-        );
+        $this->appRelations = [];
     }
 
     protected function ensureSort()
