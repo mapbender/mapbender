@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,12 +13,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class YamlApplicationAwareController extends AbstractController
 {
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
-
-    public function __construct(ApplicationYAMLMapper $yamlRepository)
+    public function __construct(protected ApplicationYAMLMapper $yamlRepository)
     {
-        $this->yamlRepository = $yamlRepository;
     }
 
     /**
@@ -36,7 +33,7 @@ abstract class YamlApplicationAwareController extends AbstractController
         if (!$application) {
             throw new NotFoundHttpException();
         }
-        $this->denyAccessUnlessGranted('VIEW', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
         return $application;
     }
 }

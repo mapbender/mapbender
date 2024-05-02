@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\CoreBundle\Component\Security\Voter;
+namespace FOM\UserBundle\Security\Permission;
 
 
 use Mapbender\CoreBundle\Entity\Element;

@@ -22,7 +22,7 @@ class SourceToApplications
     /** @var SourceInstance[][] */
     protected $sourceInstances;
 
-    /** @var ApplicationToSources[][] */
+    /** @var ApplicationToSources[] */
     protected $appRelations;
 
     /** @var bool */
@@ -63,9 +63,7 @@ class SourceToApplications
     public function getApplicationRelations()
     {
         $this->ensureSort();
-        $published = array_values($this->appRelations['published']);
-        $unpublished = array_values($this->appRelations['unpublished']);
-        return array_merge($published, $unpublished);
+        return $this->appRelations;
     }
 
     /**
@@ -94,18 +92,14 @@ class SourceToApplications
         } else {
             $instGroupKey = 'disabled';
         }
-        if ($application->isPublished()) {
-            $appGroupKey = 'published';
-        } else {
-            $appGroupKey = 'unpublished';
-        }
+
         $appId = $application->getId();
-        if (!array_key_exists($appId, $this->appRelations[$appGroupKey])) {
-            $this->appRelations[$appGroupKey][$appId] = new ApplicationToSources($application);
+        if (!array_key_exists($appId, $this->appRelations)) {
+            $this->appRelations[$appId] = new ApplicationToSources($application);
         }
-        $this->appRelations[$appGroupKey][$appId]->addSourceInstance($instance);
+        $this->appRelations[$appId]->addSourceInstance($instance);
         $this->sourceInstances[$instGroupKey][$instance->getId()] = $instance;
-        $this->applications[$appGroupKey][$application->getId()] = $application;
+        $this->applications[$application->getId()] = $application;
         $this->sorted = false;
         return true;
     }

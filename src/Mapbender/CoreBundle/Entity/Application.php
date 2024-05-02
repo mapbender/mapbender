@@ -109,11 +109,6 @@ class Application
     protected $layersets;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    protected $published = true;
-
-    /**
      * @ORM\Column(type="string", length=256, nullable=true)
      */
     protected $screenshot;
@@ -459,29 +454,6 @@ class Application
     public function getExtraAssets()
     {
         return $this->extra_assets;
-    }
-
-    /**
-     * Set published
-     *
-     * @param boolean $published
-     * @return $this
-     */
-    public function setPublished($published)
-    {
-        $this->published = $published;
-
-        return $this;
-    }
-
-    /**
-     * Is published?
-     *
-     * @return boolean
-     */
-    public function isPublished()
-    {
-        return $this->published;
     }
 
     /**
