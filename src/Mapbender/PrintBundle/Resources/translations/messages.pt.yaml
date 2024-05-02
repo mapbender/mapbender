@@ -6,11 +6,11 @@ mb:
           ok: Exportar
           cancel: Cancelar
       info:
-        noactivelayer: 'Nenhuma camada ativa!'
-      chooseformat: 'Escolher formato de exportação'
+        noactivelayer: 'Nenhuma layer ativa!'
+      chooseformat: 'Selecionar formato de exportação'
       class:
         title: 'Exportar imagem'
-        description: 'Exporta o mapa atual como uma imagem. Os Formatos possíveis são png e jpeg. '
+        description: 'EA exportação de imagem permite que você exporte sua visualização atual do mapa. A imagem pode ser salva como png ou jpeg.'
       tag:
         image: Imagem
         export: Exportação
@@ -18,13 +18,13 @@ mb:
         png: png
     printclient:
       tab:
-        settings: Configurações do Trabalho
-        joblist: Trabalhos Recentes
+        settings: Configurações
+        joblist: Trabalhos de impressão
       joblist:
         header:
           id: #
           ctime: Criado
-          status: Status
+          status: Estado
         status:
           pending: Aguardando
           processing: Processando
@@ -42,7 +42,7 @@ mb:
             direct: Direto
             queued: Enfileirado
         queueAccess:
-          label: Fila de Trabalhos
+          label: Fila de impressões
           choice:
             global: Global
             private: Privada
@@ -52,7 +52,7 @@ mb:
         scales: Escalas (separadas por vírgulas)
         fileprefix: Prefixo do Arquivo
         optionalfields: Campos Opcionais
-        replacepattern: Padrão de Substituição
+        replacepattern: Substituir variáveis
         templates: Modelos
         qualitylevels: Níveis de Qualidade
       label:
