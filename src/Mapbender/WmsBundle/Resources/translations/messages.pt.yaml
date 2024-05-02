@@ -8,7 +8,7 @@ mb:
           wmsuser: Usuário
           wmspass: Senha
       error:
-        load: 'Carregar WMS: Não foi possível carregar o documento de Capacidades WMS!'
+        load: 'Iniciar WMS: Não foi possível carregar o documento de WMS Capabilities !'
       repo:
         macros:
           label:
@@ -18,64 +18,64 @@ mb:
             metadata: Metadados
             contact: Contato
             details: Detalhes
-            layers: Camada
+            layers: Layers
             title: Título
             name: Nome
             version: Versão
-            originurl: 'URL de origem'
+            originurl: 'URL'
             abstract: Descrição
             onlineresource: 'Recurso online'
             exceptionformats: 'Formatos de exceção'
-            fees: Taxa
-            accessconstraints: 'Limitações de acesso'
+            fees: Taxas
+            accessconstraints: 'Restrições de acesso'
             person: Pessoa
             organization: Organização
-            position: Posição
+            position: Cargo
             telephone: Telefone
             facsimile: Fax
-            email: Email
+            email: E-mail
             address: Endereço
             addresstype: 'Tipo de endereço'
             city: Cidade
             state: Estado
-            postcode: 'Código postal'
+            postcode: CEP
             country: País
           message:
-            cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
+            cautionscalehint: 'Atenção: Os cálculos de escala estão sujeitos à resolução limitada do ScaleHint no WMS 1.1.1'
         instance:
           btn:
-            save: Guardar
+            save: Salvar
             cancel: Cancelar
           label:
             originurl: 'URL de origem'
             visible: Visibilidade
-            basesource: Basesource
+            basesource: Fonte Base
             proxy: Proxy
             transparency: Transparência
-            tiled: 'Em mosaico'
+            tiled: 'Tiled'
             title: Título
             minsc: 'Escala mínima'
             maxsc: 'Escala máxima'
-            active: Ativo
-            select: Escolhido
-            info: Informação
-            toggle: Abrir
-            reorder: Organizar
-            allow: Permitir
-            'on': Ligado
-            ratio: 'Factor de BBox'
-            buffer: 'Buffer de bloco'
-            layerorder: 'Ordem da Camada'
+            active: ativo
+            select: selecionado
+            info: Informações
+            toggle: alternar
+            reorder: reordenar
+            allow: permitir
+            'on': ligado
+            ratio: 'Fator BBox'
+            buffer: 'Tile buffer'
+            layerorder: 'Ordenamento da layer'
             layerorder.standard: 'Padrão'
             layerorder.reverse: 'QGIS'
-            exceptionformat: 'Formato de Exceção'
-            infoformat: 'Formato do pedido GetFeatureInfo'
-            format: 'Formato do pedido GetMap'
+            exceptionformat: 'Formato para erros'
+            infoformat: 'Formato da requisição GetFeatureInfo'
+            format: 'Formato da requisição GetMap'
             dimensions: 'Dimensões'
-            vendorspecifics: 'Parâmetros Específicos do Fornecedor'
-            layers: 'Camadas'
+            vendorspecifics: 'Parâmetros de pedidos vendor'
+            layers: 'Layers'
           vendorspecific:
-            label: 'Específico do Fornecedor'
+            label: 'Pedidos vendor'
         preview:
           title:
             servicerepository: 'Repositório de Serviços'
@@ -92,11 +92,11 @@ mb:
             nosubset: 'Sem subgrupo'
             fixedwidth: 'Largura fixa'
             fixedheight: 'Altura fixa'
-            latlonbounds: 'Limite LatLon'
+            latlonbounds: 'Limite Lat/Lon'
             boundingbox: BoundingBox
             srs: SRS
             styles: Estilos
-            legendurl: 'URL de legenda'
+            legendurl: 'URL da legenda'
             scale: Escala
             min: Mínimo
             max: Máximo
@@ -115,14 +115,14 @@ mb:
             featurelisturl: 'URL de Lista de Recursos'
         instancelayerform:
           label:
-            layerstitle: 'Título da camada'
+            layerstitle: 'Título da layer'
             minscale: 'Escala mínima'
             maxsclase: 'Escala máxima'
-            active: Ativo
+            active: ativo
             allowselecttoc: 'Permitir seleção na árvore de camadas'
-            selectedtoc: 'Selecionado na árvore de camadas'
-            selectedtoc.help: 'O conjunto de camadas está ativo no arranque. A configuração só deve ser alterada se camadas temáticas forem usadas.'
-            unselectedtoc.help: 'O conjunto de camadas está inativo no arranque. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
+            selectedtoc: 'Deixar layer ativa na inicialização do aplicativo. Atenção: Deixe esta caixa marcada se não estiver usando camadas temáticas'
+            selectedtoc.help: 'A layer está ativa na inicialização do aplicativo. A configuração só deve ser alterada se camadas temáticas forem usadas.'
+            unselectedtoc.help: 'A layer está está inativa na inicialização do aplicativo. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
             allowinfotoc: 'Permitir FeatureInfo na árvore de camadas'
             infotoc: 'FeatureInfo na árvore de camadas'
             allowtoggletoc: 'Permitir alternar na árvore de camadas'
@@ -136,7 +136,7 @@ mb:
             style: Estilo
       class:
         title: 'Carregar WMS'
-        description: 'Carrega um WMS sobre o pedido de Capacidades getCapabilities'
+        description: 'Carrega um WMS sobre o pedido de getCapabilities'
       admin:
         label:
           splitlayers: 'Dividir camadas'
@@ -148,7 +148,7 @@ mb:
     metadata:
       section:
         common:
-          title: Comum
+          title: Informações gerais
         contact:
           title: Contato
         items:
@@ -165,7 +165,7 @@ mb:
     dimhandler:
       class:
         title: Manipulador de Dimensões
-        description: null
+        description: O Manipulador de Dimensões agrupa e chama as instâncias suportadas por dimensões no mapa
     dimensionsets:
       no_dimension: 'Não existe nenhuma dimensão'
   core:
@@ -188,13 +188,13 @@ mb:
       legendurltype:
         width: 'Largura'
         height: 'Altura'
-        onlineresource: 'Recurso Online'
+        onlineresource: 'Fonte Online'
       vendorspecifictype:
-        hidden: 'Escondido'
+        hidden: 'Oculto'
         setdefaults: 'Definir padrões'
     vendorspecifictype:
       admin:
         vstype: 'Tipo de Parâmetro'
         name: 'Nome'
         default: 'Valor Padrão'
-        hidden: 'Escondido'
+        hidden: 'Oculto'
