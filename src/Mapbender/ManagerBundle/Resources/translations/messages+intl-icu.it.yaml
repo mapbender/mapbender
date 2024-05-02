@@ -161,7 +161,7 @@ mb:
         view_this: 'Vedi questa applicazione'
         duplicate: 'Copia applicazione'
         public:
-          on_off: 'Alterna pubblica/annulla pubblicazione applicazione'
+          on_off: 'Attiva/disattiva l''accesso pubblico'
         delete: 'Elimina applicazione'
         no_application: 'Nessuna applicazione disponibile'
         new:

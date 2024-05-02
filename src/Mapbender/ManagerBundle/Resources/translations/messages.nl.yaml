@@ -91,7 +91,7 @@ mb:
         view_this: Toon deze applicatie
         duplicate: Dupliceer applicatie
         public:
-          on_off: Wissel publiceer/on-publiceer applicatie
+          on_off: Openbare toegang in-/uitschakelen
         delete: Verwijder applicatie
         no_application: Geen applicatie beschikbaar
         new:

@@ -91,7 +91,7 @@ mb:
         view_this: Bu uygulamayı görüntüle
         duplicate: Uygulamayı çoğaltın
         public:
-          on_off: Yayını aç/kaldır
+          on_off: Genel erişimi değiştirmek
         delete: Uygulamayı sil
         no_application: Uygulama bulunamadı
         new:

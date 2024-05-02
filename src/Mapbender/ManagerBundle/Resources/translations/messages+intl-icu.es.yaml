@@ -159,7 +159,7 @@ mb:
         view_this: 'Ver esta aplicación'
         duplicate: Duplicar
         public:
-          on_off: 'Cambiar aplicación a pública/privada'
+          on_off: 'Cambiar acceso público'
         delete: 'Borrar aplicación'
         no_application: 'Aplicación no disponible'
         new:

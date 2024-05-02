@@ -46,14 +46,14 @@ class Permission implements SubjectInterface
     protected ?string $subjectDomain = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
      * References the user for @see SubjectDomainUser
      */
     protected ?User $user = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Group", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Group")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
      * References the group  for @see SubjectDomainGroup
      */
@@ -80,14 +80,14 @@ class Permission implements SubjectInterface
     protected ?string $resourceDomain = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Element", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Element")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
      * References the element for resource domain @see ResourceDomainElement
      */
     protected ?Element $element = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Application", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Application")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
      * References the application for resource domain @see ResourceDomainApplication
      */

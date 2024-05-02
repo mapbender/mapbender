@@ -90,7 +90,7 @@ mb:
         view_this: Mostrar aplicação
         duplicate: Duplicar aplicação
         public:
-          on_off: Publicar/ocultar aplicação
+          on_off: Alternar acesso público
         delete: Remover aplicação
         no_application: Aplicação não existe
         new:

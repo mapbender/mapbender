@@ -161,7 +161,7 @@ mb:
         view_this: 'View this application'
         duplicate: 'Duplicate application'
         public:
-          on_off: 'Toggle publish/unpublish application'
+          on_off: 'Toggle public access'
         delete: 'Delete application'
         no_application: 'No application available'
         new:

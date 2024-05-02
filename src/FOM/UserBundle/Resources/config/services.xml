@@ -145,6 +145,12 @@
             <argument>%fom.acl_assignment.show_groups%</argument>
         </service>
 
+        <service id="mapbender.twig.permisison"
+                 class="FOM\UserBundle\Component\PermissionExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="fom.security.permission_manager" />
+        </service>
+
         <service id="fom.identities.provider" class="%fom.identities.provider.class%">
             <argument type="service" id="doctrine" />
             <argument type="service" id="fom.ldap_user_identities_provider" />

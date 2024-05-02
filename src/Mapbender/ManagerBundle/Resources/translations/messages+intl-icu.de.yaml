@@ -161,7 +161,7 @@ mb:
         view_this: 'Anwendung anzeigen'
         duplicate: 'Anwendung duplizieren'
         public:
-          on_off: 'Anwendung publizieren/verbergen'
+          on_off: 'Öffentlichen Zugriff umschalten'
         delete: 'Anwendung löschen'
         no_application: 'Keine Anwendung vorhanden'
         new:

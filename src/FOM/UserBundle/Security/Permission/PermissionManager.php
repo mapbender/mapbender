@@ -23,7 +23,7 @@ class PermissionManager extends Voter
         /** @var AbstractSubjectDomain[] */
         private array                  $subjectDomains,
         private ?SubjectDomainPublic   $publicAccessDomain,
-        private EntityManagerInterface $doctrineEM,
+        private EntityManagerInterface $em,
     )
     {
     }
@@ -55,7 +55,7 @@ class PermissionManager extends Voter
         $this->findSubjectDomainFor($subject)->populatePermission($permission, $subject);
         $this->findResourceDomainFor($resource)->populatePermission($permission, $resource);
 
-        $existingPermission = $this->doctrineEM->getRepository(Permission::class)->findOneBy([
+        $existingPermission = $this->em->getRepository(Permission::class)->findOneBy([
             'subjectDomain' => $permission->getSubjectDomain(),
             'user' => $permission->getUser(),
             'group' => $permission->getGroup(),
@@ -68,21 +68,21 @@ class PermissionManager extends Voter
         ]);
 
         if ($existingPermission === null && $isGranted) {
-            $this->doctrineEM->persist($permission);
-            $this->doctrineEM->flush();
+            $this->em->persist($permission);
+            $this->em->flush();
         } elseif ($existingPermission !== null && !$isGranted) {
-            $this->doctrineEM->remove($existingPermission);
-            $this->doctrineEM->flush();
+            $this->em->remove($existingPermission);
+            $this->em->flush();
         }
     }
 
     /**
-     * @param UserInterface $user
+     * @param ?UserInterface $user
      * @return array{permission: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int}
      */
-    protected function getPermissionsForUser(UserInterface $user): array
+    protected function getPermissionsForUser(?UserInterface $user): array
     {
-        $userIdentifier = $user->getUserIdentifier();
+        $userIdentifier = $user?->getUserIdentifier();
         if (in_array($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
 
         $subjectWhereComponents = [];
@@ -96,7 +96,7 @@ class PermissionManager extends Voter
 
         $sql = 'SELECT p.action, p.resource_domain, p.resource, p.element_id, p.application_id FROM fom_permission p';
         if (count($subjectWhereComponents) > 0) $sql .= ' WHERE (' . implode(' OR ', $subjectWhereComponents) . ")";
-        $permissions = $this->doctrineEM->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
+        $permissions = $this->em->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
         $this->cache[$userIdentifier] = $permissions;
         return $permissions;
     }
@@ -146,7 +146,7 @@ class PermissionManager extends Voter
         bool                   $alwaysAddPublicAccess = false
     ): array
     {
-        $repository = $this->doctrineEM->getRepository(Permission::class);
+        $repository = $this->em->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
         $resourceDomain->buildWhereClause($query, $resource);
         /** @var Permission[] $permissionsUngrouped */
@@ -189,7 +189,7 @@ class PermissionManager extends Voter
         // TODO: smarter method than deleting old permissions and adding new
         $oldPermissions = $this->findPermissions($resourceDomain, $resource, false);
         $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
-        $this->doctrineEM->getRepository(Permission::class)->createQueryBuilder('p')
+        $this->em->getRepository(Permission::class)->createQueryBuilder('p')
             ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)
             ->getQuery()->execute()
         ;
@@ -200,17 +200,17 @@ class PermissionManager extends Voter
                 if ($newPermission['permissions'][$i] === true) {
                     $permissionEntity = new Permission(
                         subjectDomain: $json["domain"],
-                        user: $json["user_id"] ? $this->doctrineEM->getReference(User::class, $json["user_id"]) : null,
-                        group: $json["group_id"] ? $this->doctrineEM->getReference(Group::class, $json["group_id"]) : null,
+                        user: $json["user_id"] ? $this->em->getReference(User::class, $json["user_id"]) : null,
+                        group: $json["group_id"] ? $this->em->getReference(Group::class, $json["group_id"]) : null,
                         subject: $json["subject"],
                         action: $availableActions[$i],
                     );
                     $resourceDomain->populatePermission($permissionEntity, $resource);
-                    $this->doctrineEM->persist($permissionEntity);
+                    $this->em->persist($permissionEntity);
                 }
             }
         }
-        $this->doctrineEM->flush();
+        $this->em->flush();
     }
 
 
