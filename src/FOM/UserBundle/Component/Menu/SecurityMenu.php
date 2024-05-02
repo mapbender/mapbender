@@ -3,24 +3,29 @@
 
 namespace FOM\UserBundle\Component\Menu;
 
-use FOM\UserBundle\Controller\SecurityController;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SecurityMenu extends MenuItem
 {
-    public function enabled(AuthorizationCheckerInterface $authorizationChecker)
+    public function enabled(AuthorizationCheckerInterface $authorizationChecker): bool
     {
-        /** @see SecurityController::indexAction */
-        $userOid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\User');
-        $groupOid = new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group');
-        $aclOid = new ObjectIdentity('class', 'Symfony\Component\Security\Acl\Domain\Acl');
+        $securityActions = [
+            ResourceDomainInstallation::ACTION_MANAGE_PERMISSION,
+            ResourceDomainInstallation::ACTION_VIEW_USERS,
+            ResourceDomainInstallation::ACTION_CREATE_USERS,
+            ResourceDomainInstallation::ACTION_EDIT_USERS,
+            ResourceDomainInstallation::ACTION_DELETE_USERS,
+            ResourceDomainInstallation::ACTION_VIEW_GROUPS,
+            ResourceDomainInstallation::ACTION_CREATE_GROUPS,
+            ResourceDomainInstallation::ACTION_EDIT_GROUPS,
+            ResourceDomainInstallation::ACTION_DELETE_GROUPS,
+        ];
 
-        return
-            $authorizationChecker->isGranted('VIEW', $userOid)
-            || $authorizationChecker->isGranted('VIEW', $groupOid)
-            || $authorizationChecker->isGranted('EDIT', $aclOid)
-        ;
+        foreach ($securityActions as $action) {
+            if ($authorizationChecker->isGranted($action)) return true;
+        }
+        return false;
     }
 }

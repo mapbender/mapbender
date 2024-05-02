@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
@@ -92,9 +93,7 @@ class InstanceTunnelController extends AbstractController
             throw new NotFoundHttpException("No such instance");
         }
         if (($layerset = $instance->getLayerset()) && $application = $layerset->getApplication()) {
-            if (!$this->isGranted('VIEW', $application)) {
-                $this->denyAccessUnlessGranted('VIEW', $application);
-            }
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
         }
         return $this->tunnelService->makeEndpoint($instance);
     }

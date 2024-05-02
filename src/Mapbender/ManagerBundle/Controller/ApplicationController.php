@@ -489,7 +489,7 @@ class ApplicationController extends ApplicationControllerBase
     {
         $form = $this->createForm(ApplicationType::class, $application);
         if ($this->allowPermissionEditing($application)) {
-            $resourceDomain = $this->permissionManager->findResourceDomainFor($application);
+            $resourceDomain = $this->permissionManager->findResourceDomainFor($application, throwIfNotFound: true);
             $form->add('security', PermissionListType::class, [
                 'resource_domain' => $resourceDomain,
                 'resource' => $application,

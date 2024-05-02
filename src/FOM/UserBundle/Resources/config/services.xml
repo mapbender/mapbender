@@ -41,6 +41,8 @@
             <parameter key="FOM\UserBundle\Entity\User">fom.user.userbundle.classes.users</parameter>
             <parameter key="FOM\UserBundle\Entity\Group">fom.user.userbundle.classes.groups</parameter>
         </parameter>
+        <parameter key="fom.security.voter.yaml_application.class">FOM\UserBundle\Security\Permission\YamlApplicationVoter</parameter>
+        <parameter key="fom.security.voter.yaml_application_element.class">FOM\UserBundle\Security\Permission\YamlApplicationElementVoter</parameter>
     </parameters>
     <services>
         <service id="fom.user_helper.service" class="%fom.user_helper.service.class%">
@@ -85,6 +87,8 @@
                  class="%fom.security.permission_manager.class%"
                  lazy="true">
             <!-- default class: FOM\UserBundle\Security\Permission\PermissionManager -->
+
+            <tag name="security.voter" />
 
             <!-- initialized by compiler pass -->
             <!-- will contain all services tagged with "fom.security.resource_domain", sorted by priority -->
@@ -145,11 +149,22 @@
             <argument>%fom.acl_assignment.show_groups%</argument>
         </service>
 
-        <service id="mapbender.twig.permisison"
+        <service id="mapbender.twig.permission"
                  class="FOM\UserBundle\Component\PermissionExtension">
             <tag name="twig.extension" />
             <argument type="service" id="fom.security.permission_manager" />
         </service>
+
+        <service id="fom.security.voter.yaml_application" class="%fom.security.voter.yaml_application.class%">
+            <tag name="security.voter" priority="255" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
+        <service id="fom.security.voter.yaml_application_element" class="%fom.security.voter.yaml_application_element.class%">
+            <tag name="security.voter" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
+
+
 
         <service id="fom.identities.provider" class="%fom.identities.provider.class%">
             <argument type="service" id="doctrine" />

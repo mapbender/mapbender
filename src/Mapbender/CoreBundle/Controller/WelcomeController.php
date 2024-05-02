@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,15 +53,14 @@ class WelcomeController extends AbstractController
         $allowedApplications = array();
 
         foreach ($allApplications as $application) {
-            if ($this->isGranted('VIEW', $application)) {
+            if ($this->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
                 $allowedApplications[] = $application;
             }
         }
 
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications' => $allowedApplications,
-            'create_permission' => $this
-                ->isGranted('CREATE', new ObjectIdentity('class', Application::class)),
+            'create_permission' => $this->isGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS),
         ));
     }
 }

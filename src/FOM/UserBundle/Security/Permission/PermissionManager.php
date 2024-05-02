@@ -37,6 +37,8 @@ class PermissionManager extends Voter
         if (empty($permissions)) return false;
 
         $resourceDomain = $this->findResourceDomainFor($resource, $action);
+        if ($resourceDomain === null) return false;
+
         foreach ($permissions as $permission) {
             if ($resourceDomain->matchesPermission($permission, $action, $resource)) return true;
         }
@@ -53,7 +55,7 @@ class PermissionManager extends Voter
     {
         $permission = new Permission(action: $action);
         $this->findSubjectDomainFor($subject)->populatePermission($permission, $subject);
-        $this->findResourceDomainFor($resource)->populatePermission($permission, $resource);
+        $this->findResourceDomainFor($resource, throwIfNotFound: true)->populatePermission($permission, $resource);
 
         $existingPermission = $this->em->getRepository(Permission::class)->findOneBy([
             'subjectDomain' => $permission->getSubjectDomain(),
@@ -101,12 +103,16 @@ class PermissionManager extends Voter
         return $permissions;
     }
 
-    public function findResourceDomainFor(mixed $resource, string $action = null): AbstractResourceDomain
+    public function findResourceDomainFor(mixed $resource, string $action = null, bool $throwIfNotFound = false): ?AbstractResourceDomain
     {
         foreach ($this->resourceDomains as $resourceDomain) {
             if ($resourceDomain->supports($resource, $action)) return $resourceDomain;
         }
-        throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
+
+        if ($throwIfNotFound) {
+            throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
+        }
+        return null;
     }
 
     public function findSubjectDomainFor(mixed $permissionOrSubject, string $action = null): AbstractSubjectDomain
@@ -183,7 +189,7 @@ class PermissionManager extends Voter
      */
     public function savePermissions(mixed $resource, array $permissionData): void
     {
-        $resourceDomain = $this->findResourceDomainFor($resource);
+        $resourceDomain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
         $availableActions = $resourceDomain->getActions();
 
         // TODO: smarter method than deleting old permissions and adding new
