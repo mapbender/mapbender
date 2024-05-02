@@ -6,8 +6,8 @@ mb:
           label:
             matrixsets: 'Conjuntos de Matrizes'
             theme: 'Tema'
-            serviceprovidername: 'Nome do provedor de serviços'
-            serviceprovidersite: 'Site do provedor de serviços'
+            serviceprovidername: 'Nome do provedor de serviço'
+            serviceprovidersite: 'Site do provedor de serviço'
         tilematrixset:
           label:
             identifier: 'Identificador'
@@ -30,12 +30,12 @@ mb:
             formats: 'Formatos'
             title: 'Título'
             abstract: 'Resumo'
-            latlonbounds: 'Limites LatLon'
-            tilematrixsetlinks: 'Links de Conjunto de Matrizes de Azulejos'
+            latlonbounds: 'Limites Lat/Lon'
+            tilematrixsetlinks: 'Links de Conjunto de TileMatrix'
         tilematrix:
           label:
             identifier: 'Identificador'
             scaledenominator: 'Denominador de Escala'
             topleftcorner: 'Canto Superior Esquerdo'
-            tilesize: 'Tamanho do Azulejo'
-            matrixsize: 'Tamanho da Matriz'
+            tilesize: 'Tamanho do Tile'
+            matrixsize: 'Tamanho da Matrix'
