@@ -10,7 +10,7 @@ mb:
       chooseformat: 'Selecionar formato de exportação'
       class:
         title: 'Exportar imagem'
-        description: 'EA exportação de imagem permite que você exporte sua visualização atual do mapa. A imagem pode ser salva como png ou jpeg.'
+        description: 'A exportação de imagem permite que você exporte sua visualização atual do mapa. A imagem pode ser salva como png ou jpeg.'
       tag:
         image: Imagem
         export: Exportação
