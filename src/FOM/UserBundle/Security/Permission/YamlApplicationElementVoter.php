@@ -4,29 +4,17 @@
 namespace FOM\UserBundle\Security\Permission;
 
 
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class YamlApplicationElementVoter extends Voter
+class YamlApplicationElementVoter extends YamlApplicationVoter
 {
-    /** @var AccessDecisionManagerInterface */
-    protected $accessDecisionManager;
-
-    public function __construct(AccessDecisionManagerInterface $accessDecisionManager)
-    {
-        $this->accessDecisionManager = $accessDecisionManager;
-    }
-
     protected function supports($attribute, $subject): bool
     {
-        // Only vote on VIEW on an Element in a Yaml-defined Application
-        return
-            ($attribute === 'VIEW')
-            && is_object($subject) && ($subject instanceof Element)
-            && ($subject->getApplication()) && ($subject->getApplication()->isYamlBased())
-        ;
+        return $attribute === ResourceDomainElement::ACTION_VIEW
+            && $subject instanceof Element
+            && $subject->getApplication()?->getSource() === Application::SOURCE_YAML;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -37,11 +25,7 @@ class YamlApplicationElementVoter extends Voter
             // Empty list of roles => allow all
             return true;
         }
-        foreach ($roleNames as $roleName) {
-            if ($this->accessDecisionManager->decide($token, array($roleName), null)) {
-                return true;
-            }
-        }
-        return false;
+
+        return $this->checkYamlRoles($roleNames, $token);
     }
 }

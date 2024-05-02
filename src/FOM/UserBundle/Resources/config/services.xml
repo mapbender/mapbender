@@ -157,11 +157,9 @@
 
         <service id="fom.security.voter.yaml_application" class="%fom.security.voter.yaml_application.class%">
             <tag name="security.voter" priority="255" />
-            <argument type="service" id="security.access.decision_manager" />
         </service>
         <service id="fom.security.voter.yaml_application_element" class="%fom.security.voter.yaml_application_element.class%">
             <tag name="security.voter" />
-            <argument type="service" id="security.access.decision_manager" />
         </service>
 
 
