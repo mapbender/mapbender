@@ -92,7 +92,7 @@ class PermissionManager extends Voter
             if ($wrapper === null) continue;
             $subjectWhereComponents[] = '(' . $wrapper->whereClause . ')';
             $variables = array_merge($variables, $wrapper->variables);
-        };
+        }
 
         $sql = 'SELECT p.action, p.resource_domain, p.resource, p.element_id, p.application_id FROM fom_permission p';
         if (count($subjectWhereComponents) > 0) $sql .= ' WHERE (' . implode(' OR ', $subjectWhereComponents) . ")";

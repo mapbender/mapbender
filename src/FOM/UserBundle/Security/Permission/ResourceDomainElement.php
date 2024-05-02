@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 
 class ResourceDomainElement extends AbstractResourceDomain
@@ -19,8 +20,9 @@ class ResourceDomainElement extends AbstractResourceDomain
 
     public function supports(mixed $resource, ?string $action = null): bool
     {
-        return $resource instanceof Element &&
-            ($action === null || in_array($action, $this->getActions()));
+        return $resource instanceof Element
+            && $resource->getApplication()->getSource() === Application::SOURCE_DB
+            && ($action === null || in_array($action, $this->getActions()));
     }
 
     public function getActions(): array
@@ -28,11 +30,12 @@ class ResourceDomainElement extends AbstractResourceDomain
         return [self::ACTION_VIEW];
     }
 
-    public function matchesPermission(array $permission, string $action, mixed $subject): bool
+    public function matchesPermission(array $permission, string $action, mixed $resource): bool
     {
-        /** @var Element $subject */
-        return parent::matchesPermission($permission, $action, $subject)
-            && $permission["element_id"] === $subject->getId();
+        /** @var Element $resource */
+        return parent::matchesPermission($permission, $action, $resource)
+            && $resource->getApplication()->getSource() === Application::SOURCE_DB
+            && $permission["element_id"] === $resource->getId();
     }
 
     public function buildWhereClause(QueryBuilder $q, mixed $resource): void

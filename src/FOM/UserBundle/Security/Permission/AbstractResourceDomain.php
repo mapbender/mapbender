@@ -60,10 +60,10 @@ abstract class AbstractResourceDomain
      * this is used for isGranted checks, where all permissions for a user are cached to minimize calls to the database
      * @param array{action: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int} $permission
      * @param string $action
-     * @param mixed $subject
+     * @param mixed $resource
      * @return bool
      */
-    public function matchesPermission(array $permission, string $action, mixed $subject): bool
+    public function matchesPermission(array $permission, string $action, mixed $resource): bool
     {
         return $permission["resource_domain"] === $this->getSlug() && (
             $this->isHierarchical()
