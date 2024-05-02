@@ -1,7 +1,10 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\Component\Transport\ConnectionErrorException;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -12,13 +15,11 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
-use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
@@ -35,16 +36,11 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class RepositoryController extends ApplicationControllerBase
 {
-    /** @var MutableAclProviderInterface */
-    protected $aclProvider;
-    /** @var TypeDirectoryService */
-    protected $typeDirectory;
-
-    public function __construct(MutableAclProviderInterface $aclProvider,
-                                TypeDirectoryService $typeDirectory)
+    public function __construct(protected MutableAclProviderInterface $aclProvider,
+                                protected TypeDirectoryService        $typeDirectory,
+                                EntityManagerInterface                $em)
     {
-        $this->aclProvider = $aclProvider;
-        $this->typeDirectory = $typeDirectory;
+        parent::__construct($em);
     }
 
     /**
@@ -57,7 +53,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $this->denyAccessUnlessGranted('VIEW', $oid);
-        $repository = $this->getDoctrine()->getRepository(Source::class);
+        $repository = $this->em->getRepository(Source::class);
         /** @var Source[] $sources */
         $sources = $repository->findBy(array(), array(
             'title' => 'ASC',
@@ -65,7 +61,7 @@ class RepositoryController extends ApplicationControllerBase
         ));
 
         /** @var SourceInstanceRepository $instanceRepository */
-        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
+        $instanceRepository = $this->em->getRepository(SourceInstance::class);
 
         $sharedInstances = $instanceRepository->findReusableInstances(array(), array(
             'title' => 'ASC',
@@ -104,14 +100,13 @@ class RepositoryController extends ApplicationControllerBase
                 $source = $loader->evaluateServer($form->getData());
 
                 $this->setAliasForDuplicate($source);
-                $em = $this->getEntityManager();
-                $em->beginTransaction();
+                $this->em->beginTransaction();
 
-                $em->persist($source);
+                $this->em->persist($source);
 
-                $em->flush();
+                $this->em->flush();
                 $this->initializeAccessControl($source);
-                $em->commit();
+                $this->em->commit();
                 // @todo: provide translations
                 $this->addFlash('success', "A new {$source->getType()} source has been created");
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
@@ -148,9 +143,8 @@ class RepositoryController extends ApplicationControllerBase
      */
     public function viewAction($sourceId)
     {
-        $em = $this->getEntityManager();
         /** @var Source|null $source */
-        $source = $em->getRepository(Source::class)->find($sourceId);
+        $source = $this->em->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             throw $this->createNotFoundException();
         }
@@ -186,9 +180,8 @@ class RepositoryController extends ApplicationControllerBase
     public function deleteAction(Request $request, $sourceId)
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $em = $this->getEntityManager();
         /** @var Source $source */
-        $source = $em->getRepository(Source::class)->find($sourceId);
+        $source = $this->em->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             // If delete action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
@@ -219,7 +212,7 @@ class RepositoryController extends ApplicationControllerBase
         if ($request->getMethod() === Request::METHOD_GET) {
             // Use an empty form to help client code follow the final redirect properly
             // See Resources/public/confirm-delete.js
-            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig',  array(
+            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig', array(
                 'source' => $source,
                 'applications' => $affectedApplications,
                 'form' => $dummyForm->createView(),
@@ -230,19 +223,19 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         // capture ACL and entity updates in a single transaction
-        $em->beginTransaction();
-        $oid         = ObjectIdentity::fromDomainObject($source);
+        $this->em->beginTransaction();
+        $oid = ObjectIdentity::fromDomainObject($source);
         $this->aclProvider->deleteAcl($oid);
 
         $dtNow = new \DateTime('now');
         foreach ($affectedApplications as $affectedApplication) {
-            $em->persist($affectedApplication);
+            $this->em->persist($affectedApplication);
             $affectedApplication->setUpdated($dtNow);
         }
 
-        $em->remove($source);
-        $em->flush();
-        $em->commit();
+        $this->em->remove($source);
+        $this->em->flush();
+        $this->em->commit();
         $this->addFlash('success', 'Your source has been deleted');
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
@@ -259,7 +252,7 @@ class RepositoryController extends ApplicationControllerBase
     {
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         /** @var Source|null $source */
-        $source = $this->getDoctrine()->getRepository(Source::class)->find($sourceId);
+        $source = $this->em->getRepository(Source::class)->find($sourceId);
         if (!$source) {
             // If edit action is forbidden, hide the fact that the source doesn't
             // exist behind an access denied.
@@ -283,21 +276,20 @@ class RepositoryController extends ApplicationControllerBase
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
-            $em->beginTransaction();
+            $this->em->beginTransaction();
             try {
                 $loader->refresh($source, $formModel);
-                $em->persist($source);
+                $this->em->persist($source);
 
-                $em->flush();
-                $em->commit();
+                $this->em->flush();
+                $this->em->commit();
 
                 $this->addFlash('success', "Your {$source->getType()} source has been updated");
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
             } catch (\Exception $e) {
-                $em->rollback();
+                $this->em->rollback();
                 $form->addError(new FormError($e->getMessage()));
             }
         }
@@ -312,10 +304,11 @@ class RepositoryController extends ApplicationControllerBase
 
     protected function setAliasForDuplicate(Source $source)
     {
-        $wmsWithSameTitle = $this->getDoctrine()
+        $wmsWithSameTitle = $this->em
             ->getManager()
             ->getRepository(Source::class)
-            ->findBy(array('title' => $source->getTitle()));
+            ->findBy(array('title' => $source->getTitle()))
+        ;
 
         if (count($wmsWithSameTitle) > 0) {
             $source->setAlias(count($wmsWithSameTitle));
@@ -342,7 +335,7 @@ class RepositoryController extends ApplicationControllerBase
     protected function getDbApplicationRepository()
     {
         /** @var ApplicationRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Application::class);
+        $repository = $this->em->getRepository(Application::class);
         return $repository;
     }
 }

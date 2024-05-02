@@ -38,11 +38,10 @@ class LayersetController extends ApplicationControllerBase
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $em = $this->getEntityManager();
                 $application->setUpdated(new \DateTime('now'));
-                $em->persist($application);
-                $em->persist($layerset);
-                $em->flush();
+                $this->em->persist($application);
+                $this->em->persist($layerset);
+                $this->em->flush();
                 $this->addFlash('success', 'mb.layerset.create.success');
             } else {
                 foreach ($form->getErrors(false, true) as $error) {
@@ -82,11 +81,10 @@ class LayersetController extends ApplicationControllerBase
                 throw new BadRequestHttpException();
             }
 
-            $em = $this->getEntityManager();
-            $em->remove($layerset);
+            $this->em->remove($layerset);
             $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->flush();
             $this->addFlash('success', 'mb.layerset.remove.success');
             /** @todo: perform redirect server side, not client side */
             return new Response();
@@ -110,12 +108,11 @@ class LayersetController extends ApplicationControllerBase
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
         $layerset->setSelected($request->request->getBoolean('enabled'));
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($layerset);
-        $em->persist($application);
-        $em->flush();
+        $this->em->persist($layerset);
+        $this->em->persist($application);
+        $this->em->flush();
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

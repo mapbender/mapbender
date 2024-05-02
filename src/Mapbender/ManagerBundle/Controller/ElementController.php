@@ -3,6 +3,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Component\AclManager;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
@@ -32,24 +33,14 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ElementController extends ApplicationControllerBase
 {
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var ElementEntityFactory */
-    protected $factory;
-    /** @var ElementFormFactory */
-    protected $elementFormFactory;
-    /** @var AclManager */
-    protected $aclManager;
 
-    public function __construct(ElementInventoryService $inventory,
-                                ElementEntityFactory $factory,
-                                ElementFormFactory $elementFormFactory,
-                                AclManager $aclManager)
+    public function __construct(protected ElementInventoryService $inventory,
+                                protected ElementEntityFactory $factory,
+                                protected ElementFormFactory $elementFormFactory,
+                                protected AclManager $aclManager,
+    EntityManagerInterface $em)
     {
-        $this->inventory = $inventory;
-        $this->factory = $factory;
-        $this->elementFormFactory = $elementFormFactory;
-        $this->aclManager = $aclManager;
+        parent::__construct($em);
     }
 
     /**
@@ -130,10 +121,9 @@ class ElementController extends ApplicationControllerBase
             $element->setWeight($newWeight);
 
             $application->setUpdated(new \DateTime('now'));
-            $em = $this->getEntityManager();
-            $em->persist($application);
-            $em->persist($element);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->persist($element);
+            $this->em->flush();
             $this->addFlash('success', 'Your element has been saved.');
 
             return new Response('', 201);
@@ -171,10 +161,9 @@ class ElementController extends ApplicationControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
-            $em->persist($application->setUpdated(new \DateTime('now')));
-            $em->persist($element);
-            $em->flush();
+            $this->em->persist($application->setUpdated(new \DateTime('now')));
+            $this->em->persist($element);
+            $this->em->flush();
 
             $this->addFlash('success', 'Your element has been saved.');
             // NOTE: On Symfony >=4.4.44 (4.4.43 is fine), Chromium / Chrome will not receive Response headers
@@ -211,8 +200,7 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
         }
 
-        $entityManager = $this->getEntityManager();
-        $entityManager->clear(Element::class); // prevent element from being stored with default config/stored again
+        $this->em->clear(Element::class); // prevent element from being stored with default config/stored again
 
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
@@ -228,18 +216,18 @@ class ElementController extends ApplicationControllerBase
         ));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->beginTransaction();
+            $this->em->beginTransaction();
             try {
                 $application->setUpdated(new \DateTime('now'));
-                $entityManager->persist($application);
+                $this->em->persist($application);
                 $this->aclManager->setObjectACEs($element, $form->get('acl')->getData());
-                $entityManager->flush();
-                $entityManager->commit();
+                $this->em->flush();
+                $this->em->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
             } catch (\Exception $e) {
                 $this->addFlash('error', "There was an error trying to change your element's access.");
-                $entityManager->rollback();
-                $entityManager->close();
+                $this->em->rollback();
+                $this->em->close();
             }
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
                 'slug' => $slug,
@@ -275,7 +263,6 @@ class ElementController extends ApplicationControllerBase
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
         $higherWeightCriteria = Criteria::create()
             ->where(Criteria::expr()->eq('region', $element->getRegion()))
             ->andWhere(Criteria::expr()->gt('weight', $element->getWeight()))
@@ -283,13 +270,13 @@ class ElementController extends ApplicationControllerBase
         $higherWeightElements = $this->getRepository()->matching($higherWeightCriteria);
         foreach ($higherWeightElements as $otherElement) {
             /** @var Element $otherElement */
-            $em->persist($otherElement);
+            $this->em->persist($otherElement);
             $otherElement->setWeight($otherElement->getWeight() - 1);
         }
-        $em->remove($element);
+        $this->em->remove($element);
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($application);
-        $em->flush();
+        $this->em->persist($application);
+        $this->em->flush();
 
         $this->addFlash('success', 'Your element has been removed.');
 
@@ -304,7 +291,6 @@ class ElementController extends ApplicationControllerBase
      */
     public function weightAction(Request $request, $id)
     {
-        $em = $this->getEntityManager();
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
 
@@ -359,8 +345,8 @@ class ElementController extends ApplicationControllerBase
         }
         $application->setElements($rebuiltElementCollection);
         $application->setUpdated(new \DateTime());
-        $em->persist($application);
-        $em->flush();
+        $this->em->persist($application);
+        $this->em->flush();
         return new JsonResponse(array(
             'error' => '',      // why?
             'result' => 'ok',   // why?
@@ -389,12 +375,11 @@ class ElementController extends ApplicationControllerBase
         } else {
             $enabled = $request->request->get("enabled") === "true";
             $element->setEnabled($enabled);
-            $em = $this->getEntityManager();
             $application = $element->getApplication();
             $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->persist($element);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->persist($element);
+            $this->em->flush();
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
     }
@@ -415,12 +400,11 @@ class ElementController extends ApplicationControllerBase
         }
 
         $newValue = $request->request->get('screenType');
-        $em = $this->getEntityManager();
-        $em->persist($element);
-        $em->persist($application);
+        $this->em->persist($element);
+        $this->em->persist($application);
         $application->setUpdated(new \DateTime());
         $element->setScreenType($newValue);
-        $em->flush();
+        $this->em->flush();
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -430,7 +414,7 @@ class ElementController extends ApplicationControllerBase
     protected function getRepository()
     {
         /** @var EntityRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Element::class);
+        $repository = $this->em->getRepository(Element::class);
         return $repository;
     }
 }

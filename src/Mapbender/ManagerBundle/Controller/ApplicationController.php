@@ -3,6 +3,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
@@ -47,8 +48,10 @@ class ApplicationController extends ApplicationControllerBase
                                 protected UploadsManager              $uploadsManager,
                                 protected PermissionManager           $permissionManager,
                                 protected bool                        $enableResponsiveElements,
+                                EntityManagerInterface $em,
     )
     {
+        parent::__construct($em);
     }
 
     /**
@@ -85,11 +88,10 @@ class ApplicationController extends ApplicationControllerBase
                 return $this->redirectToRoute('mapbender_manager_application_index');
             }
             $application->setUpdated(new \DateTime('now'));
-            $em = $this->getEntityManager();
 
-            $em->beginTransaction();
-            $em->persist($application);
-            $em->flush();
+            $this->em->beginTransaction();
+            $this->em->persist($application);
+            $this->em->flush();
             if ($form->has('security')) {
                 $this->permissionManager->savePermissions($application, $form->get('security')->getData());
             }
@@ -100,13 +102,13 @@ class ApplicationController extends ApplicationControllerBase
                 $uploadScreenShot->upload($appDirectory, $scFile, $application);
             }
 
-            $em->persist($application);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->flush();
             $this->createRegionProperties($application);
 
-            $em->persist($application);
-            $em->flush();
-            $em->commit();
+            $this->em->persist($application);
+            $this->em->flush();
+            $this->em->commit();
             $this->addFlash('success', 'mb.application.create.success');
 
             return $this->redirectToRoute('mapbender_manager_application_edit', array(
@@ -138,14 +140,13 @@ class ApplicationController extends ApplicationControllerBase
         $form = $this->createApplicationForm($application);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
-            $em->beginTransaction();
+            $this->em->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
             if ($form->get('removeScreenShot')->getData() == '1') {
                 $application->setScreenshot(null);
             }
-            $em->persist($application);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->flush();
 
             try {
                 if ($oldSlug !== $application->getSlug()) {
@@ -158,12 +159,12 @@ class ApplicationController extends ApplicationControllerBase
                     $uploadScreenShot = new UploadScreenshot();
                     $uploadScreenShot->upload($uploadPath, $scFile, $application);
                 }
-                $em->persist($application);
-                $em->flush();
+                $this->em->persist($application);
+                $this->em->flush();
                 if ($form->has('security')) {
                     $this->permissionManager->savePermissions($application, $form->get('security')->getData());
                 }
-                $em->commit();
+                $this->em->commit();
                 $this->addFlash('success', 'mb.application.save.success');
                 return $this->redirectToRoute('mapbender_manager_application_edit', array(
                     'slug' => $application->getSlug(),
@@ -171,10 +172,10 @@ class ApplicationController extends ApplicationControllerBase
             } catch (IOException $e) {
                 $this->addFlash('error', 'mb.application.save.failure.create.directory');
                 $this->addFlash('error', ": {$e->getMessage()}");
-                $em->rollback();
+                $this->em->rollback();
             } catch (\Exception $e) {
                 $this->addFlash('error', 'mb.application.save.failure.general');
-                $em->rollback();
+                $this->em->rollback();
             }
         }
         $template = $this->templateRegistry->getApplicationTemplate($application);
@@ -210,13 +211,7 @@ class ApplicationController extends ApplicationControllerBase
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
-
         $requestedState = $request->request->get("enabled") === "true";
-        $application->setPublished($requestedState);
-        $em->flush();
-
-        // TODO: remove upper part after implementing this
         $this->permissionManager->grant(SubjectDomainPublic::SLUG, $application, ResourceDomainApplication::ACTION_VIEW, $requestedState);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
@@ -241,11 +236,10 @@ class ApplicationController extends ApplicationControllerBase
         }
 
         try {
-            $em = $this->getEntityManager();
-            $em->beginTransaction();
-            $em->remove($application);
-            $em->flush();
-            $em->commit();
+            $this->em->beginTransaction();
+            $this->em->remove($application);
+            $this->em->flush();
+            $this->em->commit();
             $this->uploadsManager->removeSubdirectory($slug);
             $this->addFlash('success', 'mb.application.remove.success');
         } catch (IOException $e) {
@@ -272,12 +266,12 @@ class ApplicationController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted('VIEW', $sourceOid);
 
         $layerset = $this->requireLayerset($layersetId, $application);
-        $sources = $this->getDoctrine()->getRepository(Source::class)->findBy(array(), array(
+        $sources = $this->em->getRepository(Source::class)->findBy(array(), array(
             'title' => 'ASC',
             'id' => 'ASC',
         ));
         /** @var SourceInstanceRepository $instanceRepository */
-        $instanceRepository = $this->getDoctrine()->getRepository(SourceInstance::class);
+        $instanceRepository = $this->em->getRepository(SourceInstance::class);
 
         return $this->render('@MapbenderManager/Application/list-source.html.twig', array(
             'application' => $application,
@@ -304,9 +298,8 @@ class ApplicationController extends ApplicationControllerBase
         }
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted('EDIT', $application);
-        $em = $this->getEntityManager();
         $instanceCopy = clone $instance;
-        $em->persist($instanceCopy);
+        $this->em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
         $instanceCopy->setWeight(-1);
         $layerset->addInstance($instanceCopy);
@@ -321,7 +314,7 @@ class ApplicationController extends ApplicationControllerBase
         });
         foreach ($reusablePartitions[1] as $removableAssignment) {
             /** @var SourceInstanceAssignment $removableAssignment */
-            $em->remove($removableAssignment);
+            $this->em->remove($removableAssignment);
             $assignmentWeight = $removableAssignment->getWeight();
             if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
                 $instanceCopy->setWeight($assignmentWeight);
@@ -329,10 +322,10 @@ class ApplicationController extends ApplicationControllerBase
         }
         $layerset->setReusableInstanceAssignments($reusablePartitions[0]);
         WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
-        $em->persist($layerset);
-        $em->persist($application);
+        $this->em->persist($layerset);
+        $this->em->persist($application);
         $application->setUpdated(new \DateTime('now'));
-        $em->flush();
+        $this->em->flush();
         $this->addFlash('success', 'mb.manager.sourceinstance.converted_to_bound');
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             "slug" => $application->getSlug(),
@@ -352,7 +345,6 @@ class ApplicationController extends ApplicationControllerBase
         if ($instance->getLayerset()) {
             throw new \LogicException("Keine freie Instanz");
         }
-        $em = $this->getEntityManager();
         $application = $layerset->getApplication();
         $assignment = new ReusableSourceInstanceAssignment();
         $assignment->setLayerset($layerset);
@@ -362,17 +354,17 @@ class ApplicationController extends ApplicationControllerBase
         foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
             /** @var SourceInstanceAssignment $otherAssignment */
             $otherAssignment->setWeight($index + 1);
-            $em->persist($otherAssignment);
+            $this->em->persist($otherAssignment);
         }
 
         $layerset->getReusableInstanceAssignments()->add($assignment);
-        $em->persist($assignment);
-        $em->persist($application);
+        $this->em->persist($assignment);
+        $this->em->persist($application);
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($layerset);
+        $this->em->persist($layerset);
         // sanity
         $instance->setLayerset(null);
-        $em->flush();
+        $this->em->flush();
         $this->addFlash('success', 'mb.manager.sourceinstance.reusable_assigned_to_application');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
@@ -392,8 +384,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function deleteInstanceAction(Request $request, $slug, $layersetId, $instanceId)
     {
-        $em = $this->getEntityManager();
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         if ($application) {
@@ -410,17 +401,17 @@ class ApplicationController extends ApplicationControllerBase
         if (!$instance) {
             throw $this->createNotFoundException();
         }
-        $em->persist($application);
+        $this->em->persist($application);
         $application->setUpdated(new \DateTime('now'));
         $layerset->getInstances()->removeElement($instance);
         foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $remainingAssignment) {
             /** @var SourceInstanceAssignment $remainingAssignment */
             $remainingAssignment->setWeight($index);
-            $em->persist($remainingAssignment);
+            $this->em->persist($remainingAssignment);
         }
 
-        $em->remove($instance);
-        $em->flush();
+        $this->em->remove($instance);
+        $this->em->flush();
         $this->addFlash('success', 'Your source instance has been deleted');
         return new Response();  // ???
     }
@@ -449,14 +440,13 @@ class ApplicationController extends ApplicationControllerBase
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
         $layerset->getReusableInstanceAssignments()->removeElement($assignment);
-        $em->remove($assignment);
+        $this->em->remove($assignment);
         WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($application);
-        $em->persist($layerset);
-        $em->flush();
+        $this->em->persist($application);
+        $this->em->persist($layerset);
+        $this->em->flush();
         $this->addFlash('success', 'Your reusable source instance assignment has been deleted');
         $params = array(
             'slug' => $application->getSlug(),
@@ -486,10 +476,9 @@ class ApplicationController extends ApplicationControllerBase
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getEntityManager();
-            $em->persist($application);
+            $this->em->persist($application);
             $application->setUpdated(new \DateTime());
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         } else {
             return new JsonResponse(\strval($form->getErrors()), Response::HTTP_BAD_REQUEST);
