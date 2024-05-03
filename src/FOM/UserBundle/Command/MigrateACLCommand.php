@@ -2,9 +2,13 @@
 
 namespace FOM\UserBundle\Command;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Tools\SchemaTool;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
@@ -55,6 +59,8 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->ensureTableExists();
+
         $connection = $this->em->getConnection();
         $this->userRepo = $this->em->getRepository(User::class);
         $this->groupRepo = $this->em->getRepository(Group::class);
@@ -294,5 +300,20 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         $entry = clone $newEntry;
         $entry->setAction($permission);
         $this->em->persist($entry);
+    }
+
+    private function ensureTableExists()
+    {
+        try {
+            $check = $this->em->getRepository(Permission::class)->createQueryBuilder('p')->select('p.id')->setMaxResults(1)->getQuery()->getResult();
+            return;
+        } catch (TableNotFoundException $e) {
+            $schemaTool = new SchemaTool($this->em);
+            $classMetadata = $this->em->getClassMetadata(Permission::class);
+            $sqls = $schemaTool->getCreateSchemaSql([$classMetadata]);
+            foreach ($sqls as $sql) {
+                if (!str_contains($sql, 'acl')) $this->em->getConnection()->executeQuery($sql);
+            }
+        }
     }
 }

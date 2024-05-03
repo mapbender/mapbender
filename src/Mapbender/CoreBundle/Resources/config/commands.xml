@@ -44,7 +44,7 @@
         <service id="Mapbender\CoreBundle\Command\DatabaseUpgradeCommand"
                  class="Mapbender\CoreBundle\Command\DatabaseUpgradeCommand">
             <tag name="console.command" command="mapbender:database:upgrade" />
-            <argument type="service" id="doctrine" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
         <service id="Mapbender\CoreBundle\Command\UserListCommand"
                  class="Mapbender\CoreBundle\Command\UserListCommand">

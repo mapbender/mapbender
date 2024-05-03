@@ -1,4 +1,12 @@
 ## next major release (v4.0)
+
+### Upgrade database
+Important: Execute the following commands in the specified order to upgrade. First, make a backup of your database!
+
+- `bin/console mapbender:database:upgrade`: this replaces doctrine's removed json_array type to json. If you are using a DBMS other than SQlite, PostgreSQL and MySQL you need to do that manually. 
+- `bin/console mapbender:security:migrate-from-acl`: migrates security definitions from the ACL system to the new permission system
+- `bin/console doctrine:schema:update --complete --force`: updates the rest of the database. That needs to be executed last, since it deletes the old ACL tables
+
 ### Symfony updated to version 5.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
   that the core mapbender requires are included now. If you're missing a symfony component, 
@@ -43,7 +51,7 @@
       `MAILER_DSN` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See https://symfony.com/doc/current/mailer.html#using-built-in-transports for details
       Configure it by adding it in your .env.local file
 - Doctrine: updated ORM from 2.10 to 2.15 and DBAL from 2.11 to 3
-	- Type `json_array` was replaced by `json`. Run `bin/console mapbender:database:upgrade` if you were using the `json_array` database type
+	- Type `json_array` was replaced by `json`. Run `bin/console mapbender:database:upgrade`
     - Parameters `database_driver`, `database_host`, `database_port`, `database_name`, `database_path`, `database_user`, `database_password` 
       replaced by an environment variable `MAPBENDER_DATABASE_URL` containing the entire connect string, 
       e.g. `postgresql://dbuser:dbpassword@localhost:5432/dbname?serverVersion=14&charset=utf8`. 
