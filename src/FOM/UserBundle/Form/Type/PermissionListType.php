@@ -43,6 +43,7 @@ class PermissionListType extends AbstractType
             'resource' => null,
             'permission_list' => null,
             'show_public_access' => false,
+            'action_filter' => null,
             // Can never be mapped. Retrieval and storage goes through PermissionManager.
             'mapped' => false,
             'entry_options' => ['resource_domain' => null],
@@ -69,6 +70,7 @@ class PermissionListType extends AbstractType
             $options['resource_domain'],
             $options['resource'],
             alwaysAddPublicAccess: $options['show_public_access'],
+            actionFilter: $options['action_filter'],
         );
     }
 

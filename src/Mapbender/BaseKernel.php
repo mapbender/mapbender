@@ -58,6 +58,8 @@ class BaseKernel extends Kernel
         return $container;
     }
 
+    protected ?string $projectDirectory = null;
+
     /**
      * replace function from symfony's Kernel.php: It looks for a composer.json file
      * which exists in the mapbender library, this is not the project root though,
@@ -65,7 +67,7 @@ class BaseKernel extends Kernel
      */
     public function getProjectDir(): string
     {
-        if (null === @$this->projectDir) {
+        if ($this->projectDirectory === null) {
             $r = new \ReflectionObject($this);
 
             if (!is_file($dir = $r->getFileName())) {
@@ -76,13 +78,13 @@ class BaseKernel extends Kernel
             // MARK: replaced Kernel.php's composer.json by composer.lock
             while (!is_file($dir.'/composer.lock')) {
                 if ($dir === \dirname($dir)) {
-                    return $this->projectDir = $rootDir;
+                    return $this->projectDirectory = $rootDir;
                 }
                 $dir = \dirname($dir);
             }
-            $this->projectDir = $dir;
+            $this->projectDirectory = $dir;
         }
 
-        return $this->projectDir;
+        return $this->projectDirectory;
     }
 }

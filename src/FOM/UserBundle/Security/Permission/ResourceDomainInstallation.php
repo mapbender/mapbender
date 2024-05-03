@@ -68,15 +68,31 @@ class ResourceDomainInstallation extends AbstractResourceDomain
         ];
     }
 
+    public function getCssClassForAction(string $action): string
+    {
+        return match ($action) {
+            self::ACTION_EDIT_ALL_APPLICATIONS,
+            self::ACTION_CREATE_APPLICATIONS,
+            self::ACTION_CREATE_USERS,
+            self::ACTION_CREATE_GROUPS,
+            self::ACTION_CREATE_SOURCES,
+            self::ACTION_EDIT_USERS,
+            self::ACTION_EDIT_GROUPS,
+            self::ACTION_REFRESH_SOURCES,
+            self::ACTION_EDIT_FREE_INSTANCES => self::CSS_CLASS_WARNING,
+            self::ACTION_DELETE_ALL_APPLICATIONS,
+            self::ACTION_OWN_ALL_APPLICATIONS,
+            self::ACTION_MANAGE_PERMISSION,
+            self::ACTION_DELETE_SOURCES,
+            self::ACTION_DELETE_USERS,
+            self::ACTION_DELETE_GROUPS => self::CSS_CLASS_DANGER,
+            default => self::CSS_CLASS_SUCCESS,
+        };
+    }
+
     public function buildWhereClause(QueryBuilder $q, mixed $resource): void
     {
         $q->orWhere("p.resourceDomain = '" . self::SLUG . "'");
-    }
-
-    public function getCssClassForAction(string $action): string
-    {
-        // TODO
-        return parent::getCssClassForAction($action);
     }
 
     function getTranslationPrefix(): string

@@ -155,12 +155,16 @@ class PermissionManager extends Voter
         AbstractResourceDomain $resourceDomain,
         mixed                  $resource,
         bool                   $group = true,
-        bool                   $alwaysAddPublicAccess = false
+        bool                   $alwaysAddPublicAccess = false,
+        ?array                 $actionFilter = null,
     ): array
     {
         $repository = $this->em->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
         $resourceDomain->buildWhereClause($query, $resource);
+        if (is_array($actionFilter)) {
+            $query->andWhere('p.action IN (:actions)')->setParameter('actions', $actionFilter);
+        }
         /** @var Permission[] $permissionsUngrouped */
         $permissionsUngrouped = $query->getQuery()->getResult();
 
@@ -191,15 +195,16 @@ class PermissionManager extends Voter
      * after validating the form data
      * @param mixed $resource
      * @param array{subjectJson: string, permissions: bool[]} $permissionData
+     * @param array<string>|null $actionFilter
      * @return void
      */
-    public function savePermissions(mixed $resource, array $permissionData): void
+    public function savePermissions(mixed $resource, array $permissionData, ?array $actionFilter = null): void
     {
         $resourceDomain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
-        $availableActions = $resourceDomain->getActions();
+        $availableActions = is_array($actionFilter) ? $actionFilter : $resourceDomain->getActions();
 
         // TODO: smarter method than deleting old permissions and adding new
-        $oldPermissions = $this->findPermissions($resourceDomain, $resource, false);
+        $oldPermissions = $this->findPermissions($resourceDomain, $resource, false, actionFilter: $actionFilter);
         $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
         $this->em->getRepository(Permission::class)->createQueryBuilder('p')
             ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)

@@ -49,7 +49,7 @@ class ACLController extends AbstractController
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
 
-        $permissions = match ($category) {
+        $actions = match ($category) {
             self::CATEGORY_APPLICATION => [
                 ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS,
                 ResourceDomainInstallation::ACTION_VIEW_ALL_APPLICATIONS,
@@ -89,7 +89,9 @@ class ACLController extends AbstractController
         $resourceDomain = $this->permissionManager->findResourceDomainFor(null, throwIfNotFound: true);
         $form->add('security', PermissionListType::class, [
             'resource_domain' => $resourceDomain,
+            'action_filter' => $actions,
             'entry_options' => [
+                'action_filter' => $actions,
                 'resource_domain' => $resourceDomain,
             ],
             'show_public_access' => true,
@@ -98,7 +100,7 @@ class ACLController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->permissionManager->savePermissions(null, $form->get('security')->getData());
+            $this->permissionManager->savePermissions(null, $form->get('security')->getData(), $actions);
 
             return $this->redirectToRoute('fom_user_security_index', array(
                 '_fragment' => 'tabAcl',

@@ -26,16 +26,22 @@ class PermissionType extends AbstractType
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'resource_domain' => null
+            'resource_domain' => null,
+            'action_filter' => null,
         ]);
         $resolver->setAllowedTypes('resource_domain', [AbstractResourceDomain::class]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var AbstractResourceDomain $resourceDomain */
+        $resourceDomain = $options['resource_domain'];
+        $availableActions = is_array($options['action_filter']) ? $options['action_filter'] : $resourceDomain->getActions();
+
         $builder->addModelTransformer(new PermissionDataTransformer(
                 $options["resource_domain"],
-                $this->permissionManager
+                $this->permissionManager,
+                $availableActions
             )
         );
 
@@ -51,10 +57,8 @@ class PermissionType extends AbstractType
         $builder->add('title', HiddenType::class, $hiddenOptions);
         $builder->add('subjectJson', HiddenType::class, $hiddenOptions);
 
-        /** @var AbstractResourceDomain $resourceDomain */
-        $resourceDomain = $options['resource_domain'];
         $i = 0;
-        foreach ($resourceDomain->getActions() as $action) {
+        foreach ($availableActions as $action) {
             $class = $resourceDomain->getCssClassForAction($action);
             $builder
                 ->add('permission_' . $i, TagboxType::class, [

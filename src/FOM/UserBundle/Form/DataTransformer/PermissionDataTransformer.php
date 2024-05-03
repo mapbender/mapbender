@@ -14,7 +14,11 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 class PermissionDataTransformer implements DataTransformerInterface
 {
-    public function __construct(private AbstractResourceDomain $attributeDomain, private PermissionManager $permissionManager)
+    public function __construct(
+        private AbstractResourceDomain $attributeDomain,
+        private PermissionManager $permissionManager,
+        private array $actions
+    )
     {
     }
 
@@ -24,10 +28,9 @@ class PermissionDataTransformer implements DataTransformerInterface
         if (empty($value)) return [];
         $permissionEntity = $value[0];
 
-        $allPermissions = $this->attributeDomain->getActions();
         $subjectDomain = $this->permissionManager->findSubjectDomainFor($permissionEntity);
         $permissionList = array_map(fn(Permission $permission) => $permission->getAction(), $value);
-        $permissionMap = array_map(fn(string $permission) => in_array($permission, $permissionList), $allPermissions);
+        $permissionMap = array_map(fn(string $permission) => in_array($permission, $permissionList), $this->actions);
         return array(
             'permissions' => $permissionMap,
             'icon' => $subjectDomain->getIconClass(),
