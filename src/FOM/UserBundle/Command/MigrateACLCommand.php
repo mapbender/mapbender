@@ -35,7 +35,7 @@ class MigrateACLCommand extends Command
     private array $allApplicationIds;
     private array $allElementIds;
 
-    public function __construct(private EntityManagerInterface $doctrine)
+    public function __construct(private EntityManagerInterface $em)
     {
         parent::__construct(self::COMMAND);
     }
@@ -55,15 +55,15 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $connection = $this->doctrine->getConnection();
-        $this->userRepo = $this->doctrine->getRepository(User::class);
-        $this->groupRepo = $this->doctrine->getRepository(Group::class);
+        $connection = $this->em->getConnection();
+        $this->userRepo = $this->em->getRepository(User::class);
+        $this->groupRepo = $this->em->getRepository(Group::class);
 
-        $this->allApplicationIds = $this->doctrine->getRepository(Application::class)
+        $this->allApplicationIds = $this->em->getRepository(Application::class)
             ->createQueryBuilder('a')->select('a.id')->getQuery()
             ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN)
         ;
-        $this->allElementIds = $this->doctrine->getRepository(Element::class)
+        $this->allElementIds = $this->em->getRepository(Element::class)
             ->createQueryBuilder('e')->select('e.id')->getQuery()
             ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN)
         ;
@@ -91,7 +91,19 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             if ($newEntry === null) continue;
             $this->populateAttributeAndSave($newEntry, $entry);
         }
-        $this->doctrine->flush();
+
+        $publishedApplications = $this->em->getConnection()->executeQuery('SELECT id FROM mb_core_application WHERE published IS TRUE')->fetchFirstColumn();
+        foreach ($publishedApplications as $applicationId) {
+            $newEntry = new Permission(
+                subjectDomain: SubjectDomainPublic::SLUG,
+                resourceDomain: ResourceDomainApplication::SLUG,
+                application: $this->em->getReference(Application::class, $applicationId),
+                action: ResourceDomainApplication::ACTION_VIEW
+            );
+            $this->em->persist($newEntry);
+        }
+
+        $this->em->flush();
         return 0;
     }
 
@@ -162,7 +174,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
                 echo "WARNING: application id $applicationId not found for entry " . $entry["id"] . "\n";
                 return;
             }
-            $application = $this->doctrine->getReference(Application::class, $applicationId);
+            $application = $this->em->getReference(Application::class, $applicationId);
             $newEntry->setApplication($application);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_VIEW);
@@ -187,7 +199,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
                 echo "WARNING: element id $elementId not found for entry " . $entry["id"] . "\n";
                 return;
             }
-            $element = $this->doctrine->getReference(Element::class, $elementId);
+            $element = $this->em->getReference(Element::class, $elementId);
             $newEntry->setElement($element);
             if (($mask & MaskBuilder::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainElement::ACTION_VIEW);
@@ -281,6 +293,6 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($newEntry->getSubjectDomain() === SubjectDomainUser::SLUG && $newEntry->getUser()?->getId() === 1) return;
         $entry = clone $newEntry;
         $entry->setAction($permission);
-        $this->doctrine->persist($entry);
+        $this->em->persist($entry);
     }
 }
