@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractResourceDomain
 {
@@ -105,6 +106,15 @@ abstract class AbstractResourceDomain
     public function populatePermission(Permission $permission, mixed $resource): void
     {
         $permission->setResourceDomain($this->getSlug());
+    }
+
+    /**
+     * Override this method if you want to modify the regular behaviour (default deny except a permission is defined for a resource)
+     * @return null|bool null if the defined permissions should decide, true to override the access decision to "granted", false to override to "denied"
+     */
+    public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
+    {
+        return null;
     }
 
 }

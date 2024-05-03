@@ -74,8 +74,7 @@ class ApplicationController extends ApplicationControllerBase
     public function newAction(Request $request): Response
     {
         $application = new Application();
-        $oid = new ObjectIdentity('class', get_class($application));
-        $this->denyAccessUnlessGranted('CREATE', $oid);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
 
         $form = $this->createApplicationForm($application);
         $form->handleRequest($request);

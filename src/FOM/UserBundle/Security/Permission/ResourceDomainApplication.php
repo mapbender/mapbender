@@ -5,6 +5,8 @@ namespace FOM\UserBundle\Security\Permission;
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
 use Mapbender\CoreBundle\Entity\Application;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ResourceDomainApplication extends AbstractResourceDomain
 {
@@ -14,6 +16,7 @@ class ResourceDomainApplication extends AbstractResourceDomain
     const ACTION_EDIT = "edit";
     const ACTION_DELETE = "delete";
     const ACTION_MANAGE_PERMISSIONS = "manage_permissions";
+
 
     public function getSlug(): string
     {
@@ -77,5 +80,18 @@ class ResourceDomainApplication extends AbstractResourceDomain
     function getTranslationPrefix(): string
     {
         return "fom.security.resource.application";
+    }
+
+    public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
+    {
+        $globalRightsMap = [
+            self::ACTION_VIEW => ResourceDomainInstallation::ACTION_VIEW_ALL_APPLICATIONS,
+            self::ACTION_EDIT => ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS,
+            self::ACTION_DELETE => ResourceDomainInstallation::ACTION_DELETE_ALL_APPLICATIONS,
+            self::ACTION_MANAGE_PERMISSIONS => ResourceDomainInstallation::ACTION_OWN_ALL_APPLICATIONS,
+        ];
+
+        if ($manager->isGranted($user, null, $globalRightsMap[$action])) return true;
+        return null;
     }
 }

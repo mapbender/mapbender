@@ -1,25 +1,26 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use FOM\UserBundle\Component\AclManager;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Form\Type\PermissionListType;
+use FOM\UserBundle\Security\Permission\PermissionManager;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Class ElementController
@@ -35,10 +36,10 @@ class ElementController extends ApplicationControllerBase
 {
 
     public function __construct(protected ElementInventoryService $inventory,
-                                protected ElementEntityFactory $factory,
-                                protected ElementFormFactory $elementFormFactory,
-                                protected AclManager $aclManager,
-    EntityManagerInterface $em)
+                                protected ElementEntityFactory    $factory,
+                                protected ElementFormFactory      $elementFormFactory,
+                                protected PermissionManager       $permissionManager,
+                                EntityManagerInterface            $em)
     {
         parent::__construct($em);
     }
@@ -54,11 +55,11 @@ class ElementController extends ApplicationControllerBase
     public function selectAction(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
-        $region      = $request->get('region');
+        $region = $request->get('region');
 
         $classNames = $this->inventory->getActiveInventory();
 
-        $elements   = array();
+        $elements = array();
 
         /** @var MinimalInterface|string $elementClassName */
         foreach ($classNames as $elementClassName) {
@@ -200,27 +201,30 @@ class ElementController extends ApplicationControllerBase
             throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
         }
 
-        $this->em->clear(Element::class); // prevent element from being stored with default config/stored again
-
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted('EDIT', $application);
 
-        $form = $this->createForm('Symfony\Component\Form\Extension\Core\Type\FormType', null, array(
+        $form = $this->createForm(FormType::class, null, array(
             'label' => false,
         ));
-        $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', array(
-            'object_identity' => ObjectIdentity::fromDomainObject($element),
-            'entry_options' => array(
-                'mask' => MaskBuilder::MASK_VIEW,
-            ),
-        ));
+        $resourceDomain = $this->permissionManager->findResourceDomainFor($element, throwIfNotFound: true);
+        $form->add('security', PermissionListType::class, [
+            'resource_domain' => $resourceDomain,
+            'resource' => $element,
+            'entry_options' => [
+                'resource_domain' => $resourceDomain,
+            ],
+        ]);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->beginTransaction();
             try {
                 $application->setUpdated(new \DateTime('now'));
                 $this->em->persist($application);
-                $this->aclManager->setObjectACEs($element, $form->get('acl')->getData());
+                if ($form->has('security')) {
+                    $this->permissionManager->savePermissions($element, $form->get('security')->getData());
+                }
                 $this->em->flush();
                 $this->em->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
@@ -322,7 +326,7 @@ class ElementController extends ApplicationControllerBase
         );
 
         /** @var ArrayCollection[]|Element[][] $partitions */
-        $partitions = $application->getElements()->partition(function($_, $entity) use ($affectedRegionNames) {
+        $partitions = $application->getElements()->partition(function ($_, $entity) use ($affectedRegionNames) {
             /** @var Element $entity */
             return in_array($entity->getRegion(), $affectedRegionNames, true);
         });
@@ -331,7 +335,7 @@ class ElementController extends ApplicationControllerBase
         if ($currentRegionName === $targetRegionName) {
             WeightSortedCollectionUtil::updateSingleWeight($affectedRegions, $element, $number);
         } else {
-            $partitions = $affectedRegions->partition(function($_, $entity) use ($targetRegionName) {
+            $partitions = $affectedRegions->partition(function ($_, $entity) use ($targetRegionName) {
                 /** @var Element $entity */
                 return $entity->getRegion() === $targetRegionName;
             });

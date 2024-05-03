@@ -73,6 +73,7 @@ $(function() {
             }
         });
     }
+
     function appendPermissionSubjects($targetTable, $subjectList) {
         const $tbody = $("tbody", $targetTable);
         const $permissionTrProto = $("thead", $targetTable).attr("data-prototype");
@@ -165,6 +166,7 @@ $(function() {
         return false;
     });
 
+    // not for element security (there, the popup content is replaced with the check)
     $(".permissionsTable").on("click", '.-fn-delete', function(e) {
         const $row = $(e.target).closest('tr');
         const $table = $row.closest('table');
@@ -202,7 +204,7 @@ $(function() {
 
     // Element security
     function initElementSecurity(response, url) {
-        var $content = $(response);
+        const $content = $(response);
         // submit back to same url (would be automatic outside of popup scope)
         $content.filter('form').attr('action', url);
         var $initialView = $(document.createElement('div')).addClass('contentItem').append($content);
@@ -231,6 +233,10 @@ $(function() {
                         $initialView.removeClass('hidden');
                         $button.data('target-row').remove();
                         $button.data('target-row', null);
+                        if ($permissionsTable.find('tbody tr').length === 0) {
+                            $permissionsTable.closest('.permission-collection').find('.-js-table-empty').removeClass('hidden');
+                            $permissionsTable.addClass('hidden');
+                        }
                         isModified = true;
 
                         $(".buttonAdd,.buttonRemove,.buttonBack", $modal).addClass('hidden');
@@ -305,11 +311,12 @@ $(function() {
             // Suppress call to global handler
             return false;
         });
+
         $permissionsTable.on("click", 'tbody .-fn-delete', function() {
-            var $row = $(this).closest('tr');
-            var label = $row.attr('data-subject-label');
+            const $row = $(this).closest('tr');
+            const title = $row.find('.-js-subject-label').text();
             addContent(Mapbender.trans('mb.manager.components.popup.delete_user_group.content', {
-                'userGroup': label
+                'subject': title
             }));
             $(".contentItem:first,.buttonOk,.buttonReset,.buttonCancel", $modal).addClass('hidden');
             $('.buttonRemove', $modal).data('target-row', $row);
@@ -327,6 +334,7 @@ $(function() {
         });
         return false;
     });
+
     $('.elementsTable').on('click', '.screentype-icon[data-screentype]', function() {
         var $target = $(this);
         var $group = $target.closest('.screentypes');
@@ -373,6 +381,7 @@ $(function() {
             ;
         });
     });
+
     $(document).on('change', 'input[type="checkbox"][data-url].-fn-toggle-flag', function() {
         var $this = $(this);
         $.ajax($this.attr('data-url'), {

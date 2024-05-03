@@ -8,10 +8,12 @@ use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -104,6 +106,13 @@ class PermissionTest extends KernelTestCase
         $this->assertEquals(VoterInterface::ACCESS_DENIED,
             $this->permissionManager->vote($tokenUser, $otherApplication, [$action])
         );
+
+        // Gĺobal permission overrides individual grants
+        $this->permissionManager->grant($tokenUser->getUser(), null, ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
+
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED,
+            $this->permissionManager->vote($tokenUser, $application, [$action])
+        );
     }
 
     function testGrantOnGroup(): void
@@ -172,6 +181,33 @@ class PermissionTest extends KernelTestCase
             $this->permissionManager->vote($tokenUser, null, [$action])
         );
     }
+
+
+    function testPermissionOnElement(): void
+    {
+        $tokenUser1 = $this->getTokenForUser("user1");
+        $tokenUser2 = $this->getTokenForUser("user2");
+        // just get a random element
+        $element = $this->em->getRepository(Element::class)->findAll()[0];
+        $action = ResourceDomainElement::ACTION_VIEW;
+
+        // for elements, the behaviour should be to default allow, except if custom permissions are granted
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED,
+            $this->permissionManager->vote($tokenUser1, $element, [$action])
+        );
+
+
+        $this->permissionManager->grant($tokenUser2->getUser(), $element, $action);
+
+        $this->assertEquals(VoterInterface::ACCESS_DENIED,
+            $this->permissionManager->vote($tokenUser1, $element, [$action])
+        );
+
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED,
+            $this->permissionManager->vote($tokenUser2, $element, [$action])
+        );
+    }
+
 
 
 }

@@ -30,10 +30,7 @@
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service id="mapbender.twig.manager.acl" class="Mapbender\ManagerBundle\Extension\Twig\AclExtension">
-            <tag name="twig.extension"/>
-            <argument type="service" id="security.acl.provider" />
-        </service>
+
 
         <service id="mapbender.twig.manager.application_region_title" class="Mapbender\ManagerBundle\Extension\Twig\ApplicationRegionTitleExtension">
             <tag name="twig.extension"/>

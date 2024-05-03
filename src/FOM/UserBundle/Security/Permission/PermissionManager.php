@@ -39,6 +39,9 @@ class PermissionManager extends Voter
         $resourceDomain = $this->findResourceDomainFor($resource, $action);
         if ($resourceDomain === null) return false;
 
+        $override = $resourceDomain->overrideDecision($resource, $action, $user, $this);
+        if ($override !== null) return $override;
+
         foreach ($permissions as $permission) {
             if ($resourceDomain->matchesPermission($permission, $action, $resource)) return true;
         }
@@ -76,6 +79,9 @@ class PermissionManager extends Voter
             $this->em->remove($existingPermission);
             $this->em->flush();
         }
+
+        // invalidate caches after changing access rights
+        $this->cache = [];
     }
 
     /**
@@ -217,6 +223,17 @@ class PermissionManager extends Voter
             }
         }
         $this->em->flush();
+        // invalidate caches after changing access rights
+        $this->cache = [];
+    }
+
+    public function hasPermissionsDefined(mixed $resource): bool
+    {
+        $domain = $this->findResourceDomainFor($resource);
+        $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
+        $domain->buildWhereClause($q, $resource);
+        $result = $q->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+        return $result > 0;
     }
 
 

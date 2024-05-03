@@ -79,12 +79,9 @@
                         data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
                     <i class="fas fa-gear"></i>
                   </span>
-                  {% set _aces = mapbender_manager_object_aces(element) %}
-                  <span class="secureElement {% if _aces %}text-danger {% endif %}hover-highlight-effect"
-                        title="{{ "mb.manager.managerbundle.acl_element" | trans ~ "\n" -}}
-{% for ace in _aces %}
-{{ace.type}}: {{ ace.name }}
-{% endfor %}"
+                  {% set _has_permissions = mapbender_has_permissions(element) %}
+                  <span class="secureElement {% if _has_permissions %}text-danger {% endif %}hover-highlight-effect"
+                        title="{{ "mb.manager.managerbundle.acl_element" | trans ~ "\n" -}}"
                         data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
                       <i class="fas fa-key"></i>
                   </span>

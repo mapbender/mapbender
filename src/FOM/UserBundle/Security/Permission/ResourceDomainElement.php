@@ -6,12 +6,14 @@ use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ResourceDomainElement extends AbstractResourceDomain
 {
     const SLUG = "element";
 
     const ACTION_VIEW = "view";
+
 
     public function getSlug(): string
     {
@@ -56,6 +58,12 @@ class ResourceDomainElement extends AbstractResourceDomain
     function getTranslationPrefix(): string
     {
         return "fom.security.resource.element";
+    }
+
+    public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
+    {
+        if (!$manager->hasPermissionsDefined($resource)) return true;
+        return null;
     }
 
 }

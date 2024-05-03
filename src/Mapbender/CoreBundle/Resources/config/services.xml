@@ -130,7 +130,7 @@
         <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="mapbender.element_filter" />
         </service>
 
@@ -206,7 +206,7 @@
             <argument type="service" id="router" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="security.token_storage" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
         <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
@@ -238,14 +238,14 @@
             <argument>%mapbender.uploads_dir%</argument>
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="security.acl.provider" />
         </service>
         <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />
@@ -317,17 +317,13 @@
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
-        <service id="mapbender.init_db_handler.prune_global_element_grants" class="Mapbender\CoreBundle\EventHandler\InitDb\PruneGlobalElementGrantHandler">
-            <argument type="service" id="security.acl.provider" on-invalid="null" />
-            <tag name="kernel.event_subscriber" />
-        </service>
         <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <tag name="kernel.event_subscriber" />
         </service>
         <service id="mapbender.init_db_handler.fix_element_weights" class="Mapbender\CoreBundle\EventHandler\InitDb\FixElementWeightsHandler">
             <tag name="kernel.event_subscriber" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
     </services>
 </container>
