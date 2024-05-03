@@ -3,6 +3,11 @@
 namespace Mapbender\CoreBundle\Command;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\OraclePlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Entity\Element;
@@ -107,20 +112,39 @@ class DatabaseUpgradeCommand extends Command
 
     protected function updateDoctrineTypes(InputInterface $input, OutputInterface $output)
     {
+        // doctrine dbal 3 removed the json_array type as a breaking change. This means it also does not support migrating it
+        // anymore, so we need to do it on our own
+
         /** @var Connection $connection */
         $connection = $this->managerRegistry->getConnection();
         $output->writeln("Checking for outdated doctrine column definitions ...");
-        $result = $connection->executeQuery("SELECT isc.table_name, isc.column_name FROM information_schema.columns isc "
-            . "WHERE pg_catalog.col_description(format('%s.%s',isc.table_schema,isc.table_name)::regclass::oid,isc.ordinal_position) = '(DC2Type:json_array)';");
-        $oldJsonArrays = $result->fetchAllAssociative();
-        if (count($oldJsonArrays) === 0) {
-            $output->writeln("All column definitions were up to date");
-            return;
+
+        $platform = $connection->getDriver()->getDatabasePlatform();
+        // for postgresql we can update all fields at once, including fields from custom tables
+        if ($platform instanceof PostgreSqlPlatform) {
+            $result = $connection->executeQuery("SELECT isc.table_name, isc.column_name FROM information_schema.columns isc "
+                . "WHERE pg_catalog.col_description(format('%s.%s',isc.table_schema,isc.table_name)::regclass::oid,isc.ordinal_position) = '(DC2Type:json_array)';");
+            $oldJsonArrays = $result->fetchAllAssociative();
+            if (count($oldJsonArrays) === 0) {
+                $output->writeln("All column definitions were up to date");
+                return;
+            }
+            foreach ($oldJsonArrays as $oldJsonArray) {
+                $connection->executeQuery("COMMENT ON COLUMN " . $oldJsonArray['table_name'] . "." . $oldJsonArray['column_name'] . " IS '(DC2Type:json)'");
+            }
+            $output->writeln("Updated " . count($oldJsonArrays) . " column definitions.");
+        } elseif ($platform instanceof MySQLPlatform) {
+            // for other DMS we just update the known fields. Custom tables using json_array must be updated manually
+            $connection->executeQuery("ALTER TABLE fom_user_log MODIFY context JSON COMMENT '(DC2Type:json)'");
+            $connection->executeQuery("ALTER TABLE mb_print_queue MODIFY payload JSON COMMENT '(DC2Type:json)'");
+        } elseif ($platform instanceof OraclePlatform) {
+            $connection->executeQuery("COMMENT ON COLUMN fom_user_log.context IS '(DC2Type:json)'");
+            $connection->executeQuery("COMMENT ON COLUMN mb_print_queue.payload IS '(DC2Type:json)'");
+        } elseif (!($platform instanceof SqlitePlatform)) {
+            // No update necessary for Sqlite, they don't support comments
+            $output->writeln("Please manually updated all comments from (DC2Type:json_array) to (DC2Type:json) in your database columns. This includes the mapbender columns fom_user_log.context and mb_print_queue.payload.");
         }
-        foreach ($oldJsonArrays as $oldJsonArray) {
-            $connection->executeQuery("COMMENT ON COLUMN " . $oldJsonArray['table_name'] . "." . $oldJsonArray['column_name'] . " IS '(DC2Type:json)'");
-        }
-        $output->writeln("Updated " . count($oldJsonArrays) . " column definitions.");
+
     }
 }
 
