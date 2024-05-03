@@ -3,9 +3,11 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Proxy\Proxy;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
+use PHPUnit\Exception;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -159,6 +161,9 @@ class PermissionManager extends Voter
         ?array                 $actionFilter = null,
     ): array
     {
+        // querying unpersisted entities results in an error
+        if (is_object($resource) && $this->isEntity($resource) && !$this->em->contains($resource)) return [];
+
         $repository = $this->em->getRepository(Permission::class);
         $query = $repository->createQueryBuilder('p')->select('p');
         $resourceDomain->buildWhereClause($query, $resource);
@@ -187,6 +192,17 @@ class PermissionManager extends Voter
         }
 
         return $permissionsGrouped;
+    }
+
+    private function isEntity(string|object $class): bool
+    {
+        if (is_object($class)) {
+            $class = ($class instanceof Proxy)
+                ? get_parent_class($class)
+                : get_class($class);
+        }
+
+        return !$this->em->getMetadataFactory()->isTransient($class);
     }
 
 

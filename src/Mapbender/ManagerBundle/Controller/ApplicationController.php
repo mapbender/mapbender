@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
@@ -93,6 +94,11 @@ class ApplicationController extends ApplicationControllerBase
             $this->em->flush();
             if ($form->has('security')) {
                 $this->permissionManager->savePermissions($application, $form->get('security')->getData());
+            }
+            $user = $this->getUser();
+            if ($user instanceof User) {
+                // grant all rights to the user that created the application
+                $this->permissionManager->grant($user, $application, ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS);
             }
             $scFile = $form->get('screenshotFile')->getData();
 
