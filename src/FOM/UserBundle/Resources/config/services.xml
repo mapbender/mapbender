@@ -34,13 +34,6 @@
         <!-- internal; automatically replaced with value extracted from 'security' extension config
              see ForwardUserEntityClassPass -->
         <parameter key="fom.user_entity">null</parameter>
-        <parameter key="fom.user.acl_classes" type="collection">
-            <parameter key="Mapbender\CoreBundle\Entity\Application">mb.terms.application.plural</parameter>
-            <parameter key="Mapbender\CoreBundle\Entity\Source">mb.terms.source.plural</parameter>
-            <parameter key="Symfony\Component\Security\Acl\Domain\Acl">fom.user.userbundle.classes.acls</parameter>
-            <parameter key="FOM\UserBundle\Entity\User">fom.user.userbundle.classes.users</parameter>
-            <parameter key="FOM\UserBundle\Entity\Group">fom.user.userbundle.classes.groups</parameter>
-        </parameter>
         <parameter key="fom.security.voter.yaml_application.class">FOM\UserBundle\Security\Permission\YamlApplicationVoter</parameter>
         <parameter key="fom.security.voter.yaml_application_element.class">FOM\UserBundle\Security\Permission\YamlApplicationElementVoter</parameter>
     </parameters>

@@ -6,13 +6,13 @@
     </tr>
   </thead>
   <tbody>
-    {% for class, name in classes%}
+    {% for category, name in acl_categories %}
       <tr>
         <td>
-          <a href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name | trans }}</a>
+          <a href="{{ path('fom_user_acl_edit', {'category': category}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}">{{ name | trans }}</a>
         </td>
         <td class="iconColumn">
-          <a class="hover-highlight-effect" href="{{ path('fom_user_acl_edit', {'class': class}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"><i class="fas fa-gear"></i></a>
+          <a class="hover-highlight-effect" href="{{ path('fom_user_acl_edit', {'category': category}) }}" title="{{ 'fom.user.acl.index.edit' | trans }}"><i class="fas fa-gear"></i></a>
         </td>
       </tr>
     {% endfor %}
