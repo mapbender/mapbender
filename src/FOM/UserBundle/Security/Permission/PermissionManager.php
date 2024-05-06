@@ -238,18 +238,25 @@ class PermissionManager extends Voter
         $resourceDomain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
         $availableActions = is_array($actionFilter) ? $actionFilter : $resourceDomain->getActions();
 
-        // TODO: smarter method than deleting old permissions and adding new
         $oldPermissions = $this->findPermissions($resourceDomain, $resource, false, actionFilter: $actionFilter);
-        $oldPermissionIds = array_map(fn($p) => $p->getId(), $oldPermissions);
-        $this->em->getRepository(Permission::class)->createQueryBuilder('p')
-            ->delete()->where('p.id IN (:ids)')->setParameter('ids', $oldPermissionIds)
-            ->getQuery()->execute()
-        ;
+        // create a map that has the action and subject json of the already defined permission as key
+        // to avoid recreating unmodified entries on each save
+        $oldPermissionsMap = [];
+        foreach ($oldPermissions as $permission) {
+            $oldPermissionsMap[$permission->getAction() . $permission->getSubjectJson()] = $permission;
+        }
 
         foreach ($permissionData as $newPermission) {
             $json = json_decode($newPermission['subjectJson'], true);
             for ($i = 0; $i < min(count($newPermission['permissions']), count($availableActions)); $i++) {
                 if ($newPermission['permissions'][$i] === true) {
+                    $oldPermissionLookupKey = $availableActions[$i] . $newPermission['subjectJson'];
+                    if (array_key_exists($oldPermissionLookupKey, $oldPermissionsMap)) {
+                        // that permission already existed, skipping. Remove from key to mark it as still present
+                        unset($oldPermissionsMap[$oldPermissionLookupKey]);
+                        continue;
+                    }
+
                     $permissionEntity = new Permission(
                         subjectDomain: $json["domain"],
                         user: $json["user_id"] ? $this->em->getReference(User::class, $json["user_id"]) : null,
@@ -262,6 +269,12 @@ class PermissionManager extends Voter
                 }
             }
         }
+
+        // remove permissions that are still in the map, they are not in the list anymore
+        foreach ($oldPermissionsMap as $permission) {
+            $this->em->remove($permission);
+        }
+
         $this->em->flush();
         // invalidate caches after changing access rights
         $this->cache = [];
