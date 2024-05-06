@@ -55,18 +55,13 @@
                   <i class="far fa-copy"></i>
                 </a>
               {% endif %}
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT', application)) %}
                 <a class="btn btn-light" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
                   <i class="fas fa-download"></i>
                 </a>
-              {% endif %}
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
-                <i class="fas fa-gear"></i>
-              </a>
-              {% endif %}
-
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+                <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
+                  <i class="fas fa-gear"></i>
+                </a>
                 <span class="btn btn-light -fn-toggle-flag {{ has_public_access(application) ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
                     data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
                     data-token="{{ csrf_token('application_edit') }}"
@@ -75,7 +70,7 @@
                 </span>
               {% endif %}
 
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_DELETE', application)) %}
                 <span class="btn btn-light -fn-delete"
                       title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"

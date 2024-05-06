@@ -39,7 +39,6 @@ class PermissionType extends AbstractType
         $availableActions = is_array($options['action_filter']) ? $options['action_filter'] : $resourceDomain->getActions();
 
         $builder->addModelTransformer(new PermissionDataTransformer(
-                $options["resource_domain"],
                 $this->permissionManager,
                 $availableActions
             )

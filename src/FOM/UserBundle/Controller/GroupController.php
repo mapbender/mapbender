@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,6 +26,7 @@ class GroupController extends AbstractController
 {
     public function __construct(
         protected MutableAclProviderInterface $aclProvider,
+        protected EntityManagerInterface $em,
     )
     {
     }
@@ -43,24 +45,20 @@ class GroupController extends AbstractController
     {
         $group = new Group();
 
-        // ACL access check
-        $oid = new ObjectIdentity('class', get_class($group));
-
-        $this->denyAccessUnlessGranted('CREATE', $oid);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_GROUPS);
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($group);
+            $this->em->persist($group);
 
             // See method documentation for Doctrine weirdness
             foreach($group->getUsers() as $user) {
                 $user->addGroup($group);
             }
 
-            $em->flush();
+            $this->em->flush();
 
             $objectIdentity = ObjectIdentity::fromDomainObject($group);
             $acl = $this->aclProvider->createAcl($objectIdentity);
@@ -93,31 +91,29 @@ class GroupController extends AbstractController
      */
     public function editAction(Request $request, $id)
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
+
         /** @var Group|null $group */
-        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
+        $group = $this->em->getRepository(Group::class)->find($id);
         if (!$group) {
             throw new NotFoundHttpException('The group does not exist');
         }
-        $this->denyAccessUnlessGranted('EDIT', $group);
-
-        /** @var EntityManagerInterface $em $em */
-        $em = $this->getDoctrine()->getManagerForClass(Group::class);
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
 
         // see https://afilina.com/doctrine-not-saving-manytomany
         foreach ($group->getUsers() as $previousUser) {
             $previousUser->getGroups()->removeElement($group);
-            $em->persist($previousUser);
+            $this->em->persist($previousUser);
         }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($group->getUsers() as $currentUser) {
-                $em->persist($currentUser);
+                $this->em->persist($currentUser);
                 $currentUser->getGroups()->add($group);
             }
-            $em->flush();
+            $this->em->flush();
 
             $this->addFlash('success', 'The group has been updated.');
             return $this->redirectToRoute('fom_user_security_index', array(
@@ -140,13 +136,13 @@ class GroupController extends AbstractController
     public function deleteAction(Request  $request, $id)
     {
         /** @var Group|null $group */
-        $group = $this->getDoctrine()->getRepository(Group::class)->find($id);
+        $group = $this->em->getRepository(Group::class)->find($id);
 
         if($group === null) {
             throw new NotFoundHttpException('The group does not exist');
         }
         // ACL access check
-        $this->denyAccessUnlessGranted('DELETE', $group);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_GROUPS);
 
         if (!$this->isCsrfTokenValid('group_delete', $request->request->get('token'))) {
             $this->addFlash('error', 'Invalid CSRF token.');
@@ -154,9 +150,7 @@ class GroupController extends AbstractController
         }
 
 
-        /** @var EntityManagerInterface $em $em */
-        $em = $this->getDoctrine()->getManagerForClass(Group::class);
-        $em->beginTransaction();
+        $this->em->beginTransaction();
 
         try {
             if (($this->aclProvider) instanceof MutableAclProvider) {
@@ -164,15 +158,15 @@ class GroupController extends AbstractController
                 $this->aclProvider->deleteSecurityIdentity($sid);
             }
 
-            $em->remove($group);
+            $this->em->remove($group);
 
             $oid = ObjectIdentity::fromDomainObject($group);
             $this->aclProvider->deleteAcl($oid);
 
-            $em->flush();
-            $em->commit();
+            $this->em->flush();
+            $this->em->commit();
         } catch(\Exception $e) {
-            $em->rollback();
+            $this->em->rollback();
             $this->addFlash('error', "The group couldn't be deleted.");
         }
         return new Response();

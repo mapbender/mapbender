@@ -5,6 +5,8 @@ namespace Mapbender\ManagerBundle\Component;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
+use FOM\UserBundle\Security\Permission\PermissionManager;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -18,13 +20,7 @@ use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Exception\AclAlreadyExistsException;
-use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
-use Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -32,33 +28,14 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ImportHandler extends ExchangeHandler
 {
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var ExportHandler */
-    protected $exportHandler;
-    /** @var UploadsManager */
-    protected $uploadsManager;
-    /** @var MutableAclProviderInterface */
-    protected $aclProvider;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param ElementFilter $elementFilter
-     * @param ExportHandler $exportHandler
-     * @param UploadsManager $uploadsManager
-     * @param MutableAclProviderInterface $aclProvider
-     */
-    public function __construct(EntityManagerInterface $entityManager,
-                                ElementFilter $elementFilter,
-                                ExportHandler $exportHandler,
-                                UploadsManager $uploadsManager,
-                                MutableAclProviderInterface $aclProvider)
+    public function __construct(EntityManagerInterface      $entityManager,
+                                protected ElementFilter               $elementFilter,
+                                protected ExportHandler               $exportHandler,
+                                protected UploadsManager              $uploadsManager,
+                                protected PermissionManager $permissionManager)
     {
         parent::__construct($entityManager);
-        $this->elementFilter = $elementFilter;
-        $this->exportHandler = $exportHandler;
-        $this->uploadsManager = $uploadsManager;
-        $this->aclProvider = $aclProvider;
     }
 
     /**
@@ -137,7 +114,7 @@ class ImportHandler extends ExchangeHandler
             $this->em->flush();
 
             if ($app->getSource() !== Application::SOURCE_YAML) {
-                $this->copyAcls($clonedApp, $app);
+                $this->copyPermissions($clonedApp, $app);
             }
 
             return $clonedApp;
@@ -305,32 +282,9 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
-    /**
-     * @param Application $target
-     * @param Application $source
-     * @throws InvalidDomainObjectException
-     * @throws \Symfony\Component\Security\Acl\Exception\Exception
-     */
-    protected function copyAcls(Application $target, Application $source)
+    protected function copyPermissions(Application $target, Application $source)
     {
-        try {
-            $sourceAcl = $this->aclProvider->findAcl(ObjectIdentity::fromDomainObject($source));
-        } catch (AclNotFoundException $e) {
-            // Nothing to copy
-            return;
-        }
-        $targetOid = ObjectIdentity::fromDomainObject($target);
-        try {
-            $targetAcl = $this->aclProvider->createAcl($targetOid);
-        } catch (AclAlreadyExistsException $e) {
-            $targetAcl = $this->aclProvider->findAcl($targetOid);
-        }
-
-        foreach ($sourceAcl->getObjectAces() as $sourceEntry) {
-            $entryIdentity = $sourceEntry->getSecurityIdentity();
-            $targetAcl->insertObjectAce($entryIdentity, $sourceEntry->getMask());
-        }
-        $this->aclProvider->updateAcl($targetAcl);
+        // TODO: copy permissions from cloned application?
     }
 
     /**
@@ -537,32 +491,10 @@ class ImportHandler extends ExchangeHandler
         return $object;
     }
 
-    /**
-     * @param Application $application
-     * @param SecurityIdentityInterface $sid
-     */
-    public function addOwner(Application $application, SecurityIdentityInterface $sid)
+    public function addOwner(Application $application, UserInterface $user)
     {
-        $oid = ObjectIdentity::fromDomainObject($application);
-        try {
-            $acl = $this->aclProvider->createAcl($oid);
-        } catch (AclAlreadyExistsException $e) {
-            $acl = $this->aclProvider->findAcl($oid);
-        }
-        /** @var \Symfony\Component\Security\Acl\Domain\Entry[] $aces */
-        $aces = $acl->getObjectAces();
-        $updatedExistingAce = false;
-        foreach ($aces as $index => $ace) {
-            if ($ace->getSecurityIdentity()->equals($sid)) {
-                $acl->updateObjectAce($index, $ace->getMask() | MaskBuilder::MASK_OWNER);
-                $updatedExistingAce = true;
-                break;
-            }
-        }
-        if (!$updatedExistingAce) {
-            $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
-        }
-        $this->aclProvider->updateAcl($acl);
+        $this->permissionManager->grant($user, $application, ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS);
+        // TODO: what about elements?
     }
 
     /**

@@ -31,7 +31,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -124,7 +123,7 @@ class ApplicationController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Application/edit.html.twig', array(
             'application' => $application,
             'form' => $form->createView(),
-            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
+            'edit_shared_instances' => $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES),
         ));
     }
 
@@ -133,12 +132,11 @@ class ApplicationController extends ApplicationControllerBase
      *
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
      * @param string $slug Application name
-     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
     public function editAction(Request $request, $slug): Response
     {
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $oldSlug = $application->getSlug();
 
@@ -195,7 +193,7 @@ class ApplicationController extends ApplicationControllerBase
             'regions' => $template->getRegions(),
             'form' => $form->createView(),
             'template_name' => $template->getTitle(),
-            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
+            'edit_shared_instances' => $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES),
         ));
     }
 
@@ -210,7 +208,7 @@ class ApplicationController extends ApplicationControllerBase
     public function toggleStateAction(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('application_edit', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -233,7 +231,7 @@ class ApplicationController extends ApplicationControllerBase
     public function deleteAction(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('DELETE', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_DELETE, $application);
 
         if (!$this->isCsrfTokenValid('application_delete', $request->request->get('token'))) {
             $this->addFlash('error', 'Invalid CSRF token.');
@@ -266,9 +264,8 @@ class ApplicationController extends ApplicationControllerBase
     public function listSourcesAction($slug, $layersetId)
     {
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
-        $sourceOid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        $this->denyAccessUnlessGranted('VIEW', $sourceOid);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
 
         $layerset = $this->requireLayerset($layersetId, $application);
         $sources = $this->em->getRepository(Source::class)->findBy(array(), array(
@@ -302,7 +299,7 @@ class ApplicationController extends ApplicationControllerBase
             throw new \LogicException("Instance is already owned by a Layerset");
         }
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         $instanceCopy = clone $instance;
         $this->em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
@@ -393,7 +390,7 @@ class ApplicationController extends ApplicationControllerBase
             'slug' => $slug,
         ));
         if ($application) {
-            $this->denyAccessUnlessGranted('EDIT', $application);
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         }
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
@@ -439,7 +436,7 @@ class ApplicationController extends ApplicationControllerBase
         if (!$assignment || !$application) {
             throw $this->createNotFoundException();
         }
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -467,7 +464,7 @@ class ApplicationController extends ApplicationControllerBase
      */
     public function updateregionpropertiesAction(Request $request, Application $application, $regionName)
     {
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         // Provided by AbstractController
         /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
         /** @var FormFactoryInterface $factory */

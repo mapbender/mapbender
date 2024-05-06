@@ -21,7 +21,7 @@
   {%- set items = users -%}
   {{- parent() -}}
 <div class="content-box content-box-lg">
-    {%- include '@FOMUser/User/list.html.twig' with {show_groups: is_granted('VIEW', group_oid) } -%}
+    {%- include '@FOMUser/User/list.html.twig' with {show_groups: is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_VIEW_GROUPS')) } -%}
 </div>
 {% endblock %}
 

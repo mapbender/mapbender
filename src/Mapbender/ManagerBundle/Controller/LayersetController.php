@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class LayersetController extends ApplicationControllerBase
             $layerset = new Layerset();
             $layerset->setApplication($application);
         }
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
@@ -70,7 +71,7 @@ class LayersetController extends ApplicationControllerBase
     {
         $layerset = $this->requireLayerset($layersetId);
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Render confirmation dialog content
             return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
@@ -102,7 +103,7 @@ class LayersetController extends ApplicationControllerBase
     public function setselectedAction(Request $request, Layerset $layerset)
     {
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();

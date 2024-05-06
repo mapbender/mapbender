@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use FOM\ManagerBundle\Configuration\Route;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -23,7 +25,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
@@ -60,9 +61,9 @@ class SourceInstanceController extends ApplicationControllerBase
         }
         /** @var Application|null $application */
         if ($application) {
-            $this->denyAccessUnlessGranted('EDIT', $application);
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         } else {
-            $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
+            $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         }
         if (!$instance || ($application && !$application->getSourceInstances(true)->contains($instance))) {
             throw $this->createNotFoundException();
@@ -98,7 +99,7 @@ class SourceInstanceController extends ApplicationControllerBase
             "form" => $form->createView(),
             "instance" => $form->getData(),
             'layerset' => $layerset,
-            'edit_shared_instances' => $this->isGranted('EDIT', new ObjectIdentity('class', Source::class)),
+            'edit_shared_instances' => $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES),
         ));
     }
 
@@ -110,9 +111,7 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     public function deleteAction(Request $request, SourceInstance $instance)
     {
-        /** @todo: specify / implement proper grants */
-        $oid = new ObjectIdentity('class', Source::class);
-        $this->denyAccessUnlessGranted('DELETE', $oid);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
 
         // Use an empty form to help client code follow the final redirect properly
         // See Resources/public/confirm-delete.js
@@ -170,7 +169,7 @@ class SourceInstanceController extends ApplicationControllerBase
             'slug' => $slug,
         ));
         if ($application) {
-            $this->denyAccessUnlessGranted('EDIT', $application);
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         } else {
             throw $this->createNotFoundException();
         }
@@ -190,7 +189,7 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     public function createsharedAction(Request $request, Source $source)
     {
-        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         // @todo: only act on post
         $instance = $this->typeDirectory->createInstance($source);
         $instance->setLayerset(null);
@@ -211,7 +210,7 @@ class SourceInstanceController extends ApplicationControllerBase
      */
     public function promotetosharedAction(Request $request, SourceInstance $instance)
     {
-        $this->denyAccessUnlessGranted('EDIT', new ObjectIdentity('class', Source::class));
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         $layerset = $instance->getLayerset();
         if (!$layerset) {
             throw new \LogicException("Instance is already shared");
@@ -278,7 +277,7 @@ class SourceInstanceController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $layerset->getApplication());
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $layerset->getApplication());
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -349,7 +348,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $targetLayerset = $this->requireLayerset($targetLayersetId);
 
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();

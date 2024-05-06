@@ -6,8 +6,6 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Tools\SchemaTool;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
@@ -25,7 +23,6 @@ use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Mapbender 4 introduced a new, simplified security system replacing Symfony's deprecated ACL bundle.
@@ -38,6 +35,15 @@ class MigrateACLCommand extends Command
     private EntityRepository $groupRepo;
     private array $allApplicationIds;
     private array $allElementIds;
+
+    public const MASK_VIEW = 1;           // 1 << 0
+    public const MASK_CREATE = 2;         // 1 << 1
+    public const MASK_EDIT = 4;           // 1 << 2
+    public const MASK_DELETE = 8;         // 1 << 3
+    public const MASK_UNDELETE = 16;      // 1 << 4
+    public const MASK_OPERATOR = 32;      // 1 << 5
+    public const MASK_MASTER = 64;        // 1 << 6
+    public const MASK_OWNER = 128;        // 1 << 7
 
     public function __construct(private EntityManagerInterface $em)
     {
@@ -118,16 +124,16 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($entry["class_type"] === Group::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_GROUPS);
             }
-            if (($mask & MaskBuilder::MASK_CREATE) > 0) {
+            if (($mask & self::MASK_CREATE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_GROUPS);
             }
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_GROUPS);
             }
-            if (($mask & MaskBuilder::MASK_DELETE) > 0) {
+            if (($mask & self::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_GROUPS);
             }
             return;
@@ -136,16 +142,16 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($entry["class_type"] === User::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_USERS);
             }
-            if (($mask & MaskBuilder::MASK_CREATE) > 0) {
+            if (($mask & self::MASK_CREATE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_USERS);
             }
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_USERS);
             }
-            if (($mask & MaskBuilder::MASK_DELETE) > 0) {
+            if (($mask & self::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_USERS);
             }
             return;
@@ -154,19 +160,19 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($entry["class_type"] === Application::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_ALL_APPLICATIONS);
             }
-            if (($mask & MaskBuilder::MASK_CREATE) > 0) {
+            if (($mask & self::MASK_CREATE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
             }
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
             }
-            if (($mask & MaskBuilder::MASK_DELETE) > 0) {
+            if (($mask & self::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_ALL_APPLICATIONS);
             }
-            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
+            if (($mask & self::MASK_OPERATOR) > 0 || ($mask & self::MASK_MASTER) > 0 || ($mask & self::MASK_OWNER) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_OWN_ALL_APPLICATIONS);
             }
             return;
@@ -182,16 +188,16 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             }
             $application = $this->em->getReference(Application::class, $applicationId);
             $newEntry->setApplication($application);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_VIEW);
             }
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_EDIT);
             }
-            if (($mask & MaskBuilder::MASK_DELETE) > 0) {
+            if (($mask & self::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_DELETE);
             }
-            if (($mask & MaskBuilder::MASK_OPERATOR) > 0 || ($mask & MaskBuilder::MASK_MASTER) > 0 || ($mask & MaskBuilder::MASK_OWNER) > 0) {
+            if (($mask & self::MASK_OPERATOR) > 0 || ($mask & self::MASK_MASTER) > 0 || ($mask & self::MASK_OWNER) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS);
             }
             return;
@@ -207,7 +213,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             }
             $element = $this->em->getReference(Element::class, $elementId);
             $newEntry->setElement($element);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainElement::ACTION_VIEW);
             }
             return;
@@ -216,17 +222,17 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($entry["class_type"] === Source::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
-            if (($mask & MaskBuilder::MASK_VIEW) > 0) {
+            if (($mask & self::MASK_VIEW) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_VIEW_SOURCES);
             }
-            if (($mask & MaskBuilder::MASK_CREATE) > 0) {
+            if (($mask & self::MASK_CREATE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_CREATE_SOURCES);
             }
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
             }
-            if (($mask & MaskBuilder::MASK_DELETE) > 0) {
+            if (($mask & self::MASK_DELETE) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_DELETE_SOURCES);
             }
             return;
@@ -235,7 +241,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         if ($entry["class_type"] === "Symfony\Component\Security\Acl\Domain\Acl" && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
-            if (($mask & MaskBuilder::MASK_EDIT) > 0) {
+            if (($mask & self::MASK_EDIT) > 0) {
                 $this->saveEntry($newEntry, ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
             }
             return;

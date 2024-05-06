@@ -3,9 +3,9 @@ namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use FOM\UserBundle\Component\AclManager;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,7 +25,6 @@ class UserController extends UserControllerBase
 {
     public function __construct(protected MutableAclProviderInterface $aclProvider,
                                 protected UserHelperService $userHelper,
-                                protected AclManager $aclManager,
                                 ?string $userEntityClass,
                                 protected ?string $profileEntityClass,
                                 protected ?string $profileTemplate)
@@ -58,13 +57,14 @@ class UserController extends UserControllerBase
      */
     public function editAction(Request $request, $id)
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_USERS);
+
         /** @var User|null $user */
         $user = $this->getUserRepository()->find($id);
         if ($user === null) {
             throw new NotFoundHttpException('The user does not exist');
         }
 
-        $this->denyAccessUnlessGranted('EDIT', $user);
         return $this->userActionCommon($request, $user);
     }
 
@@ -87,33 +87,14 @@ class UserController extends UserControllerBase
 
         $oid = new ObjectIdentity('class', get_class($user));
         $ownerGranted = $this->isGranted('OWNER', $isNew ? $oid : $user);
-        $groupPermission =
-            $this->isGranted('EDIT', new ObjectIdentity('class', 'FOM\UserBundle\Entity\Group'))
-            || $ownerGranted;
+        $groupPermission = $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS) || $ownerGranted;
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
             'group_permission' => $groupPermission,
         ));
 
-        if ($ownerGranted) {
-            $aclOptions = array();
-            if ($user->getId()) {
-                $aclOptions['object_identity'] = ObjectIdentity::fromDomainObject($user);
-            } else {
-                $currentUser = $this->getUser();
-                if ($currentUser && ($currentUser instanceof UserInterface)) {
-                    $aclOptions['data'] = array(
-                        array(
-                            'sid' => UserSecurityIdentity::fromAccount($currentUser),
-                            'mask' => MaskBuilder::MASK_OWNER,
-                        ),
-                    );
-                }
-            }
 
-            $form->add('acl', 'FOM\UserBundle\Form\Type\ACLType', $aclOptions);
-        }
-        $securityIndexGranted = $this->isGranted('VIEW', new ObjectIdentity('class', 'FOM\UserBundle\Entity\User'));
+        $securityIndexGranted = $this->isGranted(ResourceDomainInstallation::ACTION_VIEW_USERS);
 
         $form->handleRequest($request);
 
@@ -126,18 +107,6 @@ class UserController extends UserControllerBase
 
             try {
                 $this->persistUser($em, $user);
-
-                if ($form->has('acl')) {
-                    if (!$user->getId()) {
-                        // Flush to assign PK
-                        // This is necessary for users with no profile entity
-                        // (persistUser already flushed once in this case)
-                        $em->flush();
-                    }
-                    $aces = $form->get('acl')->getData();
-                    $this->aclManager->setObjectACEs($user, $aces);
-                }
-
                 $em->flush();
 
                 if ($isNew) {

@@ -14,7 +14,7 @@
       {% for user in users %}
         <tr class="filterItem">
           <td>
-            {% if is_granted('EDIT', user) %}
+            {% if is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}
             <a href="{{ path('fom_user_user_edit', {'id': user.id}) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}">{{ user.username }}</a>
             {% else %}
             {{ user.username }}
@@ -26,7 +26,7 @@
             <ul class="list-unstyled">
               {% for group in user.groups %}
               <li>
-                {% if is_granted('EDIT', group) %}
+                {% if is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_GROUPS')) %}
                   <a href="{{ path('fom_user_group_edit', { 'id': group.id }) }}" title="{{ 'fom.user.user.index.edit_group' | trans }}">{{ group.title }}</a></li>
                 {% else %}
                   <span>{{ group.title }}</span>
@@ -36,10 +36,10 @@
           </td>
           {% endif %}
           <td class="iconColumn">
-            {% if is_granted('EDIT', user) %}
+            {% if is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}
               <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fas fa-gear"></i></a>
             {% endif %}
-            {% if user.id != 1 and is_granted('DELETE', user) %}
+            {% if user.id != 1 and is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_USERS')) %}
               <span class="-fn-delete hover-highlight-effect"
                 title="{{"fom.user.user.index.delete_user" | trans}}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"

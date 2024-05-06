@@ -3,8 +3,6 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route;
-use FOM\UserBundle\Component\AclManager;
-use FOM\UserBundle\Component\AssignableSecurityIdentityFilter;
 use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\AssignableSubject;
 use FOM\UserBundle\Security\Permission\PermissionManager;
@@ -16,9 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ACLController extends AbstractController
 {
-    public function __construct(protected AclManager                       $aclManager,
-                                protected AssignableSecurityIdentityFilter $sidFilter,
-                                protected PermissionManager                $permissionManager,
+    public function __construct(protected PermissionManager                $permissionManager,
     )
     {
     }

@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
@@ -119,8 +118,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
     {
         $root = $this->getRootUser();
         if ($root) {
-            $rootSid = UserSecurityIdentity::fromAccount($root);
-            $this->importHandler->addOwner($application, $rootSid);
+            $this->importHandler->addOwner($application, $root);
         } else {
             $output->writeln("WARNING: root user not found, no owner will be assigned to imported application {$application->getSlug()}", OutputInterface::VERBOSITY_QUIET);
         }

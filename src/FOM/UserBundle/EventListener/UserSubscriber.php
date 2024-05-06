@@ -3,9 +3,9 @@
 namespace FOM\UserBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\Security\Acl\Util\ClassUtils;
 
 
 class UserSubscriber implements EventSubscriber
@@ -27,7 +27,7 @@ class UserSubscriber implements EventSubscriber
         }
 
         if($args->hasChangedField('username')) {
-            $class = ClassUtils::getRealClass($entity);
+            $class = ClassUtils::getRealClass(\get_class($entity));
             $old_username = $args->getOldValue('username');
             $new_username = $args->getNewValue('username');
 

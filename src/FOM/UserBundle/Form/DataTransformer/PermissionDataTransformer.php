@@ -2,20 +2,13 @@
 
 namespace FOM\UserBundle\Form\DataTransformer;
 
-use FOM\UserBundle\Component\Ldap;
 use FOM\UserBundle\Entity\Permission;
-use FOM\UserBundle\Security\Permission\AbstractResourceDomain;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Security\Acl\Domain\Entry;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 class PermissionDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private AbstractResourceDomain $attributeDomain,
         private PermissionManager $permissionManager,
         private array $actions
     )

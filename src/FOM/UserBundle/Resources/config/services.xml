@@ -3,7 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="fom.identities.provider.class">FOM\UserBundle\Component\FOMIdentitiesProvider</parameter>
         <parameter key="fom.user_helper.service.class">FOM\UserBundle\Component\UserHelperService</parameter>
         <parameter key="fom.ldap_client.class">FOM\UserBundle\Component\Ldap\Client</parameter>
         <parameter key="fom.security.permission_manager.class">FOM\UserBundle\Security\Permission\PermissionManager</parameter>
@@ -12,7 +11,6 @@
         <parameter key="fom.acl_assignment.show_groups">true</parameter>
         <parameter key="fom.acl_assignment.show_authenticated">true</parameter>
         <parameter key="fom.acl_assignment.show_anonymous">false</parameter>
-        <parameter key="form.ace.model_transformer.class">FOM\UserBundle\Form\DataTransformer\ACEDataTransformer</parameter>
         <!-- LDAP parameters used in fom.ldap_client, and (indirectly) fom.identities_provider and ACE transformation -->
         <!-- any emptyish value for ldap_host will effectively disable ldap integration -->
         <parameter key="ldap_host">null</parameter>
@@ -49,20 +47,7 @@
             <argument type="service" id="security.token_storage" />
             <argument>%fom_user.profile_formtype%</argument>
         </service>
-        <service id="form.fom.acl" class="FOM\UserBundle\Form\Type\ACLType">
-            <argument type="service" id="security.token_storage" />
-            <argument type="service" id="security.acl.provider" />
-            <tag name="form.type" />
-        </service>
 
-        <service id="form.fom.ace" class="FOM\UserBundle\Form\Type\ACEType">
-            <argument type="service" id="form.ace.model_transformer" />
-            <tag name="form.type" />
-        </service>
-        <service id="form.ace.model_transformer" class="%form.ace.model_transformer.class%">
-            <argument type="service" id="fom.ldap_user_identities_provider" />
-            <argument>%fom.ldap_user_identities_provider.user_class%</argument>
-        </service>
         <service id="form.user_password" class="FOM\UserBundle\Form\Type\UserPasswordMixinType">
             <argument type="service" id="fom.user_helper.service" />
             <tag name="form.type" />
@@ -70,10 +55,6 @@
         <service id="form.fom_group" class="FOM\UserBundle\Form\Type\GroupType">
             <tag name="form.type" />
             <argument>%fom.user_entity%</argument>
-        </service>
-
-        <service id="fom.acl.manager" class="FOM\UserBundle\Component\AclManager">
-            <argument type="service" id="security.acl.provider" />
         </service>
 
         <service id="fom.security.permission_manager"
@@ -155,13 +136,6 @@
             <tag name="security.voter" />
         </service>
 
-
-
-        <service id="fom.identities.provider" class="%fom.identities.provider.class%">
-            <argument type="service" id="doctrine" />
-            <argument type="service" id="fom.ldap_user_identities_provider" />
-            <argument>%fom.user_entity%</argument>
-        </service>
         <service id="fom.ldap_user_identities_provider" class="%fom.ldap_user_identities_provider.class%">
             <argument type="service" id="fom.ldap_client" />
             <argument>%fom.ldap_user_identities_provider.user_class%</argument>
@@ -178,13 +152,6 @@
         </service>
         <service id="fom.user.subscriber" class="FOM\UserBundle\EventListener\UserSubscriber">
             <tag name="doctrine.event_subscriber" connection="default" />
-        </service>
-        <service id="fom.acl_assignment_filter" class="FOM\UserBundle\Component\AssignableSecurityIdentityFilter">
-            <argument type="service" id="fom.identities.provider" />
-            <argument>%fom.acl_assignment.show_users%</argument>
-            <argument>%fom.acl_assignment.show_groups%</argument>
-            <argument>%fom.acl_assignment.show_authenticated%</argument>
-            <argument>%fom.acl_assignment.show_anonymous%</argument>
         </service>
     </services>
 </container>

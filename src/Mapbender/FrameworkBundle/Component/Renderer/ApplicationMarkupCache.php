@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,7 +103,7 @@ class ApplicationMarkupCache
                 $request->getBaseUrl(),
             );
             foreach ($application->getElements() as $element) {
-                if (!$this->accessDecisionManager->decide($token, array('VIEW'), $element)) {
+                if (!$this->accessDecisionManager->decide($token, [ResourceDomainElement::ACTION_VIEW], $element)) {
                     $hashParts[] = $element->getId();
                 }
             }

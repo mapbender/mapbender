@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\PermissionManager;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
@@ -108,7 +109,7 @@ class ElementController extends ApplicationControllerBase
 
         $element = $this->factory->newEntity($class, $region, $application);
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
@@ -154,7 +155,7 @@ class ElementController extends ApplicationControllerBase
         }
 
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $formInfo = $this->elementFormFactory->getConfigurationForm($element);
         /** @var FormInterface $form */
@@ -202,7 +203,7 @@ class ElementController extends ApplicationControllerBase
         }
 
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $form = $this->createForm(FormType::class, null, array(
             'label' => false,
@@ -261,7 +262,7 @@ class ElementController extends ApplicationControllerBase
                 . $id . '" does not exist.');
         }
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('element_delete', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -304,7 +305,7 @@ class ElementController extends ApplicationControllerBase
         }
 
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -368,7 +369,7 @@ class ElementController extends ApplicationControllerBase
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
             throw new BadRequestHttpException();
@@ -397,7 +398,7 @@ class ElementController extends ApplicationControllerBase
     public function screentypeAction(Request $request, Element $element)
     {
         $application = $element->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('element_edit', $request->request->get('token'))) {
             throw new BadRequestHttpException();

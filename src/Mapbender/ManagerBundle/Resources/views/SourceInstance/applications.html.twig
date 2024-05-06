@@ -3,7 +3,7 @@
 <ul class="list-default">
 {% for lsg in layerset_groups %}
     {%- set application = lsg.application -%}
-    <li>{%- set _linkToApp = is_granted('EDIT', application) -%}
+    <li>{%- set _linkToApp = is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT', application)) -%}
         {%- if _linkToApp -%}
         <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) ~ '#tabLayers' }}">
         {%- endif -%}
