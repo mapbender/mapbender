@@ -3,6 +3,7 @@ namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -37,14 +38,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PasswordController extends AbstractEmailProcessController
 {
-    /** @var LoggerInterface */
-    protected $logger;
     protected $enableReset;
     protected $maxTokenAge;
 
     public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
-                                LoggerInterface $logger,
+                                ManagerRegistry $doctrine,
+                                protected LoggerInterface $logger,
                                 $userEntityClass,
                                 $emailFromName,
                                 $emailFromAddress,
@@ -52,8 +52,7 @@ class PasswordController extends AbstractEmailProcessController
                                 $maxTokenAge,
                                 $isDebug)
     {
-        $this->logger = $logger;
-        parent::__construct($mailer, $translator, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        parent::__construct($mailer, $translator, $doctrine, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
         if (!$this->enableReset) {

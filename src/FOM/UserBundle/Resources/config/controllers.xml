@@ -16,6 +16,7 @@
                  public="true">
             <argument type="service" id="mailer" />
             <argument type="service" id="translator" />
+            <argument type="service" id="doctrine" />
             <argument type="service" id="logger" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
@@ -47,6 +48,7 @@
                  class="FOM\UserBundle\Controller\UserController"
                  public="true">
             <argument type="service" id="fom.user_helper.service" />
+            <argument type="service" id="doctrine" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>
@@ -60,6 +62,7 @@
             <argument type="service" id="mailer" />
             <argument type="service" id="translator" />
             <argument type="service" id="fom.user_helper.service" />
+            <argument type="service" id="doctrine" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.mail_from_address%</argument>
             <argument>%fom_user.mail_from_name%</argument>

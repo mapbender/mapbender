@@ -79,7 +79,7 @@ class ApplicationExchangeController extends AbstractController
     public function copyDirectlyAction($slug)
     {
         /** @var Application|null $sourceApplication */
-        $sourceApplication = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+        $sourceApplication = $this->em->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         $sourceApplication = $sourceApplication ?: $this->yamlRepository->getApplication($slug);

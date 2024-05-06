@@ -4,6 +4,7 @@
 namespace FOM\UserBundle\Controller;
 
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -15,28 +16,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AbstractEmailProcessController extends UserControllerBase
 {
-    /** @var MailerInterface */
-    protected $mailer;
-    /** @var TranslatorInterface */
-    protected $translator;
+    protected ?string $emailFromName;
 
-    protected $emailFromAddress;
-    protected $emailFromName;
-    protected $isDebug;
-
-    public function __construct(MailerInterface $mailer,
-                                TranslatorInterface $translator,
+    public function __construct(protected MailerInterface $mailer,
+                                protected TranslatorInterface $translator,
+                                ManagerRegistry $doctrine,
                                 $userEntityClass,
-                                $emailFromAddress,
-                                $emailFromName,
-                                $isDebug)
+                                protected ?string $emailFromAddress,
+                                ?string $emailFromName,
+                                protected $isDebug)
     {
-        parent::__construct($userEntityClass);
-        $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->emailFromAddress = $emailFromAddress;
+        parent::__construct($userEntityClass, $doctrine);
         $this->emailFromName = $emailFromName ?: $emailFromAddress;
-        $this->isDebug = $isDebug;
         if (!$this->emailFromAddress) {
             $this->debug404("Sender mail not configured. See UserBundle/CONFIGURATION.md");
         }

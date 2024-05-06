@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
@@ -18,24 +19,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AssetsController extends YamlApplicationAwareController
 {
-    /** @var TranslatorInterface */
-    protected $translator;
-    /** @var ApplicationAssetService */
-    protected $assetService;
     protected $containerTimestamp;
     protected $cacheDir;
     protected $isDebug;
 
-    public function __construct(TranslatorInterface     $translator,
+    public function __construct(protected TranslatorInterface     $translator,
                                 ApplicationYAMLMapper   $yamlRepository,
-                                ApplicationAssetService $assetService,
+                                protected ApplicationAssetService $assetService,
+                                EntityManagerInterface $em,
                                                         $containerTimestamp,
                                                         $cacheDir,
                                                         $isDebug)
     {
-        $this->translator = $translator;
-        parent::__construct($yamlRepository);
-        $this->assetService = $assetService;
+        parent::__construct($yamlRepository, $em);
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->cacheDir = $cacheDir;
         $this->isDebug = $isDebug;

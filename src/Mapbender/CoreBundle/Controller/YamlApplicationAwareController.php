@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 abstract class YamlApplicationAwareController extends AbstractController
 {
-    public function __construct(protected ApplicationYAMLMapper $yamlRepository)
+    public function __construct(protected ApplicationYAMLMapper $yamlRepository, protected EntityManagerInterface $em)
     {
     }
 
@@ -26,7 +27,7 @@ abstract class YamlApplicationAwareController extends AbstractController
     protected function getApplicationEntity($slug)
     {
         /** @var Application|null $application */
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         $application = $application ?: $this->yamlRepository->getApplication($slug);

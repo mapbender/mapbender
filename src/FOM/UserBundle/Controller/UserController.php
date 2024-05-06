@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
@@ -19,11 +20,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UserController extends UserControllerBase
 {
     public function __construct(protected UserHelperService           $userHelper,
+                                protected ManagerRegistry $doctrine,
                                 ?string                               $userEntityClass,
                                 protected ?string                     $profileEntityClass,
                                 protected ?string                     $profileTemplate)
     {
-        parent::__construct($userEntityClass);
+        parent::__construct($userEntityClass, $doctrine);
     }
 
     /**
