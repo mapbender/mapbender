@@ -106,7 +106,7 @@ fom:
 
                   <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.
                   <br/>Нажмите, пожалуйста, <a href="%url%">сюда</a>.
-                
+
       done:
         password_reset: 'Восстановление пароля'
         congratulations: Поздравляем!
@@ -140,7 +140,6 @@ fom:
       roles:
         super_admin: 'Может управлять всем (супер-администратор)'
         user_admin: 'Может управлять пользователями и группами'
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

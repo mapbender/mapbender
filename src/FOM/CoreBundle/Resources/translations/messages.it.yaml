@@ -10,3 +10,43 @@ fom:
             ok: OK
     fields:
       no_user_group_defined: 'Nessun utente o gruppo definito.'
+  security:
+    domain:
+      public: 'Accesso Pubblico'
+      registered: 'Tutti gli Utenti Registrati'
+    resource:
+      installation:
+        create_applications: "Crea"
+        view_all_applications: "Vedere"
+        view_all_applications_help: "Permette di vedere tutte le applicazioni, indipendentemente dai permessi definiti nell'applicazione."
+        edit_all_applications: "Modifica"
+        edit_all_applications_help: "Permette di modificare tutte le applicazioni, indipendentemente dai permessi definiti nell'applicazione."
+        delete_all_applications: "Elimina"
+        delete_all_applications_help: "Permette di eliminare tutte le applicazioni, indipendentemente dai permessi definiti nell'applicazione."
+        own_all_applications: "Gestisci Permessi"
+        own_all_applications_help: "Permette di modificare i permessi per tutte le applicazioni, indipendentemente dai permessi definiti nell'applicazione."
+        view_sources: "Vedere"
+        create_sources: "Modifica"
+        refresh_sources: "Aggiorna"
+        edit_free_instances: "Modifica Istanze Libere"
+        delete_sources: "Elimina"
+        manage_permissions: "Gestione Globale dei Permessi"
+        view_users: "Vedere"
+        create_users: "Crea"
+        edit_users: "Modifica"
+        delete_users: "Elimina"
+        view_groups: "Vedere"
+        create_groups: "Crea"
+        edit_groups: "Modifica"
+        delete_groups: "Elimina"
+      application:
+        view: "Vedere"
+        view_help: "Autorizza l'utente/gruppo a vedere e usare l'applicazione nell'interfaccia frontend, inclusi tutti gli elementi per cui non sono definiti permessi speciali."
+        edit: "Modifica"
+        edit_help: "Permette di modificare l'applicazione, escluse le schede 'Sicurezza'. La modifica dei set di livelli richiede permessi globali."
+        delete: "Elimina"
+        manage_permissions: "Gestione Permessi"
+        manage_permissions_help: "Permette di gestire i permessi per questa applicazione (la pagina attuale)."
+      element:
+        view: "Vedere"
+

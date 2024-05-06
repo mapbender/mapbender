@@ -134,7 +134,6 @@ fom:
       roles:
         super_admin: Pode adminstrar tudo (super admin)
         user_admin: Pode administrar usuários e grupos
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

@@ -134,7 +134,6 @@ fom:
       roles:
         super_admin: Alles kan aangepast worden(super admin)
         user_admin: Gebruikers en groepen kunnen geadministreerd worden
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

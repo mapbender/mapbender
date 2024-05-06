@@ -138,7 +138,6 @@ fom:
       roles:
         super_admin: 'Can administrate everything (super admin)'
         user_admin: 'Can administrate users and groups'
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

@@ -136,7 +136,6 @@ fom:
       roles:
         super_admin: Може керувати всім (супер-адміністратор)
         user_admin: Може керувати користувачами та групами
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:
