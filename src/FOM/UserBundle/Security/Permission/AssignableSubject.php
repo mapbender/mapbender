@@ -5,6 +5,10 @@ namespace FOM\UserBundle\Security\Permission;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
 
+/**
+ * An assignable subject represents a subject that can be added to the permission list
+ * It is not yet connected to a resource
+ */
 class AssignableSubject implements SubjectInterface
 {
     use SubjectTrait;

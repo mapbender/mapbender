@@ -90,11 +90,6 @@ class ResourceDomainInstallation extends AbstractResourceDomain
         };
     }
 
-    public function buildWhereClause(QueryBuilder $q, mixed $resource): void
-    {
-        $q->orWhere("p.resourceDomain = '" . self::SLUG . "'");
-    }
-
     function getTranslationPrefix(): string
     {
         return "fom.security.resource.installation";

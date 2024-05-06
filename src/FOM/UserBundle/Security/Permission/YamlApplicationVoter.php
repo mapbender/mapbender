@@ -9,6 +9,27 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Yaml application's security is also supplied in the yaml file, therefore the
+ * regular PermissionManager can't be used.
+ *
+ * The following yaml keys are relevant for it's security:
+ * `published: true`: only used when `roles` is not present. It grants view rights to the public
+ * `roles`: Can contain the following children:
+ * - public: grants access to the public
+ * - registered: grants access to all registered users:
+ * - users (array): grants access to the given users by username
+ * - groups (array): grants access to the given groups by group title
+ *
+ * Example:
+ * roles:
+ *   - users:
+ *       - user1
+ *       - user2
+ *   - groups:
+ *       - group1
+ *       - group2
+ */
 class YamlApplicationVoter extends Voter
 {
     public const ROLE_PUBLIC = "public";

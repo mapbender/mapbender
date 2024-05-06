@@ -62,6 +62,7 @@ class ResourceDomainElement extends AbstractResourceDomain
 
     public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
     {
+        // if no permission is defined for an element, everyone can access the element
         if (!$manager->hasPermissionsDefined($resource)) return true;
         return null;
     }

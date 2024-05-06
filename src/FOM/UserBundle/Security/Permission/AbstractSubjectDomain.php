@@ -4,6 +4,8 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
+use Mapbender\CoreBundle\Component\IconPackageFa4;
+use Mapbender\CoreBundle\Component\IconPackageMbIcons;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractSubjectDomain
@@ -25,7 +27,9 @@ abstract class AbstractSubjectDomain
     abstract public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void;
 
     /**
-     * returns the css class that should be used for representing this subject in a backend list
+     * returns the icon css class that should be used for representing this subject in a backend list
+     * @see IconPackageFa4::getIconMarkup() or https://fontawesome.com/icons/
+     * @see IconPackageMbIcons::getIconMarkup()
      */
     function getIconClass(): string
     {
@@ -37,18 +41,22 @@ abstract class AbstractSubjectDomain
      */
     abstract function getTitle(SubjectInterface $subject): string;
 
-    /** @return SubjectInterface[] */
+    /**
+     * Returns all subjects of this domain that are available in this mapbender installation
+     * they are used when adding a permission entry
+     * @return AssignableSubject[]
+     */
     abstract function getAssignableSubjects(): array;
 
     /**
      * determines if the subject domain applies to a given subject class and (optionally) a given action
-     * @param mixed|null $subject
-     * @param string|null $action
-     * @return bool
      */
     abstract function supports(mixed $subject, ?string $action = null): bool;
 
 
+    /**
+     * Writes all data required to identify the given subject to the given permission entity
+     */
     public function populatePermission(Permission $permission, mixed $subject): void
     {
         $permission->setSubjectDomain($this->getSlug());

@@ -5,7 +5,6 @@ namespace FOM\UserBundle\Security\Permission;
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
 use Mapbender\CoreBundle\Entity\Application;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ResourceDomainApplication extends AbstractResourceDomain
@@ -84,6 +83,9 @@ class ResourceDomainApplication extends AbstractResourceDomain
 
     public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
     {
+        // if the user is granted one of the global application rights, this overrides the permissions
+        // defined for the individual application
+
         $globalRightsMap = [
             self::ACTION_VIEW => ResourceDomainInstallation::ACTION_VIEW_ALL_APPLICATIONS,
             self::ACTION_EDIT => ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS,

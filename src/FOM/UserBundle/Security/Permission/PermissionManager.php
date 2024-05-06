@@ -15,6 +15,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Permission utility service; registered as 'fom.security.permission_manager'
  *
  * This manager is available as a service and can create/read/update/delete permissions.
+ * It also doubles as a symfony voter, therefore using `isGranted` and `denyAccessUnlessGranted`
+ * in controllers is possible as well
  */
 class PermissionManager extends Voter
 {
@@ -35,16 +37,20 @@ class PermissionManager extends Voter
     private array $cache = [];
 
 
+    /**
+     * Checks if a given user has the permission to perform the action on the resource.
+     * Hierarchical permissions are considered if applicable for the resource.
+     */
     public function isGranted(?UserInterface $user, mixed $resource, string $action): bool
     {
-        $permissions = $this->getPermissionsForUser($user);
-        if (empty($permissions)) return false;
-
         $resourceDomain = $this->findResourceDomainFor($resource, $action);
         if ($resourceDomain === null) return false;
 
         $override = $resourceDomain->overrideDecision($resource, $action, $user, $this);
         if ($override !== null) return $override;
+
+        $permissions = $this->getPermissionsForUser($user);
+        if (empty($permissions)) return false;
 
         foreach ($permissions as $permission) {
             if ($resourceDomain->matchesPermission($permission, $action, $resource)) return true;
@@ -53,11 +59,12 @@ class PermissionManager extends Voter
     }
 
 
-    public function revoke(mixed $subject, mixed $resource, string $action): void
-    {
-        $this->grant($subject, $resource, $action, false);
-    }
-
+    /**
+     * Programmatically grants a subject to perform an action on a resource
+     * (or revokes the grant if isGranted is set to false)
+     * No permission entry will be added if the exact entry already exists, a grant e.g. to
+     * a user who already has access via a group permission will be added however
+     */
     public function grant(mixed $subject, mixed $resource, string $action, bool $isGranted = true): void
     {
         $permission = new Permission(action: $action);
@@ -89,24 +96,18 @@ class PermissionManager extends Voter
     }
 
     /**
-     * @param ?UserInterface $user
-     * @return array<Permission>
+     * shortcut for grant(isGranted: false)
+     * @see self::grant()
      */
-    protected function getPermissionsForUser(?UserInterface $user): array
+    public function revoke(mixed $subject, mixed $resource, string $action): void
     {
-        $userIdentifier = $user?->getUserIdentifier();
-        if (array_key_exists($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
-
-        $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
-        foreach ($this->subjectDomains as $subjectDomain) {
-            $subjectDomain->buildWhereClause($q, $user);
-        }
-
-        $permissions = $q->getQuery()->getResult();
-        $this->cache[$userIdentifier] = $permissions;
-        return $permissions;
+        $this->grant($subject, $resource, $action, false);
     }
 
+    /**
+     * returns the resource domain for a given resource
+     * @see AbstractResourceDomain::supports()
+     */
     public function findResourceDomainFor(mixed $resource, string $action = null, bool $throwIfNotFound = false): ?AbstractResourceDomain
     {
         foreach ($this->resourceDomains as $resourceDomain) {
@@ -119,6 +120,10 @@ class PermissionManager extends Voter
         return null;
     }
 
+    /**
+     * returns the subject domain for a given subject
+     * @see AbstractSubjectDomain::supports()
+     */
     public function findSubjectDomainFor(mixed $permissionOrSubject, string $action = null): AbstractSubjectDomain
     {
         foreach ($this->subjectDomains as $subjectDomain) {
@@ -135,6 +140,7 @@ class PermissionManager extends Voter
     }
 
     /**
+     * Returns a list of all subjects that are available in this application
      * @return AssignableSubject[]
      */
     public function getAssignableSubjects(): array
@@ -147,7 +153,15 @@ class PermissionManager extends Voter
     }
 
     /**
-     * @return Permission[]
+     * Find all permissions that are saved in the database for a given resource domain and resource.
+     *
+     * @param bool $group if set to true, permission entries are grouped by the subjectJson
+     * @param bool $alwaysAddPublicAccess if set to true, a permission entry for public access will always be added,
+     * regardless if an entry is saved in the database. If there isn't, a dummy permission entry with a null action will be returned
+     * @param string[]|null $actionFilter if given, only permissions for the given actions are returned.
+     * The permission hierarchy is ignored, only if a database entry for the exact action exists, the permission will be returned
+     * @return Permission[]|array<string, Permission[]> an array of permissions if group==false, otherwise
+     * @see SubjectInterface::getSubjectJson()
      */
     public function findPermissions(
         AbstractResourceDomain $resourceDomain,
@@ -190,25 +204,34 @@ class PermissionManager extends Voter
         return $permissionsGrouped;
     }
 
-    private function isEntity(string|object $class): bool
+    /**
+     * Gets all permissions for a given user. This includes e.g. public permissions and permissions
+     * registered for a group the user is part of.
+     */
+    public function getPermissionsForUser(?UserInterface $user): array
     {
-        if (is_object($class)) {
-            $class = ($class instanceof Proxy)
-                ? get_parent_class($class)
-                : get_class($class);
+        $userIdentifier = $user?->getUserIdentifier();
+        if (array_key_exists($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
+
+        $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
+        foreach ($this->subjectDomains as $subjectDomain) {
+            $subjectDomain->buildWhereClause($q, $user);
         }
 
-        return !$this->em->getMetadataFactory()->isTransient($class);
+        $permissions = $q->getQuery()->getResult();
+        $this->cache[$userIdentifier] = $permissions;
+        return $permissions;
     }
-
 
     /**
      * Save permissions for a resource. Should be called from a controller's "save" method
      * after validating the form data
      * @param mixed $resource
-     * @param array{subjectJson: string, permissions: bool[]} $permissionData
-     * @param array<string>|null $actionFilter
-     * @return void
+     * @param array{subjectJson: string, permissions: bool[]} $permissionData an associative array with the subject json
+     * as key and a bool array with an entry for each defined action (or each entry in the actionFilter if given)
+     * @param array<string>|null $actionFilter if given, only the given actions are processed
+     * @see SubjectInterface::getSubjectJson()
+     * @see AbstractResourceDomain::getActions() action list for the permission bool array if arrayFilter is not given
      */
     public function savePermissions(mixed $resource, array $permissionData, ?array $actionFilter = null): void
     {
@@ -244,14 +267,29 @@ class PermissionManager extends Voter
         $this->cache = [];
     }
 
+    /**
+     * checks if for the given resource there are permission entries defined
+     */
     public function hasPermissionsDefined(mixed $resource): bool
     {
-        $domain = $this->findResourceDomainFor($resource);
+        $domain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
         $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
         $domain->buildWhereClause($q, $resource);
         $result = $q->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
         return $result > 0;
     }
+
+    private function isEntity(string|object $class): bool
+    {
+        if (is_object($class)) {
+            $class = ($class instanceof Proxy)
+                ? get_parent_class($class)
+                : get_class($class);
+        }
+
+        return !$this->em->getMetadataFactory()->isTransient($class);
+    }
+
 
 
     /** START Wrapper for symfony's VoterInterface */
