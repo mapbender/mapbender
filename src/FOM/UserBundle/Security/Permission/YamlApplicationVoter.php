@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Yaml application's security is also supplied in the yaml file, therefore the
+ * Yaml application's security is also stated in the yaml file, therefore the
  * regular PermissionManager can't be used.
  *
  * The following yaml keys are relevant for it's security:
