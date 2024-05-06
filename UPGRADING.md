@@ -1,11 +1,12 @@
 ## next major release (v4.0)
 
 ### Upgrade database
-Important: Execute the following commands in the specified order to upgrade. First, make a backup of your database!
+Important: Execute the following commands in the specified order to upgrade (after bringing the symfony directory structure up to date). First, make a backup of your database!
 
 - `bin/console mapbender:database:upgrade`: this replaces doctrine's removed json_array type to json. If you are using a DBMS other than SQlite, PostgreSQL and MySQL you need to do that manually. 
 - `bin/console mapbender:security:migrate-from-acl`: migrates security definitions from the ACL system to the new permission system
 - `bin/console doctrine:schema:update --complete --force`: updates the rest of the database. That needs to be executed last, since it deletes the old ACL tables
+
 
 ### Symfony updated to version 5.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
