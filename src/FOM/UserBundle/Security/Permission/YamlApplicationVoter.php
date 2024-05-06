@@ -30,7 +30,6 @@ class YamlApplicationVoter extends Voter
 
         /** @var Application $subject */
         $roles = $subject->getYamlRoles();
-        if ($subject->getSlug() !== "mapbender_user") return false;
         return $this->checkYamlRoles($roles, $token);
     }
 
