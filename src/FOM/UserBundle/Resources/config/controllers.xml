@@ -6,7 +6,6 @@
         <service id="FOM\UserBundle\Controller\GroupController"
                  class="FOM\UserBundle\Controller\GroupController"
                  public="true">
-            <argument type="service" id="security.acl.provider" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
@@ -47,7 +46,6 @@
         <service id="FOM\UserBundle\Controller\UserController"
                  class="FOM\UserBundle\Controller\UserController"
                  public="true">
-            <argument type="service" id="security.acl.provider" />
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>

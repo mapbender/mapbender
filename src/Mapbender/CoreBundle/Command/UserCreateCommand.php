@@ -106,7 +106,5 @@ class UserCreateCommand extends AbstractUserCommand
         $em = $this->getEntityManager();
         $em->flush();
         $em->persist($user);
-        // Add default privileges (VIEW and EDIT on own information)
-        $this->userHelper->giveOwnRights($user);
     }
 }

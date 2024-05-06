@@ -98,8 +98,6 @@ class RegistrationController extends AbstractEmailProcessController
             $em->persist($user);
             $em->flush();
 
-            $this->userHelper->giveOwnRights($user);
-
             return $this->redirectToRoute('fom_user_registration_send');
         }
 

@@ -10,12 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use FOM\ManagerBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * Group management controller
@@ -25,7 +19,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 class GroupController extends AbstractController
 {
     public function __construct(
-        protected MutableAclProviderInterface $aclProvider,
         protected EntityManagerInterface $em,
     )
     {
@@ -59,16 +52,6 @@ class GroupController extends AbstractController
             }
 
             $this->em->flush();
-
-            $objectIdentity = ObjectIdentity::fromDomainObject($group);
-            $acl = $this->aclProvider->createAcl($objectIdentity);
-
-            // retrieving the security identity of the currently logged-in user
-            $securityIdentity = UserSecurityIdentity::fromAccount($this->getUser());
-
-            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-            $this->aclProvider->updateAcl($acl);
-
             $this->addFlash('success', 'The group has been saved.');
 
             return $this->redirectToRoute('fom_user_security_index', array(
@@ -149,20 +132,10 @@ class GroupController extends AbstractController
             return new Response();
         }
 
-
         $this->em->beginTransaction();
 
         try {
-            if (($this->aclProvider) instanceof MutableAclProvider) {
-                $sid = new RoleSecurityIdentity($group->getRole());
-                $this->aclProvider->deleteSecurityIdentity($sid);
-            }
-
             $this->em->remove($group);
-
-            $oid = ObjectIdentity::fromDomainObject($group);
-            $this->aclProvider->deleteAcl($oid);
-
             $this->em->flush();
             $this->em->commit();
         } catch(\Exception $e) {

@@ -1,4 +1,5 @@
 <?php
+
 namespace FOM\UserBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,12 +10,6 @@ use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User management controller
@@ -23,11 +18,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserController extends UserControllerBase
 {
-    public function __construct(protected MutableAclProviderInterface $aclProvider,
-                                protected UserHelperService $userHelper,
-                                ?string $userEntityClass,
-                                protected ?string $profileEntityClass,
-                                protected ?string $profileTemplate)
+    public function __construct(protected UserHelperService           $userHelper,
+                                ?string                               $userEntityClass,
+                                protected ?string                     $profileEntityClass,
+                                protected ?string                     $profileTemplate)
     {
         parent::__construct($userEntityClass);
     }
@@ -41,12 +35,11 @@ class UserController extends UserControllerBase
     public function createAction(Request $request)
     {
         $userClass = $this->userEntityClass;
-        $oid = new ObjectIdentity('class', $userClass);
-        $this->denyAccessUnlessGranted('CREATE', $oid);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_USERS);
 
         /** @var User $user */
         $user = new $userClass();
-        return $this->userActionCommon($request, $user);
+        return $this->createOrEditUser($request, $user);
     }
 
     /**
@@ -65,7 +58,7 @@ class UserController extends UserControllerBase
             throw new NotFoundHttpException('The user does not exist');
         }
 
-        return $this->userActionCommon($request, $user);
+        return $this->createOrEditUser($request, $user);
     }
 
     /**
@@ -74,20 +67,16 @@ class UserController extends UserControllerBase
      * @return Response
      * @throws \Exception
      */
-    protected function userActionCommon(Request $request, User $user)
+    protected function createOrEditUser(Request $request, User $user)
     {
         $isNew = !$user->getId();
         $profileClass = $this->profileEntityClass;
-        if ($profileClass) {
-            if ($isNew) {
-                $profile = new $profileClass();
-                $user->setProfile($profile);
-            }
+        if ($profileClass && $isNew) {
+            $profile = new $profileClass();
+            $user->setProfile($profile);
         }
 
-        $oid = new ObjectIdentity('class', get_class($user));
-        $ownerGranted = $this->isGranted('OWNER', $isNew ? $oid : $user);
-        $groupPermission = $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS) || $ownerGranted;
+        $groupPermission = $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
 
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
             'group_permission' => $groupPermission,
@@ -109,11 +98,6 @@ class UserController extends UserControllerBase
                 $this->persistUser($em, $user);
                 $em->flush();
 
-                if ($isNew) {
-                    // Make sure, the new user has VIEW & EDIT permissions
-                    $this->userHelper->giveOwnRights($user);
-                }
-
                 $em->commit();
             } catch (\Exception $e) {
                 $em->rollback();
@@ -129,8 +113,8 @@ class UserController extends UserControllerBase
             }
         }
         return $this->render('@FOMUser/User/form.html.twig', array(
-            'user'             => $user,
-            'form'             => $form->createView(),
+            'user' => $user,
+            'form' => $form->createView(),
             'profile_template' => $this->profileTemplate,
             'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
             'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
@@ -167,13 +151,6 @@ class UserController extends UserControllerBase
         $em->beginTransaction();
 
         try {
-            if (($this->aclProvider) instanceof MutableAclProvider) {
-                $sid = UserSecurityIdentity::fromAccount($user);
-                $this->aclProvider->deleteSecurityIdentity($sid);
-            }
-            $oid = ObjectIdentity::fromDomainObject($user);
-            $this->aclProvider->deleteAcl($oid);
-
             $em->remove($user);
             if ($user->getProfile()) {
                 $em->remove($user->getProfile());
