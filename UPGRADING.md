@@ -7,6 +7,9 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - `bin/console mapbender:security:migrate-from-acl`: migrates security definitions from the ACL system to the new permission system
 - `bin/console doctrine:schema:update --complete --force`: updates the rest of the database. That needs to be executed last, since it deletes the old ACL tables
 
+### New permission system
+- database permission can be migrated using `bin/console mapbender:security:migrate-from-acl`. Do that before executing the schema:update command, otherwise your old ACL tables will be gone
+- yaml permissions now follow a new structure, see [the development documentation](./docs/security/permission-system.md#yaml-applications)
 
 ### Symfony updated to version 5.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
@@ -109,6 +112,7 @@ The library was only used sparsely and was not worth the effort of keeping up to
 - `_.object`: Write manully (three-liner)
 - `_.omit`, `_.filter`: `Mapbender.Util.filter`
 - `_.uniq`: `Mapbender.Util.array_unique`
+
 
 
 ## v3.3.x
