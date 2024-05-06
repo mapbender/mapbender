@@ -45,12 +45,12 @@ class ResourceDomainApplication extends AbstractResourceDomain
         return true;
     }
 
-    public function matchesPermission(array $permission, string $action, mixed $resource): bool
+    public function matchesPermission(Permission $permission, string $action, mixed $resource): bool
     {
         /** @var Application $resource */
         return parent::matchesPermission($permission, $action, $resource)
             && $resource->getSource() === Application::SOURCE_DB
-            && $permission["application_id"] === $resource->getId();
+            && $permission->getApplication()?->getId() === $resource->getId();
     }
 
     public function buildWhereClause(QueryBuilder $q, mixed $resource): void

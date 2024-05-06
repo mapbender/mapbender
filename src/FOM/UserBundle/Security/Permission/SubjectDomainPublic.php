@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,9 +26,9 @@ class SubjectDomainPublic extends AbstractSubjectDomain
         return self::SLUG;
     }
 
-    public function buildWhereClause(?UserInterface $user): WhereClauseComponent
+    public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void
     {
-        return new WhereClauseComponent("p.subject_domain = '" . self::SLUG . "'");
+        $q->orWhere("p.subjectDomain = '" . self::SLUG . "'");
     }
 
     function getTitle(?SubjectInterface $subject): string

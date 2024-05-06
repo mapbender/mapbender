@@ -7,7 +7,6 @@ use Doctrine\ORM\Proxy\Proxy;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
-use PHPUnit\Exception;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -30,6 +29,9 @@ class PermissionManager extends Voter
     {
     }
 
+    /**
+     * @var array<string, Permission[]>
+     */
     private array $cache = [];
 
 
@@ -88,25 +90,19 @@ class PermissionManager extends Voter
 
     /**
      * @param ?UserInterface $user
-     * @return array{permission: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int}
+     * @return array<Permission>
      */
     protected function getPermissionsForUser(?UserInterface $user): array
     {
         $userIdentifier = $user?->getUserIdentifier();
-        if (in_array($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
+        if (array_key_exists($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
 
-        $subjectWhereComponents = [];
-        $variables = [];
+        $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
         foreach ($this->subjectDomains as $subjectDomain) {
-            $wrapper = $subjectDomain->buildWhereClause($user);
-            if ($wrapper === null) continue;
-            $subjectWhereComponents[] = '(' . $wrapper->whereClause . ')';
-            $variables = array_merge($variables, $wrapper->variables);
+            $subjectDomain->buildWhereClause($q, $user);
         }
 
-        $sql = 'SELECT p.action, p.resource_domain, p.resource, p.element_id, p.application_id FROM fom_permission p';
-        if (count($subjectWhereComponents) > 0) $sql .= ' WHERE (' . implode(' OR ', $subjectWhereComponents) . ")";
-        $permissions = $this->em->getConnection()->executeQuery($sql, $variables)->fetchAllAssociative();
+        $permissions = $q->getQuery()->getResult();
         $this->cache[$userIdentifier] = $permissions;
         return $permissions;
     }

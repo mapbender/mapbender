@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,13 +26,12 @@ class SubjectDomainRegistered extends AbstractSubjectDomain
         return self::SLUG;
     }
 
-    public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent
+    public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void
     {
         // registered user rules are valid for any registered user
         if ($user !== null) {
-            return new WhereClauseComponent("p.subject_domain = '" . self::SLUG . "'");
+            $q->orWhere("p.subjectDomain = '" . self::SLUG . "'");
         }
-        return null;
     }
 
     function getTitle(?SubjectInterface $subject): string

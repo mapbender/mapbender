@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
@@ -22,15 +23,13 @@ class SubjectDomainGroup extends AbstractSubjectDomain
 
     }
 
-    public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent
+    public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void
     {
         if ($user !== null and $user instanceof User) {
-            return new WhereClauseComponent(
-                whereClause: "p.subject_domain = '" . self::SLUG . "' AND p.group_id IN (SELECT ug.group_id FROM fom_users_groups ug WHERE ug.user_id = :user_id)",
-                variables: ['user_id' => $user->getId()],
-            );
+            $q->orWhere("p.subjectDomain = '" . self::SLUG . "' AND p.group IN (:groups)")
+                ->setParameter('groups', $user->getGroups())
+            ;
         }
-        return null;
     }
 
     function getIconClass(): string

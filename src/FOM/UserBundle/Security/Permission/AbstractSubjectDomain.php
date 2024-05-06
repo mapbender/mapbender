@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -16,13 +17,12 @@ abstract class AbstractSubjectDomain
     abstract function getSlug(): string;
 
     /**
-     * Build an SQL where clause that matches the logged-in user.
+     * Modify the QueryBuilder using an "orWhere" statement to match the supplied user
      * The permission table is aliased as `p`
      * The logged-in user is available as argument, if you need information from another service, use dependency injection.
      * @param UserInterface|null $user
-     * @return ?WhereClauseComponent a wrapper class for the where clause. Variables will be bound using doctrine's bindParam.
      */
-    abstract public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent;
+    abstract public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void;
 
     /**
      * returns the css class that should be used for representing this subject in a backend list

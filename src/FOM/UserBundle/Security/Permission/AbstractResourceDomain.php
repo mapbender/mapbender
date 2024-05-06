@@ -59,24 +59,20 @@ abstract class AbstractResourceDomain
     /**
      * checks if a permission entry (resource-related subset of fom_permission entity) applies to the given action and subject
      * this is used for isGranted checks, where all permissions for a user are cached to minimize calls to the database
-     * @param array{action: string, resource_domain: string, resource: ?string, element_id: ?int, application_id: ?int} $permission
-     * @param string $action
-     * @param mixed $resource
-     * @return bool
      */
-    public function matchesPermission(array $permission, string $action, mixed $resource): bool
+    public function matchesPermission(Permission $permission, string $action, mixed $resource): bool
     {
-        return $permission["resource_domain"] === $this->getSlug() && (
+        return $permission->getResourceDomain() === $this->getSlug() && (
             $this->isHierarchical()
-                ? in_array($action, $this->inheritedActions($permission["action"]))
-                : $action === $permission["action"]
+                ? in_array($action, $this->inheritedActions($permission->getAction()))
+                : $action === $permission->getAction()
             );
     }
 
     /**
-     * Build an SQL where clause that matches the supplied subject
+     * Modify the QueryBuilder using an "orWhere" statement to match the supplied resource
      * The permission table is aliased as `p`
-     * The permission subject is available as argument, if you need information from another service, use dependency injection.
+     * The resource is available as argument, if you need information from another service, use dependency injection.
      */
     abstract public function buildWhereClause(QueryBuilder $q, mixed $resource): void;
 

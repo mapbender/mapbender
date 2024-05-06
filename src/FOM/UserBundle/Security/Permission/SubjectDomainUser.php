@@ -3,6 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -22,15 +23,13 @@ class SubjectDomainUser extends AbstractSubjectDomain
         return self::SLUG;
     }
 
-    public function buildWhereClause(?UserInterface $user): ?WhereClauseComponent
+    public function buildWhereClause(QueryBuilder $q, ?UserInterface $user): void
     {
         if ($user !== null and $user instanceof User) {
-            return new WhereClauseComponent(
-                whereClause: "p.subject_domain = '" . self::SLUG . "' AND p.user_id = :user_id",
-                variables: ['user_id' => $user->getId()]
-            );
+            $q->orWhere("p.subjectDomain = '" . self::SLUG . "' AND p.user = :user")
+                ->setParameter('user', $user)
+            ;
         }
-        return null;
     }
 
     public function getTitle(SubjectInterface $subject): string
