@@ -171,12 +171,10 @@ mb:
           button: 'Выбрать файл'
           label: 'Файл не выбран'
         export:
-          addAcl: ACLs
           addSources: Источники
           btn:
             export: Экспорт
         import:
-          addAcl: ACLs
           addSources: Источники
           btn:
             import: Импорт
@@ -196,7 +194,6 @@ mb:
       new_application: 'Новое приложение'
       add_source: 'Добавить источник'
       add_user_group: 'Добавить пользователей и группы'
-      acl_element: 'Acl элемент'
       import_application: Импорт
       export_application: Экспорт
     components:
@@ -244,7 +241,7 @@ mb:
       admin:
         importfile: 'Импортировать файл'
   actions:
-    secureelement: 'Безопасность элемента'
+    secureelement: 'Ограничить доступ к этому элементу'
   wms:
     wmsloader:
       repo:

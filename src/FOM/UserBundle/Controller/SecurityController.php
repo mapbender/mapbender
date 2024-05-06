@@ -33,7 +33,7 @@ class SecurityController
         $grants = array(
             'users' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_USERS),
             'groups' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_GROUPS),
-            'acl' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION),
+            'global_permissions' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION),
         );
 
         if (!array_filter($grants)) {
@@ -41,7 +41,7 @@ class SecurityController
         }
         $vars = array(
             'grants' => $grants,
-            'acl_categories' => ACLController::categoryList(),
+            'permission_categories' => PermissionController::categoryList(),
             'users' => $grants['users'] ? $this->managerRegistry->getRepository(User::class)->findAll() : [],
             'groups' => $grants['groups'] ? $this->managerRegistry->getRepository(Group::class)->findAll() : [],
         );

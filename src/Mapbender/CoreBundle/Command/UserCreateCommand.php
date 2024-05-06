@@ -102,7 +102,6 @@ class UserCreateCommand extends AbstractUserCommand
         }
         $user->setRegistrationTime(new \DateTime());
         $this->updateUser($user, $input);
-        // must flush to generate autoincrement id before assigning ACLs
         $em = $this->getEntityManager();
         $em->flush();
         $em->persist($user);

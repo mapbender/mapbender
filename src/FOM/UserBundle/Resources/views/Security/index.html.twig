@@ -14,8 +14,8 @@
   {%- if grants.groups -%}
     {{- tab_macros.tab_header('Groups', 'fom.user.userbundle.groups', not grants.users ? 'active' : '') -}}
   {%- endif -%}
-  {%- if grants.acl -%}
-    {{- tab_macros.tab_header('Acl', 'fom.user.acl.index.access_control_lists', not (grants.users or grants.groups) ? 'active' : '') -}}{#- #tabContact -#}
+  {%- if grants.global_permissions -%}
+    {{- tab_macros.tab_header('Permissions', 'fom.user.permissions.index.global_permissions', not (grants.users or grants.groups) ? 'active' : '') -}}{#- #tabContact -#}
   {%- endif -%}
 {% endblock tab_headers %}
 
@@ -30,9 +30,9 @@
           {%- include '@FOMUser/Group/list-tab.html.twig' -%}
       </div>
   {%- endif -%}
-  {%- if grants.acl -%}
-      <div{{ tab_macros.tab_content_attributes('Acl', not (grants.users or grants.groups) ? 'active' : '', true) }}>
-          {%- include '@FOMUser/ACL/list.html.twig' with {classes: acl_categories} -%}
+  {%- if grants.global_permissions -%}
+      <div{{ tab_macros.tab_content_attributes('Permissions', not (grants.users or grants.groups) ? 'active' : '', true) }}>
+          {%- include '@FOMUser/Permission/list.html.twig' with {classes: permission_categories} -%}
       </div>
   {%- endif -%}
 {% endblock %}

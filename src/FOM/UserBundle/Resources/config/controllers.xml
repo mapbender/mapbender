@@ -36,8 +36,8 @@
             <argument type="service" id="twig" />
             <argument>%fom.user_entity%</argument>
         </service>
-        <service id="FOM\UserBundle\Controller\ACLController"
-                 class="FOM\UserBundle\Controller\ACLController"
+        <service id="FOM\UserBundle\Controller\PermissionController"
+                 class="FOM\UserBundle\Controller\PermissionController"
                  public="true">
             <argument type="service" id="fom.security.permission_manager" />
             <call method="setContainer">

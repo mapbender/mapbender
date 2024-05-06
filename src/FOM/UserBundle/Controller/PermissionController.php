@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ACLController extends AbstractController
+class PermissionController extends AbstractController
 {
     public function __construct(protected PermissionManager                $permissionManager,
     )
@@ -21,7 +21,7 @@ class ACLController extends AbstractController
 
     public const CATEGORY_APPLICATION = "applications";
     public const CATEGORY_SOURCES = "sources";
-    public const CATEGORY_ACL = "acl";
+    public const CATEGORY_PERMISSIONS = "permissions";
     public const CATEGORY_USERS = "users";
     public const CATEGORY_GROUPS = "groups";
 
@@ -30,7 +30,7 @@ class ACLController extends AbstractController
         return [
             self::CATEGORY_APPLICATION => "mb.terms.application.plural",
             self::CATEGORY_SOURCES => "mb.terms.source.plural",
-            self::CATEGORY_ACL => "fom.user.userbundle.classes.acls",
+            self::CATEGORY_PERMISSIONS => "fom.user.userbundle.classes.permissions",
             self::CATEGORY_USERS => "fom.user.userbundle.classes.users",
             self::CATEGORY_GROUPS => "fom.user.userbundle.classes.groups",
         ];
@@ -60,7 +60,7 @@ class ACLController extends AbstractController
                 ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES,
                 ResourceDomainInstallation::ACTION_DELETE_SOURCES,
             ],
-            self::CATEGORY_ACL => [
+            self::CATEGORY_PERMISSIONS => [
                 ResourceDomainInstallation::ACTION_MANAGE_PERMISSION
             ],
             self::CATEGORY_USERS => [
@@ -99,21 +99,21 @@ class ACLController extends AbstractController
             $this->permissionManager->savePermissions(null, $form->get('security')->getData(), $actions);
 
             return $this->redirectToRoute('fom_user_security_index', array(
-                '_fragment' => 'tabAcl',
+                '_fragment' => 'tabPermissions',
             ));
         } elseif ($form->isSubmitted()) {
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
 
-        return $this->render('@FOMUser/ACL/edit.html.twig', array(
+        return $this->render('@FOMUser/Permission/edit.html.twig', array(
             'class' => $category,
             'form' => $form->createView(),
-            'acl_class' => self::categoryList()[$category],
+            'permission_class' => self::categoryList()[$category],
         ));
     }
 
     /**
-     * @Route("/acl/overview", methods={"GET"})
+     * @Route("/permission/overview", methods={"GET"})
      */
     public function overviewAction(Request $request): Response
     {
@@ -127,7 +127,7 @@ class ACLController extends AbstractController
             );
         }
 
-        return $this->render('@FOMUser/ACL/groups-and-users.html.twig', array(
+        return $this->render('@FOMUser/Permission/groups-and-users.html.twig', array(
             'subjects' => $assignableSubjects
         ));
     }

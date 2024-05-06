@@ -104,12 +104,10 @@ mb:
           button: Choisir un fichier
           label: Aucun fichier sélectionné
         export:
-          addAcl: ACLs
           addSources: Sources
           btn:
             export: Exporter
         import:
-          addAcl: ACLs
           addSources: Sources
           btn:
             import: Importer
@@ -127,7 +125,6 @@ mb:
       new_application: Nouvelle application
       add_source: Ajouter une source
       add_user_group: Ajouter des utilisateurs ou des groupes
-      acl_element: Élément ACL
       import_application: Importer
       export_application: Exporter
     components:
@@ -168,3 +165,5 @@ mb:
           format_error: Ce format n'est pas supporté!
           resolution:
             error: Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.
+  actions:
+    secureelement: 'Restreindre l''accès à l''élément'

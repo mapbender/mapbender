@@ -1,8 +1,4 @@
 fom:
-  acl:
-    group_label:
-      anonymous: 'Usuarios anónimos'
-      authenticated: 'Todos los usuarios registrados'
   user:
     registration:
       email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, haz clic <a href="%url%">aqui</a>.</p>'
@@ -89,18 +85,18 @@ fom:
         username: Usuario
         description: Description
         activated: Activado
-    acl:
+    permissions:
       index:
-        access_control_lists: 'Lista de control de acceso global (ACL)'
+        global_permissions: 'Permisos globales'
         name: Nombre
         class: Clase
         edit: Editar
       required: 'Los campos requeridos son marcados con etiquetas oscuras, mientras que los campos opcionales tienen etiquetas claras.'
       edit:
-        edit_class_acl: 'Editar clase ACL para %name%'
+        edit_permission: 'Editar permisos para %name%'
       groups_users:
         name: Nombre
-        no_goups_users: 'No hay grupos y usuarios definidos.'
+        no_groups_users: 'No hay grupos y usuarios definidos.'
     password:
       email_body_html: '<p>Hola, %user_username%,</p><p> se ha solicitado una nueva contraseña para Mapbender. <p>Ckica aquí, por favor, <a href="%url%">hier</a>, para cambiar tu contraseña.</p>'
       done:
@@ -130,7 +126,7 @@ fom:
       groups: Grupos
       new_group: 'Nuevo grupo'
       classes:
-        acls: 'Autorizaciones ACL'
+        permissions: 'Autorizaciones'
         users: Usuarios
         groups: grupos
       roles:

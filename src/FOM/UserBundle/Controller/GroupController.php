@@ -124,7 +124,6 @@ class GroupController extends AbstractController
         if($group === null) {
             throw new NotFoundHttpException('The group does not exist');
         }
-        // ACL access check
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_GROUPS);
 
         if (!$this->isCsrfTokenValid('group_delete', $request->request->get('token'))) {

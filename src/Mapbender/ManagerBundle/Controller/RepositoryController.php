@@ -202,7 +202,7 @@ class RepositoryController extends ApplicationControllerBase
             return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
         }
 
-        // capture ACL and entity updates in a single transaction
+        // capture permission and entity updates in a single transaction
         $this->em->beginTransaction();
 
         $dtNow = new \DateTime('now');

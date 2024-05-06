@@ -250,7 +250,7 @@
   <div class="permission-collection" {{ block('widget_container_attributes') }} data-hierarchical="{{  form.vars.resource_domain.hierarchical }}">
     {%- if form.vars.allow_add -%}
     <div class="form-group text-end">
-        <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
+        <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_permission_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
             <i class="fas fa-2x fa-plus"></i>
         </span>
     </div>

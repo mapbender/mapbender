@@ -172,12 +172,10 @@ mb:
           button: 'Selecciona un archivo'
           label: 'No se ha seleccionado ningún archivo'
         export:
-          addAcl: ACLs
           addSources: Fuentes
           btn:
             export: Exportar
         import:
-          addAcl: ACLs
           addSources: Fuentes
           btn:
             import: Importar
@@ -197,7 +195,6 @@ mb:
       new_application: 'Nueva aplicación'
       add_source: 'Añadir fuentes'
       add_user_group: 'Añadir usuarios y grupos'
-      acl_element: 'Elemento Acl'
       import_application: Importar
       export_application: Exportar
     components:
@@ -245,7 +242,7 @@ mb:
       admin:
         importfile: 'Importar archivo'
   actions:
-    secureelement: 'Elemento seguro'
+    secureelement: 'Restringir el acceso al elemento'
   wms:
     wmsloader:
       repo:

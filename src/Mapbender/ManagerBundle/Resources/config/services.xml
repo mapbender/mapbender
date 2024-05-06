@@ -8,7 +8,7 @@
         <!-- maintain status quo for anonymous grants for unfinshed Application grant work
              @todo: finish Application grant remodeling, use 'published' exclusively, purge anoymous grants in
                     DB initialization -->
-        <parameter key="fom.acl_assignment.show_anonymous">true</parameter>
+        <parameter key="fom.permission.assignment.show_anonymous">true</parameter>
         <!-- populated by compiler passes -->
         <parameter type="collection" key="mapbender.manager.menu.items" />
         <parameter type="collection" key="mapbender.manager.menu.route_prefix_blacklist" />

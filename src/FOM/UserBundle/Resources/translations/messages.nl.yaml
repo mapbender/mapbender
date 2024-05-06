@@ -85,18 +85,18 @@ fom:
         username: Gebruikersnaam
         description: Beschrijving
         activated: geactiveerd
-    acl:
+    permissions:
       index:
-        access_control_lists: Global toegangscontrole lijsten
+        global_permissions: Globale machtigingen
         name: Naam
         class: Klasse
         edit: Wijzig
       required: Verplichte velden zijn donker gekleurd en optionele velden zijn licht gekleurd.
       edit:
-        edit_class_acl: Wijzig klasse toegangscontrole (ACL) voor %name%
+        edit_permission: Machtigingen bewerken voor %name%
       groups_users:
         name: Naam
-        no_goups_users: Geen groepen en gebruikers gedefinieerd.
+        no_groups_users: Geen groepen en gebruikers gedefinieerd.
     password:
       email_body_html: |-
         &lt;p&gt;Hallo %user_username%,&lt;/p&gt;&lt;p&gt; u heeft om een nieuwe wachtwoord verzocht.
@@ -128,7 +128,7 @@ fom:
       groups: Groepen
       new_group: Nieuwe groep
       classes:
-        acls: ACLs
+        permissions: 'Machtigingenbeheer'
         users: Gebruikers
         groups: Groepen
       roles:

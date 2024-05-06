@@ -80,7 +80,7 @@ $(function() {
 
         let existingPermissionsCount = $tbody.find("tr").length;
         $subjectList.find('input[type="checkbox"]:checked').each(function(index, element) {
-            // see FOM/UserBundle/Resoruces/views/ACL/groups-and-users.html.twig
+            // see FOM/UserBundle/Resoruces/views/Permission/groups-and-users.html.twig
             const $checkbox = $(element);
             const subjectJson = $checkbox.val();
             const text = $checkbox.attr('data-label');

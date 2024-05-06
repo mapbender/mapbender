@@ -161,12 +161,10 @@ mb:
           button: 'Вибрати файл:'
           label: Файл не обрано
         export:
-          addAcl: ACLs
           addSources: Джерела
           btn:
             export: Експорт
         import:
-          addAcl: ACLs
           addSources: Джерела
           btn:
             import: Import
@@ -184,7 +182,6 @@ mb:
       new_application: Новий застосунок
       add_source: Додати джерело
       add_user_group: Додати користувачів та групи
-      acl_element: Acl елемент
       import_application: Імпорт
       export_application: Експорт
     components:
@@ -227,3 +224,5 @@ mb:
           format_error: Цей формат не підтримується!
           resolution:
             error: Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.
+  actions:
+    secureelement: 'Обмежити доступ до цього елементу'

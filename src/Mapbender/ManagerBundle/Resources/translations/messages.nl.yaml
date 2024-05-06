@@ -104,12 +104,10 @@ mb:
           button: Selecteer bestand
           label: Geen bestand geselecteerd
         export:
-          addAcl: Toegangs-restricties (ACLs)
           addSources: Bronnen
           btn:
             export: Exporteer
         import:
-          addAcl: Toegangs-restricties (ACLs)
           addSources: Bronnen
           btn:
             import: Importeer
@@ -127,7 +125,6 @@ mb:
       new_application: Nieuwe applicatie
       add_source: Voeg bron toe
       add_user_group: Voeg gebruikers en groepen toe
-      acl_element: Toegangs-restrictie (ACL) element
       import_application: Importeer
       export_application: Exporteer
     components:
@@ -168,3 +165,5 @@ mb:
           format_error: Dit formaat wordt niet ondersteund!
           resolution:
             error: Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.
+  actions:
+    secureelement: 'Toegang tot het element beperken'
