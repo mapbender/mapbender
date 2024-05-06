@@ -22,7 +22,7 @@
 {% block tab_containers %}
   {%- if grants.users -%}
       <div{{ tab_macros.tab_content_attributes('Users', 'active', false) }}>
-          {%- include '@FOMUser/User/list-tab.html.twig' with {show_groups: is_granted(constant('\\FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_VIEW_GROUPS'))} -%}
+          {%- include '@FOMUser/User/list-tab.html.twig' with {show_groups: is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_VIEW_GROUPS'))} -%}
       </div>
   {%- endif -%}
   {%- if grants.groups -%}

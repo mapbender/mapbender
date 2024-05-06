@@ -57,8 +57,10 @@ class YamlApplicationVoter extends Voter
         return false;
     }
 
-    protected function checkUserAndGroup(UserInterface $user, string $key, array $children): bool
+    protected function checkUserAndGroup(?UserInterface $user, string $key, array $children): bool
     {
+        if ($user === null) return false;
+
         if ($key === self::USERS && in_array($user->getUserIdentifier(), $children, true)) {
             return true;
         }
