@@ -208,7 +208,7 @@ class ApplicationController extends ApplicationControllerBase
     public function toggleStateAction(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
-        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS, $application);
 
         if (!$this->isCsrfTokenValid('application_edit', $request->request->get('token'))) {
             throw new BadRequestHttpException();

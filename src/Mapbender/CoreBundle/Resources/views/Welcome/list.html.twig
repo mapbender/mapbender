@@ -62,6 +62,8 @@
                 <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
                   <i class="fas fa-gear"></i>
                 </a>
+              {% endif %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS'), application) %}
                 <span class="btn btn-light -fn-toggle-flag {{ has_public_access(application) ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
                     data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
                     data-token="{{ csrf_token('application_edit') }}"
