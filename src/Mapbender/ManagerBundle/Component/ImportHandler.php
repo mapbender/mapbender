@@ -114,7 +114,7 @@ class ImportHandler extends ExchangeHandler
             $this->em->flush();
 
             if ($app->getSource() !== Application::SOURCE_YAML) {
-                $this->copyPermissions($clonedApp, $app);
+                $this->permissionManager->copyPermissions($app, $clonedApp);
             }
 
             return $clonedApp;
@@ -280,11 +280,6 @@ class ImportHandler extends ExchangeHandler
             }
             $this->em->persist($element);
         }
-    }
-
-    protected function copyPermissions(Application $target, Application $source)
-    {
-        // TODO: copy permissions from cloned application?
     }
 
     /**

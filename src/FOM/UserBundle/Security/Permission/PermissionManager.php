@@ -3,7 +3,7 @@
 namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
@@ -290,6 +290,30 @@ class PermissionManager extends Voter
         $domain->buildWhereClause($q, $resource);
         $result = $q->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
         return $result > 0;
+    }
+
+    /**
+     * clones all permissions set for the source resource to the target resource
+     */
+    public function copyPermissions(mixed $sourceResource, mixed $targetResource): void
+    {
+        if (\get_class($sourceResource) !== \get_class($targetResource)) {
+            throw new \InvalidArgumentException("source and target resource must be of the same type");
+        }
+        $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
+        $permissions = $this->findPermissions($resourceDomain, $sourceResource, group: false);
+        foreach ($permissions as $permission) {
+            $newPermission = new Permission(
+                subjectDomain: $permission->getSubjectDomain(),
+                user: $permission->getUser(),
+                group: $permission->getGroup(),
+                subject: $permission->getSubject(),
+                action: $permission->getAction(),
+            );
+            $resourceDomain->populatePermission($newPermission, $targetResource);
+            $this->em->persist($newPermission);
+        }
+        $this->em->flush();
     }
 
     private function isEntity(string|object $class): bool
