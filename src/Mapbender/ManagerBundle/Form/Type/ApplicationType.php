@@ -94,11 +94,6 @@ class ApplicationType extends AbstractType
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
             ))
-            ->add('published', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType',
-                array(
-                'required' => false,
-                'label' => 'mb.manager.admin.application.security.public',
-            ))
         ;
         /** @var Application $application */
         $application = $options['data'];

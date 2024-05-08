@@ -3,11 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="form.type.class_acl" class="FOM\ManagerBundle\Form\Type\ClassAclType">
-            <tag name="form.type" />
-            <argument type="service" id="security.token_storage"/>
-            <argument type="service" id="security.acl.provider"/>
-        </service>
         <service id="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader"
                  class="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader">
             <tag name="routing.loader" />

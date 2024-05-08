@@ -3,7 +3,6 @@
 namespace FOM\UserBundle;
 
 use FOM\UserBundle\Component\Menu\SecurityMenu;
-use FOM\UserBundle\DependencyInjection\Compiler\CollectAclClassesPass;
 use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;

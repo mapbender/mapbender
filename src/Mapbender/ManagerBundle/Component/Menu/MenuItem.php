@@ -111,7 +111,7 @@ class MenuItem implements \Serializable
         return $this->children;
     }
 
-    public function enabled(AuthorizationCheckerInterface $authorizationChecker)
+    public function enabled(AuthorizationCheckerInterface $authorizationChecker): bool
     {
         return true;
     }

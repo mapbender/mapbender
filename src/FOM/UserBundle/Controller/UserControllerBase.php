@@ -5,32 +5,23 @@ namespace FOM\UserBundle\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 abstract class UserControllerBase extends AbstractController
 {
-    protected $userEntityClass;
-
-    public function __construct($userEntityClass)
+    public function __construct(protected string $userEntityClass, protected ManagerRegistry $doctrine)
     {
-        $this->userEntityClass = $userEntityClass;
     }
 
-    /**
-     * @return EntityManagerInterface
-     */
-    protected function getEntityManager()
+    protected function getEntityManager(): EntityManagerInterface
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getDoctrine()->getManagerForClass($this->userEntityClass);
-        return $em;
+        return $this->doctrine->getManagerForClass($this->userEntityClass);
     }
 
-    /**
-     * @return \Doctrine\Persistence\ObjectRepository
-     */
-    protected function getUserRepository()
+    protected function getUserRepository(): ObjectRepository
     {
-        return $this->getDoctrine()->getRepository($this->userEntityClass);
+        return $this->doctrine->getRepository($this->userEntityClass);
     }
 }

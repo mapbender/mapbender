@@ -161,7 +161,7 @@ mb:
         view_this: 'Vedi questa applicazione'
         duplicate: 'Copia applicazione'
         public:
-          on_off: 'Alterna pubblica/annulla pubblicazione applicazione'
+          on_off: 'Attiva/disattiva l''accesso pubblico'
         delete: 'Elimina applicazione'
         no_application: 'Nessuna applicazione disponibile'
         new:
@@ -174,12 +174,10 @@ mb:
           button: 'Selezione file'
           label: 'Nessun file selezionato'
         export:
-          addAcl: ACLs
           addSources: Risorse
           btn:
             export: Esporta
         import:
-          addAcl: ACLs
           addSources: Risorsa
           btn:
             import: Importa
@@ -199,7 +197,6 @@ mb:
       new_application: 'Nuova applicazione'
       add_source: 'Aggiungi fonte'
       add_user_group: 'Aggiungi utenti e gruppi'
-      acl_element: 'Acl elemento'
       import_application: Importazione
       export_application: Esportazione
     components:
@@ -221,7 +218,7 @@ mb:
           title: 'Conferma eliminazione'
         delete_user_group:
           title: 'Conferma cancellazione'
-          content: 'Cancellare davvero %userGroup%?'
+          content: 'Cancellare davvero %subject%?'
     import:
       application:
         failed: 'L''applicazione non può essere importata'
@@ -247,7 +244,7 @@ mb:
       admin:
         importfile: 'Importazione del file'
   actions:
-    secureelement: 'Elemento sicuro'
+    secureelement: 'Limitare l''accesso all''elemento'
   wms:
     wmsloader:
       repo:

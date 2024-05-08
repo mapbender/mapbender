@@ -12,7 +12,6 @@
         "ext-json": "*",
         "ext-zip": "*",
 
-        "symfony/acl-bundle": "^2",
         "symfony/asset": "^5.4",
         "symfony/config": "^5.4",
         "symfony/console": "^5.4",

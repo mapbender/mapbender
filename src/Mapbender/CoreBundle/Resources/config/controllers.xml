@@ -9,6 +9,7 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.renderer.application_markup" />
             <argument type="service" id="mapbender.cache.application_markup" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%kernel.debug%</argument>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
@@ -43,6 +44,7 @@
                  class="Mapbender\CoreBundle\Controller\InstanceTunnelController"
                  public="true">
             <argument type="service" id="mapbender.source.instancetunnel.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%kernel.debug%</argument>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
@@ -54,6 +56,7 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -71,6 +74,7 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
             <argument type="service" id="mapbender.presenter.application.cache" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%cachable.mapbender.application.config%</argument>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
@@ -82,6 +86,7 @@
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_asset.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>

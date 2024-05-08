@@ -10,3 +10,43 @@ fom:
             ok: OK
     fields:
       no_user_group_defined: Geen gebruiker of groep gedefineerd.
+  security:
+    domain:
+      public: 'Publieke Toegang'
+      registered: 'Alle Geregistreerde Gebruikers'
+    resource:
+      installation:
+        create_applications: "Maken"
+        view_all_applications: "Bekijken"
+        view_all_applications_help: "Sta toe om alle applicaties te bekijken, ongeacht de rechten die in de applicatie zijn gedefinieerd."
+        edit_all_applications: "Bewerken"
+        edit_all_applications_help: "Sta toe om alle applicaties te bewerken, ongeacht de rechten die in de applicatie zijn gedefinieerd."
+        delete_all_applications: "Verwijderen"
+        delete_all_applications_help: "Sta toe om alle applicaties te verwijderen, ongeacht de rechten die in de applicatie zijn gedefinieerd."
+        own_all_applications: "Beheer Rechten"
+        own_all_applications_help: "Sta toe om de rechten van alle applicaties te bewerken, ongeacht de rechten die in de applicatie zijn gedefinieerd."
+        view_sources: "Bekijken"
+        create_sources: "Bewerken"
+        refresh_sources: "Vernieuwen"
+        edit_free_instances: "Bewerk Vrije Instances"
+        delete_sources: "Verwijderen"
+        manage_permissions: "Globaal Rechtenbeheer"
+        view_users: "Bekijken"
+        create_users: "Maken"
+        edit_users: "Bewerken"
+        delete_users: "Verwijderen"
+        view_groups: "Bekijken"
+        create_groups: "Maken"
+        edit_groups: "Bewerken"
+        delete_groups: "Verwijderen"
+      application:
+        view: "Bekijken"
+        view_help: "Autoriseert de gebruiker/groep om de applicatie in de frontend te bekijken en te gebruiken, inclusief alle elementen waarvoor geen speciale rechten zijn gedefinieerd."
+        edit: "Bewerken"
+        edit_help: "Sta toe om de applicatie te bewerken, met uitzondering van de 'Beveiliging'-tab. Bewerken van lagen vereist wereldwijde rechten."
+        delete: "Verwijderen"
+        manage_permissions: "Rechtenbeheer"
+        manage_permissions_help: "Sta toe om de rechten van deze applicatie (de huidige pagina) te beheren."
+      element:
+        view: "Bekijken"
+

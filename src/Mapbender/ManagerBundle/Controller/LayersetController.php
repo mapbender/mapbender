@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,17 +33,16 @@ class LayersetController extends ApplicationControllerBase
             $layerset = new Layerset();
             $layerset->setApplication($application);
         }
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $em = $this->getEntityManager();
                 $application->setUpdated(new \DateTime('now'));
-                $em->persist($application);
-                $em->persist($layerset);
-                $em->flush();
+                $this->em->persist($application);
+                $this->em->persist($layerset);
+                $this->em->flush();
                 $this->addFlash('success', 'mb.layerset.create.success');
             } else {
                 foreach ($form->getErrors(false, true) as $error) {
@@ -71,7 +71,7 @@ class LayersetController extends ApplicationControllerBase
     {
         $layerset = $this->requireLayerset($layersetId);
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Render confirmation dialog content
             return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
@@ -82,11 +82,10 @@ class LayersetController extends ApplicationControllerBase
                 throw new BadRequestHttpException();
             }
 
-            $em = $this->getEntityManager();
-            $em->remove($layerset);
+            $this->em->remove($layerset);
             $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->flush();
             $this->addFlash('success', 'mb.layerset.remove.success');
             /** @todo: perform redirect server side, not client side */
             return new Response();
@@ -104,18 +103,17 @@ class LayersetController extends ApplicationControllerBase
     public function setselectedAction(Request $request, Layerset $layerset)
     {
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
         $layerset->setSelected($request->request->getBoolean('enabled'));
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($layerset);
-        $em->persist($application);
-        $em->flush();
+        $this->em->persist($layerset);
+        $this->em->persist($application);
+        $this->em->flush();
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

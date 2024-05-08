@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Controller;
 
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer;
@@ -16,18 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ElementController extends YamlApplicationAwareController
 {
-    /** @var ElementFilter */
-    protected $filter;
-    /** @var ElementMarkupRenderer */
-    protected $renderer;
-
-    public function __construct(ApplicationYAMLMapper $yamlRepository,
-                                ElementFilter $filter,
-                                ElementMarkupRenderer $renderer)
+    public function __construct(ApplicationYAMLMapper           $yamlRepository,
+                                protected ElementFilter         $filter,
+                                protected ElementMarkupRenderer $renderer,
+                                EntityManagerInterface          $em)
     {
-        parent::__construct($yamlRepository);
-        $this->filter = $filter;
-        $this->renderer = $renderer;
+        parent::__construct($yamlRepository, $em);
     }
 
     /**

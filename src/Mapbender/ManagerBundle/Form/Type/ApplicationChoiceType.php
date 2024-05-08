@@ -5,34 +5,29 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ApplicationChoiceType extends AbstractType
 {
-    /** @var \Doctrine\Persistence\ObjectRepository */
-    protected $dbRepository;
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    protected ObjectRepository $dbRepository;
 
     public function __construct(EntityManagerInterface $em,
-                                ApplicationYAMLMapper $yamlRepository,
-                                AuthorizationCheckerInterface $authorizationChecker)
+                                protected ApplicationYAMLMapper $yamlRepository,
+                                protected AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
-        $this->yamlRepository = $yamlRepository;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getParent()
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return ChoiceType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -47,10 +42,9 @@ class ApplicationChoiceType extends AbstractType
     }
 
     /**
-     * @param string|null $requiredGrant
      * @return string[]
      */
-    protected function loadChoices($requiredGrant)
+    protected function loadChoices(?string $requiredGrant): array
     {
         $apps = $this->yamlRepository->getApplications();
         $apps = array_merge($apps, $this->dbRepository->findBy(array(), array(

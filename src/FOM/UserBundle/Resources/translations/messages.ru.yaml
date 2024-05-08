@@ -1,8 +1,4 @@
 fom:
-  acl:
-    group_label:
-      anonymous: 'Анонимный пользователь'
-      authenticated: 'Все зарегистрированные пользователи'
   user:
     registration:
       email_body_html: '<p>Здравствуй %user_username%,</p><p>вы только недавно зарегистрировались. Для завершения Вашей регистрации, пожалуйста, нажмите <a href="%url%">здесь</a>.</p>'
@@ -89,24 +85,24 @@ fom:
         username: 'Имя пользователя'
         description: Описание
         activated: активирован
-    acl:
+    permissions:
       index:
-        access_control_lists: 'Глобальные списки контроля доступа'
+        global_permissions: 'Глобальные разрешения'
         name: Имя
         class: Класс
         edit: Редактировать
       required: 'Обязательные поля помечены темными метками, а необязательные светлым цветом.'
       edit:
-        edit_class_acl: 'Редактировать класса ACL для %name%'
+        edit_class_permission: 'Редактировать разрешения для %name%'
       groups_users:
         name: Имя
-        no_goups_users: 'Нет групп и пользователей.'
+        no_groups_users: 'Нет групп и пользователей.'
     password:
       email_body_html: |2-
 
                   <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.
                   <br/>Нажмите, пожалуйста, <a href="%url%">сюда</a>.
-                
+
       done:
         password_reset: 'Восстановление пароля'
         congratulations: Поздравляем!
@@ -134,13 +130,12 @@ fom:
       groups: Группы
       new_group: 'Новая группа'
       classes:
-        acls: ACLs
+        permissions: 'управление разрешениями'
         users: Пользователи
         groups: Группы
       roles:
         super_admin: 'Может управлять всем (супер-администратор)'
         user_admin: 'Может управлять пользователями и группами'
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

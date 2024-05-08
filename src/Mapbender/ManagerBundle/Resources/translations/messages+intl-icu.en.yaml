@@ -161,7 +161,7 @@ mb:
         view_this: 'View this application'
         duplicate: 'Duplicate application'
         public:
-          on_off: 'Toggle publish/unpublish application'
+          on_off: 'Toggle public access'
         delete: 'Delete application'
         no_application: 'No application available'
         new:
@@ -176,12 +176,10 @@ mb:
           button: 'Select file'
           label: 'No file selected'
         export:
-          addAcl: ACLs
           addSources: Sources
           btn:
             export: Export
         import:
-          addAcl: ACLs
           addSources: Sources
           btn:
             import: Import
@@ -201,7 +199,6 @@ mb:
       new_application: 'New application'
       add_source: 'Add source'
       add_user_group: 'Add users and groups'
-      acl_element: 'Acl element'
       import_application: Import
       export_application: Export
     components:
@@ -223,7 +220,7 @@ mb:
           title: 'Confirm delete'
         delete_user_group:
           title: 'Confirm delete'
-          content: 'Really delete %userGroup%?'
+          content: 'Really delete %subject%?'
     import:
       application:
         failed: 'Application cannot be imported'
@@ -249,7 +246,7 @@ mb:
       admin:
         importfile: 'Import file'
   actions:
-    secureelement: 'Secure element'
+    secureelement: 'Restrict element access'
   wms:
     wmsloader:
       repo:

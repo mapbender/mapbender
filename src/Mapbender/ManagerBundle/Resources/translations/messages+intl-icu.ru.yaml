@@ -66,7 +66,7 @@ mb:
             other {Этот экземпляр используется # приложениями}
         }
       convert_to_reusable: 'Преобразовать в общедоступный экземпляр'
-      convert_to_bound: 'Преобразовать в приватный экземпляр' 
+      convert_to_bound: 'Преобразовать в приватный экземпляр'
       converted_to_bound: 'Приватная копия общедоступного экземпляра была добавлена в приложение'
       reusable_assigned_to_application: 'Общедоступный экземпляр был добавлен в приложение'
       create_reusable: 'Создать общедоступный экземпляр'
@@ -158,7 +158,7 @@ mb:
         view_this: 'Показать приложение'
         duplicate: 'Создать копию приложения'
         public:
-          on_off: 'Вкл/выкл публикацию приложения'
+          on_off: 'Переключить публичный доступ'
         delete: 'Удалить приложение'
         no_application: 'Нет доступных приложений'
         new:
@@ -171,12 +171,10 @@ mb:
           button: 'Выбрать файл'
           label: 'Файл не выбран'
         export:
-          addAcl: ACLs
           addSources: Источники
           btn:
             export: Экспорт
         import:
-          addAcl: ACLs
           addSources: Источники
           btn:
             import: Импорт
@@ -196,7 +194,6 @@ mb:
       new_application: 'Новое приложение'
       add_source: 'Добавить источник'
       add_user_group: 'Добавить пользователей и группы'
-      acl_element: 'Acl элемент'
       import_application: Импорт
       export_application: Экспорт
     components:
@@ -218,7 +215,7 @@ mb:
           title: 'Подтвердить удаления'
         delete_user_group:
           title: 'Подтвердите удаление'
-          content: 'Действительно удалить%userGroup%?'
+          content: 'Действительно удалить %subject%?'
     import:
       application:
         failed: 'Приложение не может быть импортировано'
@@ -244,7 +241,7 @@ mb:
       admin:
         importfile: 'Импортировать файл'
   actions:
-    secureelement: 'Безопасность элемента'
+    secureelement: 'Ограничить доступ к этому элементу'
   wms:
     wmsloader:
       repo:

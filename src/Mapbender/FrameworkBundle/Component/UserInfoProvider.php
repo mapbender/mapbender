@@ -33,19 +33,18 @@ class UserInfoProvider
     public function getValues()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token instanceof AnonymousToken) {
+        if ($token === null) {
             return array(
                 'name' => null,
                 'roles' => array(),
                 'isAnonymous' => true,
             );
         } else {
-            $values = array(
+            return array(
                 'name' => $token->getUsername(),
                 'roles' => $token->getRoleNames(),
                 'isAnonymous' => false,
             );
-            return $values;
         }
     }
 }

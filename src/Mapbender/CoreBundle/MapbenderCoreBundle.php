@@ -66,7 +66,6 @@ class MapbenderCoreBundle extends Bundle
     protected function getConfigs()
     {
         return array(
-            'security.xml',
             'services.xml',
             'controllers.xml',
             'commands.xml',

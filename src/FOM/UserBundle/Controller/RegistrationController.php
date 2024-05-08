@@ -2,8 +2,10 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Entity\User;
@@ -20,29 +22,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationController extends AbstractEmailProcessController
 {
-    /** @var UserHelperService */
-    protected $userHelper;
-
-    protected $enableRegistration;
-    protected $maxTokenAge;
-    protected $groupTitles;
-
     public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
-                                UserHelperService $userHelper,
+                                protected UserHelperService $userHelper,
+                                ManagerRegistry $doctrine,
                                 $userEntityClass,
                                 $emailFromAddress,
                                 $emailFromName,
-                                $enableRegistration,
-                                $maxTokenAge,
-                                array $groupTitles,
+                                protected $enableRegistration,
+                                protected $maxTokenAge,
+                                protected array $groupTitles,
                                 $isDebug)
     {
-        parent::__construct($mailer, $translator, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
-        $this->userHelper = $userHelper;
-        $this->enableRegistration = $enableRegistration;
-        $this->groupTitles = $groupTitles;
-        $this->maxTokenAge = $maxTokenAge;
+        parent::__construct($mailer, $translator, $doctrine, $userEntityClass, $emailFromAddress, $emailFromName, $isDebug);
         if (!$this->enableRegistration) {
             $this->debug404("Registration disabled by configuration");
         }
@@ -79,7 +71,7 @@ class RegistrationController extends AbstractEmailProcessController
             $user->setRegistrationToken(hash("sha1",rand()));
             $user->setRegistrationTime(new \DateTime());
 
-            $groupRepository = $this->getDoctrine()->getRepository(Group::class);
+            $groupRepository = $this->getEntityManager()->getRepository(Group::class);
             foreach ($this->groupTitles as $groupTitle) {
                 /** @var Group|null $group */
                 $group = $groupRepository->findOneBy(array(
@@ -97,8 +89,6 @@ class RegistrationController extends AbstractEmailProcessController
             $em = $this->getEntityManager();
             $em->persist($user);
             $em->flush();
-
-            $this->userHelper->giveOwnRights($user);
 
             return $this->redirectToRoute('fom_user_registration_send');
         }

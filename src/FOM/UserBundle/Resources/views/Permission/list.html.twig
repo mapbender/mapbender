@@ -1,0 +1,20 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>{{ "fom.user.permissions.index.name" | trans }}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category, name in permission_categories %}
+      <tr>
+        <td>
+          <a href="{{ path('fom_user_permission_edit', {'category': category}) }}" title="{{ 'fom.user.permissions.index.edit' | trans }}">{{ name | trans }}</a>
+        </td>
+        <td class="iconColumn">
+          <a class="hover-highlight-effect" href="{{ path('fom_user_permission_edit', {'category': category}) }}" title="{{ 'fom.user.permissions.index.edit' | trans }}"><i class="fas fa-gear"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

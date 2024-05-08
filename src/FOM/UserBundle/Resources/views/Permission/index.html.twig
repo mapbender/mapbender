@@ -1,0 +1,7 @@
+{% extends "@MapbenderManager/layouts/simple.html.twig" %}
+
+{%- set title = 'fom.user.permissions.index.global_permissions' | trans -%}
+
+{% block content_main %}
+  {%- include '@FOMUser/Permission/list.html.twig' -%}
+{% endblock %}

@@ -10,7 +10,7 @@ use Mapbender\IntrospectionBundle\Component\WorkingSet;
  */
 class Application extends Base
 {
-    /** @var Relation\ApplicationToSources[][] */
+    /** @var Relation\ApplicationToSources[] */
     protected $relationBuckets;
 
     /**
@@ -34,25 +34,17 @@ class Application extends Base
             $sourceId = $source->getId();
             $unusedSources[$sourceId] = $source;
         }
-        $buckets = array(
-            'published' => array(),
-            'unpublished' => array(),
-        );
+        $buckets = [];
         foreach ($workingSet->getApplications() as $applicationEntity) {
             $relation = new Relation\ApplicationToSources($applicationEntity);
             foreach (static::getLayerSetInstances($applicationEntity) as $lsi) {
                 $relation->addSourceInstance($lsi);
                 unset($unusedSources[$lsi->getSource()->getId()]);
             }
-            if ($applicationEntity->isPublished()) {
-                $buckets['published'][$applicationEntity->getId()] = $relation;
-            } else {
-                $buckets['unpublished'][$applicationEntity->getId()] = $relation;
-            }
+            $buckets[$applicationEntity->getId()] = $relation;
         }
         ksort($unusedSources);
-        ksort($buckets['published']);
-        ksort($buckets['unpublished']);
+        ksort($buckets);
         return new static($buckets, $unusedSources);
     }
 
@@ -60,12 +52,8 @@ class Application extends Base
      * @param bool $published
      * @return Relation\ApplicationToSources[]
      */
-    public function getRelations($published = true)
+    public function getRelations()
     {
-        if ($published) {
-            return $this->relationBuckets['published'];
-        } else {
-            return $this->relationBuckets['unpublished'];
-        }
+        return $this->relationBuckets;
     }
 }

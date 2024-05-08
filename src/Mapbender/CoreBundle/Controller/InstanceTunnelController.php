@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
@@ -16,14 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InstanceTunnelController extends AbstractController
 {
-    /** @var InstanceTunnelService */
-    protected $tunnelService;
     protected $isDebug;
 
-    public function __construct(InstanceTunnelService $tunnelService,
+    public function __construct(protected InstanceTunnelService $tunnelService,
+                                protected EntityManagerInterface $em,
                                 $isDebug)
     {
-        $this->tunnelService = $tunnelService;
         $this->isDebug = $isDebug;
     }
 
@@ -86,15 +86,12 @@ class InstanceTunnelController extends AbstractController
     protected function getGrantedTunnelEndpoint($instanceId)
     {
         /** @var SourceInstance|null $instance */
-        $instance = $this->getDoctrine()
-            ->getRepository(SourceInstance::class)->find($instanceId);
+        $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
         if (($layerset = $instance->getLayerset()) && $application = $layerset->getApplication()) {
-            if (!$this->isGranted('VIEW', $application)) {
-                $this->denyAccessUnlessGranted('VIEW', $application);
-            }
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
         }
         return $this->tunnelService->makeEndpoint($instance);
     }

@@ -6,11 +6,11 @@
         <service id="Mapbender\ManagerBundle\Controller\ApplicationController"
                  class="Mapbender\ManagerBundle\Controller\ApplicationController"
                  public="true">
-            <argument type="service" id="security.acl.provider" />
             <argument type="service" id="mapbender.application_template_registry" />
-            <argument type="service" id="fom.acl.manager" />
             <argument type="service" id="mapbender.uploads_manager.service" />
+            <argument type="service" id="fom.security.permission_manager" />
             <argument>%mapbender.responsive.elements%</argument>
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -29,6 +29,7 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -36,6 +37,7 @@
         <service id="Mapbender\ManagerBundle\Controller\LayersetController"
                  class="Mapbender\ManagerBundle\Controller\LayersetController"
                  public="true" lazy="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -46,7 +48,8 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.element_entity_factory" />
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
-            <argument type="service" id="fom.acl.manager" />
+            <argument type="service" id="fom.security.permission_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -54,8 +57,8 @@
         <service id="Mapbender\ManagerBundle\Controller\RepositoryController"
                  class="Mapbender\ManagerBundle\Controller\RepositoryController"
                  public="true">
-            <argument type="service" id="security.acl.provider" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
@@ -65,6 +68,7 @@
                  public="true">
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="translator" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>

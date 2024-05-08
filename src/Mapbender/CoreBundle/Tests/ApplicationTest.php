@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
+use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
@@ -34,9 +35,8 @@ class ApplicationTest extends TestBase
     {
         $client = $this->getClient();
         foreach ($this->getYamlApplications() as $application) {
-            if (!$application->isPublished()) continue;
             $yamlRoles = $application->getYamlRoles();
-            if (empty($yamlRoles) || (count($yamlRoles) === 1 && $yamlRoles[0] === 'IS_AUTHENTICATED_ANONYMOUSLY')) {
+            if (empty($yamlRoles) || (count($yamlRoles) === 1 && $yamlRoles[0] === YamlApplicationVoter::ROLE_PUBLIC)) {
                 $slug = $application->getSlug();
                 $client->request('GET', '/application/' . rawurlencode($slug));
                 $response = $client->getResponse();

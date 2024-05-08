@@ -15,7 +15,7 @@
     {%- if form.groups is defined -%}
     {{- tab_macros.tab_header('Groups', form.groups.vars.label) -}}{#- #tabGroups -#}
     {%- endif -%}
-    {%- if form.acl is defined -%}
+    {%- if form.security is defined -%}
     {{- tab_macros.tab_header('Security', 'fom.user.user.container.security') -}}{#- #tabSecurity -#}
     {%- endif -%}
 {% endblock %}
@@ -63,9 +63,9 @@
       {%- endif -%}
     </div>
     {%- endif -%}
-    {%- if form.acl is defined -%}
+    {%- if form.security is defined -%}
         <div{{ tab_macros.tab_content_attributes('Security') }}>{#- #containerSecurity -#}
-            {{ form_widget(form.acl) }}
+            {{ form_widget(form.security) }}
         </div>
     {%- endif -%}
 {% endblock %}
