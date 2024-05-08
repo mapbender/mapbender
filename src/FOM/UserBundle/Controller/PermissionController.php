@@ -14,8 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PermissionController extends AbstractController
 {
-    public function __construct(protected PermissionManager                $permissionManager,
-    )
+    public function __construct(protected PermissionManager $permissionManager)
     {
     }
 

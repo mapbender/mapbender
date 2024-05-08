@@ -5,8 +5,13 @@ namespace Mapbender\ManagerBundle\Component;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
+use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
+use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
+use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
@@ -30,9 +35,9 @@ class ImportHandler extends ExchangeHandler
 {
 
     public function __construct(EntityManagerInterface      $entityManager,
-                                protected ElementFilter               $elementFilter,
-                                protected ExportHandler               $exportHandler,
-                                protected UploadsManager              $uploadsManager,
+                                protected ElementFilter     $elementFilter,
+                                protected ExportHandler     $exportHandler,
+                                protected UploadsManager    $uploadsManager,
                                 protected PermissionManager $permissionManager)
     {
         parent::__construct($entityManager);
@@ -113,7 +118,9 @@ class ImportHandler extends ExchangeHandler
             $this->uploadsManager->copySubdirectory($originalSlug, $clonedApp->getSlug());
             $this->em->flush();
 
-            if ($app->getSource() !== Application::SOURCE_YAML) {
+            if ($app->getSource() === Application::SOURCE_YAML) {
+                $this->setupPermissionsFromYaml($app, $clonedApp);
+            } elseif ($app->getSource() === Application::SOURCE_DB) {
                 $this->permissionManager->copyPermissions($app, $clonedApp);
             }
 
@@ -486,10 +493,9 @@ class ImportHandler extends ExchangeHandler
         return $object;
     }
 
-    public function addOwner(Application $application, UserInterface $user)
+    public function addOwner(Application $application, UserInterface $user): void
     {
         $this->permissionManager->grant($user, $application, ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS);
-        // TODO: what about elements?
     }
 
     /**
@@ -519,5 +525,43 @@ class ImportHandler extends ExchangeHandler
                 break;
         }
         return null;
+    }
+
+    private function setupPermissionsFromYaml(Application $sourceYamlApp, Application $targetDbApp): void
+    {
+        foreach ($sourceYamlApp->getYamlRoles() as $key => $role) {
+            if ($role === YamlApplicationVoter::ROLE_PUBLIC) {
+                $this->permissionManager->grant(SubjectDomainPublic::SLUG, $targetDbApp, ResourceDomainApplication::ACTION_VIEW);
+            }
+            if ($role === YamlApplicationVoter::ROLE_REGISTERED) {
+                $this->permissionManager->grant(SubjectDomainRegistered::SLUG, $targetDbApp, ResourceDomainApplication::ACTION_VIEW);
+            }
+            if (($key === YamlApplicationVoter::USERS || $key === YamlApplicationVoter::GROUPS) && is_array($role)) {
+                $this->addUserRightsFromYaml($targetDbApp, $key, $role);
+            }
+
+            if (is_array($role)) {
+                foreach ($role as $innerKey => $children) {
+                    if (is_array($children)) $this->addUserRightsFromYaml($targetDbApp, $innerKey, $children);
+                }
+            }
+        }
+    }
+
+    protected function addUserRightsFromYaml(Application $application, string $key, array $children): void
+    {
+        if ($key === YamlApplicationVoter::USERS) {
+            $users = $this->em->getRepository(User::class)->findBy(['username' => $children]);
+            foreach ($users as $user) {
+                $this->permissionManager->grant($user, $application, ResourceDomainApplication::ACTION_VIEW);
+            }
+        }
+
+        if ($key === YamlApplicationVoter::GROUPS) {
+            $groups = $this->em->getRepository(Group::class)->findBy(['title' => $children]);
+            foreach ($groups as $group) {
+                $this->permissionManager->grant($group, $application, ResourceDomainApplication::ACTION_VIEW);
+            }
+        }
     }
 }
