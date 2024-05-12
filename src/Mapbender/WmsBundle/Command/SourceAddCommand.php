@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SourceAddCommand extends UrlParseCommand
 {
     protected static $defaultName = 'mapbender:wms:add';
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

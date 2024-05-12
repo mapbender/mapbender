@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class SspiFactory implements AuthenticatorFactoryInterface
 {
 
-    public function addConfiguration(NodeDefinition $builder)
+    public function addConfiguration(NodeDefinition $builder): void
     {
         //  Nothing
     }

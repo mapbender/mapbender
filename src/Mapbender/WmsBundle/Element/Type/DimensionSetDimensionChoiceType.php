@@ -17,7 +17,7 @@ class DimensionSetDimensionChoiceType extends AbstractType
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // NOTE: `use ($this)` not allowed in PHP lambda definitions...
         $resolver->setDefaults(array(
@@ -43,7 +43,7 @@ class DimensionSetDimensionChoiceType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new DimensionSetDimensionChoiceTransformer($options['dimensions']));
     }

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UrlParseCommand extends AbstractHttpCapabilitiesProcessingCommand
 {
     protected static $defaultName = 'mapbender:wms:parse:url';
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

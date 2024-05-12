@@ -15,7 +15,7 @@ class AboutDialogAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Icon is hard-coded, remove upstream icon field.
         // @todo: allow configuration, after providing the previously hard-coded setting as a default

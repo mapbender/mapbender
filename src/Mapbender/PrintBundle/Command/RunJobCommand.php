@@ -31,7 +31,7 @@ class RunJobCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription("Run a print job from a dumped job definition json or yaml")
             ->addArgument('inputFile', InputArgument::REQUIRED, 'JSON or YAML job file to load ("-" for stdin)')

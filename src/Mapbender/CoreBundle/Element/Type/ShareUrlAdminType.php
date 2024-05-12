@@ -14,7 +14,7 @@ class ShareUrlAdminType extends AbstractType
         return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Icon is hard-coded, remove upstream icon field.
         if ($builder->has('icon')) {

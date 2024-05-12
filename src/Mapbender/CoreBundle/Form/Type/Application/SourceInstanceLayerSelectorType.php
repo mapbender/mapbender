@@ -31,7 +31,7 @@ class SourceInstanceLayerSelectorType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // thank you PHP for not allowing "use $this" in a lambda
         $self = $this;

@@ -46,7 +46,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $this->elementFilter = $elementFilter;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'element_filter_function' => null,
@@ -69,7 +69,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $resolver->setAllowedTypes('include_buttons', array('bool'));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }

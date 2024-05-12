@@ -17,7 +17,7 @@ class SourceShowCommand extends AbstractSourceCommand
 {
 
     protected static $defaultName = 'mapbender:wms:show';
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Displays layer information of a persisted WMS source')

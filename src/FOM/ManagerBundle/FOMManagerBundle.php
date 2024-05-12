@@ -17,7 +17,7 @@ class FOMManagerBundle extends Bundle
     /**
      * @inheritdoc
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/Resources/config'));
         $loader->load('services.xml');

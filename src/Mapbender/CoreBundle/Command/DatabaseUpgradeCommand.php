@@ -28,7 +28,7 @@ class DatabaseUpgradeCommand extends Command
         parent::__construct(null);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setHelp('The <info>mapbender:database:upgrade</info> command updates the database to the new schema of your mapbender version')

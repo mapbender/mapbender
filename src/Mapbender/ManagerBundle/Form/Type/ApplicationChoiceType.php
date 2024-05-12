@@ -30,7 +30,7 @@ class ApplicationChoiceType extends AbstractType
         return ChoiceType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $type = $this;
         $resolver->setDefaults(array(

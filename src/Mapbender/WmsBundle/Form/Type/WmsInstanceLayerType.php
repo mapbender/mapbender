@@ -20,7 +20,7 @@ class WmsInstanceLayerType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
@@ -57,7 +57,7 @@ class WmsInstanceLayerType extends AbstractType
         ;
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         // NOTE: collection prototype view does not have data
         /** @var WmsInstanceLayer|null $layer */

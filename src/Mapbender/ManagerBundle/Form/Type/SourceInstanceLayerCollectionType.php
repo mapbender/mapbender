@@ -15,7 +15,7 @@ class SourceInstanceLayerCollectionType extends AbstractType
         return 'Symfony\Component\Form\Extension\Core\Type\CollectionType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             // Supply prototype view, so the "summary" fields can access labels from

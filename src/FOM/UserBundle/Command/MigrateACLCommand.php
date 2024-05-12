@@ -51,7 +51,7 @@ class MigrateACLCommand extends Command
         parent::__construct(self::COMMAND);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Migrates from Symfony ACL bundle to new mapbender security')

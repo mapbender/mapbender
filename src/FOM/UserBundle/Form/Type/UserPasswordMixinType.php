@@ -27,7 +27,7 @@ class UserPasswordMixinType extends AbstractType
         $this->userHelperService = $userHelperService;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => 'FOM\UserBundle\Entity\User',
@@ -70,7 +70,7 @@ class UserPasswordMixinType extends AbstractType
         ;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // NOTE: PHP < 7.1 disallows use ($this) in lambdas
         $type = $this;

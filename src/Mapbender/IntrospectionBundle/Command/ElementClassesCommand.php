@@ -52,12 +52,12 @@ class ElementClassesCommand extends Command
         parent::__construct(null);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('Summarizes information about all available Mapbender Element classes in all currently active bundles');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $noteStyle = new OutputFormatterStyle('white', 'blue');
         $output->getFormatter()->setStyle('note', $noteStyle);

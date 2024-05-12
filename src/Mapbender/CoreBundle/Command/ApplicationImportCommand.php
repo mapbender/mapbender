@@ -31,7 +31,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         $this->strictElementConfigs = $strictElementConfigs;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('input', InputArgument::REQUIRED, 'File name (`-` for stdin) or directory');
     }

@@ -12,7 +12,7 @@ class LayerTreeMenuType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = array(
             'mb.core.layertree.admin.layerremove' => 'layerremove',

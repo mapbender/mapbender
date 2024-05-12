@@ -18,7 +18,7 @@ class ApplicationType extends AbstractType
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'maxFileSize' => 2097152,
@@ -27,7 +27,7 @@ class ApplicationType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$options['data']->getId()) {
             // allow template choice only for new Application

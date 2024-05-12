@@ -10,7 +10,7 @@ class CoordinatesDisplayAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(

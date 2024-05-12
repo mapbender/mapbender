@@ -15,7 +15,7 @@ class LinkButtonAdminType extends AbstractType
         return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('click', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

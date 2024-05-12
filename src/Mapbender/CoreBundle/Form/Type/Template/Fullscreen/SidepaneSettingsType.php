@@ -27,7 +27,7 @@ class SidepaneSettingsType extends AbstractType
         return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'compound' => true,
@@ -39,7 +39,7 @@ class SidepaneSettingsType extends AbstractType
         return 'sidepane_settings';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', SidepaneTypeType::class, array(
             'label' => 'mb.core.admin.template.sidepane.type.label',

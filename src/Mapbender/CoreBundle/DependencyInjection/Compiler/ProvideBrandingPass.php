@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ProvideBrandingPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $name = $this->selectProjectName($container);
         $version = $this->selectProjectVersion($container);

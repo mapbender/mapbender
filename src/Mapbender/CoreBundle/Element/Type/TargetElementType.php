@@ -60,7 +60,7 @@ class TargetElementType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $fixedParentOptions = array(
             'class' => 'Mapbender\CoreBundle\Entity\Element',
@@ -144,7 +144,7 @@ class TargetElementType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $transformer = new ElementIdTransformer($this->repository);
         $builder->addModelTransformer($transformer);
@@ -156,7 +156,7 @@ class TargetElementType extends AbstractType
         }
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $translator = $this->translator;
         $translatedLcLabels = array_map(function($element) use ($translator) {

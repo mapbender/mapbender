@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\Count;
 
 class SimpleSearchAdminType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('configurations', CollapsibleCollectionType::class, array(

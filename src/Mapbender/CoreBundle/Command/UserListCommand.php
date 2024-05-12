@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UserListCommand extends AbstractUserCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('List all users stored in the database');
     }

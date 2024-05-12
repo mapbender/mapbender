@@ -21,7 +21,7 @@ class AutodetectSasscBinaryPass implements CompilerPassInterface
         $this->parameterName = $parameterName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $paramValue = $container->getParameter($this->parameterName);
         if (empty($paramValue)) {

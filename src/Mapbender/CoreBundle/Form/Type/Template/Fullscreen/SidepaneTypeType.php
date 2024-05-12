@@ -18,7 +18,7 @@ class SidepaneTypeType extends AbstractType
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'required' => false,

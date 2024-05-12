@@ -19,14 +19,14 @@ class LayertreeThemeCollectionType extends AbstractType implements EventSubscrib
         return CollectionType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }

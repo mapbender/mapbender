@@ -33,7 +33,7 @@ class SourceInstanceItemType extends AbstractType
         return 'source_instance_item';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -89,7 +89,7 @@ class SourceInstanceItemType extends AbstractType
         ));
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         // NOTE: collection prototype view does not have data
         /** @var SourceInstanceItem|null $layer */

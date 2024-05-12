@@ -30,13 +30,13 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
         $this->exportHandler = $exportHandler;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('slug', InputArgument::REQUIRED);
         $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yaml', 'json');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         switch (strtolower($input->getOption('format'))) {
             case 'json':

@@ -17,7 +17,7 @@ class ScaleDisplayAdminType extends AbstractType
         $this->trans = $trans;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('scalePrefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', $this->createInlineHelpText([

@@ -17,7 +17,7 @@ class RegisterMenuRoutesPass implements CompilerPassInterface
         $this->item = $item;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $key = 'mapbender.manager.menu.items';
         $items = $container->getParameter($key);

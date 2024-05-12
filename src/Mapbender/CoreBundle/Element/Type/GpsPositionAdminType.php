@@ -16,7 +16,7 @@ class GpsPositionAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('autoStart', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(

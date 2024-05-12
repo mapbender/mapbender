@@ -16,7 +16,7 @@ class RegionSettingsType extends AbstractType implements DataMapperInterface
         return 'region_settings';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setDataMapper($this);
     }
@@ -25,7 +25,7 @@ class RegionSettingsType extends AbstractType implements DataMapperInterface
      * @param RegionProperties|null $viewData
      * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
      */
-    public function mapDataToForms($viewData, $forms)
+    public function mapDataToForms($viewData, $forms): void
     {
         if (!$viewData) {
             return;
@@ -46,7 +46,7 @@ class RegionSettingsType extends AbstractType implements DataMapperInterface
      * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
      * @param RegionProperties $viewData
      */
-    public function mapFormsToData($forms, &$viewData)
+    public function mapFormsToData($forms, &$viewData): void
     {
         if (null === $viewData) {
             return;

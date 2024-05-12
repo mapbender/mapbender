@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PrintQueueCleanCommand extends AbstractPrintQueueCleanCommand
 {
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription("Purge old jobs from the print queue (database + files)")

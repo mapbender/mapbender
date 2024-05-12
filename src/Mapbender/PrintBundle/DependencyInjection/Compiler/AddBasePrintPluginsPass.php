@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddBasePrintPluginsPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $hostDefinition = $container->getDefinition('mapbender.print_plugin_host.service');
         $this->tryAddDigitizerPlugin($container, $hostDefinition);

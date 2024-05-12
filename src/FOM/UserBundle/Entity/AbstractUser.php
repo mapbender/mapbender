@@ -122,7 +122,7 @@ abstract class AbstractUser implements UserInterface
     /**
      * Required interface method; no tampering with persisted data.
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 }

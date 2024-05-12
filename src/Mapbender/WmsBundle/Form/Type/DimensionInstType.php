@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DimensionInstType extends AbstractType implements EventSubscriberInterface
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(array('instance'));
         $resolver->setAllowedTypes('instance', array('Mapbender\WmsBundle\Entity\WmsInstance'));
@@ -25,7 +25,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
         $builder
@@ -137,7 +137,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
         ));
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var DimensionInst $dimInst */
         $dimInst = $form->getData();

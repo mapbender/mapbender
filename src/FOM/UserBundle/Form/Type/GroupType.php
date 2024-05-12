@@ -15,7 +15,7 @@ class GroupType extends AbstractType
         $this->userEntityClass = $userEntityClass;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

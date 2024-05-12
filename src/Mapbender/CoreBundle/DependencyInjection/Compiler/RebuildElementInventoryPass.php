@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class RebuildElementInventoryPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $allElementClasses = $this->collectElementClassNames($container);
         $inventoryDefinition = $container->getDefinition('mapbender.element_inventory.service');

@@ -13,7 +13,7 @@ class VendorSpecificType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'vstype' => VS::TYPE_VS_SIMPLE,
@@ -25,7 +25,7 @@ class VendorSpecificType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('vstype', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(

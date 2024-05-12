@@ -22,7 +22,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setRequired(array(
@@ -53,7 +53,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer($this);
     }

@@ -15,7 +15,7 @@ class SourceInstanceType extends AbstractType
         return 'source_instance';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

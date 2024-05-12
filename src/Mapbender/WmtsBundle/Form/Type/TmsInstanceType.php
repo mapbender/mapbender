@@ -16,7 +16,7 @@ class TmsInstanceType extends AbstractType
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('layers', SourceInstanceLayerCollectionType::class, array(

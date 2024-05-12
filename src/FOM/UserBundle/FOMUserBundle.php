@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class FOMUserBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');

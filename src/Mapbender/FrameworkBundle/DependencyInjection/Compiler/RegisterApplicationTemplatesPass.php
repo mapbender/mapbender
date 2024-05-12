@@ -22,7 +22,7 @@ class RegisterApplicationTemplatesPass implements CompilerPassInterface
         $this->targetServiceId = $targetServiceId;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $priorityMap = array();
         $bundleTemplateClasses = $this->getBundleTemplates($container);

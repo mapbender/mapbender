@@ -27,7 +27,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var WmsInstance $instance */
         $instance = $options["data"];

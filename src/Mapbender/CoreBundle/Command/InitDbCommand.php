@@ -28,7 +28,7 @@ class InitDbCommand extends Command
         parent::__construct('mapbender:database:init');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Performs required db (re-)initializations and cleanups');
     }

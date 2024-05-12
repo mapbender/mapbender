@@ -28,7 +28,7 @@ use Symfony\Component\Form\FormInterface;
  */
 class MapTargetType extends AbstractType implements EventSubscriberInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }

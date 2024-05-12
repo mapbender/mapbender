@@ -24,7 +24,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

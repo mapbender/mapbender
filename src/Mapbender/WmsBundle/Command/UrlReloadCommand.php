@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
 {
     protected static $defaultName = 'mapbender:wms:reload:url';
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Reloads a WMS source from given url')

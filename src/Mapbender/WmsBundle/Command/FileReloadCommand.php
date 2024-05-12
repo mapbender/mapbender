@@ -17,7 +17,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
 {
 
     protected static $defaultName = 'mapbender:wms:reload:file';
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Reloads a WMS source from given capabilities document file')

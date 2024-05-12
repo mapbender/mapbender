@@ -43,7 +43,7 @@ class ResetRootAccountCommand extends Command
         $this->userEntityClass = $userEntityClass;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDefinition(array(
@@ -60,7 +60,7 @@ EOT
             );
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
 
@@ -105,7 +105,7 @@ EOT
         return 0;
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');

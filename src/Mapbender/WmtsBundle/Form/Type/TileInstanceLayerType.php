@@ -18,7 +18,7 @@ class TileInstanceLayerType extends AbstractType
         return SourceInstanceItemType::class;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('supportedCrs', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -32,7 +32,7 @@ class TileInstanceLayerType extends AbstractType
         ;
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var WmtsInstanceLayer|null $instanceLayer */
         $instanceLayer = $form->getData();

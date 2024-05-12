@@ -30,7 +30,7 @@ class SourceAssignCommand extends AbstractSourceCommand
     public const ARGUMENT_SOURCE = "source";
     public const ARGUMENT_LAYERSET = "layerset";
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

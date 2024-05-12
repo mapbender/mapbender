@@ -19,13 +19,13 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
         return 'Symfony\Component\Form\Extension\Core\Type\TextType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('element_class');
         $resolver->setAllowedTypes('element_class', 'string');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer($this);
     }
@@ -43,7 +43,7 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
         return $value ?: '';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$form->getConfig()->getRequired()) {
             /** @var MinimalInterface|string $elementClass */
