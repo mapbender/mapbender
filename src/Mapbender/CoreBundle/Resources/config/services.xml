@@ -5,7 +5,7 @@
     <parameters>
         <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
-        <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
+        <parameter key="assetic.filter.scss.class">Assetic\Filter\ScsssphpFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
