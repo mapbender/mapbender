@@ -24,7 +24,7 @@ class FOMUserBundle extends Bundle
     {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new SspiFactory());
+        $extension->addAuthenticatorFactory(new SspiFactory());
 
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $xmlLoader = new XmlFileLoader($container, $configLocator);
