@@ -28,7 +28,7 @@ class SourceInstanceItemType extends AbstractType
         $this->typeDirectory = $typeDirectory;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'source_instance_item';
     }

@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LayertreeThemeCollectionType extends AbstractType implements EventSubscriberInterface
 {
-    public function getParent()
+    public function getParent(): string
     {
         return CollectionType::class;
     }
@@ -31,7 +31,7 @@ class LayertreeThemeCollectionType extends AbstractType implements EventSubscrib
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             // Run before collection ResizeFormListener preSetData

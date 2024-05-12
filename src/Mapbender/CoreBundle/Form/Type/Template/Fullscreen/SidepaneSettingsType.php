@@ -22,7 +22,7 @@ class SidepaneSettingsType extends AbstractType
     {
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
     }
@@ -34,7 +34,7 @@ class SidepaneSettingsType extends AbstractType
         ));
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'sidepane_settings';
     }

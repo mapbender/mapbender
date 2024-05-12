@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class LinkButtonAdminType extends AbstractType
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }

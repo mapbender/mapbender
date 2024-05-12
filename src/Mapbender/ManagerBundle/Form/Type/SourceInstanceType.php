@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints;
 
 class SourceInstanceType extends AbstractType
 {
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'source_instance';
     }

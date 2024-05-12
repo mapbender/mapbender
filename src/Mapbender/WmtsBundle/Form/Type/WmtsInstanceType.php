@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class WmtsInstanceType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return SourceInstanceType::class;
     }

@@ -31,7 +31,7 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
     }
 
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
@@ -63,7 +63,7 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',

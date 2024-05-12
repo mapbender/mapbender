@@ -85,7 +85,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
         ;
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value) {
             if (array_key_exists('otherSrs', $value) && is_array($value['otherSrs'])) {
@@ -102,7 +102,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
         }
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value) {
             if (array_key_exists('otherSrs', $value) && !is_array($value['otherSrs'])) {

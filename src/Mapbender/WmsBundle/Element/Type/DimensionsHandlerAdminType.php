@@ -35,7 +35,7 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(FormEvents::PRE_SET_DATA => 'preSetData');
     }

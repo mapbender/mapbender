@@ -23,7 +23,7 @@ class CollapsibleCollectionType extends AbstractType
     public const INITIAL_STATE_FIRST_OPENED = 'first_opened';
     public const INITIAL_STATE_LAST_OPENED = 'last_opened';
 
-    public function getParent()
+    public function getParent(): string
     {
         return SortableCollectionType::class;
     }

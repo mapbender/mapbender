@@ -29,7 +29,7 @@ class UserType extends AbstractType
         $this->profileType = $profileType;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
     }

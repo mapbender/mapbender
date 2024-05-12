@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ElementTitleType extends AbstractType implements DataTransformerInterface
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\TextType';
     }
@@ -30,12 +30,12 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
         $builder->addModelTransformer($this);
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         return $value;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         // Called on norm-to-model transformation.
         // Prevent nulls from reaching Element::setTitle()

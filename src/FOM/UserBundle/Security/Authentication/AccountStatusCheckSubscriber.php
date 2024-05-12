@@ -33,7 +33,7 @@ class AccountStatusCheckSubscriber implements EventSubscriberInterface
         $this->loggingFailureSubscriber = $loggingFailureSubscriber;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',

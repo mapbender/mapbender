@@ -11,7 +11,7 @@ class LayersetAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType';
     }

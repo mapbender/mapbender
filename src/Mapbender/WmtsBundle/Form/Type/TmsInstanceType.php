@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TmsInstanceType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
     }

@@ -21,7 +21,7 @@ class YAMLConfigurationType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'preSubmit'));
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\TextareaType';
     }

@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormView;
 
 class TileInstanceLayerType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return SourceInstanceItemType::class;
     }

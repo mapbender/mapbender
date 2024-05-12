@@ -71,7 +71,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         return $instances;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value && is_object($value)) {
             return $value->getId();
@@ -85,7 +85,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         return $value ?: null;
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         return $value;
     }

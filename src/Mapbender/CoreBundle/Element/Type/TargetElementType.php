@@ -52,7 +52,7 @@ class TargetElementType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Bridge\Doctrine\Form\Type\EntityType';
     }

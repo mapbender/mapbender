@@ -30,7 +30,7 @@ class PermissionListType extends AbstractType
         return CollectionType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'permission_list';
     }

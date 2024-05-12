@@ -17,7 +17,7 @@ class SqliteConnectionListener implements EventSubscriber
     /** @var Connection[] */
     protected $modifiedConnections = array();
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return array(
             Events::postConnect,

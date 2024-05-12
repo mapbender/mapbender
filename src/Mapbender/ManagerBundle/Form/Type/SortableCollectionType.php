@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormView;
 
 class SortableCollectionType extends AbstractType implements EventSubscriberInterface
 {
-    public function getParent()
+    public function getParent(): string
     {
         return CollectionType::class;
     }
@@ -30,7 +30,7 @@ class SortableCollectionType extends AbstractType implements EventSubscriberInte
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             // Bump priority to run before collection events

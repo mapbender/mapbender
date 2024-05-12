@@ -21,12 +21,12 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
         $this->urlGenerator = $urlGenerator;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\TextType';
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'srslist';
     }
@@ -48,10 +48,8 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
 
     /**
      * Transform norm data to view data
-     * @param mixed $value
-     * @return mixed|void
      */
-    public function transform($value)
+    public function transform($value): ?string
     {
         if (!$value) {
             return null;
@@ -75,7 +73,7 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
      * @param mixed $value
      * @return mixed|void
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return null;

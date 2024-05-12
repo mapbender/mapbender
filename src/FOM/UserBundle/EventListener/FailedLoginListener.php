@@ -42,7 +42,7 @@ class FailedLoginListener implements EventSubscriberInterface
         $this->checkInterval = $checkInterval;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onLoginSuccess',

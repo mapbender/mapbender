@@ -20,7 +20,7 @@ class TemplateChoiceType extends AbstractType
         ksort($this->choices);
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }

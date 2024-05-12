@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormView;
 class WmsInstanceLayerType extends AbstractType
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
     }

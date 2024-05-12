@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class RegionSettingsType extends AbstractType implements DataMapperInterface
 {
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'region_settings';
     }

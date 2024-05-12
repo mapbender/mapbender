@@ -9,12 +9,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * Root account voter.
  *
  * This voter grants access if user id is 1.
- *
- * @author Christian Wygoda
  */
 class RootAccountVoter implements VoterInterface
 {
-    function vote(TokenInterface $token, $subject, array $attributes)
+    function vote(TokenInterface $token, $subject, array $attributes): int
     {
         $user = $token->getUser();
         if ($user && \is_object($user) && \method_exists($user, 'isAdmin') && $user->isAdmin()) {
