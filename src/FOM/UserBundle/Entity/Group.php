@@ -11,10 +11,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @author Christian Wygoda
  * @ORM\Entity()
- * @UniqueEntity("title")
  * @ORM\Table(name="fom_group")
  * @ORM\MappedSuperclass()
  */
+#[UniqueEntity('title')]
 class Group
 {
     /**
@@ -26,9 +26,9 @@ class Group
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=3)
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3)]
     protected $title;
 
     /**

@@ -293,11 +293,11 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             //       network proxies.
             $content = file_get_contents($fullPath);
             if ($content !== false) {
-                return new Response($content, 200, $headers);
+                return new Response($content, Response::HTTP_OK, $headers);
             }
         } else {
             if (file_exists($fullPath) && is_readable($fullPath)) {
-                return new BinaryFileResponse($fullPath, 200, $headers);
+                return new BinaryFileResponse($fullPath, Response::HTTP_OK, $headers);
             }
         }
         throw new NotFoundHttpException();

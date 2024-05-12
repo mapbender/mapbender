@@ -32,10 +32,10 @@ class OwsProxyController
     /**
      * Handles the client's request
      *
-     * @Route("/")
      * @param Request $request
      * @return Response
      */
+    #[Route(path: '/')]
     public function entryPointAction(Request $request)
     {
         $url = $request->query->get('url');

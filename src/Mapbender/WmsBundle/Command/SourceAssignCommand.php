@@ -20,6 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class SourceAssignCommand extends AbstractSourceCommand
 {
+    protected static $defaultName = 'mapbender:wms:assign';
     public function __construct(private SourceInstanceController $sourceInstanceController, ManagerRegistry $managerRegistry, Importer $importer)
     {
         parent::__construct($managerRegistry, $importer);
@@ -33,7 +34,6 @@ class SourceAssignCommand extends AbstractSourceCommand
     {
         parent::configure();
         $this
-            ->setName('mapbender:wms:assign')
             ->setDescription('Assigns a WMS source to an application')
             ->addArgument(self::ARGUMENT_APPLICATION, InputArgument::REQUIRED, "id or slug of the application")
             ->addArgument(self::ARGUMENT_SOURCE, InputArgument::REQUIRED, "id of the wms source")

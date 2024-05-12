@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
 /**
  * Event listener for failed logins which upscales forced wait time.
@@ -45,8 +46,8 @@ class FailedLoginListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return array(
-            AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onLoginSuccess',
-            AuthenticationEvents::AUTHENTICATION_FAILURE => 'onLoginFailure',
+            AuthenticationSuccessEvent::class => 'onLoginSuccess',
+            AuthenticationFailureEvent::class => 'onLoginFailure',
         );
     }
 

@@ -317,6 +317,10 @@
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
+        <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine">
+            <argument type="service" id="logger" />
+            <argument type="service" id="doctrine" />
+        </service>
         <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <tag name="kernel.event_subscriber" />

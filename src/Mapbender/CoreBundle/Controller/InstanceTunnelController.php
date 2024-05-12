@@ -31,12 +31,12 @@ class InstanceTunnelController extends AbstractController
      * Get SourceInstances via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("/instance/{instanceId}/tunnel")
      * @param Request $request
      * @param string $instanceId
      * @return Response
      */
-    public function instancetunnelAction(Request $request, $instanceId)
+    #[Route(path: '/instance/{instanceId}/tunnel')]
+    public function instancetunnel(Request $request, $instanceId)
     {
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
@@ -59,13 +59,13 @@ class InstanceTunnelController extends AbstractController
      * Get a layer's legend image via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("instance/{instanceId}/tunnel/legend/{layerId}")
      * @param Request $request
      * @param string $instanceId
      * @param string $layerId
      * @return Response
      */
-    public function instancetunnellegendAction(Request $request,$instanceId, $layerId)
+    #[Route(path: 'instance/{instanceId}/tunnel/legend/{layerId}')]
+    public function instancetunnellegend(Request $request,$instanceId, $layerId)
     {
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $url = $instanceTunnel->getService()->getInternalUrl($request, false);

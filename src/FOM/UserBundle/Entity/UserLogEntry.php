@@ -24,14 +24,14 @@ class UserLogEntry
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $userId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $userName;
 
     /**
@@ -41,20 +41,20 @@ class UserLogEntry
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $ipAddress;
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $action;
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $status;
 
     /**

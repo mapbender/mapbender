@@ -25,6 +25,7 @@ use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
@@ -49,6 +51,8 @@ class ApplicationController extends ApplicationControllerBase
                                 protected PermissionManager           $permissionManager,
                                 protected bool                        $enableResponsiveElements,
                                 EntityManagerInterface $em,
+                                protected FormFactory $formFactory,
+                                protected UsageTrackingTokenStorage $usageTrackingTokenStorage,
     )
     {
         parent::__construct($em);
@@ -61,7 +65,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request): Response
+    public function index(): Response
     {
         return $this->redirectToRoute('mapbender_core_welcome_list');
     }
@@ -71,7 +75,7 @@ class ApplicationController extends ApplicationControllerBase
      *
      * @ManagerRoute("/application/new", methods={"GET","POST"})
      */
-    public function newAction(Request $request): Response
+    public function new(Request $request): Response
     {
         $application = new Application();
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
@@ -133,7 +137,7 @@ class ApplicationController extends ApplicationControllerBase
      * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
      * @param string $slug Application name
      */
-    public function editAction(Request $request, $slug): Response
+    public function edit(Request $request, $slug): Response
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
@@ -205,7 +209,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $slug
      * @return Response
      */
-    public function toggleStateAction(Request $request, $slug)
+    public function toggleState(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS, $application);
@@ -228,7 +232,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $slug
      * @return Response
      */
-    public function deleteAction(Request $request, $slug)
+    public function delete(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_DELETE, $application);
@@ -261,7 +265,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param int $layersetId
      * @return Response
      */
-    public function listSourcesAction($slug, $layersetId)
+    public function listSources($slug, $layersetId)
     {
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
@@ -293,7 +297,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param Layerset $layerset
      * @return Response
      */
-    public function sharedinstancecopyAction(Request $request, SourceInstance $instance, Layerset $layerset)
+    public function sharedinstancecopy(SourceInstance $instance, Layerset $layerset)
     {
         if ($instance->getLayerset()) {
             throw new \LogicException("Instance is already owned by a Layerset");
@@ -342,7 +346,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param SourceInstance $instance
      * @return Response
      */
-    public function attachreusableinstanceAction(Request $request, Layerset $layerset, SourceInstance $instance)
+    public function attachreusableinstance(Layerset $layerset, SourceInstance $instance)
     {
         if ($instance->getLayerset()) {
             throw new \LogicException("Keine freie Instanz");
@@ -384,7 +388,7 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @throws \Exception
      */
-    public function deleteInstanceAction(Request $request, $slug, $layersetId, $instanceId)
+    public function deleteInstance(Request $request, $slug, $layersetId, $instanceId)
     {
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
@@ -426,7 +430,7 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $assignmentId
      * @return Response
      */
-    public function detachinstanceAction(Request $request, Layerset $layerset, $assignmentId)
+    public function detachinstance(Request $request, Layerset $layerset, $assignmentId)
     {
         $application = $layerset->getApplication();
         $assignment = $layerset->getReusableInstanceAssignments()->filter(function ($assignment) use ($assignmentId) {
@@ -462,14 +466,12 @@ class ApplicationController extends ApplicationControllerBase
      * @param string $regionName
      * @ManagerRoute("/{application}/regionproperties/{regionName}", methods={"POST"})
      */
-    public function updateregionpropertiesAction(Request $request, Application $application, $regionName)
+    public function updateregionproperties(Request $request, Application $application, $regionName)
     {
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         // Provided by AbstractController
         /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
-        /** @var FormFactoryInterface $factory */
-        $factory = $this->get('form.factory');
-        $formBuilder = $factory->createNamedBuilder('application', 'Symfony\Component\Form\Extension\Core\Type\FormType', $application);
+        $formBuilder = $this->formFactory->createNamedBuilder('application', 'Symfony\Component\Form\Extension\Core\Type\FormType', $application);
         $formBuilder->add('regionProperties', 'Mapbender\ManagerBundle\Form\Type\Application\RegionPropertiesType', array(
             'application' => $application,
             'region_names' => array($regionName),
@@ -543,8 +545,6 @@ class ApplicationController extends ApplicationControllerBase
     {
         // Provided by AbstractController
         /** @see \Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices() */
-        /** @var TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this->get('security.token_storage');
-        return $tokenStorage->getToken();
+        return $this->usageTrackingTokenStorage->getToken();
     }
 }

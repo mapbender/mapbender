@@ -30,10 +30,10 @@ class CoordinatesUtilityController
     /**
      * Provide autocomplete for SRS
      *
-     * @Route("/srs-autocomplete", name="srs_autocomplete", options={"expose"=true})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/srs-autocomplete', name: 'srs_autocomplete', options: ['expose' => true])]
     public function srsAutocompleteAction(Request $request)
     {
         $term = $request

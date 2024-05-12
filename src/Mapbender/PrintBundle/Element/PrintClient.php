@@ -325,7 +325,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 $displayInline = true;
                 $filename = $this->generateFilename($element);
 
-                $response = new Response($pdfBody, 200, array(
+                $response = new Response($pdfBody, Response::HTTP_OK, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
                 ));
@@ -344,7 +344,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                     $rawData = $this->extractRequestData($request);
                     $jobData = $this->preparePrintData($rawData, $configuration);
                     $queuePlugin->putJob($jobData, $this->generateFilename($element));
-                    return new Response('', 204);
+                    return new Response('', Response::HTTP_NO_CONTENT);
                 } else {
                     throw new NotFoundHttpException();
                 }

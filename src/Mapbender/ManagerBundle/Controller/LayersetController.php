@@ -23,7 +23,7 @@ class LayersetController extends ApplicationControllerBase
      * @param string|null $layersetId
      * @return Response
      */
-    public function editAction(Request $request, $slug, $layersetId = null)
+    public function edit(Request $request, $slug, $layersetId = null)
     {
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId);
@@ -67,7 +67,7 @@ class LayersetController extends ApplicationControllerBase
      * @param string $layersetId
      * @return Response
      */
-    public function deleteAction(Request $request, $slug, $layersetId)
+    public function delete(Request $request, $slug, $layersetId)
     {
         $layerset = $this->requireLayerset($layersetId);
         $application = $layerset->getApplication();
@@ -100,7 +100,7 @@ class LayersetController extends ApplicationControllerBase
      * @param Layerset $layerset
      * @return Response
      */
-    public function setselectedAction(Request $request, Layerset $layerset)
+    public function setselected(Request $request, Layerset $layerset)
     {
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);

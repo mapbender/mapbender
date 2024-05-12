@@ -40,7 +40,7 @@ class PermissionController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function editAction(Request $request, string $category)
+    public function edit(Request $request, string $category)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
 
@@ -114,7 +114,7 @@ class PermissionController extends AbstractController
     /**
      * @Route("/permission/overview", methods={"GET"})
      */
-    public function overviewAction(Request $request): Response
+    public function overview(Request $request): Response
     {
         $assignableSubjects = $this->permissionManager->getAssignableSubjects();
 

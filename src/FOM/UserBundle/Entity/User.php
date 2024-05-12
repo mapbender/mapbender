@@ -22,16 +22,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Paul Schmidt
  *
  * @ORM\Entity
- * @UniqueEntity("email")
  * @ORM\Table(name="fom_user")
  */
+#[UniqueEntity('email')]
 class User extends AbstractUser implements EquatableInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="string", nullable=false, length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email()
      */
+    #[Assert\NotBlank]
+    #[Assert\Email]
     protected $email;
 
     /**

@@ -34,7 +34,7 @@ class GroupController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         $group = new Group();
 
@@ -72,7 +72,7 @@ class GroupController extends AbstractController
      * @param string $id
      * @return Response
      */
-    public function editAction(Request $request, $id)
+    public function edit(Request $request, $id)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
 
@@ -116,7 +116,7 @@ class GroupController extends AbstractController
      * @param string $id
      * @return Response
      */
-    public function deleteAction(Request  $request, $id)
+    public function delete(Request  $request, $id)
     {
         /** @var Group|null $group */
         $group = $this->em->getRepository(Group::class)->find($id);

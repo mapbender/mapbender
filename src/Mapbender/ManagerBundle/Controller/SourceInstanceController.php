@@ -43,7 +43,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param Layerset|null $layerset
      * @return Response
      */
-    public function editAction(Request $request, $instanceId, $slug = null, Layerset $layerset = null)
+    public function edit(Request $request, $instanceId, $slug = null, Layerset $layerset = null)
     {
         /** @var SourceInstance|null $instance */
         $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
@@ -109,7 +109,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param SourceInstance $instance
      * @return Response
      */
-    public function deleteAction(Request $request, SourceInstance $instance)
+    public function delete(Request $request, SourceInstance $instance)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
 
@@ -162,7 +162,7 @@ class SourceInstanceController extends ApplicationControllerBase
      *     methods={"GET"})
      *
      */
-    public function addInstanceAction(Request $request, string $slug, int $layersetId, int $sourceId): Response
+    public function addInstance(string $slug, int $layersetId, int $sourceId): Response
     {
         /** @var Application|null $application */
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -187,7 +187,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param Source $source
      * @return Response
      */
-    public function createsharedAction(Request $request, Source $source)
+    public function createshared(Source $source)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         // @todo: only act on post
@@ -208,7 +208,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param SourceInstance $instance
      * @return Response
      */
-    public function promotetosharedAction(Request $request, SourceInstance $instance)
+    public function promotetoshared(SourceInstance $instance)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         $layerset = $instance->getLayerset();
@@ -245,7 +245,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param string $instanceId
      * @return Response
      */
-    public function toggleEnabledAction(Request $request, Layerset $layerset, $instanceId)
+    public function toggleEnabled(Request $request, Layerset $layerset, $instanceId)
     {
         /** @var SourceInstance|null $sourceInstance */
         $sourceInstance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
@@ -259,7 +259,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @Route("/application/reusable-instance-enable/{assignmentId}", methods={"POST"},
      *        name="mapbender_manager_repository_instanceassignmentenabled")
      */
-    public function toggleAssignmentEnabledAction(Request $request, $assignmentId): Response
+    public function toggleAssignmentEnabled(Request $request, $assignmentId): Response
     {
         /** @var ReusableSourceInstanceAssignment|null $assignment */
         $assignment = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);
@@ -301,7 +301,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param string $instanceId
      * @return Response
      */
-    public function weightAction(Request $request, $slug, $layersetId, $instanceId)
+    public function weight(Request $request, $slug, $layersetId, $instanceId)
     {
         /** @var SourceInstance|null $instance */
         $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
@@ -323,7 +323,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param string $assignmentId
      * @return Response
      */
-    public function assignmentweightAction(Request $request, Layerset $layerset, $assignmentId)
+    public function assignmentweight(Request $request, Layerset $layerset, $assignmentId)
     {
         /** @var ReusableSourceInstanceAssignment|null $assignment */
         $assignment = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);

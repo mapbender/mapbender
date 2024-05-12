@@ -25,9 +25,7 @@ class SecurityController
     {
     }
 
-    /**
-     * @Route("/manager/security", methods={"GET"})
-     */
+    #[Route(path: '/manager/security', methods: ['GET'])]
     public function indexAction(Request $request): Response
     {
         $grants = array(

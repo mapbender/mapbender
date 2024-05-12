@@ -31,15 +31,15 @@ class RegionProperties
     /**
      * @var string $title The element title
      * @ORM\Column(type="string", length=128)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $name;
 
     /**
      * @var array $properties The region properties
      * @ORM\Column(type="array", nullable=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $properties;
 
     /**

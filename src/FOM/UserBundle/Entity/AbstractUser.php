@@ -14,9 +14,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @author apour
  * @author Paul Schmidt
  *
- * @UniqueEntity("username")
  * @ORM\MappedSuperclass()
  */
+#[UniqueEntity('username')]
 abstract class AbstractUser implements UserInterface
 {
     /**
@@ -28,9 +28,9 @@ abstract class AbstractUser implements UserInterface
 
     /**
      * @ORM\Column(type="string", nullable=false, length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=3)
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3)]
     protected $username;
 
     /**

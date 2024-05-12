@@ -43,10 +43,10 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 3: Show instruction page that email has been sent
      *
-     * @Route("/user/registration/send", methods={"GET"})
      * @return Response
      */
-    public function sendAction()
+    #[Route(path: '/user/registration/send', methods: ['GET'])]
+    public function send()
     {
         return $this->render('@FOMUser/Registration/send.html.twig');
     }
@@ -54,11 +54,11 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 1: Registration form
      *
-     * @Route("/user/registration", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
-    public function formAction(Request $request)
+    #[Route(path: '/user/registration', methods: ['GET', 'POST'])]
+    public function form(Request $request)
     {
         $userClass = $this->userEntityClass;
         /** @var User $user */
@@ -101,11 +101,11 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 4: Activate account by token
      *
-     * @Route("/user/activate", methods={"GET"})
      * @param Request $request
      * @return Response
      */
-    public function confirmAction(Request $request)
+    #[Route(path: '/user/activate', methods: ['GET'])]
+    public function confirm(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromRegistrationToken($token);
@@ -135,11 +135,11 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 4a: Reset token (if expired)
      *
-     * @Route("/user/registration/reset")
      * @param Request $request
      * @return Response
      */
-    public function resetAction(Request $request)
+    #[Route(path: '/user/registration/reset')]
+    public function reset(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromRegistrationToken($token);
@@ -164,10 +164,10 @@ class RegistrationController extends AbstractEmailProcessController
     /**
      * Registration step 5: Welcome new user
      *
-     * @Route("/user/registration/done", methods={"GET"})
      * @return Response
      */
-    public function doneAction()
+    #[Route(path: '/user/registration/done', methods: ['GET'])]
+    public function done()
     {
         return $this->render('@FOMUser/Registration/done.html.twig');
     }

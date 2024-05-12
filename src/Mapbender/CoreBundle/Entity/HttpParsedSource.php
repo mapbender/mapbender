@@ -18,9 +18,9 @@ abstract class HttpParsedSource extends Source
     /**
      * @var string|null
      * @ORM\Column(type="string", nullable=true)
-     * @Constraints\NotBlank()
-     * @Constraints\Url()
      */
+    #[Constraints\NotBlank]
+    #[Constraints\Url]
     protected $originUrl = "";
 
     /**

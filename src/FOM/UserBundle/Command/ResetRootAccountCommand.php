@@ -22,6 +22,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class ResetRootAccountCommand extends Command
 {
+    protected static $defaultName = 'fom:user:resetroot';
     /** @var UserHelperService */
     protected $userHelper;
     /** @var EntityManagerInterface */
@@ -56,8 +57,7 @@ The <info>fom:user:resetroot</info> command can be used to create or update
 the root user account. This account is identified by id 1, username, e-mail
 and password can be set.
 EOT
-            )
-            ->setName('fom:user:resetroot');
+            );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)

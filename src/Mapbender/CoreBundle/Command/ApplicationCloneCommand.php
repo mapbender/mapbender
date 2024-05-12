@@ -11,9 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ApplicationCloneCommand extends AbstractApplicationTransportCommand
 {
+    protected static $defaultName = 'mapbender:application:clone';
     protected function configure()
     {
-        $this->setName('mapbender:application:clone');
         $this->addArgument('slug', InputArgument::REQUIRED);
     }
 

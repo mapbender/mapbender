@@ -34,7 +34,7 @@ class UserController extends UserControllerBase
      * @return Response
      * @throws \Exception
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         $userClass = $this->userEntityClass;
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_USERS);
@@ -50,7 +50,7 @@ class UserController extends UserControllerBase
      * @param string $id
      * @return Response
      */
-    public function editAction(Request $request, $id)
+    public function edit(Request $request, $id)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_USERS);
 
@@ -130,7 +130,7 @@ class UserController extends UserControllerBase
      * @param string $id
      * @return Response
      */
-    public function deleteAction(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         $user = $this->getUserRepository()->find($id);
 

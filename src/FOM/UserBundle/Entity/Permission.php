@@ -34,7 +34,6 @@ class Permission implements SubjectInterface
 
     /**
      * @ORM\Column(type="string", name="subject_domain")
-     * @Assert\NotBlank()
      * stores the type of subject this right is granted to.
      * default mapbender supports:
      * - public: Right granted to everyone, logged in or not, @see SubjectDomainPublic
@@ -43,6 +42,7 @@ class Permission implements SubjectInterface
      * - user: Right granted to a specific user, @see SubjectDomainUser
      * might be extended for custom requirements
      */
+    #[Assert\NotBlank]
     protected ?string $subjectDomain = null;
 
     /**
@@ -69,7 +69,6 @@ class Permission implements SubjectInterface
 
     /**
      * @ORM\Column(type="string", name="resource_domain")
-     * @Assert\NotBlank()
      * stores the attribute domain of this right.
      * default mapbender supports
      * - installation: Installation-wide validity, like "create_application", @see ResourceDomainInstallation
@@ -77,6 +76,7 @@ class Permission implements SubjectInterface
      * - element: right is valid for a specific element, @see ResourceDomainElement
      * might be extended for custom requirements
      */
+    #[Assert\NotBlank]
     protected ?string $resourceDomain = null;
 
     /**
@@ -103,9 +103,8 @@ class Permission implements SubjectInterface
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * Stores the action for the given resource domain, like "view" or "edit"
      */
+    #[Assert\NotBlank] // Stores the action for the given resource domain, like "view" or "edit"
     protected ?string $action = null;
 
 

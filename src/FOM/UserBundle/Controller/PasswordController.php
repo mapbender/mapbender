@@ -63,10 +63,10 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 3: Show instruction page that email has been sent
      *
-     * @Route("/user/password/send", methods={"GET"})
      * @return Response
      */
-    public function sendAction()
+    #[Route(path: '/user/password/send', methods: ['GET'])]
+    public function send()
     {
         return $this->render('@FOMUser/Password/send.html.twig');
     }
@@ -74,12 +74,12 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset steps 1 / 2: Request reset token
      *
-     * @Route("/user/password", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      *
      */
-    public function formAction(Request $request)
+    #[Route(path: '/user/password', methods: ['GET', 'POST'])]
+    public function form(Request $request)
     {
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserForgotPassType');
         $form->handleRequest($request);
@@ -118,11 +118,11 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 4a: Reset the reset token
      *
-     * @Route("/user/reset/reset")
      * @param Request $request
      * @return Response
      */
-    public function tokenResetAction(Request $request)
+    #[Route(path: '/user/reset/reset')]
+    public function tokenReset(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromResetToken($token);
@@ -144,11 +144,11 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset steps 4 + 5: Show password reset form
      *
-     * @Route("/user/reset", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
-    public function resetAction(Request $request)
+    #[Route(path: '/user/reset', methods: ['GET', 'POST'])]
+    public function reset(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromResetToken($token);
@@ -187,10 +187,10 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 6: All done message
      *
-     * @Route("/user/reset/done", methods={"GET"})
      * @return Response
      */
-    public function doneAction()
+    #[Route(path: '/user/reset/done', methods: ['GET'])]
+    public function done()
     {
         return $this->render('@FOMUser/Password/done.html.twig');
     }

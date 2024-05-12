@@ -22,11 +22,8 @@ class LoginController extends AbstractController
         $this->enablePasswordReset = $enablePasswordReset;
     }
 
-    /**
-     * @Route("/user/login", methods={"GET"})
-     * @return Response
-     */
-    public function loginAction()
+    #[Route(path: '/user/login', methods: ['GET'])]
+    public function login(): Response
     {
         return $this->render('@MapbenderCore/Login/login.html.twig', array(
             'selfregister' => $this->enableRegistration,
@@ -40,11 +37,10 @@ class LoginController extends AbstractController
      * Handled entirely by Symfony form_login / logout extensions.
      * Action is never called. Only here to define urls, so the
      * routing component doesn't throw 404.
-     *
-     * @Route("/user/logout", name="mapbender_core_login_logout")
-     * @Route("/user/login/check", methods={"POST"})
      */
-    public function dummyAction()
+    #[Route(path: '/user/logout', name: 'mapbender_core_login_logout')]
+    #[Route(path: '/user/login/check', methods: ['POST'])]
+    public function dummy()
     {
         throw new \LogicException("Firewall configuration error. The actions /user/logout and /user/login/check should be intercepted.");
     }

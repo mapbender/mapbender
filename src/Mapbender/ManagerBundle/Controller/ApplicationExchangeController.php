@@ -37,7 +37,7 @@ class ApplicationExchangeController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function importAction(Request $request)
+    public function import(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
         $job = new ImportJob();
@@ -76,7 +76,7 @@ class ApplicationExchangeController extends AbstractController
      * @param string $slug
      * @return Response
      */
-    public function copyDirectlyAction($slug)
+    public function copyDirectly($slug)
     {
         /** @var Application|null $sourceApplication */
         $sourceApplication = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -120,7 +120,7 @@ class ApplicationExchangeController extends AbstractController
      * @param string $slug
      * @return Response
      */
-    public function exportdirectAction(Request $request, $slug)
+    public function exportdirect($slug)
     {
         /** @var Application|null $application */
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -132,7 +132,7 @@ class ApplicationExchangeController extends AbstractController
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         $data = $this->exportHandler->exportApplication($application);
         $fileName = "{$application->getSlug()}.json";
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, Response::HTTP_OK, array(
             'Content-disposition' => "attachment; filename={$fileName}",
         ));
     }

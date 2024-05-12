@@ -18,6 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
+    protected static $defaultName = 'mapbender:application:import';
     /** @var boolean */
     protected $strictElementConfigs;
 
@@ -32,7 +33,6 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
 
     protected function configure()
     {
-        $this->setName('mapbender:application:import');
         $this->addArgument('input', InputArgument::REQUIRED, 'File name (`-` for stdin) or directory');
     }
 

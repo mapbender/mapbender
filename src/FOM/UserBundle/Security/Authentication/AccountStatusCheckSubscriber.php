@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
+use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Security\Core\Exception\AccountExpiredException;
 use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
@@ -23,20 +24,14 @@ use Symfony\Component\Security\Core\Exception\DisabledException;
  */
 class AccountStatusCheckSubscriber implements EventSubscriberInterface
 {
-    protected $loggingFailureSubscriber;
-
-    /**
-     * @param FailedLoginListener|null $loggingFailureSubscriber
-     */
-    public function __construct($loggingFailureSubscriber = null)
+    public function __construct(protected ?FailedLoginListener $loggingFailureSubscriber = null)
     {
-        $this->loggingFailureSubscriber = $loggingFailureSubscriber;
     }
 
     public static function getSubscribedEvents(): array
     {
         return array(
-            AuthenticationEvents::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',
+            AuthenticationSuccessEvent::class => 'onAuthenticationSuccess',
         );
     }
 

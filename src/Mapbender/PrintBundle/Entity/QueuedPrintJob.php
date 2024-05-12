@@ -29,8 +29,8 @@ class QueuedPrintJob
      *
      * @var string
      * @ORM\Column(name="salt", type="string", length=255, unique=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $filename;
 
     /**

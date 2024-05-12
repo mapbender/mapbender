@@ -16,10 +16,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SourceShowCommand extends AbstractSourceCommand
 {
 
+    protected static $defaultName = 'mapbender:wms:show';
     protected function configure()
     {
         $this
-            ->setName('mapbender:wms:show')
             ->setDescription('Displays layer information of a persisted WMS source')
             ->addArgument('id', InputArgument::OPTIONAL, 'Id or url of the source. If omitted, all sources are shown')
             ->addOption('json', null, InputOption::VALUE_NONE, 'if set, output is formatted as json')

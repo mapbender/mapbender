@@ -16,8 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\LayersetRepository")
  * @ORM\Table(name="mb_core_layerset", uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
- * @UniqueEntity(fields={"application", "title"}, message ="mb.core.layerset.unique_title")
  */
+#[UniqueEntity(fields: ['application', 'title'], message: 'mb.core.layerset.unique_title')]
 class Layerset
 {
 
@@ -32,8 +32,8 @@ class Layerset
     /**
      * @var string $title The layerset title
      * @ORM\Column(type="string", length=128)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**

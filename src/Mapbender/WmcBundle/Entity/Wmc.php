@@ -72,8 +72,8 @@ class Wmc
 
     /**
      * @var File screenshot
-     * @Assert\File(maxSize="6000000")
      */
+    #[Assert\File(maxSize: '6000000')]
     private $screenshot;
 
     /**
@@ -84,8 +84,8 @@ class Wmc
 
     /**
      * @var File XML document as file
-     * @Assert\File(maxSize="6000000")
      */
+    #[Assert\File(maxSize: '6000000')]
     private $xml;
 
     /**

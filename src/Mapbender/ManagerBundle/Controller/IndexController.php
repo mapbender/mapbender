@@ -32,7 +32,7 @@ class IndexController extends AbstractController
      * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction()
+    public function index()
     {
         return $this->redirectToRoute($this->defaultRoute);
     }

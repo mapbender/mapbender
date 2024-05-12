@@ -35,12 +35,12 @@ class ApplicationController extends YamlApplicationAwareController
     /**
      * Main application controller.
      *
-     * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
      * @param Request $request
      * @param string $slug Application
      * @return Response
      */
-    public function applicationAction(Request $request, $slug)
+    #[Route(path: '/application/{slug}.{_format}', defaults: ['_format' => 'html'])]
+    public function application(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
 

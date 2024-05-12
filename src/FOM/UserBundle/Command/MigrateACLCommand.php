@@ -30,6 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateACLCommand extends Command
 {
+    protected static $defaultName = self::COMMAND;
     const COMMAND = 'mapbender:security:migrate-from-acl';
     private EntityRepository $userRepo;
     private EntityRepository $groupRepo;
@@ -59,7 +60,6 @@ The symfony/acl-bundle is deprecated since Symfony 4.0 and since Mapbender 4 is 
 This commands converts existing permissions to the new system
 EOT
             )
-            ->setName(self::COMMAND)
         ;
     }
 

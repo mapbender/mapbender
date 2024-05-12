@@ -16,10 +16,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
 {
 
+    protected static $defaultName = 'mapbender:wms:reload:file';
     protected function configure()
     {
         $this
-            ->setName('mapbender:wms:reload:file')
             ->setDescription('Reloads a WMS source from given capabilities document file')
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
             ->addArgument('path', InputArgument::REQUIRED)

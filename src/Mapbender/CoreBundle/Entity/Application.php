@@ -15,12 +15,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Application entity
  *
- * @UniqueEntity("title")
- * @UniqueEntity("slug")
  * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
+#[UniqueEntity('title')]
+#[UniqueEntity('slug')]
 class Application
 {
     /** YAML based application type */
@@ -46,18 +46,15 @@ class Application
 
     /**
      * @ORM\Column(type="string", length=128, unique=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
     protected $title;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\Regex(
-     *     pattern="/^[0-9\-\_a-zA-Z]+$/",
-     *     message="The slug value is wrong."
-     * )
-     * @Assert\NotBlank()
      */
+    #[Assert\Regex(pattern: '/^[0-9\-\_a-zA-Z]+$/', message: 'The slug value is wrong.')]
+    #[Assert\NotBlank]
     protected $slug;
 
     /**

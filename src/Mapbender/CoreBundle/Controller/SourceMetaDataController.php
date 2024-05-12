@@ -28,13 +28,11 @@ class SourceMetaDataController
     }
 
     /**
-     * @Route("/application/metadata/{instance}/{layerId}",
-     *     name="mapbender_core_application_metadata",
-     *     methods={"GET"})
      * @param SourceInstance $instance
      * @param string $layerId
      * @return Response
      */
+    #[Route(path: '/application/metadata/{instance}/{layerId}', name: 'mapbender_core_application_metadata', methods: ['GET'])]
     public function metadataAction(SourceInstance $instance, $layerId)
     {
         $layerCriteria = Criteria::create()

@@ -53,7 +53,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $slug
      * @return Response
      */
-    public function selectAction(Request $request, $slug)
+    public function select(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $region = $request->get('region');
@@ -101,7 +101,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $slug
      * @return Response
      */
-    public function newAction(Request $request, $slug)
+    public function new(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $class = $request->query->get('class');
@@ -128,7 +128,7 @@ class ElementController extends ApplicationControllerBase
             $this->em->flush();
             $this->addFlash('success', 'Your element has been saved.');
 
-            return new Response('', 201);
+            return new Response('', Response::HTTP_CREATED);
         }
 
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
@@ -144,7 +144,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $id
      * @return Response
      */
-    public function editAction(Request $request, $slug, $id)
+    public function edit(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -193,7 +193,7 @@ class ElementController extends ApplicationControllerBase
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
-    public function securityAction(Request $request, $slug, $id)
+    public function security(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -252,7 +252,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $id
      * @return Response
      */
-    public function deleteAction(Request $request, $slug, $id)
+    public function delete(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -294,7 +294,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $id
      * @return Response
      */
-    public function weightAction(Request $request, $id)
+    public function weight(Request $request, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -364,7 +364,7 @@ class ElementController extends ApplicationControllerBase
      * @param string $id
      * @return Response
      */
-    public function enableAction(Request $request, $id)
+    public function enable(Request $request, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -395,7 +395,7 @@ class ElementController extends ApplicationControllerBase
      * @param Element $element
      * @return Response
      */
-    public function screentypeAction(Request $request, Element $element)
+    public function screentype(Request $request, Element $element)
     {
         $application = $element->getApplication();
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);

@@ -17,6 +17,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
+    protected static $defaultName = 'mapbender:application:export';
     /** @var ExportHandler */
     protected $exportHandler;
 
@@ -31,7 +32,6 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
 
     protected function configure()
     {
-        $this->setName('mapbender:application:export');
         $this->addArgument('slug', InputArgument::REQUIRED);
         $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yaml', 'json');
     }

@@ -46,7 +46,7 @@ class RepositoryController extends ApplicationControllerBase
      * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction()
+    public function index()
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $repository = $this->em->getRepository(Source::class);
@@ -80,7 +80,7 @@ class RepositoryController extends ApplicationControllerBase
      * @param Request $request
      * @return Response
      */
-    public function newAction(Request $request)
+    public function new(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
 
@@ -135,7 +135,7 @@ class RepositoryController extends ApplicationControllerBase
      * @param string $sourceId
      * @return Response
      */
-    public function viewAction($sourceId)
+    public function view($sourceId)
     {
         /** @var Source|null $source */
         $source = $this->em->getRepository(Source::class)->find($sourceId);
@@ -167,7 +167,7 @@ class RepositoryController extends ApplicationControllerBase
      * @param string $sourceId
      * @return Response
      */
-    public function deleteAction(Request $request, $sourceId)
+    public function delete(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
@@ -226,7 +226,7 @@ class RepositoryController extends ApplicationControllerBase
      * @param string $sourceId
      * @return Response
      */
-    public function updateformAction(Request $request, $sourceId)
+    public function updateform(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
