@@ -2,7 +2,6 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -18,7 +17,6 @@ use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +28,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
- * @ManagerRoute("/repository")
  */
+#[ManagerRoute("/repository")]
 class RepositoryController extends ApplicationControllerBase
 {
     public function __construct(protected TypeDirectoryService        $typeDirectory,

@@ -3,38 +3,28 @@
 namespace FOM\ManagerBundle\Routing;
 
 use Symfony\Component\Routing\Route;
-use Doctrine\Common\Annotations\Reader;
+use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader as FrameworkAnnotatedRouteControllerLoader;
 
 /**
- * Route annotation loader
- *
- * This loader extends the one in the
- * FrameworkExtraBundle by prefixing manager
- * routes with a configurable prefix.
- *
- * @author Christian Wygoda
+ * Prefixes manager routes with a configurable (fom_manager.route_prefix) prefix
  */
-class AnnotatedRouteControllerLoader extends \Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader
+class AnnotatedRouteControllerLoader extends FrameworkAnnotatedRouteControllerLoader
 {
-    protected $prefix;
 
-    public function __construct(Reader $reader, $prefix)
+    public function __construct(protected string $prefix)
     {
-        parent::__construct($reader);
-        $this->prefix = $prefix;
+        parent::__construct();
     }
 
     /**
      * For all route annotations using
      * FOM\ManagerBundle\Configuration\Route,
      * this adds the configured prefix.
-     *
-     * @inheritdoc
      */
     protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, $annot)
     {
         parent::configureRoute($route, $class, $method, $annot);
-        if(is_a($annot, 'FOM\ManagerBundle\Configuration\Route')) {
+        if(is_a($annot, \FOM\ManagerBundle\Configuration\Route::class)) {
             $route->setPath($this->prefix . $route->getPath());
         }
     }
