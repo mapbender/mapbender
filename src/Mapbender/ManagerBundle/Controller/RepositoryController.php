@@ -41,9 +41,9 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * Renders the layer service repository.
      *
-     * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
+    #[ManagerRoute('/', methods: ['GET'])]
     public function index()
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
@@ -74,10 +74,10 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/new", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
+    #[ManagerRoute('/new', methods: ['GET', 'POST'])]
     public function new(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
@@ -129,10 +129,10 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/source/{sourceId}", methods={"GET"})
      * @param string $sourceId
      * @return Response
      */
+    #[ManagerRoute('/source/{sourceId}', methods: ['GET'])]
     public function view($sourceId)
     {
         /** @var Source|null $source */
@@ -160,11 +160,11 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * Deletes a Source (POST) or renders confirmation markup (GET)
-     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param string $sourceId
      * @return Response
      */
+    #[ManagerRoute('/source/{sourceId}/delete', methods: ['GET', 'POST', 'DELETE'])]
     public function delete(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
@@ -219,11 +219,11 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * Returns a Source update form.
      *
-     * @ManagerRoute("/source/{sourceId}/update", methods={"GET", "POST"})
      * @param Request $request
      * @param string $sourceId
      * @return Response
      */
+    #[ManagerRoute('/source/{sourceId}/update', methods: ['GET', 'POST'])]
     public function updateform(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);

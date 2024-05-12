@@ -25,8 +25,6 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/group/new", methods={"GET", "POST"})
-     *
      * There is one weirdness when storing groups: In Doctrine Many-to-Many
      * associations, updates are only written, when the owning side changes.
      * For the User-Group association, the user is the owner part.
@@ -34,6 +32,7 @@ class GroupController extends AbstractController
      * @return Response
      * @throws \Exception
      */
+    #[Route('/group/new', methods: ['GET', 'POST'])]
     public function create(Request $request)
     {
         $group = new Group();
@@ -67,11 +66,11 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/group/{id}/edit", methods={"GET", "POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
+    #[Route('/group/{id}/edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, $id)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
@@ -112,10 +111,10 @@ class GroupController extends AbstractController
     }
 
     /**
-     * @Route("/group/{id}/delete", methods={"POST"})
      * @param string $id
      * @return Response
      */
+    #[Route('/group/{id}/delete', methods: ['POST'])]
     public function delete(Request  $request, $id)
     {
         /** @var Group|null $group */

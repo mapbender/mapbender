@@ -61,10 +61,10 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Render a list of applications the current logged-in user has access to.
      *
-     * @ManagerRoute("/applications", methods={"GET"})
      * @param Request $request
      * @return Response
      */
+    #[ManagerRoute('/applications', methods: ['GET'])]
     public function index(): Response
     {
         return $this->redirectToRoute('mapbender_core_welcome_list');
@@ -72,9 +72,8 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * Shows form for creating new applications
-     *
-     * @ManagerRoute("/application/new", methods={"GET","POST"})
      */
+    #[ManagerRoute('/application/new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $application = new Application();
@@ -134,9 +133,9 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Edit application
      *
-     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" }, methods={"GET", "POST"})
      * @param string $slug Application name
      */
+    #[ManagerRoute('/application/{slug}/edit', requirements: ['slug' => '[\w-]+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, $slug): Response
     {
         $application = $this->requireDbApplication($slug);
@@ -204,11 +203,11 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Toggle application state.
      *
-     * @ManagerRoute("/application/{slug}/state", options={"expose"=true}, methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/state', options: ['expose' => true], methods: ['POST'])]
     public function toggleState(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
@@ -227,11 +226,11 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Delete application
      *
-     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" }, methods={"POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/delete', requirements: ['slug' => '[\w-]+'], methods: ['POST'])]
     public function delete(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
@@ -259,12 +258,12 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list", methods={"GET"})
      *
      * @param string $slug of Application
      * @param int $layersetId
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/list', methods: ['GET'])]
     public function listSources($slug, $layersetId)
     {
         $application = $this->requireDbApplication($slug);
@@ -291,12 +290,12 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/instance/{instance}/copy-into-layerset/{layerset}", methods={"GET"})
      * @param Request $request
      * @param SourceInstance $instance
      * @param Layerset $layerset
      * @return Response
      */
+    #[ManagerRoute('/instance/{instance}/copy-into-layerset/{layerset}', methods: ['GET'])]
     public function sharedinstancecopy(SourceInstance $instance, Layerset $layerset)
     {
         if ($instance->getLayerset()) {
@@ -340,12 +339,12 @@ class ApplicationController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/instance/{instance}/attach/{layerset}")
      * @param Request $request
      * @param Layerset $layerset
      * @param SourceInstance $instance
      * @return Response
      */
+    #[ManagerRoute('/instance/{instance}/attach/{layerset}')]
     public function attachreusableinstance(Layerset $layerset, SourceInstance $instance)
     {
         if ($instance->getLayerset()) {
@@ -380,7 +379,6 @@ class ApplicationController extends ApplicationControllerBase
 
     /**
      * Delete a source instance from a layerset
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete", methods={"POST"})
      *
      * @param string $slug
      * @param int $layersetId
@@ -388,6 +386,7 @@ class ApplicationController extends ApplicationControllerBase
      * @return Response
      * @throws \Exception
      */
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete', methods: ['POST'])]
     public function deleteInstance(Request $request, $slug, $layersetId, $instanceId)
     {
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -425,11 +424,11 @@ class ApplicationController extends ApplicationControllerBase
     /**
      * Remove a reusable source instance assigment
      *
-     * @ManagerRoute("/layerset/{layerset}/instance-assignment/{assignmentId}/detach", methods={"POST"})
      * @param Layerset $layerset
      * @param string $assignmentId
      * @return Response
      */
+    #[ManagerRoute('/layerset/{layerset}/instance-assignment/{assignmentId}/detach', methods: ['POST'])]
     public function detachinstance(Request $request, Layerset $layerset, $assignmentId)
     {
         $application = $layerset->getApplication();
@@ -464,8 +463,8 @@ class ApplicationController extends ApplicationControllerBase
      * @param Request $request
      * @param Application $application
      * @param string $regionName
-     * @ManagerRoute("/{application}/regionproperties/{regionName}", methods={"POST"})
      */
+    #[ManagerRoute('/{application}/regionproperties/{regionName}', methods: ['POST'])]
     public function updateregionproperties(Request $request, Application $application, $regionName)
     {
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);

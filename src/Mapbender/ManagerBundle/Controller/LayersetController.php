@@ -16,13 +16,13 @@ class LayersetController extends ApplicationControllerBase
     /**
      * Handle create + modify
      *
-     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET", "POST"}, name="mapbender_manager_layerset_new")
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET", "POST"}, name="mapbender_manager_layerset_edit")
      * @param Request $request
      * @param string $slug
      * @param string|null $layersetId
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/layerset/new', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_new')]
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/edit', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_edit')]
     public function edit(Request $request, $slug, $layersetId = null)
     {
         if ($layersetId) {
@@ -61,12 +61,12 @@ class LayersetController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param string $slug
      * @param string $layersetId
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/delete', methods: ['GET', 'POST', 'DELETE'])]
     public function delete(Request $request, $slug, $layersetId)
     {
         $layerset = $this->requireLayerset($layersetId);
@@ -95,11 +95,11 @@ class LayersetController extends ApplicationControllerBase
     /**
      * Setter action for "selected" flag (single value, immediate by ajax, no form)
      *
-     * @ManagerRoute("/layerset/{layerset}/toggleselected", methods={"POST"})
      * @param Request $request
      * @param Layerset $layerset
      * @return Response
      */
+    #[ManagerRoute('/layerset/{layerset}/toggleselected', methods: ['POST'])]
     public function setselected(Request $request, Layerset $layerset)
     {
         $application = $layerset->getApplication();

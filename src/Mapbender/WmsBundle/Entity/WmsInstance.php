@@ -18,7 +18,7 @@ use Mapbender\WmsBundle\Component\WmsMetadata;
 #[ORM\Table(name: 'mb_wms_wmsinstance')]
 class WmsInstance extends SourceInstance
 {
-    #[ORM\ManyToOne(targetEntity: Mapbender\WmsBundle\Entity\WmsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
+    #[ORM\ManyToOne(targetEntity: WmsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
     #[ORM\JoinColumn(name: 'wmssource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
 

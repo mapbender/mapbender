@@ -3,6 +3,7 @@
 namespace FOM\ManagerBundle\Routing;
 
 use Symfony\Component\Routing\Route;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader as FrameworkAnnotatedRouteControllerLoader;
 
 /**
@@ -24,7 +25,7 @@ class AnnotatedRouteControllerLoader extends FrameworkAnnotatedRouteControllerLo
     protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, $annot)
     {
         parent::configureRoute($route, $class, $method, $annot);
-        if(is_a($annot, \FOM\ManagerBundle\Configuration\Route::class)) {
+        if(is_a($annot, ManagerRoute::class)) {
             $route->setPath($this->prefix . $route->getPath());
         }
     }

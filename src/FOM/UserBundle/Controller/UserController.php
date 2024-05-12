@@ -29,11 +29,11 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/new", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      * @throws \Exception
      */
+    #[ManagerRoute('/user/new', methods: ['GET', 'POST'])]
     public function create(Request $request)
     {
         $userClass = $this->userEntityClass;
@@ -45,11 +45,11 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/{id}/edit", methods={"GET", "POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('/user/{id}/edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, $id)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_USERS);
@@ -126,10 +126,10 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/{id}/delete", methods={"POST"})
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('/user/{id}/delete', methods: ['POST'])]
     public function delete(Request $request, $id)
     {
         $user = $this->getUserRepository()->find($id);

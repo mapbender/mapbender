@@ -36,10 +36,10 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * @Route("/security/edit/{category}", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
+    #[Route('/security/edit/{category}', methods: ['GET', 'POST'])]
     public function edit(Request $request, string $category)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
@@ -111,9 +111,7 @@ class PermissionController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/permission/overview", methods={"GET"})
-     */
+    #[Route('/permission/overview', methods: ['GET'])]
     public function overview(Request $request): Response
     {
         $assignableSubjects = $this->permissionManager->getAssignableSubjects();

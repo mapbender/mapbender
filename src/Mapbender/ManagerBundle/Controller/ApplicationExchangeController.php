@@ -33,10 +33,10 @@ class ApplicationExchangeController extends AbstractController
     /**
      * Imports serialized application.
      *
-     * @ManagerRoute("/application/import", name="mapbender_manager_application_import", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
+    #[ManagerRoute('/application/import', name: 'mapbender_manager_application_import', methods: ['GET', 'POST'])]
     public function import(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
@@ -72,10 +72,10 @@ class ApplicationExchangeController extends AbstractController
     /**
      * Copies an application
      *
-     * @ManagerRoute("/application/{slug}/copydirectly", name="mapbender_manager_application_copydirectly", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/copydirectly', name: 'mapbender_manager_application_copydirectly', requirements: ['slug' => '[\w-]+'], methods: ['GET'])]
     public function copyDirectly($slug)
     {
         /** @var Application|null $sourceApplication */
@@ -115,11 +115,11 @@ class ApplicationExchangeController extends AbstractController
 
     /**
      * Export application as json (direct link)
-     * @ManagerRoute("/application/{slug}/export", name="mapbender_manager_application_exportdirect", methods={"GET"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/export', name: 'mapbender_manager_application_exportdirect', methods: ['GET'])]
     public function exportdirect($slug)
     {
         /** @var Application|null $application */

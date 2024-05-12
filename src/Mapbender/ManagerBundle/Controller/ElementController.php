@@ -48,11 +48,11 @@ class ElementController extends ApplicationControllerBase
     /**
      * Show element class selection
      *
-     * @ManagerRoute("/application/{slug}/element/select", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/element/select', methods: ['GET', 'POST'])]
     public function select(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
@@ -96,11 +96,11 @@ class ElementController extends ApplicationControllerBase
     /**
      * Shows form for creating new element
      *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/element/new', methods: ['GET', 'POST'])]
     public function new(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
@@ -138,12 +138,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('/application/{slug}/element/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
@@ -185,7 +185,6 @@ class ElementController extends ApplicationControllerBase
     /**
      * Display and handle element access rights
      *
-     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      * @param Request $request
      * @param $slug string Application short name
      * @param $id int Element ID
@@ -193,6 +192,7 @@ class ElementController extends ApplicationControllerBase
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
+    #[ManagerRoute('/application/{slug}/element/{id}/security', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function security(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
@@ -247,11 +247,11 @@ class ElementController extends ApplicationControllerBase
     /**
      * Delete element
      *
-     * @ManagerRoute("application/{slug}/element/{id}/delete", methods={"POST"})
      * @param string $slug
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('application/{slug}/element/{id}/delete', methods: ['POST'])]
     public function delete(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
@@ -289,11 +289,11 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("application/element/{id}/weight", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('application/element/{id}/weight', methods: ['POST'])]
     public function weight(Request $request, $id)
     {
         /** @var Element|null $element */
@@ -359,11 +359,11 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("application/element/{id}/enable", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
+    #[ManagerRoute('application/element/{id}/enable', methods: ['POST'])]
     public function enable(Request $request, $id)
     {
         /** @var Element|null $element */
@@ -390,11 +390,11 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/element/{element}/screentype", methods={"POST"})
      * @param Request $request
      * @param Element $element
      * @return Response
      */
+    #[ManagerRoute('/element/{element}/screentype', methods: ['POST'])]
     public function screentype(Request $request, Element $element)
     {
         $application = $element->getApplication();

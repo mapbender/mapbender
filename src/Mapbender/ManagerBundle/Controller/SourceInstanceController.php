@@ -34,15 +34,15 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/application/{slug}/instance/{instanceId}", name="mapbender_manager_repository_instance")
-     * @Route("/instance/{instanceId}", name="mapbender_manager_repository_unowned_instance", requirements={"instanceId"="\d+"})
-     * @Route("/instance/{instanceId}/layerset/{layerset}", name="mapbender_manager_repository_unowned_instance_scoped", requirements={"instanceId"="\d+"})
      * @param Request $request
      * @param string|null $slug
      * @param string $instanceId
      * @param Layerset|null $layerset
      * @return Response
      */
+    #[Route('/application/{slug}/instance/{instanceId}', name: 'mapbender_manager_repository_instance')]
+    #[Route('/instance/{instanceId}', name: 'mapbender_manager_repository_unowned_instance', requirements: ['instanceId' => '\d+'])]
+    #[Route('/instance/{instanceId}/layerset/{layerset}', name: 'mapbender_manager_repository_unowned_instance_scoped', requirements: ['instanceId' => '\d+'])]
     public function edit(Request $request, $instanceId, $slug = null, Layerset $layerset = null)
     {
         /** @var SourceInstance|null $instance */
@@ -104,11 +104,11 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/{instance}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param SourceInstance $instance
      * @return Response
      */
+    #[Route('/instance/{instance}/delete', methods: ['GET', 'POST', 'DELETE'])]
     public function delete(Request $request, SourceInstance $instance)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
@@ -157,11 +157,9 @@ class SourceInstanceController extends ApplicationControllerBase
 
     /**
      * Add a new SourceInstance to the Layerset
-     * @Route("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add",
-     *     name="mapbender_manager_application_addinstance",
-     *     methods={"GET"})
      *
      */
+    #[Route('/application/{slug}/layerset/{layersetId}/source/{sourceId}/add', name: 'mapbender_manager_application_addinstance', methods: ['GET'])]
     public function addInstance(string $slug, int $layersetId, int $sourceId): Response
     {
         /** @var Application|null $application */
@@ -182,11 +180,11 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/createshared/{source}", methods={"GET", "POST"}))
      * @param Request $request
      * @param Source $source
      * @return Response
      */
+    #[Route('/instance/createshared/{source}', methods: ['GET', 'POST'])]
     public function createshared(Source $source)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
@@ -202,12 +200,11 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/instance/{instance}/promotetoshared",
-     *        name="mapbender_manager_repository_promotetosharedinstance")
      * @param Request $request
      * @param SourceInstance $instance
      * @return Response
      */
+    #[Route('/instance/{instance}/promotetoshared', name: 'mapbender_manager_repository_promotetosharedinstance')]
     public function promotetoshared(SourceInstance $instance)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
@@ -238,13 +235,12 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/application/layerset/{layerset}/instance-enable/{instanceId}", methods={"POST"},
-     *        name="mapbender_manager_repository_instanceenabled")
      * @param Request $request
      * @param Layerset $layerset
      * @param string $instanceId
      * @return Response
      */
+    #[Route('/application/layerset/{layerset}/instance-enable/{instanceId}', methods: ['POST'], name: 'mapbender_manager_repository_instanceenabled')]
     public function toggleEnabled(Request $request, Layerset $layerset, $instanceId)
     {
         /** @var SourceInstance|null $sourceInstance */
@@ -255,10 +251,7 @@ class SourceInstanceController extends ApplicationControllerBase
         return $this->toggleEnabledCommon($request, $layerset, $sourceInstance);
     }
 
-    /**
-     * @Route("/application/reusable-instance-enable/{assignmentId}", methods={"POST"},
-     *        name="mapbender_manager_repository_instanceassignmentenabled")
-     */
+    #[Route('/application/reusable-instance-enable/{assignmentId}', methods: ['POST'], name: 'mapbender_manager_repository_instanceassignmentenabled')]
     public function toggleAssignmentEnabled(Request $request, $assignmentId): Response
     {
         /** @var ReusableSourceInstanceAssignment|null $assignment */
@@ -293,14 +286,13 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/application/{slug}/instance/{layersetId}/weight/{instanceId}",
-     *        name="mapbender_manager_repository_instanceweight")
      * @param Request $request
      * @param string $slug
      * @param string $layersetId (unused, legacy)
      * @param string $instanceId
      * @return Response
      */
+    #[Route('/application/{slug}/instance/{layersetId}/weight/{instanceId}', name: 'mapbender_manager_repository_instanceweight')]
     public function weight(Request $request, $slug, $layersetId, $instanceId)
     {
         /** @var SourceInstance|null $instance */
@@ -316,13 +308,12 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
     /**
-     * @Route("/layerset/{layerset}/reusable-weight/{assignmentId}",
-     *        name="mapbender_manager_repository_assignmentweight")
      * @param Request $request
      * @param Layerset $layerset
      * @param string $assignmentId
      * @return Response
      */
+    #[Route('/layerset/{layerset}/reusable-weight/{assignmentId}', name: 'mapbender_manager_repository_assignmentweight')]
     public function assignmentweight(Request $request, Layerset $layerset, $assignmentId)
     {
         /** @var ReusableSourceInstanceAssignment|null $assignment */

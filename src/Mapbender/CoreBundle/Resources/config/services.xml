@@ -317,7 +317,7 @@
             <tag name="doctrine.event_listener" event="postConnect" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
-        <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine">
+        <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine" public="true">
             <argument type="service" id="logger" />
             <argument type="service" id="doctrine" />
         </service>
