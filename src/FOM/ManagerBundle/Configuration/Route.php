@@ -2,7 +2,7 @@
 
 namespace FOM\ManagerBundle\Configuration;
 
-use Symfony\Component\Routing\Annotation\Route as BaseRoute;
+use Symfony\Component\Routing\Attribute\Route as BaseRoute;
 
 /**
  * Route annotation for Manager Controllers.

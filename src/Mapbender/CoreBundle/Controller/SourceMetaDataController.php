@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Used only by Layertree.
