@@ -66,7 +66,7 @@ class PasswordController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/password/send', methods: ['GET'])]
-    public function send()
+    public function send(): Response
     {
         return $this->render('@FOMUser/Password/send.html.twig');
     }
@@ -190,7 +190,7 @@ class PasswordController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/reset/done', methods: ['GET'])]
-    public function done()
+    public function done(): Response
     {
         return $this->render('@FOMUser/Password/done.html.twig');
     }

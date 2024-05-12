@@ -29,7 +29,7 @@ class UserListCommand extends AbstractUserCommand
             } else {
                 $since = '';
             }
-            $output->writeln("User #{$user->getId()} name: " . print_r($user->getUsername(), true) . $since);
+            $output->writeln("User #{$user->getId()} name: " . print_r($user->getUserIdentifier(), true) . $since);
         }
         return 0;
     }

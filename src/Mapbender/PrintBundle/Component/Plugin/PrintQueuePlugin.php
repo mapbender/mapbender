@@ -263,7 +263,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 // it's not part of the basic UserInterface!
                 return $user->getId();
             } catch (\Exception $e) {
-                return $user->getUsername();
+                return $user->getUserIdentifier();
             }
         } else {
             // user is either an object with __toString or just a string

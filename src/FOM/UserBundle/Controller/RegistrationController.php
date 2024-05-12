@@ -42,11 +42,9 @@ class RegistrationController extends AbstractEmailProcessController
 
     /**
      * Registration step 3: Show instruction page that email has been sent
-     *
-     * @return Response
      */
     #[Route(path: '/user/registration/send', methods: ['GET'])]
-    public function send()
+    public function send(): Response
     {
         return $this->render('@FOMUser/Registration/send.html.twig');
     }
@@ -80,7 +78,7 @@ class RegistrationController extends AbstractEmailProcessController
                 if ($group) {
                     $user->addGroup($group);
                 } else {
-                    @trigger_error("WARNING: Self-registration group '{$groupTitle}' not found for user '{$user->getUsername()}'", E_USER_DEPRECATED);
+                    @trigger_error("WARNING: Self-registration group '{$groupTitle}' not found for user '{$user->getUserIdentifier()}'", E_USER_DEPRECATED);
                 }
             }
 
@@ -167,7 +165,7 @@ class RegistrationController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/registration/done', methods: ['GET'])]
-    public function done()
+    public function done(): Response
     {
         return $this->render('@FOMUser/Registration/done.html.twig');
     }

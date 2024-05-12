@@ -45,7 +45,7 @@ class AssetsController extends YamlApplicationAwareController
      */
     #[Route(path: '/application/{slug}/assets/{type}', name: 'mapbender_core_application_assets', requirements: ['type' => 'js|css|trans'])]
     #[Route(path: '/application/{slug}/sourcemap/{type}', name: 'mapbender_core_application_sourcemap', requirements: ['type' => 'js|css|trans'])]
-    public function assets(Request $request, $slug, $type, $_route)
+    public function assets(Request $request, string $slug, string $type, $_route)
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {

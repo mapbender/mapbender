@@ -68,7 +68,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     {
         // Avoid automatic implicit logout after modifying group assignments or profile information
         // see https://github.com/symfony/symfony/issues/35501
-        return $user->getUsername() === $this->getUsername();
+        return $user->getUserIdentifier() === $this->getUserIdentifier();
     }
 
     /**

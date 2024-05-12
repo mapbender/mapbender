@@ -36,12 +36,9 @@ class WelcomeController extends AbstractController
 
     /**
      * Render user application list.
-     *
-     * @param Request $request
-     * @return Response
      */
     #[Route(path: '/', methods: ['GET'])]
-    public function list()
+    public function list(): Response
     {
         $yamlApplications = $this->yamlRepository->getApplications();
         $dbApplications = $this->doctrine->getRepository(Application::class)->findBy(array(), array(

@@ -101,7 +101,7 @@ EOT
         $this->entityManager->persist($root);
         $this->entityManager->flush();
 
-        $output->writeln("User {$root->getUsername()} {$mode}.");
+        $output->writeln("User {$root->getUserIdentifier()} {$mode}.");
         return 0;
     }
 
@@ -112,7 +112,7 @@ EOT
         $root = $this->getRoot();
 
         if (!$input->getOption('username')) {
-            $default = $root ? $root->getUsername() : 'root';
+            $default = $root ? $root->getUserIdentifier() : 'root';
             $question = new Question("Enter the username to use for the root account [{$default}]: ", $default);
             $input->setOption('username', $questionHelper->ask($input, $output, $question));
         }

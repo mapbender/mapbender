@@ -503,7 +503,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             if (is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
                 $values = array_replace($values, array(
                     'userId' => $user->getId(),
-                    'userName' => $user->getUsername(),
+                    'userName' => $user->getUserIdentifier(),
                 ));
                 $fomGroups = $user->getGroups() ?: array();
                 if (is_object($fomGroups) && ($fomGroups instanceof Collection)) {
@@ -511,7 +511,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 }
             } elseif (is_object($user) && ($user instanceof UserInterface)) {
                 $values = array_replace($values, array(
-                    'userName' => $user->getUsername(),
+                    'userName' => $user->getUserIdentifier(),
                 ));
             } elseif ($user) {
                 // b) an object with a __toString method or just a string

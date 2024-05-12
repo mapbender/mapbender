@@ -228,7 +228,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     {
         $token = $this->tokenStorage->getToken();
         if ($token && !($token instanceof AnonymousToken)) {
-            return $token->getUser()->getUsername();
+            return $token->getUser()->getUserIdentifier();
         }
         return null;
     }
