@@ -60,7 +60,7 @@
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2",
 
-        "assetic/framework": "^2.0",
+        "assetic/framework": "^3.1",
 
         "wheregroup/compass-mixins": "0.x",
         "mapbender/mapbender-icons": "^1.3",
