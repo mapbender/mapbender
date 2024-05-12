@@ -40,7 +40,6 @@
         "symfony/security-bundle": "^6.4",
         "symfony/security-core": "^6.4",
         "symfony/security-csrf": "^6.4",
-        "symfony/security-guard": "^6.4",
         "symfony/security-http": "^6.4",
         "symfony/serializer": "^6.4",
         "symfony/templating": "^6.4",
