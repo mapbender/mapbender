@@ -13,37 +13,29 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @author Christian Wygoda
  * @author apour
  * @author Paul Schmidt
- *
- * @ORM\MappedSuperclass()
  */
 #[UniqueEntity('username')]
+#[ORM\MappedSuperclass]
 abstract class AbstractUser implements UserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\Column(type="string", nullable=false, length=255, unique=true)
-     */
     #[Assert\NotBlank]
     #[Assert\Length(min: 3)]
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: false)]
     protected $username;
 
     /**
      * Password HASH, not verbatim password
      * @var string|null
-     *
-     * @ORM\Column(type="string", nullable=false)
      */
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $password;
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $salt;
 
     /**

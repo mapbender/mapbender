@@ -10,35 +10,27 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Group entity
  *
  * @author Christian Wygoda
- * @ORM\Entity()
- * @ORM\Table(name="fom_group")
- * @ORM\MappedSuperclass()
  */
 #[UniqueEntity('title')]
+#[ORM\Entity]
+#[ORM\MappedSuperclass]
+#[ORM\Table(name: 'fom_group')]
 class Group
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
     #[Assert\NotBlank]
     #[Assert\Length(min: 3)]
+    #[ORM\Column(type: 'string', unique: true)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="groups")
-     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'groups')]
     protected $users;
 
     public function __construct()

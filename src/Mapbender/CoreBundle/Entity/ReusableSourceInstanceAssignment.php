@@ -5,32 +5,29 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="mb_core_layersets_sourceinstances")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_layersets_sourceinstances')]
 class ReusableSourceInstanceAssignment extends SourceInstanceAssignment
 {
     /**
      * @var integer|null
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     protected $id;
 
     /**
      * @var SourceInstance
-     * @ORM\ManyToOne(targetEntity="SourceInstance", inversedBy="reusableassignments")
-     * @ORM\JoinColumn(name="instance_id", referencedColumnName="id", onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: SourceInstance::class, inversedBy: 'reusableassignments')]
+    #[ORM\JoinColumn(name: 'instance_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $instance;
 
     /**
      * @var Layerset
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="reusableInstanceAssignments", cascade={"refresh"}))
-     * @ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: Layerset::class, cascade: ['refresh'], inversedBy: 'reusableInstanceAssignments')] // @ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")
     protected $layerset;
 
     /**

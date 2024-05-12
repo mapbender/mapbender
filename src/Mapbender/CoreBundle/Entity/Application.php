@@ -14,13 +14,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Application entity
- *
- * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\ApplicationRepository")
- * @ORM\Table(name="mb_core_application")
- * @ORM\HasLifecycleCallbacks
  */
 #[UniqueEntity('title')]
 #[UniqueEntity('slug')]
+#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\ApplicationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'mb_core_application')]
 class Application
 {
     /** YAML based application type */
@@ -37,93 +36,75 @@ class Application
     /** @var integer $source Application source type (self::SOURCE_*) */
     protected $source = self::SOURCE_DB;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     protected $id;
 
-    /**
-     * @ORM\Column(type="string", length=128, unique=true)
-     */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 128, unique: true)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
     #[Assert\Regex(pattern: '/^[0-9\-\_a-zA-Z]+$/', message: 'The slug value is wrong.')]
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     protected $slug;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
-    /**
-     * @ORM\Column(length=1024, nullable=false)
-     */
+    #[ORM\Column(length: 1024, nullable: false)]
     protected $template;
 
     /**
-     * @ORM\Column(type="string", length=15, nullable=false, options={"default": "current"})
      * @var string|null
      */
+    #[ORM\Column(type: 'string', length: 15, nullable: false, options: ['default' => 'current'])]
     protected $map_engine_code = self::MAP_ENGINE_CURRENT;
 
     /**
-     * @ORM\Column(type="boolean", name="persistent_view", options={"default": false})
      * @var bool
      */
+    #[ORM\Column(name: 'persistent_view', type: 'boolean', options: ['default' => false])]
     protected $persistentView = false;
 
-    /**
-     * @ORM\Column(type="boolean", name="splashscreen", options={"default": true})
-     */
+    #[ORM\Column(name: 'splashscreen', type: 'boolean', options: ['default' => true])]
     protected bool $splashscreen = true;
 
     /**
      * @var RegionProperties[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"remove", "persist"})
-     * @ORM\OrderBy({"id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'application', targetEntity: RegionProperties::class, cascade: ['remove', 'persist'])]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $regionProperties;
 
     /**
      * @var Element[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"remove"})
-     * @ORM\OrderBy({"weight" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'application', targetEntity: Element::class, cascade: ['remove'])]
+    #[ORM\OrderBy(['weight' => 'asc'])]
     protected $elements;
 
     /**
      * @var Layerset[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"remove"})
-     * @ORM\OrderBy({"title" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'application', targetEntity: Layerset::class, cascade: ['remove'])]
+    #[ORM\OrderBy(['title' => 'asc'])]
     protected $layersets;
 
-    /**
-     * @ORM\Column(type="string", length=256, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 256, nullable: true)]
     protected $screenshot;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $extra_assets;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     protected $updated;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @Scss
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $custom_css;
 
     /**
@@ -661,9 +642,9 @@ class Application
 
     /**
      * @param LifecycleEventArgs $args
-     * @ORM\PostPersist
-     * @ORM\PreUpdate
      */
+    #[ORM\PostPersist]
+    #[ORM\PreUpdate]
     public function bumpUpdate(LifecycleEventArgs $args)
     {
         $this->setUpdated(new \DateTime('now'));

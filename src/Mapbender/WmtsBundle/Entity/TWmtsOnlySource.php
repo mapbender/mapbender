@@ -16,42 +16,36 @@ trait TWmtsOnlySource
 {
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $fees = "";
 
-    /**
-     * @ORM\Column(type="text",nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $accessConstraints = "";
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $serviceProviderSite = "";
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $serviceProviderName = "";
 
     /**
      * @var RequestInformation|null
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     public $getTile = null;
 
     /**
      * @var RequestInformation|null
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     public $getFeatureInfo = null;
 
     /**
      * @var ArrayCollection A list of WMTS Theme
-     * @ORM\OneToMany(targetEntity="Theme",mappedBy="source", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Theme::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $themes;
 
     /**

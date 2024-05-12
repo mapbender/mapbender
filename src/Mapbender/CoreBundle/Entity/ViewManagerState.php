@@ -6,48 +6,47 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="mb_core_viewmanager_state", indexes={@ORM\Index(columns={"slug", "user_id"})})
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_viewmanager_state')]
+#[ORM\Index(columns: ['slug', 'user_id'])]
 class ViewManagerState
 {
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
     protected $id;
 
     /**
      * @see Application::$slug
      * @var string
-     * @ORM\Column(type="string", length=255, name="slug")
      * NOTE: cannot use id (Yaml applications have no ids)
-     * NOTE: cannot use relation (Yaml applications not visible to Doctrine)
      */
+    #[ORM\Column(name: 'slug', type: 'string', length: 255)]
     protected $applicationSlug;
 
     /**
      * @var string|null
-     * @ORM\Column(type="string", length=255, name="user_id", nullable=true)
-     * NOTE: cannot use a relation; cannot guarantee database record for any user with LDAP / other custom user providers
+     * NOTE: cannot use id (Yaml applications have no ids)
+     * NOTE: cannot use relation (Yaml applications not visible to Doctrine)
      */
+    #[ORM\Column(name: 'user_id', type: 'string', length: 255, nullable: true)]
     protected $userId;
 
     /**
      * Date and time of last modification
      *
      * @var \DateTime|null
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     protected $mtime;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=63)
      */
+    #[ORM\Column(type: 'string', length: 63)]
     protected $title;
 
     /**
@@ -55,20 +54,20 @@ class ViewManagerState
      * Same as url fragment in frontend
      *
      * @var string
-     * @ORM\Column(type="string", length=47, name="view_params")
      */
+    #[ORM\Column(name: 'view_params', type: 'string', length: 47)]
     protected $viewParams;
 
     /**
      * @var mixed[]
-     * @ORM\Column(type="array", name="layerset_diffs")
      */
+    #[ORM\Column(name: 'layerset_diffs', type: 'array')]
     protected $layersetDiffs;
 
     /**
      * @var mixed[]
-     * @ORM\Column(type="array", name="source_diffs")
      */
+    #[ORM\Column(name: 'source_diffs', type: 'array')]
     protected $sourceDiffs;
 
     public function __construct()

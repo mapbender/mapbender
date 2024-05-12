@@ -10,94 +10,64 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 /**
  * @author Paul Schmidt
  *
- * @ORM\Entity(repositoryClass="WmsInstanceLayerRepository")
- * @ORM\Table(name="mb_wms_wmsinstancelayer")
- * @ORM\HasLifecycleCallbacks
  *
  * @property WmsLayerSource $sourceItem
  * @method WmsInstance getSourceInstance
  * @method WmsLayerSource getSourceItem
  */
+#[ORM\Entity(repositoryClass: \WmsInstanceLayerRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'mb_wms_wmsinstancelayer')]
 class WmsInstanceLayer extends SourceInstanceItem
 {
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh", "persist"})
-     * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsInstance::class, cascade: ['refresh', 'persist'], inversedBy: 'layers')]
+    #[ORM\JoinColumn(name: 'wmsinstance', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $sourceInstance;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", cascade={"refresh"}, inversedBy="instanceLayers")
-     * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsLayerSource::class, cascade: ['refresh'], inversedBy: 'instanceLayers')]
+    #[ORM\JoinColumn(name: 'wmslayersource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $sourceItem;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsInstanceLayer",inversedBy="sublayer")
-     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsInstanceLayer::class, inversedBy: 'sublayer')]
+    #[ORM\JoinColumn(name: 'parent', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected $parent = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer",mappedBy="parent", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
-     */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: WmsInstanceLayer::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['priority' => 'asc', 'id' => 'asc'])]
     protected $sublayer;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $active = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $allowselected = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $selected = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $info;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $allowinfo;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $toggle;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $allowtoggle;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     protected $minScale;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     protected $maxScale;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $style = "";
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
 
     /**
@@ -136,9 +106,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         }
     }
 
-    /**
-     * @ORM\PostLoad()
-     */
+    #[ORM\PostLoad]
     public function postLoad()
     {
         if ($this->minScale == INF) {

@@ -36,7 +36,7 @@ class ElementController extends YamlApplicationAwareController
      * @param string $action
      * @return Response
      */
-    #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', defaults: ['id' => null, 'action' => null], requirements: ['action' => '.+'])]
+    #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['id' => null, 'action' => null])]
     public function element(Request $request, $slug, $id, $action)
     {
         $application = $this->getApplicationEntity($slug);

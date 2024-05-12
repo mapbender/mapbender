@@ -6,40 +6,39 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_regionproperties")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_regionproperties')]
 class RegionProperties
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var Application The configuration entity for the application
-     * @ORM\ManyToOne(targetEntity="Application", inversedBy="regionProperties")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: Application::class, inversedBy: 'regionProperties')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     protected $application;
 
     /**
      * @var string $title The element title
-     * @ORM\Column(type="string", length=128)
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 128)]
     protected $name;
 
     /**
      * @var array $properties The region properties
-     * @ORM\Column(type="array", nullable=true)
      */
     #[Assert\NotBlank]
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $properties;
 
     /**

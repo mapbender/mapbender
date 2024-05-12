@@ -35,7 +35,7 @@ class ComponentsController
      * @param string $path
      * @return Response
      */
-    #[Route(path: '/components/{packageName}/{path}', methods: ['GET'], requirements: ['path' => '.+'])]
+    #[Route(path: '/components/{packageName}/{path}', requirements: ['path' => '.+'], methods: ['GET'])]
     public function componentsAction(Request $request, $packageName, $path)
     {
         if ($this->matchHidden($path)) {
