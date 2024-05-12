@@ -78,6 +78,11 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - Some icon styles are now only available for FontAwesome pro users. The open-source mapbender does not come with a
   FontAwesome pro license.
 
+
+### Removed deprecated classes
+- `Mapbender\CoreBundle\Component\Element`, `Mapbender\CoreBundle\Component\ElementInterface`, `Mapbender\CoreBundle\Component\ElementHttpHandlerInterface`: use `Mapbender\CoreBundle\Entity\Element\AbstractElementService` instead 
+
+
 ### Removed OpenLayers 2 support
 OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now removed from the core. If you were using OpenLayers >= 4
 already, you should not expect breaking changes. You can now safely remove all version checks for `Mapbender.mapEngine.code` 
