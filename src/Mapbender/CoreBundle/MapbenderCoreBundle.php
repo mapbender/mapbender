@@ -5,7 +5,6 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPa
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
-use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +36,6 @@ class MapbenderCoreBundle extends Bundle
         $container->addCompilerPass(new ProvideBrandingPass());
 
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
-        $container->addCompilerPass(new RebuildElementInventoryPass());
     }
 
     protected function loadConfigs(ContainerBuilder $container)

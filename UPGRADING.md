@@ -85,7 +85,7 @@ Important: Execute the following commands in the specified order to upgrade (aft
 
 ### Removed deprecated classes
 - `Mapbender\CoreBundle\Component\Element`, `Mapbender\CoreBundle\Component\ElementInterface`, `Mapbender\CoreBundle\Component\ElementHttpHandlerInterface`: use `Mapbender\CoreBundle\Entity\Element\AbstractElementService` instead 
-
+- `Mapbender\CoreBundle\Component\MapbenderBundle`: Extend from symfony's default bundle (`Symfony\Component\HttpKernel\Bundle\Bundle`), define your custom elements and templates by tagging them `mapbender.element` / `mapbender.application_template` 
 
 ### Removed OpenLayers 2 support
 OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now removed from the core. If you were using OpenLayers >= 4

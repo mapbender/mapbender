@@ -248,7 +248,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     }
 
     /**
-     * Returns the full, unmodified Element class inventory advertised by the sum of enabled MapbenderBundles.
+     * Returns the full, unmodified Element class inventory.
      *
      * @return string[]
      */
