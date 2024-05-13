@@ -13,16 +13,18 @@
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="form.factory" />
             <argument type="service" id="security.token_storage" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\IndexController"
                  class="Mapbender\ManagerBundle\Controller\IndexController"
                  public="true">
             <argument type="service" id="mapbender.twig.manager.menu" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ApplicationExchangeController"
@@ -32,16 +34,18 @@
             <argument type="service" id="mapbender.application_importer.service" />
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\LayersetController"
                  class="Mapbender\ManagerBundle\Controller\LayersetController"
                  public="true" lazy="true">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\ElementController"
@@ -52,8 +56,9 @@
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
             <argument type="service" id="fom.security.permission_manager" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\RepositoryController"
@@ -61,8 +66,9 @@
                  public="true">
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ManagerBundle\Controller\SourceInstanceController"
@@ -71,8 +77,9 @@
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="translator" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
     </services>

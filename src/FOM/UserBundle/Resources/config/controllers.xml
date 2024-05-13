@@ -7,8 +7,9 @@
                  class="FOM\UserBundle\Controller\GroupController"
                  public="true">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="FOM\UserBundle\Controller\PasswordController"
@@ -24,8 +25,9 @@
             <argument>%fom_user.reset_password%</argument>
             <argument>%fom_user.max_reset_time%</argument>
             <argument>%kernel.debug%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="FOM\UserBundle\Controller\SecurityController"
@@ -40,8 +42,9 @@
                  class="FOM\UserBundle\Controller\PermissionController"
                  public="true">
             <argument type="service" id="fom.security.permission_manager" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="FOM\UserBundle\Controller\UserController"
@@ -52,8 +55,9 @@
             <argument>%fom.user_entity%</argument>
             <argument>%fom_user.profile_entity%</argument>
             <argument>%fom_user.profile_template%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="FOM\UserBundle\Controller\RegistrationController"
@@ -70,8 +74,9 @@
             <argument>%fom_user.max_registration_time%</argument>
             <argument>%fom_user.self_registration_groups%</argument>
             <argument>%kernel.debug%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
     </services>

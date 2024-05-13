@@ -41,8 +41,9 @@ Important: Execute the following commands in the specified order to upgrade (aft
 	- All classes inheriting from `AbstractController` must add the following within their `<service>` definition:
 
 ```xml
+<tag name="container.service_subscriber" />
 <call method="setContainer">
-    <argument type="service" id="service_container"/>
+    <argument type="service" id="Psr\Container\ContainerInterface"/>
 </call>
 ```
 
