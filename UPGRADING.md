@@ -78,6 +78,10 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - Some icon styles are now only available for FontAwesome pro users. The open-source mapbender does not come with a
   FontAwesome pro license.
 
+### Assetic Framework: Updated from v2 to v3
+- [Migration Guide](https://github.com/assetic-php/assetic/blob/master/CHANGELOG-3.0.md)
+- Replaced sass compilation by supplied binaries for all platforms by [scssphp](https://github.com/scssphp/scssphp) (PHP-based compiler)
+- If you customized the `assetic.filter.scss.class` parameter, make sure to inherit from `Assetic\Filter\ScssphpFilter` now
 
 ### Removed deprecated classes
 - `Mapbender\CoreBundle\Component\Element`, `Mapbender\CoreBundle\Component\ElementInterface`, `Mapbender\CoreBundle\Component\ElementHttpHandlerInterface`: use `Mapbender\CoreBundle\Entity\Element\AbstractElementService` instead 

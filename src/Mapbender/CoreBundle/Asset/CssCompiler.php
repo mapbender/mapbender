@@ -5,10 +5,14 @@ namespace Mapbender\CoreBundle\Asset;
 
 
 use Assetic\Asset\StringAsset;
+use Assetic\Filter\CssRewriteFilter;
 use Assetic\Filter\FilterInterface;
+use Assetic\Filter\ScssphpFilter;
+use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use ScssPhp\ScssPhp\OutputStyle;
 
 /**
  * Locates, merges and compiles (S)CSS assets for applications.
@@ -18,30 +22,16 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class CssCompiler extends AssetFactoryBase
 {
-    /** @var FilterInterface */
-    protected $sassFilter;
-    /** @var FilterInterface */
-    protected $cssRewriteFilter;
-    /** @var RouterInterface */
-    protected $router;
+    protected FilterInterface $cssRewriteFilter;
 
-    /**
-     * @param FileLocatorInterface $fileLocator
-     * @param string $webDir
-     * @param string[] $bundleClassMap
-     * @param FilterInterface $sassFilter
-     * @param RouterInterface $router
-     */
     public function __construct(FileLocatorInterface $fileLocator,
                                 LoggerInterface $logger,
                                 $webDir, $bundleClassMap,
-                                FilterInterface $sassFilter,
-                                RouterInterface $router)
+                                protected FilterInterface $sassFilter,
+                                protected RouterInterface $router)
     {
         parent::__construct($fileLocator, $logger, $webDir, $bundleClassMap);
-        $this->sassFilter = $sassFilter;
-        $this->cssRewriteFilter = new \Assetic\Filter\CssRewriteFilter();
-        $this->router = $router;
+        $this->cssRewriteFilter = new CssRewriteFilter();
     }
 
     /**
@@ -53,10 +43,9 @@ class CssCompiler extends AssetFactoryBase
     {
         $content = $this->concatenateContents($inputs, $debug);
 
-        $sass = clone $this->sassFilter;
-        $sass->setStyle($debug ? 'nested' : 'compressed');
+        $this->sassFilter->setOutputStyle($debug ? OutputStyle::EXPANDED : OutputStyle::COMPRESSED);
         $filters = array(
-            $sass,
+            $this->sassFilter,
             $this->cssRewriteFilter,
         );
 

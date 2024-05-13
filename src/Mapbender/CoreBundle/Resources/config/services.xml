@@ -5,7 +5,7 @@
     <parameters>
         <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
-        <parameter key="assetic.filter.scss.class">Assetic\Filter\ScsssphpFilter</parameter>
+        <parameter key="assetic.filter.scss.class">Assetic\Filter\ScssphpFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
@@ -173,25 +173,13 @@
         <service id="mapbender.assetic.filter.sass"
                  class="%assetic.filter.scss.class%"
                  lazy="true">
-            <argument>%mapbender.asset.sassc_binary_path%</argument>
-            <call method="setTimeout">
-                <argument>%mapbender.asset_compiler.css.timeout%</argument>
-            </call>
-
-            <!-- default option for SASSC -->
-            <call method="setCacheLocation">
-                <argument>false</argument>
-            </call>
-            <call method="setScss">
-                <argument>false</argument>
-            </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
             </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/vendor/igosuki/compass-mixins/lib</argument>
             </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/public</argument>
             </call>
         </service>
