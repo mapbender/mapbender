@@ -3,84 +3,50 @@
 namespace FOM\UserBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\UserLogEntry;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Core\AuthenticationEvents;
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
-use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
+use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 
 /**
  * Event listener for failed logins which upscales forced wait time.
- *
- * @author Christian Wygoda
- * @author Andriy Oblivantsev
  */
+#[AsEventListener]
 class FailedLoginListener implements EventSubscriberInterface
 {
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-    /** @var int */
-    protected $maxAttempts;
-    /** @var int */
-    protected $delayTime;
-    /** @var string */
-    protected $checkInterval;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param int $maxAttempts before login is artificially slowed down
-     * @param int $delayTime in seconds
-     * @param string $checkInterval DateTimeInterval spec for $maxAttempts time window
-     */
-    public function __construct(EntityManagerInterface $entityManager,
-                                $maxAttempts, $delayTime, $checkInterval)
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected int                    $maxAttempts, // before login is artificially slowed down
+        protected int                    $delayTime, // in seconds
+        protected string                 $checkInterval, // DateTimeInterval spec for $maxAttempts time window
+    )
     {
-        $this->entityManager = $entityManager;
-        $this->maxAttempts = $maxAttempts;
-        $this->delayTime = $delayTime;
-        $this->checkInterval = $checkInterval;
     }
 
     public static function getSubscribedEvents(): array
     {
-        return array(
-            AuthenticationSuccessEvent::class => 'onLoginSuccess',
-            AuthenticationFailureEvent::class => 'onLoginFailure',
-        );
+        return [LoginFailureEvent::class => 'onLoginFailure'];
     }
 
-    /**
-     * @param AuthenticationEvent $event
-     */
-    public function onLoginSuccess(AuthenticationEvent $event)
+    public function onLoginFailure(LoginFailureEvent $event): void
     {
-    }
-
-    /**
-     * @param AuthenticationFailureEvent $event
-     */
-    public function onLoginFailure(AuthenticationFailureEvent $event)
-    {
-        /** @var EntityRepository $repository */
-
         $em = $this->entityManager;
-        $userName = $event->getAuthenticationToken()->getUsername();
-        $ipAddress  = $_SERVER["REMOTE_ADDR"];
+        $userName = $event->getPassport()->getUser()->getUserIdentifier();
+        $ipAddress = $_SERVER["REMOTE_ADDR"];
         $repository = $em->getRepository(UserLogEntry::class);
-        $userInfo = array(
+        $userInfo = [
             'userName' => $userName,
             'ipAddress' => $ipAddress,
             'action' => 'login',
             'status' => 'fail',
-        );
+        ];
         // Log failed login attempt
-        $entry = new UserLogEntry(array_merge($userInfo, array(
-            'context' => array(
+        $entry = new UserLogEntry(array_merge($userInfo, [
+            'context' => [
                 'userAgent' => $_SERVER["HTTP_USER_AGENT"],
-            ),
-        )));
+            ],
+        ]));
         $em->persist($entry);
         $em->flush();
 
@@ -93,20 +59,20 @@ class FailedLoginListener implements EventSubscriberInterface
             ->setParameters($userInfo)
             ->setParameter('creationDate', new \DateTime($this->checkInterval))
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleScalarResult()
+        ;
 
         if ($failedLoginCount >= $this->maxAttempts) {
             sleep($this->delayTime);
         }
 
         // Garbage collection for log entries
-        // TODO: create user log service and refactor here.
         $repository->createQueryBuilder('p')
             ->delete()
             ->where('p.creationDate < :gcDate')
             ->setParameter('gcDate', new \DateTime("-2 days"))
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleScalarResult()
+        ;
     }
-
 }
