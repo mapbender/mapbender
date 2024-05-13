@@ -2,6 +2,7 @@
 namespace FOM\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -16,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 #[UniqueEntity('username')]
 #[ORM\MappedSuperclass]
-abstract class AbstractUser implements UserInterface
+abstract class AbstractUser implements UserInterface, LegacyPasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -104,7 +105,7 @@ abstract class AbstractUser implements UserInterface
      * @param string
      * @return null|string
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return $this->salt;
     }
