@@ -3,7 +3,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * PHP 8.0 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
-* Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
+* Symfony updated to version 6.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)

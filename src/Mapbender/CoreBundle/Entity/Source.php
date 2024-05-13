@@ -161,15 +161,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * @return boolean
-     * @deprecated always returns true
-     */
-    public function getValid()
-    {
-        return true;
-    }
-
-    /**
      * Returns a Source as String
      *
      * @return String Source as String

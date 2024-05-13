@@ -154,10 +154,6 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
                 return false;
             }
             if (!$options['include_buttons']) {
-                // Legacy Component\Element style
-                if (\is_a($className, 'Mapbender\CoreBundle\Element\BaseButton', true)) {
-                    return false;
-                }
                 // Service-type ButtonLike
                 if (\is_a($className, 'Mapbender\Component\Element\ButtonLike', true)) {
                     return false;

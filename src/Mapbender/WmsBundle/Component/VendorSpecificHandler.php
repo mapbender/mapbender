@@ -2,12 +2,11 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Collections\Collection;
 use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -52,18 +51,6 @@ class VendorSpecificHandler
     public function isValueDynamic($value)
     {
         return !!$this->findDynamicValuePortion($value);
-    }
-
-    /**
-     * Removes '$'-signs from given $value
-     *
-     * @param string $value a string value
-     * @return boolean true if a value is dynamic.
-     * @deprecated no more invocations; @todo remove on master branch
-     */
-    public function stripDynamic($value)
-    {
-        return str_replace('$', '', $value);
     }
 
     public function isValuePublic(VendorSpecific $vendorspec)
@@ -146,7 +133,7 @@ class VendorSpecificHandler
      */
     protected function getUserFromToken(TokenInterface $userToken=null)
     {
-        if (!$userToken || $userToken instanceof AnonymousToken) {
+        if (!$userToken || $userToken instanceof NullToken) {
             return null;
         } else {
             $user = $userToken->getUser();

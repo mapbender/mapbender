@@ -11,7 +11,6 @@ use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
-use Mapbender\FrameworkBundle\Component\ElementShimFactory;
 
 /**
  * Maintains inventory of Element Component classes
@@ -23,7 +22,6 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
 {
     /** @var string[] */
     protected $movedElementClasses = array(
-        // see https://github.com/mapbender/data-source/tree/0.1.8/Element
         'Mapbender\DataSourceBundle\Element\DataManagerElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\DataStoreElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\QueryBuilderElement' => 'Mapbender\QueryBuilderBundle\Element\QueryBuilderElement',
@@ -44,32 +42,13 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     protected $disabledClassesFromConfig = array();
     /** @var ElementServiceInterface[] */
     protected $serviceElements = array();
-    /** @var ElementShimFactory|null */
-    protected $shimFactory;
 
-    public function __construct($disabledClasses,
-                                ElementShimFactory $shimFactory = null)
+    public function __construct($disabledClasses)
     {
         $this->disabledClassesFromConfig = $disabledClasses ?: array();
-        $this->shimFactory = $shimFactory;
     }
 
-    /**
-     * @param string $classNameIn
-     * @return string|MinimalInterface
-     * @deprecated prefer getHandlingClassName (requires Element argument)
-     */
-    public function getAdjustedElementClassName($classNameIn)
-    {
-        if (!empty($this->movedElementClasses[$classNameIn])) {
-            $classNameOut = $this->movedElementClasses[$classNameIn];
-            return $classNameOut;
-        } else {
-            return $classNameIn;
-        }
-    }
-
-    public function getHandlingClassName(Element $element)
+    public function getHandlingClassName(Element $element): string
     {
         $handlingClass = parent::getHandlingClassName($element);
         if (!empty($this->movedElementClasses[$handlingClass])) {
@@ -93,7 +72,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      */
     public function getHandlerService(Element $element)
     {
-        return $this->getHandlerServiceInternal($element, false);
+        return $this->getHandlerServiceInternal($element);
     }
 
     /**
@@ -103,7 +82,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     public function getHttpHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        $handler = $this->getHandlerServiceInternal($element, true);
+        $handler = $this->getHandlerServiceInternal($element);
         if ($handler && ($handler instanceof HttpHandlerProvider)) {
             return $handler->getHttpHandler($element);
         } else {
@@ -118,7 +97,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     public function getFrontendHandler(Element $element)
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
-        return $this->getHandlerServiceInternal($element, true);
+        return $this->getHandlerServiceInternal($element);
     }
 
     /**
@@ -127,7 +106,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      */
     public function getImportProcessor(Element $element)
     {
-        $handler = $this->getHandlerServiceInternal($element, true);
+        $handler = $this->getHandlerServiceInternal($element);
         if ($handler && ($handler instanceof ImportAwareInterface)) {
             return $handler;
         } else {
@@ -277,22 +256,14 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
         );
     }
 
-    /**
-     * @param Element $element
-     * @param bool $allowShim
-     * @return ElementServiceInterface|null
-     */
-    protected function getHandlerServiceInternal(Element $element, $allowShim = false)
+    protected function getHandlerServiceInternal(Element $element): ?ElementServiceInterface
     {
         $className = $this->getHandlingClassName($element);
 
         if (!empty($this->serviceElements[$className])) {
             return $this->serviceElements[$className];
-        } elseif ($allowShim && $this->shimFactory) {
-           return $this->shimFactory->getShim($className);
-        } else {
-            return null;
         }
+        return null;
     }
 
     protected function resolveInventory()

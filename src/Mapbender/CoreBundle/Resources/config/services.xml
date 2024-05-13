@@ -121,13 +121,6 @@
             <argument type="service" id="translator" />
         </service>
 
-        <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
-            <tag name="form.type" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
-            <argument type="service" id="mapbender.element_filter" />
-        </service>
-
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
             <tag name="form.type"/>
             <!-- arguments 1:1 for ChoiceType parent class constructor -->
@@ -284,7 +277,6 @@
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- NOTE: base Element class availability is not an argument, but added via compiler passes; this is not configurable -->
             <argument>%mapbender.disabled_elements%</argument>
-            <argument type="service" id="mapbender.element_shim_factory" />
         </service>
         <service id="mapbender.icon_package_fa4" class="Mapbender\CoreBundle\Component\IconPackageFa4">
             <argument>%mapbender.icons.disable_default_fa%</argument>
