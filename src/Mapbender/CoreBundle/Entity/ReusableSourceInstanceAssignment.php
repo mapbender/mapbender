@@ -105,7 +105,7 @@ class ReusableSourceInstanceAssignment implements WeightSortedCollectionMember
         $this->weight = $weight;
     }
 
-    public function isEnabled(): bool
+    public function getEnabled(): bool
     {
         return $this->enabled;
     }

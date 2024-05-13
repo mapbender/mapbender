@@ -193,8 +193,8 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     {
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
-        $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
-        $record->setSourceDiffs($request->request->get('sourcesDiff', array()));
+        $record->setLayersetDiffs($request->request->get('layersetsDiff') ?? []);
+        $record->setSourceDiffs($request->request->get('sourcesDiff') ?? []);
         $record->setMtime(new \DateTime());
     }
 

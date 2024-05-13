@@ -6,7 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Bridge\Monolog\Logger;
+use Monolog\Logger;
 
 class SQLSearchEngine
 {
