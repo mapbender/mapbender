@@ -1,13 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle;
 
-use Mapbender\CoreBundle\DependencyInjection\Compiler\AutodetectSasscBinaryPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ContainerUpdateTimestampPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideBrandingPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\ProvideCookieConsentGlobalPass;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\RebuildElementInventoryPass;
-use Mapbender\CoreBundle\DependencyInjection\Compiler\RewriteFormThemeCompilerPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +35,6 @@ class MapbenderCoreBundle extends Bundle
         $container->addCompilerPass(new MapbenderYamlCompilerPass());
         $container->addCompilerPass(new ContainerUpdateTimestampPass());
         $container->addCompilerPass(new ProvideBrandingPass());
-        $container->addCompilerPass(new AutodetectSasscBinaryPass('mapbender.asset.sassc_binary_path'));
 
         $container->addCompilerPass(new ProvideCookieConsentGlobalPass());
         $container->addCompilerPass(new RebuildElementInventoryPass());
