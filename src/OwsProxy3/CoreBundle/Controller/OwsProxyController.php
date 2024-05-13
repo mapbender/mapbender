@@ -1,4 +1,5 @@
 <?php
+
 namespace OwsProxy3\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Signer;
@@ -17,16 +18,9 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class OwsProxyController
 {
-    /** @var HttpFoundationClient */
-    protected $client;
-    /** @var Signer */
-    protected $signer;
-
-    public function __construct(HttpFoundationClient $client,
-                                Signer $signer)
+    public function __construct(protected HttpFoundationClient $client,
+                                protected Signer               $signer)
     {
-        $this->client = $client;
-        $this->signer = $signer;
     }
 
     /**
