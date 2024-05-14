@@ -24,7 +24,7 @@ class InfiniteCyclicArrayIterator implements \Iterator
         $this->nTotal = count($elements);
     }
 
-    public function next()
+    public function next(): void
     {
         ++$this->index;
         if ($this->index >= $this->nTotal) {
@@ -32,24 +32,24 @@ class InfiniteCyclicArrayIterator implements \Iterator
         }
     }
 
-    public function valid()
+    public function valid(): bool
     {
         // NOTE: This can never retrun true if the original $elements array was empty,
         //       thus ensuring no looping takes place.
         return $this->index < $this->nTotal;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->index = 0;
     }
 
-    public function current()
+    public function current(): mixed
     {
         return $this->elements[$this->index];
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->keys[$this->index];
     }

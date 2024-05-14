@@ -14,13 +14,13 @@ class LineLoopIterator extends LineStringIterator
         parent::__construct($points);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         // unline parent, allow iteration to continue even if lineEndIterator is one past the last point
         return $this->lineStartIterator->valid();
     }
 
-    public function current()
+    public function current(): LineSegment
     {
         if ($this->lineEndIterator->valid()) {
             return parent::current();
