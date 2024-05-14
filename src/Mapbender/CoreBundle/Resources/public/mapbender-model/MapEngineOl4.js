@@ -204,7 +204,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             }
         },
         /**
-         * @param {ol.PluggableMap} olMap
+         * @param {ol.Map} olMap
          * @param {ol.layer.Layer} olLayer
          */
         destroyLayer: function(olMap, olLayer) {
