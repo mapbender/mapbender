@@ -236,7 +236,7 @@ window.Mapbender.MapEngineOl4 = (function() {
                 return source.tileUrlFunction([0, 0, 0], 1, ol.proj.get(srsName));
             } else {
                 /** @var {ol.source.ImageWMS} source */
-                return source.getRequestUrl_([0,0,0,0], [0,0], 1, ol.proj.get(srsName), source.getParams());
+                return ol.util.getRequestUrl(source.getUrl(), [0,0,0,0], [0,0], ol.proj.get(srsName), source.getParams());
             }
         },
         getLayerArray: function(olMap) {
