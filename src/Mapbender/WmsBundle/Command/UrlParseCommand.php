@@ -5,12 +5,13 @@ namespace Mapbender\WmsBundle\Command;
 
 
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('mapbender:wms:parse:url')]
 class UrlParseCommand extends AbstractHttpCapabilitiesProcessingCommand
 {
-    protected static $defaultName = 'mapbender:wms:parse:url';
     protected function configure(): void
     {
         parent::configure();

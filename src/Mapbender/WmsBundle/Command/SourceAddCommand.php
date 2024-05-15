@@ -5,15 +5,16 @@ namespace Mapbender\WmsBundle\Command;
 
 
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Console command mapbender:wms:add
  */
+#[AsCommand('mapbender:wms:add')]
 class SourceAddCommand extends UrlParseCommand
 {
-    protected static $defaultName = 'mapbender:wms:add';
     protected function configure(): void
     {
         parent::configure();

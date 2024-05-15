@@ -6,6 +6,7 @@ namespace Mapbender\WmsBundle\Command;
 
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,10 +14,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('mapbender:wms:show')]
 class SourceShowCommand extends AbstractSourceCommand
 {
-
-    protected static $defaultName = 'mapbender:wms:show';
     protected function configure(): void
     {
         $this

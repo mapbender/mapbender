@@ -4,14 +4,15 @@
 namespace Mapbender\WmsBundle\Command;
 
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('mapbender:wms:reload:url')]
 class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
 {
-    protected static $defaultName = 'mapbender:wms:reload:url';
     protected function configure(): void
     {
         $this

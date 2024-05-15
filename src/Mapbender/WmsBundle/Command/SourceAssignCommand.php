@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Controller\SourceInstanceController;
 use Mapbender\WmsBundle\Component\Wms\Importer;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,9 +19,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Console command mapbender:wms:assign
  */
+#[AsCommand('mapbender:wms:assign')]
 class SourceAssignCommand extends AbstractSourceCommand
 {
-    protected static $defaultName = 'mapbender:wms:assign';
     public function __construct(private SourceInstanceController $sourceInstanceController, ManagerRegistry $managerRegistry, Importer $importer)
     {
         parent::__construct($managerRegistry, $importer);

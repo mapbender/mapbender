@@ -9,15 +9,16 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
+#[AsCommand('mapbender:application:export')]
 class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
-    protected static $defaultName = 'mapbender:application:export';
     /** @var ExportHandler */
     protected $exportHandler;
 

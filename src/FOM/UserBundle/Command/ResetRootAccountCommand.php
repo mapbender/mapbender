@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,9 +21,9 @@ use Symfony\Component\Console\Question\Question;
  *
  * @author Christian Wygoda
  */
+#[AsCommand('fom:user:resetroot')]
 class ResetRootAccountCommand extends Command
 {
-    protected static $defaultName = 'fom:user:resetroot';
     /** @var UserHelperService */
     protected $userHelper;
     /** @var EntityManagerInterface */

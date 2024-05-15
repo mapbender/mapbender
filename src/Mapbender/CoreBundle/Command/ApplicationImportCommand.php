@@ -10,15 +10,16 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('mapbender:application:import')]
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
-    protected static $defaultName = 'mapbender:application:import';
     /** @var boolean */
     protected $strictElementConfigs;
 
