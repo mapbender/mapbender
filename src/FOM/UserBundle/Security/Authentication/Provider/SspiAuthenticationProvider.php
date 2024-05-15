@@ -1,30 +1,23 @@
 <?php
-namespace  FOM\UserBundle\Security\Authentication\Provider;
 
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\User\UserCheckerInterface;
+namespace FOM\UserBundle\Security\Authentication\Provider;
+
 use FOM\UserBundle\Security\Authentication\Token\SspiUserToken;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class SspiAuthenticationProvider implements AuthenticationProviderInterface
+class SspiAuthenticationProvider implements AuthenticationManagerInterface
 {
-
-    /** @var UserCheckerInterface */
-    protected $checker;
-    /** @var UserProviderInterface */
-    protected $provider;
-
-    public function __construct(UserProviderInterface $userProvider, UserCheckerInterface $userChecker)
+    public function __construct(protected UserProviderInterface $provider, protected UserCheckerInterface $checker)
     {
-        $this->checker = $userChecker;
-        $this->provider = $userProvider;
     }
 
     public function authenticate(TokenInterface $token)
     {
-        $user = $this->provider->loadUserByUsername($token->getUsername());
+        $user = $this->provider->loadUserByIdentifier($token->getUsername());
 
         if ($user) {
             $this->checker->checkPreAuth($user);

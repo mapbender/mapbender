@@ -24,7 +24,7 @@ class UserCreateCommand extends AbstractUserCommand
         parent::__construct($managerRegistry);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('Create a new local user, or optionally (with --update) modify an existing user');
         $this->addArgument('name', InputArgument::REQUIRED);
@@ -33,7 +33,7 @@ class UserCreateCommand extends AbstractUserCommand
         $this->addOption('email', null, InputOption::VALUE_REQUIRED);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
         if (!$input->getArgument('name')) {

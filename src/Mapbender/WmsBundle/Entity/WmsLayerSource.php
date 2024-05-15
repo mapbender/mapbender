@@ -20,128 +20,79 @@ use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="mb_wms_wmslayersource")
- *
  * @property WmsSource $source
  * @method WmsSource getSource
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wms_wmslayersource')]
 class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrlTarget
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
-     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsSource::class, inversedBy: 'layers')]
+    #[ORM\JoinColumn(name: 'wmssource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsLayerSource::class, inversedBy: 'sublayer')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected $parent = null;
-    /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
-     */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: WmsLayerSource::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['priority' => 'asc', 'id' => 'asc'])]
     protected $sublayer;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $name = null;
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract = "";
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $queryable;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $cascaded = 0;
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $opaque = false;
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $noSubset = false;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $fixedWidth;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $fixedHeight;
-    /**
-     * @ORM\Column(type="object", nullable=true)
-     */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $latlonBounds;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $boundingBoxes;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $srs;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $styles;
-    /**
-     * @ORM\Column(type="object",nullable=true)
-     */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $scale;
 
-    /**
-     * @ORM\Column(type="object", nullable=true)
-     */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $attribution;
 
-    /**
-     * @ORM\Column(type="array",nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $identifier;
 
-    /**
-     * @ORM\Column(type="array",nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $authority;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $metadataUrl;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $dimension;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $dataUrl;
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords
-     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"value" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'reference', targetEntity: WmsLayerSourceKeyword::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['value' => 'asc'])]
     protected $keywords;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
 
     /**
      * @var ArrayCollection A list of layer instances
-     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsInstanceLayer",mappedBy="sourceItem", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: 'sourceItem', targetEntity: WmsInstanceLayer::class, cascade: ['remove'])]
     protected $instanceLayers;
 
     /**

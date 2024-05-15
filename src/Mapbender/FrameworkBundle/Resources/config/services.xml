@@ -81,11 +81,6 @@
             <argument type="service" id="twig.extension.assets" />
             <argument type="service" id="mapbender.icon_index" />
         </service>
-        <service id="mapbender.element_shim_factory" class="Mapbender\FrameworkBundle\Component\ElementShimFactory">
-            <argument type="service" id="mapbender.element_shim_factory.container" />
-        </service>
-        <!-- @todo Sf4: replace with a restricted / prepulated container replacement -->
-        <service id="mapbender.element_shim_factory.container" alias="service_container" />
         <service id="mapbender.application_engine_listener"
                  class="Mapbender\FrameworkBundle\Listener\ApplicationEngineListener">
             <tag name="doctrine.orm.entity_listener"

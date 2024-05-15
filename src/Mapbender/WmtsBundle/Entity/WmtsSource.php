@@ -6,10 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtssource")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtssource')]
 class WmtsSource extends HttpTileSource
 {
     /**

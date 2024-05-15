@@ -22,7 +22,7 @@ class SimpleSearchAdminConfigurationType extends AbstractType
         $this->trans = $trans;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $defaults = SimpleSearch::getDefaultChildConfiguration();
 

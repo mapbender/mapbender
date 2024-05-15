@@ -4,34 +4,42 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Collections\WeightSortedCollectionMember;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="mb_core_layersets_sourceinstances")
+ * @see SourceInstanceAssignment; cannot extend though, because property layerset cannot be redeclared
  */
-class ReusableSourceInstanceAssignment extends SourceInstanceAssignment
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_layersets_sourceinstances')]
+class ReusableSourceInstanceAssignment implements WeightSortedCollectionMember
 {
     /**
      * @var integer|null
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     protected $id;
 
     /**
      * @var SourceInstance
-     * @ORM\ManyToOne(targetEntity="SourceInstance", inversedBy="reusableassignments")
-     * @ORM\JoinColumn(name="instance_id", referencedColumnName="id", onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: SourceInstance::class, inversedBy: 'reusableassignments')]
+    #[ORM\JoinColumn(name: 'instance_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $instance;
 
     /**
      * @var Layerset
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="reusableInstanceAssignments", cascade={"refresh"}))
-     * @ORM\JoinColumn(name="layerset_id", referencedColumnName="id", onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: Layerset::class, cascade: ['refresh'], inversedBy: 'reusableInstanceAssignments')]
+    #[ORM\JoinColumn(name: 'layerset_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $layerset;
+
+    #[ORM\Column(type: 'integer')]
+    protected int $weight = 0;
+
+    #[ORM\Column(type: 'boolean')]
+    protected bool $enabled = true;
 
     /**
      * @return int|null
@@ -86,5 +94,26 @@ class ReusableSourceInstanceAssignment extends SourceInstanceAssignment
         $this->layerset = $layerset;
         return $this;
     }
+
+    public function getWeight(): int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight($weight): void
+    {
+        $this->weight = $weight;
+    }
+
+    public function getEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
 }
 

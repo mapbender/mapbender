@@ -17,7 +17,7 @@ class HttpSourceSelectionType extends HttpSourceOriginType
         $this->choices = array_flip($typeDirectory->getTypeLabels());
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults(array(
@@ -25,7 +25,7 @@ class HttpSourceSelectionType extends HttpSourceOriginType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $fieldOptions = array(
             // HACK: use "type" translation from Element scope

@@ -11,7 +11,7 @@ class SearchRouterFormType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'fields' => array(),
@@ -26,7 +26,7 @@ class SearchRouterFormType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['fields']['form'] as $name => $conf) {
             $type = FormTypeUtil::migrateFormType($conf['type']);

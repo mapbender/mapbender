@@ -14,7 +14,7 @@ use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AssetsController extends YamlApplicationAwareController
@@ -38,18 +38,14 @@ class AssetsController extends YamlApplicationAwareController
     }
 
     /**
-     * @Route("/application/{slug}/assets/{type}",
-     *     name="mapbender_core_application_assets",
-     *     requirements={"type" = "js|css|trans"})
-     * @Route("/application/{slug}/sourcemap/{type}",
-     *     name="mapbender_core_application_sourcemap",
-     *     requirements={"type" = "js|css|trans"})
      * @param Request $request
      * @param string $slug of Application
      * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
-    public function assetsAction(Request $request, $slug, $type, $_route)
+    #[Route(path: '/application/{slug}/assets/{type}', name: 'mapbender_core_application_assets', requirements: ['type' => 'js|css|trans'])]
+    #[Route(path: '/application/{slug}/sourcemap/{type}', name: 'mapbender_core_application_sourcemap', requirements: ['type' => 'js|css|trans'])]
+    public function assets(Request $request, string $slug, string $type, $_route)
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
@@ -67,7 +63,7 @@ class AssetsController extends YamlApplicationAwareController
 
         $useCached = (!$this->isDebug) && file_exists($cacheFile);
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
-            $response = new BinaryFileResponse($cacheFile, 200, $headers);
+            $response = new BinaryFileResponse($cacheFile, Response::HTTP_OK, $headers);
             // allow file timestamp to be read again correctly for 'Last-Modified' header
             clearstatcache($cacheFile, true);
             $response->isNotModified($request);
@@ -87,9 +83,9 @@ class AssetsController extends YamlApplicationAwareController
 
         if (!$this->isDebug) {
             file_put_contents($cacheFile, $content);
-            return new BinaryFileResponse($cacheFile, 200, $headers);
+            return new BinaryFileResponse($cacheFile, Response::HTTP_OK, $headers);
         } else {
-            return new Response($content, 200, $headers);
+            return new Response($content, Response::HTTP_OK, $headers);
         }
     }
 

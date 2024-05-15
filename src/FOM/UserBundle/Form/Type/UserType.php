@@ -29,12 +29,12 @@ class UserType extends AbstractType
         $this->profileType = $profileType;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new UserSubscriber($this->tokenStorage));
         $builder
@@ -80,7 +80,7 @@ class UserType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'group_permission' => false,

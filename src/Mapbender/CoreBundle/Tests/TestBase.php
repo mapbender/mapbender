@@ -9,12 +9,12 @@ use Symfony\Component\Console\Input\StringInput;
 
 class TestBase extends WebTestCase
 {
-    protected KernelBrowser $client;
+    protected KernelBrowser $browser;
     protected ?CmdApplication $application = null;
 
     public function setUp(): void
     {
-        $this->client = static::createClient();
+        $this->browser = static::createClient();
     }
 
 
@@ -34,8 +34,8 @@ class TestBase extends WebTestCase
         return $application->run(new StringInput($command));
     }
 
-    protected function getClient(): KernelBrowser
+    protected function getBrowser(): KernelBrowser
     {
-        return $this->client;
+        return $this->browser;
     }
 }

@@ -15,7 +15,7 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Dump queued print job from the DB to JSON or YAML')
@@ -24,7 +24,7 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
         ;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
         $validFormats = array(

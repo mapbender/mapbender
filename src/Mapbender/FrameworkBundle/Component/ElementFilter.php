@@ -121,11 +121,7 @@ class ElementFilter extends ElementConfigFilter
         return $elementsOut;
     }
 
-    /**
-     * @param Element $element
-     * @return string|MinimalInterface|null
-     */
-    public function getHandlingClassName(Element $element)
+    public function getHandlingClassName(Element $element): string
     {
         return $this->inventory->getHandlingClassName($element);
     }

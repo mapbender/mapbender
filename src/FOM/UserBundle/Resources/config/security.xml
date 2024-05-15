@@ -38,7 +38,7 @@
 
         <service id="fom.user_profile_listener" class="%fom_user.user_profile_listener.class%">
             <argument>%fom_user.profile_entity%</argument>
-            <tag name="doctrine.event_subscriber" connection="default" />
+            <tag name="doctrine.event_listener" connection="default" event="loadClassMetadata" />
         </service>
     </services>
 </container>

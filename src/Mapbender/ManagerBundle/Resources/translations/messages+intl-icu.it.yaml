@@ -53,7 +53,7 @@ mb:
     sidepane:
       width: Larghezza
       resizable: Ridimensionabile
-      resizable_help: 'Se è selezionata, l'utente può ridimensionare la barra laterale trascinandola sul bordo destro. Se si desidera limitare la larghezza minima e massima, utilizzare i CSS personalizzati (min-width/max-width su .sidePane.resizable).'
+      resizable_help: 'Se è selezionata, l''utente può ridimensionare la barra laterale trascinandola sul bordo destro. Se si desidera limitare la larghezza minima e massima, utilizzare i CSS personalizzati (min-width/max-width su .sidePane.resizable).'
       closed: 'Inizialmente chiuso'
       align:
         label: Posizione
@@ -71,7 +71,7 @@ mb:
       convert_to_bound: 'Convertire in istanza vincolata'
       converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
       reusable_assigned_to_application: 'L''istanza condivisa è stata aggiunta all''applicazione'
-      create_reusable: 'Crea un'istanza condivisa'
+      create_reusable: 'Crea un''istanza condivisa'
       created_reusable: 'È stata creata una nuova istanza condivisa'
     application:
       persistentView: 'Stato della mappa persistente'
@@ -101,9 +101,9 @@ mb:
           }
       map:
         max_extent: 'Max. estensione'
-        max_extent.help: 'Bounding Box (min/max x/y) in cui l'utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
+        max_extent.help: 'Bounding Box (min/max x/y) in cui l''utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
         start_extent: 'Estensione iniziale'
-        start_extent.help: 'Bounding Box (min/max x/y) che viene visualizzato inizialmente al caricamento della mappa. Facendo clic sull'icona della home, la mappa viene ingrandita in questa estensione.'
+        start_extent.help: 'Bounding Box (min/max x/y) che viene visualizzato inizialmente al caricamento della mappa. Facendo clic sull''icona della home, la mappa viene ingrandita in questa estensione.'
         base_dpi: 'Risoluzione predefinita [dpi]'
         base_dpi.help: 'La risoluzione si adatta alla risoluzione dello schermo in base al valore configurato'
       element:
@@ -142,7 +142,7 @@ mb:
         no_layer_added: 'Nessun layer aggiunto'
         max_input_vars_exceeded: 'PHP ha impostato max_input_vars troppo basso per il numero di layer in questa istanza.'
         update_successful: 'La tua istanza è stata aggiornata.'
-        converted_to_shared: 'L'istanza è stata convertita in istanza condivisa.'
+        converted_to_shared: 'L''istanza è stata convertita in istanza condivisa.'
       template: Template
       application:
         view: Vedi

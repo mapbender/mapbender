@@ -19,7 +19,7 @@ class WmtsInstanceLayerType extends AbstractType
     implements EventSubscriberInterface
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return TileInstanceLayerType::class;
     }
@@ -27,7 +27,7 @@ class WmtsInstanceLayerType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
         $builder
@@ -42,7 +42,7 @@ class WmtsInstanceLayerType extends AbstractType
         ;
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         // NOTE: collection prototype view does not have data
         /** @var WmtsInstanceLayer|null $layer */
@@ -64,7 +64,7 @@ class WmtsInstanceLayerType extends AbstractType
         $view['allowinfo']->vars['checkbox_group'] = 'checkInfoAllow';
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',

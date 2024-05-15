@@ -5,37 +5,36 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_state")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_state')]
 class State
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $title The state title
-     * @ORM\Column(type="string", length=128, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     protected $title;
 
     /**
      * @var string $title The appllication slug
-     * @ORM\Column(type="string", length=128, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     protected $slug;
 
     /**
      * @var string $json The json
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $json;
 
     /**

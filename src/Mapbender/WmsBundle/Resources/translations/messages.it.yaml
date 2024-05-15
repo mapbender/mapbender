@@ -121,7 +121,7 @@ mb:
             active: attivo
             allowselecttoc: 'Permetti la Selezione nel TOC'
             selectedtoc: 'Selezionato nel TOC'
-            selectedtoc.help: 'Il layerset è attivo all'avvio. L'impostazione deve essere modificata solo se si utilizzano layer tematici.'
+            selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'
             unselectedtoc.help: 'Il layerset è inattivo all''avvio. Attenzione: Se non si utilizzano layer tematici, questo layerset non sarà accessibile.'
             allowinfotoc: 'Permetti FeatureInfo nel TOC'
             infotoc: 'FeatureInfo nel TOC'

@@ -8,34 +8,27 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtsinstance")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtsinstance')]
 class WmtsInstance extends SourceInstance
 {
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
+    #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
 
     /**
      * @var WmtsInstanceLayer[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="WmtsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      */
+    #[ORM\OneToMany(mappedBy: 'sourceInstance', targetEntity: WmtsInstanceLayer::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'layers', referencedColumnName: 'id')]
     protected $layers;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $opacity = 100;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $proxy = false;
 
 

@@ -18,10 +18,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class TranslationGetCommand extends AbstractTranslationCommand
 {
-    protected function configure()
+    protected static $defaultName = 'translation:get';
+    protected function configure(): void
     {
         $this
-            ->setName('translation:get')
             ->addArgument('input', InputArgument::REQUIRED, 'Translation input')
             ->addOption('locale', null, InputOption::VALUE_REQUIRED)
             ->addOption('domain', null, InputOption::VALUE_REQUIRED)

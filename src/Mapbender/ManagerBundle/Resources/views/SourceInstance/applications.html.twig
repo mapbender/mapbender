@@ -8,7 +8,7 @@
         <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) ~ '#tabLayers' }}">
         {%- endif -%}
             {{- application.title -}}
-            {%- if not application.published -%}&nbsp;<span class="badge">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
+            {%- if not has_public_access(application) -%}&nbsp;<span class="badge bg-info">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
         {%- if _linkToApp -%}
         </a>
         {%- endif -%}

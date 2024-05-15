@@ -3,9 +3,6 @@
 namespace FOM\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
-use FOM\UserBundle\Security\Permission\ResourceDomainElement;
-use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use FOM\UserBundle\Security\Permission\SubjectDomainGroup;
 use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
@@ -18,23 +15,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Represents a single permission
- * @ORM\Entity()
- * @ORM\Table(name="fom_permission")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'fom_permission')]
 class Permission implements SubjectInterface
 {
     use SubjectTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
     /**
-     * @ORM\Column(type="string", name="subject_domain")
-     * @Assert\NotBlank()
      * stores the type of subject this right is granted to.
      * default mapbender supports:
      * - public: Right granted to everyone, logged in or not, @see SubjectDomainPublic
@@ -43,69 +36,60 @@ class Permission implements SubjectInterface
      * - user: Right granted to a specific user, @see SubjectDomainUser
      * might be extended for custom requirements
      */
+    #[Assert\NotBlank]
+    #[ORM\Column(name: 'subject_domain', type: 'string')]
     protected ?string $subjectDomain = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the user for @see SubjectDomainUser
-     */
+    /** References the user for @see SubjectDomainUser  */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     protected ?User $user = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Group")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the group  for @see SubjectDomainGroup
-     */
+    /** References the group  for @see SubjectDomainGroup */
+    #[ORM\ManyToOne(targetEntity: Group::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     protected ?Group $group = null;
 
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * Can store a subject for custom subjectDomains. When using this, make sure to implement a sensible
      * strategy to delete permission entries for deleted subjects
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $subject = null;
 
-    /**
-     * @ORM\Column(type="string", name="resource_domain")
-     * @Assert\NotBlank()
-     * stores the attribute domain of this right.
+    /**  stores the resources domain of this right.
      * default mapbender supports
      * - installation: Installation-wide validity, like "create_application", @see ResourceDomainInstallation
      * - application: right is valid for a specific application, @see ResourceDomainApplication
      * - element: right is valid for a specific element, @see ResourceDomainElement
      * might be extended for custom requirements
      */
+    #[Assert\NotBlank]
+    #[ORM\Column(name: 'resource_domain', type: 'string')]
     protected ?string $resourceDomain = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Element")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the element for resource domain @see ResourceDomainElement
-     */
+    /** References the element for resource domain @see ResourceDomainElement */
+    #[ORM\ManyToOne(targetEntity: Element::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     protected ?Element $element = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Mapbender\CoreBundle\Entity\Application")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
-     * References the application for resource domain @see ResourceDomainApplication
-     */
+    /** References the application for resource domain @see ResourceDomainApplication */
+    #[ORM\ManyToOne(targetEntity: Application::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     protected ?Application $application = null;
 
 
     /**
-     * @ORM\Column(type="string", nullable=true)
      * Can store an attribute for custom resource domains. When using this, make sure to implement a sensible
      * strategy to delete permission entries for deleted attributes
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $resource = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * Stores the action for the given resource domain, like "view" or "edit"
-     */
+    /** Stores the action for the given resource domain, like "view" or "edit"  */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string')]
     protected ?string $action = null;
 
 

@@ -8,7 +8,7 @@ use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Application controller.
@@ -35,12 +35,12 @@ class ApplicationController extends YamlApplicationAwareController
     /**
      * Main application controller.
      *
-     * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
      * @param Request $request
      * @param string $slug Application
      * @return Response
      */
-    public function applicationAction(Request $request, $slug)
+    #[Route(path: '/application/{slug}.{_format}', defaults: ['_format' => 'html'])]
+    public function application(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
 

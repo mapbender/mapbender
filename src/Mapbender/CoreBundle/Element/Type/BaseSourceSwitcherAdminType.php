@@ -17,7 +17,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -27,7 +27,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(FormEvents::PRE_SET_DATA => 'preSetData');
     }

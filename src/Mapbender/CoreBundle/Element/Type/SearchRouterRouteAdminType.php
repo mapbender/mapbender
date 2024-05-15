@@ -9,7 +9,7 @@ use Mapbender\ManagerBundle\Form\DataTransformer\YAMLDataTransformer;
 
 class SearchRouterRouteAdminType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new SearchRouterRouteTransformer());
         $builder->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

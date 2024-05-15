@@ -20,7 +20,7 @@ use function Symfony\Bridge\Twig\Extension\twig_is_selected_choice;
  */
 class FormExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'get_value_choice' => new TwigFunction('get_value_choice', array($this, 'get_value_choice')),

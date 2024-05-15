@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PrintQueueGcFilesCommand extends AbstractPrintQueueCleanCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription("Delete unreferenced files from print queue storage path");
         $this->addOption('dry-run', null, InputOption::VALUE_NONE);

@@ -4,27 +4,16 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Monolog\Logger;
 
-/**
- * Class SQLSearchEngine
- *
- * @package Mapbender\CoreBundle\Component
- */
 class SQLSearchEngine
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    /**
-     * SQLSearchEngine constructor.
-     *
-     * @param $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(
+        protected Logger $logger,
+        protected ManagerRegistry $registry)
     {
-        $this->container = $container;
     }
 
     /**
@@ -60,14 +49,13 @@ class SQLSearchEngine
             $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
         }
 
-        $logger = $this->container->get('logger');
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
                 if (strlen($properties[$otherProp] ?? null)) {
                     $qb->andWhere($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
-                    $logger->warn('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
+                    $this->logger->warning('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
                 }
             }
         }
@@ -163,14 +151,11 @@ class SQLSearchEngine
         return $features;
     }
 
-    /**
-     * @param $config
-     * @return   Connection $connection
-     */
-    protected function getConnection($config)
+    protected function getConnection($config): Connection
     {
         $connectionName = $config['class_options']['connection'] ?: 'default';
-        return $this->container->get('doctrine')->getConnection($connectionName);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->registry->getConnection($connectionName);
     }
 
     /**

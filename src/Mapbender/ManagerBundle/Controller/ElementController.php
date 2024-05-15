@@ -48,12 +48,12 @@ class ElementController extends ApplicationControllerBase
     /**
      * Show element class selection
      *
-     * @ManagerRoute("/application/{slug}/element/select", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
-    public function selectAction(Request $request, $slug)
+    #[ManagerRoute('/application/{slug}/element/select', methods: ['GET', 'POST'])]
+    public function select(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $region = $request->get('region');
@@ -96,12 +96,12 @@ class ElementController extends ApplicationControllerBase
     /**
      * Shows form for creating new element
      *
-     * @ManagerRoute("/application/{slug}/element/new", methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
-    public function newAction(Request $request, $slug)
+    #[ManagerRoute('/application/{slug}/element/new', methods: ['GET', 'POST'])]
+    public function new(Request $request, $slug)
     {
         $application = $this->requireDbApplication($slug);
         $class = $request->query->get('class');
@@ -128,7 +128,7 @@ class ElementController extends ApplicationControllerBase
             $this->em->flush();
             $this->addFlash('success', 'Your element has been saved.');
 
-            return new Response('', 201);
+            return new Response('', Response::HTTP_CREATED);
         }
 
         return $this->render('@MapbenderManager/Element/edit.html.twig', array(
@@ -138,13 +138,13 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      * @param Request $request
      * @param string $slug
      * @param string $id
      * @return Response
      */
-    public function editAction(Request $request, $slug, $id)
+    #[ManagerRoute('/application/{slug}/element/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -185,7 +185,6 @@ class ElementController extends ApplicationControllerBase
     /**
      * Display and handle element access rights
      *
-     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      * @param Request $request
      * @param $slug string Application short name
      * @param $id int Element ID
@@ -193,7 +192,8 @@ class ElementController extends ApplicationControllerBase
      * @throws \Doctrine\DBAL\ConnectionException
      * @throws \Exception
      */
-    public function securityAction(Request $request, $slug, $id)
+    #[ManagerRoute('/application/{slug}/element/{id}/security', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function security(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -247,12 +247,12 @@ class ElementController extends ApplicationControllerBase
     /**
      * Delete element
      *
-     * @ManagerRoute("application/{slug}/element/{id}/delete", methods={"POST"})
      * @param string $slug
      * @param string $id
      * @return Response
      */
-    public function deleteAction(Request $request, $slug, $id)
+    #[ManagerRoute('application/{slug}/element/{id}/delete', methods: ['POST'])]
+    public function delete(Request $request, $slug, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -289,12 +289,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("application/element/{id}/weight", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
-    public function weightAction(Request $request, $id)
+    #[ManagerRoute('application/element/{id}/weight', methods: ['POST'])]
+    public function weight(Request $request, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -359,12 +359,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("application/element/{id}/enable", methods={"POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
-    public function enableAction(Request $request, $id)
+    #[ManagerRoute('application/element/{id}/enable', methods: ['POST'])]
+    public function enable(Request $request, $id)
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -390,12 +390,12 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/element/{element}/screentype", methods={"POST"})
      * @param Request $request
      * @param Element $element
      * @return Response
      */
-    public function screentypeAction(Request $request, Element $element)
+    #[ManagerRoute('/element/{element}/screentype', methods: ['POST'])]
+    public function screentype(Request $request, Element $element)
     {
         $application = $element->getApplication();
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);

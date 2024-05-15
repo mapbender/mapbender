@@ -20,7 +20,7 @@ class RewriteFormThemeCompilerPass implements CompilerPassInterface
         $this->toTheme = $toTheme;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->patchTwigThemes($container, $this->fromTheme, $this->toTheme);
         $this->patchResourceReferenceArray($container, 'twig.form.resources', $this->fromTheme, $this->toTheme);

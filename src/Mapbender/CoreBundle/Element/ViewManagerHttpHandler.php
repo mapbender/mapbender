@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -193,8 +193,8 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     {
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $record->setViewParams($request->request->get('viewParams'));
-        $record->setLayersetDiffs($request->request->get('layersetsDiff', array()));
-        $record->setSourceDiffs($request->request->get('sourcesDiff', array()));
+        $record->setLayersetDiffs($request->request->get('layersetsDiff') ?? []);
+        $record->setSourceDiffs($request->request->get('sourcesDiff') ?? []);
         $record->setMtime(new \DateTime());
     }
 
@@ -221,14 +221,14 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected function isCurrentUserAnonymous()
     {
         $token = $this->tokenStorage->getToken();
-        return !$token || ($token instanceof AnonymousToken);
+        return !$token || ($token instanceof NullToken);
     }
 
     protected function getUserId()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && !($token instanceof AnonymousToken)) {
-            return $token->getUser()->getUsername();
+        if ($token && !($token instanceof NullToken)) {
+            return $token->getUser()->getUserIdentifier();
         }
         return null;
     }
@@ -236,7 +236,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected function isAdmin()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && !($token instanceof AnonymousToken)) {
+        if ($token && !($token instanceof NullToken)) {
             $user = $token->getUser();
             if (\is_object($user) && ($user instanceof User)) {
                 return $user->isAdmin();

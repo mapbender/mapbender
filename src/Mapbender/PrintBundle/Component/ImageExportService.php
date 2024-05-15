@@ -148,23 +148,6 @@ class ImageExportService
     }
 
     /**
-     * Builds a png image and emits it directly to the browser
-     *
-     * @param string $content the job description in valid JSON
-     * @return void
-     * @deprecated
-     *
-     * @todo: converting from JSON encoding is controller responsibility
-     * @todo: emitting to browser is controller responsibility
-     */
-    public function export($content)
-    {
-        $jobData = json_decode($content, true);
-        $image = $this->runJob($jobData);
-        $this->emitImageToBrowser($image, $jobData['format']);
-    }
-
-    /**
      * @param array $jobData
      * @return ExportCanvas
      */
@@ -295,19 +278,6 @@ class ImageExportService
         foreach ($effectiveLayers as $k => $layerDef) {
             $this->addImageLayer($canvas, $layerDef, $extent);
         }
-    }
-
-    /**
-     * @param resource $image GDish
-     * @param string $format
-     * @deprecated service layer should never do http
-     */
-    protected function emitImageToBrowser($image, $format)
-    {
-        $fileName = "export_" . date("YmdHis") . ($format === 'png' ? ".png" : 'jpg');
-        header("Content-Type: " . ImageExport::getMimetype($format));
-        header("Content-Disposition: attachment; filename={$fileName}");
-        echo $this->dumpImage($image, $format);
     }
 
     protected function getColor($color, $alpha, $image)

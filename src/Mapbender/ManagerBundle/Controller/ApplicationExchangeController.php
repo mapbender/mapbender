@@ -33,11 +33,11 @@ class ApplicationExchangeController extends AbstractController
     /**
      * Imports serialized application.
      *
-     * @ManagerRoute("/application/import", name="mapbender_manager_application_import", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
-    public function importAction(Request $request)
+    #[ManagerRoute('/application/import', name: 'mapbender_manager_application_import', methods: ['GET', 'POST'])]
+    public function import(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
         $job = new ImportJob();
@@ -72,11 +72,11 @@ class ApplicationExchangeController extends AbstractController
     /**
      * Copies an application
      *
-     * @ManagerRoute("/application/{slug}/copydirectly", name="mapbender_manager_application_copydirectly", requirements = { "slug" = "[\w-]+" }, methods={"GET"})
      * @param string $slug
      * @return Response
      */
-    public function copyDirectlyAction($slug)
+    #[ManagerRoute('/application/{slug}/copydirectly', name: 'mapbender_manager_application_copydirectly', requirements: ['slug' => '[\w-]+'], methods: ['GET'])]
+    public function copyDirectly($slug)
     {
         /** @var Application|null $sourceApplication */
         $sourceApplication = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -115,12 +115,12 @@ class ApplicationExchangeController extends AbstractController
 
     /**
      * Export application as json (direct link)
-     * @ManagerRoute("/application/{slug}/export", name="mapbender_manager_application_exportdirect", methods={"GET"})
      * @param Request $request
      * @param string $slug
      * @return Response
      */
-    public function exportdirectAction(Request $request, $slug)
+    #[ManagerRoute('/application/{slug}/export', name: 'mapbender_manager_application_exportdirect', methods: ['GET'])]
+    public function exportdirect($slug)
     {
         /** @var Application|null $application */
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -132,7 +132,7 @@ class ApplicationExchangeController extends AbstractController
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         $data = $this->exportHandler->exportApplication($application);
         $fileName = "{$application->getSlug()}.json";
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, Response::HTTP_OK, array(
             'Content-disposition' => "attachment; filename={$fileName}",
         ));
     }

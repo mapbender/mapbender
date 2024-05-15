@@ -14,24 +14,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LayertreeThemeCollectionType extends AbstractType implements EventSubscriberInterface
 {
-    public function getParent()
+    public function getParent(): string
     {
         return CollectionType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             // Run before collection ResizeFormListener preSetData

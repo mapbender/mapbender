@@ -11,7 +11,7 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - database permission can be migrated using `bin/console mapbender:security:migrate-from-acl`. Do that before executing the schema:update command, otherwise your old ACL tables will be gone
 - yaml permissions now follow a new structure, see [the development documentation](./docs/security/permission-system.md#yaml-applications)
 
-### Symfony updated to version 5.4 LTS
+### Symfony updated to version 6.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
   that the core mapbender requires are included now. If you're missing a symfony component, 
   check https://github.com/symfony/symfony/blob/5.4/composer.json#L58 for the dependency that might be needed and install 
@@ -41,8 +41,9 @@ Important: Execute the following commands in the specified order to upgrade (aft
 	- All classes inheriting from `AbstractController` must add the following within their `<service>` definition:
 
 ```xml
+<tag name="container.service_subscriber" />
 <call method="setContainer">
-    <argument type="service" id="service_container"/>
+    <argument type="service" id="Psr\Container\ContainerInterface"/>
 </call>
 ```
 
@@ -64,7 +65,7 @@ Important: Execute the following commands in the specified order to upgrade (aft
       these in the config/packages/doctrine.yaml file
 - parameter `app_secret` replaced by the environment variable `APP_SECRET`. Override it in your .env.local file. 
 - several configuration options added/replaced in the `parameters.yaml` file. Check the `parameters.yaml.dist` file and adjust your configuration accordingly
-
+- Annotation for symfony router and doctrine entities replaced by PHP native attributes. ([see screencast](https://symfonycasts.com/screencast/symfony6-upgrade/annotations-to-attributes))
 
 ### Twig: Updated from v2 to v3 (https://twig.symfony.com/doc/2.x/deprecated.html#tags)
 - for if -> replace by for | filter
@@ -77,6 +78,24 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - Some icon class names have changed. Refer to the migration guide linked above
 - Some icon styles are now only available for FontAwesome pro users. The open-source mapbender does not come with a
   FontAwesome pro license.
+
+### Assetic Framework: Updated from v2 to v3
+- [Migration Guide](https://github.com/assetic-php/assetic/blob/master/CHANGELOG-3.0.md)
+- Replaced sass compilation by supplied binaries for all platforms by [scssphp](https://github.com/scssphp/scssphp) (PHP-based compiler)
+- If you customized the `assetic.filter.scss.class` parameter, make sure to inherit from `Assetic\Filter\ScssphpFilter` now
+
+### Removed deprecated classes and methods
+- `Mapbender\CoreBundle\Component\Element`, `Mapbender\CoreBundle\Component\ElementInterface`, `Mapbender\CoreBundle\Element\BaseButton`, `Mapbender\CoreBundle\Element\Button`, `Mapbender\CoreBundle\Component\ElementHttpHandlerInterface`, `Mapbender\CoreBundle\Component\ElementBase\BoundEntityInterface`. `Mapbender\CoreBundle\Component\ElementBase\BoundSelfRenderingEntityInterface`, `Mapbender\CoreBundle\Component\ElementBase\MinimalBound`, `Mapbender\FrameworkBundle\Component\ElementShimFactory`, `Mapbender\FrameworkBundle\Component\ElementShim` : use `Mapbender\CoreBundle\Entity\Element\AbstractElementService` instead 
+- `Mapbender\CoreBundle\Component\MapbenderBundle`, `Mapbender\ManagerBundle\Component\ManagerBundle`: Extend from symfony's default bundle (`Symfony\Component\HttpKernel\Bundle\Bundle`), define your custom elements and templates by tagging them `mapbender.element` / `mapbender.application_template` 
+- `FOM\CoreBundle\Component\CSVResponse`: Use symfony's [CSVEncoder](https://github.com/symfony/symfony/blob/6.4/src/Symfony/Component/Serializer/Encoder/CsvEncoder.php)
+- `Mapbender\CoreBundle\Component\Source\TypeDirectoryService::getSourceService`: use `getConfigGenerator`
+- `Mapbender\CoreBundle\Component\ElementInventoryService::getAdjustedElementClassName`: use `getHandlingClassName`
+- `Mapbender\CoreBundle\Entity\Source::getValid`: always returned true
+- `Mapbender\CoreBundle\Element\Type\TargetElementType`: use `MapTargetType` or `ControlTargetType`
+- `Mapbender\WmsBundle\Component\VendorSpecificHandler::stripDynamic`: was unused 
+- `Mapbender\PrintBundle\Component\ImageExportService::export, ::emitImageToBrowser`: use handleRequest/dumpImage directly
+- `Mapbender\PrintBundle\Component\Service\PrintServiceBridge`: inject / access PrintService (service id "mapbender.print.service") and / or plugin host (service id "mapbender.print.plugin_host.service) directly
+- `autocomplete.js` from FOMCoreBundle: Use jQueryUI autocomplete instead
 
 ### Removed OpenLayers 2 support
 OpenLayers 2 support was deprecated in version 3.2 (July 2020) and is now removed from the core. If you were using OpenLayers >= 4

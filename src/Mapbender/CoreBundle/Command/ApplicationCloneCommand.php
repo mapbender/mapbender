@@ -5,15 +5,16 @@ namespace Mapbender\CoreBundle\Command;
 
 
 use Mapbender\CoreBundle\Entity\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('mapbender:application:clone')]
 class ApplicationCloneCommand extends AbstractApplicationTransportCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('mapbender:application:clone');
         $this->addArgument('slug', InputArgument::REQUIRED);
     }
 

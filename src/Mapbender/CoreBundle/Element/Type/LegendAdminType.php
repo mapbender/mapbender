@@ -10,7 +10,7 @@ class LegendAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(

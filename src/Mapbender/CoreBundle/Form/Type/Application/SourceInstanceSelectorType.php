@@ -22,7 +22,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setRequired(array(
@@ -53,7 +53,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer($this);
     }
@@ -71,7 +71,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         return $instances;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value && is_object($value)) {
             return $value->getId();
@@ -85,7 +85,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         return $value ?: null;
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         return $value;
     }

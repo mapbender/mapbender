@@ -41,7 +41,7 @@ class ApplicationContentExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'region_markup' => new TwigFunction('region_markup', array($this, 'region_markup')),

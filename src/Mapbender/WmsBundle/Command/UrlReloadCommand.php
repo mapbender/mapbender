@@ -4,17 +4,18 @@
 namespace Mapbender\WmsBundle\Command;
 
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('mapbender:wms:reload:url')]
 class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('mapbender:wms:reload:url')
             ->setDescription('Reloads a WMS source from given url')
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
             ->addOption(self::OPTION_DEACTIVATE_NEW_LAYERS, null, InputOption::VALUE_NONE, 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.')

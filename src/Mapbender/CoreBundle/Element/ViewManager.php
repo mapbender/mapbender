@@ -6,7 +6,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
@@ -83,7 +83,7 @@ class ViewManager extends AbstractElementService
     {
         $token = $this->tokenStorage->getToken();
         $config = $element->getConfiguration() + $this->getDefaultConfiguration();
-        if (!$token || ($token instanceof AnonymousToken)) {
+        if (!$token || ($token instanceof NullToken)) {
             if (empty($config['publicEntries'])) {
                 // No access to public entries; private entries undefined for anons
                 // => suppress markup entirely

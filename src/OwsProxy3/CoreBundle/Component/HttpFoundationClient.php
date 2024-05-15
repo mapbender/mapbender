@@ -63,7 +63,7 @@ class HttpFoundationClient extends CurlClientCommon
                     throw new ConnectionTimeoutException($curlError, $errorCode);
                 default:
                     // Uh-oh
-                    $response = Response::create('');
+                    $response = new Response('');
                     $response->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE, $curlError ?: null);
             }
         }
@@ -79,7 +79,7 @@ class HttpFoundationClient extends CurlClientCommon
     {
         $headerLength = strlen($rawResponse) - \curl_getinfo($ch, CURLINFO_SIZE_DOWNLOAD);
         $body = substr($rawResponse, $headerLength);
-        $response = Response::create($body, \curl_getinfo($ch, CURLINFO_HTTP_CODE));
+        $response = new Response($body, \curl_getinfo($ch, CURLINFO_HTTP_CODE));
         $responseHeaders = $this->parseResponseHeaders(substr($rawResponse, 0, $headerLength));
         $responseHeaders =  Utils::filterHeaders($responseHeaders, array(
             'transfer-encoding',

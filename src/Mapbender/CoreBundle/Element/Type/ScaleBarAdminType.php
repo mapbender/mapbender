@@ -9,7 +9,7 @@ class ScaleBarAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // @todo: add missing field labels
         $builder

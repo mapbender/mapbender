@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterElementServicesPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $inventoryDefinition = $container->getDefinition('mapbender.element_inventory.service');
         $registering = array();

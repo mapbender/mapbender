@@ -10,17 +10,14 @@ use Mapbender\CoreBundle\Entity\Keyword;
  * Source entity
  *
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_keyword_source")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_keyword_source')]
 class WmtsSourceKeyword extends Keyword
 {
-    
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource", inversedBy="keywords", cascade={"refresh"})
-     * @ORM\JoinColumn(name="reference_id", referencedColumnName="id")
-     */
+
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, cascade: ['refresh'], inversedBy: 'keywords')]
+    #[ORM\JoinColumn(name: 'reference_id', referencedColumnName: 'id')]
     protected $reference;
 
     /**

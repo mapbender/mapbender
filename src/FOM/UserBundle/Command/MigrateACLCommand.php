@@ -20,6 +20,7 @@ use FOM\UserBundle\Security\Permission\SubjectDomainUser;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Source;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Mapbender 4 introduced a new, simplified security system replacing Symfony's deprecated ACL bundle.
  * This command migrates most existing permissions
  */
+#[AsCommand(self::COMMAND)]
 class MigrateACLCommand extends Command
 {
     const COMMAND = 'mapbender:security:migrate-from-acl';
@@ -50,7 +52,7 @@ class MigrateACLCommand extends Command
         parent::__construct(self::COMMAND);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Migrates from Symfony ACL bundle to new mapbender security')
@@ -59,7 +61,6 @@ The symfony/acl-bundle is deprecated since Symfony 4.0 and since Mapbender 4 is 
 This commands converts existing permissions to the new system
 EOT
             )
-            ->setName(self::COMMAND)
         ;
     }
 

@@ -22,6 +22,20 @@ Mapbender.confirm = function (message) {
     return res;
 };
 
+Mapbender.restrictPopupPositioning = function($dialogElement) {
+    $dialogElement.on('dragstop', function (event, ui) {
+        let forcedX = null;
+        let forcedY = null;
+        let $target = $(event.target);
+        if (ui.position.top < 0) forcedY = 0;
+        if (ui.position.top > window.innerHeight - 50) forcedY = window.innerHeight - 50;
+        if (ui.position.left < 0) forcedX = 0;
+        if (ui.position.left > window.innerWidth - 50) forcedX = window.innerWidth - 50;
+        if (forcedX !== null) $target.css('left', forcedX);
+        if (forcedY !== null) $target.css('top', forcedY);
+    });
+};
+
 Mapbender.checkTarget = function (widgetName, target, targetname) {
     if (target === null || typeof (target) === 'undefined'
         || new String(target).replace(/^\s+|\s+$/g, '') === ""

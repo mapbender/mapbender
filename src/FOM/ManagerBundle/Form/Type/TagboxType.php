@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TagboxType extends AbstractType
 {
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
@@ -19,7 +19,7 @@ class TagboxType extends AbstractType
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
         $view->vars['translation_prefix'] = $options['translation_prefix'];

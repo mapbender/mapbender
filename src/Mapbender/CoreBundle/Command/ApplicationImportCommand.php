@@ -10,12 +10,14 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('mapbender:application:import')]
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
     /** @var boolean */
@@ -30,9 +32,8 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         $this->strictElementConfigs = $strictElementConfigs;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('mapbender:application:import');
         $this->addArgument('input', InputArgument::REQUIRED, 'File name (`-` for stdin) or directory');
     }
 

@@ -10,7 +10,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Welcome controller.
@@ -36,12 +36,9 @@ class WelcomeController extends AbstractController
 
     /**
      * Render user application list.
-     *
-     * @Route("/", methods={"GET"})
-     * @param Request $request
-     * @return Response
      */
-    public function listAction(Request $request)
+    #[Route(path: '/', methods: ['GET'])]
+    public function list(): Response
     {
         $yamlApplications = $this->yamlRepository->getApplications();
         $dbApplications = $this->doctrine->getRepository(Application::class)->findBy(array(), array(
@@ -50,13 +47,11 @@ class WelcomeController extends AbstractController
         /** @var Application[] $allApplications */
         $allApplications = array_merge($yamlApplications, $dbApplications);
         $allowedApplications = array();
-
         foreach ($allApplications as $application) {
             if ($this->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
                 $allowedApplications[] = $application;
             }
         }
-
         return $this->render('@MapbenderCore/Welcome/list.html.twig', array(
             'applications' => $allowedApplications,
             'create_permission' => $this->isGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS),

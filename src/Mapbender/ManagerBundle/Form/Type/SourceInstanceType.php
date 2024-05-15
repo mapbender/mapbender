@@ -10,12 +10,12 @@ use Symfony\Component\Validator\Constraints;
 
 class SourceInstanceType extends AbstractType
 {
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'source_instance';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

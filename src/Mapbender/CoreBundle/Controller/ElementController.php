@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ElementController extends YamlApplicationAwareController
 {
@@ -30,17 +30,14 @@ class ElementController extends YamlApplicationAwareController
      *
      * Passes the request to
      * the element's handleHttpRequest.
-     * @Route("/application/{slug}/element/{id}/{action}",
-     *     name="mapbender_core_application_element",
-     *     defaults={ "id" = null, "action" = null },
-     *     requirements={ "action" = ".+" })
      * @param Request $request
      * @param string $slug
      * @param string $id
      * @param string $action
      * @return Response
      */
-    public function elementAction(Request $request, $slug, $id, $action)
+    #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['id' => null, 'action' => null])]
+    public function element(Request $request, $slug, $id, string $action)
     {
         $application = $this->getApplicationEntity($slug);
         $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
@@ -64,12 +61,12 @@ class ElementController extends YamlApplicationAwareController
      * Only accessed via relative URL from script.
      * See mapbender.application.js _initElements method
      *
-     * @Route("/application/{slug}/elements", methods={"GET"})
      * @param Request $request
      * @param $slug
      * @return Response
      */
-    public function reloadMarkupAction(Request $request, $slug)
+    #[Route(path: '/application/{slug}/elements', methods: ['GET'])]
+    public function reloadMarkup(Request $request, $slug)
     {
         $application = $this->getApplicationEntity($slug);
         $idsParam = $request->query->get('ids', '');

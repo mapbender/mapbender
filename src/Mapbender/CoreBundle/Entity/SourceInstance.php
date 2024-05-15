@@ -4,42 +4,38 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
  * @author Karim Malhas
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
- *
- * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository")
- * @ORM\Table(name="mb_core_sourceinstance")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
  */
+#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository::class)]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
+#[ORM\Table(name: 'mb_core_sourceinstance')]
 abstract class SourceInstance extends SourceInstanceAssignment
 {
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $title
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $basesource = false;
 
     /**
      * @var ReusableSourceInstanceAssignment[]|Collection
-     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="instance", orphanRemoval=true, cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: 'instance', targetEntity: ReusableSourceInstanceAssignment::class, cascade: ['remove'], orphanRemoval: true)]
     protected $reusableassignments;
 
     final public function getInstance()

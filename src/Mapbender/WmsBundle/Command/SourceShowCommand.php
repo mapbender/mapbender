@@ -6,6 +6,7 @@ namespace Mapbender\WmsBundle\Command;
 
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,13 +14,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand('mapbender:wms:show')]
 class SourceShowCommand extends AbstractSourceCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('mapbender:wms:show')
             ->setDescription('Displays layer information of a persisted WMS source')
             ->addArgument('id', InputArgument::OPTIONAL, 'Id or url of the source. If omitted, all sources are shown')
             ->addOption('json', null, InputOption::VALUE_NONE, 'if set, output is formatted as json')

@@ -29,12 +29,12 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/new", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      * @throws \Exception
      */
-    public function createAction(Request $request)
+    #[ManagerRoute('/user/new', methods: ['GET', 'POST'])]
+    public function create(Request $request)
     {
         $userClass = $this->userEntityClass;
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_USERS);
@@ -45,12 +45,12 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/{id}/edit", methods={"GET", "POST"})
      * @param Request $request
      * @param string $id
      * @return Response
      */
-    public function editAction(Request $request, $id)
+    #[ManagerRoute('/user/{id}/edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, $id)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_USERS);
 
@@ -126,11 +126,11 @@ class UserController extends UserControllerBase
     }
 
     /**
-     * @ManagerRoute("/user/{id}/delete", methods={"POST"})
      * @param string $id
      * @return Response
      */
-    public function deleteAction(Request $request, $id)
+    #[ManagerRoute('/user/{id}/delete', methods: ['POST'])]
+    public function delete(Request $request, $id)
     {
         $user = $this->getUserRepository()->find($id);
 

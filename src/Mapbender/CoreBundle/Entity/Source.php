@@ -9,17 +9,13 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  * Source entity
  *
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_source")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string", length=15)
- * @ORM\DiscriminatorMap({
- *     "wmssource"="\Mapbender\WmsBundle\Entity\WmsSource",
- *     "wmtssource"="\Mapbender\WmtsBundle\Entity\WmtsSource"
- * })
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 15)]
+#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource', 'wmtssource' => '\Mapbender\WmtsBundle\Entity\WmtsSource'])]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'mb_core_source')]
 abstract class Source implements MutableHttpOriginInterface
 {
     const TYPE_WMS = "WMS";
@@ -28,33 +24,31 @@ abstract class Source implements MutableHttpOriginInterface
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $title;
 
     /**
      * @var string $alias The source alias
-     * @ORM\Column(type="string", length=128, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
     protected $alias = "";
 
     /**
      * @var string $description The source description
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $description;
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $type;
 
     public function __construct()
@@ -167,15 +161,6 @@ abstract class Source implements MutableHttpOriginInterface
     }
 
     /**
-     * @return boolean
-     * @deprecated always returns true
-     */
-    public function getValid()
-    {
-        return true;
-    }
-
-    /**
      * Returns a Source as String
      *
      * @return String Source as String
@@ -214,9 +199,7 @@ abstract class Source implements MutableHttpOriginInterface
      */
     abstract public function getViewTemplate($frontend = false);
 
-    /**
-     * @ORM\PostLoad()
-     */
+    #[ORM\PostLoad]
     public function postLoad()
     {
         if (!$this->type) {

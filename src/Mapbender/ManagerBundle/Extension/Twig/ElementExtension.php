@@ -17,7 +17,7 @@ class ElementExtension extends AbstractExtension
         return 'mbmanager_element';
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'is_map_element' => new TwigFunction('is_map_element', array($this, 'is_map_element')),

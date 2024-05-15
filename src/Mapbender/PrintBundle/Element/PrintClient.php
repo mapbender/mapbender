@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -325,7 +325,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 $displayInline = true;
                 $filename = $this->generateFilename($element);
 
-                $response = new Response($pdfBody, 200, array(
+                $response = new Response($pdfBody, Response::HTTP_OK, array(
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
                 ));
@@ -344,7 +344,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                     $rawData = $this->extractRequestData($request);
                     $jobData = $this->preparePrintData($rawData, $configuration);
                     $queuePlugin->putJob($jobData, $this->generateFilename($element));
-                    return new Response('', 204);
+                    return new Response('', Response::HTTP_NO_CONTENT);
                 } else {
                     throw new NotFoundHttpException();
                 }
@@ -497,13 +497,13 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         );
         $fomGroups = array();
         $token = $this->tokenStorage->getToken();
-        if ($token && !$token instanceof AnonymousToken) {
+        if ($token && !$token instanceof NullToken) {
             $user = $token->getUser();
             // getUser's return value can be a lot of different things
             if (is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
                 $values = array_replace($values, array(
                     'userId' => $user->getId(),
-                    'userName' => $user->getUsername(),
+                    'userName' => $user->getUserIdentifier(),
                 ));
                 $fomGroups = $user->getGroups() ?: array();
                 if (is_object($fomGroups) && ($fomGroups instanceof Collection)) {
@@ -511,7 +511,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 }
             } elseif (is_object($user) && ($user instanceof UserInterface)) {
                 $values = array_replace($values, array(
-                    'userName' => $user->getUsername(),
+                    'userName' => $user->getUserIdentifier(),
                 ));
             } elseif ($user) {
                 // b) an object with a __toString method or just a string

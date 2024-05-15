@@ -7,26 +7,26 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class SearchRouterRouteTransformer implements DataTransformerInterface
 {
-    public function transform($configuration)
+    public function transform($value): array
     {
-        if (!$configuration) {
+        if (!$value) {
             return array();
         }
-        $title = !empty($configuration['title']) ? $configuration['title'] : '';
-        unset($configuration['title']);
+        $title = !empty($value['title']) ? $value['title'] : '';
+        unset($value['title']);
         return array(
             'title' => $title,
-            'configuration' => $configuration,
+            'configuration' => $value,
         );
     }
 
-    public function reverseTransform($data)
+    public function reverseTransform($value): array
     {
-        if (!$data) {
+        if (!$value) {
             return array();
         }
-        return ($data['configuration'] ?: array()) + array(
-            'title' => $data['title'] ?: '',
+        return ($value['configuration'] ?: array()) + array(
+            'title' => $value['title'] ?: '',
         );
     }
 }

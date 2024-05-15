@@ -202,10 +202,6 @@ class ElementMarkupRenderer
         if (\is_a($handling, ButtonLike::class, true)) {
             return true;
         }
-        $legacyBtn = 'Mapbender\CoreBundle\Element\BaseButton';
-        if (ClassUtil::exists($legacyBtn) && \is_a($handling, $legacyBtn, true)) {
-            return true;
-        }
         return false;
     }
 

@@ -32,7 +32,7 @@ class AutoMimeResponseFile extends File
         'svg' => 'image/svg+xml',
     );
 
-    public function getMimeType()
+    public function getMimeType(): ?string
     {
         if ($mime = $this->guessMimeTypeFromExtension($this->getExtension())) {
             return $mime;

@@ -25,12 +25,12 @@ class ApplicationChoiceType extends AbstractType
         $this->dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return ChoiceType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $type = $this;
         $resolver->setDefaults(array(

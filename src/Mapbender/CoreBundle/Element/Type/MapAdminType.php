@@ -27,7 +27,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'application' => null,
@@ -37,7 +37,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer($this);
         $builder
@@ -85,7 +85,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
         ;
     }
 
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value) {
             if (array_key_exists('otherSrs', $value) && is_array($value['otherSrs'])) {
@@ -102,7 +102,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
         }
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value) {
             if (array_key_exists('otherSrs', $value) && !is_array($value['otherSrs'])) {

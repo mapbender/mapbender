@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Controller\SourceInstanceController;
 use Mapbender\WmsBundle\Component\Wms\Importer;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Console command mapbender:wms:assign
  */
+#[AsCommand('mapbender:wms:assign')]
 class SourceAssignCommand extends AbstractSourceCommand
 {
     public function __construct(private SourceInstanceController $sourceInstanceController, ManagerRegistry $managerRegistry, Importer $importer)
@@ -29,11 +31,10 @@ class SourceAssignCommand extends AbstractSourceCommand
     public const ARGUMENT_SOURCE = "source";
     public const ARGUMENT_LAYERSET = "layerset";
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
-            ->setName('mapbender:wms:assign')
             ->setDescription('Assigns a WMS source to an application')
             ->addArgument(self::ARGUMENT_APPLICATION, InputArgument::REQUIRED, "id or slug of the application")
             ->addArgument(self::ARGUMENT_SOURCE, InputArgument::REQUIRED, "id of the wms source")

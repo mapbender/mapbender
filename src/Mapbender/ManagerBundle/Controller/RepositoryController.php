@@ -2,7 +2,6 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -30,12 +29,12 @@ use Symfony\Component\HttpFoundation\Response;
  * @author  Andreas Schmitz <andreas.schmitz@wheregroup.com>
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
- * @ManagerRoute("/repository")
  */
+#[ManagerRoute("/repository")]
 class RepositoryController extends ApplicationControllerBase
 {
-    public function __construct(protected TypeDirectoryService        $typeDirectory,
-                                EntityManagerInterface                $em)
+    public function __construct(protected TypeDirectoryService $typeDirectory,
+                                EntityManagerInterface         $em)
     {
         parent::__construct($em);
     }
@@ -43,10 +42,10 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * Renders the layer service repository.
      *
-     * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction()
+    #[ManagerRoute('/', methods: ['GET'])]
+    public function index()
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $repository = $this->em->getRepository(Source::class);
@@ -76,11 +75,11 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/new", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
-    public function newAction(Request $request)
+    #[ManagerRoute('/new', methods: ['GET', 'POST'])]
+    public function new(Request $request)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
 
@@ -131,11 +130,11 @@ class RepositoryController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/source/{sourceId}", methods={"GET"})
      * @param string $sourceId
      * @return Response
      */
-    public function viewAction($sourceId)
+    #[ManagerRoute('/source/{sourceId}', methods: ['GET'])]
+    public function view($sourceId)
     {
         /** @var Source|null $source */
         $source = $this->em->getRepository(Source::class)->find($sourceId);
@@ -162,12 +161,12 @@ class RepositoryController extends ApplicationControllerBase
 
     /**
      * Deletes a Source (POST) or renders confirmation markup (GET)
-     * @ManagerRoute("/source/{sourceId}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param string $sourceId
      * @return Response
      */
-    public function deleteAction(Request $request, $sourceId)
+    #[ManagerRoute('/source/{sourceId}/delete', methods: ['GET', 'POST', 'DELETE'])]
+    public function delete(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
@@ -221,12 +220,12 @@ class RepositoryController extends ApplicationControllerBase
     /**
      * Returns a Source update form.
      *
-     * @ManagerRoute("/source/{sourceId}/update", methods={"GET", "POST"})
      * @param Request $request
      * @param string $sourceId
      * @return Response
      */
-    public function updateformAction(Request $request, $sourceId)
+    #[ManagerRoute('/source/{sourceId}/update', methods: ['GET', 'POST'])]
+    public function updateform(Request $request, $sourceId)
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES);

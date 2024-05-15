@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Command;
 
 use Mapbender\Component\BaseSourceLoaderSettings;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,13 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Console command mapbender:wms:reload:file
  */
+#[AsCommand('mapbender:wms:reload:file')]
 class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('mapbender:wms:reload:file')
             ->setDescription('Reloads a WMS source from given capabilities document file')
             ->addArgument('id', InputArgument::REQUIRED, 'Id of the source')
             ->addArgument('path', InputArgument::REQUIRED)

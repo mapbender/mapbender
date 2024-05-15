@@ -35,7 +35,7 @@ class ElementExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'element_class_title' => new TwigFunction('element_class_title', array($this, 'element_class_title')),
@@ -46,7 +46,7 @@ class ElementExtension extends AbstractExtension
     }
 
     /**
-     * 
+     *
      * @param Element $element
      * @return string|null
      */

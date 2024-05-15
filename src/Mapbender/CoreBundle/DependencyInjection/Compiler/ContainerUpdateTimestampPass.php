@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ContainerUpdateTimestampPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $now = microtime(true);
         $container->setParameter('container.compilation_timestamp_float', $now);

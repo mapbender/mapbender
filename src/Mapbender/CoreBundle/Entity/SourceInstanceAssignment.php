@@ -6,27 +6,23 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Collections\WeightSortedCollectionMember;
 
-/**
- * @ORM\MappedSuperclass()
- */
+#[ORM\MappedSuperclass]
 abstract class SourceInstanceAssignment implements WeightSortedCollectionMember
 {
     /**
      * @var Layerset|null
-     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="layerset", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: Layerset::class, cascade: ['refresh'], inversedBy: 'instances')]
+    #[ORM\JoinColumn(name: 'layerset', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected $layerset;
 
     /**
      * @var integer $weight The sorting weight for display
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     protected $weight;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     protected $enabled = true;
 
     /**

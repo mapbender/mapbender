@@ -32,7 +32,7 @@ class ApplicationExtension extends AbstractExtension
         return 'mapbender_application';
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'application_screenshot_path' => new TwigFunction('application_screenshot_path', array($this, 'application_screenshot_path')),

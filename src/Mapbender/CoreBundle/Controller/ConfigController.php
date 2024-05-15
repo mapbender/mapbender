@@ -10,7 +10,7 @@ use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ConfigController extends YamlApplicationAwareController
 {
@@ -31,12 +31,11 @@ class ConfigController extends YamlApplicationAwareController
 
     /**
      *
-     * @Route("/application/{slug}/config",
-     *     name="mapbender_core_application_configuration")
      * @param string $slug
      * @return Response
      */
-    public function configurationAction($slug)
+    #[Route(path: '/application/{slug}/config', name: 'mapbender_core_application_configuration')]
+    public function configuration($slug)
     {
         $applicationEntity = $this->getApplicationEntity($slug);
         $cacheKeyPath = array('config.json');

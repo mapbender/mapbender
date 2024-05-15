@@ -24,7 +24,10 @@ class ApplicationUtil
     {
         $mapElements = [];
         foreach ($application->getElements() as $element) {
-            if ($element instanceof MainMapElementInterface) $mapElements[] = $element;
+            $className = $element->getClass();
+            if ($className && \class_exists($className) && \is_a($className, MainMapElementInterface::class, true)) {
+                $mapElements[] = $element;
+            }
         }
         return $mapElements;
     }

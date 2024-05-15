@@ -1,9 +1,9 @@
 ## next major release (v4.0)
 Breaking changes (for details on migration process see UPGRADING.md):
-* PHP 8.0 is now the minimum supported PHP version
+* PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
-* Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
+* Symfony updated to version 6.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
@@ -13,7 +13,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 
 Features:
 * fix sorting issue in layertree (https://github.com/mapbender/mapbender/issues/1567) ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
-* PHP 8.2 is now fully supported.
+* PHP 8.2 and PHP 8.3 are now fully supported.
 * New permission system to replace symfony's deprecated ACL bundle. ([PR#1579](https://github.com/mapbender/mapbender/pull/1579)) 
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
