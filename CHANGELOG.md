@@ -38,6 +38,7 @@ Bugfixes:
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* [FeatureInfo] Allow usage in side-pane ([PR#1582](https://github.com/mapbender/mapbender/pull/1582))
 * Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * Dropdown Element can now handle two options with the same value ([PR#1557](https://github.com/mapbender/mapbender/pull/1557))

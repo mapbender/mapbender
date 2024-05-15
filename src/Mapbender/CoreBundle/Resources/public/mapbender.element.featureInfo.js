@@ -15,6 +15,7 @@
             height: 500
         },
         mbMap: null,
+        isPopup: true,
         popup: null,
         mobilePane: null,
         isActive: false,
@@ -56,37 +57,40 @@
 
 
         _setup: function (mbMap) {
-            var widget = this;
-            var options = widget.options;
+            this.isPopup = Mapbender.ElementUtil.checkDialogMode(this.element);
             this.mbMap = mbMap;
             this._setupMapClickHandler();
-            if (options.autoActivate || options.autoOpen) { // autoOpen old configuration
-                widget.activate();
+            if (this.options.autoActivate || this.options.autoOpen) { // autoOpen old configuration
+                this.activate();
             }
 
-            if (options.highlighting) {
+            if (this.options.highlighting) {
                 this.highlightLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({}),
                     style: this._createLayerStyle()
                 });
 
                 this.mbMap.getModel().olMap.addLayer(this.highlightLayer);
-                window.addEventListener("message", function (message) {
-                    widget._postMessage(message);
-                });
+                window.addEventListener("message", (message) => this._postMessage(message));
                 this._createHighlightControl();
             }
 
             $(document).bind('mbmapsourcechanged', this._reorderTabs.bind(this));
             $(document).bind('mbmapsourcesreordered', this._reorderTabs.bind(this));
 
-            widget._trigger('ready');
+            this._trigger('ready');
         },
         /**
          * Default action for mapbender element
          */
         defaultAction: function (callback) {
             this.activate(callback);
+        },
+        reveal: function () {
+            this.activate();
+        },
+        hide: function () {
+            this.hide();
         },
         activate: function (callback) {
             this.callback = callback;
@@ -190,17 +194,15 @@
                 };
                 ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
             }
-            var request = $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
-                var data_ = data;
+            return $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
                 var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                data_ = $.trim(data_);
+                const data_ = $.trim(data);
                 if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
                     return self.formatResponse_(source, data_, mimetype);
                 }
             }, function (jqXHR, textStatus, errorThrown) {
                 Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
             });
-            return request;
         },
         _isDataValid: function (data, mimetype) {
             switch (mimetype.toLowerCase()) {
@@ -223,36 +225,38 @@
             }
         },
         _open: function () {
-            var widget = this;
-            var options = widget.options;
-            if (!this.mobilePane.length) {
-                if (!widget.popup || !widget.popup.$element) {
-                    if (this.highlightLayer) {
-                        this.highlightLayer.getSource().clear();
-                    }
-                    widget.popup = new Mapbender.Popup2({
-                        title: widget.element.attr('data-title'),
-                        draggable: true,
-                        modal: false,
-                        closeOnESC: false,
-                        detachOnClose: false,
-                        content: this.element,
-                        resizable: true,
-                        cssClass: 'featureinfoDialog',
-                        width: options.width,
-                        height: options.height,
-                        buttons: this._getPopupButtonOptions()
-                    });
-                    widget.popup.$element.on('close', function () {
-                        widget._close();
-                    });
-                }
-                widget.popup.$element.show();
-            } else {
+            if (this.highlightLayer) {
+                this.highlightLayer.getSource().clear();
+            }
+
+            if (this.mobilePane.length) {
                 $(document).trigger('mobilepane.switch-to-element', {
                     element: this.element
                 });
+                return;
             }
+
+            if (!this.isPopup) return; // no intialization necessary for sidepane
+
+            if (!this.popup || !this.popup.$element) {
+                this.popup = new Mapbender.Popup2({
+                    title: this.element.attr('data-title'),
+                    draggable: true,
+                    modal: false,
+                    closeOnESC: false,
+                    detachOnClose: false,
+                    content: this.element,
+                    resizable: true,
+                    cssClass: 'featureinfoDialog',
+                    width: this.options.width,
+                    height: this.options.height,
+                    buttons: this._getPopupButtonOptions()
+                });
+                this.popup.$element.on('close', function () {
+                    this._close();
+                });
+            }
+            this.popup.$element.show();
         },
         _hide: function () {
             if (this.popup && this.popup.$element) {
@@ -267,8 +271,14 @@
             }
         },
         _handleZeroResponses: function () {
-            // @todo mobile-style display: no popup, cannot hide popup; show placeholder text instead
-            this._hide();
+            this.element.find('.-js-placeholder').addClass("hidden");
+
+            if (this.popup) {
+                this._hide();
+            } else {
+                this.element.find('.-js-no-content').removeClass("hidden");
+                this.element.find('.js-content-parent').addClass("hidden");
+            }
         },
         /**
          * @returns {Array<Object>}
@@ -346,6 +356,10 @@
             $content.attr('data-url', url);
         },
         showResponseContent_: function (source, content) {
+            this.element.find('.-js-no-content').addClass("hidden");
+            this.element.find('.js-content-parent').removeClass("hidden");
+            this.element.find('.-js-placeholder').addClass("hidden");
+
             var headerId = this._getHeaderId(source);
             var $header = $('#' + headerId, this.element);
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
@@ -497,7 +511,7 @@
             ];
             return parts.join('');
         },
-        _reorderTabs: function() {
+        _reorderTabs: function () {
             // the model sources contain all sources in the order they are currently displayed on the map
             // this matches the order in the layer tree
             const sources = this.mbMap.getModel().getSources();
@@ -510,7 +524,7 @@
             const $container = $('.tabContainer > .tabs, .accordionContainer', this.element);
             const $tabs = $container.children();
             // sort tabs (or accordion panels) by comparing their position using the previously created map
-            const $sortedTabs = $tabs.sort(function(a, b) {
+            const $sortedTabs = $tabs.sort(function (a, b) {
                 const orderA = sourcesOrderMap[$(a).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 const orderB = sourcesOrderMap[$(b).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 return orderB - orderA;
