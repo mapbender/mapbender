@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -254,7 +254,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     {
         $token = $this->tokenStorage->getToken();
         $user = $token->getUser();
-        if (!$token || $token instanceof AnonymousToken || !$user) {
+        if (!$token || $token instanceof NullToken || !$user) {
             return null;
         }
         if ($user instanceof UserInterface) {

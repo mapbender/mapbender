@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\SourceMetadata;
 
 /**
  * @author Karim Malhas

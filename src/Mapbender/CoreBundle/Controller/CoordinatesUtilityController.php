@@ -14,12 +14,8 @@ use Mapbender\CoreBundle\Entity\SRS;
 
 class CoordinatesUtilityController
 {
-    /** @var ManagerRegistry|\Symfony\Bridge\Doctrine\RegistryInterface */
-    protected $doctrineRegistry;
-
-    public function __construct($doctrineRegistry)
+    public function __construct(protected ManagerRegistry $doctrineRegistry)
     {
-        $this->doctrineRegistry = $doctrineRegistry;
     }
 
     /**

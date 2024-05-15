@@ -17,6 +17,7 @@ use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,8 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
 #[ManagerRoute("/repository")]
 class RepositoryController extends ApplicationControllerBase
 {
-    public function __construct(protected TypeDirectoryService        $typeDirectory,
-                                EntityManagerInterface                $em)
+    public function __construct(protected TypeDirectoryService $typeDirectory,
+                                EntityManagerInterface         $em)
     {
         parent::__construct($em);
     }

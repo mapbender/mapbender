@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\UserLogEntry;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 
 /**

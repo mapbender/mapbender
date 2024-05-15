@@ -6,12 +6,9 @@ namespace FOM\UserBundle\Security\Authentication;
 
 use FOM\UserBundle\EventListener\FailedLoginListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Core\AuthenticationEvents;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
-use Symfony\Component\Security\Core\Event\AuthenticationFailureEvent;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Security\Core\Exception\AccountExpiredException;
-use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 
 /**
@@ -37,15 +34,7 @@ class AccountStatusCheckSubscriber implements EventSubscriberInterface
 
     public function onAuthenticationSuccess(AuthenticationEvent $evt)
     {
-        try {
-            $this->check($evt);
-        } catch (AccountStatusException $e) {
-            if ($this->loggingFailureSubscriber && \method_exists($this->loggingFailureSubscriber, 'onLoginFailure')) {
-                $failureEvent = new AuthenticationFailureEvent($evt->getAuthenticationToken(), $e);
-                $this->loggingFailureSubscriber->onLoginFailure($failureEvent);
-            }
-            throw $e;
-        }
+        $this->check($evt);
     }
 
     public function check(AuthenticationEvent $evt)

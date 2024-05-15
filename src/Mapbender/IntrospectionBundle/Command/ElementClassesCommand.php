@@ -6,7 +6,6 @@ namespace Mapbender\IntrospectionBundle\Command;
 
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\Element\ElementServiceInterface;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\Component\BundleUtil;
 use Mapbender\CoreBundle\Entity\Application;
@@ -308,23 +307,18 @@ class ElementClassesCommand extends Command
      */
     protected function formatAdminTemplateInfo($element)
     {
-        $refl = new \ReflectionClass($element->getClass());
-        /** @var ElementInterface|string $className */
         $className = $element->getClass();
-        $template = $className::getFormTemplate();
-        $abstractBaseClass = 'Mapbender\CoreBundle\Component\Element';
+        $refl = new \ReflectionClass($className);
         $templateMethod = $refl->getMethod('getFormTemplate');
-        $isAuto = $templateMethod->class === $abstractBaseClass;
-        return $this->formatTemplatePath($element, $template, $isAuto);
+        return $this->formatTemplatePath($element, $templateMethod->invoke(null));
     }
 
     /**
      * @param Element $element
      * @param string $path twig-style
-     * @param bool $isAutomatic
      * @return string
      */
-    protected function formatTemplatePath($element, $path, $isAutomatic)
+    protected function formatTemplatePath($element, $path)
     {
         $templateBundle = BundleUtil::extractBundleNameFromTemplatePath($path);
         $elementBundle = BundleUtil::extractBundleNameFromClassName($element->getClass());
@@ -337,11 +331,7 @@ class ElementClassesCommand extends Command
         if (!$this->templateExists($path)) {
             $info = "<error>{$info}</error>";
         }
-        if ($isAutomatic) {
-            return "{$info} <comment>(auto)</comment>";
-        } else {
-            return $info;
-        }
+        return $info;
     }
 
     /**

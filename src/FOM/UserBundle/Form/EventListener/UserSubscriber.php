@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 use FOM\UserBundle\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -89,7 +89,7 @@ class UserSubscriber implements EventSubscriberInterface
     protected function getCurrentUser()
     {
         $token = $this->tokenStorage->getToken();
-        if (!($token instanceof AnonymousToken)) {
+        if (!($token instanceof NullToken)) {
             $user = $token->getUser();
             if (is_object($user) && ($user instanceof User)) {
                 return $user;

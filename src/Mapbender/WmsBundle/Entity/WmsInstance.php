@@ -9,7 +9,6 @@ use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory;
-use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
  * @author Paul Schmidt

@@ -15,7 +15,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
  * @method WmsInstance getSourceInstance
  * @method WmsLayerSource getSourceItem
  */
-#[ORM\Entity(repositoryClass: \WmsInstanceLayerRepository::class)]
+#[ORM\Entity(repositoryClass: WmsInstanceLayerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_wms_wmsinstancelayer')]
 class WmsInstanceLayer extends SourceInstanceItem
