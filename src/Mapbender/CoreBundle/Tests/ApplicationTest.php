@@ -26,14 +26,14 @@ class ApplicationTest extends TestBase
     #[Group("functional")]
     public function testLoginForm()
     {
-        $client = $this->getClient()->request('GET', '/user/login');
+        $client = $this->getBrowser()->request('GET', '/user/login');
         $this->assertTrue($client->filterXPath('//*[contains(text(), "Login")]')->count() > 0);
     }
 
     #[Group("functional")]
     public function testPublicYamlApplicationAccess()
     {
-        $client = $this->getClient();
+        $client = $this->getBrowser();
         foreach ($this->getYamlApplications() as $application) {
             $yamlRoles = $application->getYamlRoles();
             if (empty($yamlRoles) || (count($yamlRoles) === 1 && $yamlRoles[0] === YamlApplicationVoter::ROLE_PUBLIC)) {
