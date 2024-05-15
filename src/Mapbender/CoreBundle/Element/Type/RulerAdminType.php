@@ -35,6 +35,7 @@ class RulerAdminType extends AbstractType
                     'choices' => array(
                         "mb.core.ruler.tag.line" => "line",
                         "mb.core.ruler.tag.area" => "area",
+                        "mb.core.ruler.tag.both" => "both",
                     ),
                 ))
             ->add('help', TextType::class, $this->createInlineHelpText([

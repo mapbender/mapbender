@@ -187,6 +187,7 @@ mb:
       tag:
         line: line
         area: area
+        both: user-selectable
         measure: measure
       help: 'Double-click to end drawing'
       admin:

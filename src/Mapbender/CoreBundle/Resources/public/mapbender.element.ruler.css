@@ -1,0 +1,9 @@
+.mb-ruler__radiobuttons {
+    margin-bottom: 10px;
+}
+.mb-ruler__radiobuttons label {
+    display: block;
+}
+.mb-ruler__radiobuttons input {
+    margin-right: 5px;
+}
