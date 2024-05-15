@@ -288,7 +288,7 @@
             <tag name="mapbender.icon_package" priority="-2" />
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
-            <tag name="doctrine.event_listener" event="postConnect" />
+            <tag name="doctrine.middleware" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
         <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine" public="true">
