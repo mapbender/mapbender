@@ -30,16 +30,20 @@ class Ruler extends AbstractElementService
      */
     public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
-            ),
-            'css' => array(),
-            'trans' => array(
+            ],
+            'css' => [
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.css',
+            ],
+            'trans' => [
                 'mb.core.ruler.create_error',
                 'mb.core.ruler.help',
-            ),
-        );
+                'mb.core.ruler.tag.line',
+                'mb.core.ruler.tag.area',
+            ],
+        ];
     }
 
     /**

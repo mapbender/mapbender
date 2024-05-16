@@ -19,10 +19,11 @@
         popup: null,
         layer: null,
         mapModel: null,
+        isDialog: true,
 
         _create: function () {
             var self = this;
-            if (this.options.type !== 'line' && this.options.type !== 'area') {
+            if (this.options.type !== 'line' && this.options.type !== 'area' && this.options.type !== 'both') {
                 throw Mapbender.trans("mb.core.ruler.create_error");
             }
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
@@ -70,7 +71,7 @@
                 color: this.options.strokeColor,
             }));
 
-            this.layer.getNativeLayer().setStyle(function(feature) {
+            this.layer.getNativeLayer().setStyle(function (feature) {
                 return this._getStyle(feature, true);
             }.bind(this));
 
@@ -113,22 +114,49 @@
             return style;
         },
         _setup: function (mbMap) {
-            var self = this;
+            this.isDialog = Mapbender.ElementUtil.checkDialogMode(this.element);
             this.mapModel = mbMap.getModel();
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            this.createContentContainer();
             this.control = this._createControl();
-            this.container = $('<div/>');
-            this.help = $('<p/>').text(Mapbender.trans(this.options.help));
-            this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
-            this.segments = $('<ul/>');
-            this.segments.append()
-            if (this.options.help) this.container.append(this.help);
-            this.container.append(this.total);
-            this.container.append(this.segments);
 
             $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
 
             this._trigger('ready');
+        },
+        createContentContainer: function() {
+            this.container = $('<div/>');
+            this.total = $('<div/>').addClass('total-value').css({'font-weight': 'bold'});
+            this.segments = $('<ul/>');
+            this.segments.append();
+            if (this.options.type === 'both') {
+                const $buttonContainer = $(document.createElement("div")).attr("class", "mb-ruler__radiobuttons");
+                $buttonContainer.append(this.createRadioButton("line", true));
+                $buttonContainer.append(this.createRadioButton("area"));
+                this.container.append($buttonContainer);
+                this.options.type = "line";
+            }
+            if (this.options.help) {
+                const help = $('<p/>').text(Mapbender.trans(this.options.help));
+                this.container.append(help);
+            }
+            this.container.append(this.total);
+            this.container.append(this.segments);
+        },
+        createRadioButton: function (type, checked) {
+            const radioLine = $(document.createElement("input"))
+                .attr("type", "radio")
+                .attr("name", "draw_type")
+                .attr("checked", checked)
+                .on('click', () => {
+                    if (this.options.type === type) return;
+                    this.options.type = type;
+                    this._reset();
+                    this.mapModel.olMap.removeInteraction(this.control);
+                    this.control = this._createControl();
+                    this.mapModel.olMap.addInteraction(this.control);
+                });
+            return $("<label />").append(radioLine).append(Mapbender.trans("mb.core.ruler.tag." + type));
         },
         /**
          * Default action for mapbender element
@@ -148,12 +176,24 @@
                 this.layer.hide();
             }
         },
+        reveal: function () {
+            this.activate();
+        },
+        hide: function () {
+            this.deactivate();
+        },
         activate: function (callback) {
             this.callback = callback ? callback : null;
-            var self = this;
             this._toggleControl(true);
 
             this._reset();
+            if (this.isDialog) {
+                this.showPopup();
+            } else {
+                this.element.append(this.container);
+            }
+        },
+        showPopup: function () {
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
                     title: this.element.attr('data-title'),
@@ -162,7 +202,7 @@
                     resizable: true,
                     closeOnESC: true,
                     destroyOnClose: true,
-                    content: self.container,
+                    content: this.container,
                     width: 300,
                     height: 300,
                     buttons: [
@@ -251,16 +291,14 @@
             var calcOptions = {
                 projection: this.mapModel.getCurrentProjectionCode()
             };
-            // Openlayers 6 special: ol.Sphere namespace renamed to lowercase ol.sphere
-            var sphereNamespace = (ol.Sphere || ol.sphere);
             switch (type) {
                 case 'line':
-                    return sphereNamespace.getLength(geometry, calcOptions);
+                    return ol.sphere.getLength(geometry, calcOptions);
                 default:
                     console.warn("Unsupported geometry type in measure calculation", type, feature);
                 // fall through to area
                 case 'area':
-                    return sphereNamespace.getArea(geometry, calcOptions);
+                    return ol.sphere.getArea(geometry, calcOptions);
             }
         },
 

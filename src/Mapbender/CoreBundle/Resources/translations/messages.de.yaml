@@ -187,6 +187,7 @@ mb:
       tag:
         line: Linie
         area: Fläche
+        both: 'Vom Nutzer auswählbar'
         measure: Messen
       help: 'Doppelklicken zum Beenden'
       admin:
