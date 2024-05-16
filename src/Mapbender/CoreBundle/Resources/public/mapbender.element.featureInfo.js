@@ -90,7 +90,7 @@
             this.activate();
         },
         hide: function () {
-            this.hide();
+            this.deactivate();
         },
         activate: function (callback) {
             this.callback = callback;
