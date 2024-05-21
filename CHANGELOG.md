@@ -32,12 +32,14 @@ Features:
 * [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
 * [Map] visiblelayers parameter now supports also rootlayer and layer name (not only sourceinstanceid, instanceid) ([PR#1565](https://github.com/mapbender/mapbender/pull/1565))
 * [SearchRouter] Sorting for searchresults table ([PR#1572](https://github.com/mapbender/mapbender/pull/1572))
+* [Ruler] Add option to make type user-selectable ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* [Ruler] Allow usage in side-pane ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
 * [FeatureInfo] Allow usage in side-pane ([PR#1582](https://github.com/mapbender/mapbender/pull/1582))
 * Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))

@@ -223,6 +223,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
+                    '/components/datatables/media/js/dataTables.bootstrap4.min.js',
                     '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
@@ -248,6 +249,7 @@ class ApplicationAssetService
             case 'css':
                 return [
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
+                    '/components/datatables/media/css/dataTables.bootstrap4.min.css',
                 ];
         }
         return [];
