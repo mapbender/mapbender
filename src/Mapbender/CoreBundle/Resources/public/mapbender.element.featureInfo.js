@@ -252,9 +252,7 @@
                     height: this.options.height,
                     buttons: this._getPopupButtonOptions()
                 });
-                this.popup.$element.on('close', function () {
-                    this._close();
-                });
+                this.popup.$element.on('close', () => this._close());
             }
             this.popup.$element.show();
         },
