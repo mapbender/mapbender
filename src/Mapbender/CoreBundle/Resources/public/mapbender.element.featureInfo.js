@@ -216,8 +216,8 @@
         },
         formatResponse_: function (source, data, mimetype) {
             if (mimetype.toLowerCase() === 'text/html') {
-                var script = this._getInjectionScript(source.id);
-                var $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads">');
+                const script = this._getInjectionScript(source.id);
+                const $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" class="iframe--responsive">');
                 $iframe.attr("srcdoc", [script, data].join(''));
                 return $iframe.get();
             } else {
@@ -300,8 +300,8 @@
             return buttons;
         },
         _removeContent: function (source) {
-            $('[data-source-id="' + source.id + '"]', this.element).addClass('hidden');
-            $('.js-content-content[data-source-id="' + source.id + '"]', this.element).empty();
+            $('[data-source-id="' + source.id + '"]', this.element).remove();
+            $('.js-content-content[data-source-id="' + source.id + '"]', this.element).remove();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
             var $container = $('.tabContainer,.accordionContainer', this.element);
@@ -313,10 +313,12 @@
             if (this.highlightLayer) {
                 this.highlightLayer.getSource().clear();
             }
-            $('>.accordionContainer', this.element).empty();
-            $('>.tabContainer > .tabs', this.element).empty();
-            $('>.tabContainer > :not(.tabs)', this.element).remove();
-            this.showingSources.splice(0);
+            if (this.isPopup) {
+                $('>.accordionContainer', this.element).empty();
+                $('>.tabContainer > .tabs', this.element).empty();
+                $('>.tabContainer > :not(.tabs)', this.element).remove();
+                this.showingSources.splice(0);
+            }
         },
         _getContentId: function (source) {
             return ['container', source.id].join('-');

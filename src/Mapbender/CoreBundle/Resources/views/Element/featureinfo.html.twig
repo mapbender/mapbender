@@ -1,5 +1,8 @@
+<div class="-js-placeholder">{{ 'mb.core.featureinfo.placeholder' | trans }}</div>
+<div class="hidden -js-no-content">{{ 'mb.core.featureinfo.no_results' | trans }}</div>
+
 {% if displayType | default('tabs') == 'tabs' %}
-    <div class="tabContainer js-content-parent">
+    <div class="tabContainer js-content-parent hidden">
         <ul class="tabs js-header-parent ui-helper-clearfix">
             <li class="tab js-header"></li>
         </ul>
@@ -18,6 +21,4 @@
 {%- for script_template in iframe_scripts -%}
   {%- set script_content = script_content ~ script_template -%}
 {%- endfor -%}
-<div class="-js-placeholder">{{ 'mb.core.featureinfo.placeholder' | trans }}</div>
-<div class="hidden -js-no-content">{{ 'mb.core.featureinfo.no_results' | trans }}</div>
 <div class="hidden -js-iframe-script-template" data-script="{{ script_content }}"></div>
