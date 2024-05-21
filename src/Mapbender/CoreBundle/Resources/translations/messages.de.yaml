@@ -50,6 +50,8 @@ mb:
         nolayer: 'Informationsebene existiert nicht.'
         unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
         noresult: 'kein Ergebnis'
+      no_results: 'Zu keiner der aktiven Ebenen konnten Informationen geladen werden.'
+      placeholder: 'Klicken Sie auf die Karte, um Informationen zu laden.'
       class:
         title: Information
         description: Information

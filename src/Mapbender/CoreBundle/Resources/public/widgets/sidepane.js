@@ -29,10 +29,11 @@ $(function () {
             animation[align] = "0px";
         }
 
+        $sidePane.addClass('animating');
         $sidePane.animate(animation, {
             duration: 300,
             complete: function () {
-                $sidePane.toggleClass('closed', wasOpen);
+                $sidePane.removeClass('animating').toggleClass('closed', wasOpen);
             }
         });
     });

@@ -50,6 +50,8 @@ mb:
         nolayer: 'No feature info layer exists.'
         unknownoption: 'Unknown or unhandled option %key% for %namespace%.%widgetname%.'
         noresult: 'no result'
+      no_results: 'None of the active layers provided additional information.'
+      placeholder: 'Click on the map to query for feature info.'
       class:
         title: FeatureInfo
         description: FeatureInfo
