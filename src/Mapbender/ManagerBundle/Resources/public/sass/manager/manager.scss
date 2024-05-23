@@ -306,3 +306,12 @@ footer {
 .btn-light{
  --bs-btn-border-color: #dee2e6;
 }
+
+.btn-primary{
+  --bs-btn-bg: #279ddc;
+  --bs-btn-border-color: #279ddc;
+  --bs-btn-hover-bg: #1A709E;
+  --bs-btn-hover-border-color: #1A709E;
+  --bs-btn-active-bg: #1A709E;
+  --bs-btn-active-border-color: #1A709E;
+}
