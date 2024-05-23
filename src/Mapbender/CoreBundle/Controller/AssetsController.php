@@ -9,8 +9,6 @@ use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\ManagerBundle\Template\LoginTemplate;
-use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,12 +22,14 @@ class AssetsController extends YamlApplicationAwareController
     protected $isDebug;
 
     public function __construct(protected TranslatorInterface     $translator,
-                                ApplicationYAMLMapper   $yamlRepository,
+                                ApplicationYAMLMapper             $yamlRepository,
                                 protected ApplicationAssetService $assetService,
-                                EntityManagerInterface $em,
-                                                        $containerTimestamp,
-                                                        $cacheDir,
-                                                        $isDebug)
+                                EntityManagerInterface            $em,
+                                                                  $containerTimestamp,
+                                                                  $cacheDir,
+                                                                  $isDebug,
+                                protected string                  $templateClass,
+                                protected string                  $loginTemplateClass)
     {
         parent::__construct($yamlRepository, $em);
         $this->containerTimestamp = intval(ceil($containerTimestamp));
@@ -76,7 +76,7 @@ class AssetsController extends YamlApplicationAwareController
         ]);
 
         if ($source instanceof Application) {
-            $content = $this->assetService->getAssetContent($source, $type, $sourceMap,$sourceMapRoute);
+            $content = $this->assetService->getAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         } else {
             $content = $this->assetService->getBackendAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         }
@@ -111,17 +111,13 @@ class AssetsController extends YamlApplicationAwareController
         return $path;
     }
 
-    /**
-     * @param string $slug
-     * @return TemplateAssetDependencyInterface|null
-     */
-    private function getManagerAssetDependencies($slug)
+    protected function getManagerAssetDependencies(string $slug): ?TemplateAssetDependencyInterface
     {
         switch ($slug) {
             case 'manager':
-                return new ManagerTemplate();
+                return new $this->templateClass();
             case 'mb3-login':
-                return new LoginTemplate();
+                return new $this->loginTemplateClass();
             default:
                 return null;
         }

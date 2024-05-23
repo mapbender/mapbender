@@ -45,6 +45,8 @@
         </parameter>
         <parameter key="mapbender.disabled_elements" type="collection" />
         <parameter key="mapbender.uploads_dir">uploads</parameter>
+        <parameter key="mapbender.manager.manager.login_template_class">Mapbender\ManagerBundle\Template\LoginTemplate</parameter>
+        <parameter key="mapbender.manager.manager.template_class">Mapbender\ManagerBundle\Template\ManagerTemplate</parameter>
     </parameters>
 
     <services>

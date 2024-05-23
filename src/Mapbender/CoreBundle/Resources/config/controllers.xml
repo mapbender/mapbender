@@ -96,6 +96,8 @@
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>
+            <argument>%mapbender.manager.manager.template_class%</argument>
+            <argument>%mapbender.manager.manager.login_template_class%</argument>
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />
