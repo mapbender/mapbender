@@ -149,7 +149,7 @@ mb:
       sharepoi: 'Compartilhar ponto de encontro'
       text:
         snippet: 'Você pode enviar o link abaixo por e-mail. O link abrirá a aplicação e mostrará o ponto de encontro.'
- popup:
+      popup:
         btn:
           position: Posicionamento
       class:
