@@ -34,9 +34,9 @@ window.Mapbender.VectorLayerBridge = (function() {
                 return self.imageToMarkerStyle_(img, offsetX, offsetY);
             });
         },
-        draw: function(type, featureCallback) {
+        draw: function(type, featureCallback, styleFn) {
             if (!this.drawControls_[type]) {
-                this.drawControls_[type] = this.createDraw_(type);
+                this.drawControls_[type] = this.createDraw_(type, styleFn);
             }
             var controlMap = this.drawControls_;
             var others = Object.keys(controlMap)

@@ -36,35 +36,13 @@
             const source = this.layer.getNativeLayer().getSource();
             const self = this;
 
-            this.drawStyle = new ol.style.Style({
-                text: new ol.style.Text({
-                    font: this.options.fontSize + 'px sans-serif',
-                    stroke: new ol.style.Stroke({
-                        color: this.options.fontColor
-                    }),
-                    fill: new ol.style.Fill({
-                        color: this.options.fontColor
-                    }),
-                }),
-                stroke: new ol.style.Stroke({
-                    width: this.options.strokeWidthWhileDrawing,
-                    color: this.options.strokeColor,
-                }),
-                image: new ol.style.Circle({
-                    radius: this.options.strokeWidthWhileDrawing * 2,
-                    stroke: new ol.style.Stroke({
-                        width: this.options.strokeWidthWhileDrawing / 2,
-                        color: '#FFFFFF',
-                    }),
-                    fill: new ol.style.Fill({
-                        color: this.options.strokeColor,
-                    }),
-                }),
-                fill: new ol.style.Fill({
-                    color: this.options.fillColor,
-                })
-            });
-
+            this.drawStyle = Mapbender.StyleUtil.createDrawStyle(
+                this.options.strokeColor,
+                this.options.fillColor,
+                this.options.strokeWidthWhileDrawing,
+                this.options.fontSize,
+                this.options.fontColor
+            );
             this.drawCompleteStyle = this.drawStyle.clone();
             this.drawCompleteStyle.setStroke(new ol.style.Stroke({
                 width: this.options.strokeWidth,

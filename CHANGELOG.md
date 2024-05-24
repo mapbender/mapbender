@@ -2,7 +2,7 @@
 Breaking changes (for details on migration process see UPGRADING.md):
 * PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
-  automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
+  automatically use the recent OpenLayers 9 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
 * Symfony updated to version 6.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
@@ -42,6 +42,7 @@ Bugfixes:
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
 * [Ruler] Allow usage in side-pane ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
 * [FeatureInfo] Allow usage in side-pane ([PR#1582](https://github.com/mapbender/mapbender/pull/1582))
+* [Sketch] Already use selected color while drawing ([PR#1584](https://github.com/mapbender/mapbender/pull/1584))
 * Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * Dropdown Element can now handle two options with the same value ([PR#1557](https://github.com/mapbender/mapbender/pull/1557))

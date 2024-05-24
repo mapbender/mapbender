@@ -18,6 +18,7 @@
         editContent_: null,
         decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
         selectedColor_: null,
+        drawStyle: null,
 
         _create: function() {
             Object.assign(this.toolLabels, {
@@ -58,6 +59,7 @@
                 self.setColor_($btn.attr('data-color'), $btn);
             });
             this.selectedColor_ = $('.color-select', this.element).eq(0).attr('data-color') || '#ff3333';
+            this.setColor_(this.selectedColor_);
             $('.-fn-color-customize', this.element).colorpicker({
                 format: 'hex',
                 input: false,
@@ -238,7 +240,7 @@
                 case 'circle':
                 case 'polygon':
                 case 'rectangle':
-                    this.layer.draw(toolName, featureAdded);
+                    this.layer.draw(toolName, featureAdded, this._getDrawStyle.bind(this));
                     break;
                 default:
                     throw new Error("No implementation for tool name " + toolName);
@@ -294,6 +296,9 @@
             } else {
                 this.setPickerColor_(featureColor, true);
             }
+        },
+        _getDrawStyle: function() {
+            return this.drawStyle;
         },
         _endEdit: function() {
             if (this.editControl) {
@@ -458,16 +463,13 @@
         },
         setColor_: function(color, $button) {
             this.selectedColor_ = color;
-            if ($button.length) {
+            if ($button !== undefined && $button.length) {
                 this.setColorButtonActive_($button);
             }
             if (this.editing_) {
                 this._setFeatureAttribute(this.editing_, 'color', color);
-                // OpenLayers 2 only
-                if (this.editing_.layer) {
-                    this.editing_.layer.redraw();
-                }
             }
+            this.drawStyle = Mapbender.StyleUtil.createDrawStyle(color);
         },
         setColorButtonActive_: function($button) {
             $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
