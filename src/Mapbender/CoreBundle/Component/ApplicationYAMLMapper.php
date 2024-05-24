@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
+use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\Component\Collections\YamlSourceInstanceCollection;
 use Mapbender\Component\SourceInstanceFactory;
@@ -112,9 +114,6 @@ class ApplicationYAMLMapper
                 ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
         ;
-        if (isset($definition['published'])) {
-            $application->setPublished($definition['published']);
-        }
         if (!empty($definition['screenshot'])) {
             $application->setScreenshot($definition['screenshot']);
         }
@@ -146,11 +145,9 @@ class ApplicationYAMLMapper
             $application->setElements($collection);
         }
 
-        $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : array());
-        if ($application->isPublished() && !$application->getYamlRoles()) {
-            $application->setYamlRoles(array(
-               'IS_AUTHENTICATED_ANONYMOUSLY',
-            ));
+        $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : []);
+        if (isset($definition['published']) && !$application->getYamlRoles()) {
+            $application->setYamlRoles([YamlApplicationVoter::ROLE_PUBLIC]);
         }
 
         foreach ($definition['layersets'] as $layersetId => $layersetDefinition) {

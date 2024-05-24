@@ -10,18 +10,9 @@ use Mapbender\CoreBundle\Entity\Element;
 
 class ElementConfigFilter
 {
-    public function getHandlingClassName(Element $element)
+    public function getHandlingClassName(Element $element): string
     {
-        if ($element->getClass() && $element->getClass() === 'Mapbender\CoreBundle\Element\Button') {
-            $config = $element->getConfiguration();
-            if (!empty($config['click'])) {
-                return 'Mapbender\CoreBundle\Element\LinkButton';
-            } else {
-                return 'Mapbender\CoreBundle\Element\ControlButton';
-            }
-        } else {
-            return $element->getClass();
-        }
+        return $element->getClass();
     }
 
     protected function migrateConfigInternal(Element $element, $handlingClass)

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ExtentType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('0', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

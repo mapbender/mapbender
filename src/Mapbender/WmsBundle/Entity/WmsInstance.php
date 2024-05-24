@@ -9,96 +9,66 @@ use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory;
-use Mapbender\WmsBundle\Component\WmsMetadata;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_wms_wmsinstance")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wms_wmsinstance')]
 class WmsInstance extends SourceInstance
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="Mapbender\WmsBundle\Entity\WmsSource", inversedBy="instances", cascade={"refresh"})
-     * @ORM\JoinColumn(name="wmssource", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
+    #[ORM\JoinColumn(name: 'wmssource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
 
     /**
      * @var WmsInstanceLayer[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"persist", "remove", "refresh"})
-     * @ORM\JoinColumn(name="layers", referencedColumnName="id")
-     * @ORM\OrderBy({"priority" = "asc", "id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'sourceInstance', targetEntity: WmsInstanceLayer::class, cascade: ['persist', 'remove', 'refresh'])]
+    #[ORM\JoinColumn(name: 'layers', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['priority' => 'asc', 'id' => 'asc'])]
     protected $layers;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $srs;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $format;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $infoformat;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $exceptionformat = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $transparency = true;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $opacity = 100;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $proxy = false;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $tiled = false;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $dimensions;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $vendorspecifics;
 
-    /**
-     * @ORM\Column(type="integer", options={"default" = 0})
-     */
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
     protected $buffer = 0;
 
-    /**
-     * @ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
-     */
+    #[ORM\Column(type: 'decimal', scale: 2, options: ['default' => '1.25'])]
     protected $ratio = 1.25;
 
     const LAYER_ORDER_TOP_DOWN  = 'standard';
     const LAYER_ORDER_BOTTOM_UP = 'reverse';
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $layerOrder;
 
     /**

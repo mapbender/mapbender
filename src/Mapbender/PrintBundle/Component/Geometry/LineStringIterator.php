@@ -39,33 +39,30 @@ class LineStringIterator implements \Iterator
         $this->lineEndIterator = new \ArrayIterator($this->points);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->lineStartIterator->rewind();
         $this->lineEndIterator->rewind();
         $this->lineEndIterator->next();
     }
 
-    public function next()
+    public function next(): void
     {
         $this->lineStartIterator->next();
         $this->lineEndIterator->next();
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return $this->lineStartIterator->valid() && $this->lineEndIterator->valid();
     }
 
-    /**
-     * @return LineSegment
-     */
-    public function current()
+    public function current(): LineSegment
     {
         return new LineSegment($this->lineStartIterator->current(), $this->lineEndIterator->current());
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->lineStartIterator->current();
     }

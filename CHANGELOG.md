@@ -1,9 +1,9 @@
 ## next major release (v4.0)
 Breaking changes (for details on migration process see UPGRADING.md):
-* PHP 8.0 is now the minimum supported PHP version
+* PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
-  automatically use the recent OpenLayers 7 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
-* Symfony updated to version 5.4 LTS. See UPGRADING.md for migration details 
+  automatically use the recent OpenLayers 9 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
+* Symfony updated to version 6.4 LTS. See UPGRADING.md for migration details 
 * Twig updated to version 3.7. See UPGRADING.md for migration details 
 * FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
@@ -12,14 +12,18 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 
 Features:
-* PHP 8.2 is now fully supported.
+* fix sorting issue in layertree (https://github.com/mapbender/mapbender/issues/1567) ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
+* PHP 8.2 and PHP 8.3 are now fully supported.
+* New permission system to replace symfony's deprecated ACL bundle. ([PR#1579](https://github.com/mapbender/mapbender/pull/1579)) 
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
+* New element "Data Upload" that allows mapbender to be used as a non-persistent file viewer for various spatal formats ([PR#1560](https://github.com/mapbender/mapbender/pull/1560))
 * [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
   a separate bundle in this repo.
 * New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
 * New console command `mapbender:wms:assign` to add a wms source instance to an application ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Modified command `mapbender:wms:show`: parameter id is now optional, if omitted all sources are shown; id can be replaced by origin url; added option `--json` for json output. ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
+* Make ManagerTemplate and LoginTemplate configurable ([PR#1583](https://github.com/mapbender/mapbender/pull/1583))
 * [SearchRouter] New option exportcsv to download the result list as CSV ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [ApplicationAssetService] Allow overriding sass/css and js assets by calling ApplicationAssetService::registerAssetOverride or by using the new parameter `mapbender.asset_overrides` ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * [Button] Allow customization of the icons available for selection in the button edit form. See PR description for details. ([PR#1518](https://github.com/mapbender/mapbender/pull/1518))
@@ -27,13 +31,18 @@ Features:
 * [Sidebar] Sidebar is now user-resizable (configurable but active per default) ([PR#1539](https://github.com/mapbender/mapbender/pull/1539))
 * [LayerTree] When activating a layer, all its parent layers are also activated ([PR#1544](https://github.com/mapbender/mapbender/pull/1544))
 * [SearchRouter] Extends configuration to handle labeling. ([PR#1553](https://github.com/mapbender/mapbender/pull/1553))
-
+* [Map] visiblelayers parameter now supports also rootlayer and layer name (not only sourceinstanceid, instanceid) ([PR#1565](https://github.com/mapbender/mapbender/pull/1565))
+* [SearchRouter] Sorting for searchresults table ([PR#1572](https://github.com/mapbender/mapbender/pull/1572))
+* [Ruler] Add option to make type user-selectable ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* [Ruler] Allow usage in side-pane ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
+* [FeatureInfo] Allow usage in side-pane ([PR#1582](https://github.com/mapbender/mapbender/pull/1582))
+* [Sketch] Already use selected color while drawing ([PR#1584](https://github.com/mapbender/mapbender/pull/1584))
 * Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * Dropdown Element can now handle two options with the same value ([PR#1557](https://github.com/mapbender/mapbender/pull/1557))
@@ -44,8 +53,10 @@ Other:
 * [Button] added new icons for map, earth, map-pin, share-arrow ([PR#1525](https://github.com/mapbender/mapbender/pull/1525))
 * Changed default login-backdrop image ([PR#1542](https://github.com/mapbender/mapbender/pull/1542))
 * [Layertree] Removed option `hideSelect` ([PR#1543](https://github.com/mapbender/mapbender/pull/1543))
-* Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558))
+* Standardized button style using bootstrap css classes ([PR#1558](https://github.com/mapbender/mapbender/pull/1558), [PR#1574](https://github.com/mapbender/mapbender/pull/1574))
 * Revision of the Spanish translation ([PR#1563](https://github.com/mapbender/mapbender/pull/1563))
+* Revision of the Russian translation ([PR#1562](https://github.com/mapbender/mapbender/pull/1562))
+* Revision of the Italian translation ([PR#1561](https://github.com/mapbender/mapbender/pull/1561))
 
 
 ## v3.3.5

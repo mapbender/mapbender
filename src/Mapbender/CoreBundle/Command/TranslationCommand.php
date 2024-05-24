@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,10 +13,9 @@ use Symfony\Component\Translation\Exception\InvalidResourceException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
+#[AsCommand('mapbender:normalize-translations')]
 class TranslationCommand extends Command
 {
-    protected static $defaultName = 'mapbender:normalize-translations';
-
     public function __construct(private KernelInterface $kernel)
     {
         parent::__construct();

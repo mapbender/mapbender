@@ -9,12 +9,14 @@ use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
+#[AsCommand('mapbender:application:export')]
 class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
     /** @var ExportHandler */
@@ -29,14 +31,13 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
         $this->exportHandler = $exportHandler;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('mapbender:application:export');
         $this->addArgument('slug', InputArgument::REQUIRED);
         $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'json (default) or yaml', 'json');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         switch (strtolower($input->getOption('format'))) {
             case 'json':

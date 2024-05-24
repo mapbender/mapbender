@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderAwareMultipleChoiceType extends ChoiceType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         /**
@@ -26,7 +26,7 @@ class OrderAwareMultipleChoiceType extends ChoiceType
         $resolver->setAllowedValues('by_reference', array(false));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $eventDispatcher = $builder->getEventDispatcher();
         $preSubmitHandlersBefore = $eventDispatcher->getListeners(FormEvents::PRE_SUBMIT);

@@ -26,7 +26,7 @@ class YAMLDataTransformer implements DataTransformerInterface
      * @param mixed $value
      * @return string
      */
-    public function transform($value)
+    public function transform($value): string
     {
         $dumper = new Dumper(2);
         return $dumper->dump($value, $this->levelsBeforeInline, 0, true);
@@ -36,9 +36,8 @@ class YAMLDataTransformer implements DataTransformerInterface
      * Decodes YAML to native type
      *
      * @param string $value
-     * @return mixed
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         $parser = new Parser();
         return $parser->parse($value, true);

@@ -32,7 +32,7 @@ class PaintType extends AbstractType
         $this->trans = $trans;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults(array(
@@ -54,7 +54,7 @@ class PaintType extends AbstractType
         ;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($options['hasStroke']) {
             $builder->add($options['fieldNameStrokeColor'], TextType::class, $this->createInlineHelpText([

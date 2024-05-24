@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class Scss extends Constraint
 {
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'Mapbender\CoreBundle\Validator\Constraints\ScssValidator';
     }

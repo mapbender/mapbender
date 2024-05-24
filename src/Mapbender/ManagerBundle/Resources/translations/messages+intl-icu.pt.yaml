@@ -174,12 +174,10 @@ mb:
           button: 'Selecionar arquivo'
           label: 'Nenhum arquivo selecionado'
         export:
-          addAcl: ACLs
           addSources: Fontes
           btn:
             export: Exportar
         import:
-          addAcl: ACLs
           addSources: Fontes
           btn:
             import: Importar
@@ -199,7 +197,6 @@ mb:
       new_application: 'Criar aplicativo'
       add_source: 'Adicionar fonte de dados'
       add_user_group: 'Adicionar usuários e grupos'
-      acl_element: Elemento ACL
       import_application: Importar
       export_application: Exportar
     components:
@@ -221,7 +218,7 @@ mb:
           title: 'Excluir instância'
         delete_user_group:
           title: 'Confirmar exclusão'
-          content: 'Tem certeza de que deseja excluir %userGroup%?'
+          content: 'Tem certeza de que deseja excluir %subject%?'
     import:
       application:
         failed: 'Não foi possível importar o aplicativo'

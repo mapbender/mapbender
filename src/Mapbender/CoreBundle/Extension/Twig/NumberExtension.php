@@ -21,7 +21,7 @@ class NumberExtension extends AbstractExtension
         return 'mbcore_number';
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return array(
             'formatted_number' => new TwigFilter('formatted_number', [$this, 'formatNumber']),

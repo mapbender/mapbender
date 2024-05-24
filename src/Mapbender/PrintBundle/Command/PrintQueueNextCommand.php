@@ -11,7 +11,7 @@ class PrintQueueNextCommand extends AbstractPrintQueueExecutionCommand
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription("Run queued print jobs")

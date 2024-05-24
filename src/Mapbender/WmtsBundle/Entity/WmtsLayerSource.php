@@ -16,60 +16,44 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
 
 /**
  * @author Paul Schmidt
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtslayersource")
  *
  * @property WmtsSource $source
  * @method WmtsSource getSource
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtslayersource')]
 class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 {
 
-    /**
-     * @ORM\Column(name="name", type="string", nullable=true)
-     */
+    #[ORM\Column(name: 'name', type: 'string', nullable: true)]
     protected $identifier = "";
 
-    /**
-     * @ORM\Column(type="text",nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract = "";
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource",inversedBy="layers")
-     * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, inversedBy: 'layers')]
+    #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
-    /**
-     * @ORM\Column(type="object", nullable=true)
-     */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $latlonBounds;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $boundingBoxes;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $styles;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $infoformats;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $tilematrixSetlinks;
 
     /**
      * @var UrlTemplateType[]
-     * @ORM\Column(type="array", nullable=true)
      */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $resourceUrl;
 
     public function __construct()

@@ -3,7 +3,6 @@
 namespace FOM\UserBundle;
 
 use FOM\UserBundle\Component\Menu\SecurityMenu;
-use FOM\UserBundle\DependencyInjection\Compiler\CollectAclClassesPass;
 use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
@@ -21,11 +20,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class FOMUserBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new SspiFactory());
+        $extension->addAuthenticatorFactory(new SspiFactory());
 
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $xmlLoader = new XmlFileLoader($container, $configLocator);

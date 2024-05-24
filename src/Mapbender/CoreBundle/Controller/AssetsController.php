@@ -4,56 +4,48 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\ManagerBundle\Template\LoginTemplate;
-use Mapbender\ManagerBundle\Template\ManagerTemplate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AssetsController extends YamlApplicationAwareController
 {
-    /** @var TranslatorInterface */
-    protected $translator;
-    /** @var ApplicationAssetService */
-    protected $assetService;
     protected $containerTimestamp;
     protected $cacheDir;
     protected $isDebug;
 
-    public function __construct(TranslatorInterface     $translator,
-                                ApplicationYAMLMapper   $yamlRepository,
-                                ApplicationAssetService $assetService,
-                                                        $containerTimestamp,
-                                                        $cacheDir,
-                                                        $isDebug)
+    public function __construct(protected TranslatorInterface     $translator,
+                                ApplicationYAMLMapper             $yamlRepository,
+                                protected ApplicationAssetService $assetService,
+                                EntityManagerInterface            $em,
+                                                                  $containerTimestamp,
+                                                                  $cacheDir,
+                                                                  $isDebug,
+                                protected string                  $templateClass,
+                                protected string                  $loginTemplateClass)
     {
-        $this->translator = $translator;
-        parent::__construct($yamlRepository);
-        $this->assetService = $assetService;
+        parent::__construct($yamlRepository, $em);
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->cacheDir = $cacheDir;
         $this->isDebug = $isDebug;
     }
 
     /**
-     * @Route("/application/{slug}/assets/{type}",
-     *     name="mapbender_core_application_assets",
-     *     requirements={"type" = "js|css|trans"})
-     * @Route("/application/{slug}/sourcemap/{type}",
-     *     name="mapbender_core_application_sourcemap",
-     *     requirements={"type" = "js|css|trans"})
      * @param Request $request
      * @param string $slug of Application
      * @param string $type one of 'css', 'js' or 'trans'
      * @return Response
      */
-    public function assetsAction(Request $request, $slug, $type, $_route)
+    #[Route(path: '/application/{slug}/assets/{type}', name: 'mapbender_core_application_assets', requirements: ['type' => 'js|css|trans'])]
+    #[Route(path: '/application/{slug}/sourcemap/{type}', name: 'mapbender_core_application_sourcemap', requirements: ['type' => 'js|css|trans'])]
+    public function assets(Request $request, string $slug, string $type, $_route)
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
@@ -71,7 +63,7 @@ class AssetsController extends YamlApplicationAwareController
 
         $useCached = (!$this->isDebug) && file_exists($cacheFile);
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
-            $response = new BinaryFileResponse($cacheFile, 200, $headers);
+            $response = new BinaryFileResponse($cacheFile, Response::HTTP_OK, $headers);
             // allow file timestamp to be read again correctly for 'Last-Modified' header
             clearstatcache($cacheFile, true);
             $response->isNotModified($request);
@@ -84,16 +76,16 @@ class AssetsController extends YamlApplicationAwareController
         ]);
 
         if ($source instanceof Application) {
-            $content = $this->assetService->getAssetContent($source, $type, $sourceMap,$sourceMapRoute);
+            $content = $this->assetService->getAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         } else {
             $content = $this->assetService->getBackendAssetContent($source, $type, $sourceMap, $sourceMapRoute);
         }
 
         if (!$this->isDebug) {
             file_put_contents($cacheFile, $content);
-            return new BinaryFileResponse($cacheFile, 200, $headers);
+            return new BinaryFileResponse($cacheFile, Response::HTTP_OK, $headers);
         } else {
-            return new Response($content, 200, $headers);
+            return new Response($content, Response::HTTP_OK, $headers);
         }
     }
 
@@ -119,17 +111,13 @@ class AssetsController extends YamlApplicationAwareController
         return $path;
     }
 
-    /**
-     * @param string $slug
-     * @return TemplateAssetDependencyInterface|null
-     */
-    private function getManagerAssetDependencies($slug)
+    protected function getManagerAssetDependencies(string $slug): ?TemplateAssetDependencyInterface
     {
         switch ($slug) {
             case 'manager':
-                return new ManagerTemplate();
+                return new $this->templateClass();
             case 'mb3-login':
-                return new LoginTemplate();
+                return new $this->loginTemplateClass();
             default:
                 return null;
         }

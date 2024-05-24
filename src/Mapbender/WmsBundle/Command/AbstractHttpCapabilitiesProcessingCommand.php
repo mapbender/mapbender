@@ -16,7 +16,7 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
     public const OPTION_DESELECT_NEW_LAYERS = 'deselect-new-layers';
     public const OPTION_DEACTIVATE_NEW_LAYERS = 'deactivate-new-layers';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addArgument('serviceUrl', InputArgument::REQUIRED, 'URL to WMS')

@@ -26,7 +26,7 @@ class BrandingExtension extends AbstractExtension
         }
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'login_backdrop_asset' => new TwigFunction('login_backdrop_asset', array($this, 'login_backdrop_asset')),

@@ -14,50 +14,48 @@ use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
 
 
-/**
- * @ORM\MappedSuperclass
- * Contains only fields and methods common to both Wmts and TMS
- */
+/** Contains only fields and methods common to both Wmts and TMS **/
+#[ORM\MappedSuperclass]
 abstract class HttpTileSource extends HttpParsedSource
     implements MutableUrlTarget, ContainingKeyword
 {
     /**
      * @var string|null
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $version = "";
 
     /**
      * @var WmtsLayerSource[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="WmtsLayerSource",mappedBy="source", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: WmtsLayerSource::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $layers;
 
     /**
      * @var WmtsInstance[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="WmtsInstance",mappedBy="source", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: WmtsInstance::class, cascade: ['remove'])]
     protected $instances;
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="TileMatrixSet",mappedBy="source", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: TileMatrixSet::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $tilematrixsets;
 
     /**
      * @var Contact
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
+    #[ORM\OneToOne(targetEntity: Contact::class, cascade: ['persist', 'remove'])]
     protected $contact;
 
     /**
      * @var WmtsSourceKeyword[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="WmtsSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"value" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'reference', targetEntity: WmtsSourceKeyword::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['value' => 'asc'])]
     protected $keywords;
 
     public function __construct()

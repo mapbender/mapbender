@@ -2,12 +2,13 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Application controller.
@@ -19,32 +20,27 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ApplicationController extends YamlApplicationAwareController
 {
-    /** @var ApplicationMarkupRenderer */
-    protected $renderer;
-    /** @var ApplicationMarkupCache */
-    protected $markupCache;
     protected $isDebug;
 
     public function __construct(ApplicationYAMLMapper $yamlRepository,
-                                ApplicationMarkupRenderer $renderer,
-                                ApplicationMarkupCache $markupCache,
+                                protected ApplicationMarkupRenderer $renderer,
+                                protected ApplicationMarkupCache $markupCache,
+                                EntityManagerInterface $em,
                                 $isDebug)
     {
-        parent::__construct($yamlRepository);
-        $this->renderer = $renderer;
-        $this->markupCache = $markupCache;
+        parent::__construct($yamlRepository, $em);
         $this->isDebug = $isDebug;
     }
 
     /**
      * Main application controller.
      *
-     * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
      * @param Request $request
      * @param string $slug Application
      * @return Response
      */
-    public function applicationAction(Request $request, $slug)
+    #[Route(path: '/application/{slug}.{_format}', defaults: ['_format' => 'html'])]
+    public function application(Request $request, $slug)
     {
         $appEntity = $this->getApplicationEntity($slug);
 

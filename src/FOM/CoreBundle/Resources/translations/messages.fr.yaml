@@ -10,3 +10,43 @@ fom:
             ok: OK
     fields:
       no_user_group_defined: Aucun utilisateur ou groupe n'est défini
+  security:
+    domain:
+      public: 'Accès Public'
+      registered: 'Tous les Utilisateurs Enregistrés'
+    resource:
+      installation:
+        create_applications: "Créer"
+        view_all_applications: "Voir"
+        view_all_applications_help: "Permet de voir toutes les applications, indépendamment des autorisations définies dans l'application."
+        edit_all_applications: "Éditer"
+        edit_all_applications_help: "Permet d'éditer toutes les applications, indépendamment des autorisations définies dans l'application."
+        delete_all_applications: "Supprimer"
+        delete_all_applications_help: "Permet de supprimer toutes les applications, indépendamment des autorisations définies dans l'application."
+        own_all_applications: "Gérer les Permissions"
+        own_all_applications_help: "Permet d'éditer les permissions pour toutes les applications, indépendamment des autorisations définies dans l'application."
+        view_sources: "Voir"
+        create_sources: "Éditer"
+        refresh_sources: "Actualiser"
+        edit_free_instances: "Éditer des Instances Libres"
+        delete_sources: "Supprimer"
+        manage_permissions: "Gestion Globale des Permissions"
+        view_users: "Voir"
+        create_users: "Créer"
+        edit_users: "Éditer"
+        delete_users: "Supprimer"
+        view_groups: "Voir"
+        create_groups: "Créer"
+        edit_groups: "Éditer"
+        delete_groups: "Supprimer"
+      application:
+        view: "Voir"
+        view_help: "Autorise l'utilisateur/groupe à voir et utiliser l'application sur l'interface utilisateur, y compris tous les éléments pour lesquels aucune autorisation spéciale n'est définie."
+        edit: "Éditer"
+        edit_help: "Permet d'éditer l'application, à l'exclusion de l'onglet 'Sécurité'. La modification des ensembles de calques nécessite des autorisations globales."
+        delete: "Supprimer"
+        manage_permissions: "Gestion des Permissions"
+        manage_permissions_help: "Permet de gérer les permissions pour cette application (la page actuelle)."
+      element:
+        view: "Voir"
+

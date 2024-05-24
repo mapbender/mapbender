@@ -6,12 +6,6 @@ namespace FOM\UserBundle\Component;
 
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints;
 
@@ -22,25 +16,8 @@ use Symfony\Component\Validator\Constraints;
  */
 class UserHelperService
 {
-    /** @var MutableAclProviderInterface */
-    protected $aclProvider;
-    /** @var PasswordHasherFactoryInterface */
-    protected $passwordHasherFactory;
-    /** @var mixed[]; from collection parameter fom_user.user_own_permissions */
-    protected $permissionsOnSelf;
-
-    /**
-     * @param MutableAclProviderInterface $aclProvider
-     * @param EncoderFactoryInterface $encoderFactory
-     * @param mixed[] $permissionsOnSelf
-     */
-    public function __construct(MutableAclProviderInterface $aclProvider,
-                                PasswordHasherFactoryInterface $encoderFactory,
-                                $permissionsOnSelf)
+    public function __construct(protected PasswordHasherFactoryInterface $passwordHasherFactory)
     {
-        $this->aclProvider = $aclProvider;
-        $this->passwordHasherFactory = $encoderFactory;
-        $this->permissionsOnSelf = $permissionsOnSelf;
     }
 
     /**
@@ -95,36 +72,4 @@ class UserHelperService
         );
     }
 
-    /**
-     * @param UserInterface $user
-     * @param mixed[] $permissions
-     */
-    public function addPermissionsOnSelf(UserInterface $user, $permissions)
-    {
-        $maskBuilder = new MaskBuilder();
-
-        $usid = UserSecurityIdentity::fromAccount($user);
-        $uoid = ObjectIdentity::fromDomainObject($user);
-        foreach ($permissions as $permission) {
-            $maskBuilder->add($permission);
-        }
-        $umask = $maskBuilder->get();
-
-        try {
-            $acl = $this->aclProvider->findAcl($uoid);
-        } catch(\Exception $e) {
-            $acl = $this->aclProvider->createAcl($uoid);
-        }
-        $acl->insertObjectAce($usid, $umask);
-        $this->aclProvider->updateAcl($acl);
-    }
-
-    /**
-     * Gives a user the right to edit himself.
-     * @param UserInterface $user
-     */
-    public function giveOwnRights(UserInterface $user)
-    {
-        $this->addPermissionsOnSelf($user, $this->permissionsOnSelf);
-    }
 }

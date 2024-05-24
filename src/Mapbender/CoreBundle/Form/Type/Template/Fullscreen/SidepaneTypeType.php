@@ -13,12 +13,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SidepaneTypeType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'required' => false,

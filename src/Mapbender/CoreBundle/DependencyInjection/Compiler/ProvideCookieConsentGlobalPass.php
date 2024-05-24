@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ProvideCookieConsentGlobalPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $paramName = 'mapbender.cookieconsent';
         $cookieConsent = !!$container->getParameter($paramName);

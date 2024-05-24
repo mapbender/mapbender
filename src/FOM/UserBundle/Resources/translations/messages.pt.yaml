@@ -1,8 +1,4 @@
 fom:
-  acl:
-    group_label:
-      anonymous: 'Usuários Anônimos'
-      authenticated: 'Todos os usuários autenticados'
   user:
     registration:
       email_body_html: '<p>Olá %user_username%,</p><p> você criou uma conta recentemente. Para completar o seu registro, por favor clique <a href="%url%">aqui</a>.</p>'
@@ -89,15 +85,15 @@ fom:
         username: Nome de Usuário
         description: Descrição
         activated: ativado
-    acl:
+    permissions:
       index:
-        access_control_lists: 'Controle de acesso geral'
-        name: Módulo
-        class: Tipo de acesso
+        global_permissions: 'Controle de acesso geral'
+        name: Nome
+        class: Classe
         edit: Editar
       required: 'Os campos obrigatórios são marcados com letras escuras e os campos opcionais têm as letras mais claras.'
       edit:
-        edit_class_acl: 'Editar tipo de acesso para %name%'
+        edit_permission: Editar permissões para %name%
       groups_users:
         name: Nome
         no_goups_users: 'Nenhum grupo/usuário definido'
@@ -130,13 +126,12 @@ fom:
       groups: Grupos
       new_group: 'Novo grupo'
       classes:
-        acls: Controle de acesso geral
+        permissions: Controle de acesso geral
         users: Usuários
         groups: Grupos
       roles:
         super_admin: 'Pode gerenciar tudo (super admin)'
         user_admin: 'Pode gerenciar usuários e grupos'
-IS_AUTHENTICATED_ANONYMOUSLY: IS_AUTHENTICATED_ANONYMOUSLY
 form:
   profile:
     basic:

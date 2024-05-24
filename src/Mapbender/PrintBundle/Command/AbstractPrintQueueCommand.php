@@ -35,7 +35,7 @@ abstract class AbstractPrintQueueCommand extends Command
         parent::__construct(null);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
         $this->repository = $this->managerRegistry->getRepository(QueuedPrintJob::class);

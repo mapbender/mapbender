@@ -1,0 +1,254 @@
+mb:
+  application:
+    create:
+      success: 'La tua applicazione è stata creata.'
+      failure:
+        create.directory: 'La directory dell''applicazione non può essere creata.'
+    save:
+      success: 'La tua applicazione è stata salvata.'
+      failure:
+        general: 'Si è verificato un errore durante il tentativo di salvataggio dell''applicazione.'
+        create.directory: 'La tua applicazione è stata aggiornata ma non è possibile creare le directory dell''applicazione.'
+    remove:
+      success: 'L''applicazione è stata eliminata.'
+      failure:
+        general: 'La tua applicazione non può essere cancellata.'
+  layerset:
+    create:
+      success: 'Il tuo layerset di livelli è stato creato.'
+    remove:
+      success: 'Il tuo Layerset è stato cancellato.'
+      failure: 'Il tuo Layerset non può essere cancellato.'
+  source:
+    instance:
+      create:
+        success: 'È stata creata una nuova istanza. Si prega di modificarla.'
+  manager:
+    automatic: Automatico
+    autoActivate: Auto-attivazione
+    autoOpen: 'Apertura automatica'
+    confirm_form_discard: 'Cancella le modifiche?'
+    popup_height: 'Altezza della finestra di dialogo'
+    popup_width: 'Larghezza della finestra di dialogo'
+    screentype:
+      label: 'Tipo di schermo'
+      choice:
+        all: Qualsiasi
+        mobile: Mobile
+        desktop: Desktop
+    toolbar:
+      alignment:
+        label: Allineamento
+        choice:
+          left: Sinistra
+          right: Destra
+          center: Centro
+      generate_button_menu: 'Genera menu per i pulsanti'
+      menu_label: 'Menu label'
+    visibility: Visibilità
+    element:
+      screentype:
+        mobile: Mostra su schermi mobili
+        desktop: Mostra su schermi desktop
+    sidepane:
+      width: Larghezza
+      resizable: Ridimensionabile
+      resizable_help: 'Se è selezionata, l''utente può ridimensionare la barra laterale trascinandola sul bordo destro. Se si desidera limitare la larghezza minima e massima, utilizzare i CSS personalizzati (min-width/max-width su .sidePane.resizable).'
+      closed: 'Inizialmente chiuso'
+      align:
+        label: Posizione
+        choice:
+          left: Sinistra
+          right: Destra
+    sourceinstance:
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Questa istanza non è utilizzata in nessuna applicazione}
+            one   {Questa istanza è utilizzata in un''applicazione}
+            other {Questa istanza non è utilizzata in # applicazioni}
+        }
+      convert_to_reusable: 'Converti in istanza condivisa'
+      convert_to_bound: 'Convertire in istanza vincolata'
+      converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
+      reusable_assigned_to_application: 'L''istanza condivisa è stata aggiunta all''applicazione'
+      create_reusable: 'Crea un''istanza condivisa'
+      created_reusable: 'È stata creata una nuova istanza condivisa'
+    application:
+      persistentView: 'Stato della mappa persistente'
+      splashscreen: 'Mostra Splashscreen'
+    admin:
+      sources: Risorse
+      csrf_token_invalid: 'Token CSRF non valido.'
+      source:
+        add: 'Aggiungi risorsa'
+        show_metadata: 'Mostra metadati'
+        delete: 'Elimina risorsa'
+        new:
+          add: 'Aggiungi risorsa'
+        valid: 'La risorsa è valida'
+        notvalid: 'La risorsa non è valida'
+        no_source: 'Nessuna risorsa disponibile'
+        update: 'Aggiorna la risorsa'
+        status:
+          ok: 'Risorsa OK'
+          toupdate: 'Risorsa non più attuale'
+          unreachable: 'Risorsa irraggiungibile'
+        embedded_in_applications: |
+          {count, plural,
+              =0    {This source is not used in any application}
+              one   {This source is used in one application}
+              other {This source is used in # applications}
+          }
+      map:
+        max_extent: 'Max. estensione'
+        max_extent.help: 'Bounding Box (min/max x/y) in cui l''utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
+        start_extent: 'Estensione iniziale'
+        start_extent.help: 'Bounding Box (min/max x/y) che viene visualizzato inizialmente al caricamento della mappa. Facendo clic sull''icona della home, la mappa viene ingrandita in questa estensione.'
+        base_dpi: 'Risoluzione predefinita [dpi]'
+        base_dpi.help: 'La risoluzione si adatta alla risoluzione dello schermo in base al valore configurato'
+      element:
+        title: Titolo
+        type: Tipo
+        add: 'Aggiungi un nuovo elemento a'
+        show_hide: 'Alterna mostra/nascondi elemento'
+        no_element_added: 'Nessun elemento aggiunto'
+        anchor:
+          label: 'Posizione'
+          left-top: 'In alto a sinistra'
+          left-bottom: 'In basso a sinistra'
+          right-top: 'In alto a destra'
+          right-bottom: 'In basso a destra'
+      zoombar:
+        draggable: Trascinabile
+      overview:
+        fix: Fissa
+      layerset:
+        add: 'Aggiungi layerset'
+        title: Titolo
+        type: Tipo
+        edit: 'Modifica layerset'
+        delete:
+          title: 'Elimina layerset'
+          confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
+        id: Id
+      instance:
+        add: 'Aggiungi istanza'
+        show_hide: 'Alterna mostra/nascondi istanza'
+        edit: 'Modifica istanza'
+        delete:
+          title: 'Elimina istanza'
+          confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Nessuna istanza aggiunta'
+        no_layer_added: 'Nessun layer aggiunto'
+        max_input_vars_exceeded: 'PHP ha impostato max_input_vars troppo basso per il numero di layer in questa istanza.'
+        update_successful: 'La tua istanza è stata aggiornata.'
+        converted_to_shared: 'L''istanza è stata convertita in istanza condivisa.'
+      template: Template
+      application:
+        view: Vedi
+        edit:
+          title: 'Modifica applicazione'
+          base_data: 'Dati di base'
+        screenshot: null
+        layouts: null
+        layersets: null
+        custom_css: CSS
+        security:
+          title: Sicurezza
+          public: 'accesso pubblico'
+        save: Salva
+        cancel: Cancella
+        view_this: 'Vedi questa applicazione'
+        duplicate: 'Copia applicazione'
+        public:
+          on_off: 'Attiva/disattiva l''accesso pubblico'
+        delete: 'Elimina applicazione'
+        no_application: 'Nessuna applicazione disponibile'
+        new:
+          title: 'Nuova Applicazione'
+        create_use: 'Crea una nuova applicazione fornendo informazioni di base e poi usa la modalità di modifica per aggiungere elementi e layers.'
+        btn:
+          create: Crea
+          cancel: Cancella
+        upload:
+          button: 'Selezione file'
+          label: 'Nessun file selezionato'
+        export:
+          addSources: Risorse
+          btn:
+            export: Esporta
+        import:
+          addSources: Risorsa
+          btn:
+            import: Importa
+        title: Titolo
+        url:
+          title: 'Titolo URL'
+        description: Descrizione
+        template: Template
+    source:
+      serviceurl: 'URL del Servizio'
+      username: 'Nome utente'
+      password: Password
+      activate_new_layers: 'Attiva i layer appena aggiunti'
+      select_new_layers: 'Seleziona i livelli appena aggiunti'
+      load: Carica
+    managerbundle:
+      new_application: 'Nuova applicazione'
+      add_source: 'Aggiungi fonte'
+      add_user_group: 'Aggiungi utenti e gruppi'
+      import_application: Importazione
+      export_application: Esportazione
+    components:
+      popup:
+        add_element:
+          title: 'Aggiungi elemento'
+        edit_element:
+          title: 'Modifica elemento'
+        delete_element:
+          title: 'Conferma eliminazione'
+        add_edit_layerset:
+          title_edit: 'Modifica layerset'
+          title_add: 'Aggiungi layerset'
+        delete_layerset:
+          title: 'Elimina layerset'
+        add_instance:
+          title: 'Seleziona fonte'
+        delete_instance:
+          title: 'Conferma eliminazione'
+        delete_user_group:
+          title: 'Conferma cancellazione'
+          content: 'Cancellare davvero %subject%?'
+    import:
+      application:
+        failed: 'L''applicazione non può essere importata'
+    http_connection_error: 'Connessione non riuscita'
+    http_error_response: 'Il server remoto ha risposto con un messaggio di errore'
+    xml_invalid: 'Il documento non è valido'
+    xml_malformed: 'Il documento XML o la struttura XML non sono valide'
+  core:
+    admin:
+      button:
+        show_label: 'Mostra label'
+      element:
+        autostart: Autostart
+      title: Titolo
+    entity:
+      app:
+        screenshotfile:
+          error: 'Il file è troppo grande (%uploadFileSize% bytes). La dimensione massima consentita è% maxFileSize% bytes.'
+          format_error: 'Questo formato non è supportato!'
+          resolution:
+            error: 'Si possono solamente caricare dei file con la dimensione di %screenshotHeight% x %screenshotWidth% pixel o più grande. Il file caricato ha la dimensione di %uploadWidth% x %uploadHeighth% pixel.'
+    importjobtype:
+      admin:
+        importfile: 'Importazione del file'
+  actions:
+    secureelement: 'Limitare l''accesso all''elemento'
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: Titolo
+            opacity: Opacità

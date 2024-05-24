@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ViewManagerAdminType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $accessChoices = array(
             'mb.core.viewManager.admin.access.none' => '',

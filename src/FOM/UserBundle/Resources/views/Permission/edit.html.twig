@@ -1,0 +1,7 @@
+{% extends "@MapbenderManager/layouts/single_form.html.twig" %}
+{%- set return_url = path('fom_user_security_index', {_fragment: 'tabPermissions'}) -%}
+{%- set title = 'fom.user.permissions.edit.edit_permission' | trans({'%name%': permission_class | trans}) -%}
+
+{% block form_fields %}
+    {{- form_row(form) -}}
+{% endblock %}

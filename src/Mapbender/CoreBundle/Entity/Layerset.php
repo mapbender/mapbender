@@ -13,56 +13,54 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Layerset configuration entity
  *
  * @author Christian Wygoda
- *
- * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\LayersetRepository")
- * @ORM\Table(name="mb_core_layerset", uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
- * @UniqueEntity(fields={"application", "title"}, message ="mb.core.layerset.unique_title")
  */
+#[UniqueEntity(fields: ['application', 'title'], message: 'mb.core.layerset.unique_title')]
+#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\LayersetRepository::class)]
+#[ORM\Table(name: 'mb_core_layerset')]
+#[UniqueConstraint(name: 'layerset_idx', columns: ['application_id', 'title'])]
 class Layerset
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $title The layerset title
-     * @ORM\Column(type="string", length=128)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 128)]
     protected $title;
 
     /**
      * @var Application The configuration entity for the application
-     * @ORM\ManyToOne(targetEntity="Application", inversedBy="layersets")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: Application::class, inversedBy: 'layersets')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     protected $application;
 
     /**
      * NOTE: must specify portable default to avoid a nullable troolean column
-     * @ORM\Column(type="boolean", nullable=false, options={"default": true})
      */
+    #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => true])]
     protected $selected = true;
 
-    /**
-     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"remove", "persist"})
-     * @ORM\JoinColumn(name="instances", referencedColumnName="id")
-     * @ORM\OrderBy({"weight" = "asc"})
-     */
+    #[ORM\OneToMany(mappedBy: 'layerset', targetEntity: SourceInstance::class, cascade: ['remove', 'persist'])]
+    #[ORM\JoinColumn(name: 'instances', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['weight' => 'asc'])]
     protected $instances;
 
     /**
      * Reusable source instance assignments
      * Relation to actual SourceInstance goes via separate assignment entity that stores sorting weight and enabled state
      * @var ReusableSourceInstanceAssignment[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity="ReusableSourceInstanceAssignment", mappedBy="layerset", cascade={"remove", "persist"})
-     * @ORM\OrderBy({"weight"="ASC"})
      */
+    #[ORM\OneToMany(mappedBy: 'layerset', targetEntity: ReusableSourceInstanceAssignment::class, cascade: ['remove', 'persist'])]
+    #[ORM\OrderBy(['weight' => 'ASC'])]
     protected $reusableInstanceAssignments;
 
     /**

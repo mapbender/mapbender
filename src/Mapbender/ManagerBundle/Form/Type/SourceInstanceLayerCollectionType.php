@@ -10,12 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SourceInstanceLayerCollectionType extends AbstractType
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\CollectionType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             // Supply prototype view, so the "summary" fields can access labels from

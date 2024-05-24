@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PrintQueueRepairCommand extends AbstractPrintQueueCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription("Reset hung / crashed queued print jobs so they can be executed again")

@@ -10,56 +10,42 @@ use Doctrine\ORM\Mapping as ORM;
  * Metadata describing the top-level themes where layers available on this server can be classified.
  *
  * @author Paul Schmidt
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_theme")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_theme')]
 class Theme
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource",inversedBy="themes")
-     * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, inversedBy: 'themes')]
+    #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
-    /**
-     * @ORM\Column(type="string",nullable=false)
-     */
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $identifier;
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="text",nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
-    /**
-     * @ORM\Column(type="array",nullable=false);
-     */
+    #[ORM\Column(type: 'array', nullable: false)] // ;
     protected $layerrefs;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Theme",inversedBy="themes")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
-     */
+    #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themes')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true)]
     protected $parent = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Theme",mappedBy="parent", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"id" = "asc"})
-     */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Theme::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $themes;
 
     public function __construct()

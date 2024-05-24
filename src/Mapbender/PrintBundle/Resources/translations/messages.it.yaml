@@ -6,13 +6,68 @@ mb:
           ok: Esporta
           cancel: Cancella
       info:
-        noactivelayer: Nessun layer attivo!
-      chooseformat: Scegli il formato di esportazione
+        noactivelayer: 'Nessun layer attivo!'
+      chooseformat: 'Scegli il formato di esportazione'
       class:
-        title: Esporta immagine
-        description: Esporta Immagine permette di esportare la vista corrente della mappa. Puoi scegliere tra il formato png e jpeg.
+        title: 'Esporta immagine'
+        description: 'Esporta Immagine permette di esportare la vista corrente della mappa. Puoi scegliere tra il formato png e jpeg.'
       tag:
         image: immagine
         export: esporta
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: 'Impostazioni del lavoro'
+        joblist: 'Lavori recenti'
+      joblist:
+        header:
+          id: '#'
+          ctime: creato
+          status: status
+        status:
+          pending: 'in attesa'
+          processing: 'elaborazione in corso'
+          finished: terminato
+        open: aperto
+        delete: rimuovi
+        cancel: Cancella
+        nodata: 'no data'
+        loading: caricamento
+    admin:
+      printclient:
+        renderMode:
+          label: Modo
+          choice:
+            direct: diretto
+            queued: 'in coda'
+        queueAccess:
+          label: 'Coda di attesa per il lavoro'
+          choice:
+            global: globale
+            private: privato
+  core:
+    printclient:
+      admin:
+        scales: 'Scale (separate da virgole)'
+        fileprefix: 'Prefisso del file'
+        optionalfields: 'Campi opzionali'
+        replacepattern: 'Sostituire il modello'
+        templates: Templates
+        qualitylevels: 'Livelli di qualità'
+      label:
+        quality: Qualità
+      class:
+        title: Stampa
+    printclienttemplate:
+      admin:
+        template: Template
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        label:
+          qualitylevels: 'Livelli di qualità'
+          templates: Templates

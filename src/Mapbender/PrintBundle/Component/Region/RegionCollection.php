@@ -50,28 +50,28 @@ class RegionCollection implements \ArrayAccess, \IteratorAggregate
     }
 
     // foreach support
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator(\call_user_func_array('\array_merge', \array_values($this->regions)));
     }
 
     // array-style access support
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->regions[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): TemplateRegion
     {
         return $this->getMember($offset);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }

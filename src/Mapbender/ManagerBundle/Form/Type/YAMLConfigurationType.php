@@ -15,13 +15,13 @@ use Symfony\Component\Yaml\Yaml;
 
 class YAMLConfigurationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new YAMLDataTransformer());
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'preSubmit'));
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\TextareaType';
     }
@@ -37,7 +37,7 @@ class YAMLConfigurationType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'required' => false,

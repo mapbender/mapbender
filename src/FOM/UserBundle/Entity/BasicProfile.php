@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Basic profile entity
  *
  * @author Christian Wygoda
- * @ORM\Entity()
- * @ORM\Table(name="fom_profile_basic")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'fom_profile_basic')]
 class BasicProfile extends AbstractProfile
 {
     const ORG_ROLE_AUTHOR =                'author';
@@ -25,54 +25,34 @@ class BasicProfile extends AbstractProfile
     const ORG_ROLE_RESOURCEPROVIDER =      'resourceProvider';
     const ORG_ROLE_USER =                  'user';
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $firstName;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $lastName;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $notes;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $phone;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $street;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $zipCode;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $city;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $country;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $organizationName;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $organizationRole;
 
     /**

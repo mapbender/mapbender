@@ -54,7 +54,7 @@ class Signer
 
     /**
      * @param string $url
-     * @throws ProxySignatureException|\ArsGeografica\Signing\BadSignatureException
+     * @throws ProxySignatureException
      */
     public function checkSignedUrl($url)
     {

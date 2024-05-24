@@ -28,7 +28,7 @@ class ArrayToCsvScalarTransformer implements DataTransformerInterface
         $this->trim = $trim;
     }
 
-    public function transform($value)
+    public function transform($value): string
     {
         if ($value === null) {
             $value = array();
@@ -39,7 +39,7 @@ class ArrayToCsvScalarTransformer implements DataTransformerInterface
         return implode(',', $value);
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!is_scalar($value)) {
             throw new TransformationFailedException('Expected a string');

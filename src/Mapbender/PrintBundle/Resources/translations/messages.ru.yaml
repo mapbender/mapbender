@@ -6,10 +6,10 @@ mb:
           ok: Экспорт
           cancel: Отменить
       info:
-        noactivelayer: Нет активного слоя!
+        noactivelayer: 'Нет активного слоя!'
       chooseformat: Формат
       class:
-        title: Экспорт изображения
+        title: 'Экспорт изображения'
         description: |
           Позволяет экспортировать текущее отображение карты.
           Доступны PNG и JPEG форматы.
@@ -18,3 +18,58 @@ mb:
         export: Экспорт
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: 'Настройки'
+        joblist: 'На печать'
+      joblist:
+        header:
+          id: '#'
+          ctime: 'Cозданный'
+          status: 'Статус'
+        status:
+          pending: 'в очереди'
+          processing: 'отрабатывается'
+          finished: 'готово'
+        open: 'Открыть'
+        delete: 'Удалить'
+        cancel: 'Отмена'
+        nodata: 'нет данных'
+        loading: 'загрузка'
+    admin:
+      printclient:
+        renderMode:
+          label: 'Режим'
+          choice:
+            direct: 'Непосредственно'
+            queued: 'Очередь'
+        queueAccess:
+          label: 'Очередь'
+          choice:
+            global: 'глобально'
+            private: 'приватно'
+  core:
+    printclient:
+      admin:
+        scales: 'Масштабы (разделенные запятыми)'
+        fileprefix: 'Префикс файла'
+        optionalfields: 'Необязательные поля'
+        replacepattern: 'Заменить шаблон'
+        templates: 'Черновики'
+        qualitylevels: 'Уровни качества'
+      label:
+        quality: 'Качество'
+      class:
+        title: 'Печать'
+    printclienttemplate:
+      admin:
+        template: 'Черновик'
+        label: 'Обозначение'
+    printclientquality:
+      admin:
+        label: 'Обозначение'
+    admin:
+      printclient:
+        label:
+          qualitylevels: 'Уровни качества'
+          templates: 'Черновики'

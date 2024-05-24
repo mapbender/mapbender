@@ -4,14 +4,13 @@
 namespace Mapbender\ManagerBundle\Component\Menu;
 
 
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SourceMenu extends MenuItem
 {
-    public function enabled(AuthorizationCheckerInterface $authorizationChecker)
+    public function enabled(AuthorizationCheckerInterface $authorizationChecker): bool
     {
-        $sourceOid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        return $authorizationChecker->isGranted('VIEW', $sourceOid);
+        return $authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
     }
 }

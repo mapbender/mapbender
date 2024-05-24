@@ -3,10 +3,50 @@ fom:
     components:
       popup:
         delete_user_group:
-          title: Подтвердите удаление
-          content: Действительно удалить%userGroup%?
+          title: 'Подтвердите удаление'
+          content: 'Действительно удалить%userGroup%?'
           btn:
             cancel: Отменить
             ok: Ок
     fields:
-      no_user_group_defined: Группа пользователя не установлена
+      no_user_group_defined: 'Группа пользователя не установлена'
+  security:
+  domain:
+    public: 'Публичный доступ'
+    registered: 'Все зарегистрированные пользователи'
+  resource:
+    installation:
+      create_applications: "Создать"
+      view_all_applications: "Просмотреть"
+      view_all_applications_help: "Позволяет просматривать все приложения, независимо от прав, определенных в приложении."
+      edit_all_applications: "Редактировать"
+      edit_all_applications_help: "Позволяет редактировать все приложения, независимо от прав, определенных в приложении."
+      delete_all_applications: "Удалить"
+      delete_all_applications_help: "Позволяет удалять все приложения, независимо от прав, определенных в приложении."
+      own_all_applications: "Управление разрешениями"
+      own_all_applications_help: "Позволяет редактировать права всех приложений, независимо от прав, определенных в приложении."
+      view_sources: "Просмотреть"
+      create_sources: "Редактировать"
+      refresh_sources: "Обновить"
+      edit_free_instances: "Редактировать свободные экземпляры"
+      delete_sources: "Удалить"
+      manage_permissions: "Глобальное управление разрешениями"
+      view_users: "Просмотреть"
+      create_users: "Создать"
+      edit_users: "Редактировать"
+      delete_users: "Удалить"
+      view_groups: "Просмотреть"
+      create_groups: "Создать"
+      edit_groups: "Редактировать"
+      delete_groups: "Удалить"
+    application:
+      view: "Просмотреть"
+      view_help: "Авторизует пользователя/группу для просмотра и использования приложения в фронтенде, включая все элементы, для которых не определены специальные разрешения."
+      edit: "Редактировать"
+      edit_help: "Позволяет редактировать приложение, исключая вкладку 'Безопасность'. Редактирование наборов слоев требует глобальных разрешений."
+      delete: "Удалить"
+      manage_permissions: "Управление разрешениями"
+      manage_permissions_help: "Позволяет управлять разрешениями для этого приложения (текущей страницы)."
+    element:
+      view: "Просмотреть"
+

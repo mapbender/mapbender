@@ -49,16 +49,6 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
     }
 
     /**
-     * @param SourceInstance $sourceInstance
-     * @return SourceInstanceConfigGenerator
-     * @deprecated for unspecific wording; use getConfigGenerator
-     */
-    public function getSourceService(SourceInstance $sourceInstance)
-    {
-        return $this->getConfigGenerator($sourceInstance);
-    }
-
-    /**
      * Get the appropriate service to handle configuration generation
      * for the given source instance.
      *

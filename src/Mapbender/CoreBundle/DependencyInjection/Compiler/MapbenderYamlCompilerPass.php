@@ -41,7 +41,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     /**
      * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $sourcePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
         if ($this->applicationDir) {

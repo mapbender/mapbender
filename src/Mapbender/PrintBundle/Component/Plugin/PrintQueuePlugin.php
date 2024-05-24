@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -254,7 +254,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     {
         $token = $this->tokenStorage->getToken();
         $user = $token->getUser();
-        if (!$token || $token instanceof AnonymousToken || !$user) {
+        if (!$token || $token instanceof NullToken || !$user) {
             return null;
         }
         if ($user instanceof UserInterface) {
@@ -263,7 +263,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 // it's not part of the basic UserInterface!
                 return $user->getId();
             } catch (\Exception $e) {
-                return $user->getUsername();
+                return $user->getUserIdentifier();
             }
         } else {
             // user is either an object with __toString or just a string
@@ -293,11 +293,11 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
             //       network proxies.
             $content = file_get_contents($fullPath);
             if ($content !== false) {
-                return new Response($content, 200, $headers);
+                return new Response($content, Response::HTTP_OK, $headers);
             }
         } else {
             if (file_exists($fullPath) && is_readable($fullPath)) {
-                return new BinaryFileResponse($fullPath, 200, $headers);
+                return new BinaryFileResponse($fullPath, Response::HTTP_OK, $headers);
             }
         }
         throw new NotFoundHttpException();

@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Used only by Layertree.
@@ -28,13 +28,11 @@ class SourceMetaDataController
     }
 
     /**
-     * @Route("/application/metadata/{instance}/{layerId}",
-     *     name="mapbender_core_application_metadata",
-     *     methods={"GET"})
      * @param SourceInstance $instance
      * @param string $layerId
      * @return Response
      */
+    #[Route(path: '/application/metadata/{instance}/{layerId}', name: 'mapbender_core_application_metadata', methods: ['GET'])]
     public function metadataAction(SourceInstance $instance, $layerId)
     {
         $layerCriteria = Criteria::create()

@@ -2,46 +2,35 @@
 
 namespace FOM\UserBundle\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use FOM\UserBundle\Entity\User;
 
 /**
  * Event listener for adding user profile on the fly
  *
  * @author Christian Wygoda
  */
-class UserProfileListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::loadClassMetadata, priority: 500, connection: 'default')]
+class UserProfileListener
 {
-    /** @var string */
-    protected $profileEntityName;
-    /** @var string */
-    protected $defaultUserEntityName;
-
-    protected $patchProgress = array();
+    protected string $defaultUserEntityName = User::class;
+    protected array $patchProgress = array();
     const PATCH_STARTED = 1;
     const PATCH_PERFORMED = 2;
 
-    /**
-     * @param string $profileEntityClass
-     */
-    public function __construct($profileEntityClass)
+    public function __construct(protected string $profileEntityName)
     {
-        $this->profileEntityName = $profileEntityClass;
         $this->defaultUserEntityName = 'FOM\UserBundle\Entity\User';
     }
 
-    public function getSubscribedEvents()
-    {
-        return array(
-            'loadClassMetadata',
-        );
-    }
-
-    public function loadClassMetadata(LoadClassMetadataEventArgs $args)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         $metadata = $args->getClassMetadata();
         $metadataClass = $metadata->getName();
@@ -72,7 +61,7 @@ class UserProfileListener implements EventSubscriber
         }
     }
 
-    protected function patchUserEntity(ClassMetadata $metadata)
+    protected function patchUserEntity(ClassMetadata $metadata): void
     {
         if (!$metadata->hasAssociation('profile')) {
             $metadata->mapOneToOne(array(
@@ -84,7 +73,7 @@ class UserProfileListener implements EventSubscriber
         }
     }
 
-    protected function patchProfileEntity(ClassMetadata $metadata, AbstractPlatform $platform)
+    protected function patchProfileEntity(ClassMetadata $metadata, AbstractPlatform $platform): void
     {
         /** @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/basic-mapping.html#quoting-reserved-words */
         $uidColname = $platform->quoteIdentifier('uid');
@@ -114,7 +103,7 @@ class UserProfileListener implements EventSubscriber
         }
     }
 
-    protected function patchProfilePk(ClassMetadata $metadata)
+    protected function patchProfilePk(ClassMetadata $metadata): void
     {
         $metadata->setIdGenerator(new AssignedGenerator());
         if (!$metadata->getIdentifierFieldNames()) {
@@ -128,21 +117,13 @@ class UserProfileListener implements EventSubscriber
         }
     }
 
-    /**
-     * @param string $className
-     * @return boolean
-     */
-    protected function isUserEntity($className)
+    protected function isUserEntity(string $className): bool
     {
         // ONLY detect the default class
         return ltrim($className, '\\') === $this->defaultUserEntityName;
     }
 
-    /**
-     * @param string $className
-     * @return boolean
-     */
-    protected function isProfileEntity($className)
+    protected function isProfileEntity(string $className): bool
     {
         // ONLY detect the configured class
         // Relation from one User entity class to multiple different profile entity classes

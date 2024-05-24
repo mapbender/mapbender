@@ -5,7 +5,7 @@
     <parameters>
         <parameter key="applications" type="collection" />
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
-        <parameter key="assetic.filter.scss.class">Wheregroup\AsseticFilterSassc\SasscFilter</parameter>
+        <parameter key="assetic.filter.scss.class">Assetic\Filter\ScssphpFilter</parameter>
         <parameter key="mapbender.http_transport.service.class">Mapbender\Component\Transport\OwsProxyTransport</parameter>
         <parameter key="mapbender.source.instancetunnel.service.class">Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService</parameter>
         <parameter key="mapbender.presenter.application.config.service.class">Mapbender\CoreBundle\Component\Presenter\Application\ConfigService</parameter>
@@ -34,7 +34,6 @@
         <parameter key="mapbender.application_asset.service.class">Mapbender\CoreBundle\Asset\ApplicationAssetService</parameter>
         <parameter key="mapbender.asset_compiler.js.class">Mapbender\CoreBundle\Asset\JsCompiler</parameter>
         <parameter key="mapbender.asset_compiler.css.class">Mapbender\CoreBundle\Asset\CssCompiler</parameter>
-        <parameter key="mapbender.asset_compiler.css.timeout">%assetic.filter.sass.timeout%</parameter>
         <parameter key="mapbender.asset_compiler.translations.class">Mapbender\CoreBundle\Asset\TranslationCompiler</parameter>
         <parameter key="mapbender.element_inventory.service.class">Mapbender\CoreBundle\Component\ElementInventoryService</parameter>
         <parameter key="mapbender.cookieconsent">false</parameter>
@@ -46,11 +45,8 @@
         </parameter>
         <parameter key="mapbender.disabled_elements" type="collection" />
         <parameter key="mapbender.uploads_dir">uploads</parameter>
-        <!-- will be determined automatically if empty; see AtodetectSasscBinaryPass
-             try setting /usr/bin/sassc -->
-        <parameter key="mapbender.asset.sassc_binary_path">null</parameter>
-        <!-- pre-provide assetic default param, so css compilation works without AsseticBundle -->
-        <parameter key="assetic.filter.sass.timeout">null</parameter>
+        <parameter key="mapbender.manager.manager.login_template_class">Mapbender\ManagerBundle\Template\LoginTemplate</parameter>
+        <parameter key="mapbender.manager.manager.template_class">Mapbender\ManagerBundle\Template\ManagerTemplate</parameter>
     </parameters>
 
     <services>
@@ -112,6 +108,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.fileimport_admin" class="Mapbender\CoreBundle\Element\Type\DataUploadAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.paint" class="Mapbender\CoreBundle\Element\Type\PaintType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
@@ -120,13 +121,6 @@
         <service id="mapbender.form_type.activity_indicator" class="Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
-        </service>
-
-        <service id="mapbender.form_type.target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
-            <tag name="form.type" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.element_filter" />
         </service>
 
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
@@ -168,25 +162,13 @@
         <service id="mapbender.assetic.filter.sass"
                  class="%assetic.filter.scss.class%"
                  lazy="true">
-            <argument>%mapbender.asset.sassc_binary_path%</argument>
-            <call method="setTimeout">
-                <argument>%mapbender.asset_compiler.css.timeout%</argument>
-            </call>
-
-            <!-- default option for SASSC -->
-            <call method="setCacheLocation">
-                <argument>false</argument>
-            </call>
-            <call method="setScss">
-                <argument>false</argument>
-            </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
             </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/vendor/igosuki/compass-mixins/lib</argument>
             </call>
-            <call method="addLoadPath">
+            <call method="addImportPath">
                 <argument>%kernel.project_dir%/public</argument>
             </call>
         </service>
@@ -201,7 +183,7 @@
             <argument type="service" id="router" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="security.token_storage" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
         <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
@@ -233,14 +215,14 @@
             <argument>%mapbender.uploads_dir%</argument>
         </service>
         <service id="mapbender.application_importer.service" class="%mapbender.application_importer.service.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
-            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="fom.security.permission_manager" />
         </service>
         <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
         <service id="mapbender.presenter.application.cache" class="%mapbender.presenter.application.cache.class%">
             <argument type="service" id="logger" />
@@ -297,7 +279,6 @@
         <service id="mapbender.element_inventory.service" class="%mapbender.element_inventory.service.class%">
             <!-- NOTE: base Element class availability is not an argument, but added via compiler passes; this is not configurable -->
             <argument>%mapbender.disabled_elements%</argument>
-            <argument type="service" id="mapbender.element_shim_factory" />
         </service>
         <service id="mapbender.icon_package_fa4" class="Mapbender\CoreBundle\Component\IconPackageFa4">
             <argument>%mapbender.icons.disable_default_fa%</argument>
@@ -309,20 +290,20 @@
             <tag name="mapbender.icon_package" priority="-2" />
         </service>
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
-            <tag name="doctrine.event_listener" event="postConnect" />
+            <tag name="doctrine.middleware" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
-        <service id="mapbender.init_db_handler.prune_global_element_grants" class="Mapbender\CoreBundle\EventHandler\InitDb\PruneGlobalElementGrantHandler">
-            <argument type="service" id="security.acl.provider" on-invalid="null" />
-            <tag name="kernel.event_subscriber" />
+        <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine" public="true">
+            <argument type="service" id="logger" />
+            <argument type="service" id="doctrine" />
         </service>
         <service id="mapbender.init_db_handler.epsg_update" class="Mapbender\CoreBundle\EventHandler\InitDb\UpdateEpsgHandler">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <tag name="kernel.event_subscriber" />
         </service>
         <service id="mapbender.init_db_handler.fix_element_weights" class="Mapbender\CoreBundle\EventHandler\InitDb\FixElementWeightsHandler">
             <tag name="kernel.event_subscriber" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
     </services>
 </container>

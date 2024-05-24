@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class MapbenderManagerBundle extends Bundle
 {
 
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $loader = new XmlFileLoader($container, $configLocator);

@@ -19,7 +19,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $this->exposeLayerOrder = $exposeLayerOrder;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
     }
@@ -27,7 +27,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var WmsInstance $instance */
         $instance = $options["data"];

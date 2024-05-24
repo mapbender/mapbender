@@ -38,7 +38,7 @@ abstract class AbstractTranslationCommand extends Command
         parent::__construct(null);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if (method_exists($this->translator, 'getFallbackLocales')) {
             // Translator or DataCollectorTranslator, potentially more implementations

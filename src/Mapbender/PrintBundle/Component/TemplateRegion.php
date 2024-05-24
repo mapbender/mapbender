@@ -123,51 +123,35 @@ class TemplateRegion implements \ArrayAccess
 
 
     // array-style access support
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
-        switch($offset) {
-            case 'x':
-                return $this->offsets[0];
-            case 'y':
-                return $this->offsets[1];
-            case 'width':
-                return $this->width;
-            case 'height':
-                return $this->height;
-            case 'font':
-                return $this->style->getFontName();
-            case 'fontsize':
-                return $this->style->getSize();
-            case 'color':
-                return $this->style->getColor();
-            default:
-                throw new \RuntimeException("Invalid offset " . print_r($offset, true));
-        }
+        return match ($offset) {
+            'x' => $this->offsets[0],
+            'y' => $this->offsets[1],
+            'width' => $this->width,
+            'height' => $this->height,
+            'font' => $this->style->getFontName(),
+            'fontsize' => $this->style->getSize(),
+            'color' => $this->style->getColor(),
+            default => throw new \RuntimeException("Invalid offset " . print_r($offset, true)),
+        };
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
-        switch ($offset) {
-            case 'x':
-            case 'y':
-            case 'width':
-            case 'height':
-                return true;
-            case 'font':
-            case 'fontsize':
-            case 'color':
-                return !!$this->style;
-            default:
-                return false;
-        }
+        return match ($offset) {
+            'x', 'y', 'width', 'height' => true,
+            'font', 'fontsize', 'color' => !!$this->style,
+            default => false,
+        };
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }

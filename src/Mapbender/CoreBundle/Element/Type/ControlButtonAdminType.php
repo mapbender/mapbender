@@ -12,7 +12,7 @@ class ControlButtonAdminType extends BaseButtonAdminType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('target', 'Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType', array(

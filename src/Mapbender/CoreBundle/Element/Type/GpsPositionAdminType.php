@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class GpsPositionAdminType extends AbstractType
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }
@@ -16,7 +16,7 @@ class GpsPositionAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('autoStart', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(

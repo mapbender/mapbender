@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 abstract class RelatedObjectChoiceType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
@@ -33,7 +33,7 @@ abstract class RelatedObjectChoiceType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $type = $this;
         $resolver->setRequired(array(

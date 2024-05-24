@@ -10,3 +10,43 @@ fom:
             ok: Aceptar
     fields:
       no_user_group_defined: 'Gupo de usuario no definido.'
+  security:
+    domain:
+      public: 'Acceso Público'
+      registered: 'Todos los Usuarios Registrados'
+    resource:
+      installation:
+        create_applications: "Crear"
+        view_all_applications: "Ver"
+        view_all_applications_help: "Permite ver todas las aplicaciones, independientemente de los permisos definidos en la aplicación."
+        edit_all_applications: "Editar"
+        edit_all_applications_help: "Permite editar todas las aplicaciones, independientemente de los permisos definidos en la aplicación."
+        delete_all_applications: "Eliminar"
+        delete_all_applications_help: "Permite eliminar todas las aplicaciones, independientemente de los permisos definidos en la aplicación."
+        own_all_applications: "Gestionar Permisos"
+        own_all_applications_help: "Permite editar permisos para todas las aplicaciones, independientemente de los permisos definidos en la aplicación."
+        view_sources: "Ver"
+        create_sources: "Editar"
+        refresh_sources: "Actualizar"
+        edit_free_instances: "Editar Instancias Libres"
+        delete_sources: "Eliminar"
+        manage_permissions: "Gestión Global de Permisos"
+        view_users: "Ver"
+        create_users: "Crear"
+        edit_users: "Editar"
+        delete_users: "Eliminar"
+        view_groups: "Ver"
+        create_groups: "Crear"
+        edit_groups: "Editar"
+        delete_groups: "Eliminar"
+      application:
+        view: "Ver"
+        view_help: "Autoriza al usuario/grupo a ver y usar la aplicación en la interfaz, incluidos todos los elementos para los que no se han definido permisos especiales."
+        edit: "Editar"
+        edit_help: "Permite editar la aplicación, excluyendo la pestaña 'Seguridad'. La edición de conjuntos de capas requiere permisos globales."
+        delete: "Eliminar"
+        manage_permissions: "Gestión de Permisos"
+        manage_permissions_help: "Permite gestionar permisos para esta aplicación (la página actual)."
+      element:
+        view: "Ver"
+

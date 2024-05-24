@@ -8,60 +8,42 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 /**
  * @author Paul Schmidt
  *
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtsinstancelayer")
  *
  * @property WmtsLayerSource sourceItem
  * @method WmtsInstance getSourceInstance
  * @method WmtsLayerSource getSourceItem
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtsinstancelayer')]
 class WmtsInstanceLayer extends SourceInstanceItem
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsInstance", inversedBy="layers", cascade={"persist", "refresh"})
-     * @ORM\JoinColumn(name="wmtsinstance", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsInstance::class, cascade: ['persist', 'refresh'], inversedBy: 'layers')]
+    #[ORM\JoinColumn(name: 'wmtsinstance', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $sourceInstance;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsLayerSource", cascade={"persist", "refresh"})
-     * @ORM\JoinColumn(name="wmtslayersource", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsLayerSource::class, cascade: ['persist', 'refresh'])]
+    #[ORM\JoinColumn(name: 'wmtslayersource', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $sourceItem;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $infoformat;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $active = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $allowselected = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $selected = true;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $info;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $allowinfo;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $style = "";
 
     public function __clone()

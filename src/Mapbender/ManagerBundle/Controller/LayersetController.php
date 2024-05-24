@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,14 +16,14 @@ class LayersetController extends ApplicationControllerBase
     /**
      * Handle create + modify
      *
-     * @ManagerRoute("/application/{slug}/layerset/new", methods={"GET", "POST"}, name="mapbender_manager_layerset_new")
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit", methods={"GET", "POST"}, name="mapbender_manager_layerset_edit")
      * @param Request $request
      * @param string $slug
      * @param string|null $layersetId
      * @return Response
      */
-    public function editAction(Request $request, $slug, $layersetId = null)
+    #[ManagerRoute('/application/{slug}/layerset/new', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_new')]
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/edit', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_edit')]
+    public function edit(Request $request, $slug, $layersetId = null)
     {
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId);
@@ -32,17 +33,16 @@ class LayersetController extends ApplicationControllerBase
             $layerset = new Layerset();
             $layerset->setApplication($application);
         }
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $em = $this->getEntityManager();
                 $application->setUpdated(new \DateTime('now'));
-                $em->persist($application);
-                $em->persist($layerset);
-                $em->flush();
+                $this->em->persist($application);
+                $this->em->persist($layerset);
+                $this->em->flush();
                 $this->addFlash('success', 'mb.layerset.create.success');
             } else {
                 foreach ($form->getErrors(false, true) as $error) {
@@ -61,17 +61,17 @@ class LayersetController extends ApplicationControllerBase
     }
 
     /**
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/delete", methods={"GET", "POST", "DELETE"})
      * @param Request $request
      * @param string $slug
      * @param string $layersetId
      * @return Response
      */
-    public function deleteAction(Request $request, $slug, $layersetId)
+    #[ManagerRoute('/application/{slug}/layerset/{layersetId}/delete', methods: ['GET', 'POST', 'DELETE'])]
+    public function delete(Request $request, $slug, $layersetId)
     {
         $layerset = $this->requireLayerset($layersetId);
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Render confirmation dialog content
             return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
@@ -82,11 +82,10 @@ class LayersetController extends ApplicationControllerBase
                 throw new BadRequestHttpException();
             }
 
-            $em = $this->getEntityManager();
-            $em->remove($layerset);
+            $this->em->remove($layerset);
             $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-            $em->flush();
+            $this->em->persist($application);
+            $this->em->flush();
             $this->addFlash('success', 'mb.layerset.remove.success');
             /** @todo: perform redirect server side, not client side */
             return new Response();
@@ -96,26 +95,25 @@ class LayersetController extends ApplicationControllerBase
     /**
      * Setter action for "selected" flag (single value, immediate by ajax, no form)
      *
-     * @ManagerRoute("/layerset/{layerset}/toggleselected", methods={"POST"})
      * @param Request $request
      * @param Layerset $layerset
      * @return Response
      */
-    public function setselectedAction(Request $request, Layerset $layerset)
+    #[ManagerRoute('/layerset/{layerset}/toggleselected', methods: ['POST'])]
+    public function setselected(Request $request, Layerset $layerset)
     {
         $application = $layerset->getApplication();
-        $this->denyAccessUnlessGranted('EDIT', $application);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if (!$this->isCsrfTokenValid('layerset', $request->request->get('token'))) {
             throw new BadRequestHttpException();
         }
 
-        $em = $this->getEntityManager();
         $layerset->setSelected($request->request->getBoolean('enabled'));
         $application->setUpdated(new \DateTime('now'));
-        $em->persist($layerset);
-        $em->persist($application);
-        $em->flush();
+        $this->em->persist($layerset);
+        $this->em->persist($application);
+        $this->em->flush();
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

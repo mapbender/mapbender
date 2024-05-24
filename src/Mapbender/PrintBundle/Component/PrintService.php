@@ -174,14 +174,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * @param Template|array $templateData
      * @param string $templateName
-     * @return \FPDF|\FPDF_TPL|PDF_Extensions
+     * @return \FPDF|PDF_Extensions
      * @throws \Exception
      */
     protected function makeBlankPdf($templateData, $templateName)
     {
         require_once('PDF_Extensions.php');
 
-        /** @var PDF_Extensions|\FPDF|\FPDF_TPL $pdf */
+        /** @var PDF_Extensions|\FPDF $pdf */
         $pdf =  new PDF_Extensions();
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
         $pdf->setSourceFile($pdfPath);
@@ -201,7 +201,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $mapImageName
      * @param Template|array $templateData
      * @param array $jobData
-     * @return \FPDF|\FPDF_TPL|PDF_Extensions
+     * @return \FPDF|PDF_Extensions
      * @throws \Exception
      */
     protected function buildPdf($mapImageName, $templateData, $jobData)
@@ -209,11 +209,18 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         $tplidx = $pdf->importPage(1);
-        $pdf->useTemplate($tplidx);
+
+        $hasTransparentBg = $this->checkPdfBackground($jobData['template']);
+        if (!$hasTransparentBg) {
+            $pdf->useTemplate($tplidx);
+        }
         $this->addMapImage($pdf, $mapImageName, $templateData);
         unlink($mapImageName);
 
-        // @todo: reimplement "transparent background pdf" logic? (purpose / testability unknown)
+        if ($hasTransparentBg) {
+            $pdf->useTemplate($tplidx);
+        }
+
         $this->afterMainMap($pdf, $templateData, $jobData);
 
         return $pdf;
@@ -231,7 +238,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param string $mapImageName
      * @param Template|array $templateData
      */
@@ -274,7 +281,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * This excludes the legend, because the legend rendering process, if it begins on the first
      * page, may spill over and start adding more pages.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
      */
@@ -307,7 +314,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * Override this to do anything you want to do happen before the legend spill pages start rendering. You MAY
      * also add more pages to the PDF here.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
      */
@@ -320,7 +327,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * Should populate a TemplateRegion on the first page of the PDF being generated.
      * Nothing happening in this method or called by it should add page breaks to the pdf.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param TemplateRegion $region
      * @param array $jobData
      * @return bool
@@ -347,7 +354,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * LegendBlock remembers if it has already been rendered or not, so remaining legend blocks can be rendered
      * onto spill pages later.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
      * @param LegendBlockContainer[] $legendBlocks
@@ -369,7 +376,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Renders any legend blocks not yet marked as rendered on extra pages appended to the end of the pdf.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param Template $template
      * @param array $jobData
      * @param LegendBlockContainer[] $legendBlocks
@@ -385,7 +392,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Fills textual regions on the first page.
      *
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param Template|array $template
      * @param array $jobData
      */
@@ -410,7 +417,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     }
 
     /**
-     * @param \FPDF|\FPDF_TPL|PDF_Extensions $pdf
+     * @param \FPDF|PDF_Extensions $pdf
      * @param TemplateRegion|array $region
      */
     protected function applyFontStyle($pdf, $region)
@@ -709,6 +716,16 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         } else {
             return floatval($jobData['quality']) / $this->getDefaultDpi($jobData);
         }
+    }
+
+    /**
+     * @param string $templateName
+     * @return bool
+     */
+    private function checkPdfBackground($templateName)
+    {
+        $pdfString = file_get_contents($this->templateParser->getTemplateFilePath($templateName, 'pdf'));
+        return !str_contains($pdfString, '/Outlines');
     }
 
     /**

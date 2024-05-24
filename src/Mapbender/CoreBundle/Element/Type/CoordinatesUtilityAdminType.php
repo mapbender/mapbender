@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CoordinatesUtilityAdminType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'application' => null
@@ -18,7 +18,7 @@ class CoordinatesUtilityAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('srsList', 'Mapbender\CoreBundle\Element\Type\CoordinatesUtilitySrsListType', array(

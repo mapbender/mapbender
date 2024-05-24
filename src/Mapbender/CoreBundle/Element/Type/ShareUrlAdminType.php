@@ -9,12 +9,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ShareUrlAdminType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Icon is hard-coded, remove upstream icon field.
         if ($builder->has('icon')) {

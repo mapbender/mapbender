@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,6 +21,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @author Christian Wygoda
  */
+#[AsCommand('fom:user:resetroot')]
 class ResetRootAccountCommand extends Command
 {
     /** @var UserHelperService */
@@ -42,7 +44,7 @@ class ResetRootAccountCommand extends Command
         $this->userEntityClass = $userEntityClass;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDefinition(array(
@@ -56,11 +58,10 @@ The <info>fom:user:resetroot</info> command can be used to create or update
 the root user account. This account is identified by id 1, username, e-mail
 and password can be set.
 EOT
-            )
-            ->setName('fom:user:resetroot');
+            );
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
 
@@ -101,18 +102,18 @@ EOT
         $this->entityManager->persist($root);
         $this->entityManager->flush();
 
-        $output->writeln("User {$root->getUsername()} {$mode}.");
+        $output->writeln("User {$root->getUserIdentifier()} {$mode}.");
         return 0;
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
         $root = $this->getRoot();
 
         if (!$input->getOption('username')) {
-            $default = $root ? $root->getUsername() : 'root';
+            $default = $root ? $root->getUserIdentifier() : 'root';
             $question = new Question("Enter the username to use for the root account [{$default}]: ", $default);
             $input->setOption('username', $questionHelper->ask($input, $output, $question));
         }

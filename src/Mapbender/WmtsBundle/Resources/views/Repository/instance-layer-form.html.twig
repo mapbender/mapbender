@@ -7,7 +7,7 @@
     {{ form_row(form.selected) }}
     {%- endblock -%}
     <td class="text-end">
-      {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}
+      {%- set _popover_id = 'popover_' ~ form.vars.id -%}
       <div class="static-popover-wrap">
         <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
           title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
@@ -19,20 +19,20 @@
             <div class="popover-body">
               {%- block layer_details_content -%}
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form_layer.displayId) }}</div>
+                  <div class="col-sm-2">{{ form_label(form.displayId) }}</div>
                   <div class="col-sm-10">
                     {%- set layer = form.vars.data -%}
                     {% set inputVal = layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id %}
-                    {{ form_widget(form_layer.displayId, {'value': inputVal}) }}
+                    {{ form_widget(form.displayId, {'value': inputVal}) }}
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form_layer.displayName) }}</div>
-                  <div class="col-sm-10">{{ form_widget(form_layer.displayName) }}</div>
+                  <div class="col-sm-2">{{ form_label(form.displayName) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form.displayName) }}</div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form_layer.supportedCrs) }}</div>
-                  <div class="col-sm-10">{{ form_widget(form_layer.supportedCrs) }}</div>
+                  <div class="col-sm-2">{{ form_label(form.supportedCrs) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form.supportedCrs) }}</div>
                 </div>
               {%- endblock -%}
             </div>

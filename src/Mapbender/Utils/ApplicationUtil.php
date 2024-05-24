@@ -4,44 +4,38 @@
 namespace Mapbender\Utils;
 
 
-use Mapbender\Component\ClassUtil;
+use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 
 class ApplicationUtil
 {
-    /**
-     * @param Application $application
-     * @return Element|null
-     */
-    public static function getMapElement(Application $application)
+    public static function getMapElement(Application $application): ?Element
     {
-        $elements = static::getMapElements($application) ?: array(null);
+        $elements = static::getMapElements($application) ?: [null];
         return $elements[0];
     }
 
     /**
-     * @param Application $application
      * @return Element[]
      */
-    public static function getMapElements(Application $application)
+    public static function getMapElements(Application $application): array
     {
-        $matches = array();
+        $mapElements = [];
         foreach ($application->getElements() as $element) {
             $className = $element->getClass();
-            if ($className && ClassUtil::exists($className) && \is_a($className, 'Mapbender\Component\Element\MainMapElementInterface', true)) {
-                $matches[] = $element;
+            if ($className && \class_exists($className) && \is_a($className, MainMapElementInterface::class, true)) {
+                $mapElements[] = $element;
             }
         }
-        return $matches;
+        return $mapElements;
     }
 
     /**
-     * @param Application $application
      * @return Layerset[]
      */
-    public static function getMapLayersets(Application $application)
+    public static function getMapLayersets(Application $application): array
     {
         // @todo: this should always be everything except overview
         // historically, manual assignment to map element is assumed

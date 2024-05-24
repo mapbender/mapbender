@@ -7,16 +7,13 @@ use Mapbender\CoreBundle\Entity\Keyword;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_wms_keyword_layersource")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wms_keyword_layersource')]
 class WmsLayerSourceKeyword extends Keyword
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="keywords")
-     * @ORM\JoinColumn(name="reference_id", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: WmsLayerSource::class, inversedBy: 'keywords')]
+    #[ORM\JoinColumn(name: 'reference_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $reference;
 
     /**

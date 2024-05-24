@@ -46,7 +46,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $this->elementFilter = $elementFilter;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'element_filter_function' => null,
@@ -69,12 +69,12 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $resolver->setAllowedTypes('include_buttons', array('bool'));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
@@ -154,10 +154,6 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
                 return false;
             }
             if (!$options['include_buttons']) {
-                // Legacy Component\Element style
-                if (\is_a($className, 'Mapbender\CoreBundle\Element\BaseButton', true)) {
-                    return false;
-                }
                 // Service-type ButtonLike
                 if (\is_a($className, 'Mapbender\Component\Element\ButtonLike', true)) {
                     return false;

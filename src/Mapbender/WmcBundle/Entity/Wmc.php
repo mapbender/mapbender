@@ -2,6 +2,7 @@
 namespace Mapbender\WmcBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -10,88 +11,84 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A Wmc entity presents an OGC WMC.
- * @ORM\Entity
- * @ORM\Table(name="mb_wmc_wmc")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmc_wmc')]
 class Wmc
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $version The wmc version
-     * @ORM\Column(type="string", length=10, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
     protected $version = "1.1.0";
 
     /**
      * @var string $wmcid a wmc id
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected $wmcid;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\State", cascade={"persist","remove"})
-     * @ORM\JoinColumn(name="state", referencedColumnName="id")
-     * */
+    #[ORM\OneToOne(targetEntity: State::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'state', referencedColumnName: 'id')]
     protected $state;
 
     /**
      * @var array $keywords The keywords of the wmc
-     * @ORM\Column(type="array",nullable=true)
      * */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $keywords = array();
 
     /**
      * @var string $abstract The wmc description
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
     /**
      * @var LegendUrl A description url
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $logourl;
 
     /**
      * @var OnlineResource A description url
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $descriptionurl;
 
     /**
      * @var string $screenshotPath The wmc description
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $screenshotPath;
 
     /**
      * @var File screenshot
-     * @Assert\File(maxSize="6000000")
      */
+    #[Assert\File(maxSize: '6000000')]
     private $screenshot;
 
     /**
      * @var \Mapbender\CoreBundle\Entity\Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
      */
+    #[ORM\OneToOne(targetEntity: Contact::class, cascade: ['persist', 'remove'])]
     protected $contact;
 
     /**
      * @var File XML document as file
-     * @Assert\File(maxSize="6000000")
      */
+    #[Assert\File(maxSize: '6000000')]
     private $xml;
 
     /**
      * @var boolean public
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $public = false;
 
     /**
@@ -167,7 +164,7 @@ class Wmc
     /**
      * Get abstract
      *
-     * @return string 
+     * @return string
      */
     public function getAbstract()
     {
@@ -233,7 +230,7 @@ class Wmc
     /**
      * Get screenshotPath
      *
-     * @return string 
+     * @return string
      */
     public function getScreenshotPath()
     {
@@ -303,7 +300,7 @@ class Wmc
     /**
      * Get contact
      *
-     * @return string 
+     * @return string
      */
     public function getContact()
     {

@@ -29,7 +29,7 @@
             <argument type="service" id="fom.security.failed_login_listener" on-invalid="null" />
         </service>
         <service id="fom.security.failed_login_listener" class="%fom_user.failed_login_listener.class%">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%fom_user.login_attempts_before_delay%</argument>
             <argument>%fom_user.login_delay_after_fail%</argument>
             <argument>%fom_user.login_check_log_time%</argument>
@@ -38,9 +38,7 @@
 
         <service id="fom.user_profile_listener" class="%fom_user.user_profile_listener.class%">
             <argument>%fom_user.profile_entity%</argument>
-            <tag name="doctrine.event_subscriber" connection="default" />
+            <tag name="doctrine.event_listener" connection="default" event="loadClassMetadata" />
         </service>
-        <!-- @todo v3.3 remove alias, this has nothing to do with security -->
-        <service id="fom.security.user_profile_listener" alias="fom.user_profile_listener" />
     </services>
 </container>

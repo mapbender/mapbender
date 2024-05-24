@@ -154,6 +154,9 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       text-align: right;
       margin: 20px 0;
     }
+    .button-group input{
+      margin-right: 5px;
+    }
   }
 }
 
@@ -171,15 +174,23 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 }
 
 .permissionsTable{
+  tbody .tagbox {
+    cursor: pointer;
+  }
+
   .tagbox {
     display: inline-block;
     font-size: 85%;
-    cursor: pointer;
     width: auto;
     padding: 3px .5em;
     margin: 0 .25em;
     user-select: none;
     border-radius: 5px;
+
+    i {
+      cursor: pointer;
+    }
+
     input {
       display: none;
     }
@@ -187,17 +198,20 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       background-color:#c1c1c1;
     }
 
-    &.active {
+    &.active, &.active-inherited {
       color:white;
-      &.view {
+      &.success {
         background-color: #8DCA35;
       }
-      &.edit, &.delete, &.create {
+      &.warning {
         background-color: #FFAB00;
       }
-      &.operator, &.master, &.owner {
+      &.danger {
         background-color: #FF702A;
       }
+    }
+    &.active-inherited {
+        opacity: 0.6;
     }
   }
 }

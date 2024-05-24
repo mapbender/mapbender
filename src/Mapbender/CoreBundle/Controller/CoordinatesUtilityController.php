@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,12 +14,8 @@ use Mapbender\CoreBundle\Entity\SRS;
 
 class CoordinatesUtilityController
 {
-    /** @var ManagerRegistry|\Symfony\Bridge\Doctrine\RegistryInterface */
-    protected $doctrineRegistry;
-
-    public function __construct($doctrineRegistry)
+    public function __construct(protected ManagerRegistry $doctrineRegistry)
     {
-        $this->doctrineRegistry = $doctrineRegistry;
     }
 
     /**
@@ -30,10 +26,10 @@ class CoordinatesUtilityController
     /**
      * Provide autocomplete for SRS
      *
-     * @Route("/srs-autocomplete", name="srs_autocomplete", options={"expose"=true})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/srs-autocomplete', name: 'srs_autocomplete', options: ['expose' => true])]
     public function srsAutocompleteAction(Request $request)
     {
         $term = $request

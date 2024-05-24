@@ -4,11 +4,12 @@
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
@@ -90,7 +91,7 @@ class ApplicationMarkupCache
             $request->getBaseUrl(),
         );
         $token = $this->tokenStorage->getToken();
-        $isAnon = !$token || ($token instanceof AnonymousToken);
+        $isAnon = !$token || ($token instanceof NullToken);
         if ($isAnon) {
             // All anons will have the same grant check results. We can skip it, but we need to
             // make sure this cache entry is only used by anons.
@@ -102,7 +103,7 @@ class ApplicationMarkupCache
                 $request->getBaseUrl(),
             );
             foreach ($application->getElements() as $element) {
-                if (!$this->accessDecisionManager->decide($token, array('VIEW'), $element)) {
+                if (!$this->accessDecisionManager->decide($token, [ResourceDomainElement::ACTION_VIEW], $element)) {
                     $hashParts[] = $element->getId();
                 }
             }

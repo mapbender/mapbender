@@ -9,9 +9,11 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.renderer.application_markup" />
             <argument type="service" id="mapbender.cache.application_markup" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%kernel.debug%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ComponentsController"
@@ -26,26 +28,30 @@
             <argument type="service" id="security.authentication_utils" />
             <argument>%fom_user.selfregister%</argument>
             <argument>%fom_user.reset_password%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\WelcomeController"
                  class="Mapbender\CoreBundle\Controller\WelcomeController"
                  public="true">
-                <argument type="service" id="mapbender.application.yaml_entity_repository" />
-                <argument type="service" id="doctrine" />
-                <call method="setContainer">
-                    <argument type="service" id="service_container"/>
-                </call>
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="doctrine" />
+            <tag name="container.service_subscriber" />
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\InstanceTunnelController"
                  class="Mapbender\CoreBundle\Controller\InstanceTunnelController"
                  public="true">
             <argument type="service" id="mapbender.source.instancetunnel.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%kernel.debug%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\ElementController"
@@ -54,8 +60,10 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.renderer.element_markup" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\UserInfoController"
@@ -71,9 +79,11 @@
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
             <argument type="service" id="mapbender.presenter.application.cache" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%cachable.mapbender.application.config%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\AssetsController"
@@ -82,11 +92,15 @@
             <argument type="service" id="translator" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="mapbender.application_asset.service" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%container.compilation_timestamp_float%</argument>
             <argument>%kernel.cache_dir%</argument>
             <argument>%kernel.debug%</argument>
+            <argument>%mapbender.manager.manager.template_class%</argument>
+            <argument>%mapbender.manager.manager.login_template_class%</argument>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\CoreBundle\Controller\SourceMetaDataController"

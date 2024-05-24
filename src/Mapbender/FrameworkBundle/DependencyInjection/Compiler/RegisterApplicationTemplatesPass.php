@@ -4,7 +4,6 @@
 namespace Mapbender\FrameworkBundle\DependencyInjection\Compiler;
 
 
-use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,18 +21,9 @@ class RegisterApplicationTemplatesPass implements CompilerPassInterface
         $this->targetServiceId = $targetServiceId;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $priorityMap = array();
-        $bundleTemplateClasses = $this->getBundleTemplates($container);
-        foreach ($bundleTemplateClasses as $templateClass) {
-            $priorityMap += array(0 => array());
-            $priorityMap[0][] = array(
-                'class' => $templateClass,
-                'class_or_ref' => $templateClass,
-                'tag' => array(),
-            );
-        }
 
         $tagged = $container->findTaggedServiceIds('mapbender.application_template', false);
         foreach ($tagged as $serviceId => $tags) {
@@ -62,22 +52,5 @@ class RegisterApplicationTemplatesPass implements CompilerPassInterface
         }
         $targetDefinition = $container->getDefinition($this->targetServiceId);
         $targetDefinition->setArgument(0, $handlers);
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @return string[]
-     */
-    protected function getBundleTemplates(ContainerBuilder $container)
-    {
-        $templateClasses = array();
-        foreach ($container->getParameter('kernel.bundles') as $bundleClass) {
-            if (\is_a($bundleClass, MapbenderBundle::class, true)) {
-                /** @var MapbenderBundle $bundle */
-                $bundle = new $bundleClass();
-                $templateClasses = \array_merge($templateClasses, $bundle->getTemplates());
-            }
-        }
-        return $templateClasses;
     }
 }

@@ -60,7 +60,7 @@
         _setup: function () {
             this.highlightLayer = window.Mapbender.vectorLayerPool.getElementLayer(this, 0);
 
-            this.isPopUpDialog = !this.element.closest('.sidePane,.sideContent').length;
+            this.isPopUpDialog = Mapbender.ElementUtil.checkDialogMode(this.element);
 
             this._initializeMissingSrsDefinitions(this.options.srsList);
             this._setupButtons();
