@@ -116,7 +116,6 @@ class SourceInstanceController extends ApplicationControllerBase
         // Use an empty form to help client code follow the final redirect properly
         // See Resources/public/confirm-delete.js
         $dummyForm = $this->createForm(FormType::class, null, array(
-            'method' => 'DELETE',
             'action' => $this->generateUrl('mapbender_manager_sourceinstance_delete', array(
                 'instance' => $instance,
             )),
@@ -137,6 +136,7 @@ class SourceInstanceController extends ApplicationControllerBase
             } else {
                 $this->em->remove($instance);
                 $this->em->flush();
+                $this->addFlash('success', $this->trans->trans('mb.layerset.remove.success'));
             }
 
             if ($returnUrl = $request->query->get('return')) {
