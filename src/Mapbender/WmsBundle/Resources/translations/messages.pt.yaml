@@ -8,7 +8,7 @@ mb:
           wmsuser: Usuário
           wmspass: Senha
       error:
-        load: 'Carregar WMS: Não podia carregar o documento WMS Capabilities!'
+        load: 'Iniciar WMS: Não foi possível carregar o documento de WMS Capabilities !'
       repo:
         macros:
           label:
@@ -18,58 +18,67 @@ mb:
             metadata: Metadados
             contact: Contato
             details: Detalhes
-            layers: Camada
+            layers: Layers
             title: Título
             name: Nome
             version: Versão
-            originurl: URL de origem
+            originurl: 'URL'
             abstract: Descrição
-            onlineresource: Recurso online
-            exceptionformats: Formatos de exceção
-            fees: Taxa
-            accessconstraints: Limitações de acesso
+            onlineresource: 'Recurso online'
+            exceptionformats: 'Formatos de exceção'
+            fees: Taxas
+            accessconstraints: 'Restrições de acesso'
             person: Pessoa
             organization: Organização
-            position: Posição
+            position: Cargo
             telephone: Telefone
             facsimile: Fax
-            email: Email
+            email: E-mail
             address: Endereço
-            addresstype: Tipo de endereço
+            addresstype: 'Tipo de endereço'
             city: Cidade
             state: Estado
-            postcode: Código postal
+            postcode: CEP
             country: País
           message:
-            cautionscalehint: 'Atenção: O cálculo de escala está sujeito a dissolução limitada de ScaleHint no WMS 1.1.1'
+            cautionscalehint: 'Atenção: Os cálculos de escala estão sujeitos à resolução limitada do ScaleHint no WMS 1.1.1'
         instance:
           btn:
-            save: Guardar
+            save: Salvar
             cancel: Cancelar
           label:
-            originurl: URL de origem
+            originurl: 'URL de origem'
             visible: Visibilidade
-            basesource: Basesource
+            basesource: Fonte Base
             proxy: Proxy
             transparency: Transparência
-            tiled: Em mosaico
+            tiled: 'Tiled'
             title: Título
-            minsc: Escala mínima
-            maxsc: Escala máxima
-            active: Ativo
-            select: Escolhido
-            info: Informação
-            toggle: Abrir
-            reorder: Organizar
-            allow: Permitir
-            'on': Ligado
-            ratio: Factor de BBox
-            buffer: Buffer de bloco
+            minsc: 'Escala mínima'
+            maxsc: 'Escala máxima'
+            active: ativo
+            select: selecionado
+            info: Informações
+            toggle: alternar
+            reorder: reordenar
+            allow: permitir
+            'on': ligado
+            ratio: 'Fator BBox'
+            buffer: 'Tile buffer'
+            layerorder: 'Ordenamento da layer'
+            layerorder.standard: 'Padrão'
+            layerorder.reverse: 'QGIS'
+            exceptionformat: 'Formato para erros'
+            infoformat: 'Formato da requisição GetFeatureInfo'
+            format: 'Formato da requisição GetMap'
+            dimensions: 'Dimensões'
+            vendorspecifics: 'Parâmetros de pedidos vendor'
+            layers: 'Layers'
           vendorspecific:
-            label: Vendor specific
+            label: 'Pedidos vendor'
         preview:
           title:
-            servicerepository: Repository de serviços
+            servicerepository: 'Repositório de Serviços'
           label:
             load: Carregar
         layer:
@@ -78,80 +87,114 @@ mb:
             title: Título
             abstract: Descrição
             queryable: Consultável
-            cascaded: Em cascata
+            cascaded: 'Em cascata'
             opaque: Opaco
-            nosubset: Sem subgrupo
-            fixedwidth: Largura fixa
-            fixedheight: Altura fixa
-            latlonbounds: Limite LatLon
+            nosubset: 'Sem subgrupo'
+            fixedwidth: 'Largura fixa'
+            fixedheight: 'Altura fixa'
+            latlonbounds: 'Limite Lat/Lon'
             boundingbox: BoundingBox
             srs: SRS
             styles: Estilos
-            legendurl: URL de legenda
+            legendurl: 'URL da legenda'
             scale: Escala
             min: Mínimo
             max: Máximo
-            scalehint: Dica de escala
-            attribution: Attribution
-            onlineresource: Recurso online
-            logourl: URL de logotipo
+            scalehint: 'Dica de escala'
+            attribution: Atribuição
+            onlineresource: 'Recurso online'
+            logourl: 'URL de logotipo'
             identifier: Identificador
             authority: Autoridade
             url: URL
             value: Valor
-            metadataurl: URL de metadados
+            metadataurl: 'URL de metadados'
             dimension: Dimensão
             extent: Extensão
-            dataurl: URL de dados
-            featurelisturl: URL de Featurelist
+            dataurl: 'URL de dados'
+            featurelisturl: 'URL de Lista de Recursos'
         instancelayerform:
           label:
-            layerstitle: Título da camada
-            minscale: Escala mínima
-            maxsclase: Escala máxima
-            active: Ativo
-            allowselecttoc: Permite a escolha no árvore de camadas
-            selectedtoc: Escolhido no árvore de camadas
-            allowinfotoc: Permite FeatureInfo no árvore de camadas
-            infotoc: FeatureInfo no árvore de camadas
-            allowtoggletoc: Permite mudar no árvore de camadas
-            toggletoc: Mudar no árvore de camadas
-            allowreordertoc: Permite organizar no árvore de camadas
-            moreinfo: Mais informações
+            layerstitle: 'Título da layer'
+            minscale: 'Escala mínima'
+            maxsclase: 'Escala máxima'
+            active: ativo
+            allowselecttoc: 'Permitir seleção na árvore de camadas'
+            selectedtoc: 'Deixar layer ativa na inicialização do aplicativo. Atenção: Deixe esta caixa marcada se não estiver usando camadas temáticas'
+            selectedtoc.help: 'A layer está ativa na inicialização do aplicativo. A configuração só deve ser alterada se camadas temáticas forem usadas.'
+            unselectedtoc.help: 'A layer está está inativa na inicialização do aplicativo. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
+            allowinfotoc: 'Permitir FeatureInfo na árvore de camadas'
+            infotoc: 'FeatureInfo na árvore de camadas'
+            allowtoggletoc: 'Permitir alternar na árvore de camadas'
+            toggletoc: 'Alternar na árvore de camadas'
+            allowreordertoc: 'Permitir reordenar na árvore de camadas'
+            moreinfo: 'Mais informações'
             id:
               title: ID
-              description: 'Instance Layer Id: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+              description: 'ID da Camada da Instância: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Nome
             style: Estilo
       class:
-        title: Carregar WMS
-        description: 'Carrega um WMS sobre getCapabilities-Request '
+        title: 'Carregar WMS'
+        description: 'Carrega um WMS sobre o pedido de getCapabilities'
       admin:
         label:
-          splitlayers: Dividir camadas
+          splitlayers: 'Dividir camadas'
     repository:
       parser:
-        couldnotparse: Não pode "parse" o documento XML.
-        not_supported_document: O documento XML não é suportado.
-        not_supported_version: A versão de WMS não é suportado.
+        couldnotparse: 'Não foi possível analisar o documento XML.'
+        not_supported_document: 'O documento XML não é suportado.'
+        not_supported_version: 'A versão WMS não é suportada.'
     metadata:
       section:
         common:
-          _title: Common
-        useconditions:
-          _title: Termos de utilização
+          title: Informações gerais
         contact:
-          _title: Contacto
+          title: Contato
         items:
-          _title: Nível
+          title: Nível
           name: Nome
+        useconditions:
+          title: 'Condições de utilização'
+      popup:
+        title: Metadados
     repo:
       instance:
         label:
           dimensions: Dimensão
     dimhandler:
       class:
-        title: Handler de dimensão
-        description: null
+        title: Manipulador de Dimensões
+        description: O Manipulador de Dimensões agrupa e chama as instâncias suportadas por dimensões no mapa
     dimensionsets:
-      no_dimension: Não existe nenhuma dimensão
+      no_dimension: 'Não existe nenhuma dimensão'
+  core:
+    dimensionset:
+      admin:
+        title: 'Título'
+        group: 'Grupo'
+        extent: 'Extensão'
+    dimensionshandler:
+      admin:
+        tooltip: 'Dica de Ferramenta'
+        dimensionsets: 'Conjuntos de Dimensões'
+    wmsloader:
+      admin:
+        defaultformat: 'Formato Padrão'
+        defaultinfoformat: 'Formato de Informação Padrão'
+      onlineresource:
+        format: 'Formato'
+        href: 'Href'
+      legendurltype:
+        width: 'Largura'
+        height: 'Altura'
+        onlineresource: 'Fonte Online'
+      vendorspecifictype:
+        hidden: 'Oculto'
+        setdefaults: 'Definir padrões'
+    vendorspecifictype:
+      admin:
+        vstype: 'Tipo de Parâmetro'
+        name: 'Nome'
+        default: 'Valor Padrão'
+        hidden: 'Oculto'

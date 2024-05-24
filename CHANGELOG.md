@@ -57,6 +57,7 @@ Other:
 * Revision of the Spanish translation ([PR#1563](https://github.com/mapbender/mapbender/pull/1563))
 * Revision of the Russian translation ([PR#1562](https://github.com/mapbender/mapbender/pull/1562))
 * Revision of the Italian translation ([PR#1561](https://github.com/mapbender/mapbender/pull/1561))
+* Revision of the Portuguese translation ([PR#1564](https://github.com/mapbender/mapbender/pull/1564)) - thanks [@dani-li](https://github.com/dani-li)
 
 
 ## v3.3.5

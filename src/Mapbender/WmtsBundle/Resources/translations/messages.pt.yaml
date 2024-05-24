@@ -1,0 +1,41 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: 'Conjuntos de Matrizes'
+            theme: 'Tema'
+            serviceprovidername: 'Nome do provedor de serviço'
+            serviceprovidersite: 'Site do provedor de serviço'
+        tilematrixset:
+          label:
+            identifier: 'Identificador'
+            supportedcrs: 'CRS suportados'
+            title: 'Título'
+            abstract: 'Resumo'
+          matrixes: 'Matrizes'
+        theme:
+          label:
+            identifier: 'Identificador'
+            title: 'Título'
+            abstract: 'Resumo'
+            layerrefs: 'Referências de Camada'
+        instance:
+          label:
+            style: 'Estilo'
+        layer:
+          label:
+            identifier: 'Identificador'
+            formats: 'Formatos'
+            title: 'Título'
+            abstract: 'Resumo'
+            latlonbounds: 'Limites Lat/Lon'
+            tilematrixsetlinks: 'Links de Conjunto de TileMatrix'
+        tilematrix:
+          label:
+            identifier: 'Identificador'
+            scaledenominator: 'Denominador de Escala'
+            topleftcorner: 'Canto Superior Esquerdo'
+            tilesize: 'Tamanho do Tile'
+            matrixsize: 'Tamanho da Matrix'
