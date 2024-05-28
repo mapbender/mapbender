@@ -35,7 +35,13 @@ class ImageTransport
     {
         try {
             $response = $this->baseTransport->getUrl($url);
-            $image = imagecreatefromstring($response->getContent());
+            $content = $response->getContent();
+            $image = imagecreatefromstring($content);
+            if ($image === false) {
+                // If $image is false, the download probably failed, most likely because
+                // of network issues or restrictions (such as a HTTP proxy) (see #1549)
+                throw new \Exception("Could not download image from url ".$url.". RETURNS: ".$content);
+            }
             imagesavealpha($image, true);
             if ($opacity <= (1.0 - 1 / 127)) {
                 $multipliedImage = GdUtil::multiplyAlpha($image, $opacity);
