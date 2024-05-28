@@ -50,7 +50,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
 
         $rootSource = null;
         foreach ($this->getChildNodesByTagName($root, 'Contents') as $contentsEl) {
-            foreach ($this->getChildNodesByTagName($contentsEl, 'Layer') as $layerEl) {
+            foreach ($this->getChildNodesByTagName($contentsEl, 'Layer') as $index => $layerEl) {
                 if ($rootSource === null) {
                     $rootSource = $this->getRootSource($source);
                     $source->addLayer($rootSource);
@@ -58,6 +58,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
 
                 $layer = $this->parseLayer($layerEl);
                 $layer->setParent($rootSource);
+                $layer->setPriority($index + 1);
                 $source->addLayer($layer);
             }
             foreach ($this->getChildNodesByTagName($contentsEl, 'TileMatrixSet') as $matrixsetEl) {
@@ -257,6 +258,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         $layer->setTitle($source->getTitle());
         $layer->setAbstract($source->getDescription());
         $layer->setSource($source);
+        $layer->setPriority(0);
         return $layer;
     }
 

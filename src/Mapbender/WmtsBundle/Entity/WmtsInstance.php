@@ -23,6 +23,7 @@ class WmtsInstance extends SourceInstance
      */
     #[ORM\OneToMany(mappedBy: 'sourceInstance', targetEntity: WmtsInstanceLayer::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'layers', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $layers;
 
     #[ORM\Column(type: 'integer', nullable: true)]
