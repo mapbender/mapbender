@@ -148,4 +148,14 @@ class WmtsInstance extends SourceInstance
     {
         return $this->getTitle() ?: $this->getSource()->getTitle();
     }
+
+    public function getRootlayer(): ?WmtsInstanceLayer
+    {
+        foreach ($this->layers as $layer) {
+            if ($layer->getParent() === null) {
+                return $layer;
+            }
+        }
+        return null;
+    }
 }

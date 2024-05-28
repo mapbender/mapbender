@@ -84,7 +84,6 @@ abstract class HttpTileSource extends HttpParsedSource
      */
     public static function wmtsFactory()
     {
-        // HACK: no distinct class for Wmts
         $source = new WmtsSource();
         $source->setType($source::TYPE_WMTS);
         return $source;

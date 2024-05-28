@@ -1,16 +1,27 @@
-<tr class="item level0" >
-    <td class="level1 itemType"><i class="itemType fa fas fa-caret-right"></i></td>
-    <td class="titleColumn" title="{{ form.title.vars.label | trans }}">{{ form_widget(form.title) }}</td>
+{%- set layer = form_layer.vars.data -%}
+{% if layer.parent == null %}
+    {% set type = "root" %}
+    {% set _icon = 'fa-folder-open' %}
+    {% set _level = '0' %}
+{% else %}
+    {% set type = "item" %}
+    {% set _icon = 'fa-caret-right' %}
+    {% set _level = '1' %}
+{% endif %}
+
+<tr class="{{ type }} level{{ _level }}" >
+    <td class="level{{ type}} itemType"><i class="itemType fa fas {{ _icon }}"></i></td>
+    <td class="titleColumn" title="{{ form_layer.title.vars.label | trans }}">{{ form_widget(form_layer.title) }}</td>
     {%- block layer_checkbox_cells -%}
-    {{ form_row(form.active) }}
-    {{ form_row(form.allowselected) }}
-    {{ form_row(form.selected) }}
+    {{ form_row(form_layer.active) }}
+    {{ form_row(form_layer.allowselected) }}
+    {{ form_row(form_layer.selected) }}
     {%- endblock -%}
     <td class="text-end">
-      {%- set _popover_id = 'popover_' ~ form.vars.id -%}
+      {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}
       <div class="static-popover-wrap">
         <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
-          title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
+          title="{{'mb.wms.wmsloader.repo.instancelayerform_layer.label.moreinfo'|trans}}">
           <i class="fas fa-ellipsis"></i>
         </span>
         <div class="popover-inner-wrap">
@@ -19,20 +30,19 @@
             <div class="popover-body">
               {%- block layer_details_content -%}
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form.displayId) }}</div>
+                  <div class="col-sm-2">{{ form_label(form_layer.displayId) }}</div>
                   <div class="col-sm-10">
-                    {%- set layer = form.vars.data -%}
                     {% set inputVal = layer.sourceInstance.source.id ~ '-' ~ layer.sourceItem.id ~ '/' ~ layer.sourceInstance.id ~ '-' ~ layer.id %}
-                    {{ form_widget(form.displayId, {'value': inputVal}) }}
+                    {{ form_widget(form_layer.displayId, {'value': inputVal}) }}
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form.displayName) }}</div>
-                  <div class="col-sm-10">{{ form_widget(form.displayName) }}</div>
+                  <div class="col-sm-2">{{ form_label(form_layer.displayName) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form_layer.displayName) }}</div>
                 </div>
                 <div class="row mb-3">
-                  <div class="col-sm-2">{{ form_label(form.supportedCrs) }}</div>
-                  <div class="col-sm-10">{{ form_widget(form.supportedCrs) }}</div>
+                  <div class="col-sm-2">{{ form_label(form_layer.supportedCrs) }}</div>
+                  <div class="col-sm-10">{{ form_widget(form_layer.supportedCrs) }}</div>
                 </div>
               {%- endblock -%}
             </div>

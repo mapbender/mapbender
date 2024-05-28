@@ -10,9 +10,9 @@ use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\LegendUrl;
 use Mapbender\WmtsBundle\Entity\Theme;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
+use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
-use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 /**
  * @author Paul Schmidt
@@ -48,9 +48,16 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
             $this->parseOperationsMetadata($source, $operationsMetadata);
         }
 
+        $rootSource = null;
         foreach ($this->getChildNodesByTagName($root, 'Contents') as $contentsEl) {
             foreach ($this->getChildNodesByTagName($contentsEl, 'Layer') as $layerEl) {
+                if ($rootSource === null) {
+                    $rootSource = $this->getRootSource($source);
+                    $source->addLayer($rootSource);
+                }
+
                 $layer = $this->parseLayer($layerEl);
+                $layer->setParent($rootSource);
                 $source->addLayer($layer);
             }
             foreach ($this->getChildNodesByTagName($contentsEl, 'TileMatrixSet') as $matrixsetEl) {
@@ -208,11 +215,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         return $values;
     }
 
-    /**
-     * @param \DOMElement $element
-     * @return WmtsLayerSource
-     */
-    private function parseLayer(\DOMElement $element)
+    private function parseLayer(\DOMElement $element): WmtsLayerSource
     {
         $layer = new WmtsLayerSource();
 
@@ -244,6 +247,16 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         foreach ($this->getChildNodesByTagName($element, 'ResourceURL') as $resourceUrlEl) {
             $layer->addResourceUrl($this->parseLayerResourceUrl($resourceUrlEl));
         }
+        return $layer;
+    }
+
+    protected function getRootSource(WmtsSource $source): WmtsLayerSource
+    {
+        $layer = new WmtsLayerSource();
+
+        $layer->setTitle($source->getTitle());
+        $layer->setAbstract($source->getDescription());
+        $layer->setSource($source);
         return $layer;
     }
 
@@ -354,4 +367,5 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         $upperCorner = \explode(' ', $this->getFirstChildNodeText($element, 'UpperCorner'));
         return new BoundingBox($crs, $lowerCorner[0], $lowerCorner[1], $upperCorner[0], $upperCorner[1]);
     }
+
 }
