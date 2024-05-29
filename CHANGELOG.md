@@ -40,6 +40,7 @@ Bugfixes:
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
+* [Print] In print templates, respect text alignment (left/center/right) ([PR#1587](https://github.com/mapbender/mapbender/pull/1587))
 * [Ruler] Allow usage in side-pane ([PR#1581](https://github.com/mapbender/mapbender/pull/1581))
 * [FeatureInfo] Allow usage in side-pane ([PR#1582](https://github.com/mapbender/mapbender/pull/1582))
 * [Sketch] Already use selected color while drawing ([PR#1584](https://github.com/mapbender/mapbender/pull/1584))
