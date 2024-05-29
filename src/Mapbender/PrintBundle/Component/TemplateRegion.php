@@ -25,6 +25,8 @@ class TemplateRegion implements \ArrayAccess
     /** @var Template|null */
     protected $parentTemplate;
 
+    protected string $alignment = OdgParser::DEFAULT_ALIGNMENT;
+
     /**
      * @param float $width in mm
      * @param float $height in mm
@@ -121,6 +123,21 @@ class TemplateRegion implements \ArrayAccess
         return $this->offsets[1];
     }
 
+    public function getAlignment(): string
+    {
+        return $this->alignment;
+    }
+
+    public function setAlignment(string $alignment): void
+    {
+        $this->alignment = match (strtolower($alignment)) {
+            'l', 'left' => 'L',
+            'r', 'right' => 'R',
+            'c', 'center' => 'C',
+            default => $this->alignment
+        };
+    }
+
 
     // array-style access support
     public function offsetGet($offset): mixed
@@ -133,6 +150,7 @@ class TemplateRegion implements \ArrayAccess
             'font' => $this->style->getFontName(),
             'fontsize' => $this->style->getSize(),
             'color' => $this->style->getColor(),
+            'alignment' => $this->alignment,
             default => throw new \RuntimeException("Invalid offset " . print_r($offset, true)),
         };
     }
@@ -140,7 +158,7 @@ class TemplateRegion implements \ArrayAccess
     public function offsetExists($offset): bool
     {
         return match ($offset) {
-            'x', 'y', 'width', 'height' => true,
+            'x', 'y', 'width', 'height', 'alignment' => true,
             'font', 'fontsize', 'color' => !!$this->style,
             default => false,
         };
