@@ -21,7 +21,7 @@ class OdgParser
 
     const STYLE_ATTRIBUTES = [
         'fontsize' => 'fo:font-size',
-        'color' => 'fo:color',
+        'fontcolor' => 'fo:color',
         'alignment' => 'fo:text-align'
     ];
 
