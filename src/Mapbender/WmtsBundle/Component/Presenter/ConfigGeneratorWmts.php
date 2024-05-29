@@ -22,17 +22,17 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
      * @param WmtsInstanceLayer $instanceLayer
      * @return array
      */
-    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer, $isFakeRoot)
+    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
     {
         return array(
             "info" => $instanceLayer->getInfoformat() && $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
-            "toggle" => false,
+            "toggle" => $instanceLayer->getToggle(),
             "allow" => array(
                 "info" => $instanceLayer->getInfoformat() && $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
-                "toggle" => false,
-                "reorder" => null,
+                "toggle" => $instanceLayer->getAllowtoggle(),
+                "reorder" => true,
             ),
         );
     }

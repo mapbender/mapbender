@@ -21,7 +21,7 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         );
     }
 
-    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer, $isFakeRoot)
+    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
     {
         return array(
             'info' => false,
@@ -54,7 +54,7 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         }
         $layerConfigs = array();
         foreach ($titleMap as $layer) {
-            $layerConfigs[] = $this->formatInstanceLayer($layer, false);
+            $layerConfigs[] = $this->formatInstanceLayer($layer);
         }
         return $layerConfigs;
     }
