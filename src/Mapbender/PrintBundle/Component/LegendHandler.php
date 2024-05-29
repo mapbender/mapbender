@@ -198,8 +198,15 @@ class LegendHandler
      */
     public function addPage($pdf, $templateData, $jobData)
     {
-        // @todo: support something other than hardcoded A4 size in portrait orientation
-        $pdf->addPage('P', 'a4');
+        if ($templateData['orientation'] == 'portrait') {
+            $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);
+            $orientation = 'P';
+        } else {
+            $format = array($templateData['pageSize']['height'], $templateData['pageSize']['width']);
+            $orientation = 'L';
+        }
+        $pdf->addPage($orientation, $format);
+
         $this->addLegendPageImage($pdf, $templateData, $jobData);
         // @todo: make hard-coded spill page legend title font configurable
         $pdf->SetFont($this->legendPageFontName, 'B', $this->legendPageFontSize);
