@@ -158,8 +158,9 @@
                     if (!self.overview) {
                         self._initOverview();
                     } else {
-                        if (self.overview && self.overview.ovmap) {
-                            self.overview.ovmap.updateSize();
+                        if (self.overview && self.overview.getOverviewMap()) {
+                            self.overview.getOverviewMap().updateSize();
+                            self.overview.resetExtent_();
                         }
                     }
                 }, 300);
