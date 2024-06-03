@@ -138,7 +138,7 @@
                 var source = this.sources_[i];
                 // Legacy HACK: Overview ignores backend settings on instance layers, enables all children
                 //        of the root layer with non-empty names, ignores every other layer
-                if (source.hasVisibleLayers(srsName)) {
+                if (source.type !== 'wms' || source.hasVisibleLayers(srsName)) {
                     source.initializeLayers(srsName);
                     layers = layers.concat(source.getNativeLayers());
                 }
