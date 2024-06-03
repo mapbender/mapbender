@@ -4,34 +4,13 @@
 namespace Mapbender\WmtsBundle\Component;
 
 
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
-use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Form\Type\WmtsInstanceType;
 
 class InstanceFactoryWmts extends InstanceFactoryCommon
 {
-    public function createInstance(Source $source)
-    {
-        /** @var WmtsSource $source */
-        $instance = new WmtsInstance();
-        $instance->setSource($source);
-        $instance->setTitle($source->getTitle());
-
-        $rootLayer = null;
-        foreach ($source->getLayers() as $layer) {
-            $instLayer = $this->createInstanceLayer($layer, $rootLayer);
-            if ($layer->getParent() === null) $rootLayer = $instLayer;
-            $instance->addLayer($instLayer);
-        }
-        // avoid persistence errors (non-nullable column)
-        $instance->setWeight(0);
-        return $instance;
-    }
-
     public static function createInstanceLayer(WmtsLayerSource $sourceLayer, ?WmtsInstanceLayer $parent = null)
     {
         $instanceLayer = parent::createInstanceLayer($sourceLayer);

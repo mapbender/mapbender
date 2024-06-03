@@ -32,7 +32,7 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
                 "info" => $instanceLayer->getInfoformat() && $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
                 "toggle" => $instanceLayer->getAllowtoggle(),
-                "reorder" => true,
+                "reorder" => false,
             ),
         );
     }

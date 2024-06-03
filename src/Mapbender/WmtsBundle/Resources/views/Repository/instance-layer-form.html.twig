@@ -16,6 +16,8 @@
     {{ form_row(form_layer.active) }}
     {{ form_row(form_layer.allowselected) }}
     {{ form_row(form_layer.selected) }}
+    {{ form_row(form_layer.allowtoggle) }}
+    {{ form_row(form_layer.toggle) }}
     {%- endblock -%}
     <td class="text-end">
       {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}

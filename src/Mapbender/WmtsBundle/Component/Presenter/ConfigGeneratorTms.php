@@ -26,12 +26,12 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         return array(
             'info' => false,
             'selected' => $instanceLayer->getSelected(),
-            'toggle' => false,
+            'toggle' => $instanceLayer->getToggle(),
             'allow' => array(
                 'info' => false,
                 'selected' => $instanceLayer->getAllowSelected(),
-                'toggle' => false,
-                'reorder' => null,
+                'toggle' => $instanceLayer->getToggle(),
+                'reorder' => false,
             ),
         );
     }

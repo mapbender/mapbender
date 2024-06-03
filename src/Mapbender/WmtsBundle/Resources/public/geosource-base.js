@@ -106,7 +106,13 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
 
             return allLayers.map((layerDef) => {
                 layerDef.state.visibility = this._isCompatible(layerDef, srsName) && layerDef.options.treeOptions.selected;
-                return this._layerFactory(layerDef, srsName);
+                try {
+                    return this._layerFactory(layerDef, srsName);
+                } catch (e) {
+                    return new ol.layer.Vector({
+                        source: new ol.source.Vector({})
+                    })
+                }
             });
         },
         updateEngine: function () {
