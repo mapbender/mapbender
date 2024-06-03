@@ -29,7 +29,6 @@
  * @typedef {Object} WmtsSourceConfig
  * @property {string} type
  * @property {string} title
- * @property {WmtsLayerConfig|null} currentActiveLayer
  * @property {Object} configuration
  * @property {string} configuration.type
  * @property {string} configuration.title
@@ -45,21 +44,18 @@ window.Mapbender = Mapbender || {};
 window.Mapbender.WmtsTmsBaseSource = (function () {
     function WmtsTmsBaseSource(definition) {
         Mapbender.Source.apply(this, arguments);
-        this.currentActiveLayer = null;
         var sourceArg = this;
-        this.configuration.layers = (this.configuration.children[0].children || []).map(function (layerDef) {
-            return Mapbender.SourceLayer.factory(layerDef, sourceArg, null);
+        this.configuration.layers = (this.configuration.children[0].children || []).map((layerDef) => {
+            return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.configuration.children[0]);
         });
     }
 
     WmtsTmsBaseSource.prototype = Object.create(Mapbender.Source.prototype);
     Object.assign(WmtsTmsBaseSource.prototype, {
         constructor: WmtsTmsBaseSource,
-        currentActiveLayer: null,
         recreateOnSrsSwitch: true,
         destroyLayers: function (olMap) {
             Mapbender.Source.prototype.destroyLayers.call(this, olMap);
-            this.currentActiveLayer = null;
         },
         refresh: function () {
             this.nativeLayers.forEach(function (layer) {
@@ -90,10 +86,8 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
          * @param {SourceSettingsDiff|null} diff
          */
         applySettingsDiff: function (diff) {
-            console.log("diff", diff);
-            const rootLayer = this.configuration.children[0];
             if (diff.activate || diff.deactivate) {
-                rootLayer.options.treeOptions.selected = !!(diff.activate || []).length;
+                this.options.treeOptions.selected = !!(diff.activate || []).length;
             }
         },
         getSelected: function () {
@@ -106,35 +100,28 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
          * @return {Array<Object>}
          */
         createNativeLayers: function (srsName, mapOptions) {
-            const compatibleLayers = this._selectCompatibleLayers(srsName);
+            const allLayers = this._getAllLayers();
             const rootLayer = this.configuration.children[0];
-            if (!compatibleLayers.length) {
-                this.configuration.children[0].children = [];
-                this.currentActiveLayer = null;
-                return [];
-            }
+            rootLayer.children = allLayers;
 
-            rootLayer.children = compatibleLayers;
-            this.currentActiveLayer = compatibleLayers[0];
-            return compatibleLayers.map((layerDef) => {
-                layerDef.state.visibility = rootLayer.options.treeOptions.selected;
+            return allLayers.map((layerDef) => {
+                layerDef.state.visibility = this._isCompatible(layerDef, srsName) && layerDef.options.treeOptions.selected;
                 return this._layerFactory(layerDef, srsName);
-            })
+            });
         },
         updateEngine: function () {
             const rootLayer = this.configuration.children[0];
-            var layerIdent = this.currentActiveLayer && this.currentActiveLayer.options.identifier;
-            var engine = Mapbender.mapEngine;
-            var rootVisibility = rootLayer.state.visibility;
-            var targetVisibility = !!layerIdent && rootVisibility && this.getActive();
-            var olLayer = this.getNativeLayer(0);
-            if (!olLayer) {
-                return;
+            const rootLayerVisibility = rootLayer.state.visibility;
+
+            for (let i = 0; i < rootLayer.children.length; ++i) {
+                const childSource = rootLayer.children[i];
+                const olLayer = this.getNativeLayer(i);
+                const targetVisibility = rootLayerVisibility && childSource.state.visibility;
+                if (olLayer) Mapbender.mapEngine.setLayerVisibility(olLayer, targetVisibility);
             }
-            engine.setLayerVisibility(olLayer, targetVisibility);
         },
-        _getEnabledLayers: function () {
-            return this.configuration.layers.filter(function (l) {
+        _getAllLayers: function () {
+            return this.configuration.children[0].children.filter(function (l) {
                 return l.options.treeOptions.allow.selected && l.options.treeOptions.selected;
             });
         },
@@ -144,20 +131,20 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
             });
         },
         _selectCompatibleLayers: function (projectionCode) {
-            const allLayers = this._getEnabledLayers();
+            const allLayers = this._getAllLayers();
             const compatibleLayers = [];
 
             for (var i = 0; i < allLayers.length; i++) {
                 const layer = allLayers[i];
-                if (!layer.options.treeOptions.allow.selected) {
-                    continue;
-                }
-                if (layer.selectMatrixSet(projectionCode)) {
+                if (this._isCompatible(layer, projectionCode)) {
                     compatibleLayers.push(allLayers[i]);
                 }
             }
-            console.log(compatibleLayers.map(x => {return {title: x.title_, treeOptions: x.options.treeOptions}}));
             return compatibleLayers;
+        },
+        _isCompatible: function(layer, projectionCode) {
+            return (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected)
+                && layer.selectMatrixSet(projectionCode);
         },
         getFeatureInfoLayers: function () {
             console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
@@ -202,7 +189,7 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
             let layerId_;
             const rootLayer = this.configuration.children[0];
             if (!layerId || layerId === rootLayer.options.id) {
-                const anyEnabledLayer = this._getEnabledLayers()[0];
+                const anyEnabledLayer = this._getAllLayers()[0];
                 if (!anyEnabledLayer) {
                     return false;
                 }
@@ -260,12 +247,7 @@ Mapbender.WmtsTmsBaseSourceLayer = (function () {
             return matches[0] || null;
         },
         getSelected: function () {
-            var rootLayer = this.source.getRootLayer();
-            return rootLayer.options.treeOptions.selected;
-        },
-        hasBounds: function () {
-            var currentActive = this.source.currentActiveLayer;
-            return !!currentActive && Mapbender.SourceLayer.prototype.hasBounds.call(currentActive);
+            return this.options.treeOptions.selected;
         },
         isInScale: function (scale) {
             // HACK: always return true
