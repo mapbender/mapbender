@@ -41,7 +41,7 @@ h4, .h4, .tabContainer > ul {
     margin-left: 0.25em;
   }
   .dropdown-menu {
-      margin-top: 0px;
+      margin-top: 0;
   }
 }
 
@@ -314,4 +314,47 @@ footer {
   --bs-btn-hover-border-color: #1A709E;
   --bs-btn-active-bg: #1A709E;
   --bs-btn-active-border-color: #1A709E;
+}
+
+.application-list__spacing-top {
+    margin-top: 10px;
+}
+
+.application-list__spacing-bottom {
+    margin-bottom: 10px;
+}
+
+.application-list__title {
+    font-weight: 500;
+}
+
+@media screen and (min-width: 767px) {
+    .application-list__title {
+        max-width: 150px;
+    }
+}
+
+.navbar-brand {
+    min-width: 100px;
+    white-space: normal;
+}
+
+@media screen and (max-width: 767px) {
+    .navbar-brand {
+        word-wrap: anywhere;
+    }
+    .contentTitle {
+        font-size: 1.7rem;
+        margin-top: 10px !important;
+    }
+
+}
+
+
+.filter-group {
+    display: flex;
+}
+
+.permission-collection {
+    overflow-x: scroll;
 }

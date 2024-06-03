@@ -22,3 +22,9 @@ h4, .h4 {
   content: "*";
   color: #aa2323;;
 }
+
+@media (max-width: 768px) {
+    .text-nowrap {
+        white-space: normal !important;
+    }
+}
