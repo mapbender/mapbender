@@ -190,7 +190,7 @@
                     destroyOnClose: true,
                     cssClass: 'mb-poi-popup',
                     modal: true,
-                    title: this.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     width: 500,
                     content: ta,
                     buttons: []
