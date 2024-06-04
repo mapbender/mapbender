@@ -264,7 +264,7 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
 
-    protected function toggleEnabledCommon(Request $request, Layerset $layerset, SourceInstanceAssignment $assignment): Response
+    protected function toggleEnabledCommon(Request $request, Layerset $layerset, null|ReusableSourceInstanceAssignment|SourceInstanceAssignment $assignment): Response
     {
         if (!$layerset->getApplication()) {
             throw $this->createNotFoundException();
