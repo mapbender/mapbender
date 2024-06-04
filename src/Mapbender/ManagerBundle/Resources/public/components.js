@@ -197,6 +197,7 @@ $(function() {
         [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
             html: true,
             placement: 'left',
+            trigger: 'hover'
         }));
     });
 
