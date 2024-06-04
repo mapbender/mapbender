@@ -34,7 +34,7 @@ $.widget("mapbender.mbZoomBar", {
         this._zoom2Slider();
 
         if (this.options.draggable === true) {
-            this.element.draggable();
+            this.element.draggable({containment: '.mb-element-map'});
         }
         this._initRotation();
         this._trigger('ready');
