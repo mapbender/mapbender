@@ -122,7 +122,7 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
             for (let i = 0; i < rootLayer.children.length; ++i) {
                 const childSource = rootLayer.children[i];
                 const olLayer = this.getNativeLayer(i);
-                const targetVisibility = rootLayerVisibility && childSource.state.visibility;
+                const targetVisibility = this.getActive() && rootLayerVisibility && childSource.state.visibility;
                 if (olLayer) Mapbender.mapEngine.setLayerVisibility(olLayer, targetVisibility);
             }
         },
