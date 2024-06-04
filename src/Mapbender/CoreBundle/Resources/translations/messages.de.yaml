@@ -353,7 +353,7 @@ mb:
     map:
       class:
         title: Karte
-        description: 'Hauptkarte basiernd auf OpenLayers'
+        description: 'Hauptkarte basierend auf OpenLayers'
       tag:
         map: Karte
         mapquery: MapQuery
