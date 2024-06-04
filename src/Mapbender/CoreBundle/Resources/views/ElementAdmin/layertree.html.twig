@@ -40,12 +40,14 @@
         {{ form_widget(form.configuration.allowReorder, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
 </div>
-<script type="text/javascript">
-    $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
-        var $cb = $('input[type="checkbox"]', this);
-        var $icon = $('>i', this);
-        $cb.prop('checked', !$cb.prop('checked'));
-        $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
-        $icon.toggleClass('fa-folder', !$cb.prop('checked'));
-    });
-</script>
+{% if 'themes' in form.configuration %}
+    <script type="text/javascript">
+        $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
+            var $cb = $('input[type="checkbox"]', this);
+            var $icon = $('>i', this);
+            $cb.prop('checked', !$cb.prop('checked'));
+            $icon.toggleClass('fa-folder-open', $cb.prop('checked'));
+            $icon.toggleClass('fa-folder', !$cb.prop('checked'));
+        });
+    </script>
+{% endif %}
