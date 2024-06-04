@@ -41,9 +41,6 @@
             if (isDeg) {
                 numDigits += 5;
             }
-            this._resetOl4(numDigits);
-        },
-        _resetOl4: function(numDigits) {
             var model = this.mbMap.getModel();
             var template;
             if (this.options.formatoutput && this.options.displaystring) {
@@ -67,7 +64,7 @@
                 projection: model.getCurrentProjectionCode(),
                 className: 'inline',
                 target: $('.display-area', this.element).get(0),
-                undefinedHTML: $('<span/>').text(this.options.empty).html()
+                placeholder: $('<span/>').text(this.options.empty).html()
             };
             if (this.control) {
                 model.olMap.removeControl(this.control);
