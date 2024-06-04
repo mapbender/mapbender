@@ -274,7 +274,7 @@ mb:
         opacity: Deckkraft
         zoomtolayer: 'Auf Ebene zoomen'
         metadata: Metadaten
-        dimension: Abmessung
+        dimension: Dimension
     zoombar:
       zoombybox: 'Ausschnitt aufziehen'
       zoombyworld: 'Zoom auf gesamte Ausdehnung'
