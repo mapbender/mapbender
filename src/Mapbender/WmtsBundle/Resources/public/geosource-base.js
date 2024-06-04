@@ -174,7 +174,8 @@ window.Mapbender.WmtsTmsBaseSource = (function () {
                 Object.assign({}, commonOptions, {
                     url: Mapbender.Util.removeProxy(layerDef.getPrintBaseUrl(srsName)),
                     matrix: Object.assign({}, matrix),
-                    resolution: this._getMatrixResolution(matrix, srsName)
+                    resolution: this._getMatrixResolution(matrix, srsName),
+                    changeAxis: false,
                 })
             ];
         },

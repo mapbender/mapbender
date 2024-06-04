@@ -188,10 +188,8 @@
         },
         getPrintData: function() {
             var printData = {
-                layers: [],
                 changeAxis: false
             };
-            var center, height;
             var extentArray = this.overview.getOverviewMap().getView().calculateExtent();
             printData.center = {
                 x: 0.5 * (extentArray[0] + extentArray[2]),
@@ -206,21 +204,14 @@
                 right: printData.center.x + 0.5 * printData.height
             };
 
-            var scale = 10000;      // @todo: extract overview scale properly or disable min / max resolution checks for overview instances
-            var srsName = this.mbMap.getModel().getCurrentProjectionCode();
-            for (var i = 0; i < this.sources_.length; ++i) {
-                // Legacy data format quirk: overview print can ONLY process WMS sources
-                var layerConfigs = this.sources_[i].getPrintConfigs(extent, scale, srsName);
-                for (var j = 0; j < layerConfigs.length; ++j) {
-                    // Legacy data format quirk: overview print expects shared metadata for all layers. Layer itself is only the url.
-                    var layerConfig = layerConfigs[j];
-                    if (!layerConfig.url) {
-                        continue;
-                    }
-                    printData.changeAxis = printData.changeAxis || layerConfig.changeAxis;
-                    printData.layers.push(layerConfig.url);
-                }
-            }
+            const nativeMapView = this.overview.getOverviewMap().getView();
+            const mapModel = this.mbMap.getModel();
+
+            const constrainedResolution = nativeMapView.getConstrainedResolution(nativeMapView.getResolution());
+            const srsName = mapModel.getCurrentProjectionCode();
+            const scale = mapModel.resolutionToScale(constrainedResolution, 72, srsName);
+
+            printData.layers = this.sources_.flatMap((source) => source.getPrintConfigs(extent, scale, srsName));
             return printData.layers.length && printData || null;
         },
     });

@@ -512,25 +512,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $ovImageHeight = round($region['height'] / 25.4 * $quality);
         // gd pixel coords are top down!
         $ovPixelBox = new Box(0, $ovImageHeight, $ovImageWidth, 0);
-        // fix job data to be compatible with image export:
-        // 1: 'changeAxis' is only on top level, not per layer
-        // 2: Layer type is missing, we only have a URL
-        // 3: opacity is missing
-        // 4: pixel width is inferred from height + template region aspect ratio
-        $layerDefs = array();
-        foreach ($ovData['layers'] as $layerUrl) {
-            $layerDefs[] = array(
-                'url' => $layerUrl,
-                'type' => 'wms',        // HACK (same behavior as old code)
-                'changeAxis' => $ovData['changeAxis'],
-                'opacity' => 1,
-            );
-        }
         $cnt = $ovData['center'];
         $ovWidth = $ovData['height'] * $region['width'] / $region['height'];
         $ovExtent = Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ovWidth, $ovData['height']);
         $image = $this->buildExportImage(array(
-            'layers' => $layerDefs,
+            'layers' => $ovData['layers'],
             'width' => $ovImageWidth,
             'height' => $ovImageHeight,
             'extent' => $ovExtent->getAbsWidthAndHeight(),
