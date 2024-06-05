@@ -158,7 +158,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return string path to stored image
      */
-    private function createMapImage($templateData, $jobData)
+    protected function createMapImage($templateData, $jobData)
     {
         $targetBox = $this->getTargetBox($templateData, $jobData);
         $exportJob = array_replace($jobData, $targetBox->getAbsWidthAndHeight());
