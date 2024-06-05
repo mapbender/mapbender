@@ -133,7 +133,7 @@ $popupBackgroundColor: $backgroundColor !default;
   line-height: 1;
 
   &:before{
-    @include transform(rotate(45deg));
+    transform: rotate(45deg);
     font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     content: "\f054";
     display: block;

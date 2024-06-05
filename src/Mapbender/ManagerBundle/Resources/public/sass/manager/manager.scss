@@ -266,7 +266,7 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
   z-index: 1035;  // Must be higher than .navbar-fixed-top's 1030
   top: 0;
   left: 50%;
-  @include transition(all 1s ease-in-out);
+  transition: all 1s ease-in-out;
   opacity: 1;
   &.kill {
     top: -100px;

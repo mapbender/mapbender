@@ -26,7 +26,7 @@ $panelBorderColor: #888 !default;
       &:hover, &[data-state="active"]{
         background-color: $backgroundColor;
       }
-      @include transition(all .2s ease-in-out);
+      transition: all .2s ease-in-out;
       border:solid 1px $panelBorderColor;
     }
     .basesourcegroup, > .basesourcesetswitch {

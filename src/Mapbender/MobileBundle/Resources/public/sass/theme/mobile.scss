@@ -46,7 +46,7 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
     border-bottom: solid 5px $ciColor;
   }
   position: relative;
-  @include transition(all .3s ease-in-out);
+  transition: all .3s ease-in-out;
   opacity: 0;
   bottom: -100%;
   &[data-state="opened"] {
