@@ -78,8 +78,12 @@ $(function () {
 
     const constrainSize = function () {
         if (!sidePane) return;
-        if (sidePaneWidth() > Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE)) {
-            sidePane.style.width = Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE) + "px";
+        const allowedWidth = Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE);
+        if (sidePaneWidth() > allowedWidth) {
+            sidePane.style.width = allowedWidth + "px";
+            if (sidePane.style.left) {
+                sidePane.style.left = "-" + allowedWidth + "px";
+            }
         }
     }
 
