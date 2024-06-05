@@ -40,7 +40,7 @@
         {{ form_widget(form.configuration.allowReorder, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
 </div>
-{% if 'themes' in form.configuration %}
+{% if form.configuration.themes is defined %}
     <script type="text/javascript">
         $('#{{ form.configuration.themes.vars.id | raw }}').on('click', '.item-opened', function() {
             var $cb = $('input[type="checkbox"]', this);

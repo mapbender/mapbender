@@ -481,6 +481,7 @@ window.Mapbender.MapModelBase = (function() {
          * @param {string} paramValue
          */
         processVisibleLayersParam: function(paramValue) {
+            if (typeof paramValue !== 'string') return;
             var self = this;
             var specs = (paramValue || '').split(',');
             $.each(specs, function(idx, layerSpec) {
@@ -501,6 +502,7 @@ window.Mapbender.MapModelBase = (function() {
                     }
                     while (layer) {
                         layer.setSelected(true);
+                        layer.source.layerset?.setSelected(true);
                         layer = layer.parent;
                     }
                 }
