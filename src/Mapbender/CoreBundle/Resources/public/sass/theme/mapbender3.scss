@@ -420,3 +420,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     max-width: 100%;
   }
 }
+
+.prevent-selection {
+    user-select: none;
+}

@@ -53,7 +53,7 @@ mb:
       no_results: 'Zu keiner der aktiven Ebenen konnten Informationen geladen werden.'
       placeholder: 'Klicken Sie auf die Karte, um Informationen zu laden.'
       class:
-        title: Information
+        title: Infor­ma­tion
         description: Information
       admin:
         maxcount: 'Max. Anzahl'
@@ -69,7 +69,7 @@ mb:
         linktitle: 'Besuchen Sie die offizielle Mapbender Webseite.'
         website: '- zur Webseite'
       class:
-        title: Über-Mapbender-Dialog
+        title: Über-Map­bender-Dialog
         description: 'Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.'
       tag:
         help: Hilfe
@@ -83,7 +83,7 @@ mb:
         search: Suchen
         clear: 'Eingabe löschen'
       class:
-        title: 'Einfache Suche'
+        title: 'Ein­fache Suche'
         description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
       error:
         geometry:
@@ -155,7 +155,7 @@ mb:
         btn:
           position: Positionierung
       class:
-        title: 'MeetingPoint (POI)'
+        title: 'Meeting­Point (POI)'
         description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
       label:
         text: 'Bearbeiten Sie den Text'
@@ -168,7 +168,7 @@ mb:
       error:
         sourcenotavailable: 'Der Dienst mit der ID %id% ist nicht vorhanden.'
       class:
-        title: 'Hintergrund wechseln'
+        title: 'Hinter­grund wechseln'
         Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
       form:
         mesage: 'Keine Hintergrund Definitionen vorhanden.'
@@ -184,7 +184,7 @@ mb:
     ruler:
       create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
       class:
-        title: Linien-/Flächenmessung
+        title: Linien-/Flächen­messung
         description: 'Messung: Es wird eine Linie/Fläche gezeichnet, um deren Länge/Fläche in einem Dialog anzuzeigen.'
       tag:
         line: Linie
@@ -267,7 +267,7 @@ mb:
         dimension: Dimension
         sourcevisibility_onoff: 'Dienste anzeigen/ausblenden'
       class:
-        title: Ebenenbaum
+        title: Ebenen­baum
         description: 'Baum der Karten-Ebenen'
       admin:
         layerremove: 'Ebene entfernen'
@@ -283,7 +283,7 @@ mb:
       zoomin: Hineinzoomen
       zoomout: Herauszoomen
       class:
-        title: Navigationswerkzeug
+        title: Navi­ga­tions­werkzeug
         description: 'Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.'
       tag:
         zoom: Zoom
@@ -299,7 +299,7 @@ mb:
         zoomslider: Zoom-Schieberegler
     activityindicator:
       class:
-        title: Aktivitätsanzeige
+        title: Aktivitäts­anzeige
         description: 'Zeigt HTTP-Aktivität an.'
       tag:
         activity: Aktivität
@@ -334,7 +334,7 @@ mb:
         click: Ziel-URL
     coordinatesdisplay:
       class:
-        title: Koordinatenanzeige
+        title: Koor­di­naten­anzeige
         description: 'Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.'
       tag:
         coordinates: Koordinaten
@@ -343,7 +343,7 @@ mb:
         position: Position
     copyright:
       class:
-        title: Copyright
+        title: Copy­right
         description: 'Zeigt Nutzungsbedingungen an.'
       tag:
         copyright: Copyright
@@ -369,7 +369,7 @@ mb:
         srs: SRS
     scalebar:
       class:
-        title: Maßstabsleiste
+        title: Maß­stabs­leiste
         description: 'Maßstabsleiste, die den aktuellen Maßstab anzeigt.'
       tag:
         scale: Maßstab
@@ -384,14 +384,14 @@ mb:
       unit_prefix: 'Maßstab abkürzen'
       unit_prefix.help: 'Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.'
       class:
-        title: Maßstabsanzeige
+        title: Maß­stabs­anzeige
         description: 'Der aktuelle Maßstab wird angezeigt.'
       tag:
         scale: Maßstab
         display: Anzeige
     scaleselector:
       class:
-        title: Maßstabsauswahl
+        title: Maß­stabs­auswahl
         description: 'Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.'
       tag:
         scale: Maßstab
@@ -415,7 +415,7 @@ mb:
       copied_to_clipboard: 'URL in Zwischenablage kopiert'
     viewManager:
       class:
-        title: Ansichtsverwaltung
+        title: Ansichts­verwaltung
         description: 'Speichert Kartenzustände zum späteren Abruf'
       saveAsPublic: 'Als öffentlichen Eintrag speichern'
       recordStatus:
@@ -441,7 +441,7 @@ mb:
         showDate: 'Datum anzeigen'
     coordinatesutility:
       class:
-        title: Koordinaten-Werkzeug
+        title: Koor­di­naten-Werkzeug
         description: 'Koordinaten-Transformation. Navigation zu Koordinaten auf der Karte.'
       widget:
         error:
@@ -566,7 +566,7 @@ mb:
         title: Skizzen
     resetView:
       class:
-        title: 'Ansicht zurücksetzen'
+        title: 'Ansicht zurück­setzen'
         description: 'Stellt den ursprünglichen Kartenausschnitt und Diensteeinstellungen wieder her'
       admin:
         resetDynamicSources: 'Hinzugeladene Quellen entfernen'
@@ -620,7 +620,7 @@ mb:
     icon:
       mb:
         about: Information
-        layer_tree: Ebenenbaum
+        layer_tree: Ebenen­baum
         feature_info: 'Feature Info'
         area_ruler: 'Fläche messen'
         polygon: Polygon

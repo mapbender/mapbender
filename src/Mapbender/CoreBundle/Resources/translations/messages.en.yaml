@@ -53,7 +53,7 @@ mb:
       no_results: 'None of the active layers provided additional information.'
       placeholder: 'Click on the map to query for feature info.'
       class:
-        title: FeatureInfo
+        title: Feature­Info
         description: FeatureInfo
       admin:
         maxcount: 'Max count'
@@ -283,7 +283,7 @@ mb:
       zoomin: 'Zoom in'
       zoomout: 'Zoom out'
       class:
-        title: 'Navigation toolbar'
+        title: 'Navi­ga­tion toolbar'
         description: 'The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.'
       tag:
         zoom: zoom
@@ -441,7 +441,7 @@ mb:
         showDate: 'Show date'
     coordinatesutility:
       class:
-        title: 'Coordinates utility'
+        title: 'Coor­di­nates utility'
         description: 'Transform coordinates in different SRS. Navigate to coordinates on the map.'
       widget:
         error:

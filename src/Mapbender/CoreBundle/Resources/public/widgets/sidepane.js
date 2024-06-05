@@ -93,11 +93,13 @@ $(function () {
     $(document).on('pointerdown', '.sidePane.resizable', function (e) {
         if ((sidePaneLeft && sidePaneWidth() - e.offsetX < BORDER_SIZE) || (!sidePaneLeft && e.offsetX < BORDER_SIZE)) {
             pointerPosition = e.x;
+            $("body").addClass("prevent-selection");
             document.addEventListener("pointermove", resize);
         }
 
         $(document).one('pointercancel pointerup', function (e) {
             document.removeEventListener("pointermove", resize);
+            $("body").removeClass("prevent-selection");
         });
     });
 

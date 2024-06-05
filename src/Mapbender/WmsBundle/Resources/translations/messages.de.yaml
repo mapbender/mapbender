@@ -164,7 +164,7 @@ mb:
           dimensions: Dimensionen
     dimhandler:
       class:
-        title: Dimensions-Handler
+        title: Di­mensions-Handler
         description: 'Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen'
     dimensionsets:
       no_dimension: 'Keine Dimension vorhanden.'
