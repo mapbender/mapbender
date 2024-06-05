@@ -27,7 +27,7 @@ class WmtsSource extends HttpTileSource
 
     public function getTypeLabel()
     {
-        // HACK: no distinct classes for WMTS and TMS
+        // no distinct classes for WMTS and TMS
         if ($this->type === self::TYPE_TMS) {
             return 'TMS';
         } else {

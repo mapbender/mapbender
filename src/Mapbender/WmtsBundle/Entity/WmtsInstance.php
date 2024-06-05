@@ -23,6 +23,7 @@ class WmtsInstance extends SourceInstance
      */
     #[ORM\OneToMany(mappedBy: 'sourceInstance', targetEntity: WmtsInstanceLayer::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'layers', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'asc'])]
     protected $layers;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -147,5 +148,15 @@ class WmtsInstance extends SourceInstance
     public function getDisplayTitle()
     {
         return $this->getTitle() ?: $this->getSource()->getTitle();
+    }
+
+    public function getRootlayer(): ?WmtsInstanceLayer
+    {
+        foreach ($this->layers as $layer) {
+            if ($layer->getParent() === null) {
+                return $layer;
+            }
+        }
+        return null;
     }
 }

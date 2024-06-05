@@ -21,8 +21,10 @@ abstract class InstanceFactoryCommon
         $instance->setSource($source);
         $instance->setTitle($source->getTitle());
 
+        $rootLayer = null;
         foreach ($source->getLayers() as $layer) {
-            $instLayer = $this->createInstanceLayer($layer);
+            $instLayer = $this->createInstanceLayer($layer, $rootLayer);
+            if ($layer->getParent() === null) $rootLayer = $instLayer;
             $instance->addLayer($instLayer);
         }
         // avoid persistence errors (non-nullable column)
@@ -30,11 +32,15 @@ abstract class InstanceFactoryCommon
         return $instance;
     }
 
-    public static function createInstanceLayer(WmtsLayerSource $sourceLayer)
+    public static function createInstanceLayer(WmtsLayerSource $sourceLayer, ?WmtsInstanceLayer $parent = null)
     {
         $instanceLayer = new WmtsInstanceLayer();
         $instanceLayer->setSourceItem($sourceLayer);
         $instanceLayer->setTitle($sourceLayer->getTitle());
+        $instanceLayer->setPriority($sourceLayer->getPriority());
+        $instanceLayer->setAllowtoggle($sourceLayer->getParent() === null);
+        $instanceLayer->setToggle($sourceLayer->getParent() === null);
+        $instanceLayer->setParent($parent);
         return $instanceLayer;
     }
 
