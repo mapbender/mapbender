@@ -330,7 +330,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param SourceInstanceAssignment $assignment
      * @return Response
      */
-    protected function instanceWeightCommon(Request $request, Layerset $layerset, SourceInstanceAssignment $assignment)
+    protected function instanceWeightCommon(Request $request, Layerset $layerset, ReusableSourceInstanceAssignment|SourceInstanceAssignment $assignment)
     {
         $newWeight = $request->get("number");
         $targetLayersetId = $request->get("new_layersetId");
