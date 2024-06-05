@@ -1233,8 +1233,15 @@ window.Mapbender.MapModelBase = (function() {
                         return baseSettings;
                     }
                 }),
-                // @todo: merge layersets settings
-                layersets: base.layersets.slice()
+                layersets: base.layersets.map((layersetConfig) => {
+                    if (layersetConfig.selected && diff.layersets.deactivate?.includes(layersetConfig.id) === true) {
+                        layersetConfig.selected = false;
+                    }
+                    if (!layersetConfig.selected && diff.layersets.activate?.includes(layersetConfig.id) === true) {
+                        layersetConfig.selected = true;
+                    }
+                    return layersetConfig;
+                }),
             });
 
             return settings;
