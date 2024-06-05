@@ -8,12 +8,13 @@ namespace Mapbender\WmtsBundle\Component;
 use Mapbender\Component\CapabilitiesDomParser;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
+use Mapbender\WmtsBundle\Entity\WmtsSource;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 
 /**
@@ -46,13 +47,19 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 
         $source = HttpTileSource::tmsFactory();
 
-        $root =$doc->documentElement;
+        $root = $doc->documentElement;
         $this->parseService($source, $root);
 
+        $rootSource = null;
         foreach ($this->getChildNodesFromNamePath($root, array('TileMaps', 'TileMap')) as $tileMapEl) {
+            if ($rootSource === null) {
+                $rootSource = $this->getRootSource($source);
+                $source->addLayer($rootSource);
+            }
+
             $url = $tileMapEl->getAttribute('href');
             $content = $this->httpTransport->getUrl($url)->getContent();
-            $doc             = new \DOMDocument();
+            $doc = new \DOMDocument();
             if (!@$doc->loadXML($content)) {
                 throw new XmlParseException('mb.wms.repository.parser.couldnotparse');
             }
@@ -60,11 +67,23 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
             $pos_vers = strpos($url, $vers);
             $url_raw = $pos_vers ? substr($url, 0, $pos_vers) : $url;
             $url_layer = substr($url, $pos_vers + strlen($vers) + 1);
-            $this->parseTileMap($source, $doc->documentElement, $url_raw, $url_layer);
+            $layer = $this->parseTileMap($source, $doc->documentElement, $url_raw, $url_layer);
+            $layer->setParent($rootSource);
         }
         return $source;
     }
-    
+
+    protected function getRootSource(WmtsSource $source): WmtsLayerSource
+    {
+        $layer = new WmtsLayerSource();
+
+        $layer->setTitle($source->getTitle());
+        $layer->setAbstract($source->getDescription());
+        $layer->setSource($source);
+        $layer->setPriority(0);
+        return $layer;
+    }
+
     /**
      * @param HttpTileSource $source
      * @param \DOMElement $rootNode
@@ -90,7 +109,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         $source->setContact($contact);
     }
 
-    protected function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent)
+    protected function parseTileMap(HttpTileSource $source, \DOMElement $cntx, $url, $layerIdent): WmtsLayerSource
     {
         $layer = new WmtsLayerSource();
         $source->addLayer($layer);
@@ -135,6 +154,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         }
         $source->addTilematrixset($matrixSet);
         $matrixSet->setSource($source);
+        return $layer;
     }
 
     protected function parseBoundingBox(\DOMElement $element)

@@ -47,7 +47,6 @@ window.Mapbender.TmsSource = (function() {
             // @todo: resolve backend config wording weirdness
             return tileMatrix.scaleDenominator;
         },
-        __dummy__: null
     });
     return TmsSource;
 }());
@@ -66,7 +65,6 @@ window.Mapbender.TmsLayer = (function() {
         getPrintBaseUrl: function(srsName) {
             return [this.options.tileUrls[0], this.source.configuration.version, '/', this.options.identifier].join('');
         },
-        __dummy__: null
     });
     Mapbender.SourceLayer.typeMap['tms'] = TmsLayer;
     return TmsLayer;
