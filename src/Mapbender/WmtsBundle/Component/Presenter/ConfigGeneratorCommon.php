@@ -27,7 +27,7 @@ abstract class ConfigGeneratorCommon extends SourceService
 
     abstract protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer);
 
-    abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer, $isFakeRoot);
+    abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer);
 
     /**
      * @param SourceInstance $sourceInstance
@@ -39,8 +39,7 @@ abstract class ConfigGeneratorCommon extends SourceService
         return array_replace(parent::getInnerConfiguration($sourceInstance), array(
             'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
-            'children' => array($this->getRootLayerConfig($sourceInstance)),
-            'layers' => $this->getLayerConfigs($sourceInstance),
+            'children' => $this->getRootLayerConfig($sourceInstance),
             'tilematrixsets' => $this->getTileMatrixSetsConfiguration($sourceInstance),
         ));
     }
@@ -63,15 +62,13 @@ abstract class ConfigGeneratorCommon extends SourceService
      */
     protected function getRootLayerConfig(SourceInstance $instance)
     {
-        // create a fake root layer entity
-        $rootSource = new WmtsLayerSource();
-        $rootSource->setSource($instance->getSource());
-        $rootInst = new WmtsInstanceLayer();
-        $rootInst->setTitle($instance->getTitle());
-        $rootInst->setSourceItem($rootSource);
-        $rootInst->setId($instance->getId() . "-fake-root");
-        $rootInst->setSourceInstance($instance);
-        return $this->formatInstanceLayer($rootInst, true);
+        $rootLayers = [];
+        foreach ($instance->getLayers() as $layer) {
+            if ($layer->getParent() !== null) continue;
+            $rootLayers[] = $this->formatInstanceLayer($layer);
+        }
+
+        return $rootLayers;
     }
 
     /**
@@ -83,7 +80,7 @@ abstract class ConfigGeneratorCommon extends SourceService
         $layerConfigs = array();
         foreach ($sourceInstance->getLayers() as $layer) {
             if ($layer->getActive()) {
-                $layerConfigs[] = $this->formatInstanceLayer($layer, false);
+                $layerConfigs[] = $this->formatInstanceLayer($layer);
             }
         }
         return $layerConfigs;
@@ -91,21 +88,24 @@ abstract class ConfigGeneratorCommon extends SourceService
 
     /**
      * @param WmtsInstanceLayer $instanceLayer
-     * @param bool $isFakeRoot
-     * @return array
      */
-    protected function formatInstanceLayer(SourceInstanceItem $instanceLayer, $isFakeRoot)
+    protected function formatInstanceLayer(SourceInstanceItem $instanceLayer): array
     {
-        $config = array(
-            "options" => $this->formatInstanceLayerOptions($instanceLayer, $isFakeRoot),
-            "state" => array(
-                "visibility" => null,
+        $children = [];
+        foreach ($instanceLayer->getSublayer() as $child) {
+            if ($child->getActive()) $children[] = $this->formatInstanceLayer($child);
+        }
+
+        return [
+            "options" => $this->formatInstanceLayerOptions($instanceLayer),
+            "state" => [
+                "visibility" => $instanceLayer->getActive(),
                 "info" => null,
                 "outOfScale" => null,
                 "outOfBounds" => null,
-            ),
-        );
-        return $config;
+            ],
+            "children" => $children,
+        ];
     }
 
     /**

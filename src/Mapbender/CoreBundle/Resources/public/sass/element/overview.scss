@@ -12,7 +12,7 @@ $panelBorderColor: #888 !default;
 
   .olMap, .ol-overviewmap-map {
     background-color: white;
-    @include transition(all .2s linear);
+    transition: all .2s linear;
     .ol-viewport, .olMapViewport {
       border: 1px solid $panelBorderColor;
     }

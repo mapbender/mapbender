@@ -264,7 +264,7 @@ class SourceInstanceController extends ApplicationControllerBase
     }
 
 
-    protected function toggleEnabledCommon(Request $request, Layerset $layerset, SourceInstanceAssignment $assignment): Response
+    protected function toggleEnabledCommon(Request $request, Layerset $layerset, null|ReusableSourceInstanceAssignment|SourceInstanceAssignment $assignment): Response
     {
         if (!$layerset->getApplication()) {
             throw $this->createNotFoundException();
@@ -330,7 +330,7 @@ class SourceInstanceController extends ApplicationControllerBase
      * @param SourceInstanceAssignment $assignment
      * @return Response
      */
-    protected function instanceWeightCommon(Request $request, Layerset $layerset, SourceInstanceAssignment $assignment)
+    protected function instanceWeightCommon(Request $request, Layerset $layerset, ReusableSourceInstanceAssignment|SourceInstanceAssignment $assignment)
     {
         $newWeight = $request->get("number");
         $targetLayersetId = $request->get("new_layersetId");

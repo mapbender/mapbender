@@ -38,7 +38,7 @@ class WmsSource extends HttpParsedSource
     /**
      * @var string A WMS online resource
      */
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $onlineResource;
 
     /**

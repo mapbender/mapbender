@@ -11,6 +11,9 @@ Important: Execute the following commands in the specified order to upgrade (aft
 - database permission can be migrated using `bin/console mapbender:security:migrate-from-acl`. Do that before executing the schema:update command, otherwise your old ACL tables will be gone
 - yaml permissions now follow a new structure, see [the development documentation](./docs/security/permission-system.md#yaml-applications)
 
+### Refactored WMTS/TMS sources
+If you use WMTS or TMS sources, refresh them via the backend.
+
 ### Symfony updated to version 6.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
   that the core mapbender requires are included now. If you're missing a symfony component, 

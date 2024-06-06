@@ -29,8 +29,12 @@ $(function() {
         var $table = $this.closest('table');
         var groupId = $this.attr("data-check-identifier");
         var rowCbs =  $('tbody [data-check-identifier="' + groupId + '"] input[type="checkbox"]:not(:disabled)', $table);
+
+        const $rootCheckbox = getRootCheckbox($table, groupId);
         if (!rowCbs.length) {
-            getRootCheckbox($table, groupId).prop('checked', false).prop('disabled', true);
+            $rootCheckbox.prop('checked', false).prop('disabled', true);
+        } else {
+            $rootCheckbox.removeAttr('disabled');
         }
 
         setRootState($table, groupId);

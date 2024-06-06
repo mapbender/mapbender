@@ -14,7 +14,7 @@
     {{ form_row(_proto.info, {'tagName': 'th'}) }}
 {%- endblock -%}
 {%- block layer_rows -%}
-  {%- for form in form.layers -%}
-  {%- include "@MapbenderWmts/Repository/instance-layer-wmts.html.twig"  with {'form': form } -%}
+  {%- for form_layer in form.layers -%}
+    {%- include "@MapbenderWmts/Repository/instance-layer-wmts.html.twig" with {'form_layer': form_layer } -%}
   {%- endfor -%}
 {%- endblock -%}

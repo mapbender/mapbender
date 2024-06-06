@@ -24,6 +24,17 @@
                 self.updateHighlights();
             });
             this.updateHighlights();
+            this.element.on('mouseover click', '.basesourcegroup', (evt) => {
+                const $group = $(evt.target).closest('.basesourcegroup');
+                if (evt.type === 'click') {
+                    $group.addClass('active');
+                    evt.stopPropagation();
+                    $(document).one('click', () => {
+                        $group.removeClass('active')
+                    });
+                }
+                $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
+            });
         },
         updateHighlights: function() {
             var allActiveSources = [];

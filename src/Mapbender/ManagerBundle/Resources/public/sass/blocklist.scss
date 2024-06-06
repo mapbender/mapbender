@@ -35,7 +35,6 @@
   @media screen and (max-width: 767px) {
     // Reduce button spacing to prevent overflow
     .btn-toolbar {
-      margin-left: -10px;
       .btn {
         margin-left: 10px;
         // Add some vertical margin to prevent buttons sticking on top of each other in case of overflow

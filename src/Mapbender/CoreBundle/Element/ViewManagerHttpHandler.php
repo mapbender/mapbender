@@ -192,9 +192,10 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected function updateRecord(ViewManagerState $record, Request $request)
     {
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
-        $record->setViewParams($request->request->get('viewParams'));
-        $record->setLayersetDiffs($request->request->get('layersetsDiff') ?? []);
-        $record->setSourceDiffs($request->request->get('sourcesDiff') ?? []);
+        $allValues = $request->request->all();
+        $record->setViewParams($allValues['viewParams']);
+        $record->setLayersetDiffs($allValues['layersetsDiff'] ?? []);
+        $record->setSourceDiffs($allValues['sourcesDiff'] ?? []);
         $record->setMtime(new \DateTime());
     }
 
