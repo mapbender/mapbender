@@ -1,6 +1,9 @@
 $textColor: #222 !default;
 $backgroundColor: #fff !default;
 
+$ciColor: #279ddc; // blue
+$toolBarBorderColor: rgba($ciColor, 0.6);
+
 $accordionFontSize: 1.6rem;
 $accordionBackgroundColor: #777;
 $accordionTextColor: #ddd;
@@ -18,6 +21,8 @@ $sidepaneBackground: linear-gradient(0deg, rgba($backgroundColor, 0.85), rgba($b
 $toolBarBorderColor: #ccc;
 $toolBarTopBackground: linear-gradient(0deg, rgba($backgroundColor, 0.9), rgba($backgroundColor, 0.7));
 $toolBarBottomBackground: linear-gradient(0deg, rgba($backgroundColor, 0.7), rgba($backgroundColor, 0.9));
+$toolBarButtonActiveBackgroundColor: $ciColor;
+
 
 $sidepaneButtonFontSize: 1rem;
 $sidepaneBorderColor: #ccc;
