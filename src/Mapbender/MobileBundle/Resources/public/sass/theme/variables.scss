@@ -3,9 +3,9 @@ $textColor: #333 !default;
 $panelBorderColor: #ccc;
 $hoverEffects: false;
 
-// the holy colors
-$ciColor:#279ddc; // blue
-$toolBarFontColor: #279ddc;
+$ciColor: #279ddc; // Mapbender blue
+
+$toolBarFontColor: #0066BA;
 $toolBarBackgroundColor: #fff;
 $toolBarBackground: $toolBarBackgroundColor;
 $toolBarBorderColor: rgba($ciColor, 0.6);
@@ -15,6 +15,7 @@ $fontSize: 14px;
 $toolBarButtonDefaultOpacity: 1.0;
 $toolBarButtonHoverOpacity: 0.7;
 $toolBarButtonActiveOpacity: 1.0;
+$toolBarButtonActiveBackgroundColor: $ciColor !default;
 
 $accordionTextColor: $toolBarBackgroundColor;
 $accordionBackgroundColor: mix($toolBarBackgroundColor, $toolBarFontColor, 10%);
