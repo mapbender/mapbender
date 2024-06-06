@@ -17,7 +17,7 @@ class SubjectDomainRegistered extends AbstractSubjectDomain
 
     function getIconClass(): string
     {
-        return "fas fa-person-circle-question";
+        return "fas fa-people-roof";
     }
 
 

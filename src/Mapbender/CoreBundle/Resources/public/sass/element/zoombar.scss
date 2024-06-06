@@ -32,7 +32,7 @@
   .toolPane{
     display: inline-block; // for automatic width and centering
     padding:5px;
-    @include border-radius($radius);
+    border-radius: $radius;
   }
   .toolPane {
     font-size: 1.6rem;

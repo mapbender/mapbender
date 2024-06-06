@@ -38,6 +38,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'required' => true,
                 'attr' => array(
                     'readonly' => 'readonly',
+                    'disabled' => 'disabled',
                 ),
             ))
             ->add('units', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -45,6 +46,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
+                    'disabled' => 'disabled',
                 ),
             ))
             ->add('unitSymbol', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
@@ -52,6 +54,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
+                    'disabled' => 'disabled',
                 ),
             ))
             ->add('multipleValues', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
@@ -112,6 +115,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
                 'required' => true,
                 'attr' => array(
                     'readonly' => 'readonly',
+                    'disabled' => 'disabled',
                 ),
                 'label' => 'Extent',
             ))
@@ -133,6 +137,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
             'required' => false,
             'attr' => array(
                 'readonly' => 'readonly',
+                'disabled' => 'disabled',
             ),
         ));
     }

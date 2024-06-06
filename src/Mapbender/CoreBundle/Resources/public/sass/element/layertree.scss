@@ -75,7 +75,7 @@ $layer-slider-bar-height: 5px;
   // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
   width: 140px;
   border: solid 1px $panelBorderColor;
-  @include border-radius($radius);
+  border-radius: $radius;
   // arrow icon
   &:before {
     content: '';

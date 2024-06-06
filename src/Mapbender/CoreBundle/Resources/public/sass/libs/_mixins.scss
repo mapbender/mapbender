@@ -1,7 +1,3 @@
-@import "compass/layout/stretching";
-@import "compass/utilities";
-@import "compass/css3";
-
 // XXXVH: use this position mixins instead of "pos"
 @mixin position($args){
   $top:nth($args, 1);
@@ -30,7 +26,6 @@
 
 //
 // positioning helper mixin
-// compass -> stretch not support empty values
 //
 // @deprecated
 @mixin pos($top, $right, $bottom, $left){
