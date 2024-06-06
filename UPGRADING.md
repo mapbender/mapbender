@@ -135,6 +135,10 @@ The library was only used sparsely and was not worth the effort of keeping up to
 - `_.omit`, `_.filter`: `Mapbender.Util.filter`
 - `_.uniq`: `Mapbender.Util.array_unique`
 
+## Removed compass library for sass mixins
+It provided automatic prefixing for CSS 3 attributes like "transform", they are supported without prefixes now in all major
+browser so the library is not necessary anymore. If you were using one of them in your custom code, replace them with
+plain CSS statements.
 
 
 ## v3.3.x

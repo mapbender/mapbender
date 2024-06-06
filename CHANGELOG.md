@@ -10,6 +10,7 @@ Breaking changes (for details on migration process see UPGRADING.md):
 * Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * Removed underscore.js. Some functions are replaced by native JS functions, some are replaced by Mapbender.Util functions ([PR#1514](https://github.com/mapbender/mapbender/pull/1514))
 * Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
+* Removed compass library for sass mixins
 
 Features:
 * fix sorting issue in layertree (https://github.com/mapbender/mapbender/issues/1567) ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
