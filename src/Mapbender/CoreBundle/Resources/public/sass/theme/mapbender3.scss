@@ -4,6 +4,7 @@ $sidepaneBorderColor: #ccc !default;
 $sidepaneTextColor: inherit !default;
 
 $toolBarBackgroundColor: #eee !default;
+$toolBarButtonActiveBackgroundColor: $ciColor !default;
 $toolBarOpacity: 1.0 !default;
 $toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
 $toolBarTopBackground: $toolBarBackground !default;
@@ -82,7 +83,7 @@ ul.toolBar, .toolBar > ul {
 
 .toolBarItemActive {
   // Invert background and foreground
-  background-color: $toolBarFontColor;
+  background-color: $toolBarButtonActiveBackgroundColor;
   color: $toolBarBackgroundColor;
 }
 
@@ -424,3 +425,12 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 .prevent-selection {
     user-select: none;
 }
+
+.toolPane{
+ background-color: $backgroundColor;
+}
+
+.mb-element-zoombar .rotation{
+   background-color: $backgroundColor;
+}
+

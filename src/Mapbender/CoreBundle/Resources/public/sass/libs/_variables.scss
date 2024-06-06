@@ -2,6 +2,8 @@
 $fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 $fontSize:13px;
 
+$ciColor: #279ddc; // Mapbender blue
+
 // Colors applied on body / normal content containers (sidepane, popups, mobile pane)
 $textColor: #333;
 $backgroundColor: #fff;
@@ -23,29 +25,30 @@ $lightFontColor:#fff; // white
 $toolBarFontColor: #222;
 $toolBarBackgroundColor: #eee;
 $toolBarOpacity: 0.8;
+$toolBarButtonActiveBackgroundColor: $ciColor;
+
 // Default and hover opacity for Button (and Button-like) Elements in toolbars
 $toolBarButtonDefaultOpacity: 0.7;
 $toolBarButtonHoverOpacity: 1.0;
 $toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity;
 
-// the holy colors
-$ciColor:#5b932a; // green
 
 // Button colors
 $buttonCriticalFirstColor: #d36565;
 $buttonCriticalSecondColor: #b23a3a;
-$buttonFirstColor: #6fb536;
-$buttonSecondColor: #5fa229;
+$buttonFirstColor: $ciColor;
+$buttonSecondColor: $ciColor;
 $buttonTextColor: $lightFontColor;
-$buttonBorderColor: #538e24;
-$buttonHoverColor: #63a130;
+$buttonBorderColor: $ciColor;
+$buttonHoverColor: $ciColor;
 $buttonHoverTextColor: $buttonTextColor;
-$buttonFirstActiveColor: #578e2a;
+$buttonFirstActiveColor: darken($ciColor, 10%); // Mapbender blue darkended
 $buttonActiveTextColor: $buttonTextColor;
 $buttonCriticalTextColor: $lightFontColor;
 $buttonCriticalHoverTextColor: $buttonCriticalTextColor;
 $buttonCriticalBorderColor: #9f3434;
 $buttonCriticalHoverColor: #cd5151;
+
 // Button sizing
 $buttonFontSize: 100%;
 
