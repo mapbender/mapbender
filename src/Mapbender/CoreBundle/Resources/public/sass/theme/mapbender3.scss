@@ -425,3 +425,11 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 .prevent-selection {
     user-select: none;
 }
+
+.toolPane{
+ background-color: $backgroundColor;
+}
+
+.mb-element-zoombar .rotation{
+   background-color: $backgroundColor;
+}
