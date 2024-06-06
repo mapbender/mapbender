@@ -153,3 +153,17 @@ body {
   --bs-btn-active-bg: #1A709E;
   --bs-btn-active-border-color: #1A709E;
 }
+
+// hide button text for mobile mode
+// define max width of popup
+@media screen and (max-width: 420px) {
+    .hidden-sm.hidden-xs.hidden-md-down {
+      display: none;
+    }
+
+  .popup {
+    max-width: 98vw;
+    position: absolute;
+    left: 2px;
+   }
+}
