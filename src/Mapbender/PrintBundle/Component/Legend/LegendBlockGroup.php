@@ -9,12 +9,16 @@ class LegendBlockGroup extends LegendBlockCollection
     /** @var LegendBlock[] */
     protected $members;
 
-    public function __construct($members = null)
+    protected $legendEntryName;
+
+    public function __construct($members = null, $legendEntryName = null)
     {
         $this->clear();
         foreach ($members ?: array() as $member) {
             $this->addBlock($member);
         }
+
+        $this->legendEntryName = $legendEntryName;
     }
 
     /**
@@ -36,5 +40,9 @@ class LegendBlockGroup extends LegendBlockCollection
     public function clear()
     {
         $this->members = array();
+    }
+
+    public function getLegendEntryName() {
+        return $this->legendEntryName;
     }
 }

@@ -91,9 +91,9 @@ class LegendHandler
      * @param array $printJobData if you need to look into the whole thing again...
      * @return LegendBlockContainer
      */
-    public function collectLegendGroup($groupData, $printJobData)
+    public function collectLegendGroup($groupData, $printJobData, $legendGroupName = null)
     {
-        $group = new LegendBlockGroup();
+        $group = new LegendBlockGroup(null, $legendGroupName);
         foreach ($groupData as $key => $data) {
             if (is_array($data)) {
                 $url = $data['url'];
