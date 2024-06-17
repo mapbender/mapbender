@@ -94,3 +94,10 @@ select.numeric {
     }
   }
 }
+
+.dropdown[disabled] {
+
+    .dropdownValue {
+        background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
+    }
+}

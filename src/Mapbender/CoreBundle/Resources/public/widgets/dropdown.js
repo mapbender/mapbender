@@ -96,6 +96,10 @@ $(function () {
     // init dropdown list --------------------------------------------------------------------
 
     function toggleList() {
+
+        if ($(this).attr('disabled')) {
+            return false;
+        }
         if (isMbDropdown(this)) {
             fixOptions(this);
             var $list = $('.dropdownList', this);
