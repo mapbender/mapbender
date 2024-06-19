@@ -49,6 +49,7 @@ Bugfixes:
 * [Sketch] Already use selected color while drawing ([PR#1584](https://github.com/mapbender/mapbender/pull/1584))
 * [Overview] Fix WMTS and TMS sources cannot be used as overview service (([#1432](https://github.com/mapbender/mapbender/issues/1432), [PR#1589](https://github.com/mapbender/mapbender/pull/1589))
 * [BaseSourceSwitcher] Fix WMTS and TMS behaving incorrectly when not set to be initially active (([#1429](https://github.com/mapbender/mapbender/issues/1432), [PR#1589](https://github.com/mapbender/mapbender/pull/1589))
+* WMS-T sources with dimensions became corrupted after editing layerset instance ([PR#1600](https://github.com/mapbender/mapbender/pull/1600)
 * Deletion of data sources did not work in some cases ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Popup movement is now restricted to the viewport ([PR#1547](https://github.com/mapbender/mapbender/pull/1547))
 * Dropdown Element can now handle two options with the same value ([PR#1557](https://github.com/mapbender/mapbender/pull/1557))
