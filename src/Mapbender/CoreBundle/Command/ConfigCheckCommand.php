@@ -89,8 +89,8 @@ class ConfigCheckCommand extends Command
         foreach ($connections as $connection) {
             /** @var Connection $connection */
             try {
-                $connection->connect();
-                $rows[] = [$connection->getDatabase(), 'successfull', '<fg=green>ok</>'];
+                $connection->getNativeConnection();
+                $rows[] = [$connection->getDatabase(), 'successful', '<fg=green>ok</>'];
             } catch (ConnectionException|DriverException|Exception $e) {
                 $success = false;
                 $rows[] = [$connection->getDatabase(), 'Error', '<fg=red>' . $e->getMessage() . '</>'];

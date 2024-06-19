@@ -14,10 +14,13 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
   padding: 5px;
 }
 
-.input {
-  &[disabled], &[readonly] {
-    color: lighten($inputForegroundColor, 40%);
-  }
+.input, input {
+    &[disabled], &[readonly] {
+        color: lighten($inputForegroundColor, 40%);
+        background-color: var(--bs-secondary-bg);
+        opacity: 1;
+        pointer-events: none;
+    }
 
   &::placeholder {
     color: inherit;
