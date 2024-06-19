@@ -248,7 +248,14 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             return;
         }
 
-        echo "WARNING: Invalid class type " . $entry["class_type"] . "(object identifier " . $entry["object_identifier"] . ") for entry id " . $entry["id"] . "\n";
+        // For WMSSource, User and Group the owner has been set which is no longer needed.
+        // For all other classes, show a warning message
+        if ($entry["class_type"] !== "Mapbender\WmsBundle\Entity\WmsSource"
+            && $entry["class_type"] !== "FOM\UserBundle\Entity\User"
+            && $entry["class_type"] !== "FOM\UserBundle\Entity\Group"
+        ) {
+            echo "WARNING: Invalid class type " . $entry["class_type"] . "(object identifier " . $entry["object_identifier"] . ") for entry id " . $entry["id"] . "\n";
+        }
     }
 
     private function populateSubject(Permission $newEntry, array $entry): ?Permission
