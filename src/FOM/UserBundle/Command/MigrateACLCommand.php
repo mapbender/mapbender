@@ -278,7 +278,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             }
             if (!$user) {
                 echo "WARNING: could not find user $username, defined in entry id " . $entry["id"] . "\n";
-                return $newEntry;
+                return null;
             }
             $newEntry->setSubjectDomain(SubjectDomainUser::SLUG);
             $newEntry->setUser($user);
@@ -296,7 +296,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             if (is_array($group)) $group = count($group) > 0 ? $group[0] : null;
             if (!$group) {
                 echo "WARNING: could not find group $groupName, defined in entry id " . $entry["id"] . "\n";
-                return $newEntry;
+                return null;
             }
             $newEntry->setSubjectDomain(SubjectDomainGroup::SLUG);
             $newEntry->setGroup($group);
