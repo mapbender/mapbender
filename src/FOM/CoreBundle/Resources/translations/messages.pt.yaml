@@ -3,10 +3,49 @@ fom:
     components:
       popup:
         delete_user_group:
-          title: Confirme apagar
-          content: Realmente eliminar %userGroup%?
+          title: 'Confirmar remoção'
+          content: 'Tem certeza que deseja excluir o grupo %userGroup%?'
           btn:
             cancel: Cancelar
-            ok: OK
+            ok: Salvar
     fields:
-      no_user_group_defined: Nenhum usuário o grupo definido.
+      no_user_group_defined: 'Nenhum usuário ou grupo está definido.'
+  security:
+    domain:
+      public: 'Acesso Público'
+      registered: 'Todos os Usuários Registrados'
+    resource:
+      installation:
+        create_applications: "Criar"
+        view_all_applications: "Ver"
+        view_all_applications_help: "Permite ver todas as aplicações, independentemente das permissões definidas na aplicação."
+        edit_all_applications: "Editar"
+        edit_all_applications_help: "Permite editar todas as aplicações, independentemente das permissões definidas na aplicação."
+        delete_all_applications: "Excluir"
+        delete_all_applications_help: "Permite excluir todas as aplicações, independentemente das permissões definidas na aplicação."
+        own_all_applications: "Gerenciar Permissões"
+        own_all_applications_help: "Permite editar permissões para todas as aplicações, independentemente das permissões definidas na aplicação."
+        view_sources: "Ver"
+        create_sources: "Editar"
+        refresh_sources: "Atualizar"
+        edit_free_instances: "Editar Instâncias Livres"
+        delete_sources: "Excluir"
+        manage_permissions: "Gerenciamento Global de Permissões"
+        view_users: "Ver"
+        create_users: "Criar"
+        edit_users: "Editar"
+        delete_users: "Excluir"
+        view_groups: "Ver"
+        create_groups: "Criar"
+        edit_groups: "Editar"
+        delete_groups: "Excluir"
+      application:
+        view: "Ver"
+        view_help: "Autoriza o usuário/grupo a ver e usar a aplicação no frontend, incluindo todos os elementos para os quais não foram definidas permissões especiais."
+        edit: "Editar"
+        edit_help: "Permite editar a aplicação, excluindo a guia 'Segurança'. Editar conjuntos de camadas requer permissões globais."
+        delete: "Excluir"
+        manage_permissions: "Gerenciamento de Permissões"
+        manage_permissions_help: "Permite gerir permissões para esta aplicação (a página atual)."
+      element:
+        view: "Ver"

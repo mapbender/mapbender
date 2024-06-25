@@ -20,46 +20,37 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda
  * @author apour
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @UniqueEntity("email")
- * @ORM\Table(name="fom_user")
  */
+#[UniqueEntity('email')]
+#[ORM\Entity]
+#[ORM\Table(name: 'fom_user')]
 class User extends AbstractUser implements EquatableInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Column(type="string", nullable=false, length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email()
-     */
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: false)]
     protected $email;
 
     /**
      * @var \DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $registrationTime;
 
-    /**
-     * @ORM\Column(type="string", nullable=true, length=50)
-     */
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     protected $registrationToken;
 
     /**
      * @var \DateTime|null
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $resetTime;
 
-    /**
-     * @ORM\Column(type="string", nullable=true, length=50)
-     */
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     protected $resetToken;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Group", inversedBy="users")
-     * @ORM\JoinTable(name="fom_users_groups")
-     */
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'users')]
+    #[ORM\JoinTable(name: 'fom_users_groups')]
     protected $groups;
 
     /**
@@ -77,7 +68,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     {
         // Avoid automatic implicit logout after modifying group assignments or profile information
         // see https://github.com/symfony/symfony/issues/35501
-        return $user->getUsername() === $this->getUsername();
+        return $user->getUserIdentifier() === $this->getUserIdentifier();
     }
 
     /**

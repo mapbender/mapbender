@@ -3,10 +3,11 @@ namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -37,14 +38,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PasswordController extends AbstractEmailProcessController
 {
-    /** @var LoggerInterface */
-    protected $logger;
     protected $enableReset;
     protected $maxTokenAge;
 
     public function __construct(MailerInterface $mailer,
                                 TranslatorInterface $translator,
-                                LoggerInterface $logger,
+                                ManagerRegistry $doctrine,
+                                protected LoggerInterface $logger,
                                 $userEntityClass,
                                 $emailFromName,
                                 $emailFromAddress,
@@ -52,8 +52,7 @@ class PasswordController extends AbstractEmailProcessController
                                 $maxTokenAge,
                                 $isDebug)
     {
-        $this->logger = $logger;
-        parent::__construct($mailer, $translator, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
+        parent::__construct($mailer, $translator, $doctrine, $userEntityClass, $emailFromName, $emailFromAddress, $isDebug);
         $this->enableReset = $enableReset;
         $this->maxTokenAge = $maxTokenAge;
         if (!$this->enableReset) {
@@ -64,10 +63,10 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 3: Show instruction page that email has been sent
      *
-     * @Route("/user/password/send", methods={"GET"})
      * @return Response
      */
-    public function sendAction()
+    #[Route(path: '/user/password/send', methods: ['GET'])]
+    public function send(): Response
     {
         return $this->render('@FOMUser/Password/send.html.twig');
     }
@@ -75,12 +74,12 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset steps 1 / 2: Request reset token
      *
-     * @Route("/user/password", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      *
      */
-    public function formAction(Request $request)
+    #[Route(path: '/user/password', methods: ['GET', 'POST'])]
+    public function form(Request $request)
     {
         $form = $this->createForm('FOM\UserBundle\Form\Type\UserForgotPassType');
         $form->handleRequest($request);
@@ -119,11 +118,11 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 4a: Reset the reset token
      *
-     * @Route("/user/reset/reset")
      * @param Request $request
      * @return Response
      */
-    public function tokenResetAction(Request $request)
+    #[Route(path: '/user/reset/reset')]
+    public function tokenReset(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromResetToken($token);
@@ -145,11 +144,11 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset steps 4 + 5: Show password reset form
      *
-     * @Route("/user/reset", methods={"GET", "POST"})
      * @param Request $request
      * @return Response
      */
-    public function resetAction(Request $request)
+    #[Route(path: '/user/reset', methods: ['GET', 'POST'])]
+    public function reset(Request $request)
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromResetToken($token);
@@ -188,10 +187,10 @@ class PasswordController extends AbstractEmailProcessController
     /**
      * Password reset step 6: All done message
      *
-     * @Route("/user/reset/done", methods={"GET"})
      * @return Response
      */
-    public function doneAction()
+    #[Route(path: '/user/reset/done', methods: ['GET'])]
+    public function done(): Response
     {
         return $this->render('@FOMUser/Password/done.html.twig');
     }

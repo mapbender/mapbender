@@ -17,7 +17,7 @@ class ToolbarSettingsType extends BaseToolbarType
         $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults(array(
@@ -25,7 +25,7 @@ class ToolbarSettingsType extends BaseToolbarType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($this->allowResponsiveContainers) {
             $builder->add('screenType', 'Mapbender\ManagerBundle\Form\Type\ScreentypeType', array(

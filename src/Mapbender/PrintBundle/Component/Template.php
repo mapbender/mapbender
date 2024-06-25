@@ -150,41 +150,33 @@ class Template implements \ArrayAccess
     }
 
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
-        switch ($offset) {
-            case 'orientation':
-                return $this->getOrientation();
-            case 'pageSize':
-                return array(
-                    'width' => $this->getWidth(),
-                    'height' => $this->getHeight(),
-                );
-            case 'fields':
-                return $this->getTextFields();
-            default:
-                return $this->getRegion($offset);
-        }
+        return match ($offset) {
+            'orientation' => $this->getOrientation(),
+            'pageSize' => array(
+                'width' => $this->getWidth(),
+                'height' => $this->getHeight(),
+            ),
+            'fields' => $this->getTextFields(),
+            default => $this->getRegion($offset),
+        };
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
-        switch ($offset) {
-            case 'orientation':
-            case 'pageSize':
-            case 'fields':
-                return true;
-            default:
-                return $this->hasRegion($offset);
-        }
+        return match ($offset) {
+            'orientation', 'pageSize', 'fields' => true,
+            default => $this->hasRegion($offset),
+        };
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
     }

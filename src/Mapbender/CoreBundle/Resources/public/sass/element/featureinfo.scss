@@ -1,33 +1,54 @@
 .mb-element-featureinfo {
-  iframe {
-    width: 100%;
-    height: 100%;
-    border-width: 0;
-  }
+    iframe {
+        width: 100%;
+        height: 100%;
+        border-width: 0;
+    }
 }
 
 .featureinfoDialog {
-  .accordionContainer > .container-accordion > .accordion-cell {
-    padding: 0;
-    iframe {
-      padding: 10px 0;
+    .accordionContainer > .container-accordion > .accordion-cell {
+        padding: 0;
+
+        iframe {
+            padding: 10px 0;
+        }
     }
-  }
-  .popupContent {
-    height: 100%; // for accordion growth
-    .contentItem {
-      height: 100%; // for accordion growth
-      .mb-element-featureinfo {
-        height: 98%; // for accordion growth (conservative; avoid vertical scroll)
-      }
+
+    .popupContent {
+        height: 100%; // for accordion growth
+        .contentItem {
+            height: 100%; // for accordion growth
+            .mb-element-featureinfo {
+                height: 98%; // for accordion growth (conservative; avoid vertical scroll)
+            }
+        }
     }
-  }
 }
 
-.mobilePane {
-  .mb-element-featureinfo {
-    // Use available space / avoid vertical scrolling inside + outside iframe
-    height: 94%;
-    min-height: 94%;
-  }
+.mobilePane, .sidePane {
+    .mb-element-featureinfo {
+        // Use available space / avoid vertical scrolling inside + outside iframe
+        height: calc(100% - 10px);
+        min-height: calc(100% - 10px);
+
+        .tabContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            &.hidden {
+                display: none;
+            }
+
+            .container {
+                position: static;
+                flex-grow: 1;
+            }
+        }
+    }
+}
+
+.mb-feature-info-active {
+    cursor: help;
 }

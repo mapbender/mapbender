@@ -1,0 +1,252 @@
+mb:
+  application:
+    create:
+      success: 'Tu aplicación ha sido creada.'
+      failure:
+        create.directory: 'No se puede crear el directorio de la aplicación.'
+    save:
+      success: 'Tu aplicación ha sido guardada.'
+      failure:
+        general: 'Se ha producido un error al intentar guardar tu solicitud.'
+        create.directory: 'Tu aplicación ha sido actualizada pero los directorios de la aplicación no pueden ser creados.'
+    remove:
+      success: 'Tu aplicación ha sido eliminada.'
+      failure:
+        general: 'Tu aplicación no ha podido ser eliminada.'
+  layerset:
+    create:
+      success: 'Tu conjunto de capas ha sido creado.'
+    remove:
+      success: 'Tu conjunto de capas ha sido eliminado.'
+      failure: 'Tu conjunto de capas no puede ser eliminado.'
+  source:
+    instance:
+      create:
+        success: 'Se ha creado una nueva instancia. Por favor, edítala.'
+  manager:
+    automatic: Automático
+    autoActivate: 'Activar automáticamente'
+    autoOpen: 'Abrir automáticamente'
+    confirm_form_discard: '¿Realmente deseas descartar los cambios?'
+    popup_height: 'Altura del cuadro de diálogo'
+    popup_width: 'Anchura del cuadro de diálogo'
+    screentype:
+      label: 'Tipo de pantalla'
+      choice:
+        all: Cualquiera
+        mobile: Móvil
+        desktop: Desktop
+    toolbar:
+      alignment:
+        label: Alineación
+        choice:
+          left: Izquierda
+          right: Derecha
+          center: Centrada
+      generate_button_menu: 'Generar un menú para botones'
+      menu_label: 'Título del menú'
+    visibility: 'Visibilidad'
+    element:
+      screentype:
+        mobile: 'Visualización en pantallas de móviles'
+        desktop: 'Visualización en pantallas grandes'
+    sidepane:
+      width: Anchura
+      closed: 'Inicialmente cerrado'
+      align:
+        label: Posición
+        choice:
+          left: Izquierda
+          right: Derecha
+    sourceinstance:
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Esta instancia no se utiliza en ninguna aplicación}
+            one   {Esta instancia se utiliza en una aplicación}
+            other {Esta instancia se utiliza en # aplicaciones}
+        }
+      convert_to_reusable: 'Convertir a instancia libre'
+      convert_to_bound: 'Convertir a instancia privada'
+      converted_to_bound: 'Se ha añadido una copia privada de la instancia libre a la aplicación'
+      reusable_assigned_to_application: 'Se ha añadido una instancia libre a la aplicación'
+      create_reusable: 'Crear una instancia libre'
+      created_reusable: 'Se ha creado una nueva instancia libre'
+    application:
+      persistentView: 'Recordar la configuración del mapa'
+      splashscreen: 'Mostrar la pantalla de inicio'
+    admin:
+      sources: Fuentes
+      csrf_token_invalid: 'CSRF no válido.'
+      source:
+        add: 'Añadir fuente de datos'
+        show_metadata: 'Mostrar metadatos'
+        delete: 'Borrar la fuente de datos'
+        new:
+          add: 'Añadir fuente de datos'
+        valid: 'La fuente de datos es válida'
+        notvalid: 'La fuente de datos no es válida'
+        no_source: 'Fuente de datos no disponible'
+        update: 'Actualizar fuente de datos'
+        status:
+          ok: 'Fuente de datos OK'
+          toupdate: 'La fuente de datos ya no es actual'
+          unreachable: 'La fuente de datos es inaccesible'
+        embedded_in_applications: |
+          {count, plural,
+            =0    {Esta fuente de datos no se utiliza en ninguna aplicación}
+            one   {Esta fuente de datos se utiliza en una aplicación}
+            other {Esta fuente de datos se utiliza en # aplicaciones}
+          }
+      map:
+        max_extent: 'Extensión máxima'
+        max_extent.help: 'Marco límite (min/max x/y) en la que el usuario puede navegar sobre el mapa. Al hacer clic en el icono del globo terráqueo de la barra de escala, el mapa se amplía hasta esta extensión.'
+        start_extent: 'Extensión inicial'
+        start_extent.help: 'Marco límite  (min/max x/y) que se muestra inicialmente al cargar el mapa. Al hacer clic en el icono de inicio (casa) de la barra de herramientas, se hace zoom a dicha sección.'
+        base_dpi: 'Resolución predeterminada [dpi]'
+        base_dpi.help: 'La resolución se adapta a la resolución de la pantalla en función del valor configurado.'
+      element:
+        title: Título
+        type: Tipo
+        add: 'Añadir un nuevo elemento a'
+        show_hide: 'Cambiar mostrar/ocultar el elemento'
+        no_element_added: 'No añadido elemento'
+        anchor:
+          label: 'Posición'
+          left-top: 'Arriba a la izquierda'
+          left-bottom: 'Abajo a la izquierda'
+          right-top: 'Arriba a la derecha'
+          right-bottom: 'Abajo a la derecha'
+      zoombar:
+        draggable: Desplazable
+      overview:
+        fix: Fijar
+      layerset:
+        add: 'Añadir conjunto de capas'
+        title: Título
+        type: Tipo
+        edit: 'Editar conjunto de capas'
+        delete:
+          title: 'Borrar conjunto de capas'
+          confirm: '¿Realmente quieres eliminar el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
+        id: Id
+      instance:
+        add: 'Añadir instancia'
+        show_hide: 'Cambiar mostrar/ocultar instancia'
+        edit: 'Editar instancia'
+        delete:
+          title: 'Borrar instancia'
+          confirm: '¿Realmente deseas eliminar la instancia de título <span class="italic">%instance_title%</span>?'
+        no_instance_added: 'Instancia no añadida'
+        no_layer_added: 'Capa no añadida'
+        max_input_vars_exceeded: 'La configuración setting max_input_vars de PHP es demasiado baja para el número de capas en esta instancia.'
+        update_successful: 'Tu instancia ha sido actualizada'
+        converted_to_shared: 'La instancia se ha convertido en una instancia libre'
+      template: Plantilla
+      application:
+        view: Mostrar
+        edit:
+          title: 'Editar aplicación'
+          base_data: 'Información básica'
+        screenshot: 'Captura de pantalla'
+        layouts: Layout
+        layersets: 'Capas'
+        custom_css: CSS
+        security:
+          title: Seguridad
+          public: 'Acceso público'
+        save: Guardar
+        cancel: Cancelar
+        view_this: 'Ver esta aplicación'
+        duplicate: Duplicar
+        public:
+          on_off: 'Cambiar acceso público'
+        delete: 'Borrar aplicación'
+        no_application: 'Aplicación no disponible'
+        new:
+          title: 'Nueva aplicación'
+        create_use: 'Crear una nueva aplicación proveyendo información básica y luego usando el modo edición para añadir elementos y capas.'
+        btn:
+          create: Crear
+          cancel: Cancelar
+        upload:
+          button: 'Selecciona un archivo'
+          label: 'No se ha seleccionado ningún archivo'
+        export:
+          addSources: Fuentes
+          btn:
+            export: Exportar
+        import:
+          addSources: Fuentes
+          btn:
+            import: Importar
+        title: Título
+        url:
+          title: 'Título URL'
+        description: Descripción
+        template: Plantilla
+    source:
+      serviceurl: 'URL del servicio '
+      username: Usuario
+      password: Contraseña
+      activate_new_layers: 'Activar las capas recién añadidas'
+      select_new_layers: 'Seleccionar las capas recién añadidas'
+      load: Cargar
+    managerbundle:
+      new_application: 'Nueva aplicación'
+      add_source: 'Añadir fuentes'
+      add_user_group: 'Añadir usuarios y grupos'
+      import_application: Importar
+      export_application: Exportar
+    components:
+      popup:
+        add_element:
+          title: 'Añadir elemento'
+        edit_element:
+          title: 'Editar elemento'
+        delete_element:
+          title: 'Confirmar eliminación'
+        add_edit_layerset:
+          title_edit: 'Editar conjunto de capas'
+          title_add: 'Añadir conjunto de capas'
+        delete_layerset:
+          title: 'Eliminar conjunto de capas'
+        add_instance:
+          title: 'Seleccionar fuente de datos'
+        delete_instance:
+          title: 'Eliminar instancia'
+        delete_user_group:
+          title: 'Confirmar eliminación'
+          content: '¿Realmente desdea eliminar %subject%?'
+    import:
+      application:
+        failed: 'No es posible importar la aplicación'
+    http_connection_error: 'La conexión ha fallado'
+    http_error_response: 'El servidor remoto del servicio contactado respondió con un mensaje de error'
+    xml_invalid: 'El documento XML no es válido'
+    xml_malformed: 'No hay un documento XML o la estructura XML no es válida'
+  core:
+    admin:
+      button:
+        show_label: 'Mostrar etiqueta'
+      element:
+        autostart: 'Inicio automático'
+      title: Título
+    entity:
+      app:
+        screenshotfile:
+          error: 'El archivo es demasiado grande (%uploadFileSize% bytes). El tamaño máximo permitido es %maxFileSize% bytes.'
+          format_error: 'Este formato no es compatible'
+          resolution:
+            error: 'Sólo se pueden cargar archivos con %screenshotHeight% x %screenshotWidth% píxeles o más. Tu archivo tiene %uploadWidth% x %uploadHeighth% píxeles.'
+    importjobtype:
+      admin:
+        importfile: 'Importar archivo'
+  actions:
+    secureelement: 'Restringir el acceso al elemento'
+  wms:
+    wmsloader:
+      repo:
+        instance:
+          label:
+            title: Título
+            opacity: Opacidad

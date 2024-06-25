@@ -29,10 +29,11 @@ $(function () {
             animation[align] = "0px";
         }
 
+        $sidePane.addClass('animating');
         $sidePane.animate(animation, {
             duration: 300,
             complete: function () {
-                $sidePane.toggleClass('closed', wasOpen);
+                $sidePane.removeClass('animating').toggleClass('closed', wasOpen);
             }
         });
     });
@@ -77,8 +78,12 @@ $(function () {
 
     const constrainSize = function () {
         if (!sidePane) return;
-        if (sidePaneWidth() > Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE)) {
-            sidePane.style.width = Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE) + "px";
+        const allowedWidth = Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE);
+        if (sidePaneWidth() > allowedWidth) {
+            sidePane.style.width = allowedWidth + "px";
+            if (sidePane.style.left) {
+                sidePane.style.left = "-" + allowedWidth + "px";
+            }
         }
     }
 
@@ -88,11 +93,13 @@ $(function () {
     $(document).on('pointerdown', '.sidePane.resizable', function (e) {
         if ((sidePaneLeft && sidePaneWidth() - e.offsetX < BORDER_SIZE) || (!sidePaneLeft && e.offsetX < BORDER_SIZE)) {
             pointerPosition = e.x;
+            $("body").addClass("prevent-selection");
             document.addEventListener("pointermove", resize);
         }
 
         $(document).one('pointercancel pointerup', function (e) {
             document.removeEventListener("pointermove", resize);
+            $("body").removeClass("prevent-selection");
         });
     });
 

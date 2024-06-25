@@ -6,10 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtssource")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtssource')]
 class WmtsSource extends HttpTileSource
 {
     /**
@@ -29,7 +27,7 @@ class WmtsSource extends HttpTileSource
 
     public function getTypeLabel()
     {
-        // HACK: no distinct classes for WMTS and TMS
+        // no distinct classes for WMTS and TMS
         if ($this->type === self::TYPE_TMS) {
             return 'TMS';
         } else {

@@ -10,62 +10,59 @@ use Mapbender\Component\Enumeration\ScreenTypes;
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_element")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_element')]
 class Element
 {
     /**
      * @var integer
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string|null
-     * @ORM\Column(type="string", length=128)
      */
+    #[ORM\Column(type: 'string', length: 128)]
     protected $title;
 
     /**
      * @var string|null
-     * @ORM\Column(type="string", length=1024)
      */
+    #[ORM\Column(type: 'string', length: 1024)]
     protected $class;
 
     /**
      * @var array|null
-     * @ORM\Column(type="array", nullable=true)
      */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $configuration;
 
     /**
      * @var Application|null
-     * @ORM\ManyToOne(targetEntity="Application", inversedBy="elements")
-     * @ORM\JoinColumn(onDelete="CASCADE")
      */
+    #[ORM\ManyToOne(targetEntity: Application::class, inversedBy: 'elements')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     protected $application;
 
     /**
      * Name of container region in template
      * @var string|null
-     * @ORM\Column()
      */
+    #[ORM\Column]
     protected $region;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $enabled = true;
 
     /**
      * Sorting weight within region
      * @var integer|null
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     protected $weight;
 
     /** @var string[]|null */
@@ -74,8 +71,8 @@ class Element
     /**
      * Allowable screen type
      * @var string
-     * @ORM\Column(type="string", length=7, options={"default": "all"})
      */
+    #[ORM\Column(type: 'string', length: 7, options: ['default' => 'all'])]
     protected $screenType = 'all';  // = ScreenTypes::ALL
 
     /**

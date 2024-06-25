@@ -10,3 +10,42 @@ fom:
             ok: Speichern
     fields:
       no_user_group_defined: 'Kein/e Benutzer/Gruppe ist definiert.'
+  security:
+    domain:
+      public: 'Öffentlicher Zugriff'
+      registered: 'Alle angemeldeten Nutzer'
+    resource:
+      installation:
+        create_applications: "Erstellen"
+        view_all_applications: "Ansehen"
+        view_all_applications_help: "Erlaubt das Betrachten aller Anwendungen, unabhängig von den in der Anwendung definierten Rechten"
+        edit_all_applications: "Bearbeiten"
+        edit_all_applications_help: "Erlaubt das Bearbeiten aller Anwendungen, unabhängig von den in der Anwendung definierten Rechten"
+        delete_all_applications: "Löschen"
+        delete_all_applications_help: "Erlaubt das Löschen aller Anwendungen, unabhängig von den in der Anwendung definierten Rechten"
+        own_all_applications: "Rechteverwaltung"
+        own_all_applications_help: "Erlaubt das Bearbeiten der Zugangsrechte aller Anwendungen, unabhängig von den in der Anwendung definierten Rechten"
+        view_sources: "Ansehen"
+        create_sources: "Bearbeiten"
+        refresh_sources: "Aktualisieren"
+        edit_free_instances: "Freie Instanzen bearbeiten"
+        delete_sources: "Löschen"
+        manage_permissions: "Globale Rechteverwaltung"
+        view_users: "Ansehen"
+        create_users: "Erstellen"
+        edit_users: "Bearbeiten"
+        delete_users: "Löschen"
+        view_groups: "Ansehen"
+        create_groups: "Erstellen"
+        edit_groups: "Bearbeiten"
+        delete_groups: "Löschen"
+      application:
+        view: "Anzeige"
+        view_help: "Berechtigt den Nutzer/die Gruppe die Anwendung im Frontend anzuschauen und zu benutzen, inklusiver aller Element für die keine gesonderten Rechte definiert sind"
+        edit: "Bearbeiten"
+        edit_help: "Erlaubt das Bearbeiten der Anwendung exklusive des Tabs 'Sicherheit'. Für die Bearbeitung von Layersets muss das entsprechende installationsweite Recht erteilt sein."
+        delete: "Löschen"
+        manage_permissions: "Rechteverwaltung"
+        manage_permissions_help: "Erlaubt das Verwalten von Rechten für diese Anwendung (die aktuelle Seite)"
+      element:
+        view: "Anzeige"

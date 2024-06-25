@@ -42,11 +42,11 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   }
   .contentTitle {
     flex: 0;
-    font-size: 142%;
-    border-bottom: solid 5px $ciColor;
+    font-size: 132%;
+    border-bottom: solid 3px $ciColor;
   }
   position: relative;
-  @include transition(all .3s ease-in-out);
+  transition: all .3s ease-in-out;
   opacity: 0;
   bottom: -100%;
   &[data-state="opened"] {
@@ -86,4 +86,22 @@ body.mobile-template {
 .input {
   height: auto;
   line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- Position SimpleSearch */
+.anchored-element-wrap.anchored-element-wrap-rt {
+  top: 10px;
+  right: 10px;
+}
+
+/* ---------------------------------------------------------------- NAVIGATION */
+.anchored-element-wrap.anchored-element-wrap-rb {
+  right: 10px;
+  text-align: right;
+}
+
+.mobile-template .mb-element-zoombar .toolPane {
+  font-size: 1.3rem;
+  padding: 2px;
+  border-radius: 5%;
 }

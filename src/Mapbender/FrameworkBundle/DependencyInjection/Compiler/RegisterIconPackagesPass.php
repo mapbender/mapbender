@@ -20,7 +20,7 @@ class RegisterIconPackagesPass implements CompilerPassInterface
         $this->indexId = $indexId;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $packages = $this->findAndSortTaggedServices('mapbender.icon_package', $container);
         $container->getDefinition($this->indexId)->replaceArgument(0, $packages);

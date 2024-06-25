@@ -7,11 +7,11 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Component\SQLSearchEngine;
 use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
 use Mapbender\CoreBundle\Entity\Element;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -29,23 +29,12 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  */
 class SearchRouter extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
-    /** @var ConnectionRegistry */
-    protected $connectionRegistry;
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-    /** @var LoggerInterface|null */
-    protected $logger;
-    protected CsrfTokenManagerInterface $csrfTokenManager;
-
-    public function __construct(ConnectionRegistry        $connectionRegistry,
-                                FormFactoryInterface      $formFactory,
-                                CsrfTokenManagerInterface $csrfTokenManager,
-                                LoggerInterface           $logger = null)
+    public function __construct(protected ConnectionRegistry        $connectionRegistry,
+                                protected FormFactoryInterface      $formFactory,
+                                protected CsrfTokenManagerInterface $csrfTokenManager,
+                                protected ContainerInterface        $container,
+                                protected ?LoggerInterface          $logger = null)
     {
-        $this->connectionRegistry = $connectionRegistry;
-        $this->formFactory = $formFactory;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->logger = $logger;
     }
 
     public static function getClassTitle()
@@ -82,10 +71,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         );
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultRouteConfiguration()
+    protected function getDefaultRouteConfiguration(): array
     {
         return array(
             "title" => "mb.core.searchrouter.tag.search",
@@ -197,7 +183,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
         $categoryConf = array_replace_recursive($this->getDefaultRouteConfiguration(), $routeConfigs[$categoryId]);
         $engineClassName = $categoryConf['class'];
-        $engine = new $engineClassName($this->buildEngineContainer($engineClassName));
+        /** default implementation: @see SQLSearchEngine */
+        $engine = $this->container->get($engineClassName);
         $data = json_decode($request->getContent(), true);
 
         if (in_array($action, ['autocomplete', 'search'])) {
@@ -309,17 +296,5 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
         $config['routes'] = \array_values($config['routes']);
         return $config;
-    }
-
-    protected function buildEngineContainer($engineClassName)
-    {
-        $container = new Container();
-        switch ($engineClassName) {
-            default:
-            case 'Mapbender\CoreBundle\Component\SQLSearchEngine':
-                $container->set('doctrine', $this->connectionRegistry);
-                $container->set('logger', $this->logger ?: new NullLogger());
-                return $container;
-        }
     }
 }

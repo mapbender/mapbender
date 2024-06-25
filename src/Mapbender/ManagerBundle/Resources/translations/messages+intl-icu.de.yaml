@@ -161,7 +161,7 @@ mb:
         view_this: 'Anwendung anzeigen'
         duplicate: 'Anwendung duplizieren'
         public:
-          on_off: 'Anwendung publizieren/verbergen'
+          on_off: 'Öffentlichen Zugriff umschalten'
         delete: 'Anwendung löschen'
         no_application: 'Keine Anwendung vorhanden'
         new:
@@ -174,12 +174,10 @@ mb:
           button: 'Datei auswählen'
           label: 'Keine Datei ausgewählt...'
         export:
-          addAcl: Acls
           addSources: Quellen
           btn:
             export: Exportieren
         import:
-          addAcl: Acls
           addSources: Quellen
           btn:
             import: Importieren
@@ -199,7 +197,6 @@ mb:
       new_application: 'Neue Anwendung'
       add_source: 'Neue Datenquelle'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'
-      acl_element: 'Acl Element'
       import_application: Importieren
       export_application: Exportieren
     components:
@@ -221,7 +218,7 @@ mb:
           title: 'Instanz löschen'
         delete_user_group:
           title: 'Entfernen bestätigen'
-          content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
+          content: 'Wollen Sie den Eintrag %subject% wirklich entfernen?'
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden'
@@ -247,7 +244,7 @@ mb:
       admin:
         importfile: 'Datei importieren'
   actions:
-    secureelement: 'Sicheres Element'
+    secureelement: 'Zugriff auf das Element einschränken'
   wms:
     wmsloader:
       repo:

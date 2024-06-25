@@ -27,7 +27,7 @@ class RegionPropertiesType extends AbstractType
         $this->templateRegistry = $templateRegistry;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $templateRegistry = $this->templateRegistry;
         $resolver->setDefaults(array(
@@ -50,7 +50,7 @@ class RegionPropertiesType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Application $application */
         $application = $options['application'];
@@ -71,7 +71,7 @@ class RegionPropertiesType extends AbstractType
      * @param Collection|Selectable|RegionProperties[] $viewData
      * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
      */
-    public function mapDataToForms($viewData, $forms)
+    public function mapDataToForms($viewData, $forms): void
     {
         foreach ($forms as $form) {
             if ($form->getConfig()->getMapped()) {
@@ -97,7 +97,7 @@ class RegionPropertiesType extends AbstractType
      * @param Collection|Selectable|RegionProperties[] $viewData
      * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
      */
-    public function mapFormsToData($forms, &$viewData)
+    public function mapFormsToData($forms, &$viewData): void
     {
         foreach ($forms as $form) {
             if ($form->getConfig()->getMapped() && $form->isSubmitted() && $form->isSynchronized() && !$form->isDisabled()) {

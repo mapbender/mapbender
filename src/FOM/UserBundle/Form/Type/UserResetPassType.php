@@ -8,12 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserResetPassType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('requirePassword', true);
     }

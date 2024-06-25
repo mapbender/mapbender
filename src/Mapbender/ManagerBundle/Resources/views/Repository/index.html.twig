@@ -49,7 +49,7 @@
 
             {%- block item_interactions -%}
                             <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fas fa-display"></i></a>
-                            {%- if grants.edit -%}
+                            {%- if grants.refresh -%}
                               <a class="btn btn-light" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.update' | trans }} {{ item.title }}"><i class="fas fa-rotate"></i></a>
                             {% endif %}
                             {%- if grants.delete -%}
@@ -91,7 +91,7 @@
             {%- block item_interactions -%}
                 <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
                   ><i class="fas fa-display"></i></a>
-                {%- if grants.edit -%}
+                {%- if grants.delete -%}
                           <a class="btn btn-light" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
                             ><i class="fas fa-gear"></i></a>
                           <a class="btn btn-light -fn-delete" href="#"

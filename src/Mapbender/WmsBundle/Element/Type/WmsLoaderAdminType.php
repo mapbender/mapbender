@@ -14,7 +14,7 @@ class WmsLoaderAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('defaultFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(

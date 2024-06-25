@@ -8,12 +8,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 abstract class AbstractInitDbHandler implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
-            'mapbender.init.db' => array(
-                'onInitDb',
-            ),
+            'mapbender.init.db' => ['onInitDb'],
         );
     }
 

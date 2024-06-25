@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PrintQueueRerunCommand extends AbstractPrintQueueExecutionCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription("Rerun a print queue job")

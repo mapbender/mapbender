@@ -21,17 +21,17 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         );
     }
 
-    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer, $isFakeRoot)
+    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
     {
         return array(
             'info' => false,
             'selected' => $instanceLayer->getSelected(),
-            'toggle' => false,
+            'toggle' => $instanceLayer->getToggle(),
             'allow' => array(
                 'info' => false,
                 'selected' => $instanceLayer->getAllowSelected(),
-                'toggle' => false,
-                'reorder' => null,
+                'toggle' => $instanceLayer->getToggle(),
+                'reorder' => false,
             ),
         );
     }
@@ -54,7 +54,7 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         }
         $layerConfigs = array();
         foreach ($titleMap as $layer) {
-            $layerConfigs[] = $this->formatInstanceLayer($layer, false);
+            $layerConfigs[] = $this->formatInstanceLayer($layer);
         }
         return $layerConfigs;
     }

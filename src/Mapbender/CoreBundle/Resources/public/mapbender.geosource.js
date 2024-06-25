@@ -24,9 +24,7 @@ Mapbender.Geo.SourceHandler = {
      */
     getExtendedLeafInfo: function(source, scale, extent, srsName) {
         var infoMap = {};
-        // @todo: srsName should be a method argument to make extent well defined
         var srsName_ = srsName || Mapbender.Model.getCurrentProjectionCode();
-        // @todo: callers should pass extent; this is required for working out-of-bounds checks
         // NOTE: ImageExport / Print pass a non-native data object with left / bottom / right / top properties
         // Adapt to internally useable format
         var extent_ = Mapbender.mapEngine.toExtent(extent || Mapbender.Model.getCurrentExtent());
@@ -141,9 +139,12 @@ Mapbender.Geo.SourceHandler = {
             return null;
         };
         var _siblingSort = function(a, b) {
-            var ixA = layerIdOrder.indexOf(_pickChildId(layerIdOrder, a));
-            var ixB = layerIdOrder.indexOf(_pickChildId(layerIdOrder, b));
-            return ixA - ixB;
+            var childA = _pickChildId(layerIdOrder, a);
+            var childB = _pickChildId(layerIdOrder, b);
+            var ixA = layerIdOrder.includes(childA) ? layerIdOrder.indexOf(childA) : Number.MAX_SAFE_INTEGER;
+            var ixB = layerIdOrder.includes(childB) ? layerIdOrder.indexOf(childB) : Number.MIN_SAFE_INTEGER;
+            let ret = parseInt(ixA,10) - parseInt(ixB,10);
+            return ret;
         };
         var parentIdOrder = [];
         for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {

@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DimensionInstType extends AbstractType implements EventSubscriberInterface
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(array('instance'));
         $resolver->setAllowedTypes('instance', array('Mapbender\WmsBundle\Entity\WmsInstance'));
@@ -25,7 +25,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
         $builder
@@ -57,25 +57,31 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
             ->add('multipleValues', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'multiple',
-                'disabled' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
                 'required' => false,
             ))
             ->add('nearestValue', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'nearest',
-                'disabled' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
                 'required' => false,
             ))
             ->add('current', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'auto_initialize' => false,
                 'label' => 'current',
-                'disabled' => true,
+                'attr' => array(
+                    'readonly' => 'readonly',
+                ),
                 'required' => false,
             ))
         ;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(FormEvents::PRE_SET_DATA => 'preSetData');
     }
@@ -137,7 +143,7 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
         ));
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var DimensionInst $dimInst */
         $dimInst = $form->getData();

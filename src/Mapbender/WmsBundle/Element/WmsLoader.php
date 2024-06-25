@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Doctrine\Persistence\ManagerRegistry;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -16,7 +17,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -211,12 +211,10 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     protected function getDatabaseInstanceConfigs(array $instanceIds)
     {
         $instanceConfigs = array();
-        $sourceOid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         foreach ($instanceIds as $instanceId) {
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
-            /** @todo: there is actually no way to assign grants on concrete sources, much less instances */
-            if ($instance && $this->authorizationChecker->isGranted('VIEW', $sourceOid)) {
+            if ($instance && $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
                 $instanceConfigs[] = $this->getSourceService($instance)->getConfiguration($instance);
             }
         }

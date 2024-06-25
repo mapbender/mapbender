@@ -38,7 +38,7 @@ class MenuExtension extends AbstractExtension
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'mapbender_manager_menu_items' => new TwigFunction('mapbender_manager_menu_items', array($this, 'mapbender_manager_menu_items')),

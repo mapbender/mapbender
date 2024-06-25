@@ -4,6 +4,8 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
+use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
@@ -12,18 +14,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class InstanceTunnelController extends AbstractController
 {
-    /** @var InstanceTunnelService */
-    protected $tunnelService;
     protected $isDebug;
 
-    public function __construct(InstanceTunnelService $tunnelService,
+    public function __construct(protected InstanceTunnelService $tunnelService,
+                                protected EntityManagerInterface $em,
                                 $isDebug)
     {
-        $this->tunnelService = $tunnelService;
         $this->isDebug = $isDebug;
     }
 
@@ -31,12 +31,12 @@ class InstanceTunnelController extends AbstractController
      * Get SourceInstances via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("/instance/{instanceId}/tunnel")
      * @param Request $request
      * @param string $instanceId
      * @return Response
      */
-    public function instancetunnelAction(Request $request, $instanceId)
+    #[Route(path: '/instance/{instanceId}/tunnel')]
+    public function instancetunnel(Request $request, $instanceId)
     {
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
@@ -59,13 +59,13 @@ class InstanceTunnelController extends AbstractController
      * Get a layer's legend image via tunnel
      * @see InstanceTunnelService
      *
-     * @Route("instance/{instanceId}/tunnel/legend/{layerId}")
      * @param Request $request
      * @param string $instanceId
      * @param string $layerId
      * @return Response
      */
-    public function instancetunnellegendAction(Request $request,$instanceId, $layerId)
+    #[Route(path: 'instance/{instanceId}/tunnel/legend/{layerId}')]
+    public function instancetunnellegend(Request $request,$instanceId, $layerId)
     {
         $instanceTunnel = $this->getGrantedTunnelEndpoint($instanceId);
         $url = $instanceTunnel->getService()->getInternalUrl($request, false);
@@ -86,15 +86,12 @@ class InstanceTunnelController extends AbstractController
     protected function getGrantedTunnelEndpoint($instanceId)
     {
         /** @var SourceInstance|null $instance */
-        $instance = $this->getDoctrine()
-            ->getRepository(SourceInstance::class)->find($instanceId);
+        $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
         if (!$instance) {
             throw new NotFoundHttpException("No such instance");
         }
         if (($layerset = $instance->getLayerset()) && $application = $layerset->getApplication()) {
-            if (!$this->isGranted('VIEW', $application)) {
-                $this->denyAccessUnlessGranted('VIEW', $application);
-            }
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
         }
         return $this->tunnelService->makeEndpoint($instance);
     }

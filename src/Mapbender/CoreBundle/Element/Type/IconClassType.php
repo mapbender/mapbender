@@ -25,18 +25,18 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
         $this->translator = $translator;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['dropdown_elements_html'] = true;
     }
 
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $choicesWithoutIcon = $this->iconIndex->getChoices();
         $translatedIcons = $this->translateLabels($choicesWithoutIcon);
@@ -58,12 +58,12 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',

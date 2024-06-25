@@ -18,7 +18,7 @@ class HtmlTwigConstraint extends Constraint
         );
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return HtmlTwigConstraintValidator::class;
     }

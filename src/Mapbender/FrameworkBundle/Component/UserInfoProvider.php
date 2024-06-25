@@ -4,7 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -33,19 +33,18 @@ class UserInfoProvider
     public function getValues()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token instanceof AnonymousToken) {
+        if ($token === null) {
             return array(
                 'name' => null,
                 'roles' => array(),
                 'isAnonymous' => true,
             );
         } else {
-            $values = array(
+            return array(
                 'name' => $token->getUsername(),
                 'roles' => $token->getRoleNames(),
                 'isAnonymous' => false,
             );
-            return $values;
         }
     }
 }

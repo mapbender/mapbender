@@ -117,15 +117,15 @@
                 content: $('.input', this.element).first().html(),
                 buttons: [
                     {
-                        label: Mapbender.trans('mb.actions.accept'),
-                        cssClass: 'button',
+                        label: Mapbender.trans('mb.core.poi.accept'),
+                        cssClass: 'btn btn-sm btn-primary',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
-                        label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'popupClose button critical'
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]
             };
@@ -190,7 +190,7 @@
                     destroyOnClose: true,
                     cssClass: 'mb-poi-popup',
                     modal: true,
-                    title: this.element.attr('title'),
+                    title: this.element.attr('data-title'),
                     width: 500,
                     content: ta,
                     buttons: []

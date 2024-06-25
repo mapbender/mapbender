@@ -7,6 +7,7 @@ namespace Mapbender\FrameworkBundle;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterApplicationTemplatesPass;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterIconPackagesPass;
+use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterPermissionDomainsPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MapbenderFrameworkBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
@@ -33,6 +34,8 @@ class MapbenderFrameworkBundle extends Bundle
         // Forward available icon packages to icon index
         /** @see \Mapbender\FrameworkBundle\Component\IconIndex */
         $container->addCompilerPass(new RegisterIconPackagesPass('mapbender.icon_index'));
+        /** @see \FOM\UserBundle\Security\Permission\PermissionManager */
+        $container->addCompilerPass(new RegisterPermissionDomainsPass('fom.security.permission_manager'));
     }
 
     public function getContainerExtension(): ?ExtensionInterface

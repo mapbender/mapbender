@@ -11,57 +11,47 @@ use Mapbender\WmtsBundle\Component\TileMatrix;
 /**
  * A TileMatrixSet entity describes a particular set of tile matrices.
  * @author Paul Schmidt
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_tilematrixset")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_tilematrixset')]
 class TileMatrixSet implements MutableUrlTarget
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource",inversedBy="tilematrixsets")
-     * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, inversedBy: 'tilematrixsets')]
+    #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
     /**
      * Tile matrix set identifier
-     * @ORM\Column(type="string",nullable=false)
      */
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $identifier;
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="text",nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
-    /**
-     * @ORM\Column(type="string",nullable=false)
-     */
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $supportedCrs;
 
-    /**
-     * @ORM\Column(type="array",nullable=false);
-     */
+    #[ORM\Column(type: 'array', nullable: false)] // ;
     protected $tilematrices;
 
     public function __construct()
     {
         $this->tilematrices = array();
     }
-    
+
     /**
      * @return integer TileMatrixSet id
      */
@@ -97,7 +87,7 @@ class TileMatrixSet implements MutableUrlTarget
     {
         return $this->supportedCrs;
     }
-    
+
     /**
      * @param string $supportedCrs
      * @return $this

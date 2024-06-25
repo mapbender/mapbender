@@ -18,7 +18,7 @@ class ApplicationType extends AbstractType
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'maxFileSize' => 2097152,
@@ -27,7 +27,7 @@ class ApplicationType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$options['data']->getId()) {
             // allow template choice only for new Application
@@ -93,11 +93,6 @@ class ApplicationType extends AbstractType
             ], $this->trans))
             ->add('custom_css', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => false,
-            ))
-            ->add('published', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType',
-                array(
-                'required' => false,
-                'label' => 'mb.manager.admin.application.security.public',
             ))
         ;
         /** @var Application $application */

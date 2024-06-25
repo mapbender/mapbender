@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class SearchRouterAdminType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('width', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(

@@ -24,7 +24,7 @@ class IconExtension extends AbstractExtension
         $this->iconIndex = $iconIndex;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'icon_markup' => new TwigFunction('icon_markup', array($this, 'icon_markup')),

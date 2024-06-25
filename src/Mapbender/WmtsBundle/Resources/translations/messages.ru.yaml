@@ -1,0 +1,41 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: 'Наборы матриц'
+            theme: 'Тема'
+            serviceprovidername: 'Название поставщика служб'
+            serviceprovidersite: 'Веб-сайт поставщика служб'
+        tilematrixset:
+          label:
+            identifier: 'Идентификатор'
+            supportedcrs: 'Поддерживаемый CRS'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+          matrixes: 'Матрицы'
+        theme:
+          label:
+            identifier: 'Идентификатор'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+            layerrefs: 'Ссылки на слои'
+        instance:
+          label:
+            style: 'Стиль'
+        layer:
+          label:
+            identifier: 'Идентификатор'
+            formats: 'Форматы'
+            title: 'Заголовок'
+            abstract: 'Абстрактный'
+            latlonbounds: 'Ограничительная рамка'
+            tilematrixsetlinks: 'Ссылки на набор плиточных матриц'
+        tilematrix:
+          label:
+            identifier: 'Идентификатор'
+            scaledenominator: 'Знаменатель масштаба'
+            topleftcorner: 'Верхний левый угол'
+            tilesize: 'Размер плитки'
+            matrixsize: 'Размер матрицы'

@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterWmsSourceServicePass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         // Register wms config generation service with source type directory service in CoreBundle.
         // This is done here because service definitions cannot be amended via XML / YAML across bundles.

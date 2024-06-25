@@ -23,19 +23,19 @@ class CollapsibleCollectionType extends AbstractType
     public const INITIAL_STATE_FIRST_OPENED = 'first_opened';
     public const INITIAL_STATE_LAST_OPENED = 'last_opened';
 
-    public function getParent()
+    public function getParent(): string
     {
         return SortableCollectionType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'initial_collapse_state' => self::INITIAL_STATE_ALL_COLLAPSED_EXCEPT_SINGLE_ENTRY,
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars = array_replace($view->vars, [
             'allow_collapse' => true,

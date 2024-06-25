@@ -1,11 +1,12 @@
-@import "_compass";
 @import "modules/jqueryui_minimal";
 
 $darkFontColor: #3f3f3f !default;
 $textColor: $darkFontColor !default;
 $backgroundColor: #fff !default;
 
-*{@include box-sizing(border-box);}
+* {
+    box-sizing: border-box;
+}
 html, body{
   width:100%;
   height:100%;

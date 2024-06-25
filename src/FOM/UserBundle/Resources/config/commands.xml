@@ -10,9 +10,9 @@
             <argument type="service" id="fom.user_helper.service" />
             <argument>%fom.user_entity%</argument>
         </service>
-        <service id="mapbender:security:fixacl" class="FOM\UserBundle\Command\FixAceOrderCommand">
+        <service id="mapbender:security:migrate-from-acl" class="FOM\UserBundle\Command\MigrateACLCommand">
             <tag name="console.command" />
-            <argument type="service" id="FOM\UserBundle\Service\FixAceOrderService" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
     </services>
 </container>

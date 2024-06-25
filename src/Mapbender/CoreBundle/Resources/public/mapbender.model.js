@@ -68,7 +68,7 @@ window.Mapbender.MapModelOl4 = (function() {
         this._startShare();
     },
     /**
-     * @param {ol.PluggableMap} olMap
+     * @param {ol.Map} olMap
      * @param {mmViewParams} viewParams
      * @param {Object} mapOptions
      * @private

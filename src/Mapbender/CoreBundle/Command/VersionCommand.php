@@ -25,7 +25,7 @@ class VersionCommand extends Command
         parent::__construct(null);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setHelp('Display Mapbender version')
@@ -36,7 +36,7 @@ class VersionCommand extends Command
         ;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
         if ($input->getOption('name-only') && $input->getOption('number-only')) {

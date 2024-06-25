@@ -6,13 +6,68 @@ mb:
           ok: Exportar
           cancel: Cancelar
       info:
-        noactivelayer: Nenhuma camada ativa!
-      chooseformat: Escolher formato de exportação
+        noactivelayer: 'Nenhuma layer ativa!'
+      chooseformat: 'Selecionar formato de exportação'
       class:
-        title: Exportar imagem
-        description: 'Exporta o mapa atual como uma imagem. Os Formatos possíveis são png e jpeg. '
+        title: 'Exportar imagem'
+        description: 'A exportação de imagem permite que você exporte sua visualização atual do mapa. A imagem pode ser salva como png ou jpeg.'
       tag:
         image: Imagem
         export: Exportação
         jpeg: jpeg
         png: png
+    printclient:
+      tab:
+        settings: Configurações
+        joblist: Trabalhos de impressão
+      joblist:
+        header:
+          id: #
+          ctime: Criado
+          status: Estado
+        status:
+          pending: Aguardando
+          processing: Processando
+          finished: Concluído
+        open: Abrir
+        delete: Excluir
+        cancel: Cancelar
+        nodata: Sem dados
+        loading: Carregando
+    admin:
+      printclient:
+        renderMode:
+          label: Modo
+          choice:
+            direct: Direto
+            queued: Enfileirado
+        queueAccess:
+          label: Fila de impressões
+          choice:
+            global: Global
+            private: Privada
+  core:
+    printclient:
+      admin:
+        scales: Escalas (separadas por vírgulas)
+        fileprefix: Prefixo do Arquivo
+        optionalfields: Campos Opcionais
+        replacepattern: Substituir variáveis
+        templates: Modelos
+        qualitylevels: Níveis de Qualidade
+      label:
+        quality: Qualidade
+      class:
+        title: Impressão
+    printclienttemplate:
+      admin:
+        template: Modelo
+        label: Rótulo
+    printclientquality:
+      admin:
+        label: Rótulo
+    admin:
+      printclient:
+        label:
+          qualitylevels: Níveis de Qualidade
+          templates: Modelos

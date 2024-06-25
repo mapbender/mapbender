@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints;
 
 class UserForgotPassType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('search', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

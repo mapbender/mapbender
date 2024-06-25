@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class UserRegistrationType extends AbstractType
 {
 
-    public function getParent()
+    public function getParent(): string
     {
         return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
     }

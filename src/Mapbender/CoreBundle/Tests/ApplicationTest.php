@@ -2,23 +2,16 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
+use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * Class ApplicationTest
- *
- * @package Mapbender\CoreBundle\Tests
- * @author  Andriy Oblivantsev <eslider@gmail.com>
- */
 class ApplicationTest extends TestBase
 {
-    /**
-     * Test getting applications
-     * @group unit
-     * @group dataIntegrity
-     */
+    #[Group("unit")]
+    #[Group("dataIntegrity")]
     public function testYamlApplicationStructure()
     {
         foreach ($this->getYamlApplications() as $application) {
@@ -30,23 +23,20 @@ class ApplicationTest extends TestBase
         }
     }
 
-    /**
-     * @group functional
-     */
+    #[Group("functional")]
     public function testLoginForm()
     {
-        $client = $this->getClient()->request('GET', '/user/login');
-        $this->assertTrue($client->filter('html:contains("Login")')->count() > 0);
+        $client = $this->getBrowser()->request('GET', '/user/login');
+        $this->assertTrue($client->filterXPath('//*[contains(text(), "Login")]')->count() > 0);
     }
 
-    /**
-     * @group functional
-     */
+    #[Group("functional")]
     public function testPublicYamlApplicationAccess()
     {
-        $client = $this->getClient();
+        $client = $this->getBrowser();
         foreach ($this->getYamlApplications() as $application) {
-            if ($application->isPublished() && !$application->getYamlRoles()) {
+            $yamlRoles = $application->getYamlRoles();
+            if (empty($yamlRoles) || (count($yamlRoles) === 1 && $yamlRoles[0] === YamlApplicationVoter::ROLE_PUBLIC)) {
                 $slug = $application->getSlug();
                 $client->request('GET', '/application/' . rawurlencode($slug));
                 $response = $client->getResponse();
@@ -58,7 +48,7 @@ class ApplicationTest extends TestBase
     /**
      * @return Application[]
      */
-    protected function getYamlApplications()
+    protected function getYamlApplications(): array
     {
         /** @var ApplicationYAMLMapper $repository */
         $repository = $this->getContainer()->get('mapbender.application.yaml_entity_repository');

@@ -10,13 +10,14 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
+#[AsCommand('mapbender:application:import')]
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
     /** @var boolean */
@@ -31,9 +32,8 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         $this->strictElementConfigs = $strictElementConfigs;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('mapbender:application:import');
         $this->addArgument('input', InputArgument::REQUIRED, 'File name (`-` for stdin) or directory');
     }
 
@@ -119,8 +119,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
     {
         $root = $this->getRootUser();
         if ($root) {
-            $rootSid = UserSecurityIdentity::fromAccount($root);
-            $this->importHandler->addOwner($application, $rootSid);
+            $this->importHandler->addOwner($application, $root);
         } else {
             $output->writeln("WARNING: root user not found, no owner will be assigned to imported application {$application->getSlug()}", OutputInterface::VERBOSITY_QUIET);
         }
@@ -136,7 +135,7 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
             $appConfig = $yamlCompiler->prepareApplicationConfig($rawAppConfig, $slug, $fileName);
             $tempApplication = $this->yamlRepository->createApplication($appConfig, $slug);
 
-            $newSlug = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'slug', $tempApplication->getSlug() . '_yaml', '');
+            $newSlug = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'slug', $tempApplication->getSlug() . '_yml', '');
             $newTitle = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'title', $tempApplication->getTitle(), ' ');
             $em->beginTransaction();
             try {

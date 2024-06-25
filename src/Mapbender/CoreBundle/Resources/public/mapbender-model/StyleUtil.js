@@ -187,7 +187,58 @@ window.Mapbender.StyleUtil = (function() {
                 value = (value)(withDefaults);
             }
             return value;
-        }
+        },
+        /**
+         * Creates a OL style definition based off at least a stroke color that can be used in a draw interaction
+         * @param {string} color stroke color in hex or rgb format
+         * @param {string | undefined} fillColor in hex or rgb format. If not given, the color with 50% opacity will be used
+         * @param {number | undefined} strokeWidth in pixels, defaults to 3
+         * @param {number | undefined} fontSize in pixels. If fontSize or fontColor are not given, no text format will be applied
+         * @param {string | undefined} fontColor in rgb or hex format. If fontSize or fontColor are not given, no text format will be applied
+         * @returns {ol.style.Style}
+         */
+        createDrawStyle: function (color, fillColor, strokeWidth, fontSize, fontColor) {
+            if (fillColor === undefined) {
+                const parsed = this.parseCssColor(color);
+                parsed[3] = 0.5;
+                fillColor = this._componentsToRgbaRule(parsed);
+            }
+            if (strokeWidth === undefined) strokeWidth = 3;
+
+            const options = {
+                stroke: new ol.style.Stroke({
+                    width: strokeWidth,
+                    color: color,
+                }),
+                image: new ol.style.Circle({
+                    radius: strokeWidth * 2,
+                    stroke: new ol.style.Stroke({
+                        width: strokeWidth / 2,
+                        color: '#FFFFFF',
+                    }),
+                    fill: new ol.style.Fill({
+                        color: color,
+                    }),
+                }),
+                fill: new ol.style.Fill({
+                    color: fillColor,
+                })
+            };
+
+            if (fontColor !== undefined) {
+                options.text = new ol.style.Text({
+                    font: fontSize + 'px sans-serif',
+                    stroke: new ol.style.Stroke({
+                        color: fontColor
+                    }),
+                    fill: new ol.style.Fill({
+                        color: fontColor
+                    }),
+                });
+            }
+
+            return new ol.style.Style(options);
+        },
     };
 
     _svgStyleDefaults = {

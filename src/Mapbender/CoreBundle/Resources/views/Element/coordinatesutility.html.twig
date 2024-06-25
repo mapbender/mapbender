@@ -26,14 +26,23 @@
     </div>
     <div class="row mt-3">
         <div class="col">
-            <button type="button" class="btn btn-sm btn-outline-secondary coordinate-search">
+            <button type="button" class="btn btn-sm btn-primary coordinate-search">
                 {{ "mb.core.coordinatesutility.view.button.search" | trans }}
             </button>
         </div>
         <div class="col text-end">
-            <button type="button" class="btn btn-sm btn-outline-secondary center-map">
+            <button type="button" class="btn btn-sm btn-light center-map">
                 {{ "mb.core.coordinatesutility.view.button.centermap" | trans }}
             </button>
         </div>
     </div>
+    {%- if dialogMode -%}
+        <div class="row mt-3">
+            <div class="col text-end">
+                <button type="button" class="btn btn-sm btn-light popupClose">
+                    {{ "mb.actions.close" | trans }}
+                </button>
+            </div>
+        </div>
+    {%- endif -%}
 </div>

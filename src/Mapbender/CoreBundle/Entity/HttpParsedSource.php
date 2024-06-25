@@ -9,30 +9,28 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Symfony\Component\Validator\Constraints;
 
 
-/**
- * @ORM\MappedSuperclass
- */
+#[ORM\MappedSuperclass]
 abstract class HttpParsedSource extends Source
     implements MutableHttpOriginInterface
 {
     /**
      * @var string|null
-     * @ORM\Column(type="string", nullable=true)
-     * @Constraints\NotBlank()
-     * @Constraints\Url()
      */
+    #[Constraints\NotBlank]
+    #[Constraints\Url]
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $originUrl = "";
 
     /**
      * @var string|null
-     * @ORM\Column(type="string",nullable=true);
      */
+    #[ORM\Column(type: 'string', nullable: true)] // ;
     protected $username = null;
 
     /**
      * @var string|null
-     * @ORM\Column(type="string",nullable=true);
      */
+    #[ORM\Column(type: 'string', nullable: true)] // ;
     protected $password = null;
 
     /**

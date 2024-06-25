@@ -242,12 +242,15 @@
   {% endapply %}
 {% endblock form_rest %}
 
-{% block acl_widget %}
+
+{# Security #}
+
+{% block permission_list_widget %}
   {% apply spaceless %}
-  <div class="ace-collection" {{ block('widget_container_attributes') }}>
+  <div class="permission-collection" {{ block('widget_container_attributes') }} data-hierarchical="{{  form.vars.resource_domain.hierarchical }}">
     {%- if form.vars.allow_add -%}
     <div class="form-group text-end">
-        <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_acl_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
+        <span class="-fn-add-permission hover-highlight-effect" data-url="{{path('fom_user_permission_overview')}}" title="{{'mb.manager.managerbundle.add_user_group'|trans}}">
             <i class="fas fa-2x fa-plus"></i>
         </span>
     </div>
@@ -262,7 +265,14 @@
           {% for child in form.vars.prototype %}
             {% if child.vars.attr.class is defined %}
               <th>
-                <div data-perm-type="{{ child.vars.attr.class }}" class="tagbox {{ child.vars.attr.class }}">{{ child.vars.attr.class }}</div>
+                <div data-action-name="{{ child.vars.attr['data-action-name'] }}" class="tagbox {{ child.vars.attr.class }}">
+                    {{ (child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-action-name']) | trans }}{{ ' ' }}
+                    {% set help_translation_key = child.vars.translation_prefix ~ '.' ~ child.vars.attr['data-action-name'] ~ '_help' %}
+                    {% set help_translated = help_translation_key | trans %}
+                    {% if help_translation_key != help_translated %}
+                        <i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="{{ help_translated }}" data-bs-placement="left" data-bs-html="true"></i>
+                    {% endif %}
+                </div>
               </th>
             {% endif %}
           {% endfor %}
@@ -270,43 +280,41 @@
         </tr>
       </thead>
       <tbody>
-        {% for ace in form %}
-          {{ form_widget(ace) }}
+        {% for permission in form %}
+          {{ form_widget(permission) }}
         {% endfor %}
       </tbody>
     </table>
 
-    {% if not (form | length) %}
-      <p id="permissionsDescription">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
-    {% endif %}
+    <p class="-js-table-empty {% if form | length %}hidden{% endif %}">{{"fom.core.fields.no_user_group_defined"|trans}}</p>
   </div>
   {% endapply %}
 {% endblock %}
 
 {% block tagbox_widget %}
   {% apply spaceless %}
-    <div data-perm-type="{{ form.vars.attr.class }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
-      {{- form.vars.attr.class -}}
+    <div data-action-name="{{ form.vars.attr['data-action-name'] }}" class="tagbox {{ form.vars.attr.class }}{{ form.vars.checked ? ' active' : '' }}">
+      {{- (form.vars.translation_prefix ~ '.' ~ form.vars.attr['data-action-name']) | trans -}}
       <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{{ checked ? ' checked="checked"' : '' }} />
     </div>
   {% endapply %}
 {% endblock tagbox_widget %}
 
-{% block ace_widget %}
-    {%- set _sid_value = form.sid.vars.value -%}
-    {%- set _sid_label = _sid_value | slice(2) | split(':') | first %}
-    <tr class="filterItem" {{ block('widget_container_attributes') }} data-sid="{{ _sid_value }}" data-sid-label="{{ _sid_label }}">
+{% block permission_widget %}
+    <tr class="filterItem" {{ block('widget_container_attributes') }}>
       <td>
-        <i class="userType fa fas {{ form.sid.vars.value|slice(0, 1) == "u" ? 'fa-user' : 'fa-group' }}"></i>&nbsp;
-        <span class="sid-label">{# no particular styling, but .sid-label required by script #}{{ _sid_label }}</span>
-          {{ form_row(form.sid) }}
+        <i class="userType {{ form.icon.vars.value }}"></i>&nbsp;
+        <span class="-js-subject-label">{{ form.title.vars.value }}</span>
+        <span class="-js-subject-json">
+            {{ form_row(form.subjectJson) }}
+        </span>
       </td>
 
       {%- for child in form -%}
-        {% if child != (form.sid) %}
+        {% if child.vars.name != 'icon' and child.vars.name != 'title' and child.vars.name != 'subjectJson' %}
           <td>
             {{ form_widget(child) }}
-        </td>
+          </td>
         {% endif %}
       {%- endfor -%}
       <td class="iconColumn">

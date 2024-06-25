@@ -34,11 +34,12 @@ class ImageTransport
     {
         try {
             $response = $this->baseTransport->getUrl($url);
-            $image = imagecreatefromstring($response->getContent());
+            $content = $response->getContent();
+            $image = imagecreatefromstring($content);
             if ($image === false) {
                 // If $image is false, the download probably failed, most likely because
                 // of network issues or restrictions (such as a HTTP proxy) (see #1549)
-                $this->logger->error('Could not download image from url {url}');
+                $this->logger->error("Could not download image from url ".$url.". RETURNS: ".$content);
                 return null;
             }
             imagesavealpha($image, true);

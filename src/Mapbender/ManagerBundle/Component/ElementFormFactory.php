@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 
 /**
- * Service for element configuration and acl forms.
+ * Service for element configuration and permission forms.
  *
  * Default instance in container as mapbender.manager.element_form_factory.service
  */

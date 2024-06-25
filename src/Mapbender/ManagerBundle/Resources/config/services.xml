@@ -8,7 +8,7 @@
         <!-- maintain status quo for anonymous grants for unfinshed Application grant work
              @todo: finish Application grant remodeling, use 'published' exclusively, purge anoymous grants in
                     DB initialization -->
-        <parameter key="fom.acl_assignment.show_anonymous">true</parameter>
+        <parameter key="fom.permission.assignment.show_anonymous">true</parameter>
         <!-- populated by compiler passes -->
         <parameter type="collection" key="mapbender.manager.menu.items" />
         <parameter type="collection" key="mapbender.manager.menu.route_prefix_blacklist" />
@@ -30,10 +30,7 @@
             <argument type="service" id="request_stack" />
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service id="mapbender.twig.manager.acl" class="Mapbender\ManagerBundle\Extension\Twig\AclExtension">
-            <tag name="twig.extension"/>
-            <argument type="service" id="security.acl.provider" />
-        </service>
+
 
         <service id="mapbender.twig.manager.application_region_title" class="Mapbender\ManagerBundle\Extension\Twig\ApplicationRegionTitleExtension">
             <tag name="twig.extension"/>

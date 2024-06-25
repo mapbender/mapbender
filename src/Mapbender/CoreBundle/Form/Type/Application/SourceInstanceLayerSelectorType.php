@@ -23,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SourceInstanceLayerSelectorType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
     }
@@ -31,7 +31,7 @@ class SourceInstanceLayerSelectorType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // thank you PHP for not allowing "use $this" in a lambda
         $self = $this;

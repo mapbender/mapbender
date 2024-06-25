@@ -12,14 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 abstract class ApplicationControllerBase extends AbstractController
 {
-    /**
-     * @return EntityManagerInterface
-     */
-    protected function getEntityManager()
+
+    public function __construct(protected readonly EntityManagerInterface $em)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getDoctrine()->getManager();
-        return $em;
     }
 
     /**
@@ -34,7 +29,7 @@ abstract class ApplicationControllerBase extends AbstractController
             /** @var Layerset|false $layerset */
             $layerset = $application->getLayersets()->matching($layersetCriteria)->first();
         } else {
-            $repository = $this->getDoctrine()->getRepository(Layerset::class);
+            $repository = $this->em->getRepository(Layerset::class);
             $layerset = $repository->find($id);
         }
         if (!$layerset) {
@@ -50,7 +45,7 @@ abstract class ApplicationControllerBase extends AbstractController
     protected function requireDbApplication($slug)
     {
         /** @var Application|null $application */
-        $application = $this->getDoctrine()->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy(array(
             'slug' => $slug,
         ));
         if (!$application) {

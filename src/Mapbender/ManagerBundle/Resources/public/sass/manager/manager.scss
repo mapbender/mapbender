@@ -41,7 +41,7 @@ h4, .h4, .tabContainer > ul {
     margin-left: 0.25em;
   }
   .dropdown-menu {
-      margin-top: 0px;
+      margin-top: 0;
   }
 }
 
@@ -154,6 +154,9 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       text-align: right;
       margin: 20px 0;
     }
+    .button-group input{
+      margin-right: 5px;
+    }
   }
 }
 
@@ -171,15 +174,23 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
 }
 
 .permissionsTable{
+  tbody .tagbox {
+    cursor: pointer;
+  }
+
   .tagbox {
     display: inline-block;
     font-size: 85%;
-    cursor: pointer;
     width: auto;
     padding: 3px .5em;
     margin: 0 .25em;
     user-select: none;
     border-radius: 5px;
+
+    i {
+      cursor: pointer;
+    }
+
     input {
       display: none;
     }
@@ -187,17 +198,20 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
       background-color:#c1c1c1;
     }
 
-    &.active {
+    &.active, &.active-inherited {
       color:white;
-      &.view {
+      &.success {
         background-color: #8DCA35;
       }
-      &.edit, &.delete, &.create {
+      &.warning {
         background-color: #FFAB00;
       }
-      &.operator, &.master, &.owner {
+      &.danger {
         background-color: #FF702A;
       }
+    }
+    &.active-inherited {
+        opacity: 0.6;
     }
   }
 }
@@ -252,7 +266,7 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
   z-index: 1035;  // Must be higher than .navbar-fixed-top's 1030
   top: 0;
   left: 50%;
-  @include transition(all 1s ease-in-out);
+  transition: all 1s ease-in-out;
   opacity: 1;
   &.kill {
     top: -100px;
@@ -266,7 +280,7 @@ footer {
 
 .action-button, .listFilterBoxes .btn {
   border-radius: 10px;
-  padding: 5px 20px;
+  padding: 5px 12px;
   border: none;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   i + * {
@@ -287,4 +301,65 @@ footer {
 
 .badge--datasource {
     font-size: 1rem; float: right;
+}
+
+.btn-light{
+ --bs-btn-border-color: #dee2e6;
+}
+
+.btn-primary{
+  --bs-btn-bg: #279ddc;
+  --bs-btn-border-color: #279ddc;
+  --bs-btn-hover-bg: #1A709E;
+  --bs-btn-hover-border-color: #1A709E;
+  --bs-btn-active-bg: #1A709E;
+  --bs-btn-active-border-color: #1A709E;
+}
+
+.application-list__spacing-top {
+    margin-top: 10px;
+}
+
+.application-list__spacing-bottom {
+    margin-bottom: 10px;
+}
+
+.application-list__title {
+    font-weight: 500;
+}
+
+@media screen and (min-width: 767px) {
+    .application-list__title {
+        max-width: 150px;
+    }
+}
+
+.navbar-brand {
+    min-width: 100px;
+    white-space: normal;
+}
+
+@media screen and (max-width: 767px) {
+    .navbar-brand {
+        word-wrap: anywhere;
+    }
+    .contentTitle {
+        font-size: 1.7rem;
+        margin-top: 10px !important;
+    }
+
+}
+
+
+.filter-group {
+    display: flex;
+}
+
+.permission-collection {
+    overflow-x: scroll;
+}
+
+.form-check-input {
+    border-color: #A9A9A9;
+    border-width: 2px;
 }

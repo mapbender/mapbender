@@ -481,6 +481,7 @@ window.Mapbender.MapModelBase = (function() {
          * @param {string} paramValue
          */
         processVisibleLayersParam: function(paramValue) {
+            if (typeof paramValue !== 'string') return;
             var self = this;
             var specs = (paramValue || '').split(',');
             $.each(specs, function(idx, layerSpec) {
@@ -488,6 +489,11 @@ window.Mapbender.MapModelBase = (function() {
                 if (idParts.length >= 2) {
                     var sourceId = idParts[0];
                     var layerId = idParts[1];
+                    if (isNaN(sourceId) || isNaN(layerId)) {
+                        var sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
+                        sourceId = sourceAndLayerId.sourceId;
+                        layerId = sourceAndLayerId.layerId;
+                    }
                     console.log("Activating", sourceId, layerId);
                     var source = self.getSourceById(sourceId);
                     var layer = source && source.getLayerById(layerId);
@@ -496,10 +502,28 @@ window.Mapbender.MapModelBase = (function() {
                     }
                     while (layer) {
                         layer.setSelected(true);
+                        layer.source.layerset?.setSelected(true);
                         layer = layer.parent;
                     }
                 }
             });
+        },
+
+        findSourceAndLayerIdByName: function (sourceName, layerName) {
+            const sourceAndLayerId = {};
+            this.getSources().forEach(function (source) {
+                if (!source.children || !source.children.length) return;
+                const config = source.children[0];
+                if (config.options.name === sourceName || config.options.title === sourceName) {
+                    sourceAndLayerId.sourceId = config.source.id;
+                    config.children.forEach(function (child) {
+                        if (child.options.name === layerName || child.options.title === layerName) {
+                            sourceAndLayerId.layerId = child.options.id;
+                        }
+                    });
+                }
+            });
+            return sourceAndLayerId;
         }
     };
 
@@ -1209,8 +1233,15 @@ window.Mapbender.MapModelBase = (function() {
                         return baseSettings;
                     }
                 }),
-                // @todo: merge layersets settings
-                layersets: base.layersets.slice()
+                layersets: base.layersets.map((layersetConfig) => {
+                    if (layersetConfig.selected && diff.layersets.deactivate?.includes(layersetConfig.id) === true) {
+                        layersetConfig.selected = false;
+                    }
+                    if (!layersetConfig.selected && diff.layersets.activate?.includes(layersetConfig.id) === true) {
+                        layersetConfig.selected = true;
+                    }
+                    return layersetConfig;
+                }),
             });
 
             return settings;

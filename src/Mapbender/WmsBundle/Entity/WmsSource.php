@@ -17,168 +17,168 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
  * A WmsSource entity presents an OGC WMS.
- * @ORM\Entity
- * @ORM\Table(name="mb_wms_wmssource")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wms_wmssource')]
 class WmsSource extends HttpParsedSource
     implements ContainingKeyword, MutableUrlTarget
 {
     /**
      * @var string A WMS name
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $name = "";
 
     /**
      * @var string A WMS version
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $version = "";
 
     /**
      * @var string A WMS online resource
-     * @ORM\Column(type="string",nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $onlineResource;
 
     /**
      * @var Contact A contact.
-     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist", "remove"})
      */
+    #[ORM\OneToOne(targetEntity: Contact::class, cascade: ['persist', 'remove'])]
     protected $contact;
 
     /**
      * @var string A fees.
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $fees = "";
 
     /**
      * @var string An access constraints.
-     * @ORM\Column(type="text",nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $accessConstraints = "";
 
     /**
      * @var integer A limit of the layers
-     * @ORM\Column(type="integer",nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $layerLimit;
 
     /**
      * @var integer A maximum width of the GetMap image
-     * @ORM\Column(type="integer",nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $maxWidth;
 
     /**
      * @var integer A maximum height of the GetMap image
-     * @ORM\Column(type="integer",nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $maxHeight;
 
     /**
      * @var array A list of supported exception formats
-     * @ORM\Column(type="array",nullable=true)
      */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $exceptionFormats = array();
 
     /**
      * @var boolean A SLD support
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $supportSld = false;
 
     /**
      * @var boolean A user layer
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $userLayer = false;
 
     /**
      * @var boolean A user layer
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $userStyle = false;
 
     /**
      * @var boolean A remote WFS
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $remoteWfs = false;
 
     /**
      * @var boolean A inline feature
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $inlineFeature = false;
 
     /**
      * @var boolean A remote WCS
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     protected $remoteWcs = false;
 
     /**
      * @var RequestInformation A request information for the GetCapabilities operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $getCapabilities = null;
 
     /**
      * @var RequestInformation A request information for the GetMap operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $getMap = null;
 
     /**
      * @var RequestInformation A request information for the GetFeatureInfo operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $getFeatureInfo = null;
 
     /**
      * @var RequestInformation A request information for the DescribeLayer operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $describeLayer = null;
 
     /**
      * @var RequestInformation A request information for the GetLegendGraphic operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $getLegendGraphic = null;
 
     /**
      * @var RequestInformation A request information for the GetStyles operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $getStyles = null;
 
     /**
      * @var RequestInformation A request information for the PutStyles operation
-     * @ORM\Column(type="object", nullable=true)
      */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $putStyles = null;
 
     /**
      * @var WmsLayerSource[]|ArrayCollection A list of WMS layers
-     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsLayerSource",mappedBy="source", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: WmsLayerSource::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['priority' => 'asc', 'id' => 'asc'])]
     protected $layers;
 
     /**
      * @var ArrayCollection A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"value" = "asc"})
      */
+    #[ORM\OneToMany(mappedBy: 'reference', targetEntity: WmsSourceKeyword::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['value' => 'asc'])]
     protected $keywords;
 
     /**
      * @var ArrayCollection A list of WMS instances
-     * @ORM\OneToMany(targetEntity="Mapbender\WmsBundle\Entity\WmsInstance",mappedBy="source", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: WmsInstance::class, cascade: ['remove'])]
     protected $instances;
 
     /**

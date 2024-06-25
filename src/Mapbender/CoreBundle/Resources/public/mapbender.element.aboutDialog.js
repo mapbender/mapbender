@@ -25,8 +25,8 @@
                     height: 170,
                     buttons: [
                         {
-                            label: Mapbender.trans('mb.actions.accept'),
-                            cssClass: 'button popupClose'
+                            label: Mapbender.trans('mb.actions.close'),
+                            cssClass: 'btn btn-sm btn-light popupClose'
                         }
                     ]
                 });

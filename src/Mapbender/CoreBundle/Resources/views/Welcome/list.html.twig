@@ -55,27 +55,24 @@
                   <i class="far fa-copy"></i>
                 </a>
               {% endif %}
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT'), application) %}
                 <a class="btn btn-light" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
                   <i class="fas fa-download"></i>
                 </a>
+                <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
+                  <i class="fas fa-gear"></i>
+                </a>
               {% endif %}
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
-                <i class="fas fa-gear"></i>
-              </a>
-              {% endif %}
-
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <span class="btn btn-light -fn-toggle-flag {{ application.published ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS'), application) %}
+                <span class="btn btn-light -fn-toggle-flag {{ has_public_access(application) ? '-js-on' : '-js-off' }}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }}"
                     data-url="{{ path('mapbender_manager_application_togglestate', {'slug': application.slug}) }}"
                     data-token="{{ csrf_token('application_edit') }}"
                     data-toggle-flag-icons="fa-eye-slash:fa-eye">
-                    <i class="fas {{ application.published ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                    <i class="fas {{ has_public_access(application) ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                 </span>
               {% endif %}
 
-              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_DELETE'), application) %}
                 <span class="btn btn-light -fn-delete"
                       title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
@@ -92,18 +89,14 @@
 {%- endblock -%}
 
 {%- block item_content_main -%}
-    <table class="table table-borderless table-condensed">
-      <tbody>
-        <tr>
-          <th>{{ 'mb.manager.admin.application.url.title' | trans }}:</th>
-          <td>{{ item.slug }}</td>
-        </tr>
-        <tr>
-          <th>{{ 'mb.manager.admin.application.description' | trans }}:</th>
-          <td>{{ item.description }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="row">
+        <div class="col-md-3 application-list__title">{{ 'mb.manager.admin.application.url.title' | trans }}:</div>
+        <div class="col-md-9">{{ item.slug }}</div>
+    </div>
+    <div class="row application-list__spacing-top application-list__spacing-bottom">
+        <div class="col-md-3 application-list__title">{{ 'mb.manager.admin.application.description' | trans }}:</div>
+        <div class="col-md-9">{{ item.description }}</div>
+    </div>
 {%- endblock -%}
 
 {%- block boxlist_placeholder_content -%}

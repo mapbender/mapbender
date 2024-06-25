@@ -21,31 +21,29 @@ class ElementIdTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param int|string $id
-     * @return Element|null
+     * @param int|string $value
      */
-    public function transform($id)
+    public function transform($value): ?Element
     {
-        if (!$id) {
+        if (!$value) {
             return null;
         }
         /** @var Element|null $element */
         $element = $this->repository->findOneBy(array(
-            'id' => $id,
+            'id' => $value,
         ));
         return $element;
     }
 
     /**
-     * @param Element|null $element
-     * @return string
+     * @param $value ?Element
      */
-    public function reverseTransform($element)
+    public function reverseTransform($value): string
     {
-        if (null === $element) {
+        if (null === $value) {
             return "";
         }
-        return (string) $element->getId();
+        return (string) $value->getId();
     }
 
 }

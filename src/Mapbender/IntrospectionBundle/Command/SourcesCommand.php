@@ -35,7 +35,7 @@ class SourcesCommand extends Command
         parent::__construct(null);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption('by-app', null, InputOption::VALUE_NONE, 'Group by application (default)');
         $this->addOption('by-source', null, InputOption::VALUE_NONE, 'Group by source');
@@ -44,7 +44,7 @@ class SourcesCommand extends Command
         $this->addOption('format', null, InputOption::VALUE_REQUIRED, 'Output format "table" (default), "yaml" or "json"');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $formatOption = $input->getOption('format');
         if ($formatOption) {
@@ -84,10 +84,7 @@ class SourcesCommand extends Command
             'Instances',
         );
         $appList = new DataItemList('applications');
-        foreach ($aggregate->getRelations(true) as $appInfo) {
-            $appList->addItem($this->collectAppRelation($appInfo));
-        }
-        foreach ($aggregate->getRelations(false) as $appInfo) {
+        foreach ($aggregate->getRelations() as $appInfo) {
             $appList->addItem($this->collectAppRelation($appInfo));
         }
         $unusedList = $this->buildUnusedSourcesTree($aggregate);
@@ -213,7 +210,6 @@ class SourcesCommand extends Command
     {
         $application = $appInfo->getApplication();
         $appItem = new DataTreeNode($application->getId(), $application->getTitle());
-        $appItem->addFlag('publised', $application->isPublished(), null, 'comment', 'not published');
         $sourcesList = new DataItemList('sources');
 
         foreach ($appInfo->getSourceRelations() as $srcRelation) {
@@ -246,7 +242,6 @@ class SourcesCommand extends Command
         foreach ($relation->getApplicationRelations() as $appRelation) {
             $app = $appRelation->getApplication();
             $appItem = new DataTreeNode($app->getId(), $app->getTitle());
-            $appItem->addFlag('publised', $app->isPublished(), null, 'comment', 'not published');
             $instanceList = new DataItemList('instances');
             foreach ($appRelation->getSourceInstances() as $sourceInstance) {
                 $instanceItem = new DataItem($sourceInstance->getId(), $sourceInstance->getTitle());

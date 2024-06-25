@@ -12,7 +12,7 @@ class POIAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('useMailto', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(

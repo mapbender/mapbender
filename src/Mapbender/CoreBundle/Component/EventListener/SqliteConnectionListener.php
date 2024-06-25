@@ -3,35 +3,21 @@
 
 namespace Mapbender\CoreBundle\Component\EventListener;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Event\ConnectionEventArgs;
-use Doctrine\DBAL\Events;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Driver;
+use Doctrine\DBAL\Driver\Middleware;
 use Symfony\Component\Console\Event\ConsoleEvent;
 
-class SqliteConnectionListener implements EventSubscriber
+class SqliteConnectionListener implements Middleware
 {
-    protected $skipForeignKeys = false;
+    public bool $skipForeignKeys = false;
 
     /** @var Connection[] */
-    protected $modifiedConnections = array();
+    public array $modifiedConnections = array();
 
-    public function getSubscribedEvents()
+    public function wrap(Driver $driver): Driver
     {
-        return array(
-            Events::postConnect,
-        );
-    }
-
-    public function postConnect(ConnectionEventArgs $args)
-    {
-        if (!$this->skipForeignKeys) {
-            $platform = $args->getConnection()->getDatabasePlatform();
-            if ($platform instanceof SqlitePlatform) {
-                $this->enableForeignKeys($args->getConnection());
-            }
-        }
+        return new SqliteConnectionMiddleWare($driver, $this);
     }
 
     /**
@@ -39,8 +25,9 @@ class SqliteConnectionListener implements EventSubscriber
      * NOTE: cannot also implement Symfony EventSubscriber because the interface is incompatible
      *       with Doctrine EventSubscriber (same method name getScubscribedEvents, but non-static vs static)
      * @param ConsoleEvent $e
+     * @noinspection PhpUnused
      */
-    public function onConsoleCommand(ConsoleEvent $e)
+    public function onConsoleCommand(ConsoleEvent $e): void
     {
         $commandName = $e->getCommand()->getName();
         if (in_array($commandName, $this->getForeignKeyBlacklistedCommandNames())) {
@@ -52,22 +39,14 @@ class SqliteConnectionListener implements EventSubscriber
         }
     }
 
-    protected function enableForeignKeys(Connection $connection)
+
+    protected function undoEnableForeignKeys(Connection $connection): void
     {
-        // remember connection so we can undo this
-        $this->modifiedConnections[] = $connection;
-        $connection->executeStatement('PRAGMA foreign_keys = ON;');
+        $connection->exec('PRAGMA foreign_keys = OFF;');
     }
 
-    protected function undoEnableForeignKeys(Connection $connection)
+    public function getForeignKeyBlacklistedCommandNames(): array
     {
-        $connection->executeStatement('PRAGMA foreign_keys = OFF;');
-    }
-
-    public function getForeignKeyBlacklistedCommandNames()
-    {
-        return array(
-            'doctrine:schema:update',
-        );
+        return ['doctrine:schema:update'];
     }
 }

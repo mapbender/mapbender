@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterWmtsExportLayerRendererPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $wmtsRendererId = 'mapbender.imageexport.renderer.wmts';
         $tmsRendererId = 'mapbender.imageexport.renderer.tms';

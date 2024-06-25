@@ -129,7 +129,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
                 $data = $this->prepareJobData($request, $element->getConfiguration());
                 $format = $request->request->get('imageformat');
                 $image = $this->exportService->runJob($data);
-                return new Response($this->exportService->dumpImage($image, $format), 200, array(
+                return new Response($this->exportService->dumpImage($image, $format), Response::HTTP_OK, array(
                     'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
                     'Content-Type' => $this->getMimetype($format),
                 ));

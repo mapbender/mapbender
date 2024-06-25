@@ -26,7 +26,7 @@ $panelBorderColor: #888 !default;
       &:hover, &[data-state="active"]{
         background-color: $backgroundColor;
       }
-      @include transition(all .2s ease-in-out);
+      transition: all .2s ease-in-out;
       border:solid 1px $panelBorderColor;
     }
     .basesourcegroup, > .basesourcesetswitch {
@@ -43,8 +43,13 @@ $panelBorderColor: #888 !default;
       display: none;
       position: absolute;
       right: -1px;  // Compensate for border
+
+        &.right {
+            right: initial;
+            left: -1px;
+        }
     }
-    .basesourcegroup:hover .basesourcesubswitcher {
+    .basesourcegroup:hover .basesourcesubswitcher, .basesourcegroup.active .basesourcesubswitcher {
       display: initial;
     }
   }

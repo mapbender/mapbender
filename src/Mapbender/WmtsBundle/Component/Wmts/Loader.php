@@ -145,9 +145,11 @@ class Loader extends SourceLoader
         $instance->getLayers()->clear();
         $instanceLayerMeta = $this->entityManager->getClassMetadata(WmtsInstanceLayer::class);
 
+        $rootLayer = null;
         foreach ($instance->getSource()->getLayers() as $sourceLayer) {
             $identifier = $sourceLayer->getIdentifier();
-            $newInstanceLayer = InstanceFactoryWmts::createInstanceLayer($sourceLayer);
+            $newInstanceLayer = InstanceFactoryWmts::createInstanceLayer($sourceLayer, $rootLayer);
+            if ($sourceLayer->getParent() === null) $rootLayer = $newInstanceLayer;
             if (!empty($identifierMap[$identifier])) {
                 // Copy previous instance layer settings
                 EntityUtil::copyEntityFields($newInstanceLayer, $identifierMap[$identifier], $instanceLayerMeta);

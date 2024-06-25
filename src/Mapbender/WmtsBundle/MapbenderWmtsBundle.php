@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class MapbenderWmtsBundle extends Bundle
 {
 
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');

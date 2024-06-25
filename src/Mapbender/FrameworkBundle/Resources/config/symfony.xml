@@ -7,10 +7,10 @@
         <!-- Undocumented Symfony 3.4+ param; adds direct PHP file includes for "hot path" services.
              This reduces class loader overhead.
              @see https://github.com/symfony/symfony/blob/3.4/src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php#L1285 -->
-        <parameter key="container.dumper.inline_class_loader">true</parameter>
+        <parameter key=".container.dumper.inline_class_loader">true</parameter>
         <!-- prefer OpCache-friendly big, monolithic container over many small includes -->
         <!-- see https://symfony.com/blog/new-in-symfony-4-4-dependency-injection-improvements-part-1#dumping-the-container-in-one-file -->
         <!-- parameter does nothing on Symfony 3.x -->
-        <parameter key="container.dumper.inline_factories">true</parameter>
+        <parameter key=".container.dumper.inline_factories">true</parameter>
     </parameters>
 </container>

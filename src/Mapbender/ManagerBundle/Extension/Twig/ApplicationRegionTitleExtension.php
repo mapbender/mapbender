@@ -19,7 +19,7 @@ class ApplicationRegionTitleExtension extends AbstractExtension
         $this->templateRegistry = $templateRegistry;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'application_region_title' => new TwigFunction('application_region_title', array($this, 'application_region_title')),

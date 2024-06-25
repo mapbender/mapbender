@@ -145,39 +145,44 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 })
             });
         },
-        createDraw_: function(type) {
+        createDraw_: function(type, styleFn) {
             var source = this.wrappedLayer_.getSource();
             switch (type) {
                 case 'point':
                     return new ol.interaction.Draw({
                         type: 'Point',
                         stopClick: true,
-                        source: source
+                        source: source,
+                        style: styleFn
                     });
                 case 'line':
                     return new ol.interaction.Draw({
                         type: 'LineString',
                         stopClick: true,
-                        source: source
+                        source: source,
+                        style: styleFn
                     });
                 case 'polygon':
                     return new ol.interaction.Draw({
                         type: 'Polygon',
                         stopClick: true,
-                        source: source
+                        source: source,
+                        style: styleFn
                     });
                 case 'circle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
                         stopClick: true,
-                        source: source
+                        source: source,
+                        style: styleFn
                     });
                 case 'rectangle':
                     return new ol.interaction.Draw({
                         type: 'Circle',
                         geometryFunction: ol.interaction.Draw.createBox(),
                         stopClick: true,
-                        source: source
+                        source: source,
+                        style: styleFn
                     });
                 default:
                     throw new Error("No such type " + type);

@@ -1,4 +1,4 @@
-$panelBorderColor: #888 !default;
+$panelBorderColor: #b9BABC !default;
 $popupBorderColor: $panelBorderColor !default;
 $backgroundColor: #fff !default;
 $popupBackgroundColor: $backgroundColor !default;
@@ -97,7 +97,7 @@ $popupBackgroundColor: $backgroundColor !default;
   z-index: 100; // Same as .ui-front
   background-color: $popupBackgroundColor;
   border: 1px solid $popupBorderColor;
-  border-bottom-width: 5px;
+  border-bottom-width: 1px;
 }
 
 .popupContainer.modal {
@@ -133,7 +133,7 @@ $popupBackgroundColor: $backgroundColor !default;
   line-height: 1;
 
   &:before{
-    @include transform(rotate(45deg));
+    transform: rotate(45deg);
     font-family: "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     content: "\f054";
     display: block;

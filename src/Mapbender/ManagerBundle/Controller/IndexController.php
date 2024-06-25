@@ -29,10 +29,10 @@ class IndexController extends AbstractController
     /**
      * Simply redirect to the applications list.
      *
-     * @ManagerRoute("/", methods={"GET"})
      * @return Response
      */
-    public function indexAction()
+    #[ManagerRoute('/', methods: ['GET'])]
+    public function index()
     {
         return $this->redirectToRoute($this->defaultRoute);
     }

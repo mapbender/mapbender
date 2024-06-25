@@ -28,7 +28,7 @@ class SourceRewriteHostCommand extends Command
         parent::__construct(null);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription("Update host names in source urls, without reloading capabilities");
         $this->addArgument('from', InputArgument::REQUIRED);

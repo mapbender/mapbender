@@ -493,7 +493,7 @@
             return true;
         },
         _collectOverview: function() {
-            if (this.overviewWidget_ && typeof (this.overviewWidget_.getPrintData) === 'function') {
+            if (this.overviewWidget_ && this.overviewWidget_.overview && typeof (this.overviewWidget_.getPrintData) === 'function'){
                 try {
                     return this.overviewWidget_.getPrintData();
                 } catch (e) {

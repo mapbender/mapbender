@@ -9,12 +9,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class BaseToolbarType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('item_alignment', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'label' => 'mb.manager.toolbar.alignment.label',

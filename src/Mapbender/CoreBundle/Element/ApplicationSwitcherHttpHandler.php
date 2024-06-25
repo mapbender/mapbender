@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Element;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity;
@@ -55,7 +56,7 @@ class ApplicationSwitcherHttpHandler implements ElementHttpHandlerInterface
         // We must load the actual entities to perform the grants checks
         foreach ($slugsConfigured as $slug) {
             $application = $this->getApplication($slug);
-            if ($application && $this->authChecker->isGranted('VIEW', $application)) {
+            if ($application && $this->authChecker->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
                 $slugsOut[] = $slug;
             }
         }

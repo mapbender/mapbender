@@ -12,12 +12,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class WmtsInstanceType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return SourceInstanceType::class;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('layers', SourceInstanceLayerCollectionType::class, array(

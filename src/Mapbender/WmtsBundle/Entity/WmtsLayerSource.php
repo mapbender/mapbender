@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmtsBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
@@ -16,64 +17,71 @@ use Mapbender\WmtsBundle\Component\UrlTemplateType;
 
 /**
  * @author Paul Schmidt
- * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmtslayersource")
  *
  * @property WmtsSource $source
  * @method WmtsSource getSource
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_wmts_wmtslayersource')]
 class WmtsLayerSource extends SourceItem implements MutableUrlTarget
 {
 
-    /**
-     * @ORM\Column(name="name", type="string", nullable=true)
-     */
+    #[ORM\Column(name: 'name', type: 'string', nullable: true)]
     protected $identifier = "";
 
-    /**
-     * @ORM\Column(type="text",nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract = "";
 
-    /**
-     * @ORM\ManyToOne(targetEntity="WmtsSource",inversedBy="layers")
-     * @ORM\JoinColumn(name="wmtssource", referencedColumnName="id")
-     */
+    #[ORM\ManyToOne(targetEntity: WmtsSource::class, inversedBy: 'layers')]
+    #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
-    /**
-     * @ORM\Column(type="object", nullable=true)
-     */
+    #[ORM\Column(type: 'object', nullable: true)]
     protected $latlonBounds;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $boundingBoxes;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $styles;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $infoformats;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $tilematrixSetlinks;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    protected $priority;
+
+    public function setPriority(mixed $priority): self
+    {
+        $this->priority = $priority !== null ? intval($priority) : $priority;
+        return $this;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->priority;
+    }
 
     /**
      * @var UrlTemplateType[]
-     * @ORM\Column(type="array", nullable=true)
      */
+    #[ORM\Column(type: 'array', nullable: true)]
     protected $resourceUrl;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'sublayer')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['priority' => 'asc', 'id' => 'asc'])]
+    protected $sublayer;
 
     public function __construct()
     {
+        $this->sublayer = new ArrayCollection();
         $this->infoformats = array();
         $this->styles = array();
         $this->resourceUrl = array();
@@ -309,6 +317,22 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     {
         return $this->resourceUrl;
     }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): void
+    {
+        $this->parent = $parent;
+    }
+
+    public function getSublayer()
+    {
+        return $this->sublayer;
+    }
+
 
     /**
      * @return UrlTemplateType[]

@@ -5,37 +5,36 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @author Paul Schmidt
- *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_srs")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'mb_core_srs')]
 class SRS
 {
 
     /**
      * @var integer $id
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var string $name the name of the spatial reference system
-     * @ORM\Column(type="string", nullable=false, length=15, unique=true)
      */
+    #[ORM\Column(type: 'string', length: 15, unique: true, nullable: false)]
     protected $name;
 
     /**
      * @var string $title the title of the spatial reference system
-     * @ORM\Column(type="string", length=128)
      */
+    #[ORM\Column(type: 'string', length: 128)]
     protected $title;
 
     /**
      * @var string The definition of the spatial reference system
-     * @ORM\Column(type="string", length=512)
      */
+    #[ORM\Column(type: 'string', length: 512)]
     protected $definition;
 
     /**

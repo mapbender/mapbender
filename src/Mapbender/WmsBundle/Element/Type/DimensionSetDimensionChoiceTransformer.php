@@ -20,19 +20,19 @@ class DimensionSetDimensionChoiceTransformer implements DataTransformerInterface
         $this->dimensionInstances = $dimensionInstances;
     }
 
-    public function transform($values)
+    public function transform($value): array
     {
-        if (!$values) {
+        if (!$value) {
             return array();
         }
-        if (!\is_array($values)) {
+        if (!\is_array($value)) {
             throw new TransformationFailedException('Expected an array.');
         }
 
         $instances = array();
-        foreach ($values as $k => $value) {
+        foreach ($value as $k => $val) {
             foreach ($this->dimensionInstances as $inst) {
-                if ($this->getInstanceIdent($inst) == $value) {
+                if ($this->getInstanceIdent($inst) == $val) {
                     $instances[$k] = $inst;
                     break;
                 }
@@ -41,17 +41,17 @@ class DimensionSetDimensionChoiceTransformer implements DataTransformerInterface
         return $instances;
     }
 
-    public function reverseTransform($values)
+    public function reverseTransform($value): array
     {
-        if (!$values) {
+        if (!$value) {
             return array();
         }
-        if (!\is_array($values)) {
+        if (!\is_array($value)) {
             throw new TransformationFailedException('Expected an array.');
         }
 
         $strings = array();
-        foreach ($values as $k => $inst) {
+        foreach ($value as $k => $inst) {
             /** @var DimensionInst $inst */
             $strings[$k] = $this->getInstanceIdent($inst);
         }

@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
+use FOM\UserBundle\Security\Permission\ResourceDomainElement;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
@@ -120,11 +121,7 @@ class ElementFilter extends ElementConfigFilter
         return $elementsOut;
     }
 
-    /**
-     * @param Element $element
-     * @return string|MinimalInterface|null
-     */
-    public function getHandlingClassName(Element $element)
+    public function getHandlingClassName(Element $element): string
     {
         return $this->inventory->getHandlingClassName($element);
     }
@@ -176,7 +173,7 @@ class ElementFilter extends ElementConfigFilter
                 $enabled = $target && $this->isEnabled($target, $checkGrant, false);
             }
             if ($checkGrant && $enabled) {
-                $enabled = $this->authorizationChecker->isGranted('VIEW', $element);
+                $enabled = $this->authorizationChecker->isGranted(ResourceDomainElement::ACTION_VIEW, $element);
             }
         }
         return $enabled;

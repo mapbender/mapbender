@@ -55,7 +55,7 @@
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'button',
+                            cssClass: 'btn btn-sm btn-primary',
                             callback: function(){
                                 var form = this.$element.find('form').get(0);
                                 if (form.reportValidity && !form.reportValidity()) return;
@@ -72,8 +72,8 @@
                             }
                         },
                         {
-                            label: Mapbender.trans('mb.actions.cancel'),
-                            cssClass: 'button popupClose critical'
+                            label: Mapbender.trans('mb.actions.close'),
+                            cssClass: 'btn btn-sm btn-light popupClose'
                         }
                     ]
                 });

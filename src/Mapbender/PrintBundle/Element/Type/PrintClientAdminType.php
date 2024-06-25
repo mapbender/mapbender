@@ -23,7 +23,7 @@ class PrintClientAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(

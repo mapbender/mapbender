@@ -32,7 +32,7 @@ class ElementMarkupExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             'element_visibility_class' => new TwigFunction('element_visibility_class', array($this, 'element_visibility_class')),

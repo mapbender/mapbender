@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FinalizeMenuPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $itemsKey = 'mapbender.manager.menu.items';
         /** @var MenuItem[] $items */

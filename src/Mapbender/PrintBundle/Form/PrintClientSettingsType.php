@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrintClientSettingsType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'required_fields_first' => false,
@@ -25,7 +25,7 @@ class PrintClientSettingsType extends AbstractType
         ));
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $templateChoices = array();
         foreach ($options['templates'] as $templateOption) {
@@ -111,7 +111,7 @@ class PrintClientSettingsType extends AbstractType
         }
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         // Mangle input names (~submit property paths) of custom fields to keep data format compatible with print
         // backend / frontend / stored jobs

@@ -8,69 +8,67 @@ use Symfony\Component\Validator\Constraints as Assert;
  * NOTE: table name is chosen for compatibility with older implementations
  * NOTE: 'filename' attribute is mapped to a column named 'salt' for compatibility with older implementations
  *
- * @ORM\Entity(repositoryClass="Mapbender\PrintBundle\Repository\QueuedPrintJobRepository")
- * @ORM\Table(name="mb_print_queue")
- * @ORM\HasLifecycleCallbacks
  *
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
  */
+#[ORM\Entity(repositoryClass: \Mapbender\PrintBundle\Repository\QueuedPrintJobRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'mb_print_queue')]
 class QueuedPrintJob
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * NOTE: column name is chosen for continuity / compatibility with previous implementations.
      *
      * @var string
-     * @ORM\Column(name="salt", type="string", length=255, unique=true)
-     * @Assert\NotBlank()
      */
+    #[Assert\NotBlank]
+    #[ORM\Column(name: 'salt', type: 'string', length: 255, unique: true)]
     protected $filename;
 
     /**
      * User ID or if anonymous then null
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
      * @var string|null
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected $userId;
 
     /**
      * The job serialized into an array
      *
      * @var array
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $payload;
 
     /**
      * Date of queue creation
      *
      * @var \DateTime
-     * @ORM\Column(type="datetime",nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $queued;
 
     /**
      * Date of render started
      *
      * @var \DateTime
-     * @ORM\Column(type="datetime",nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $started;
 
     /**
      * Date of render finished
      *
      * @var \DateTime
-     * @ORM\Column(type="datetime",nullable=true)
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $created;
 
     /**
@@ -215,9 +213,7 @@ class QueuedPrintJob
         return $this;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function fixFilename()
     {
         // previous implementations stored the filename without extension

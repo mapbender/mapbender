@@ -78,7 +78,7 @@ class ApplicationDataService
             if ($content === false) {
                 return false;
             }
-            $response = new Response($content, 200, array(
+            $response = new Response($content, Response::HTTP_OK, array(
                 'Content-Type' => $mimeType,
             ));
             // @todo: add etag etc

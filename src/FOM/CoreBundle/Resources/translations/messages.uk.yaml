@@ -10,3 +10,43 @@ fom:
             ok: Підтвердити
     fields:
       no_user_group_defined: Користувач або група не визначені.
+  security:
+    domain:
+      public: 'Публічний доступ'
+      registered: 'Усі зареєстровані користувачі'
+    resource:
+      installation:
+        create_applications: "Створити"
+        view_all_applications: "Переглянути"
+        view_all_applications_help: "Дозволяє переглядати всі додатки, незалежно від прав, визначених у додатку."
+        edit_all_applications: "Редагувати"
+        edit_all_applications_help: "Дозволяє редагувати всі додатки, незалежно від прав, визначених у додатку."
+        delete_all_applications: "Видалити"
+        delete_all_applications_help: "Дозволяє видаляти всі додатки, незалежно від прав, визначених у додатку."
+        own_all_applications: "Управління дозволами"
+        own_all_applications_help: "Дозволяє редагувати права всіх додатків, незалежно від прав, визначених у додатку."
+        view_sources: "Переглянути"
+        create_sources: "Редагувати"
+        refresh_sources: "Оновити"
+        edit_free_instances: "Редагувати вільні екземпляри"
+        delete_sources: "Видалити"
+        manage_permissions: "Глобальне управління дозволами"
+        view_users: "Переглянути"
+        create_users: "Створити"
+        edit_users: "Редагувати"
+        delete_users: "Видалити"
+        view_groups: "Переглянути"
+        create_groups: "Створити"
+        edit_groups: "Редагувати"
+        delete_groups: "Видалити"
+      application:
+        view: "Переглянути"
+        view_help: "Авторизує користувача/групу на перегляд і використання додатку у фронтенді, включаючи всі елементи, для яких не визначені спеціальні дозволи."
+        edit: "Редагувати"
+        edit_help: "Дозволяє редагувати додаток, виключаючи вкладку 'Безпека'. Редагування наборів шарів потребує глобальних дозволів."
+        delete: "Видалити"
+        manage_permissions: "Управління дозволами"
+        manage_permissions_help: "Дозволяє керувати дозволами для цього додатку (поточна сторінка)."
+      element:
+        view: "Переглянути"
+

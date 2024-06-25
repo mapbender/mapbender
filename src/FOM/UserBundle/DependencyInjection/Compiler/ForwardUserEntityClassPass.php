@@ -29,7 +29,7 @@ class ForwardUserEntityClassPass implements CompilerPassInterface
         $this->default = $default;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $securityConfig = $container->getExtensionConfig('security');
         if ($securityConfig && !isset($securityConfig['providers'])) {

@@ -6,60 +6,42 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author  Andriy Oblivantsev <eslider@gmail.com>
- * @ORM\Entity
- * @ORM\Table(
- *   name="fom_user_log",
- *   indexes={@ORM\Index(name="ipNamedRequestDate", columns={"ipAddress", "userName", "creationDate", "userId"})}
- * )
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'fom_user_log')]
+#[ORM\Index(columns: ['ipAddress', 'userName', 'creationDate', 'userId'], name: 'ipNamedRequestDate')]
 class UserLogEntry
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank()
-     */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected $userId;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank()
-     */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected $userName;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $context;
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
-     */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $ipAddress;
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
-     */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $action;
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
-     */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'string', nullable: false)]
     protected $status;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected $creationDate;
 
     /**
@@ -89,9 +71,7 @@ class UserLogEntry
         }
     }
 
-    /**
-     * @ORM\PrePersist()
-     */
+    #[ORM\PrePersist]
     public function createDateOnInsert()
     {
         $this->creationDate = new \DateTime();

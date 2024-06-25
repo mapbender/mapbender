@@ -31,7 +31,7 @@ class SitelinksExtension extends AbstractExtension
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             new TwigFunction('get_sitelinks', array($this, 'get_sitelinks')),
