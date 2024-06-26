@@ -1,4 +1,4 @@
-## next major release (v4.0)
+## v4.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
