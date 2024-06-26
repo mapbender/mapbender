@@ -4,16 +4,16 @@ This pages gives a quick overview of the controllers used in a Mapbender applica
 
 ## The Front Controller - Using Routes
 
-In Symfony, each HTTP request goes through the front end controller (app.php in the web directory) which determines the controller function to pass it to.
+In Symfony, each HTTP request goes through the front end controller (index.php in the public directory) which determines the controller function to pass it to.
 
-The mapping from request path to controller function is basically done in the configuration, where the routing.yml defines these mappings - called routes - or imports their definitions from bundles (or other files).
+The mapping from request path to controller function is basically done in the configuration, where the configuration in the `config/routes` directory defines these mappings - called routes - or imports their definitions from bundles (or other files).
 In your own bundle, you can also use [PHP attributes directly in your controller](https://symfony.com/doc/current/routing.html).
 
 To get an overview of all defined routes by using the console command.
 
 ```console
  cd mapbender/application
- app/console router:debug
+ bin/console router:debug
 
  [router] Current routes
  Name                                        Method Pattern
@@ -43,7 +43,7 @@ To get an overview of all defined routes by using the console command.
 The command lists all routes with their names, allowed methods and URL pattern. To get more information about a particular route, give its name to the command:
 
 ```console
- app/console router:debug mapbender_core_user_login
+ bin/console router:debug mapbender_core_user_login
 
  [router] Route "mapbender_core_user_login"
  Name         mapbender_core_user_login
@@ -61,7 +61,7 @@ To learn more about routing, read the [Symfony documentation](https://symfony.co
 
 ### Defining routes using annotations
 
-In Mapbender, we use decentralized route definitions: Instead of writing each and every route in the routing.yml, we import their definition from the controller classes in the activated bundles. This has the advantage of having the definition with the controller function. This should usually be fine and can be - if need arises - easily overwritten by adapting the routing.yml.
+In Mapbender, we use decentralized route definitions: Instead of describing each and every route we import their definition from the controller classes in the activated bundles. This has the advantage of having the definition with the controller function. This should usually be fine and can be - if need arises - easily overwritten by adapting the configuration in the `config/routes` directory.
 Using the Symfony with the SE bundles like Mapbender does, routes can therefore be written using annotation comments for each controller function. You can read about the annotation syntax over at the [Symfony documentation](https://symfony.com/doc/current/book/index.html).
 
 ## Mapbender Controllers
@@ -98,8 +98,6 @@ For each section an own controller class exists within this bundle:
 * **SettingsController**: Manage common settings
 * **UserController**: Manage users
 * **ManagerController**: Provides common functionality for the other controllers
-
-Each of the these controllers (right now work is going on within the ApplicationController) is a good example of what we think of as good kinda RESTful URLs.
 
 [↑ Back to top](#controllers)
 

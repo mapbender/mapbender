@@ -1,8 +1,8 @@
 # Components
 
-Mapbender is made up of different components. On the server side we use Symfony as a framework which comes along with powerful components like Doctrine, Twig, Monolog and more. On the client side we use OpenLayers, MapQuery and jQuery & jQuery UI.
+Mapbender is made up of different components. On the server side we use Symfony as a framework which comes along with powerful components like Doctrine, Twig, Monolog and more. On the client side we use OpenLayers, jQuery & jQuery UI.
 
-We have a Mapbender core bundle with the Mapbender basic functionalities. And more Mapbender bundles which are optional. We also offer a Mapbender Starter package. With the Mapbender Starter package, you can set up a Mapbender installation easily.
+We have a Mapbender core bundle with basic Mapbender functionalities and more Mapbender bundles which are optional. We also offer a Mapbender Starter package. With the Mapbender Starter package, you can set up a Mapbender installation easily.
 
 ## Symfony
 
@@ -34,21 +34,16 @@ The Mapbender core consists of a collection of bundles located in the `src` fold
 
 The Mapbender CoreBundle is the base bundle for Mapbender. It offers base classes for applications, elements, layers and more.
 
-It provides jQuery, jQuery UI, OpenLayers and MapQuery for all other Mapbender bundles.
+It provides jQuery, jQuery UI and OpenLayers for all other Mapbender bundles.
 
 ## Mapbender Starter
 
 Mapbender Starter is Symfony demo project which uses the Mapbender bundles to showcase a Mapbender application.
 
-It contains demo applications which are defined in the mapbender.yaml with WMS and WMTS. It provides a web interface with authentication which provides the possibility to create applications, create users/groups and build up a service repository.
+It contains demo applications which are defined in the directory `config/applications` using YAML files. It also provides a web interface with authentication which provides the possibility to create applications, create users/groups and build up a service repository.
 
 Mapbender Starter can be used as a template to start Mapbender projects.
 
-## External Repositories
-
-You find more code connected to Mapbender at GitHub, which is not part of the main project. Other providers can offer Bundles for Mapbender like the DesktopIntegrationBundle which is provided by [WhereGroup](https://wheregroup.com) and sponsored by customers.
-
-WhereGroup offers [bundles for Mapbender](https://github.com/WhereGroup).
 
 [↑ Back to top](#components)
 
