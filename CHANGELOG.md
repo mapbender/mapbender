@@ -1,25 +1,25 @@
 ## next major release (v4.0)
-Breaking changes (for details on migration process see [Upgrading guide](docs/UPGRADING.md)):
+Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 9 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
-* Symfony updated to version 6.4 LTS. See UPGRADING.md for migration details 
-* Twig updated to version 3.7. See UPGRADING.md for migration details 
-* FontAwesome updated to version 6.4. See UPGRADING.md for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
-* Bootstrap updated to version 5.3. See https://getbootstrap.com/docs/4.0/migration/, https://getbootstrap.com/docs/5.0/migration/)
+* Symfony updated to version 6.4 LTS. See [UPGRADING.md] for migration details 
+* Twig updated to version 3.7. See [UPGRADING.md] for migration details 
+* FontAwesome updated to version 6.4. See [UPGRADING.md] for migration details ([PR#1521](https://github.com/mapbender/mapbender/pull/1521), [PR#1525](https://github.com/mapbender/mapbender/pull/1525))
+* Bootstrap updated to version 5.3. See [Migration to v4](https://getbootstrap.com/docs/4.0/migration/), [Migration to v5](https://getbootstrap.com/docs/5.0/migration/)
 * Removed deprecated automatic bundle inference. Assets now always have to be imported using a bundle qualifier (e.g. `@MyBundle/Resources/public/file.js`) ([PR#1512](https://github.com/mapbender/mapbender/pull/1512))
 * Removed underscore.js. Some functions are replaced by native JS functions, some are replaced by Mapbender.Util functions ([PR#1514](https://github.com/mapbender/mapbender/pull/1514))
 * Removed command `mapbender:wms:validate:url`. Use `mapbender:wms:parse:url --validate` instead ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
 * Removed compass library for sass mixins
 
 Features:
-* fix sorting issue in layertree (https://github.com/mapbender/mapbender/issues/1567) ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
 * PHP 8.2 and PHP 8.3 are now fully supported.
 * New permission system to replace symfony's deprecated ACL bundle. ([PR#1579](https://github.com/mapbender/mapbender/pull/1579)) 
 * Backend interface is now fully localised in German and English ([PR#1524](https://github.com/mapbender/mapbender/pull/1524))
+* New documentation for developers within the repository ([PR#1575](https://github.com/mapbender/mapbender/pull/1575)) 
 * Added splash screen for all applications ([PR#1522](https://github.com/mapbender/mapbender/pull/1522))
 * New element "Data Upload" that allows mapbender to be used as a non-persistent file viewer for various spatal formats ([PR#1560](https://github.com/mapbender/mapbender/pull/1560))
-* [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is now longer a separate repository but integrated as 
+* [Coordinates Utility](https://github.com/mapbender/coordinates-utility) is no longer a separate repository but integrated as 
   a separate bundle in this repo.
 * New console command `mapbender:normalize-translations` to quickly find and complement missing translations ([PR#1538](https://github.com/mapbender/mapbender/pull/1538))
 * New console command `mapbender:wms:assign` to add a wms source instance to an application ([PR#1552](https://github.com/mapbender/mapbender/pull/1552))
@@ -39,6 +39,7 @@ Features:
 
 Bugfixes:
 * [Simple Search] Correctly handle deletion of configurations (([#1502](https://github.com/mapbender/mapbender/issues/1502), [PR#1503](https://github.com/mapbender/mapbender/pull/1503))
+* [LayerTree] Fix sorting issue ([PR#1567](https://github.com/mapbender/mapbender/pull/1567))
 * [LayerTree] Restore layertree configuration after source update ([PR#1497](https://github.com/mapbender/mapbender/pull/1497))
 * [SearchRouter] Fix possiblility to enable/disable result option count ([PR#1509](https://github.com/mapbender/mapbender/pull/1509))
 * [Print] Fix crash when encountering a network error during printing ([#1549](https://github.com/mapbender/mapbender/issues/1549), [PR#1551](https://github.com/mapbender/mapbender/pull/1551) - thanks [@enno-t](https://github.com/enno-t))
@@ -1709,3 +1710,6 @@ NOTE: This version extends the database schema and will require running a `doctr
   - Merge pull request #460 from mapbender/hotfix/default-titlesize512
   - Change tilesize default to 512
 
+
+
+[UPGRADING.md]: https://github.com/mapbender/mapbender/blob/master/docs/UPGRADING.md
