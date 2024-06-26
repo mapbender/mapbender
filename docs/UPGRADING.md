@@ -1,6 +1,6 @@
 # Upgrading Guide
 
-## next major release (v4.0)
+## v4.0.0
 
 ### Upgrade database
 Important: Execute the following commands in the specified order to upgrade (after bringing the symfony directory structure up to date). First, make a backup of your database!
