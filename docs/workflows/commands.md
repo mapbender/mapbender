@@ -58,9 +58,9 @@ You may also re-require an already required package with a new explicit version 
 # Add new package
 php bin/composer require mapbender/data-manager
 # Add new package, explicit minimum version
-php bin/composer require 'mapbender/data-manager:^1.0.3'
+php bin/composer require 'mapbender/digitizer:^2.0.0'
 # Switch and lock package to exact version
-php bin/composer require 'mapbender/fom:3.1.2'
+php bin/composer require 'mapbender/digitizer:2.0.0'
 ```
 
 ## Mapbender-specific commands

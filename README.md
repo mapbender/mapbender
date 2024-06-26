@@ -11,7 +11,7 @@ This Mapbender module contains most functionality of Mapbender itself. All eleme
 
 Before building and developing Mapbender on your own, refer to the [Contributing Guide in Mapbender-Starter](https://github.com/mapbender/mapbender-starter/blob/HEAD/CONTRIBUTING.md).
 
-If you want to learn more about the Mapbender development process and the code itself, please read the [Development documentation](https://github.com/mapbender/mapbender/tree/master/docs) that is included in this Mapbender module.
+If you want to learn more about the Mapbender development process and the code itself, please read the [Development documentation](https://github.com/mapbender/mapbender/tree/master/docs) that is included in this Mapbender module. It also includes the [Upgrading guide](https://github.com/mapbender/mapbender/tree/master/docs/UPGRADING.md)
 
 The [Mapbender-user mailing list](https://lists.osgeo.org/mailman/listinfo/mapbender_users) supports the community in resolving issues and questions regarding installation and operation.
 

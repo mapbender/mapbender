@@ -107,13 +107,11 @@ by using their element id and the path provided in the Mapbender variable:
 
 Manager modules are plain Symfony controller classes. To ensure their routes
 are prefixed with /manager - or whatever prefix is configured for the manager
-bundle - you should not use the Sensio\\FrameworkExtraBundle\\Configuration\\Route
-annotation, but the special FOM\\ManagerBundle\\Configuration\\Route annotation.
-Actually, that annotation class is not so special after all, but it enables the
-ManagerBundle to enforce the prefix.
+bundle - you should use the special FOM\\ManagerBundle\\Configuration\\Route attribute.
+It enables the ManagerBundle to enforce the prefix.
 
-It is best practice to use the Route annotation under a different name to make
-it visually easier to debug the controller for the use of the right annotation:
+It is best practice to use the Route attribute under a different name to make
+it visually easier to debug the controller for the use of the right attribute:
 
 ```php
     <?php
@@ -125,9 +123,7 @@ it visually easier to debug the controller for the use of the right annotation:
 
     class DemoManagerController extends Controller
     {
-        /**
-         * @ManagerRoute("/demo")
-         */
+        #[ManagerRoute('/demo', methods: ['GET'])]
          public function demoAction()
          {
             /* ... */

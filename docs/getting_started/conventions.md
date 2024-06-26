@@ -24,9 +24,7 @@ We follow the Git Flow branching model (Read more about it in the [original docu
 
 * develop - for the daily work, always has the latest merged commits, and is
   equal to or ahead of the latest release
-* master - only changes on new releases (right now and until the 3.0.1 release,
-  some of our repositories don't have a master branch but will get one then
-  again)
+* master - only changes on new releases
 
 Furthermore there might be more branches, which must always be namespaced:
 
@@ -109,7 +107,7 @@ cd mapbender-starter
 * Run bootstrap
 
 ```console
-sh bootstrap
+./bootstrap
 ```
 
 * Change the directory

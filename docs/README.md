@@ -25,7 +25,7 @@ Welcome to the Mapbender Development Documentation! This documentation is intend
 
 ## Things to consider
 
-To contribute to Mapbender, it is essential to have a solid understanding of object oriented PHP and Symfony, the framework we use.
+To contribute to Mapbender, it is essential to have a solid understanding of object-oriented PHP and Symfony, the framework we use.
 
 You can find more information about Symfony by reading [The Book](https://symfony.com/doc/current/index.html). We often rely on jQuery, especially the jQuery UI Widget factory, in our JavaScript code for legacy reasons.
 

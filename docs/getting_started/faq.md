@@ -2,17 +2,9 @@
 
 ## System requirements
 
-### Does Mapbender work with PHP 7?
+### Does Mapbender work with PHP 8?
 
-Yes, a freshly installed Mapbender 3.0.8.5 works "out of the box" with PHP from (and including) 5.4 up to (and including) 7.2.
-
-#### 7.2 ... does Mapbender work with >= PHP7.3?
-
-A complete test has not yet been run, but basically yes. However, manual interventions are still necessary.
-
-#### Update to Symfony 3.4
-
-The platform in the *composer.json* of the launcher must be set to e.g. 7.1.9, or removed completely. Then run `bin/composer update doctrine/common doctrine/dbal doctrine/orm` once.
+Yes, a freshly installed Mapbender 4 works "out of the box" with PHP from (and including) 8.1 up to (and including) 8.3.
 
 ## Installation
 
@@ -101,28 +93,7 @@ For Yaml-defined applications, the ID of the map must be entered.
 ### Can there be several map elements?
 
 A Mapbender application should and must always contain exactly one map.
-Example of a script-side lookup in the registry using the CSS class selector for `.mb-element-map`:
-
-```javascript
-Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) { console.log(mbMap); })
-  t.<computed>.<computed> {element: n.fn.init(1), uuid: 11, eventNamespace: ".mbMap11", bindings: n.fn.init(1), hoverable: n.fn.init, ...}
-    element: n.fn.init [div#52.mb-element.mb-element-map.olMap, context: div#52.mb-element.mb-element-map.olMap]
-    uuid: 11
-    eventNamespace: ".mbMap11"
-    bindings: n.fn.init [div#52.mb-element.mb-element-map.olMap, prevObject: n.fn.init, context: undefined]
-    hoverable: n.fn.init {}
-    focusable: n.fn.init {}
-    classesElementLookup: {}
-    document: n.fn.init [document, context: document]
-    window: n.fn.init [Window]
-    options: {classes: {...}, disabled: false, create: null, poiIcon: {...}, layersets: Array(2), ...}
-    _super: undefined
-    _superApply: undefined
-    elementUrl: "/app_dev.php/application/aliks-bb-test/element/52/"
-    model: {mbMap: t.<...>.<computed>, map: NotMapQueryMap, sourceTree: Array(16), srsDefs: Array(7), mapMaxExtent: {...}, ...}
-    map: NotMapQueryMap {idCounter: 16, layersList: {...}, element: n.fn.init(1), olMap: initialise}
-<...>
-```
+Therefor, accessing the map by using the CSS class selector for `.mb-element-map` is sufficient.
 
 Support for finding the map via *target* will remain.
 

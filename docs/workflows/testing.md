@@ -21,45 +21,26 @@ You can revert back to a shipping state by running
 bin/composer install --no-dev
 ```
 
-### Posix + bash + PHP>=5.6
-
-It might work on gitbash and/or cygwin with some fiddling.
 
 ## Running choices
 
-Run all tests, including "functional" browser-simulating tests, by invoking
+Run all tests, including "functional" browser-simulating tests, by invoking in the application directory
 
 ```bash
-bin/run_tests.sh
+bin/phpunit
 ```
-
-(that's the top-level bin, _not_ the application/bin)
-
-This will require phantomjs on your path. If it cannot invoke phantomjs, it will bail and do nothing.
-
-Run just the straightforward set of in-process tests by invoking
-
-```bash
-bin/run_tests-dev.sh
-```
-
-This one does not require phantomjs.
-
-Both of these commands can be invoked from any current working directory you want.
-
-You can create a symlink to a project's `bin/run_tests-dev.sh` somewhere in your path and get immediate access from anywhere.
 
 Additional command line arguments are passed through to phpunit. Try
 
 ```bash
-bin/run_tests-dev.sh --help
+bin/phpunit --help
 ```
 
 ## Authoring tests
 
 By default, _application/src_ (suite "Project") and the _mapbender/fom/owsproxy_ trinity of directories are scanned for *Test classes. They can be located anywhere, inside or outside of bundles, phpunit will find them.
 
-Please [annotate your tests with `@group`](https://phpunit.de/manual/5.7/en/appendixes.annotations.html#appendixes.annotations.group) to appropriately preclassify them as either `unit` or `functional`. Additional groups may be stacked on top (a test case can be placed into more than one group).
+Please [annotate your tests with `@group`](https://docs.phpunit.de/en/10.5/annotations.html#group) to appropriately preclassify them as either `unit` or `functional`. Additional groups may be stacked on top (a test case can be placed into more than one group).
 
 If one group makes sense for all tests in your test case, you can annotate the class once, and all tests within it will inherit the setting.
 

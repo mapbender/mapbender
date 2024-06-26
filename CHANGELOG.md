@@ -1,5 +1,5 @@
 ## next major release (v4.0)
-Breaking changes (for details on migration process see UPGRADING.md):
+Breaking changes (for details on migration process see [Upgrading guide](docs/UPGRADING.md)):
 * PHP 8.1 is now the minimum supported PHP version
 * Removed OpenLayers 2 support (deprecated since v3.2). All applications that were still using the legacy engine will
   automatically use the recent OpenLayers 9 implementation ([PR#1483](https://github.com/mapbender/mapbender/pull/1483))
