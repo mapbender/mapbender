@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Command;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
@@ -105,7 +106,12 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             $this->populateAttributeAndSave($newEntry, $entry);
         }
 
-        $publishedApplications = $this->em->getConnection()->executeQuery('SELECT id FROM mb_core_application WHERE published IS TRUE')->fetchFirstColumn();
+        try {
+            $publishedApplications = $this->em->getConnection()->executeQuery('SELECT id FROM mb_core_application WHERE published IS TRUE')->fetchFirstColumn();
+        } catch(Exception) {
+            $publishedApplications = $this->em->getConnection()->executeQuery('SELECT id FROM mb_core_application')->fetchFirstColumn();
+        }
+
         foreach ($publishedApplications as $applicationId) {
             $newEntry = new Permission(
                 subjectDomain: SubjectDomainPublic::SLUG,
@@ -251,6 +257,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         // For WMSSource, User and Group the owner has been set which is no longer needed.
         // For all other classes, show a warning message
         if ($entry["class_type"] !== "Mapbender\WmsBundle\Entity\WmsSource"
+            && $entry["class_type"] !== "Mapbender\WmsBundle\Entity\WmtsSource"
             && $entry["class_type"] !== "FOM\UserBundle\Entity\User"
             && $entry["class_type"] !== "FOM\UserBundle\Entity\Group"
         ) {
