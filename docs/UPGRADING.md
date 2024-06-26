@@ -1,3 +1,5 @@
+# Upgrading Guide
+
 ## next major release (v4.0)
 
 ### Upgrade database
@@ -17,7 +19,7 @@ If you use WMTS or TMS sources, refresh them via the backend.
 ### Symfony updated to version 6.4 LTS
 - symfony/symfony dependency was unpacked to use individual symfony/* subpackages. By default, only the dependencies 
   that the core mapbender requires are included now. If you're missing a symfony component, 
-  check https://github.com/symfony/symfony/blob/5.4/composer.json#L58 for the dependency that might be needed and install 
+  check [this page](https://github.com/symfony/symfony/blob/5.4/composer.json#L58) for the dependency that might be needed and install 
   it manually to your project using `./bin/composer install symfony/your-bundle` 
 - Local webserver bundle has been removed and replaced by the symfony local web server. Install the
   [symfony cli](https://symfony.com/download). Then, instead of `./bin/console server:run` now call `symfony server:start --no-tls`. 
@@ -28,7 +30,7 @@ If you use WMTS or TMS sources, refresh them via the backend.
 	- app/db => var/db (adjust this path in your configuration if you're using SQLite)
 	- app/console => bin/console
 	- app/config => config. Configuration is split into dedicated files per package living in config/packages. Detailed 
-      instructions can be found on https://symfonycasts.com/screencast/symfony4-upgrade/framework-config. Mapbender default configuration is already migrated, only migrate the changes you made to the default configuration 
+      instructions can be found on [SymfonyCasts](https://symfonycasts.com/screencast/symfony4-upgrade/framework-config). Mapbender default configuration is already migrated, only migrate the changes you made to the default configuration 
 	- app/Resources/MapbenderPrintBundle => config/MapbenderPrintBundle
 	- app/Resources/public => public
 	- app/web => public
@@ -37,7 +39,7 @@ If you use WMTS or TMS sources, refresh them via the backend.
       Environment can now be set using the environment variable APP_ENV.   
       `index_dev.php` is still available as an alternative for accessing the dev environment on remote servers.
 	- app/AppKernel.php => src/Kernel.php. Unless you are doing any custom logic, the Kernel can now stay blank when it's 
-      inheriting from Mapbender\BaseKernel. Make sure to define your bundles in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html).
+      inheriting from Mapbender\BaseKernel. Make sure to define your bundles in `config/bundles.php` (see [Symfony Docs](https://symfony.com/doc/5.4/bundles.html)).
 - Changes in configuration:
 	- `kernel.root_dir` replaced by `kernel.project_dir`. Note: `project_dir` points to  the application folder, 
        i.e. one directory layer deeper than before.
@@ -51,26 +53,26 @@ If you use WMTS or TMS sources, refresh them via the backend.
 ```
 
 - `Mapbender\BaseKernel`: removed methods `addNameSpaceBundles`, `registerBundles` and `filterUniqueBundles`. 
-   Instead, register your bundle in `config/bundles.php` (see https://symfony.com/doc/5.4/bundles.html)
+   Instead, register your bundle in `config/bundles.php` (see [Symfony Docs](https://symfony.com/doc/5.4/bundles.html))
 - Swiftmailer replaced by built-in symfony/mailer:
-	- Changed classes see https://github.com/rectorphp/rector-symfony/blob/main/config/sets/swiftmailer/swiftmailer-to-symfony-mailer.php
+	- Changed classes see [Github](https://github.com/rectorphp/rector-symfony/blob/main/config/sets/swiftmailer/swiftmailer-to-symfony-mailer.php)
 	- Configuration moved from swiftmailer to framework.mailer
 	- Parameters `mailer_transport`, `mailer_host`, `mailer_user` and `mailer_password` replaced by an environment variable
-      `MAILER_DSN` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See https://symfony.com/doc/current/mailer.html#using-built-in-transports for details
+      `MAILER_DSN` containing the entire connect string, e.g. `smtp://user:pass@smtp.example.com:25`. See [Symfony Docs](https://symfony.com/doc/current/mailer.html#using-built-in-transports) for details
       Configure it by adding it in your .env.local file
 - Doctrine: updated ORM from 2.10 to 2.15 and DBAL from 2.11 to 3
 	- Type `json_array` was replaced by `json`. Run `bin/console mapbender:database:upgrade`
     - Parameters `database_driver`, `database_host`, `database_port`, `database_name`, `database_path`, `database_user`, `database_password` 
       replaced by an environment variable `MAPBENDER_DATABASE_URL` containing the entire connect string, 
       e.g. `postgresql://dbuser:dbpassword@localhost:5432/dbname?serverVersion=14&charset=utf8`. 
-      See https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html#connecting-using-a-url for details
+      See [Doctrine Dbal Docs](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html#connecting-using-a-url) for details
       Configure it by adding it in your .env.local file. If you have multiple connections, use one env variable per connection and configure
       these in the config/packages/doctrine.yaml file
 - parameter `app_secret` replaced by the environment variable `APP_SECRET`. Override it in your .env.local file. 
 - several configuration options added/replaced in the `parameters.yaml` file. Check the `parameters.yaml.dist` file and adjust your configuration accordingly
 - Annotation for symfony router and doctrine entities replaced by PHP native attributes. ([see screencast](https://symfonycasts.com/screencast/symfony6-upgrade/annotations-to-attributes))
 
-### Twig: Updated from v2 to v3 (https://twig.symfony.com/doc/2.x/deprecated.html#tags)
+### Twig: Updated from v2 to v3 (<https://twig.symfony.com/doc/2.x/deprecated.html#tags>)
 - for if -> replace by for | filter
 - spaceless standalone tag -> {% apply spaceless %}
 - Referencing templates using BundleName:: replaced by @notation and slashes (e.g. `MapbenderCoreBundle::index.html` -> `@MapbenderCore/index.html`)
@@ -122,7 +124,7 @@ The following methods have been renamed (only relevant if you overwrite or call 
 The following files have been renamed:
 - `mapbender.model.ol4.js` => `mapbender.model.js` 
 
-## Removed underscore.js
+### Removed underscore.js
 The library was only used sparsely and was not worth the effort of keeping up to date. The following replacements can be used:
 
 - `_.assign`, `_.extend`: `Object.extend`
