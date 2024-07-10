@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\Component\Collections\WeightSortedCollectionMember;
 use Mapbender\Component\Enumeration\ScreenTypes;
 
 /**
@@ -13,7 +14,7 @@ use Mapbender\Component\Enumeration\ScreenTypes;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_core_element')]
-class Element
+class Element implements WeightSortedCollectionMember
 {
     /**
      * @var integer
