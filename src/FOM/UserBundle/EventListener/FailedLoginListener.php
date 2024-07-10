@@ -3,9 +3,11 @@
 namespace FOM\UserBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Entity\UserLogEntry;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 
 /**
@@ -31,7 +33,10 @@ class FailedLoginListener implements EventSubscriberInterface
     public function onLoginFailure(LoginFailureEvent $event): void
     {
         $em = $this->entityManager;
-        $userName = $event->getPassport()->getUser()->getUserIdentifier();
+        $passport = $event->getPassport();
+        if (!$passport) return;
+
+        $userName = $passport->getUser()?->getUserIdentifier();
         $ipAddress = $_SERVER["REMOTE_ADDR"];
         $repository = $em->getRepository(UserLogEntry::class);
         $userInfo = [

@@ -1,3 +1,7 @@
+## next bugfix release
+* Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
+
+
 ## v4.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.1 is now the minimum supported PHP version
