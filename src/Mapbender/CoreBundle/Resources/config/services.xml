@@ -47,6 +47,7 @@
         <parameter key="mapbender.uploads_dir">uploads</parameter>
         <parameter key="mapbender.manager.manager.login_template_class">Mapbender\ManagerBundle\Template\LoginTemplate</parameter>
         <parameter key="mapbender.manager.manager.template_class">Mapbender\ManagerBundle\Template\ManagerTemplate</parameter>
+        <parameter key="mapbender.application.resolver.class">Mapbender\CoreBundle\Component\Application\DbAndYamlApplicationResolver</parameter>
     </parameters>
 
     <services>
@@ -302,5 +303,13 @@
             <tag name="kernel.event_subscriber" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
+
+        <service id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" class="%mapbender.application.resolver.class%">
+            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="security.authorization_checker" />
+        </service>
+
+        <service id="mapbender.application.resolver" alias="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
     </services>
 </container>

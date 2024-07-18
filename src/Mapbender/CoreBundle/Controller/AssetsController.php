@@ -4,34 +4,32 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
-use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Asset\ApplicationAssetService;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Entity\Application;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AssetsController extends YamlApplicationAwareController
+class AssetsController extends AbstractController
 {
     protected $containerTimestamp;
     protected $cacheDir;
     protected $isDebug;
 
     public function __construct(protected TranslatorInterface     $translator,
-                                ApplicationYAMLMapper             $yamlRepository,
+                                protected ApplicationResolver     $applicationResolver,
                                 protected ApplicationAssetService $assetService,
-                                EntityManagerInterface            $em,
                                                                   $containerTimestamp,
                                                                   $cacheDir,
                                                                   $isDebug,
                                 protected string                  $templateClass,
                                 protected string                  $loginTemplateClass)
     {
-        parent::__construct($yamlRepository, $em);
         $this->containerTimestamp = intval(ceil($containerTimestamp));
         $this->cacheDir = $cacheDir;
         $this->isDebug = $isDebug;
@@ -52,7 +50,7 @@ class AssetsController extends YamlApplicationAwareController
             // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = $this->containerTimestamp;
         } else {
-            $source = $this->getApplicationEntity($slug);
+            $source = $this->applicationResolver->getApplicationEntity($slug);
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
         $cacheFile .= ".{$type}";

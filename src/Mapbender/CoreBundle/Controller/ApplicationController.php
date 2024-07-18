@@ -2,10 +2,10 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupCache;
 use Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,17 +18,15 @@ use Symfony\Component\Routing\Attribute\Route;
  * @author  Paul Schmidt <paul.schmidt@wheregroup.com>
  * @author  Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
  */
-class ApplicationController extends YamlApplicationAwareController
+class ApplicationController extends AbstractController
 {
     protected $isDebug;
 
-    public function __construct(ApplicationYAMLMapper $yamlRepository,
+    public function __construct(protected ApplicationResolver       $applicationResolver,
                                 protected ApplicationMarkupRenderer $renderer,
-                                protected ApplicationMarkupCache $markupCache,
-                                EntityManagerInterface $em,
-                                $isDebug)
+                                protected ApplicationMarkupCache    $markupCache,
+                                                                    $isDebug)
     {
-        parent::__construct($yamlRepository, $em);
         $this->isDebug = $isDebug;
     }
 
@@ -42,7 +40,7 @@ class ApplicationController extends YamlApplicationAwareController
     #[Route(path: '/application/{slug}.{_format}', defaults: ['_format' => 'html'])]
     public function application(Request $request, $slug)
     {
-        $appEntity = $this->getApplicationEntity($slug);
+        $appEntity = $this->applicationResolver->getApplicationEntity($slug);
 
         if (!$this->isDebug) {
             return $this->markupCache->getMarkupResponse($request, $appEntity, $this->renderer);

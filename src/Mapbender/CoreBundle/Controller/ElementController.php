@@ -5,24 +5,23 @@ namespace Mapbender\CoreBundle\Controller;
 
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\FrameworkBundle\Component\Renderer\ElementMarkupRenderer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ElementController extends YamlApplicationAwareController
+class ElementController extends AbstractController
 {
-    public function __construct(ApplicationYAMLMapper           $yamlRepository,
+    public function __construct(protected ApplicationResolver   $applicationResolver,
                                 protected ElementFilter         $filter,
                                 protected ElementMarkupRenderer $renderer,
-                                EntityManagerInterface          $em)
+    )
     {
-        parent::__construct($yamlRepository, $em);
     }
 
     /**
@@ -39,7 +38,7 @@ class ElementController extends YamlApplicationAwareController
     #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['id' => null, 'action' => null])]
     public function element(Request $request, $slug, $id, string $action)
     {
-        $application = $this->getApplicationEntity($slug);
+        $application = $this->applicationResolver->getApplicationEntity($slug);
         $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
         if (!$element) {
             throw new NotFoundHttpException();
