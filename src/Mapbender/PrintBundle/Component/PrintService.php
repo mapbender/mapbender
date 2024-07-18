@@ -409,7 +409,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $lineHeight = $region->getFontStyle()->getLineHeightMm();
                 $this->applyFontStyle($pdf, $region);
                 $pdf->SetXY($region['x'] - 1, $region['y'] + 0.25 * $lineHeight);
-                $pdf->MultiCell($region['width'], $lineHeight, utf8_decode($text), 0, $region->getAlignment());
+                $encodedText = mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
+                $pdf->MultiCell($region['width'], $lineHeight, $encodedText, 0, $region->getAlignment());
             }
         }
         // reset text color to default black

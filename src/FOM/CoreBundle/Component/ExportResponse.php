@@ -77,7 +77,7 @@ class ExportResponse extends Response
                     $this->setXls($data);
                 }
                 break;
-            
+
             case self::TYPE_XLSX:
                 $this->setFileName($fileName.".xlsx");
                 if ($data) {
@@ -278,7 +278,7 @@ class ExportResponse extends Response
 
             if ($hasKeys) {
                 foreach ($keys as $key => $value) {
-                    $value = utf8_decode($value);
+                    $value = mb_convert_encoding($value, 'ISO-8859-1', 'UTF-8');
                     $l = strlen($value);
                     fputs($handle, pack("ssssss", self::XLS_STRING_TYPE, 8 + $l, $rowNum, $colNum, 0x0, $l) . $value);
                     $colNum++;
@@ -291,7 +291,7 @@ class ExportResponse extends Response
         foreach ($data as $row) {
             $colNum = 0;
             foreach ($row as $keyName => $value) {
-                $value = utf8_decode(trim($value));
+                $value = mb_convert_encoding(trim($value), 'ISO-8859-1', 'UTF-8');
 
                 /* string cell */
                 if (!is_numeric($value)) {

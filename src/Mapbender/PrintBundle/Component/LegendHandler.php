@@ -170,12 +170,13 @@ class LegendHandler
                 $pageX = $x + $region->getOffsetX();
                 $pageY = $y + $region->getOffsetY();
                 $pdf->SetXY($pageX, $pageY);
-                $nLines = $pdf->getMultiCellTextHeight(utf8_decode($block->getTitle()), $this->maxColumnWidthMm);
+                $text = mb_convert_encoding($block->getTitle(), 'ISO-8859-1', 'UTF-8');
+                $nLines = $pdf->getMultiCellTextHeight($text, $this->maxColumnWidthMm);
                 // Font size is in 'pt'. Convert pt to mm for line height.
                 // see https://en.wikipedia.org/wiki/Point_(typography)
                 $lineHeightMm = $titleFontSize * .353;
                 $blockTitleHeightMm = $lineHeightMm * $nLines;
-                $pdf->MultiCell($this->maxColumnWidthMm, $lineHeightMm, utf8_decode($block->getTitle()), 0, 'L');
+                $pdf->MultiCell($this->maxColumnWidthMm, $lineHeightMm, $text, 0, 'L');
                 $this->pdfUtil->addImageToPdf($pdf, $block->resource,
                     $pageX,
                     $pageY + $blockTitleHeightMm,
