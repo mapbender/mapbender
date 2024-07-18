@@ -4,28 +4,25 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Cache\ApplicationDataService;
 use Mapbender\CoreBundle\Component\Presenter\Application\ConfigService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ConfigController extends YamlApplicationAwareController
+class ConfigController extends AbstractController
 {
     /** @var ApplicationDataService|null */
     protected $cacheService;
     protected $enableCache;
 
-    public function __construct(ApplicationYAMLMapper $yamlRepository,
-                                protected ConfigService $configService,
-                                ApplicationDataService $cacheService,
-                                EntityManagerInterface $em,
-                                $enableCache)
+    public function __construct(protected ApplicationResolver $applicationResolver,
+                                protected ConfigService       $configService,
+                                ApplicationDataService        $cacheService,
+                                                              $enableCache)
     {
-        parent::__construct($yamlRepository, $em);
-        $this->configService = $configService;
         $this->cacheService = ($enableCache ? $cacheService : null) ?: null;
     }
 
@@ -37,7 +34,7 @@ class ConfigController extends YamlApplicationAwareController
     #[Route(path: '/application/{slug}/config', name: 'mapbender_core_application_configuration')]
     public function configuration($slug)
     {
-        $applicationEntity = $this->getApplicationEntity($slug);
+        $applicationEntity = $this->applicationResolver->getApplicationEntity($slug);
         $cacheKeyPath = array('config.json');
 
         if ($this->cacheService) {
