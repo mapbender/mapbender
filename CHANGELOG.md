@@ -1,5 +1,9 @@
 ## next bugfix release
+Bugfixes:
 * Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
+
+Other:
+* Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))
 
 
 ## v4.0.0
