@@ -11,9 +11,11 @@ use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
+use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
+use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -22,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ElementController
@@ -38,9 +41,12 @@ class ElementController extends ApplicationControllerBase
 
     public function __construct(protected ElementInventoryService $inventory,
                                 protected ElementEntityFactory    $factory,
+                                protected ElementFilter           $elementFilter,
                                 protected ElementFormFactory      $elementFormFactory,
                                 protected PermissionManager       $permissionManager,
-                                EntityManagerInterface            $em)
+                                EntityManagerInterface            $em,
+                                protected TranslatorInterface     $translator,
+    )
     {
         parent::__construct($em);
     }
@@ -115,6 +121,8 @@ class ElementController extends ApplicationControllerBase
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
+        $this->validateConfiguration($form, $element);
+
         if ($form->isSubmitted() && $form->isValid()) {
             // calculate weight (append at end of region)
             $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
@@ -161,6 +169,7 @@ class ElementController extends ApplicationControllerBase
         /** @var FormInterface $form */
         $form = $formInfo['form'];
         $form->handleRequest($request);
+        $this->validateConfiguration($form, $element);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($application->setUpdated(new \DateTime('now')));
@@ -421,5 +430,15 @@ class ElementController extends ApplicationControllerBase
         /** @var EntityRepository $repository */
         $repository = $this->em->getRepository(Element::class);
         return $repository;
+    }
+
+    private function validateConfiguration(FormInterface $form, Element $element): void
+    {
+        if ($form->isSubmitted()) {
+            $handlingClass = $this->elementFilter->getHandlingClassName($element);
+            if (is_a($handlingClass, ValidatableConfigurationInterface::class, true)) {
+                $handlingClass::validate($element->getConfiguration(), $form, $this->translator);
+            }
+        }
     }
 }

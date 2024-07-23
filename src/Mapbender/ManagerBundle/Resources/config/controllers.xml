@@ -53,9 +53,11 @@
                  public="true">
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.element_entity_factory" />
+            <argument type="service" id="mapbender.element_filter" />
             <argument type="service" id="mapbender.manager.element_form_factory.service" />
             <argument type="service" id="fom.security.permission_manager" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="translator" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />

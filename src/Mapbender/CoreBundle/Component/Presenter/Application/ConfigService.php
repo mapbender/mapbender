@@ -5,6 +5,8 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 use Mapbender\Component\Event\ApplicationConfigEvent;
 use Mapbender\Component\Event\ApplicationEvent;
 use Mapbender\Component\SourceInstanceConfigGenerator;
+use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
+use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
@@ -17,6 +19,7 @@ use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Service that generates the frontend-facing configuration for a Mapbender application.
@@ -26,38 +29,20 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class ConfigService
 {
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var UrlProcessor */
-    protected $urlProcessor;
-
-    /** @var UrlGeneratorInterface */
-    protected $router;
-    /** @var bool */
-    protected $debug;
     /** @var string */
     protected $assetBaseUrl;
 
 
-    public function __construct(EventDispatcherInterface $eventDispatcher,
-                                ElementFilter $elementFilter,
-                                TypeDirectoryService $sourceTypeDirectory,
-                                UrlProcessor $urlProcessor,
-                                UrlGeneratorInterface $router,
-                                PackageInterface $baseUrlPackage,
-                                $debug)
+    public function __construct(protected EventDispatcherInterface $eventDispatcher,
+                                protected ElementFilter $elementFilter,
+                                protected TypeDirectoryService $sourceTypeDirectory,
+                                protected UrlProcessor $urlProcessor,
+                                protected UrlGeneratorInterface $router,
+                                protected PackageInterface $baseUrlPackage,
+                                protected TranslatorInterface $translator,
+                                protected bool $debug)
     {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->elementFilter = $elementFilter;
-        $this->sourceTypeDirectory = $sourceTypeDirectory;
-        $this->urlProcessor = $urlProcessor;
-        $this->router = $router;
         $this->assetBaseUrl = $baseUrlPackage->getUrl('');
-        $this->debug = $debug;
     }
 
     /**
@@ -169,6 +154,13 @@ class ConfigService
                         'init' => $handler->getWidgetName($element),
                         'configuration' => $handler->getClientConfiguration($element),
                     );
+                    if ($handler instanceof ValidatableConfigurationInterface) {
+                        try {
+                            $handler::validate($values['configuration'], null, $this->translator);
+                        } catch(ValidationFailedException $e) {
+                            $values['errors'] = [$e->getMessage()];
+                        }
+                    }
                 } catch (ElementErrorException $e) {
                     // for frontend presentation, incomplete / invalid elements are silently suppressed
                     // => do nothing

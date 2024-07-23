@@ -9,6 +9,7 @@ Bugfixes:
 
 Other:
 * Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))
+* Add ValidatableConfigurationInterface to validate an element's configuration ([PR#1607](https://github.com/mapbender/mapbender/pull/1607))
 
 
 ## v4.0.0
