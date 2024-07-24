@@ -1,6 +1,7 @@
 ## next bugfix release
 Bugfixes:
 * Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
+* [Manager] Fix empty region placeholder in layout editor ([#1606](https://github.com/mapbender/mapbender/issues/1606), [PR#1611](https://github.com/mapbender/mapbender/pull/1611))
 
 Other:
 * Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))
