@@ -13,8 +13,10 @@ class ApplicationUtil
 {
     public static function getMapElement(Application $application): ?Element
     {
-        $elements = static::getMapElements($application) ?: [null];
-        return $elements[0];
+        foreach (static::getMapElements($application) as $element) {
+            if ($element->getEnabled()) return $element;
+        }
+        return null;
     }
 
     /**
