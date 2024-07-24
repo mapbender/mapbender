@@ -190,6 +190,7 @@
          * @returns {[ol.format.*,string]} An array containing the openlayers format and the appropriate projection
          */
         findFormatByType: function(file, result) {
+            // best case: mime type is transmitted, but only works in some browsers/OS
             switch (file.type) {
                 case 'application/geo+json':
                 case 'application/json':
@@ -201,6 +202,24 @@
                 case 'application/gpx+xml':
                     return [new ol.format.GPX(), 'EPSG:4326'];
             }
+
+            // fallback: use file extensions
+            const parts = file.name.split('.');
+            const extension = parts.length > 1 ? parts[parts.length - 1] : '';
+
+            switch (extension) {
+                case 'geojson':
+                case 'json':
+                    return [new ol.format.GeoJSON(), this.findGeoJsonProjection(result)];
+                case 'kml':
+                    return [new ol.format.KML(), 'EPSG:4326'];
+                case 'gml':
+                case 'xml':
+                    return [this.findGmlFormat(result), this.findProjection()];
+                case 'gpx':
+                    return [new ol.format.GPX(), 'EPSG:4326'];
+            }
+
             return [null, null];
         },
 
