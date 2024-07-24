@@ -52,53 +52,54 @@
           </tr>
         </thead>
         <tbody>
-        {% for element in application.getElementsByRegion(region) %}
-              {% if not is_typeof_element_disabled(element) %}
-               <tr class="element" {% if is_map_element(element) -%}
-                  id="-ft-map-element"
-                {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}"
-                    data-token="{{ csrf_token('element_edit') }}">
-                <td>{{ element_title(element) | trans }}</td>
-                <td>{{ element_class_title(element) | trans }}</td>
-                <td class="iconColumn">
-                  <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
-                      data-toggle-flag-icons="fa-eye-slash:fa-eye"
-                      data-token="{{ csrf_token('element_edit') }}"
-                      data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
-                      title="{{ 'mb.manager.admin.element.show_hide' | trans }}">
-                    <i class="fas {{ element.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
-                  </span>
-                  <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}"
-                    data-token="{{ csrf_token('element_edit') }}">
-                    {%- set _element_screentype = element.getScreenType() -%}
-                    <i data-screentype="mobile" class="screentype-icon fas fa-mobile-screen {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
-                    <i data-screentype="desktop" class="screentype-icon fas fa-display{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
-                  </span>
-                  <span class="editElement hover-highlight-effect clickable"
-                        title="{{ 'mb.actions.edit' | trans }}"
-                        data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
-                    <i class="fas fa-gear"></i>
-                  </span>
-                  {% set _has_permissions = mapbender_has_permissions(element) %}
-                  <span class="secureElement {% if _has_permissions %}text-danger {% endif %}hover-highlight-effect"
-                        title="{{ "mb.actions.secureelement" | trans ~ "\n" -}}"
-                        data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
-                      <i class="fas fa-key"></i>
-                  </span>
-                  <span class="-fn-delete hover-highlight-effect"
-                        title="{{ 'mb.actions.delete' | trans }}"
-                        data-slug="{{ application.slug }}"
-                        data-token="{{ csrf_token('element_delete') }}"
-                        data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
-                        ><i class="far fa-trash-can"></i></span>
-                </td>
+        {% set region_empty = true %}
+          {% for element in application.getElementsByRegion(region) %}
+            {% if not is_typeof_element_disabled(element) %}
+                {% set region_empty = false %}
+             <tr class="element" {% if is_map_element(element) -%}
+                id="-ft-map-element"
+              {%- endif %} data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}"
+                  data-token="{{ csrf_token('element_edit') }}">
+              <td>{{ element_title(element) | trans }}</td>
+              <td>{{ element_class_title(element) | trans }}</td>
+              <td class="iconColumn">
+                <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
+                    data-toggle-flag-icons="fa-eye-slash:fa-eye"
+                    data-token="{{ csrf_token('element_edit') }}"
+                    data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}"
+                    title="{{ 'mb.manager.admin.element.show_hide' | trans }}">
+                  <i class="fas {{ element.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
+                </span>
+                <span class="screentypes" data-url="{{ path('mapbender_manager_element_screentype', {'element': element.id}) }}"
+                  data-token="{{ csrf_token('element_edit') }}">
+                  {%- set _element_screentype = element.getScreenType() -%}
+                  <i data-screentype="mobile" class="screentype-icon fas fa-mobile-screen {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
+                  <i data-screentype="desktop" class="screentype-icon fas fa-display{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
+                </span>
+                <span class="editElement hover-highlight-effect clickable"
+                      title="{{ 'mb.actions.edit' | trans }}"
+                      data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
+                  <i class="fas fa-gear"></i>
+                </span>
+                {% set _has_permissions = mapbender_has_permissions(element) %}
+                <span class="secureElement {% if _has_permissions %}text-danger {% endif %}hover-highlight-effect"
+                      title="{{ "mb.actions.secureelement" | trans ~ "\n" -}}"
+                      data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
+                    <i class="fas fa-key"></i>
+                </span>
+                <span class="-fn-delete hover-highlight-effect"
+                      title="{{ 'mb.actions.delete' | trans }}"
+                      data-slug="{{ application.slug }}"
+                      data-token="{{ csrf_token('element_delete') }}"
+                      data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
+                      ><i class="far fa-trash-can"></i></span>
+              </td>
               </tr>
-        {% else %}
-            <tr class="dummy">
-              <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
-            </tr>
             {% endif %}
           {% endfor %}
+          <tr class="dummy" {% if not region_empty %} style="display: none;"{% endif %}>
+            <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
