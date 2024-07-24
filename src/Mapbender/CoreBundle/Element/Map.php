@@ -56,12 +56,12 @@ class Map extends AbstractElementService
         return array(
             'layersets' => array(),
             'srs' => 'EPSG:4326',
-            'otherSrs' => array("EPSG:31466", "EPSG:31467"),
+            'otherSrs' => array("EPSG:25832","EPSG:25833","EPSG:3857","EPSG:31466", "EPSG:31467"),
             'base_dpi' => 96,
             'tileSize' => 512,
-            'extent_max' => array(0, 40, 20, 60),
-            'extent_start' => array(5, 45, 15, 55),
-            "scales" => array(25000000, 10000000, 5000000, 1000000, 500000),
+            'extent_max' => array(0, 40, 20, 60.8),
+            'extent_start' => array(7.03, 50.71, 7.17, 50.76),
+            "scales" => array(7500000,5000000,1000000,500000,100000,50000,25000,10000,7500,5000,2500,1000),
             'fixedZoomSteps' => false,
         );
     }
