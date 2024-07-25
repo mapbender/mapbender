@@ -49,6 +49,16 @@ $(function() {
         }
         return true;
     }
+
+    function updateDummyTableRow($container) {
+        $container.find('tbody').each(function (index, el) {
+            const $el = $(el);
+            const childCount = $el.find('tr:not(.dummy)').length;
+            const $dummy = $el.find('.dummy')
+            if (childCount > 0) $dummy.hide(); else $dummy.show();
+        });
+    }
+
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -76,6 +86,7 @@ $(function() {
                     });
                 }
             });
+            updateDummyTableRow($item.closest('#containerLayout'));
         }
     });
     $('.regionProperties[data-url]').on('change', ':input', function() {
@@ -109,12 +120,7 @@ $(function() {
                     token: $item.attr('data-token'),
                 }
             });
-            $item.closest('#all-instances').find('tbody').each(function(index, el) {
-                const $el = $(el);
-                const childCount = $el.find('tr:not(.dummy)').length;
-                const $dummy = $el.find('.dummy')
-                if (childCount > 0) $dummy.hide(); else $dummy.show();
-            });
+            updateDummyTableRow($item.closest('#all-instances'));
         }
     });
 
