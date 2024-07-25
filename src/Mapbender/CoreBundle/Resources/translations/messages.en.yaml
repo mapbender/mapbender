@@ -368,7 +368,7 @@ mb:
         othersrs: 'Other SRS'
         srs: SRS
       error:
-        extent_wrong: 'The minimum value must be smaller than the maximum value'
+        extent_wrong: 'min %dim must be smaller than max %dim'
     scalebar:
       class:
         title: 'Scale bar'

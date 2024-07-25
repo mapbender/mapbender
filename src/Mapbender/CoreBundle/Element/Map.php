@@ -254,8 +254,10 @@ class Map extends AbstractElementService
             foreach ([0, 1] as $index) {
                 if ($extent[$index] >= $extent[$index + 2]) {
                     $msg = $translator->trans('mb.core.map.error.extent_wrong');
+                    $msg = str_replace("%dim", $index === 0 ? 'x' : 'y', $msg);
                     if ($form !== null) {
                         $form->get('configuration')->get($key)->get($index)->addError(new FormError($msg));
+                        $form->get('configuration')->get($key)->get($index + 2)->addError(new FormError(""));
                     } else {
                         throw new ValidationFailedException($msg);
                     }
