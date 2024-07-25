@@ -1,6 +1,7 @@
 ## next bugfix release
 Bugfixes:
 * Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
+* [Security] Fix `published: false` was ignored in YAML applications ([PR#1614](https://github.com/mapbender/mapbender/pull/1614))
 * [Manager] Fix empty region placeholder in layout editor ([#1606](https://github.com/mapbender/mapbender/issues/1606), [PR#1611](https://github.com/mapbender/mapbender/pull/1611))
 * [DataUpload] Fix data type recognition in some browsers / operating systems ([#1603](https://github.com/mapbender/mapbender/issues/1603), [PR#1610](https://github.com/mapbender/mapbender/pull/1610))
 * Never use a disabled map element ([#1608](https://github.com/mapbender/mapbender/issues/1608), [PR#1609](https://github.com/mapbender/mapbender/pull/1609))

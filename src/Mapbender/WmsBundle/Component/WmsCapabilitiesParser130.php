@@ -21,15 +21,15 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
     protected function parseService(WmsSource $source, \DOMElement $serviceEl)
     {
         parent::parseService($source, $serviceEl);
-        $layerLimit = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'LayerLimit')));
+        $layerLimit = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'LayerLimit') ?? ''));
         if ($layerLimit > 0) {
             $source->setLayerLimit($layerLimit);
         }
-        $maxWidth = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxWidth')));
+        $maxWidth = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxWidth') ?? ''));
         if ($maxWidth > 0) {
             $source->setMaxWidth($maxWidth);
         }
-        $maxHeight = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxHeight')));
+        $maxHeight = \intval(\trim($this->getFirstChildNodeText($serviceEl, 'MaxHeight') ?? ''));
         if ($maxHeight > 0) {
             $source->setMaxHeight($maxHeight);
         }
@@ -49,8 +49,8 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         foreach ($this->getChildNodesByTagName($layerEl, 'CRS') as $crsEl) {
             $layer->addSrs(\trim($crsEl->textContent));
         }
-        $minScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MinScaleDenominator'));
-        $maxScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MaxScaleDenominator'));
+        $minScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MinScaleDenominator') ?? '');
+        $maxScaleText = \trim($this->getFirstChildNodeText($layerEl, 'MaxScaleDenominator') ?? '');
 
         if (\strlen($minScaleText) || \strlen($maxScaleText)) {
             $min = \strlen($minScaleText) ? $minScaleText : null;
