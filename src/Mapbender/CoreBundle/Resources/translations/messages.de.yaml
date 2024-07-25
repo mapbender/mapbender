@@ -367,6 +367,8 @@ mb:
         scales: 'Maßstäbe (komma-separiert)'
         othersrs: 'Andere SRS'
         srs: SRS
+      error:
+        extent_wrong: 'min %dim muss kleiner sein als max %dim.'
     scalebar:
       class:
         title: Maß­stabs­leiste

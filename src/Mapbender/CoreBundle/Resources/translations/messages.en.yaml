@@ -367,6 +367,8 @@ mb:
         scales: 'Scales (comma-separated)'
         othersrs: 'Other SRS'
         srs: SRS
+      error:
+        extent_wrong: 'min %dim must be smaller than max %dim'
     scalebar:
       class:
         title: 'Scale bar'

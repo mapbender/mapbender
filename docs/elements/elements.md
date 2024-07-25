@@ -40,6 +40,10 @@ The following methods must be overridden in the PHP class:
 - `getWidgetName(): string`: The jQueryUI widget's name (see [below](#javascript-widgets))
 - `getView(Element $element): ElementView`: The element's view, either static or a twig template (see [below](#rendering-the-view))
 
+You can also implement the class `Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface` and override the `validate` method. Validate the configuration here. The method is called in two cases:
+- when saving a form in the administration backend. The `$form` attribute will be non-null. You should create a form error in this case, e.g. `$form->get('configuration')->get('mykey')->addError(new FormError('Something went wrong'));` 
+- when accessing an application in the frontend. In this case, the `$form` argument will be null. Throw a `Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException` if a validation error occurs. Caution: This message will be shown to frontend users.
+
 
 ## PHP Form type
 A form type is used to configure the element in the backend. By convention, it's placed in your bundle's `Element/Type` namespace and should extend from `Symfony\Component\Form\AbstractType`. 

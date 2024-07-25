@@ -8,9 +8,14 @@ use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
+use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Map element.
@@ -18,7 +23,7 @@ use Mapbender\ManagerBundle\Component\Mapper;
  * @author Christian Wygoda
  */
 class Map extends AbstractElementService
-    implements MainMapElementInterface, ConfigMigrationInterface, ImportAwareInterface
+    implements MainMapElementInterface, ConfigMigrationInterface, ImportAwareInterface, ValidatableConfigurationInterface
 {
 
     const MINIMUM_TILE_SIZE = 128;
@@ -103,7 +108,7 @@ class Map extends AbstractElementService
     {
         $customTitles = array();
         $configuration = $element->getConfiguration();
-        $mainSrsParts  = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
+        $mainSrsParts = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
         $defaultSrsName = $mainSrsParts[0];
         $configuration['srs'] = $defaultSrsName;
         if (!empty($mainSrsParts[1])) {
@@ -146,11 +151,10 @@ class Map extends AbstractElementService
     {
         // Remove nulls, readd defaults
         // @todo: prevent saving invalid empty values via form constraints
-        $conf = \array_filter($element->getConfiguration(), function($v) {
+        $conf = \array_filter($element->getConfiguration(), function ($v) {
             return $v !== null;
         });
         $conf += static::getDefaultConfiguration();
-
         $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
         $conf = $this->buildSrsConfigs($element) + $conf;
         return $conf;
@@ -240,5 +244,26 @@ class Map extends AbstractElementService
         $config['scales'] = array_values(array_map('intval', $config['scales']));
 
         $entity->setConfiguration($config);
+    }
+
+    public static function validate(array $configuration, ?FormInterface $form, TranslatorInterface $translator): void
+    {
+        // check that max > min for all cases
+        foreach (['extent_start', 'extent_max'] as $key) {
+            $extent = $configuration[$key];
+            foreach ([0, 1] as $index) {
+                if ($extent[$index] >= $extent[$index + 2]) {
+                    $msg = $translator->trans('mb.core.map.error.extent_wrong');
+                    $msg = str_replace("%dim", $index === 0 ? 'x' : 'y', $msg);
+                    if ($form !== null) {
+                        $form->get('configuration')->get($key)->get($index)->addError(new FormError($msg));
+                        $form->get('configuration')->get($key)->get($index + 2)->addError(new FormError(""));
+                    } else {
+                        throw new ValidationFailedException($msg);
+                    }
+                }
+            }
+
+        }
     }
 }

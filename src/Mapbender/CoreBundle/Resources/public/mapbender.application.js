@@ -308,6 +308,9 @@ $.extend(Mapbender, (function($) {
     function initElement(id, data) {
         var instance;
         var $node = $(document.getElementById(id));
+        if (data.errors) {
+            throw new Error('Configuration error: ' + data.errors.join('\n'));
+        }
         if (!$node.length) {
             throw new Error('Element #' + id + ' not found in DOM');
         }
@@ -392,7 +395,7 @@ $.extend(Mapbender, (function($) {
                 // Log original stack trace (clickable in Chrome, unfortunately not in Firefox) separately
                 console.log(e.stack);
             }
-            $.notify('Your element with id ' + id + ' (widget ' + elementData.init + ') failed to initialize properly.', 'error');
+            $.notify('Your element with id ' + id + ' (widget ' + elementData.init + ') failed to initialize properly: ' + e.message, 'error');
         }
     }
 
