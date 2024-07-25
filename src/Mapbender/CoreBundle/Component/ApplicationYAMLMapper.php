@@ -146,7 +146,7 @@ class ApplicationYAMLMapper
         }
 
         $application->setYamlRoles(array_key_exists('roles', $definition) ? $definition['roles'] : []);
-        if (isset($definition['published']) && !$application->getYamlRoles()) {
+        if (isset($definition['published']) && $definition['published'] && !$application->getYamlRoles()) {
             $application->setYamlRoles([YamlApplicationVoter::ROLE_PUBLIC]);
         }
 

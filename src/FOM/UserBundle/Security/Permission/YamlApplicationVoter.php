@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Yaml application's security is also stated in the yaml file, therefore the
  * regular PermissionManager can't be used.
  *
- * The following yaml keys are relevant for it's security:
+ * The following yaml keys are relevant for its security:
  * `published: true`: only used when `roles` is not present. It grants view rights to the public
  * `roles`: Can contain the following children:
  * - public: grants access to the public
