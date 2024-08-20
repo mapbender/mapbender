@@ -1,4 +1,6 @@
 ## next bugfix release
+:warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
+
 Bugfixes:
 * Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
 
