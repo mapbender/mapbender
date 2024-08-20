@@ -255,6 +255,12 @@
             <argument type="service" id="twig" />
             <argument>%fallback_locale%</argument>
         </service>
+        <service id="mapbender.application_asset.overrides.service"
+                 class="Mapbender\CoreBundle\Asset\ApplicationAssetOverrides"
+                 lazy="true"
+                 public="true">
+            <argument>%mapbender.asset_overrides%</argument>
+        </service>
         <service id="mapbender.application_asset.service"
                  class="%mapbender.application_asset.service.class%"
                  lazy="true"
@@ -266,9 +272,9 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="mapbender.application_template_registry" />
+            <argument type="service" id="mapbender.application_asset.overrides.service" />
             <argument>%kernel.debug%</argument>
             <argument>%mapbender.strict.asset.bundle_scopes%</argument>
-            <argument>%mapbender.asset_overrides%</argument>
         </service>
         <service id="mapbender.xmlvalidator.service" class="Mapbender\CoreBundle\Component\XmlValidatorService">
             <argument type="service" id="mapbender.http_transport.service" />

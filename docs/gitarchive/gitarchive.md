@@ -45,10 +45,10 @@ Translations keys normalized for bundle Mapbender\CoreBundle. No keys were missi
 
 #### Overriding JavaScript and CSS/Sass Resources
 
-##### Option 1: use the ApplicationAssetService class
+##### Option 1: use the ApplicationAssetOverrides class
 
-- Inject the Service `mapbender.application_asset.service` into your class, e.g. within your bundle file's boot method using `$this->container->get('mapbender.application_asset.service')` or using constructor injection in any PHP file: `<argument type="service" id="mapbender.application_asset.service" />`. If using the latter approach, make sure you use a file that will be called, e.g. the Template
-- Call `ApplicationAssetService::registerAssetOverride` or `ApplicationAssetService::registerAssetOverrides` to mark assets for replacement. For example:
+- Inject the Service `mapbender.application_asset.overrides.service` into your class, e.g. within your bundle file's boot method using `$this->container->get('mapbender.application_asset.overrides.service')` or using constructor injection in any PHP file: `<argument type="service" id="mapbender.application_asset.overrides.service" />`. If using the latter approach, make sure you use a file that will be called, e.g. the Template
+- Call `ApplicationAssetOverrides::registerAssetOverride` or `ApplicationAssetOverrides::registerAssetOverrides` to mark assets for replacement. For example:
 
 ```php
 class MyBundle extends Bundle
@@ -58,7 +58,7 @@ class MyBundle extends Bundle
     public function boot(): void
     {
         parent::boot();
-        $assetService = $this->container->get('mapbender.application_asset.service');
+        $assetService = $this->container->get('mapbender.application_asset.overrides.service');
         $assetService->registerAssetOverride('@MapbenderCoreBundle/Resources/public/sass/element/button.scss', '@MyBundle/Resources/public/element/my_button.scss');
 
         $assetService->registerAssetOverrides([
