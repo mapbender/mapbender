@@ -1,3 +1,9 @@
+## next bugfix release
+:warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
+
+Bugfixes:
+* Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
+
 ## v4.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.1 is now the minimum supported PHP version
