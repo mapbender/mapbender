@@ -84,7 +84,7 @@ class Permission implements SubjectInterface
      * Can store an attribute for custom resource domains. When using this, make sure to implement a sensible
      * strategy to delete permission entries for deleted attributes
      */
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name: "resource_ref", type: 'string', nullable: true)]
     protected ?string $resource = null;
 
     /** Stores the action for the given resource domain, like "view" or "edit"  */
