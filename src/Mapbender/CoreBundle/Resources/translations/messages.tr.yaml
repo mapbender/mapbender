@@ -260,6 +260,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: Kapandığında devre dışı bırak
+          printResult: '"Yazdır" düğmesini göster'
           onlyvalid: Sadece geçerli olan
           highlighting: null
       printclient:

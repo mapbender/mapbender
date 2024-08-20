@@ -259,9 +259,19 @@ mb:
           showgroupedlayertitle: Toon gegroepeerde laag-titel
       featureinfo:
         label:
-          deactivateonclose: Deactiveer bij sluiten
-          onlyvalid: Alleen geldig
-          highlighting: null
+          deactivateonclose: 'Deactiveren bij sluiten'
+          printResult: 'Toon de knop "Afdrukken"'
+          onlyvalid: 'Alleen geldig'
+          highlighting_group: 'Markering'
+          highlighting: 'Markering ingeschakeld'
+          default_group: 'Standaard'
+          hover_group: 'Bij zweven'
+          fillColor: 'Opvulkleur'
+          strokeColor: 'Randkleur'
+          opacity_pct: 'Opaciteit (%)'
+          stroke_width_px: 'Randbreedte (pixels)'
+          fontColor: 'Tekstkleur'
+          fontSize: 'Tekstgrootte'
       printclient:
         label:
           rotatable: Roteerbaar

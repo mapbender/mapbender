@@ -482,6 +482,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
+          printResult: 'Schaltfläche "Drucken" anzeigen'
           onlyvalid: 'Nur valide zeigen'
           highlighting_group: Highlighting
           highlighting: 'Highlighting aktiv'

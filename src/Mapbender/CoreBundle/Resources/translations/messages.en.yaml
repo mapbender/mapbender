@@ -482,6 +482,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Deactivate on close'
+          printResult: 'Show "Print" button'
           onlyvalid: 'Only valid'
           highlighting_group: Highlighting
           highlighting: 'Highlighting enabled'
