@@ -161,6 +161,7 @@
             $("ul.layers", this.element).each(function () {
                 $(this).sortable({
                     axis: 'y',
+                    handle: '.leaveContainer',
                     items: "> li",
                     distance: 6,
                     cursor: "move",
