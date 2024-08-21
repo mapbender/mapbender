@@ -37,7 +37,7 @@ class SQLSearchEngine
         $qb = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
 
-        $qb->select("DISTINCT t.{$key}");
+        $qb->select("DISTINCT t.{$connection->quoteIdentifier($key)}");
 
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
@@ -60,7 +60,7 @@ class SQLSearchEngine
             }
         }
 
-        $qb->orderBy('t.' . $key, 'ASC');
+        $qb->orderBy('t.' . $connection->quoteIdentifier($key), 'ASC');
 
         $stmt = $qb->executeQuery()->fetchAllAssociative();
         $dataOut = array();
