@@ -477,6 +477,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Desactivar al cerrar'
+          printResult:  'Mostrar botón "Imprimir"'
           onlyvalid: 'Mostrar sólo válidos'
           highlighting_group: Destacar
           highlighting: 'Destacar activo'

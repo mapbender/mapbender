@@ -259,9 +259,19 @@ mb:
           showgroupedlayertitle: Afficher le titre des groupes de couches
       featureinfo:
         label:
-          deactivateonclose: null
-          onlyvalid: null
-          highlighting: null
+          deactivateonclose: 'Désactiver à la fermeture'
+          printResult: 'Afficher le bouton "Imprimer"'
+          onlyvalid: 'Uniquement valide'
+          highlighting_group: 'Surlignage'
+          highlighting: 'Surlignage activé'
+          default_group: 'Par défaut'
+          hover_group: 'Au survol'
+          fillColor: 'Couleur de remplissage'
+          strokeColor: 'Couleur du contour'
+          opacity_pct: 'Opacité (%)'
+          stroke_width_px: 'Largeur du contour (pixels)'
+          fontColor: 'Couleur de la police'
+          fontSize: 'Taille de la police'
       printclient:
         label:
           rotatable: Pivotable

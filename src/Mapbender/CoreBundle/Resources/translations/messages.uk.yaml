@@ -325,6 +325,7 @@ mb:
         label:
           autoopen: Автовідкриття
           deactivateonclose: Деактивувати під час закриття
+          printResult: 'Показати кнопку "Друк"'
           onlyvalid: Тільки дійсні
           highlighting_group: Виділення
           highlighting: Виділення увімкнено

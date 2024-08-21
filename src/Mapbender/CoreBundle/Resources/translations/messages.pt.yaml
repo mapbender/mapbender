@@ -477,6 +477,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Desativar ao fechar'
+          printResult: 'Mostrar botão "Imprimir"'
           onlyvalid: 'Mostrar apenas válidos'
           highlighting_group: Realce (Highlighting)
           highlighting: 'Realce ativo'

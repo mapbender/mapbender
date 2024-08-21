@@ -477,6 +477,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Disattiva in chiusura'
+          printResult: 'Mostra il pulsante "Stampa"'
           onlyvalid: 'Solo per le feature valide'
           highlighting_group: Evidenzia
           highlighting: 'Abilita evidenziazione'

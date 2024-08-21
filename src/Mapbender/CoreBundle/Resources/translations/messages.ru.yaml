@@ -478,6 +478,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Деактивировать при закрытии'
+          printResult: 'Показать кнопку "Печать"'
           onlyvalid: 'Только действительные'
           highlighting_group: 'Выделение'
           highlighting: 'Выделение активно'
