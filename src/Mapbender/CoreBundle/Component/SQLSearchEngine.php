@@ -11,7 +11,7 @@ use Monolog\Logger;
 class SQLSearchEngine
 {
     public function __construct(
-        protected Logger $logger,
+        protected Logger          $logger,
         protected ManagerRegistry $registry)
     {
     }
@@ -19,22 +19,22 @@ class SQLSearchEngine
     /**
      * SQL Autocomplete method
      *
+     * @param array $config Search configuration
+     * @param String $key Autocomplete field nme
+     * @param String $value Autocomplete value
+     * @param string[] $properties All form values
+     * @param String $srs Current map SRS
+     * @param array $extent Current map extent
+     * @return array              Autocomplete suggestions
      * @todo Make like search configurable (exact, left, right, both)
      * @todo Make case invariant configurable
      * @todo Limit results
      *
-     * @param  array  $config     Search configuration
-     * @param  String $key        Autocomplete field nme
-     * @param  String $value      Autocomplete value
-     * @param  string[] $properties All form values
-     * @param  String $srs        Current map SRS
-     * @param  array  $extent     Current map extent
-     * @return array              Autocomplete suggestions
      */
     public function autocomplete($config, $key, $value, $properties, $srs, $extent)
     {
-        $connection     = $this->getConnection($config);
-        $qb             = $connection->createQueryBuilder();
+        $connection = $this->getConnection($config);
+        $qb = $connection->createQueryBuilder();
         $fieldConfig = $this->getFormFieldConfig($config, $key);
 
         $qb->select("DISTINCT t.{$key}");
@@ -43,7 +43,7 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         // Build WHERE condition
-        $qb->where($this->getTextMatchExpression($key, $value, 'ilike', $qb));
+        $qb->where($this->getTextMatchExpression($connection, $key, $value, 'ilike', $qb));
         if ($srs && $extent && !empty($config['class_options']['geometry_attribute'])) {
             $geomColumn = 't.' . $connection->quoteIdentifier(trim($config['class_options']['geometry_attribute'], '"'));
             $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
@@ -53,7 +53,7 @@ class SQLSearchEngine
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
                 if (strlen($properties[$otherProp] ?? null)) {
-                    $qb->andWhere($this->getTextMatchExpression($otherProp, $properties[$otherProp], 'ilike-right', $qb));
+                    $qb->andWhere($this->getTextMatchExpression($connection, $otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
                     $this->logger->warning('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
                 }
@@ -80,21 +80,21 @@ class SQLSearchEngine
     /**
      * Actual SQL search method
      *
-     * @todo Make like search configurable (exact, left, right, both)
-     * @todo Make case invariant configurable
+     * @param array $config Search configuration
+     * @param array $data Form data
+     * @param string $srs Search extent SRS
+     * @param array $extent Search extent
+     * @return array         Search results
      * @todo Paging
      *
-     * @param  array  $config Search configuration
-     * @param  array  $data   Form data
-     * @param  string $srs    Search extent SRS
-     * @param  array  $extent Search extent
-     * @return array         Search results
+     * @todo Make like search configurable (exact, left, right, both)
+     * @todo Make case invariant configurable
      */
     public function search($config, $data, $srs, $extent)
     {
         $options = $config['class_options'];
-        $connection     = $this->getConnection($config);
-        $qb             = $connection->createQueryBuilder();
+        $connection = $this->getConnection($config);
+        $qb = $connection->createQueryBuilder();
         $selectExpressions = array();
         foreach ($options['attributes'] as $columName) {
             $selectExpressions[] = 't.' . $connection->quoteIdentifier(trim($columName, '"'));
@@ -110,13 +110,13 @@ class SQLSearchEngine
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
 
-        foreach($data['form'] as $key => $value) {
+        foreach ($data['form'] as $key => $value) {
             if (!\strlen($value)) {
                 continue;
             }
             $fieldConfig = $this->getFormFieldConfig($config, $key);
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
-            $qb->andWhere($this->getTextMatchExpression($key, $value, $matchMode, $qb));
+            $qb->andWhere($this->getTextMatchExpression($connection, $key, $value, $matchMode, $qb));
         }
         if ($srs && $extent) {
             $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
@@ -158,15 +158,8 @@ class SQLSearchEngine
         return $this->registry->getConnection($connectionName);
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param string $mode
-     * @param QueryBuilder $qb
-     * @return mixed
-     */
-    protected function getTextMatchExpression($key, $value, $mode, $qb) {
-
+    protected function getTextMatchExpression(Connection $connection, string $key, $value, string $mode, QueryBuilder $qb): mixed
+    {
         switch ($mode) {
             case 'exact':
             case 'like':
@@ -211,7 +204,7 @@ class SQLSearchEngine
         ));
         $matchValue = "{$patternPrefix}{$matchValue}{$patternSuffix}";
         $placeHolder = $qb->createNamedParameter($matchValue);
-        $referenceExpression = "t.{$key}";
+        $referenceExpression = "t." . $connection->quoteIdentifier($key);
         $matchExpression = $placeHolder;
         if ($caseInsensitive) {
             $referenceExpression = "LOWER({$referenceExpression})";

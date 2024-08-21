@@ -1,14 +1,14 @@
-    {{ form_row(route_select_form, {'label': false}) }}
+{{ form_row(route_select_form, {'label': false}) }}
 
-    <div class="search-forms">
-        {% for form in search_forms %}
-            <form name="{{ form.vars.name }}" autocomplete="off">
-                {{ form_widget(form) }}
-            </form>
-        {% endfor %}
-    </div>
-    <div class="search-action-buttons">
-        <button data-action="reset" class="btn btn-sm btn-light">{{ 'mb.actions.reset' | trans }}</button>
-        <button data-action="search" class="btn btn-sm btn-primary">{{ 'mb.actions.search' | trans }}</button>
-    </div>
-    <div class="search-results"></div>
+<div class="search-forms">
+    {% for form in search_forms %}
+        <form name="{{ form.vars.name }}" autocomplete="off">
+            {{ form_widget(form) }}
+        </form>
+    {% endfor %}
+</div>
+<div class="search-action-buttons">
+    <button data-action="reset" class="btn btn-sm btn-light">{{ 'mb.actions.reset' | trans }}</button>
+    <button data-action="search" class="btn btn-sm btn-primary">{{ 'mb.actions.search' | trans }}</button>
+</div>
+<div class="search-results"></div>
