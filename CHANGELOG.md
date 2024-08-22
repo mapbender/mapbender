@@ -11,6 +11,7 @@ Bugfixes:
 * Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
 * [Mobile Template] Allow scrolling layer tree on the left edge ([#1617](https://github.com/mapbender/mapbender/issues/1617), [PR#1620](https://github.com/mapbender/mapbender/pull/1620))
 * [SearchRouter] Upper case column names did not work in SearchRouter ([PR#1623](https://github.com/mapbender/mapbender/pull/1623))
+* Fix base path when using AssetOverriding (check PR text if you used asset overriding before) ([#1618](https://github.com/mapbender/mapbender/issues/1618), [PR#1622](https://github.com/mapbender/mapbender/pull/1622))
 
 Other:
 * Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))

@@ -18,47 +18,24 @@ use Mapbender\FrameworkBundle\Component\ElementFilter;
 /**
  * Produces merged application assets.
  * Registered in container at mapbender.application_asset.service
+ * @see ApplicationAssetOverrides for overriding specific resources
  */
 class ApplicationAssetService
 {
-    protected CssCompiler $cssCompiler;
-    protected JsCompiler $jsCompiler;
-    protected TranslationCompiler $translationCompiler;
-    protected ElementFilter $elementFilter;
-    protected ElementInventoryService $inventory;
-    protected TypeDirectoryService $sourceTypeDirectory;
-    protected ApplicationTemplateRegistry $templateRegistry;
-    protected bool $debug;
-    protected bool $strict;
-
-    protected array $assetOverrideMap = [];
-
     protected bool $debugOpenlayers = false;
 
-    public function __construct(CssCompiler                 $cssCompiler,
-                                JsCompiler                  $jsCompiler,
-                                TranslationCompiler         $translationCompiler,
-                                ElementFilter               $elementFilter,
-                                ElementInventoryService     $inventory,
-                                TypeDirectoryService        $sourceTypeDirectory,
-                                ApplicationTemplateRegistry $templateRegistry,
-                                bool                        $debug = false,
-                                bool                        $strict = false,
-                                ?array                      $assetOverrides = null)
+    public function __construct(protected CssCompiler                 $cssCompiler,
+                                protected JsCompiler                  $jsCompiler,
+                                protected TranslationCompiler         $translationCompiler,
+                                protected ElementFilter               $elementFilter,
+                                protected ElementInventoryService     $inventory,
+                                protected TypeDirectoryService        $sourceTypeDirectory,
+                                protected ApplicationTemplateRegistry $templateRegistry,
+                                protected ApplicationAssetOverrides   $overrides,
+                                protected bool                        $debug = false,
+                                protected bool                        $strict = false,
+    )
     {
-        $this->cssCompiler = $cssCompiler;
-        $this->jsCompiler = $jsCompiler;
-        $this->translationCompiler = $translationCompiler;
-        $this->elementFilter = $elementFilter;
-        $this->inventory = $inventory;
-        $this->sourceTypeDirectory = $sourceTypeDirectory;
-        $this->templateRegistry = $templateRegistry;
-        $this->debug = $debug;
-        $this->strict = $strict;
-
-        if (is_array($assetOverrides)) {
-            $this->registerAssetOverrides($assetOverrides);
-        }
     }
 
     /**
@@ -99,26 +76,6 @@ class ApplicationAssetService
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
         $assetType = $sourceMap ? 'map.' . $type : $type;
         return $this->compileAssetContent($references, $assetType, $sourceMapRoute);
-    }
-
-    /**
-     * after calling this function, everytime $originalRef is requested, $newRef will be included instead
-     * Can be used to override internal templates, javascript or css files
-     * @see self::registerAssetOverrides() for registering multiple files at a time
-     */
-    public function registerAssetOverride(string $originalRef, string $newRef): void
-    {
-        $this->assetOverrideMap[$originalRef] = $newRef;
-    }
-
-    /**
-     * after calling this function, everytime an asset that corresponds to a key in the overrideMap is requested,
-     * it is replaced by the asset of the corresponding value
-     * Can be used to override internal templates, javascript or css files
-     */
-    public function registerAssetOverrides(array $overrideMap): void
-    {
-        $this->assetOverrideMap = array_merge($this->assetOverrideMap, $overrideMap);
     }
 
     /**
@@ -349,15 +306,15 @@ class ApplicationAssetService
 
     /**
      * Replace references where an override was registered.
-     * @see self::registerAssetOverride()
+     * @see ApplicationAssetOverrides::registerAssetOverride()
      */
     protected function replaceWithOverrides(array $references): array
     {
         for ($i = 0; $i < count($references); $i++) {
             $ref = $references[$i];
             if (!is_string($ref)) continue;
-            if (array_key_exists($ref, $this->assetOverrideMap)) {
-                $references[$i] = $this->assetOverrideMap[$ref];
+            if (array_key_exists($ref, $this->overrides->getMap())) {
+                $references[$i] = $this->overrides->getMap()[$ref];
             }
         }
         return $references;
