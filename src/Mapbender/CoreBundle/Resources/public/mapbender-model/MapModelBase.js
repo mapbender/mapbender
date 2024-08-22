@@ -485,26 +485,26 @@ window.Mapbender.MapModelBase = (function() {
             var self = this;
             var specs = (paramValue || '').split(',');
             $.each(specs, function(idx, layerSpec) {
-                var idParts = layerSpec.split('/');
-                if (idParts.length >= 2) {
-                    var sourceId = idParts[0];
-                    var layerId = idParts[1];
-                    if (isNaN(sourceId) || isNaN(layerId)) {
-                        var sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
-                        sourceId = sourceAndLayerId.sourceId;
-                        layerId = sourceAndLayerId.layerId;
-                    }
-                    console.log("Activating", sourceId, layerId);
-                    var source = self.getSourceById(sourceId);
-                    var layer = source && source.getLayerById(layerId);
-                    if (layer) {
-                        layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
-                    }
-                    while (layer) {
-                        layer.setSelected(true);
-                        layer.source.layerset?.setSelected(true);
-                        layer = layer.parent;
-                    }
+                const idParts = layerSpec.split('/');
+                let sourceId = idParts[0];
+                let layerId = idParts.length >= 2 ? idParts[1] : null;
+                if ((sourceId && isNaN(sourceId)) || (layerId && isNaN(layerId))) {
+                    const sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
+                    sourceId = sourceAndLayerId.sourceId;
+                    layerId = sourceAndLayerId.layerId;
+                }
+                console.log("Activating", sourceId, layerId);
+                const source = self.getSourceById(sourceId);
+                if (!source) return;
+
+                let layer = layerId ? source.getLayerById(layerId) : source.getRootLayer();
+                if (layer) {
+                    layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
+                }
+                while (layer) {
+                    layer.setSelected(true);
+                    layer.source.layerset?.setSelected(true);
+                    layer = layer.parent;
                 }
             });
         },
@@ -516,6 +516,7 @@ window.Mapbender.MapModelBase = (function() {
                 const config = source.children[0];
                 if (config.options.name === sourceName || config.options.title === sourceName) {
                     sourceAndLayerId.sourceId = config.source.id;
+                    if (!layerName) return sourceAndLayerId;
                     config.children.forEach(function (child) {
                         if (child.options.name === layerName || child.options.title === layerName) {
                             sourceAndLayerId.layerId = child.options.id;
