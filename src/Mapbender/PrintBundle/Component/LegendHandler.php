@@ -123,10 +123,7 @@ class LegendHandler
         $margins = $this->getMargins($region);
         $x = $margins['x'];
         $y = $margins['y'];
-        $fontStyle = $region->getFontStyle() ?: FontStyle::defaultFactory();
-        $titleFontSize = $fontStyle->getSize();
-        // @todo: extract method for title calculation
-        // @todo: re-calculate title height when switching from embedded ~'legend' region to spill page
+        $titleFontSize = $this->getLegendTitleFontSize($region);
 
         foreach ($blockGroups as $group) {
             foreach ($group->getBlocks() as $block) {
@@ -145,9 +142,8 @@ class LegendHandler
                 $scaledImageHeight = $imageMmHeight * $scaleFactor;
 
                 // allot a little extra height for the title text
-                // @todo: this should scale with font size
                 // @todo: support multi-line text
-                $blockHeightMm = round($scaledImageHeight + 10);
+                $blockHeightMm = round($scaledImageHeight + $titleFontSize);
 
                 if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
                     // spill to next column
@@ -270,5 +266,11 @@ class LegendHandler
                 'y' => 5,
             );
         }
+    }
+
+    public function getLegendTitleFontSize(TemplateRegion $region): float
+    {
+        $fontStyle = $region->getFontStyle() ?: FontStyle::defaultFactory();
+        return $fontStyle->getSize();
     }
 }
