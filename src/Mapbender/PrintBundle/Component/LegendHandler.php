@@ -41,8 +41,6 @@ class LegendHandler
     protected $maxImageDpi = 96.;
     /** @var string */
     protected $legendPageFontName = 'Arial';
-    /** @var float */
-    protected $legendPageFontSize = 11;
 
     /**
      * @param ImageTransport $imageTransport
@@ -121,8 +119,9 @@ class LegendHandler
     public function addLegends($pdf, $region, $blockGroups, $allowPageBreaks, $templateData, $jobData)
     {
         $margins = $this->getMargins($region);
-        $x = $margins['x'];
-        $y = $margins['y'];
+        $pageMargins = $this->getPageMargins($region);
+        $x = $pageMargins['x'];
+        $y = $pageMargins['y'];
         $titleFontSize = $this->getLegendTitleFontSize($region);
 
         foreach ($blockGroups as $group) {
@@ -158,9 +157,9 @@ class LegendHandler
                     $this->addPage($pdf, $templateData, $jobData);
                     $region = FullPage::fromCurrentPdfPage($pdf);
                     $margins = $this->getMargins($region);
-                    $x = $margins['x'];
-                    $y = $margins['y'];
-                    $titleFontSize = $this->legendPageFontSize;
+                    $x = $pageMargins['x'];
+                    $y = $pageMargins['y'];
+                    $titleFontSize = $this->getLegendTitleFontSize($region, true);
                 }
 
                 $pageX = $x + $region->getOffsetX();
@@ -205,8 +204,7 @@ class LegendHandler
         $pdf->addPage($orientation, $format);
 
         $this->addLegendPageImage($pdf, $templateData, $jobData);
-        // @todo: make hard-coded spill page legend title font configurable
-        $pdf->SetFont($this->legendPageFontName, 'B', $this->legendPageFontSize);
+        $pdf->SetFont($this->legendPageFontName, 'B', $this->getLegendTitleFontSize(null, true));
     }
 
     /**
@@ -249,10 +247,9 @@ class LegendHandler
     /**
      * Returns the desired outer margin around the rendered legends
      *
-     * @param TemplateRegion $region
      * @return int[] with keys 'x' and 'y', values in mm
      */
-    protected function getMargins($region)
+    protected function getMargins(TemplateRegion $region): array
     {
         // @todo: config values please
         if ($region instanceof FullPage) {
@@ -268,9 +265,14 @@ class LegendHandler
         }
     }
 
-    public function getLegendTitleFontSize(TemplateRegion $region): float
+    protected function getPageMargins(TemplateRegion $region): array
     {
-        $fontStyle = $region->getFontStyle() ?: FontStyle::defaultFactory();
+        return $this->getMargins($region);
+    }
+
+    public function getLegendTitleFontSize(?TemplateRegion $region = null, bool $extraPage = false): float
+    {
+        $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
         return $fontStyle->getSize();
     }
 }
