@@ -146,8 +146,8 @@ class LegendHandler
 
                 if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
                     // spill to next column
-                    $x += $this->maxColumnWidthMm + $margins['x'];
-                    $y = $margins['y'];
+                    $x += $this->maxColumnWidthMm + $pageMargins['x'];
+                    $y = $pageMargins['y'];
                 }
                 if ($x + 20 > $region->getWidth()) {
                     if (!$allowPageBreaks) {
