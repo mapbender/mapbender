@@ -194,9 +194,9 @@ window.Mapbender.MapEngineOl4 = (function() {
             var to = this._getProj(toProj, true);
             var transformFn = ol.proj.getTransform(from, to);
             var transformed = ol.extent.applyTransform(bounds, transformFn);
-            // transformation fails in some cases when EPSG:3847 is transformed into UTM coordinates.
-            // Workaround: If max x / min x used to be (close to) -1 and is now (close to) 1, change the sign of min x
-            if (Math.abs(bounds[0] / bounds[2] + 1) < 0.000001 && Math.abs(transformed[0] / transformed[2] - 1) < 0.0000001) {
+            // transformation fails in some cases when EPSG:3847 is transformed into UTM or GK (etc.) coordinates.
+            // Workaround: If the current min x is negative and the transformed not, change the sign of min x
+            if (bounds[0] < 0 && transformed[0] > 0) {
                 transformed[0] *= -1;
             }
             return this.boundsFromArray(transformed);
