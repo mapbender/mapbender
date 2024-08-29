@@ -1,14 +1,14 @@
-## next bugfix release
+## v4.0.1
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
 Bugfixes:
+* Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
 * Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
 * [Security] Fix `published: false` was ignored in YAML applications ([PR#1614](https://github.com/mapbender/mapbender/pull/1614))
 * [Manager] Fix empty region placeholder in layout editor ([#1606](https://github.com/mapbender/mapbender/issues/1606), [PR#1611](https://github.com/mapbender/mapbender/pull/1611))
 * [DataUpload] Fix data type recognition in some browsers / operating systems ([#1603](https://github.com/mapbender/mapbender/issues/1603), [PR#1610](https://github.com/mapbender/mapbender/pull/1610))
-* [Map] Transformation failed in some cases when EPSG:3847 is transformed into UTM coordinates ([#1602](https://github.com/mapbender/mapbender/issues/1602), [PR#1613](https://github.com/mapbender/mapbender/pull/1613))
-* Never use a disabled map element ([#1608](https://github.com/mapbender/mapbender/issues/1608), [PR#1609](https://github.com/mapbender/mapbender/pull/1609))
-* Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
+* [Map] Transformation failed in some cases when EPSG:3847 is transformed into UTM or GK coordinates ([#1602](https://github.com/mapbender/mapbender/issues/1602), [#1615](https://github.com/mapbender/mapbender/issues/1615), [PR#1613](https://github.com/mapbender/mapbender/pull/1613), [PR#1626](https://github.com/mapbender/mapbender/pull/1626))
+* [Map] Never use a disabled map element ([#1608](https://github.com/mapbender/mapbender/issues/1608), [PR#1609](https://github.com/mapbender/mapbender/pull/1609))
 * [Mobile Template] Allow scrolling layer tree on the left edge ([#1617](https://github.com/mapbender/mapbender/issues/1617), [PR#1620](https://github.com/mapbender/mapbender/pull/1620))
 * [SearchRouter] Upper case column names did not work in SearchRouter ([PR#1623](https://github.com/mapbender/mapbender/pull/1623))
 * Fix base path when using AssetOverriding (check PR text if you used asset overriding before) ([#1618](https://github.com/mapbender/mapbender/issues/1618), [PR#1622](https://github.com/mapbender/mapbender/pull/1622))
@@ -18,6 +18,7 @@ Other:
 * Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))
 * Add ValidatableConfigurationInterface to validate an element's configuration ([PR#1607](https://github.com/mapbender/mapbender/pull/1607))
 * [LegendHandler] Allow page margins to be configured independently ([PR#1627](https://github.com/mapbender/mapbender/pull/1627))
+
 
 ## v4.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
