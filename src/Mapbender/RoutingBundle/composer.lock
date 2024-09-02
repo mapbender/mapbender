@@ -1,0 +1,214 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "c0a9f0401ddd71822109b058ff50880f",
+    "content-hash": "8ae4af6251c85b847ebae46f5bde3cfa",
+    "packages": [
+        {
+            "name": "eslider/hkv-storage",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eSlider/hkv-storage.git",
+                "reference": "ba846e77776e61d62128ee2bb7afc7f8c1fef11e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eSlider/hkv-storage/zipball/ba846e77776e61d62128ee2bb7afc7f8c1fef11e",
+                "reference": "ba846e77776e61d62128ee2bb7afc7f8c1fef11e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1",
+                "zumba/json-serializer": "*"
+            },
+            "require-dev": {
+                "eslider/spatialite": "*",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Eslider\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andriy Oblivantsev",
+                    "email": "eslider@gmail.com",
+                    "homepage": "https://github.com/eSlider"
+                }
+            ],
+            "description": "Hierarchy key-value data storage manager",
+            "keywords": [
+                "key-value",
+                "no-sql",
+                "sqlite"
+            ],
+            "time": "2016-11-22 13:10:09"
+        },
+        {
+            "name": "mapbender/data-source",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mapbender/data-source.git",
+                "reference": "b749f6de9382b20748fc5f64da3a8b5362112d29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mapbender/data-source/zipball/b749f6de9382b20748fc5f64da3a8b5362112d29",
+                "reference": "b749f6de9382b20748fc5f64da3a8b5362112d29",
+                "shasum": ""
+            },
+            "require": {
+                "phayes/geophp": "1.2",
+                "php": ">=5.3.3",
+                "zumba/json-serializer": "1.x"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^3.7",
+                "symfony/framework-bundle": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Mapbender\\DataSourceBundle": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andriy Oblivantsev",
+                    "email": "andriy.oblivantsev@wheregroup.com"
+                }
+            ],
+            "description": "Mapbender data source handler",
+            "keywords": [
+                "data",
+                "data source",
+                "mapbender"
+            ],
+            "time": "2017-04-08 22:34:06"
+        },
+        {
+            "name": "phayes/geophp",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phayes/geoPHP.git",
+                "reference": "015404e85b602e0df1f91441f8db0f9e98f7e567"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phayes/geoPHP/zipball/015404e85b602e0df1f91441f8db0f9e98f7e567",
+                "reference": "015404e85b602e0df1f91441f8db0f9e98f7e567",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "geoPHP.inc"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2 or New-BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Patrick Hayes"
+                }
+            ],
+            "description": "GeoPHP is a open-source native PHP library for doing geometry operations. It is written entirely in PHP and can therefore run on shared hosts. It can read and write a wide variety of formats: WKT (including EWKT), WKB (including EWKB), GeoJSON, KML, GPX, GeoRSS). It works with all Simple-Feature geometries (Point, LineString, Polygon, GeometryCollection etc.) and can be used to get centroids, bounding-boxes, area, and a wide variety of other useful information.",
+            "homepage": "https://github.com/phayes/geoPHP",
+            "time": "2014-12-02 06:11:22"
+        },
+        {
+            "name": "zumba/json-serializer",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zumba/json-serializer.git",
+                "reference": "61cb3a9458146b2b91e8f7700cee80cad1bf9279"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zumba/json-serializer/zipball/61cb3a9458146b2b91e8f7700cee80cad1bf9279",
+                "reference": "61cb3a9458146b2b91e8f7700cee80cad1bf9279",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "ext-mbstring": "To support unescaped unicode characters in PHP 5.3."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Zumba\\Util": "src/",
+                    "Zumba\\Exception": "src/",
+                    "Zumba\\Util\\Test": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Juan Basso",
+                    "email": "juan.basso@zumba.com"
+                },
+                {
+                    "name": "Zumba Fitness, LLC",
+                    "email": "engineering@zumba.com"
+                }
+            ],
+            "description": "Serialize PHP variables, including objects, in JSON format. Support to unserialize it too.",
+            "homepage": "http://tech.zumba.com",
+            "keywords": [
+                "json",
+                "serialize",
+                "serializer"
+            ],
+            "time": "2014-07-05 20:09:27"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [
+        {
+            "alias": "0.1",
+            "alias_normalized": "0.1.0.0",
+            "version": "9999999-dev",
+            "package": "mapbender/search"
+        }
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "mapbender/search": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3.3"
+    },
+    "platform-dev": []
+}

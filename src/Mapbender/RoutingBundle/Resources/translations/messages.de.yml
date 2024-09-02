@@ -1,0 +1,155 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Es ist ein Fehler aufgetreten
+        noResult: Es konnte keine Route gefunden werden.
+      graphhopper:
+        400: Bei der Anfrage ist ein Fehler aufgetreten (zu wenige oder zu viele Punkte).
+        401: Authentifizierung ist erforderlich! Registrieren Sie sich und erhalten Sie einen gültigen API-Schlüssel unter https://www.graphhopper.com/developers/.
+        413: Zu viele Parameter in der URL, Sie müssen das JSON-Format und POST-Anfragen verwenden.
+        429: Das API-Limit wurde erreicht. Sie erhalten eine E-Mail. Die Header-Eigenschaften geben Ihnen weitere Informationen (siehe Abschnitt 'HTTP-Header').
+        500: Interner Serverfehler. Wir erhalten automatisch eine Benachrichtigung und versuchen dies schnell zu beheben.
+        501: Nur eine spezielle Fahrzeugliste wird unterstützt.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Transportmodus
+          car: Auto
+          bike: Fahrrad
+          foot: Fußgänger
+          start: Start
+          intermediate: Über
+          destination: Ziel
+          clearroute: Zurücksetzen
+          flippoints: Umkehren
+          addintermediate: Punkt hinzufügen
+          getroute: Los!
+      context:
+        btn:
+          start: Start setzen
+          intermediate: Zwischenpunkt setzen
+          destination: Ziel setzen
+      info: benötigen
+    backend:
+      title: Routing
+      description: Streckenführungs-Werkzeug (Routing)
+      sign:
+        -98: Wenden
+        -7: Links halten
+        -3: Scharf links abbiegen
+        -2: Links abbiegen
+        -1: Leicht links abbiegen
+        0: Dem Straßenverlauf folgen
+        1: Leicht rechts abbiegen
+        2: Rechts abbiegen
+        3: Scharf rechts abbiegen
+        7: Rechts halten
+        4: Ziel erreicht
+        5: Zwischenziel erreicht
+        on: auf
+      dialog:
+        input:
+          yes: ja
+          no: nein
+          number: Anzahl
+          nodes: Knoten
+          distance: Distanz
+          duration: Ankunft
+          datasources: Datenquellen
+          weight: Gewicht
+          speed: Geschwindigkeit
+          full: Voll
+          simplified: Vereinfacht
+          default: Standard
+          osrmservice:
+            route: Route
+            nearest: nächste
+            table: Matrix
+            match: übereinstimmen
+            trip: Rundreise
+            tile: Mapbox Vector Tiles
+        label:
+          title: Titel
+          target: Ziel
+          buffer: Zoompuffer (m)
+          autoSubmit: Route direkt ausgeben
+          addIntermediatePoints: Zwischenpunkte erlauben
+          advanced: weitere Einstellungen
+          disableContextMenu: Kontextmenü deaktivieren
+          search: Suche aktivieren
+          reverseGeocoding: Geokodierung aktivieren
+          color: Linienfarbe
+          width: Linienbreite
+          opacity: Liniendeckkraft
+          dateTimeFormat: Zeitformat
+          infoText: Infotext zur Route
+          startImagePath: Pfad Starticon
+          startImageSize: Größe Starticon w, h
+          startImageOffset: Offset Starticon x, y
+          intermediateImagePath: Pfad Zwischenicon
+          intermediateImageSize: Größe Zwischenicon w, h
+          intermediateImageOffset: Offset Zwischenicon x, y
+          destinationImagePath: Pfad Zielicon
+          destinationImageSize: Größe Zielicon w, h
+          destinationImageOffset: Offset Zielicon x, y
+          routingDriver: Routingsoftware
+          chooseOption: Bitte auswählen
+          url: URL
+          instructions: Routingbeschreibung
+          pg:
+            titel: PgRouting
+            connection: DB-Konfigurationsname
+            pgWayTable: Straßen-Tabelle
+            pgWayTableVertices: Straßen-Vertices-Tabelle
+            speed: ∅ Geschw. (km/h)
+          osrm:
+            titel: OSRM
+            service: Services
+            version: API-Version
+            alternatives: Alternativ Route
+            annotations: Anmerkungen
+            overview: Übersicht
+            continueStraight: direkt weitermachen
+          gh:
+            titel: GraphHopper
+            key: API-Schlüssel
+            weighting:
+              title: Gewichtung
+              fastest: Schnellste Strecke
+              shortest: Kürzeste Strecke
+            optimize:
+              label: Punktreihenfolge
+              yes: optimieren
+              no: nicht optimieren
+            elevation: Höheninformationen
+          sh:
+            label: Such-Einstellung
+            shDriver: Suchsoftware
+            shUrl: Such-URL
+            query_key: Suchparameterschlüssel
+            query_ws_replace: Leerzeichenersetzung
+            query_format: Suchformat
+            token_regex: Tokenizer spaltet
+            token_regex_in: Tokenizer sucht
+            token_regex_out: Tokenizer ersetzt
+            collection_path: Attributspfad
+            label_attribute: Attributname
+            geom_attribute: Attributname Geodaten
+            geom_format: Geodatenformat
+            delay: Automatische Vervollständigungs-Verzögerung
+            result_buffer: Zoompuffer (m)
+            result_minscale: Zoompuffer min.
+            result_maxscale: Zoompuffer max.
+            result_icon_url: Symbol-Pfad
+            result_icon_offset: Versatz des Symbols (x,y)
+          reverse:
+            label: Inverse Geokodierung
+            geocodeDriver: Reverse Software
+            connection: DB-Konfigurationsname
+            revTableName: Tabellen Name
+            revRowGeoWay: Geometrie-Spalte
+            revRowSearch: Such-Spalte
+            revRowSearchBuffer: Such-Radius
+        error:
+          buffer: Wert muss Ganzzahl sein

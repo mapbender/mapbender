@@ -1,0 +1,337 @@
+<div class="elementForm defaultForm elementFormMb-Routing">
+    <style>
+        .elementFormMb-Routing label.labelInput {
+            display: block;
+            margin: 0;
+            height: 23px;
+
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            hyphens: auto;
+
+            float: left;
+            width: 140px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <div class="left">
+    </div>
+    <div class="right">
+        {{ form_widget(form.configuration.advanced) }}<label for="{{form.configuration.advanced.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.advanced"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title)}}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
+    <div class="clearContainer"></div>
+    <div class="left">
+        {{ form_widget(form.configuration.autoSubmit) }}<label for="{{form.configuration.autoSubmit.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.autoSubmit"|trans}}</label>
+        <div class="clearContainer"></div>
+        {{ form_widget(form.configuration.addIntermediatePoints) }}<label for="{{form.configuration.addIntermediatePoints.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.addIntermediatePoints"|trans}}</label>
+        <div class="clearContainer"></div>
+        {{ form_widget(form.configuration.disableContextMenu) }}<label for="{{form.configuration.disableContextMenu.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.disableContextMenu"|trans}}</label>
+        <div class="clearContainer"></div>
+    </div>
+    <div class="right">
+        {{ form_widget(form.configuration.addSearch) }}<label for="{{form.configuration.addSearch.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.search"|trans}}</label>
+        <div class="clearContainer"></div>
+        {{ form_widget(form.configuration.addReverseGeocoding) }}<label for="{{form.configuration.addReverseGeocoding.vars.id}}" class="labelCheck">{{"mb.routing.backend.dialog.label.reverseGeocoding"|trans}}</label>
+        <div class="clearContainer"></div>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.buffer) }}{{ form_widget(form.configuration.buffer) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.color) }}{{ form_widget(form.configuration.color) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.width) }}{{ form_widget(form.configuration.width) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.opacity) }}{{ form_widget(form.configuration.opacity) }}
+    <div class="clearContainer"></div>
+    <div class="basic advanced" style="display:none">
+        {{ form_label(form.configuration.infoText) }}{{ form_widget(form.configuration.infoText) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.dateTimeFormat) }}{{ form_widget(form.configuration.dateTimeFormat) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.startImagePath) }}{{ form_widget(form.configuration.startImagePath) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.startImageSize) }}{{ form_widget(form.configuration.startImageSize) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.startImageOffset) }}{{ form_widget(form.configuration.startImageOffset) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.intermediateImagePath) }}{{ form_widget(form.configuration.intermediateImagePath) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.intermediateImageSize) }}{{ form_widget(form.configuration.intermediateImageSize) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.intermediateImageOffset) }}{{ form_widget(form.configuration.intermediateImageOffset) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.destinationImagePath) }}{{ form_widget(form.configuration.destinationImagePath) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.destinationImageSize) }}{{ form_widget(form.configuration.destinationImageSize) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.destinationImageOffset) }}{{ form_widget(form.configuration.destinationImageOffset) }}
+        <div class="clearContainer"></div>
+    </div>
+    <br>
+    {{ form_label(form.configuration.routingDriver) }}{{ form_widget(form.configuration.routingDriver) }}
+    <div class="clearContainer"></div>
+    <div class="graphhopper drivers" style="display:none">
+        {{ form_label(form.configuration.ghUrl) }}{{ form_widget(form.configuration.ghUrl) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.ghTransportationMode) }}{{ form_widget(form.configuration.ghTransportationMode) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.ghKey) }}{{ form_widget(form.configuration.ghKey) }}
+        <div class="clearContainer"></div>
+        <div class="graphhopper advanced" style="display:none">
+            {{ form_label(form.configuration.ghWeighting) }}{{ form_widget(form.configuration.ghWeighting)}}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.ghOptimize) }}{{ form_widget(form.configuration.ghOptimize) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.ghElevation) }}{{ form_widget(form.configuration.ghElevation)}}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.ghInstructions) }}{{ form_widget(form.configuration.ghInstructions) }}
+            <div class="clearContainer"></div>
+        </div>
+    </div>
+    <div class="pgrouting drivers" style="display:none">
+        {{ form_label(form.configuration.connection) }}{{ form_widget(form.configuration.connection) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.pgWayTable) }}{{ form_widget(form.configuration.pgWayTable) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.pgWayTableVertices) }}{{ form_widget(form.configuration.pgWayTableVertices) }}
+        <div class="clearContainer"></div>
+        <div class="pgrouting advanced" style="display:none">
+            {{ form_label(form.configuration.pgWeighting) }}{{ form_widget(form.configuration.pgWeighting) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.pgSpeed) }}{{ form_widget(form.configuration.pgSpeed) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.pgInstructions) }}{{ form_widget(form.configuration.pgInstructions) }}
+            <div class="clearContainer"></div>
+        </div>
+    </div>
+    <div class="osrm drivers" style="display:none">
+        {{ form_label(form.configuration.osrmUrl) }}{{ form_widget(form.configuration.osrmUrl) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.osrmService) }}{{ form_widget(form.configuration.osrmService) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.osrmTransportationMode) }}{{ form_widget(form.configuration.osrmTransportationMode) }}
+        <div class="clearContainer"></div>
+        <div class="osrm advanced" style="display:none">
+            {{ form_label(form.configuration.osrmVersion) }}{{ form_widget(form.configuration.osrmVersion) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.osrmAlternatives) }}{{ form_widget(form.configuration.osrmAlternatives) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.osrmSteps) }}{{ form_widget(form.configuration.osrmSteps) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.osrmAnnotations) }}{{ form_widget(form.configuration.osrmAnnotations) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.osrmOverview) }}{{ form_widget(form.configuration.osrmOverview) }}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.osrmContinueStraight) }}{{ form_widget(form.configuration.osrmContinueStraight) }}
+            <div class="clearContainer"></div>
+        </div>
+    </div>
+    <div class="trias drivers" style="display:none">
+        <p>Currently no driver configuration possible</p>
+    </div>
+    {#Search Drivers#}
+    <div class="search">
+        <br>
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.search.searchDriver) }}{{ form_widget(form.configuration.search.searchDriver) }}
+        {% if form.configuration.search.searchDriver is defined %}
+            <div class="clearContainer"></div>
+            {#{% for searchTag in form.configuration.search %}#}
+            {#{{ form_label(searchTag) }}{{ form_widget(searchTag) }}#}
+            {#{% endfor %}#}
+            <div class="clearContainer"></div>
+            {{ form_label(form.configuration.search.searchUrl) }}{{ form_widget(form.configuration.search.searchUrl) }}
+            <div class="clearContainer"></div>
+            <div class="search advanced" style="display:none">
+                {{ form_label(form.configuration.search.query_key) }}{{ form_widget(form.configuration.search.query_key) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.query_ws_replace) }}{{ form_widget(form.configuration.search.query_ws_replace) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.query_format) }}{{ form_widget(form.configuration.search.query_format) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.token_regex) }}{{ form_widget(form.configuration.search.token_regex) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.token_regex_in) }}{{ form_widget(form.configuration.search.token_regex_in) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.token_regex_out) }}{{ form_widget(form.configuration.search.token_regex_out) }}
+                <div class="clearContainer"></div>
+                {{ form_label(form.configuration.search.collection_path) }}{{ form_widget(form.configuration.search.collection_path) }}
+                {#!! The following values ​​are not evaluated !!#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.label_attribute) }}{{ form_widget(form.configuration.search.label_attribute) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.geom_attribute) }}{{ form_widget(form.configuration.search.geom_attribute) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.geom_format) }}{{ form_widget(form.configuration.search.geom_format) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.result_buffer) }}{{ form_widget(form.configuration.search.result_buffer) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.result_minscale) }}{{ form_widget(form.configuration.search.result_minscale) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.result_maxscale) }}{{ form_widget(form.configuration.search.result_maxscale) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.result_icon_url) }}{{ form_widget(form.configuration.search.result_icon_url) }}#}
+                {#<div class="clearContainer"></div>#}
+                {#{{ form_label(form.configuration.search.result_icon_offset) }}{{ form_widget(form.configuration.search.result_icon_offset) }}   #}
+            </div>
+        {% endif %}
+    </div>
+    <div class="reverseGeocoding" style="display:none">
+        <br>
+        {{ form_label(form.configuration.reverse.revGeocodingDriver) }}{{ form_widget(form.configuration.reverse.revGeocodingDriver) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.reverse.revGeoConnection) }}{{ form_widget(form.configuration.reverse.revGeoConnection) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.reverse.revTableName) }}{{ form_widget(form.configuration.reverse.revTableName) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.reverse.revRowGeoWay) }}{{ form_widget(form.configuration.reverse.revRowGeoWay) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.configuration.reverse.revRowSearch) }}{{ form_widget(form.configuration.reverse.revRowSearch) }}
+        <div class="clearContainer"></div>
+        <div class="reverseGeocoding advanced" style="display:none">
+            {{ form_label(form.configuration.reverse.revSearchBuffer) }}{{ form_widget(form.configuration.reverse.revSearchBuffer) }}
+            <div class="clearContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
+        var value_type_advanced = $('#form_configuration_advanced').is(":checked");
+        var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(":checked");
+        var value_type_search = $('#form_configuration_addSearch').is(":checked");
+        var $drivers = $('.drivers');
+        var $basic = $('.basic.advanced');
+        var $reverseGeocoding = $('.reverseGeocoding');
+        var search = $('.search');
+
+        $drivers.hide();
+        $basic.hide();
+        $reverseGeocoding.hide();
+        search.hide();
+
+        console.log('Driver: '+ value_type_routingDriver);
+        console.log('reverse Geocoding:'+ value_type_reverseGeocoding);
+        console.log('Search:'+ value_type_search);
+
+        if (typeof value_type_routingDriver !== false) {
+            $('.' + value_type_routingDriver).show();
+
+            if( value_type_advanced === false){
+                $('.basic.advanced').hide();
+                $('.' + value_type_routingDriver).children('.advanced').hide();
+            }else{
+                $('.basic.advanced').show();
+                $('.' + value_type_routingDriver).children('.advanced').show();
+            }
+        }
+
+        if ( value_type_search === true) {
+            search.show();
+
+            if( value_type_advanced === false){
+                $(search).children('.advanced').hide();
+            }else{
+                $(search).children('.advanced').show();
+            }
+        }
+
+        if ( value_type_reverseGeocoding === true) {
+            $reverseGeocoding.show();
+        }
+
+        $('#form_configuration_advanced').bind("change", function() {
+            var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
+            var value_type_Search = $('#form_configuration_addSearch').is(":checked");
+            var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(":checked");
+            var value_type_routingDriver_advanced = $('#form_configuration_advanced').is(":checked");
+
+            if (value_type_routingDriver_advanced !== false) {
+                $('.basic.advanced').show();
+                $('.' + value_type_routingDriver).children('.advanced').show();
+            } else {
+                $('.basic.advanced').hide();
+                $('.' + value_type_routingDriver).children('.advanced').hide();
+            }
+
+            if (value_type_Search !== false) {
+                $('.search').children('.advanced').show();
+            } else {
+                $('.search').children('.advanced').hide();
+            }
+
+            if (value_type_reverseGeocoding !== false) {
+                $('.reverseGeocoding').children('.advanced').show();
+            } else {
+                $('.reverseGeocoding').children('.advanced').hide();
+            }
+
+        });
+
+        $('#form_configuration_routingDriver').bind("change", function() {
+            var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
+            var value_type_routingDriver_advanced = $('#form_configuration_advanced').is(":checked");
+            var $drivers = $('.drivers');
+            var $basic = $('.basic.advanced');
+            $drivers.hide();
+            $basic.hide();
+
+            if (typeof value_type_routingDriver !== false) {
+                $('.' + value_type_routingDriver).show();
+
+                if( value_type_routingDriver_advanced === false){
+                    $('.' + value_type_routingDriver).children('.advanced').hide();
+                    $('.basic.advanced').hide();
+                }
+            }
+        });
+
+        $('#form_configuration_addReverseGeocoding').bind("change", function() {
+            var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(":checked");
+            var $reverseGeocoding = $('.reverseGeocoding');
+
+            if (value_type_reverseGeocoding === true) {
+                $reverseGeocoding.show();
+
+                if( value_type_advanced === false){
+                    $($reverseGeocoding).children('.advanced').hide();
+                }else{
+                    $($reverseGeocoding).children('.advanced').show();
+                }
+
+            }else {
+                $reverseGeocoding.hide();
+            }
+
+        });
+
+        $('#form_configuration_addSearch').bind("change", function() {
+            var value_type_Search = $('#form_configuration_addSearch').is(":checked");
+            var search = $('.search');
+
+            if (value_type_Search === true) {
+                search.show();
+
+                if( value_type_advanced === false){
+                    $(search).children('.advanced').hide();
+                }else{
+                    $(search).children('.advanced').show();
+                }
+
+            }else {
+                search.hide();
+            }
+
+        });
+    });
+</script>

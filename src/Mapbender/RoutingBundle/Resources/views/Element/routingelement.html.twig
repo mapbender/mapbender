@@ -1,0 +1,99 @@
+<div id="{{ id }}" class="mb-element mb-element-routingelement">
+    {% block transportation_modes %}
+    <div class="mb-routing-transportation-mode">
+            {% if transportationModes is not defined or transportationModes|length == 0 %}
+                <div class="transportation-mode-box-input">
+                </div>
+            {% else %}
+                <ul class="transportation-mode-box-input"
+                    {% if transportationModes|length == 1 %}
+                        style="display:none"
+                    {% endif %}>
+                    {% for transportationMode in transportationModes %}
+                        <li class="mb-routing-transportation-mode-box-content">
+                            <input type="radio"
+                                   name="vehicle"
+                                   value="{{ transportationMode }}"
+                                   id="{{ transportationMode }}"
+                                   checked/>
+                            <label class="button mb-routing-icon" for="{{ transportationMode }}">
+                                <span class="routing-icon-{{ transportationMode }}"></span>
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    </div>
+    <div class="clear"></div>
+    {% endblock transportation_modes %}
+    {% block point_inputs %}
+    <form class="ui-sortable mb-routing-location-points">
+        <div class="input-wrapper start" id="0-mb-routing-wrapper">
+            <label for="startPoint" class="input-icon">
+                <span class="iconGps"></span>
+            </label>
+            <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.start"|trans }}"/>
+            <span class="iconCancel"></span>
+            <span class="clear"></span>
+        </div>
+        <div class="input-wrapper destination" id="1-mb-routing-wrapper">
+            <label for="destinationPoint" class="input-icon">
+                <span class="iconGps"></span>
+            </label>
+            <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.destination"|trans }}"/>
+            <span class="iconCancel"></span>
+            <span class="clear"></span>
+        </div>
+    </form>
+    <div class="input-wrapper intermediate wrapper-clone" style="display:none">
+        <label for="intermediatePoint" class="input-icon">
+            <span class="iconGps"></span>
+        </label>
+        <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.intermediate"|trans }}"/>
+        <span class="iconCancel"></span>
+        <span class="clear"></span>
+    </div>
+    {% endblock point_inputs %}
+    {% block button_inputs %}
+    <div class="mb-element right">
+        <button
+                type="button"
+                class="button critical mb-routing-icon"
+                name="clearRoute"
+                title="{{ "mb.routing.frontend.dialog.label.clearroute"|trans }}">
+            <span class="routing-icon-reset"></span>
+        </button>
+        <button
+                type="button"
+                class="button mb-routing-icon"
+                name="flipPoints"
+                title="{{ "mb.routing.frontend.dialog.label.flippoints"|trans }}">
+            <span class="routing-icon-swap"></span>
+        </button>
+        {% if addIntermediatePoints %}
+            <button
+                    type="button"
+                    class="button mb-routing-icon"
+                    name="addPoint"
+                    title="{{ "mb.routing.frontend.dialog.label.addintermediate"|trans }}">
+                <span class="routing-icon-add-point"></span>
+            </button>
+        {% endif %}
+        <button
+                type="button"
+                class="button mb-routing-icon"
+                name="getRoute"
+                title="{{ "mb.routing.frontend.dialog.label.getroute"|trans }}">
+            <span class="routing-icon-start-routing"></span>
+        </button>
+    </div>
+    <div class="clear"></div>
+    {% endblock button_inputs %}
+    {% block routing_results %}
+    <div class="mb-routing-results">
+        <div class="mb-routing-info" style="display: none;"></div>
+        <div class="mb-routing-instructions"> </div>
+    </div>
+    <div class="mb-routing-error"></div>
+    {% endblock routing_results %}
+</div>
