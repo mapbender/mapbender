@@ -88,7 +88,7 @@
                     <i class="fas fa-key"></i>
                 </span>
                 <span class="-fn-delete hover-highlight-effect"
-                      title="{{ 'mb.actions.delete' | trans }}"
+                      title="{{"mb.manager.admin.element.delete.title"|trans}} {{ element_title(element) | trans }}"
                       data-slug="{{ application.slug }}"
                       data-token="{{ csrf_token('element_delete') }}"
                       data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
