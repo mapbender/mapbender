@@ -51,6 +51,8 @@ mb:
         add: Yeni bir öğe oluştur
         show_hide: Geçiş gösterme/gizleme öğesi
         no_element_added: Öğe eklenmedi
+        delete:
+          title: Öğeyi sil
       zoombar:
         draggable: Sürüklenebilir
       overview:
