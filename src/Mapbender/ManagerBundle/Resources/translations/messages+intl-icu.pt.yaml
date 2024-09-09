@@ -112,6 +112,8 @@ mb:
         add: 'Adicionar elemento'
         show_hide: 'ativo/inativo'
         no_element_added: 'Nenhum elemento adicionado'
+        delete:
+          title: 'Excluir elemento'
         anchor:
           label: 'Posição'
           left-top: 'Superior esquerdo'

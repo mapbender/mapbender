@@ -112,6 +112,8 @@ mb:
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
         no_element_added: 'Nessun elemento aggiunto'
+        delete:
+          title: 'Elimina elemento'
         anchor:
           label: 'Posizione'
           left-top: 'In alto a sinistra'

@@ -109,6 +109,8 @@ mb:
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
         no_element_added: 'Элемент не добавлен'
+        delete:
+          title: 'Удалить элемент'
         anchor:
           label: 'Позиция'
           left-top: 'Вверху слева'

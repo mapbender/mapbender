@@ -51,6 +51,8 @@ mb:
         add: Voeg een nieuw element toe
         show_hide: Wissel toon/verberg element
         no_element_added: Geen element toegevoegd
+        delete:
+          title: Element verwijderen
       zoombar:
         draggable: Versleepbaar
       overview:
