@@ -29,11 +29,21 @@
   {% endblock %}
 {%- endif -%}
 
+<div class="row">
+    <div class="col-xs-6 col-6">
+        {%- if application.layersets -%}
+            {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'all-regions'} %}
+        {%- endif -%}
+    </div>
+</div>
+
+<ul id="all-regions">
 {% for region in regions %}
+    <li class="filterItem">
   <div class="{{region}} region">
       <table class="application-component-table table table-condensed elementsTable" data-region="{{ region }}">
         <thead>
-          <tr>
+          <tr class='doNotFilter'>
             <th colspan="1">
               <h3 class="subTitle">{{ application_region_title(application, region) | trans }}</h3>
             </th>
@@ -43,7 +53,7 @@
               {% endif %}
             </th>
           </tr>
-          <tr>
+          <tr class='doNotFilter'>
             <th class="titleColumn">{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="typeColumn">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
@@ -103,4 +113,6 @@
         </tbody>
       </table>
     </div>
+    </li>
   {% endfor %}
+</ul>

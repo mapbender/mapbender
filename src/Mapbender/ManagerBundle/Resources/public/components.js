@@ -38,9 +38,22 @@ $(function() {
                 var $item = $(this);
                 var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
                 $item.toggle(containsInput);
+
+                var $itemRows = $item.find('tr');
+                $.each($itemRows, function() {
+                    var $row = $(this);
+                    var rowContainsInput = $row.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                    if(rowContainsInput) {
+                        $row.find('td').addClass('bg-warning-subtle');
+                    } else {
+                        $row.find('td').removeClass('bg-warning-subtle');
+                    }
+                });
+
             });
         }else{
             items.show();
+            items.find('tr').find('td').removeClass('bg-warning-subtle');
         }
     });
 
