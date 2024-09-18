@@ -1,7 +1,10 @@
 <table class="table">
   <thead>
     <tr>
-      <th>{{ "fom.user.permissions.index.name" | trans }}</th>
+      <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+          {{ "fom.user.permissions.index.name" | trans }}
+          <span class="fas fa-arrow-up" style="display: none"></span>
+      </th>
       <th></th>
     </tr>
   </thead>

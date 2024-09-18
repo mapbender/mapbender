@@ -2,10 +2,19 @@
     <table class="table">
     <thead>
       <tr>
-        <th>{{ "fom.user.user.index.name" | trans }}</th>
-        <th>{{ "fom.user.user.index.email" | trans }}</th>
+        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+            {{'fom.user.user.index.name'|trans }}
+            <span class="fas fa-arrow-up" style="display: none"></span>
+        </th>
+        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+            {{'fom.user.user.index.email'|trans}}
+            <span class="fas fa-arrow-up" style="display: none"></span>
+        </th>
         {% if show_groups %}
-        <th>{{ "fom.user.user.index.groups" | trans }}</th>
+        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+            {{'fom.user.user.index.groups'|trans}}
+            <span class="fas fa-arrow-up" style="display: none"></span>
+        </th>
         {% endif %}
         <th></th>
       </tr>
