@@ -1,26 +1,24 @@
 window.Mapbender = Mapbender || {};
-window.Mapbender.WmsSourceLayer = (function () {
-    function WmsSourceLayer() {
-        Mapbender.SourceLayer.apply(this, arguments);
-    }
 
-    Mapbender.SourceLayer.typeMap['wms'] = WmsSourceLayer;
-    WmsSourceLayer.prototype = Object.create(Mapbender.SourceLayer.prototype);
-    Object.assign(WmsSourceLayer.prototype, {
-        constructor: WmsSourceLayer,
-        getId: function () {
+(function () {
+    Mapbender.WmsSourceLayer = class WmsSourceLayer extends Mapbender.SourceLayer {
+        getId() {
             return this.options.id;
-        },
-        getName: function () {
+        }
+
+        getName() {
             return this.options.name;
-        },
-        getSelected: function () {
+        }
+
+        getSelected() {
             return this.options.treeOptions.selected;
-        },
-        setSelected: function (state) {
+        }
+
+        setSelected(state) {
             this.options.treeOptions.selected = !!state;
-        },
-        getSelectedList: function () {
+        }
+
+        getSelectedList() {
             var selectedLayers = [];
             if (this.getSelected()) {
                 selectedLayers.push(this);
@@ -29,8 +27,9 @@ window.Mapbender.WmsSourceLayer = (function () {
                 selectedLayers = selectedLayers.concat(this.children[i].getSelectedList());
             }
             return selectedLayers;
-        },
-        isInScale: function (scale) {
+        }
+
+        isInScale(scale) {
             // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
             //       equivalently
             var min = this.options.minScale;
@@ -40,8 +39,9 @@ window.Mapbender.WmsSourceLayer = (function () {
             } else {
                 return !(max && max < scale);
             }
-        },
-        intersectsExtent: function (extent, srsName) {
+        }
+
+        intersectsExtent(extent, srsName) {
             var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
                 // unlimited layer extent
@@ -55,60 +55,58 @@ window.Mapbender.WmsSourceLayer = (function () {
             }
             return Mapbender.Util.extentsIntersect(extent_, layerExtent);
         }
-    });
-    return WmsSourceLayer;
-}());
-window.Mapbender.WmsSource = (function () {
-    // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
-    function WmsSource(definition) {
-        Mapbender.Source.apply(this, arguments);
-        var customParams = {};
-        if (definition.customParams) {
-            $.extend(this.customParams, definition.customParams);
-        }
-        (definition.configuration.options.dimensions || []).map(function (dimensionConfig) {
-            if (dimensionConfig.default) {
-                customParams[dimensionConfig.__name] = dimensionConfig.default;
-            }
-        });
-        this.customParams = customParams;
     }
 
-    WmsSource.prototype = Object.create(Mapbender.Source.prototype);
-    WmsSource.prototype.constructor = WmsSource;
-    Mapbender.Source.typeMap['wms'] = WmsSource;
-    Object.assign(WmsSource.prototype, {
-        // We must remember custom params for serialization in getMapState()...
-        customParams: {},
-        // ... but we will not remember the following ~standard WMS params the same way
-        _runtimeParams: ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'],
+    // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
+    Mapbender.WmsSource = class WmsSource extends Mapbender.Source {
+        constructor(definition) {
+            super(definition);
+            var customParams = {};
+            if (definition.customParams) {
+                $.extend(this.customParams, definition.customParams);
+            }
+            (definition.configuration.options.dimensions || []).map(function (dimensionConfig) {
+                if (dimensionConfig.default) {
+                    customParams[dimensionConfig.__name] = dimensionConfig.default;
+                }
+            });
+
+            // We must remember custom params for serialization in getMapState()...
+            this.customParams = customParams;
+
+            // ... but we will not remember the following ~standard WMS params the same way
+            this._runtimeParams = ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'];
+        }
+
         /**
          * @param {String} srsName
          * @param {Object} [mapOptions]
          * @return {Array<Object>}
          */
-        createNativeLayers: function (srsName, mapOptions) {
+        createNativeLayers(srsName, mapOptions) {
             return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
-        },
+        }
+
         /**
          * @return {SourceSettings}
          */
-        getSettings: function () {
+        getSettings() {
             const selectedLayers = this.configuration.children[0].getSelectedList().map(function (layer) {
                 return {
                     id: layer.getId(),
                     name: layer.getName(),
                 };
             });
-            return Object.assign(Mapbender.Source.prototype.getSettings.call(this), {
+            return Object.assign(super.getSettings(this), {
                 selectedLayers: selectedLayers
             });
-        },
+        }
+
         /**
          * @param {SourceSettingsDiff|null} diff
          */
-        applySettingsDiff: function (diff) {
-            Mapbender.Source.prototype.applySettingsDiff.call(this, diff);
+        applySettingsDiff(diff) {
+            super.applySettingsDiff(diff);
 
             const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
             if (!isDiffValid) return;
@@ -121,19 +119,21 @@ window.Mapbender.WmsSource = (function () {
                     if (diff.deactivate[index].id === layer.getId()) layer.setSelected(false);
                 }
             }.bind(this));
-        },
+        }
 
-        getSelected: function () {
+        getSelected() {
             // delegate to root layer
             return this.configuration.children[0].getSelected();
-        },
-        refresh: function () {
+        }
+
+        refresh() {
             var cacheBreakParams = {
                 _OLSALT: Math.random()
             };
             this.addParams(cacheBreakParams);
-        },
-        addParams: function (params) {
+        }
+
+        addParams(params) {
             for (var i = 0; i < this.nativeLayers.length; ++i) {
                 Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
             }
@@ -141,8 +141,9 @@ window.Mapbender.WmsSource = (function () {
             $.extend(this.customParams, Mapbender.Util.filter(params, function (value, key) {
                 return rtp.indexOf(('' + key).toUpperCase()) === -1;
             }));
-        },
-        removeParams: function (names) {
+        }
+
+        removeParams(names) {
             // setting a param to null effectively removes it from the generated URL
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Util.js#L514
             // see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Layer/HTTPRequest.js#L197
@@ -152,13 +153,15 @@ window.Mapbender.WmsSource = (function () {
                 mapOfNamesToRemove[name] = null;
             })
             this.addParams(mapOfNamesToRemove);
-        },
-        toJSON: function () {
-            var s = Mapbender.Source.prototype.toJSON.apply(this, arguments);
+        }
+
+        toJSON() {
+            var s = super.toJSON(arguments);
             s.customParams = this.customParams;
             return s;
-        },
-        updateEngine: function () {
+        }
+
+        updateEngine() {
             var layers = [], styles = [];
             Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (layer) {
                 // Layer names can be emptyish, most commonly on root layers
@@ -206,11 +209,12 @@ window.Mapbender.WmsSource = (function () {
                 engine.applyWmsParams(olLayer, newParams);
                 engine.setLayerVisibility(olLayer, true);
             }
-        },
+        }
+
         /**
          * @return {Array<WmsSourceLayer>}
          */
-        getFeatureInfoLayers: function () {
+        getFeatureInfoLayers() {
             var layers = [];
             Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (layer) {
                 // Layer names can be emptyish, most commonly on root layers
@@ -220,12 +224,13 @@ window.Mapbender.WmsSource = (function () {
                 }
             });
             return layers;
-        },
+        }
+
         /**
          * Overview support hack: get names of all 'selected' leaf layers (c.f. instance backend),
          * disregarding 'allowed', disregarding 'state', not recalculating out of scale / out of bounds etc.
          */
-        getActivatedLeaves: function () {
+        getActivatedLeaves() {
             var layers = [];
             Mapbender.Util.SourceTree.iterateSourceLeaves(this, false, function (node, index, parents) {
                 var selected = node.options.treeOptions.selected;
@@ -237,8 +242,9 @@ window.Mapbender.WmsSource = (function () {
                 }
             });
             return layers;
-        },
-        hasVisibleLayers: function (srsName) {
+        }
+
+        hasVisibleLayers(srsName) {
             var activatedLayers = this.getActivatedLeaves();
             var nonEmptyLayerNames = activatedLayers.map(function (sourceLayer) {
                 return sourceLayer.options.name;
@@ -246,14 +252,15 @@ window.Mapbender.WmsSource = (function () {
                 return !!layerName;
             });
             return !!nonEmptyLayerNames.length;
-        },
+        }
+
         /**
          * Build base params (no SRS / CRS / BBOX considerations) for GetMap
          * request.
          *
          * @return Object<String, (String | (Array<String>))
          */
-        getGetMapRequestBaseParams: function () {
+        getGetMapRequestBaseParams() {
             var params = {
                 LAYERS: [],
                 STYLES: [],
@@ -272,21 +279,23 @@ window.Mapbender.WmsSource = (function () {
                 }
             }
             return params;
-        },
-        _isBboxFlipped: function (srsName) {
+        }
+
+        _isBboxFlipped(srsName) {
             if (this.configuration.options.version === '1.3.0') {
                 return Mapbender.mapEngine.isProjectionAxisFlipped(srsName);
             } else {
                 return false;
             }
-        },
+        }
+
         /**
          * @param {*} bounds
          * @param {Number} scale
          * @param {String} srsName
          * @return {Array<Object>}
          */
-        getPrintConfigs: function (bounds, scale, srsName) {
+        getPrintConfigs(bounds, scale, srsName) {
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName, true);
             var extraParams = {
                 REQUEST: 'GetMap',          // required for tunnel resolution
@@ -301,7 +310,7 @@ window.Mapbender.WmsSource = (function () {
             var commonOptions = Object.assign({}, this._getPrintBaseOptions(), {
                 changeAxis: this._isBboxFlipped(srsName)
             });
-            for(const item of Object.values(leafInfoMap)) {
+            for (const item of Object.values(leafInfoMap)) {
                 if (item.state.visibility) {
                     var replaceParams = Object.assign({}, extraParams, {
                         LAYERS: item.layer.options.name,
@@ -320,6 +329,9 @@ window.Mapbender.WmsSource = (function () {
                 return a.order - b.order;
             });
         }
-    });
-    return WmsSource;
+    }
+
+    Mapbender.Source.typeMap['wms'] = Mapbender.WmsSource;
+    Mapbender.SourceLayer.typeMap['wms'] = Mapbender.WmsSourceLayer;
+
 }());
