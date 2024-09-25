@@ -79,7 +79,8 @@ window.Mapbender = Mapbender || {};
         }
 
         createNativeLayers(srsName, mapOptions) {
-            return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
+            this.nativeLayers = [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
+            return this.nativeLayers;
         }
 
         /**

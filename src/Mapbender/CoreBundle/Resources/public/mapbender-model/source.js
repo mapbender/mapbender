@@ -206,7 +206,7 @@ window.Mapbender = Mapbender || {};
         }
 
         /**
-         * Creates the native OpenLayers layers required for this source
+         * Creates the native OpenLayers layers required for this source and stores them in the class variable nativeLayers
          * @abstract
          * @param {String} srsName
          * @param {Object} [mapOptions]

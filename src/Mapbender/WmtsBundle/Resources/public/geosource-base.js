@@ -98,7 +98,7 @@ window.Mapbender = Mapbender || {};
             const rootLayer = this.configuration.children[0];
             rootLayer.children = allLayers;
 
-            return allLayers.map((layerDef) => {
+            this.nativeLayers = allLayers.map((layerDef) => {
                 layerDef.state.visibility = this._isCompatible(layerDef, srsName) && layerDef.options.treeOptions.selected;
                 try {
                     return this._layerFactory(layerDef, srsName);
@@ -108,6 +108,7 @@ window.Mapbender = Mapbender || {};
                     })
                 }
             });
+            return this.nativeLayers;
         }
 
         updateEngine() {
