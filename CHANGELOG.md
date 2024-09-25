@@ -1,5 +1,5 @@
-## next bugfix release
-Bugfixes:
+## v4.0.2
+Bugfix:
 * Fix ajax requests fail in YAML applications (regression introduced in 4.0.1) ([#1628](https://github.com/mapbender/mapbender/issues/1628), [PR#1634](https://github.com/mapbender/mapbender/pull/1634))
 
 
