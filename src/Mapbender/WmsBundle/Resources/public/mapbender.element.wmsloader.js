@@ -193,7 +193,7 @@
                 sourceDef.id = sourceId;
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
-                sourceDef.wmsloader = true;
+                sourceDef.isDynamicSource = true;
                 this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);

@@ -22,9 +22,23 @@ window.Mapbender = Mapbender || {};
 (function () {
     Mapbender.LayerGroup = class LayerGroup {
         constructor(title, parent) {
+            /**
+             * @type string
+             * @private
+             */
             this.title_ = title;
+            /**
+             * @type {null|Mapbender.LayerGroup}
+             */
             this.parent = parent || null;
+            /**
+             *
+             * @type {Mapbender.LayerGroup[]}
+             */
             this.children = [];
+            /**
+             * @type {Mapbender.LayerGroup[]}
+             */
             this.siblings = [this];
         }
 
@@ -32,9 +46,14 @@ window.Mapbender = Mapbender || {};
             return this.title_;
         }
 
+        /**
+         * returnes whether this layergroup and all its parents are selected
+         * @see getSelected
+         * @returns {Boolean}
+         */
         getActive() {
-            var active = this.getSelected();
-            var parent = this.parent;
+            let active = this.getSelected();
+            let parent = this.parent;
             while (parent && active) {
                 active = active && parent.getSelected();
                 parent = parent.parent;
@@ -43,6 +62,8 @@ window.Mapbender = Mapbender || {};
         }
 
         /**
+         * returns whether this layer is currently selected.
+         * @see getActive
          * @return Boolean
          * @abstract
          */
@@ -50,9 +71,13 @@ window.Mapbender = Mapbender || {};
             throw new Error("Invoked abstract LayerGroup.getSelected");
         }
 
+        /**
+         * removes the given child layer from this LayerGroup
+         * @param {Mapbender.LayerGroup} child
+         */
         removeChild(child) {
             [this.children, this.siblings].forEach(function (list) {
-                var index = list.indexOf(child);
+                const index = list.indexOf(child);
                 if (-1 !== index) {
                     list.splice(index, 1);
                 }
@@ -60,10 +85,19 @@ window.Mapbender = Mapbender || {};
         }
     }
 
+    /**
+     * The most basic LayerGroup definition that is shown in the layer tree but does not display anything itself
+     */
     Mapbender.Layerset = class Layerset extends Mapbender.LayerGroup {
         constructor(title, id, selected) {
             super(title, null);
+            /**
+             * @type {string|number}
+             */
             this.id = id;
+            /**
+             * @type Boolean
+             */
             this.selected = selected;
         }
 
@@ -85,58 +119,98 @@ window.Mapbender = Mapbender || {};
             };
         }
 
+        /**
+         * Changes all given layer settings
+         * @see getSettings
+         * @param {{selected?: Boolean}} settings
+         * @returns {boolean} true if at least one attribute has been changed
+         */
         applySettings(settings) {
-            var dirty = settings.selected !== this.selected;
-            this.setSelected(settings.selected);
+            let dirty = false;
+            if ("selected" in settings) {
+                dirty = settings.selected !== this.selected;
+                this.setSelected(settings.selected);
+            }
             return dirty;
         }
     }
 
     /**
+     * A source represents a layer that is displayed on the map. WmsSource, WmtsSource, GeoJsonSource etc. extend
+     * from this base class
      * @abstract
      */
     Mapbender.Source = class Source extends Mapbender.LayerGroup {
         constructor(definition) {
             super(definition.title, null);
 
+            /**
+             * A unique identifier for this source
+             * @type {null|string}
+             */
             this.id = null;
-            this.title = null;
-            this.type = null;
-            this.configuration = {};
-            this.nativeLayers = [];
-            this.recreateOnSrsSwitch = false;
-            this.wmsloader = false;
-
             if (definition.id || definition.id === 0) {
                 this.id = '' + definition.id;
             }
-            this.type = definition.type;
-            this.configuration = definition.configuration;
-            this.wmsloader = definition.wmsloader;
-            var sourceArg = this;
-            this.configuration.children = (this.configuration.children || []).map(function (childDef) {
-                return Mapbender.SourceLayer.factory(childDef, sourceArg, null)
-            });
+
+            /**
+             * The native OpenLayers layers
+             * @see createNativeLayers
+             * @see getNativeLayers
+             * @type {ol.Layer[]}
+             */
+            this.nativeLayers = [];
+
+            /**
+             * Indicates whether this source has been added by the user during runtime, e.g. by using the WMSLoader
+             * dynamic sources are removed when the view is reset
+             * @type {boolean}
+             */
+            this.isDynamicSource = false;
+            if ("isDynamicSource" in definition) this.isDynamicSource = definition.isDynamicSource;
+
+            /**
+             * a unique identifier for the type of source, e.g. 'wms' or 'geojson'
+             * @type {string}
+             */
+            this.type = definition.type || 'undefined';
+
+            /**
+             * Configuration options for this source, keys depend on the source type
+             * @type {object}
+             */
+            this.configuration = definition.configuration || {};
+            this.configuration.children = (this.configuration.children || []).map(childDef => Mapbender.SourceLayer.factory(childDef, this, null));
+
             this.children = this.configuration.children;
             this.configuredSettings_ = this.getSettings();
+
+            /**
+             * the (optional) layerset this source is assigned to
+             * @type {null|Mapbender.Layerset}
+             */
+            this.layerset = null;
         }
 
         /**
-         * @param {*} definition
+         * Creates a new source instance
+         * @param {*} definition object containing at least the attribute 'type'
          * @returns {Mapbender.Source}
          */
         static factory(definition) {
             var typeClass = Source.typeMap[definition.type];
             if (!typeClass) {
-                typeClass = Source;
+                typeClass = Mapbender.Source;
             }
             return new typeClass(definition);
         }
 
         /**
+         * Creates the native OpenLayers layers required for this source
+         * @abstract
          * @param {String} srsName
          * @param {Object} [mapOptions]
-         * @return {Array<Object>}
+         * @return {ol.Layer[]}
          */
         createNativeLayers(srsName, mapOptions) {
             console.error("Layer creation not implemented", this);
@@ -144,21 +218,31 @@ window.Mapbender = Mapbender || {};
         }
 
         /**
-         * @param {String} srsName
-         * @param {Object} [mapOptions]
-         * @return {Array<Object>}
+         * Layer state has changed, e.g. layers have been reordered, deselected etc. Refresh the view in the native layers.
+         * @abstract
          */
-        initializeLayers(srsName, mapOptions) {
-            this.nativeLayers = this.createNativeLayers(srsName, mapOptions);
-            return this.nativeLayers;
+        updateEngine() {
+            console.error("Update engine not implemented", this);
+            throw new Error("Update engine not implemented");
+        }
+
+        /**
+         * @returns {ol.Layer[]}
+         */
+        getNativeLayers() {
+            return this.nativeLayers.slice();
         }
 
         getActive() {
-            var upstream = Mapbender.LayerGroup.prototype.getActive.call(this);
-            // NOTE: (only) WmsLoader sources don't have a layerset
+            const upstream = super.getActive();
+            // NOTE: some sources like e.g. WmsLoader sources don't have a layerset
             return upstream && (!this.layerset || this.layerset.getSelected());
         }
 
+        /**
+         * destroys all currently assigned native layers
+         * @param {ol.Map} olMap
+         */
         destroyLayers(olMap) {
             if (this.nativeLayers && this.nativeLayers.length) {
                 this.nativeLayers.map(function (olLayer) {
@@ -166,10 +250,6 @@ window.Mapbender = Mapbender || {};
                 });
             }
             this.nativeLayers = [];
-        }
-
-        getNativeLayers() {
-            return this.nativeLayers.slice();
         }
 
         getSettings() {
@@ -183,11 +263,19 @@ window.Mapbender = Mapbender || {};
         }
 
         /**
+         * Returns all layers that support feature info
+         * @return {Array<Mapbender.SourceLayer>}
+         */
+        getFeatureInfoLayers() {
+            return [];
+        }
+
+        /**
          * @param {SourceSettings} settings
-         * @return {boolean}
+         * @return {boolean} true if at least one setting has been changed
          */
         applySettings(settings) {
-            var diff = this.diffSettings(this.getSettings(), settings);
+            const diff = this.diffSettings(this.getSettings(), settings);
             if (diff) {
                 this.applySettingsDiff(diff);
                 return true;
@@ -272,13 +360,25 @@ window.Mapbender = Mapbender || {};
             return settings;
         }
 
+        /**
+         * indicates whether this source should be recreated when a srs change occurs
+         * @param {string} oldProj
+         * @param {string} newProj
+         * @returns {boolean}
+         */
         checkRecreateOnSrsSwitch(oldProj, newProj) {
-            return this.recreateOnSrsSwitch;
+            return false;
         }
 
+        /**
+         * Gets the native OpenLayers layer of the specified index
+         * @see createNativeLayers
+         * @param {number|undefined} index
+         * @returns {ol.Layer|null}
+         */
         getNativeLayer(index) {
-            var layer = this.nativeLayers[index || 0] || null;
-            var c = this.nativeLayers.length;
+            const layer = this.nativeLayers[index || 0] || null;
+            const c = this.nativeLayers.length;
             if (typeof index === 'undefined' && c !== 1) {
                 console.warn("Mapbender.Source.getNativeLayer called on a source with flexible layer count; currently " + c + " native layers");
             }
@@ -290,7 +390,7 @@ window.Mapbender = Mapbender || {};
          * @return {SourceLayer}
          */
         getLayerById(id) {
-            var foundLayer = null;
+            let foundLayer = null;
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (sourceLayer) {
                 if ((sourceLayer.options?.id ?? sourceLayer.id) === id) {
                     foundLayer = sourceLayer;
@@ -301,33 +401,22 @@ window.Mapbender = Mapbender || {};
             return foundLayer;
         }
 
+        /**
+         * @returns {Mapbender.SourceLayer}
+         */
         getRootLayer() {
             return this.configuration.children[0];
         }
 
-        _reduceBboxMap(bboxMap, projCode) {
-            if (bboxMap && Object.keys(bboxMap).length) {
-                if (projCode) {
-                    if (bboxMap[projCode]) {
-                        var reduced = {};
-                        reduced[projCode] = bboxMap[projCode];
-                        return reduced;
-                    }
-                    return null;
-                }
-                return bboxMap;
-            }
-            return null;
-        }
-
+        /**
+         * @param {number|undefined} layerId
+         * @param {string} projCode
+         * @param {boolean} inheritFromParent
+         * @returns {number[]|boolean} false if bounds could not be calculated
+         */
         getLayerBounds(layerId, projCode, inheritFromParent) {
-            var layer;
-            if (layerId) {
-                layer = this.getLayerById(layerId);
-            } else {
-                // root layer
-                layer = this.configuration.children[0];
-            }
+            const layer = layerId ? this.getLayerById(layerId) : this.configuration.children[0];
+
             if (!layer) {
                 console.warn("No layer, unable to calculate bounds");
                 return false;
@@ -335,6 +424,9 @@ window.Mapbender = Mapbender || {};
             return layer.getBounds(projCode, inheritFromParent) || null;
         }
 
+        /**
+         * @param {number} value between 0 and 1
+         */
         setOpacity(value) {
             this.configuration.options.opacity = value;
             this.nativeLayers.map(function (layer) {
@@ -350,13 +442,26 @@ window.Mapbender = Mapbender || {};
             return {
                 type: this.configuration.type,
                 sourceId: this.id,
-                // @todo: use live native layer opacity?
                 opacity: this.configuration.options.opacity
             };
         }
 
-        // Custom toJSON for mbMap.getMapState()
-        // Drops nativeLayers to avoid circular references
+        /**
+         * Returns information that is passed to the printing service when printing or exporting a map
+         * @param {Number[]} bounds
+         * @param {Number} scale
+         * @param {String} srsName
+         * @return {Array<Object>}
+         */
+        getPrintConfigs(bounds, scale, srsName) {
+            return [];
+        }
+
+        /**
+         * Custom toJSON for mbMap.getMapState()
+         * Drops nativeLayers to avoid circular references
+         * @returns {{configuration: Object, id: (string|null), title, type: string}}
+         */
         toJSON() {
             return {
                 id: this.id,
@@ -366,6 +471,7 @@ window.Mapbender = Mapbender || {};
             };
         }
     }
+
 
     /**
      * @abstract
@@ -390,7 +496,7 @@ window.Mapbender = Mapbender || {};
         static factory(definition, source, parent) {
             var typeClass = SourceLayer.typeMap[source.type];
             if (!typeClass) {
-                typeClass = SourceLayer;
+                typeClass = Mapbender.SourceLayer;
             }
             return new typeClass(definition, source, parent);
         }

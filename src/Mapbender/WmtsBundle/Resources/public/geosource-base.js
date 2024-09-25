@@ -46,7 +46,6 @@ window.Mapbender = Mapbender || {};
         constructor(definition) {
             super(definition);
             var sourceArg = this;
-            this.recreateOnSrsSwitch = true;
             this.configuration.layers = (this.configuration.children[0].children || []).map((layerDef) => {
                 return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.configuration.children[0]);
             });
@@ -94,11 +93,6 @@ window.Mapbender = Mapbender || {};
             return rootLayer && rootLayer.options.treeOptions.selected || false;
         }
 
-        /**
-         * @param {String} srsName
-         * @param {Object} [mapOptions]
-         * @return {Array<Object>}
-         */
         createNativeLayers(srsName, mapOptions) {
             const allLayers = this._getAllLayers();
             const rootLayer = this.configuration.children[0];
@@ -155,11 +149,6 @@ window.Mapbender = Mapbender || {};
 
         _isCompatible(layer, projectionCode) {
             return (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected) && layer.selectMatrixSet(projectionCode);
-        }
-
-        getFeatureInfoLayers() {
-            console.warn("getFeatureInfoLayers not implemented for TMS / WMTS sources");
-            return [];
         }
 
         /**

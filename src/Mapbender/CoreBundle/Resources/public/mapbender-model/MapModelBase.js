@@ -589,7 +589,7 @@ window.Mapbender.MapModelBase = (function() {
                     mbMap: this.mbMap,
                     source: source
                 });
-                var olLayers = source.initializeLayers(projCode, this.mbMap.options);
+                var olLayers = source.createNativeLayers(projCode, this.mbMap.options);
                 for (var j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
                     Mapbender.mapEngine.setLayerVisibility(olLayer, false);
@@ -724,7 +724,7 @@ window.Mapbender.MapModelBase = (function() {
             for (var i = 0; i < this.sourceTree.length; ++i) {
                 var source = this.sourceTree[i];
                 if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                    var olLayers = source.initializeLayers(srsNameTo, this.mbMap.options);
+                    var olLayers = source.createNativeLayers(srsNameTo, this.mbMap.options);
                     for (var j = 0; j < olLayers.length; ++j) {
                         var olLayer = olLayers[j];
                         Mapbender.mapEngine.setLayerVisibility(olLayer, false);

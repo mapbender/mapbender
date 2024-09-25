@@ -78,11 +78,6 @@ window.Mapbender = Mapbender || {};
             this._runtimeParams = ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'];
         }
 
-        /**
-         * @param {String} srsName
-         * @param {Object} [mapOptions]
-         * @return {Array<Object>}
-         */
         createNativeLayers(srsName, mapOptions) {
             return [Mapbender.mapEngine.createWmsLayer(this, mapOptions)];
         }
@@ -122,8 +117,7 @@ window.Mapbender = Mapbender || {};
         }
 
         getSelected() {
-            // delegate to root layer
-            return this.configuration.children[0].getSelected();
+            return this.getRootLayer().getSelected();
         }
 
         refresh() {
@@ -134,10 +128,10 @@ window.Mapbender = Mapbender || {};
         }
 
         addParams(params) {
-            for (var i = 0; i < this.nativeLayers.length; ++i) {
+            for (let i = 0; i < this.nativeLayers.length; ++i) {
                 Mapbender.mapEngine.applyWmsParams(this.nativeLayers[i], params);
             }
-            var rtp = this._runtimeParams;
+            const rtp = this._runtimeParams;
             $.extend(this.customParams, Mapbender.Util.filter(params, function (value, key) {
                 return rtp.indexOf(('' + key).toUpperCase()) === -1;
             }));
