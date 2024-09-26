@@ -186,6 +186,7 @@ window.Mapbender = Mapbender || {};
              * @type {object}
              */
             this.configuration = definition.configuration || {};
+            this.configuration.options = this.configuration.options || {};
             this.configuration.children = (this.configuration.children || []).map(childDef => Mapbender.SourceLayer.factory(childDef, this, null));
 
             this.children = this.configuration.children;
@@ -486,7 +487,20 @@ window.Mapbender = Mapbender || {};
         constructor(definition, source, parent) {
             super(((definition || {}).options || {}).title || '', parent)
             this.options = definition.options || {};
-            this.state = definition.state || {};
+            this.options.treeOptions = this.options.treeOptions || {
+                selected: true,
+                info: false,
+                toggle: true,
+                allow: {selected: true, info: false, toggle: true,}
+            };
+
+            this.state = definition.state || {
+                info: null,
+                outOfBounds: false,
+                outOfScale: false,
+                visibility: true,
+            };
+
             this.source = source;
             var childDefs = definition.children || [];
             var i, child, childDef;
