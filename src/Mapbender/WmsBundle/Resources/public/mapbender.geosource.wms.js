@@ -10,10 +10,6 @@ window.Mapbender = Mapbender || {};
             return this.options.name;
         }
 
-        getSelected() {
-            return this.options.treeOptions.selected;
-        }
-
         setSelected(state) {
             this.options.treeOptions.selected = !!state;
         }

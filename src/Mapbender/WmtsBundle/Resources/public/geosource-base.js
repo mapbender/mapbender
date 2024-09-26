@@ -245,10 +245,6 @@ window.Mapbender = Mapbender || {};
             return matches[0] || null;
         }
 
-        getSelected() {
-            return this.options.treeOptions.selected;
-        }
-
         isInScale(scale) {
             // HACK: always return true
             // @todo: implement properly

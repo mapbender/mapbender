@@ -71,6 +71,10 @@ window.Mapbender = Mapbender || {};
             throw new Error("Invoked abstract LayerGroup.getSelected");
         }
 
+        getParent() {
+            return this.parent;
+        }
+
         /**
          * removes the given child layer from this LayerGroup
          * @param {Mapbender.LayerGroup} child
@@ -136,8 +140,10 @@ window.Mapbender = Mapbender || {};
     }
 
     /**
-     * A source represents a layer that is displayed on the map. WmsSource, WmtsSource, GeoJsonSource etc. extend
-     * from this base class
+     * A source represents a data source that is displayed on the map. WmsSource, WmtsSource, GeoJsonSource etc. extend
+     * from this base class. A source can have one or more SourceLayers.
+     * They must be defined in the constructor using definition.configuration.children
+     * @see SourceLayer
      * @abstract
      */
     Mapbender.Source = class Source extends Mapbender.LayerGroup {
@@ -486,7 +492,7 @@ window.Mapbender = Mapbender || {};
             var i, child, childDef;
             for (i = 0; i < childDefs.length; ++i) {
                 childDef = childDefs[i];
-                child = SourceLayer.factory(childDef, source, this);
+                child = Mapbender.SourceLayer.factory(childDef, source, this);
                 child.siblings = this.children;
                 this.children.push(child);
             }
@@ -494,17 +500,55 @@ window.Mapbender = Mapbender || {};
         }
 
         static factory(definition, source, parent) {
-            var typeClass = SourceLayer.typeMap[source.type];
+            let typeClass = SourceLayer.typeMap[source.type];
             if (!typeClass) {
                 typeClass = Mapbender.SourceLayer;
             }
             return new typeClass(definition, source, parent);
         }
 
-        // need custom toJSON for getMapState call
+        /**
+         * is this layer selected in the layertree
+         * Caution: This does not mean it's visible, parent layers might be unselected
+         * @returns {boolean}
+         */
+        getSelected() {
+            return this.options.treeOptions.selected;
+        }
+
+        getId() {
+            return this.options.id;
+        }
+
+        getName() {
+            return this.options.name;
+        }
+
+        /**
+         * Should the layer be displayed at this scale level?
+         * @param {number} scale
+         * @returns {boolean}
+         */
+        isInScale(scale) {
+            return true;
+        }
+
+        /**
+         * Does the layer has contents in this extent?
+         * @param {number[]} extent
+         * @param {string} srsName
+         * @returns {boolean}
+         */
+        intersectsExtent(extent, srsName) {
+            return true;
+        }
+
+        /**
+         * need custom toJSON for getMapState call
+         */
         toJSON() {
             // Skip the circular-ref inducing properties 'siblings', 'parent' and 'source'
-            var r = {
+            const r = {
                 options: this.options,
                 state: this.state
             };
@@ -514,24 +558,29 @@ window.Mapbender = Mapbender || {};
             return r;
         }
 
-        getParent() {
-            return this.parent;
-        }
-
+        /**
+         * removes this layer from the source tree
+         * @returns {string|null} the if of the removed layer or null of the layer had no parent
+         */
         remove() {
-            var index = this.siblings.indexOf(this);
-            if (index !== -1) {
-                this.siblings.splice(index, 1);
-                if (!this.siblings.length && this.parent) {
-                    return this.parent.remove();
-                } else {
-                    return this.options.id;
-                }
-            } else {
+            const index = this.siblings.indexOf(this);
+            if (index === -1) {
                 return null;
             }
+
+            this.siblings.splice(index, 1);
+            if (!this.siblings.length && this.parent && this.parent.remove) {
+                return this.parent.remove();
+            }
+
+            return this.options.id;
         }
 
+        /**
+         * @param {string} projCode
+         * @param {boolean} inheritFromParent
+         * @returns {number[]|boolean} false if bounds could not be calculated
+         */
         getBounds(projCode, inheritFromParent) {
             var bboxMap = this.options.bbox;
             var srsOrder = [projCode].concat(Object.keys(bboxMap));
