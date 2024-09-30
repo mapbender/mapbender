@@ -285,17 +285,20 @@
         _resetSourceAtTree: function (source) {
             var self = this;
 
-            function resetLayer(layer) {
+            function resetLayer(layer, $parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
+                if (!$li.length && $parent) {
+                    $parent.find('ul.layers').append(self._createLayerNode(layer));
+                }
                 self._updateLayerDisplay($li, layer);
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
-                        resetLayer(layer.children[i]);
+                        resetLayer(layer.children[i], $li);
                     }
                 }
             }
 
-            resetLayer(source.configuration.children[0]);
+            resetLayer(source.configuration.children[0], null);
         },
         _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
