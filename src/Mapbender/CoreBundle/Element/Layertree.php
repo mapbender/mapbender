@@ -86,7 +86,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
 
     public function getView(Element $element)
     {
-        $view = new TemplateView('@MapbenderCore/Element/layertree.html.twig');
+        $view = new TemplateView($this->getTwigTemplatePath());
         $view->attributes['class'] = 'mb-element-layertree';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['configuration'] = array(
@@ -128,5 +128,10 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
         // Force menu to a list of strings (= JavaScript Array, never Object)
         $config['menu'] = \array_values($config['menu']);
         return $config;
+    }
+
+    public function getTwigTemplatePath(): string
+    {
+        return '@MapbenderCore/Element/layertree.html.twig';
     }
 }

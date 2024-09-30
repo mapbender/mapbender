@@ -203,7 +203,6 @@
 
             var $li = this.template.clone();
             $li.data('layer', layer);
-
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
 
@@ -241,8 +240,7 @@
             return $li;
         },
         _createSourceTree: function (source) {
-            var li = this._createLayerNode(source.configuration.children[0]);
-            return li;
+            return this._createLayerNode(source.configuration.children[0]);
         },
         _onSourceAdded: function (event, data) {
             var source = data.source;
@@ -360,7 +358,7 @@
             this._updateFolderState($node);
             return false;
         },
-        _updateFolderState: function($node) {
+        _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
                 .toggleClass('fa-folder-open', active)
@@ -429,24 +427,47 @@
          * @param $layerNode jQuery
          */
         _initMenu: function ($layerNode) {
-            var layer = $layerNode.data('layer');
-            var source = layer.source;
-            var menu = $(this.menuTemplate.clone());
-            var mapModel = this.model;
-            if (layer.getParent()) {
-                $('.layer-control-root-only', menu).remove();
-            }
+            const layer = $layerNode.data('layer');
+            const $menu = $(this.menuTemplate.clone());
 
             const activeMenuItems = this._filterMenu(layer);
             if (!activeMenuItems.length) {
-                menu.remove();
+                $menu.remove();
                 return;
             }
+            $layerNode.find('.leaveContainer:first', $layerNode).after($menu);
 
-            // element must be added to dom and sized before Dragdealer init...
-            $('.leaveContainer:first', $layerNode).after(menu);
+            $menu.find('[data-menu-action]').each((index, el) => {
+                const $actionElement = $(el);
+                const action = $actionElement.attr('data-menu-action');
+                if (activeMenuItems.includes(action)) {
+                    this._initMenuAction(action, $actionElement, $layerNode, layer);
+                } else {
+                    $actionElement.remove();
+                }
+            });
+        },
+        /**
+         *
+         * @param {string} action
+         * @param {jQuery} $actionElement the dom element with the data-action attribute
+         * @param {jQuery} $layerNode the dom element for the layer node
+         * @param {Mapbender.SourceLayer} layer
+         * @private
+         */
+        _initMenuAction(action, $actionElement, $layerNode, layer) {
+            switch (action) {
+                case 'opacity':
+                    return this._initOpacitySlider($actionElement, layer);
+                case 'dimension':
+                    return this._initDimensionsMenu($layerNode, $menu, dims, layer.source);
+                case 'zoomtolayer':
+                    return $actionElement.on('click', this._zoomToLayer.bind(this));
+            }
+        },
 
-            var $opacityControl = $('.layer-control-opacity', menu);
+        _initOpacitySlider: function ($opacityControl, layer) {
+            const source = layer.source;
             if ($opacityControl.length) {
                 var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
@@ -457,30 +478,13 @@
                     speed: 1,
                     steps: 100,
                     handleClass: "layer-opacity-handle",
-                    animationCallback: function (x, y) {
+                    animationCallback: (x, y) => {
                         var opacity = Math.max(0.0, Math.min(1.0, x));
                         var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
-                        mapModel.setSourceOpacity(source, opacity);
+                        this.model.setSourceOpacity(source, opacity);
                     }
                 });
-            }
-            var $zoomControl = $('.layer-zoom', menu);
-            if ($zoomControl.length && layer.hasBounds()) {
-                $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
-            } else {
-                $zoomControl.remove();
-            }
-            if (!layer.options.metadataUrl || !$('.layer-metadata', menu).length) {
-                $('.layer-metadata', menu).remove();
-            }
-
-            var dims = source.configuration.options.dimensions || [];
-            var $dimensionsControl = $('.layer-control-dimensions', menu);
-            if (dims.length && $dimensionsControl.length) {
-                this._initDimensionsMenu($layerNode, menu, dims, source);
-            } else {
-                $dimensionsControl.remove();
             }
         },
         _toggleMenu: function (e) {
@@ -502,30 +506,15 @@
         },
         /**
          * returns a list of supported menu options for this layer. Override this if you have a custom menu option
-         * @param layer Mapbender.SourceLayer
+         * @param {Mapbender.SourceLayer} layer
          * @returns {string[]}
          */
         _getSupportedMenuOptions(layer) {
-            const supported = ['layerremove'];
-            if (layer.options.metadataUrl) {
-                supported.push('metadata');
-            }
-            // opacity + dimension are only available on root layer
-            if (!layer.getParent()) {
-                supported.push('opacity');
-                if ((layer.source.configuration.options.dimensions || []).length) {
-                    supported.push('dimension');
-                }
-            }
-            if (layer.hasBounds()) {
-                supported.push('zoomtolayer');
-            }
-            return supported;
+            return layer.getSupportedMenuOptions();
         },
-        _initDimensionsMenu: function ($element, menu, dims, source) {
+        _initDimensionsMenu: function ($element, $actionElement, dims, source) {
             var self = this;
             var dimData = $element.data('dimensions') || {};
-            var template = $('.layer-control-dimensions', menu);
             var $controls = [];
             var dragHandlers = [];
             var updateData = function (key, props) {
@@ -536,7 +525,7 @@
                 $element.data('dimensions', mergedData);
             };
             $.each(dims, function (idx, item) {
-                var $control = template.clone();
+                var $control = $actionElement.clone();
                 var label = $('.layer-dimension-title', $control);
 
                 var dimDataKey = source.id + '~' + idx;
@@ -584,7 +573,7 @@
                 }
                 $controls.push($control);
             });
-            template.replaceWith($controls);
+            $actionElement.replaceWith($controls);
             dragHandlers.forEach(function (dh) {
                 dh.reflow();
             });

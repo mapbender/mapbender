@@ -632,6 +632,34 @@ window.Mapbender = Mapbender || {};
             } while (layer);
             return false;
         }
+
+        /**
+         * Returns a list of menu options supported by this layer.
+         * Core mapbender menu options:
+         * - layerremove: Deletes this layer
+         * - metadata: Opens metadata in a new window. options.medataUrl should be defined
+         * - opacity: Opacity slider between 0 and 1. See {Mapbender.Source.setOpacity}
+         * - dimension: selection slider for dimensions like e.g. time
+         * - zoomtolayer: Changes the map's view to fit the layer
+         * @returns {string[]}
+         */
+        getSupportedMenuOptions() {
+            const supported = ['layerremove'];
+            if (this.options.metadataUrl) {
+                supported.push('metadata');
+            }
+            // opacity + dimension are only available on root layer
+            if (!this.getParent()) {
+                supported.push('opacity');
+                if ((this.source.configuration.options.dimensions || []).length) {
+                    supported.push('dimension');
+                }
+            }
+            if (this.hasBounds()) {
+                supported.push('zoomtolayer');
+            }
+            return supported;
+        }
     }
 
     Mapbender.Source.typeMap = {};
