@@ -44,16 +44,16 @@ $(function() {
                     var $row = $(this);
                     var rowContainsInput = $row.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
                     if(rowContainsInput) {
-                        $row.find('td').addClass('bg-warning-subtle');
+                        $row.find('td').addClass('filter-matches');
                     } else {
-                        $row.find('td').removeClass('bg-warning-subtle');
+                        $row.find('td').removeClass('filter-matches');
                     }
                 });
 
             });
         }else{
             items.show();
-            items.find('tr').find('td').removeClass('bg-warning-subtle');
+            items.find('tr').find('td').removeClass('filter-matches');
         }
     });
 
