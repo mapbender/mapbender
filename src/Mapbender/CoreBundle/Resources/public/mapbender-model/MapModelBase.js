@@ -209,8 +209,7 @@ window.Mapbender.MapModelBase = (function() {
             var source = this.getSourceById(sourceId);
             Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
             this._checkSource(source, false);
-            // @todo: rename this event; it's about layers within a source
-            $(this.mbMap.element).trigger('mbmapsourcemoved', {
+            $(this.mbMap.element).trigger('mbmapsourcelayersreordered', {
                 mbMap: this.mbMap,
                 source: source
             });

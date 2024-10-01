@@ -49,7 +49,7 @@
             var rerenderOn = [
                 'mbmapsourceadded',
                 'mbmapsourcechanged',
-                'mbmapsourcemoved',
+                'mbmapsourcelayersreordered',
                 'mbmapsourcesreordered',
                 'mbmapsourcelayerremoved'
             ];

@@ -1,5 +1,14 @@
 # Upgrading Guide
 
+## next release
+
+### The following methods are removed
+- `Mapbender.Geo.SourceHandler.isLayerInScale`: Use `layer.isInScale`
+- `Mapbender.Geo.SourceHandler.isLayerWithinBounds`: Use `layer.intersectsExtent`. The method requires an srsname which can be obtained using `Mapbender.Model.getCurrentProjectionCode()`
+
+### The following was added
+- new event `mbmapsourcelayersreordered` that fires when the layer order within a source is moved. In earlier versions, `mbmapsourcemoved` was called then. 
+
 ## v4.0.0
 
 ### Upgrade database
