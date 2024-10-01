@@ -206,8 +206,8 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-            var source = this.getSourceById(sourceId);
-            Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
+            const source = this.getSourceById(sourceId);
+            source.setLayerOrder(newLayerIdOrder);
             this._checkSource(source, false);
             $(this.mbMap.element).trigger('mbmapsourcelayersreordered', {
                 mbMap: this.mbMap,

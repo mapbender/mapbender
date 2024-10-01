@@ -441,6 +441,15 @@ window.Mapbender = Mapbender || {};
             });
         }
 
+        /**
+         * reorders the layers of this source. The default implementation forwards to
+         * [Mapbender.Geo.SourceHandler.setLayerOrder] which works for hierarchical sources like WMS and WMTS
+         * @param {string[]} newLayerIdOrder the layer ids in their new order
+         */
+        setLayerOrder(newLayerIdOrder) {
+            Mapbender.Geo.SourceHandler.setLayerOrder(this, newLayerIdOrder);
+        }
+
         _bboxArrayToBounds(bboxArray, projCode) {
             return Mapbender.mapEngine.boundsFromArray(bboxArray);
         }
