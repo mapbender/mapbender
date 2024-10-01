@@ -37,6 +37,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     {
         return array(
             'js' => array(
+                '@MapbenderCoreBundle/Resources/public/element/LegendEntry.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.legend.js',
             ),
             'css' => array(

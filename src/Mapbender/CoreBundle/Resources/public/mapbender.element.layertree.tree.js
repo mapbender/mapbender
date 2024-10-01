@@ -240,7 +240,7 @@
             return $li;
         },
         _createSourceTree: function (source) {
-            return this._createLayerNode(source.configuration.children[0]);
+            return this._createLayerNode(source.getRootLayer());
         },
         _onSourceAdded: function (event, data) {
             var source = data.source;
@@ -296,7 +296,7 @@
                 }
             }
 
-            resetLayer(source.configuration.children[0], null);
+            resetLayer(source.getRootLayer(), null);
         },
         _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {

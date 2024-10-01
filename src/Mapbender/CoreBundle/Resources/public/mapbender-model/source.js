@@ -631,6 +631,16 @@ window.Mapbender = Mapbender || {};
             return null;
         }
 
+        /**
+         * Returns the legend for this layer. The legend can be either an external
+         * url (e.g. for WMS services) or a style definition that is rendered on a canvas
+         *
+         * @return {null|{type: 'url', url: string, topLevel: boolean}|LegendDefinition}
+         */
+        getLegend() {
+            return null;
+        }
+
         hasBounds() {
             var layer = this;
             do {

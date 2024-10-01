@@ -417,7 +417,7 @@
             var sources = this._getRasterSources();
             for (var i = 0; i < sources.length; ++i) {
                 var source = sources[i];
-                var rootLayer = source.configuration.children[0];
+                var rootLayer = source.getRootLayer();
                 var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
                 var leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 var sourceLegendList = [];

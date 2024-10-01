@@ -46,8 +46,8 @@ window.Mapbender = Mapbender || {};
         constructor(definition) {
             super(definition);
             var sourceArg = this;
-            this.configuration.layers = (this.configuration.children[0].children || []).map((layerDef) => {
-                return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.configuration.children[0]);
+            this.configuration.layers = (this.getRootLayer().children || []).map((layerDef) => {
+                return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.getRootLayer());
             });
         }
 
@@ -89,13 +89,13 @@ window.Mapbender = Mapbender || {};
         }
 
         getSelected() {
-            const rootLayer = this.configuration.children[0];
+            const rootLayer = this.getRootLayer();
             return rootLayer && rootLayer.options.treeOptions.selected || false;
         }
 
         createNativeLayers(srsName, mapOptions) {
             const allLayers = this._getAllLayers();
-            const rootLayer = this.configuration.children[0];
+            const rootLayer = this.getRootLayer();
             rootLayer.children = allLayers;
 
             this.nativeLayers = allLayers.map((layerDef) => {
@@ -112,7 +112,7 @@ window.Mapbender = Mapbender || {};
         }
 
         updateEngine() {
-            const rootLayer = this.configuration.children[0];
+            const rootLayer = this.getRootLayer();
             const rootLayerVisibility = rootLayer.state.visibility;
 
             for (let i = 0; i < rootLayer.children.length; ++i) {
@@ -124,7 +124,7 @@ window.Mapbender = Mapbender || {};
         }
 
         _getAllLayers() {
-            return this.configuration.children[0].children.filter(function (l) {
+            return this.getRootLayer().children.filter(function (l) {
                 return l.options.treeOptions.allow.selected && l.options.treeOptions.selected;
             });
         }
@@ -160,7 +160,7 @@ window.Mapbender = Mapbender || {};
          */
         getPrintConfigs(bounds, scale, srsName) {
             var layerDef = this._selectCompatibleLayers(srsName)[0];
-            const rootLayer = this.configuration.children[0];
+            const rootLayer = this.getRootLayer();
             if (!rootLayer.state.visibility || !layerDef) {
                 return [];
             }
@@ -190,7 +190,7 @@ window.Mapbender = Mapbender || {};
 
         getLayerBounds(layerId, projCode, inheritFromParent) {
             let layerId_;
-            const rootLayer = this.configuration.children[0];
+            const rootLayer = this.getRootLayer();
             if (!layerId || layerId === rootLayer.options.id) {
                 const anyEnabledLayer = this._getAllLayers()[0];
                 if (!anyEnabledLayer) {
@@ -265,6 +265,16 @@ window.Mapbender = Mapbender || {};
                 extent_ = extent;
             }
             return Mapbender.Util.extentsIntersect(bounds, extent_);
+        }
+
+        getLegend() {
+            if (this.options.legend && this.options.legend.url) {
+                return {
+                    type: 'url',
+                    url: this.options.legend.url
+                };
+            }
+            return null;
         }
     }
 

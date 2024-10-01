@@ -10,6 +10,16 @@ window.Mapbender = Mapbender || {};
             return this.options.name;
         }
 
+        getLegend() {
+            if (this.options.legend && this.options.legend.url) {
+                return {
+                    type: 'url',
+                    url: this.options.legend.url
+                };
+            }
+            return null;
+        }
+
         setSelected(state) {
             this.options.treeOptions.selected = !!state;
         }
@@ -83,7 +93,7 @@ window.Mapbender = Mapbender || {};
          * @return {SourceSettings}
          */
         getSettings() {
-            const selectedLayers = this.configuration.children[0].getSelectedList().map(function (layer) {
+            const selectedLayers = this.getRootLayer().getSelectedList().map(function (layer) {
                 return {
                     id: layer.getId(),
                     name: layer.getName(),

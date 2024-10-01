@@ -49,6 +49,7 @@
             var rerenderOn = [
                 'mbmapsourceadded',
                 'mbmapsourcechanged',
+                'mbmapsourceremoved',
                 'mbmapsourcelayersreordered',
                 'mbmapsourcesreordered',
                 'mbmapsourcelayerremoved'
@@ -77,7 +78,7 @@
             var sourceDataList = [];
             var sources = this.mbMap.getModel().getSources();
             for (var i = 0; i < sources.length; ++i) {
-                var rootLayer = sources[i].configuration.children[0];
+                var rootLayer = sources[i].getRootLayer();
                 if (rootLayer.state.visibility && (!rootLayer.source || !rootLayer.source.layerset || rootLayer.source.layerset.selected)) {
                     // display in reverse map order
                     sourceDataList.unshift(this._getLayerData(sources[i], rootLayer, 1));
@@ -86,24 +87,11 @@
             return sourceDataList;
         },
         /**
-         * Get legend
          *
-         * @param layer
-         * @return {*}
-         */
-        getLegendUrl: function (layer) {
-            if (layer.options.legend) {
-                return layer.options.legend.url || null;
-            }
-            return null;
-        },
-
-        /**
-         *
-         * @param source
-         * @param layer
-         * @param level
-         * @return {*}
+         * @param {Mapbender.Source} source
+         * @param {Mapbender.SourceLayer} layer
+         * @param {number} level
+         * @return {Object}
          * @private
          */
         _getLayerData: function (source, layer, level) {
@@ -111,7 +99,7 @@
                 id: layer.options.id,
                 title: layer.options.title,
                 level: level,
-                legend: this.getLegendUrl(layer),
+                legend: layer.getLegend(),
                 children: []
             };
 
@@ -154,15 +142,20 @@
                 .addClass('subTitle')
                 ;
         },
-        /**
-         * Create Image
-         *
-         * @param layer
-         * @private
-         */
+        createLegendForLayer: function (layer) {
+            switch (layer.legend.type) {
+                case 'url':
+                    return this.createImage(layer);
+                case 'style':
+                    return this.createLegendForStyle(layer);
+            }
+        },
         createImage: function (layer) {
-            return $('<img/>')
-                .attr('src', layer.legend);
+            return $('<img/>').attr('src', layer.legend.url);
+        },
+
+        createLegendForStyle: function (layer) {
+            return (new LegendEntry(layer.legend)).getContainer()
         },
 
         /**
@@ -173,16 +166,22 @@
             return $(document.createElement('ul')).addClass('list-unstyled');
         },
         _createSourceHtml: function (sourceData) {
-            var visibleChildLayers = sourceData.children;
-            var ul = this.createLegendContainer(sourceData);
+            const visibleChildLayers = sourceData.children;
+            const ul = this.createLegendContainer(sourceData);
 
-            if (!visibleChildLayers.length) {
+            if (!visibleChildLayers.length && (!sourceData.legend || !sourceData.legend.topLevel)) {
                 return null;
             }
 
             if (this.options.showSourceTitle) {
                 ul.append(this.createSourceTitle(sourceData));
             }
+
+            if (sourceData.legend && sourceData.legend.topLevel) {
+                ul.append(this._createLayerHtml(sourceData));
+                return ul;
+            }
+
             for (var i = 0; i < visibleChildLayers.length; ++i) {
                 var childLayer = visibleChildLayers[i];
                 ul.append(this._createLayerHtml(childLayer));
@@ -206,11 +205,10 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-
                 if (options.showLayerTitle) {
                     $li.append(widget.createTitle(layer));
                 }
-                $li.append(widget.createImage(layer));
+                $li.append(widget.createLegendForLayer(layer));
             }
             return $li;
         },

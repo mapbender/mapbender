@@ -238,7 +238,7 @@
                 });
             }
             // always activate root layer
-            var rootLayer = source.configuration.children[0];
+            var rootLayer = source.getRootLayer();
             rootLayer.options.treeOptions.selected = rootLayer.options.treeOptions.allow.selected;
             Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
                 var doActivate = activateAll;
