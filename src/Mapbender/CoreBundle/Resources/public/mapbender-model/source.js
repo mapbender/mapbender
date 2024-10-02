@@ -539,6 +539,10 @@ window.Mapbender = Mapbender || {};
             return this.options.treeOptions.selected;
         }
 
+        setSelected(state) {
+            this.options.treeOptions.selected = !!state;
+        }
+
         getId() {
             return this.options.id;
         }
@@ -641,6 +645,10 @@ window.Mapbender = Mapbender || {};
             return null;
         }
 
+        /**
+         * is this layer restricted to spatial bbox?
+         * @returns {boolean}
+         */
         hasBounds() {
             var layer = this;
             do {
