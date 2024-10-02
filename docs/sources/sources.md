@@ -56,20 +56,20 @@ createNativeLayers(srsName, mapOptions) {
 
 - `updateEngine()`: this method is called when the content should be updated, e.g. because a layer's visibility has
   been toggled, a new layer has been added, the layer order has changed etc.    
-  Use `this.getNativeLayer()` to access the OL native layer and perform operations on it (refer to the open layers docs)
-  Note that new layers are hidden by default, so make sure to call `Mapbender.mapEngine.setLayerVisibility(olLayer, true)`
+  Use `this.getNativeLayer()` to access the OL native layer and perform operations on it (refer to the open layers docs)  
+  Note that new layers are hidden by default, so make sure to call `Mapbender.mapEngine.setLayerVisibility(olLayer, true)`  
   Also, you need to check the individual layer's `layer.state.visibility` property, this will be updated when a layer
   is toggled in the layer tree.
 
-- `setLayerOrder(newLayerIdOrder)`: The layers within this source has been reordered in the layer tree. The argument
-  list all the ids in the new order. The default implementation might or might not work for your usecase.
+- `setLayerOrder(newLayerIdOrder)`: The layers within this source have been reordered in the layer tree. The argument
+  list all the ids in the new order. There is a default implementation available that might work for your use case already.
 
 
 Also, you can override the following methods:
 
 - `getSettings()`, `applySettings(settings)`, `applySettingsDiff(settings)`, `diffSettings(from, to)`: 
-  modifies runtime settings you might need for your source. Per default, this is only opacity.
-- `getConfiguredSettings()`: returns the initial settings during initialisation
+  modifies runtime settings you might need for your source. By default, this is only opacity.
+- `getConfiguredSettings()`: returns the initial settings set during initialisation
 - `getFeatureInfoLayers()`: returns all layers that support feature info
 - `checkRecreateOnSrsSwitch(oldProj, newProj)`: indicates whether this source should be recreated when a srs change occurs
 - `getPrintConfigs(bounds, scale, srsName)`: Returns information that is passed to the printing service when printing or exporting a map
@@ -88,7 +88,7 @@ For a SourceLayer no methods are required to be overridden. The following overri
 - `hasBounds()`: is this layer restricted to spatial bbox?
 - `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS
 - `isInScale(scale)`: Should the layer be displayed at this scale level?
-- `intersectsExtent(extent, srsName)`: Does the layer has contents in this extent?
+- `intersectsExtent(extent, srsName)`: Does the layer have features in this extent?
 - `getSupportedMenuOptions()`: Returns a list of menu options supported by this layer. See [below](#custom-layer-tree-menu-item) for details
 - `getLegend()`: Returns the legend for this layer. The legend can be either an external url to an image (e.g. for WMS services) 
    or a style definition that is rendered on a canvas. See [below](#legend-entries-for-custom-sources) for details
@@ -98,7 +98,7 @@ The following methods are also available to be used which you probably don't nee
 - `getSelected()` / `setSelected(state)`: Gets/sets the visibility of this layer. Caution: This does not mean it's visible on the map, if parent layers are not selected.
 - `getActive()`: Checks if the layer is actually visible on the map (i.e. whether this layer and all parents `getSelected` return true)
 - `remove()`: Deletes this layer
-- `addChild(newsourceLayer)`: Adds a new sublayer
+- `addChild(newSourceLayer)`: Adds a new sublayer
 - `getId()` / `getName()`
 
 ## Registering your new source
