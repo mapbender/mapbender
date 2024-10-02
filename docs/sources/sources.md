@@ -305,6 +305,16 @@ In the overridden JavaScript widget, initialise the new functionality:
             // the admin type
             this.options.menu.push('searchremove');
         },
+        // override this if your menu item needs initialisation (not necessary for buttons)
+        _initMenuAction(action, $actionElement, $layerNode, layer) {
+            switch(action) {
+                case 'new-menu-item':
+                    // do something for initialisation
+                    break;
+                default:
+                    return this._super(action, $actionElement, $layerNode, layer);
+            }
+        },
         _createEvents: function () {
             this._super();
             // add a click (or whatever you need) listener here. 

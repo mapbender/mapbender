@@ -464,7 +464,6 @@
                     legends.unshift(sourceLegendList);
                 }
             }
-            console.log(legends);
             return legends;
         },
         /**
