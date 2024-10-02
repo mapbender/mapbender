@@ -29,28 +29,18 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  */
 class LegendHandler
 {
-    /** @var ImageTransport */
-    protected $imageTransport;
-    /** @var string */
-    protected $resourceDir;
-    /** @var PdfUtil */
-    protected $pdfUtil;
-    /** @var float */
-    protected $maxColumnWidthMm = 100.;
-    /** @var float */
-    protected $maxImageDpi = 96.;
-    /** @var string */
-    protected $legendPageFontName = 'Arial';
+    protected PdfUtil $pdfUtil;
+    protected float $maxColumnWidthMm = 100.;
+    protected float $maxImageDpi = 96.;
+    protected string $legendPageFontName = 'Arial';
 
-    /**
-     * @param ImageTransport $imageTransport
-     * @param string $resourceDir
-     * @param string $tempDir
-     */
-    public function __construct(ImageTransport $imageTransport, $resourceDir, $tempDir)
+    public function __construct(
+        protected ImageTransport $imageTransport,
+        protected string         $resourceDir,
+        ?string                   $tempDir,
+        protected string         $canvasLegendClass,
+    )
     {
-        $this->imageTransport = $imageTransport;
-        $this->resourceDir = $resourceDir;
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print_legend');
     }
 
@@ -93,14 +83,11 @@ class LegendHandler
     {
         $group = new LegendBlockGroup();
         foreach ($groupData as $key => $data) {
-            if (is_array($data)) {
-                $url = $data['url'];
-                $title = $data['layerName'];
-            } else {
-                $url = $data;
-                $title = $key;
-            }
-            $block = $this->prepareUrlBlock($title, $url);
+            $block = match($data['type']) {
+                'url' => $this->prepareUrlBlock($data['layerName'], $data['url']),
+                'style' => $this->prepareStyleBlock($data),
+                default => null,
+            };
             if ($block) {
                 $group->addBlock($block);
             }
@@ -187,12 +174,8 @@ class LegendHandler
     /**
      * Adds a new page to the PDF to render more legends. Also implicitly adds watermarks, if defined in the
      * template and job.
-     *
-     * @param PDF_Extensions|\FPDF $pdf $pdf
-     * @param Template|array $templateData
-     * @param array $jobData
      */
-    public function addPage($pdf, $templateData, $jobData)
+    public function addPage(PDF_Extensions|\FPDF $pdf, Template|array $templateData, array $jobData): void
     {
         if ($templateData['orientation'] == 'portrait') {
             $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);
@@ -207,12 +190,7 @@ class LegendHandler
         $pdf->SetFont($this->legendPageFontName, 'B', $this->getLegendTitleFontSize(null, true));
     }
 
-    /**
-     * @param PDF_Extensions|\FPDF $pdf
-     * @param Template|array $templateData
-     * @param array $jobData
-     */
-    protected function addLegendPageImage($pdf, $templateData, $jobData)
+    protected function addLegendPageImage(PDF_Extensions|\FPDF $pdf, Template|array $templateData, array $jobData): void
     {
         if (empty($templateData['legendpage_image']) || empty($jobData['legendpage_image'])) {
             return;
@@ -229,19 +207,18 @@ class LegendHandler
         }
     }
 
-    /**
-     * @param string $title
-     * @param string $url
-     * @return LegendBlock|null
-     */
-    public function prepareUrlBlock($title, $url)
+    public function prepareStyleBlock(array $legendInfo): ?LegendBlock
+    {
+        /** @var CanvasLegend $canvasLegend */
+        $canvasLegend = new $this->canvasLegendClass($legendInfo["layers"]);
+        $image = $canvasLegend->getImage();
+        return $image ? new LegendBlock($image, $legendInfo['layerName']) : null;
+    }
+
+    public function prepareUrlBlock(string $title, string $url): ?LegendBlock
     {
         $image = $this->imageTransport->downloadImage($url);
-        if ($image) {
-            return new LegendBlock($image, $title);
-        } else {
-            return null;
-        }
+        return $image ? new LegendBlock($image, $title) : null;
     }
 
     /**

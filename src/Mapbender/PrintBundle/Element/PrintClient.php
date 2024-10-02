@@ -8,7 +8,6 @@ use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\OdgParser;
@@ -51,15 +50,15 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     protected $enableQueue;
 
     public function __construct(UrlGeneratorInterface $urlGenerator,
-                                FormFactoryInterface $formFactory,
+                                FormFactoryInterface  $formFactory,
                                 TokenStorageInterface $tokenStorage,
-                                UrlProcessor $sourceUrlProcessor,
-                                OdgParser $odgParser,
-                                /** @todo: elminate bridge service */
+                                UrlProcessor          $sourceUrlProcessor,
+                                OdgParser             $odgParser,
+        /** @todo: elminate bridge service */
                                 PrintServiceInterface $printService,
-                                PrintPluginHost $pluginRegistry,
-                                $memoryLimit,
-                                $enableQueue)
+                                PrintPluginHost       $pluginRegistry,
+                                                      $memoryLimit,
+                                                      $enableQueue)
     {
         $this->urlGenerator = $urlGenerator;
         $this->formFactory = $formFactory;
@@ -206,9 +205,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     public function getClientConfiguration(Element $element)
     {
         return $element->getConfiguration() + array(
-            // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
-            'locale' => \locale_get_default(),
-        );
+                // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
+                'locale' => \locale_get_default(),
+            );
     }
 
     public function getView(Element $element)
@@ -238,9 +237,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             'id' => $element->getId(),
             'title' => $element->getTitle(),
             'configuration' => $config + array(
-                'required_fields_first' => false,
-                'type' => 'dialog',
-            ),
+                    'required_fields_first' => false,
+                    'type' => 'dialog',
+                ),
         );
         if ($queueMode) {
             /**
@@ -450,35 +449,30 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         return $url;
     }
 
-    /**
-     * @param array[] $legendDefs
-     * @return string[]
-     */
-    protected function prepareLegends($legendDefs)
+    protected function prepareLegends(array $legendDefs): array
     {
-        $legendDefsOut = array();
-        foreach ($legendDefs as $ix => $imageList) {
-            $legendDefsOut[$ix] = array();
-            foreach ($imageList as $imageListKey => $sourceLegendData) {
-                if (is_array($sourceLegendData)) {
-                    // New style arrays, fixes ~semi-random order from browser-specific JSON processing
-                    // $imageListKey is a numeric index, $sourceLegendData is an array with
-                    // * url
-                    // * sourceName
-                    // * layerName
-                    // * parentNames (string[])
-                    $legendDefsOut[$ix][$imageListKey] = array_replace($sourceLegendData, array(
-                        'url' => $this->sourceUrlProcessor->getInternalUrl($sourceLegendData['url']),
-                    ));
-                } else {
+        for ($ix = 0; $ix < count($legendDefs); $ix++) {
+            foreach ($legendDefs[$ix] as $imageListKey => $sourceLegendData) {
+                if (is_string($sourceLegendData)) {
                     // Old style title => url mapping. May go out of order depending on browser's and PHP's
                     // JSON processing
                     $internalUrl = $this->sourceUrlProcessor->getInternalUrl($sourceLegendData);
-                    $legendDefsOut[$ix][$imageListKey] = $internalUrl;
+                    $legendDefs[$ix][$imageListKey] = [
+                        'url' => $internalUrl,
+                        'type' => 'url',
+                        'layerName' => $imageListKey,
+                    ];
+                } elseif (is_array($sourceLegendData) && array_key_exists('url', $sourceLegendData)) {
+                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($sourceLegendData['url']);
+                    $legendDefs[$ix][$imageListKey]['url'] = $internalUrl;
+
+                    if (!array_key_exists('type', $sourceLegendData)) {
+                        $legendDefs[$ix][$imageListKey]['type'] = 'url';
+                    }
                 }
             }
-        };
-        return $legendDefsOut;
+        }
+        return $legendDefs;
     }
 
     /**
@@ -531,11 +525,11 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      *
      * Unused param $user is provided for override methods, if you want to look into your
      * LDAP or something. This can have a multitude of types.
-     * @see AbstractToken::setUser()
-     *
      * @param \FOM\UserBundle\Entity\Group|mixed $group
      * @param UserInterface|object|string $user
      * @return array
+     * @see AbstractToken::setUser()
+     *
      */
     protected function getGroupSpecifics($group, $user)
     {
@@ -567,7 +561,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     private function replaceUrlPattern($url, $pattern, $dpi)
     {
-        if (!isset($pattern['replacement'][$dpi])){
+        if (!isset($pattern['replacement'][$dpi])) {
             return $url;
         }
 
@@ -582,7 +576,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     private function addUrlPattern($url, $pattern, $dpi)
     {
-        if(!isset($pattern['default'][$dpi]))
+        if (!isset($pattern['default'][$dpi]))
             return $url;
 
         return $url . $pattern['default'][$dpi];

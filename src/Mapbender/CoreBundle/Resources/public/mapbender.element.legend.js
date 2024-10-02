@@ -155,7 +155,7 @@
         },
 
         createLegendForStyle: function (layer) {
-            return (new LegendEntry(layer.legend)).getContainer()
+            return (new LegendEntry(layer.legend)).getContainer();
         },
 
         /**

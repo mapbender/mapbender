@@ -412,42 +412,50 @@
          * @private
          */
         _collectLegends: function() {
-            var legends = [];
-            var scale = this._getPrintScale();
-            var sources = this._getRasterSources();
-            for (var i = 0; i < sources.length; ++i) {
-                var source = sources[i];
-                var rootLayer = source.getRootLayer();
-                var sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
-                var leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
-                var sourceLegendList = [];
+            const legends = [];
+            const scale = this._getPrintScale();
+            const sources = this._getRasterSources();
+            for (let i = 0; i < sources.length; ++i) {
+                const source = sources[i];
+                const rootLayer = source.getRootLayer();
+                const sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
+                const leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
+                const sourceLegendList = [];
+                const legendIds = [];
+
                 for(const activeLeaf of Object.values(leafInfo)) {
                     if (activeLeaf.state.visibility) {
-                        for (var p = -1; p < activeLeaf.parents.length; ++p) {
-                            var legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
-                            if (legendLayer.options.legend && legendLayer.options.legend.url) {
-                                var remainingParents = activeLeaf.parents.slice(p + 1);
-                                var parentNames = remainingParents.map(function(parent) {
-                                    return parent.options.title;
-                                });
-                                parentNames = parentNames.filter(function(x) {
-                                    // remove all empty values
-                                    return !!x;
-                                });
-                                // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
-                                // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
-                                //      because sources going through the instance tunnel will always have distinct legend
-                                //      urls per layer, no matter how unique the internal urls are.
-                                var legendInfo = {
-                                    url: legendLayer.options.legend.url,
-                                    layerName: legendLayer.options.title || '',
-                                    parentNames: parentNames,
-                                    sourceName: sourceName
-                                };
-                                // reverse layer order per source
-                                sourceLegendList.unshift(legendInfo);
-                                break;
-                            }
+                        for (let p = -1; p < activeLeaf.parents.length; ++p) {
+                            const legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
+
+                            const legend = legendLayer.getLegend();
+                            if (!legend) continue;
+
+                            if (legendIds.includes(legendLayer.getId())) break;
+                            legendIds.push(legendLayer.getId());
+
+                            var remainingParents = activeLeaf.parents.slice(p + 1);
+                            var parentNames = remainingParents.map(function(parent) {
+                                return parent.options.title;
+                            });
+                            parentNames = parentNames.filter(function(x) {
+                                // remove all empty values
+                                return !!x;
+                            });
+                            // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
+                            // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
+                            //      because sources going through the instance tunnel will always have distinct legend
+                            //      urls per layer, no matter how unique the internal urls are.
+                            const legendInfo = {
+                                layerName: legendLayer.options.title || '',
+                                parentNames: parentNames,
+                                sourceName: sourceName,
+                                ...legend
+                            };
+
+                            // reverse layer order per source
+                            sourceLegendList.unshift(legendInfo);
+                            break;
                         }
                     }
                 }
@@ -456,6 +464,7 @@
                     legends.unshift(sourceLegendList);
                 }
             }
+            console.log(legends);
             return legends;
         },
         /**
