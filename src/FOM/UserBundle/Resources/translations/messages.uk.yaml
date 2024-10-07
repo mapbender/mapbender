@@ -67,7 +67,7 @@ fom:
         edit_user: Редагувати користувача
         contact_user: Зв'язатися з користувачем електронною поштою
         edit_group: Змінити групу
-        delete_user: Ви дійсно хочете видалити користувача "%user_username%"?
+        delete_user: Ви дійсно хочете видалити користувача "%user_username%"
         no_users_available: Немає доступних користувачів.
       form:
         edit_user: Редагувати користувача

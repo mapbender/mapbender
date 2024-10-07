@@ -67,7 +67,7 @@ fom:
         edit_user: 'Editar usuario'
         contact_user: 'Contactar usuario via e-mail'
         edit_group: 'Editar gupo'
-        delete_user: '¿Realmente quieres borrar el usuario "%user_username%"?'
+        delete_user: '¿Realmente quieres borrar el usuario "%user_username%"'
         no_users_available: 'Usuarios no habilitados.'
       form:
         edit_user: 'Editar Usuario'
