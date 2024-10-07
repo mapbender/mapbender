@@ -260,6 +260,7 @@ mb:
         featureinfo_onoff: 'Information an/aus'
         opacity: Deckkraft
         zoomtolayer: 'Zoom auf Ebene'
+        select_style: 'Stil'
         metadata: Metadaten
         legend: Legende
         kmlexport: 'KML Export'
@@ -273,6 +274,7 @@ mb:
         layerremove: 'Ebene entfernen'
         opacity: Deckkraft
         zoomtolayer: 'Auf Ebene zoomen'
+        select_style: 'Stil auswählen'
         metadata: Metadaten
         dimension: Dimension
     zoombar:

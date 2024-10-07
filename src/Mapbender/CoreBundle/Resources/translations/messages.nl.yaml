@@ -157,6 +157,7 @@ mb:
         featureinfo_onoff: Object informatie aan/uit
         opacity: Doorzichtigheid
         zoomtolayer: Zoom naar laag
+        select_style: Stijl
         metadata: Metadata
         legend: Legenda
         kmlexport: Kml export
@@ -166,6 +167,8 @@ mb:
       class:
         title: Lagenboom
         description: Mappen-structuur (LayerTree) van kaartlagen
+      admin:
+        Selecteer stijl
     zoombar:
       zoombybox: zoom in via rechthoek
       zoombyworld: zoom uit

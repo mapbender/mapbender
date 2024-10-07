@@ -115,6 +115,11 @@
                     $('.-fn-toggle-selected', this).click();
                 });
             }
+            this.element.on('change', '.select-layer-styles', function(){
+                let layer = $(this).data('layer');
+                layer.options.style = $(this).val();
+                self.model.updateSource(layer.source);
+            });
         },
         /**
          * Applies the new (going by DOM) layer order inside a source.
@@ -478,6 +483,22 @@
                 this._initDimensionsMenu($layerNode, menu, dims, source);
             } else {
                 $dimensionsControl.remove();
+            }
+
+            var $availableStyles = layer.options.availableStyles || [];
+            var $selectLayerStyles = $('.select-layer-styles', menu);
+            $selectLayerStyles.data('layer', layer);
+            if ($availableStyles.length && $selectLayerStyles.length) {
+                if(layer.options.style.length){
+                    $selectLayerStyles.append(new Option(layer.options.style));
+                }
+                for(let i = 0; i < $availableStyles.length; i++){
+                    if($availableStyles[i].name !== layer.options.style) {
+                        $selectLayerStyles.append(new Option($availableStyles[i].title), $availableStyles[i].name);
+                    }
+                }
+            } else {
+                $('.layer-styles', menu).remove();
             }
         },
         _toggleMenu: function (e) {

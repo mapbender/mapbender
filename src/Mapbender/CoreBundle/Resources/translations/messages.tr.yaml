@@ -157,6 +157,7 @@ mb:
         featureinfo_onoff: Detay bilgisi açık/kapalı
         opacity: Opaklık
         zoomtolayer: Katmana yakınlaştır
+        select_style: Stil
         metadata: ' Üstveri (Metadata)'
         legend: Lejant
         kmlexport: KML formatında dışa aktar (Export)
@@ -166,6 +167,8 @@ mb:
       class:
         title: Katman ağacı
         description: Haritanın katman ağacı
+      admin:
+        select_style: Stil seçin
     zoombar:
       zoombybox: Çizilen alana yakınlaştır
       zoombyworld: Tüm dünyayı göster
