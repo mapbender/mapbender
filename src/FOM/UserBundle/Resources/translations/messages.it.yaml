@@ -69,7 +69,7 @@ fom:
         edit_user: 'Edita utente'
         contact_user: 'Contatta utente via e-mail'
         edit_group: 'Edita gruppa'
-        delete_user: 'Elimina utente'
+        delete_user: Si vuole davvero cancellare l'utente "%user_username%"?
         no_users_available: 'Nessun utente disponibile.'
       form:
         edit_user: 'Modifica utente'

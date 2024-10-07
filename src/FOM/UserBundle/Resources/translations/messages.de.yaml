@@ -67,7 +67,7 @@ fom:
         edit_user: 'Benutzer bearbeiten'
         contact_user: 'Kontaktieren Sie den Benutzer per E-Mail'
         edit_group: 'Gruppe bearbeiten'
-        delete_user: 'Möchten Sie den Benutzer %user_username% wirklich löschen'
+        delete_user: 'Möchten Sie den Benutzer "%user_username%" wirklich löschen'
         no_users_available: 'Kein Benutzer verfügbar.'
       form:
         edit_user: 'Benutzer bearbeiten'

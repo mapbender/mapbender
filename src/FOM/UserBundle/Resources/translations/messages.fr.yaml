@@ -67,7 +67,7 @@ fom:
         edit_user: Modifier l'utilisateur
         contact_user: Contacter l'utilisateur par courriel
         edit_group: Modifier le groupe
-        delete_user: Supprimer l'utilisateur
+        delete_user: Voulez-vous vraiment supprimer l'utilisateur "%user_username%"?
         no_users_available: Aucun utilisateur n'est disponible.
       form:
         edit_user: Modifier un utilisateur

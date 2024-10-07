@@ -67,7 +67,7 @@ fom:
         edit_user: Wijzig gebruiker
         contact_user: Contact een gebruiker via e-mail
         edit_group: Wijzig groep
-        delete_user: Verwijder gebruiker
+        delete_user: Wil je de gebruiker "%user_username%" echt verwijderen?
         no_users_available: Geen gebruikers beschikbaar.
       form:
         edit_user: Wijzig gebruiker
