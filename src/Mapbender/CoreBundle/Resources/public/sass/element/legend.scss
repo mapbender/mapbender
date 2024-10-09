@@ -9,3 +9,24 @@
     margin-bottom: 0.5em;
   }
 }
+
+.legend-custom {
+  padding: 3px;
+
+  &__heading {
+    margin-top: 5px;
+    margin-left: -3px;
+    font-weight: 800;
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+  }
+
+  &__canvas {
+    float: left;
+    margin-right: 5px;
+  }
+
+  &__layer {
+    font-size: 1.05rem;
+  }
+}

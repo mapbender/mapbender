@@ -31,7 +31,7 @@
         resetDynamicSources: function() {
             var model = this.mbMap.getModel();
             model.sourceTree.forEach(function(source) {
-                if (source.wmsloader) {
+                if (source.isDynamicSource) {
                     model.removeSource(source);
                 }
             });

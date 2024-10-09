@@ -193,7 +193,7 @@
                 sourceDef.id = sourceId;
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
-                sourceDef.wmsloader = true;
+                sourceDef.isDynamicSource = true;
                 this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
@@ -238,7 +238,7 @@
                 });
             }
             // always activate root layer
-            var rootLayer = source.configuration.children[0];
+            var rootLayer = source.getRootLayer();
             rootLayer.options.treeOptions.selected = rootLayer.options.treeOptions.allow.selected;
             Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
                 var doActivate = activateAll;

@@ -1,3 +1,11 @@
+## next release
+Features:
+* Allow selecting WMS layer styles via the layer tree contextmenu ([PR#1636](https://github.com/mapbender/mapbender/pull/1636))
+
+Other:
+* Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635))
+
+
 ## v4.0.2
 Bugfix:
 * Fix ajax requests fail in YAML applications (regression introduced in 4.0.1) ([#1628](https://github.com/mapbender/mapbender/issues/1628), [PR#1634](https://github.com/mapbender/mapbender/pull/1634))

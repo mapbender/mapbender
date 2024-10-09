@@ -98,26 +98,7 @@ Mapbender.Geo.SourceHandler = {
         });
         return stateChanged;
     },
-    /**
-     * @param {Object} layer
-     * @param {number} scale current value fetched from Mapbender.Model if omitted
-     * @return {boolean}
-     * @deprecated call layer.isInScale
-     */
-    isLayerInScale: function(layer, scale) {
-        return layer.isInScale(scale);
-    },
-    /**
-     * @param {Object} layer
-     * @param {*} extent
-     * @return {boolean}
-     * @deprecated call layer.intersectsExtent
-     */
-    isLayerWithinBounds: function(layer, extent) {
-        var srsName = Mapbender.Model.getCurrentProjectionCode();
-        return layer.intersectsExtent(extent, srsName);
-    },
-    setLayerOrder: function setLayerOrder(source, layerIdOrder) {
+    setLayerOrder: function(source, layerIdOrder) {
         var listsSorted = [];
         var _pickChildId = function(ids, layer) {
             if (!ids.length) {
@@ -143,8 +124,7 @@ Mapbender.Geo.SourceHandler = {
             var childB = _pickChildId(layerIdOrder, b);
             var ixA = layerIdOrder.includes(childA) ? layerIdOrder.indexOf(childA) : Number.MAX_SAFE_INTEGER;
             var ixB = layerIdOrder.includes(childB) ? layerIdOrder.indexOf(childB) : Number.MIN_SAFE_INTEGER;
-            let ret = parseInt(ixA,10) - parseInt(ixB,10);
-            return ret;
+            return parseInt(ixA, 10) - parseInt(ixB, 10);
         };
         var parentIdOrder = [];
         for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {

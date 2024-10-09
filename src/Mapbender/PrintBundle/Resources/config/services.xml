@@ -29,6 +29,7 @@
         <parameter key="mapbender.print.temp_dir">%mapbender.imageexport.temp_dir%</parameter>
         <parameter key="mapbender.print.template_dir">%mapbender.print.resource_dir%/templates</parameter>
         <parameter key="mapbender.print.legend_handler.service.class">Mapbender\PrintBundle\Component\LegendHandler</parameter>
+        <parameter key="mapbender.print.canvas_legend.class">Mapbender\PrintBundle\Component\CanvasLegend</parameter>
         <parameter key="mapbender.print.template_parser.service.class">Mapbender\PrintBundle\Component\OdgParser</parameter>
         <parameter key="mapbender.print_plugin_host.service.class">Mapbender\PrintBundle\Component\Service\PrintPluginHost</parameter>
         <parameter key="mapbender.print.plugin.digitizer.class">Mapbender\PrintBundle\Component\Plugin\DigitizerPrintPlugin</parameter>
@@ -109,6 +110,7 @@
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument>%mapbender.print.resource_dir%</argument>
             <argument>%mapbender.print.temp_dir%</argument>
+            <argument>%mapbender.print.canvas_legend.class%</argument>
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
         </service>
