@@ -685,6 +685,9 @@ window.Mapbender = Mapbender || {};
             if (this.hasBounds()) {
                 supported.push('zoomtolayer');
             }
+            if (this.options.availableStyles && this.options.availableStyles.length > 1) {
+                supported.push('select_style');
+            }
             return supported;
         }
     }

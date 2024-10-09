@@ -512,7 +512,7 @@
                     }
                 }
             } else {
-                $('.layer-styles', menu).remove();
+                $layerStyleControl.remove();
             }
         },
         _toggleMenu: function (e) {
