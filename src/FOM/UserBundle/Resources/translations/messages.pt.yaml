@@ -145,3 +145,9 @@ form:
       zipCode: CEP
       city: Cidade
       country: País
+mb:
+  manager:
+    admin:
+      element:
+        delete:
+          title: Pretende mesmo apagar o elemento "%element_name%"

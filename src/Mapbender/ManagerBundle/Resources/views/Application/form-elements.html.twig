@@ -87,8 +87,9 @@
                       data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
                     <i class="fas fa-key"></i>
                 </span>
+                  {% set element_name = element_title(element) | trans %}
                 <span class="-fn-delete hover-highlight-effect"
-                      title="{{"mb.manager.admin.element.delete.title"|trans}} {{ element_title(element) | trans }}"
+                      title="{{ 'mb.manager.admin.element.delete.title'|trans ({'%element_name%': element_name})}}"
                       data-slug="{{ application.slug }}"
                       data-token="{{ csrf_token('element_delete') }}"
                       data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"

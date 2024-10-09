@@ -149,3 +149,9 @@ form:
       zipCode: 'Почтовый индекс'
       city: Город
       country: Страна
+mb:
+  manager:
+    admin:
+      element:
+        delete:
+          title: Вы действительно хотите удалить элемент "%element_name%"

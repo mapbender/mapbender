@@ -147,3 +147,9 @@ form:
       zipCode: Cap
       city: Città
       country: Nazione
+mb:
+  manager:
+    admin:
+      element:
+        delete:
+          title: Vuoi davvero cancellare l'elemento "%element_name%"

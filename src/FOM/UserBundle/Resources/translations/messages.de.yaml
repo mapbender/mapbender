@@ -145,3 +145,9 @@ form:
       zipCode: PLZ
       city: Stadt
       country: Land
+mb:
+  manager:
+    admin:
+      element:
+        delete:
+          title: 'Möchten Sie Element "%element_name%" wirklich löschen'

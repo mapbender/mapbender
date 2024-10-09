@@ -112,8 +112,8 @@ mb:
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
         no_element_added: 'Kein Element vorhanden'
-        delete:
-          title: 'Element löschen'
+        #delete:
+          #title: 'Möchten Sie Element "%element_name%" wirklich löschen'
         anchor:
           label: Position
           left-top: 'Oben links'
