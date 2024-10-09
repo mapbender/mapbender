@@ -257,6 +257,7 @@ mb:
         featureinfo_onoff: 'Informação ligar/desligar'
         opacity: Opacidade
         zoomtolayer: 'Zoom na camada'
+        select_style: 'Estilo'
         metadata: Metadados
         legend: Legenda
         kmlexport: 'Exportar KML'
@@ -270,6 +271,7 @@ mb:
         layerremove: 'Remover camada'
         opacity: Opacidade
         zoomtolayer: 'Zoom na camada'
+        select_style: 'Selecionar estilo'
         metadata: Metadados
         dimension: Dimensão
     zoombar:

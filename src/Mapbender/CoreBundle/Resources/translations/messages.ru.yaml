@@ -258,6 +258,7 @@ mb:
         featureinfo_onoff: 'Инфосвойства вкл/выкл'
         opacity: Непрозрачность
         zoomtolayer: 'Масштаб по слоюr'
+        select_style: 'Стиль'
         metadata: Метаданные
         legend: Легенда
         kmlexport: 'Kml экспорт'
@@ -271,6 +272,7 @@ mb:
         layerremove: 'Удалить слой'
         opacity: 'Непрозрачность'
         zoomtolayer: 'Масштабирование до слоя'
+        select_style: 'Выберите стиль'
         metadata: 'Метаданные'
         dimension: 'Измерение'
     zoombar:
