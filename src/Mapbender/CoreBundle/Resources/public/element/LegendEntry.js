@@ -40,7 +40,7 @@ class LegendEntry {
         this._addHeading();
         legendDefinition.layers.forEach((layer) => {
             const subContainer = document.createElement("div");
-            subContainer.append(this._createCanvasForLayer("Label", 35, 15, layer.style));
+            subContainer.append(this._createCanvasForLayer(layer.style.label ? "Label" : null, 35, 15, layer.style));
             subContainer.append(this._createLayerHeading(layer.title));
             this.container.append(subContainer);
         });
@@ -80,7 +80,6 @@ class LegendEntry {
      * @private
      */
     _createCanvasForLayer(label, width, height, style) {
-
         const canvas = document.createElement('canvas');
         canvas.className = "legend-custom__canvas";
         canvas.width = width;
