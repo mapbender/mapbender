@@ -2,7 +2,8 @@
 
 namespace Mapbender\PrintBundle\Component;
 
-class CanvasLegend {
+class CanvasLegend
+{
 
     private \GdImage $image;
     protected string $font = __DIR__ . '/../../../../../config/MapbenderPrintBundle/fonts/OpenSans-Regular.ttf';
@@ -12,12 +13,15 @@ class CanvasLegend {
     protected int $layerHeight = 25;
     protected int $symbolHeight = 15;
     protected int $symbolWidth = 35;
+    protected int $layerTitleFontSize = 12;
+    protected string $layerLabelString = "Label";
 
-    public function __construct(private array $layers) {
+    public function __construct(private array $layers)
+    {
         $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers));
         $this->prepareCanvas();
 
-        foreach($this->layers as $layer) {
+        foreach ($this->layers as $layer) {
             $this->addSubLayer($layer["title"], $layer["style"]);
         }
     }
@@ -27,7 +31,8 @@ class CanvasLegend {
         return $this->image;
     }
 
-    protected function addSubLayer(string $label, array $style) {
+    protected function addSubLayer(string $label, array $style)
+    {
         // Set fill color
         $fillColor = $this->hexToRgb($style['fillColor']);
         $fillOpacity = $style['fillOpacity'];
@@ -43,38 +48,22 @@ class CanvasLegend {
             imagerectangle($this->image, 0, $this->offset, $this->symbolWidth - 1, $this->offset + $this->symbolHeight - 1, $stroke);
         }
 
-        // Set font options and calculate text placement
-        $fontColor = $this->hexToRgb($style['fontColor']);
-        $fontSize = min(10, (int)$style['fontSize']);
-        $textColor = imagecolorallocate($this->image, $fontColor['red'], $fontColor['green'], $fontColor['blue']);
-
-        $textBox = imagettfbbox($fontSize, 0, $this->font, "Label");
-        $textWidth = abs($textBox[4] - $textBox[0]);
-        $textHeight = abs($textBox[5] - $textBox[1]);
-        $textX = ($this->symbolWidth - $textWidth) / 2;
-        $textY = ($this->symbolHeight + $textHeight) / 2;
-
-        // Draw label outline if needed
-        if (isset($style['labelOutlineWidth']) && $style['labelOutlineWidth'] > 0) {
-            $labelOutlineColor = $this->hexToRgb($style['labelOutlineColor']);
-            $outlineColor = imagecolorallocate($this->image, $labelOutlineColor['red'], $labelOutlineColor['green'], $labelOutlineColor['blue']);
-            $outlineWidth = $style['labelOutlineWidth'];
-            for ($x = -$outlineWidth; $x <= $outlineWidth; $x++) {
-                for ($y = -$outlineWidth; $y <= $outlineWidth; $y++) {
-                    imagettftext($this->image, $fontSize, 0, $textX + $x, $this->offset + $textY + $y, $outlineColor, $this->font, "Label");
-                }
-            }
+        if (array_key_exists('label', $style) && $style['label']) {
+            $this->drawLabelText($style);
         }
 
-        // Draw the label
-        imagettftext($this->image, $fontSize, 0, $textX, $textY + $this->offset, $textColor, $this->font, "Label");
 
+        $textBox = imagettfbbox($this->layerTitleFontSize, 0, $this->font, $label);
+        $textHeight = abs($textBox[5] - $textBox[1]);
+        $textY = ($this->symbolHeight + $textHeight) / 2;
         $black = imagecolorallocate($this->image, 0, 0, 0);
-        imagettftext($this->image, 12, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $label);
+
+        imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $label);
         $this->offset += $this->symbolHeight + 10;
     }
 
-    private function hexToRgb($hex) {
+    private function hexToRgb($hex)
+    {
         $hex = str_replace("#", "", $hex);
         if (strlen($hex) == 3) {
             $r = hexdec(str_repeat(substr($hex, 0, 1), 2));
@@ -92,5 +81,34 @@ class CanvasLegend {
     {
         $white = imagecolorallocate($this->image, 255, 255, 255);
         imagefill($this->image, 0, 0, $white);
+    }
+
+    public function drawLabelText(array $style): void
+    {
+        $fontColor = $this->hexToRgb($style['fontColor']);
+        $fontSize = min(10, (int)$style['fontSize']);
+        $textColor = imagecolorallocate($this->image, $fontColor['red'], $fontColor['green'], $fontColor['blue']);
+
+
+        $textBox = imagettfbbox($fontSize, 0, $this->font, $this->layerLabelString);
+        $textWidth = abs($textBox[4] - $textBox[0]);
+        $textHeight = abs($textBox[5] - $textBox[1]);
+        $textX = ($this->symbolWidth - $textWidth) / 2;
+        $textY = ($this->symbolHeight + $textHeight) / 2;
+
+        // Draw label outline if needed
+        if (isset($style['labelOutlineWidth']) && $style['labelOutlineWidth'] > 0) {
+            $labelOutlineColor = $this->hexToRgb($style['labelOutlineColor']);
+            $outlineColor = imagecolorallocate($this->image, $labelOutlineColor['red'], $labelOutlineColor['green'], $labelOutlineColor['blue']);
+            $outlineWidth = $style['labelOutlineWidth'];
+            for ($x = -$outlineWidth; $x <= $outlineWidth; $x++) {
+                for ($y = -$outlineWidth; $y <= $outlineWidth; $y++) {
+                    imagettftext($this->image, $fontSize, 0, $textX + $x, $this->offset + $textY + $y, $outlineColor, $this->font, $this->layerLabelString);
+                }
+            }
+        }
+
+        // Draw the label
+        imagettftext($this->image, $fontSize, 0, $textX, $textY + $this->offset, $textColor, $this->font, "Label");
     }
 }
