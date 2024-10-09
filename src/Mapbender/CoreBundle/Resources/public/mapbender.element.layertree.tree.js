@@ -115,6 +115,7 @@
                     $('.-fn-toggle-selected', this).click();
                 });
             }
+            this._initLayerStyleEvents();
         },
         /**
          * Applies the new (going by DOM) layer order inside a source.
@@ -441,7 +442,7 @@
                 const $actionElement = $(el);
                 const action = $actionElement.attr('data-menu-action');
                 if (activeMenuItems.includes(action)) {
-                    this._initMenuAction(action, $actionElement, $layerNode, layer);
+                    this._initMenuAction($menu, action, $actionElement, $layerNode, layer);
                 } else {
                     $actionElement.remove();
                 }
@@ -450,22 +451,24 @@
         /**
          *
          * @param {string} action
+         * @param {jQuery} $menu the menu container dom element
          * @param {jQuery} $actionElement the dom element with the data-action attribute
          * @param {jQuery} $layerNode the dom element for the layer node
          * @param {Mapbender.SourceLayer} layer
          * @private
          */
-        _initMenuAction(action, $actionElement, $layerNode, layer) {
+        _initMenuAction($menu, action, $actionElement, $layerNode, layer) {
             switch (action) {
                 case 'opacity':
                     return this._initOpacitySlider($actionElement, layer);
                 case 'dimension':
-                    return this._initDimensionsMenu($layerNode, $menu, dims, layer.source);
+                    return this._initDimensionsMenu($layerNode, $menu, layer.source);
+                case 'select_style':
+                    return this._initLayerStyleSelector($actionElement, layer);
                 case 'zoomtolayer':
                     return $actionElement.on('click', this._zoomToLayer.bind(this));
             }
         },
-
         _initOpacitySlider: function ($opacityControl, layer) {
             const source = layer.source;
             if ($opacityControl.length) {
@@ -485,6 +488,31 @@
                         this.model.setSourceOpacity(source, opacity);
                     }
                 });
+            }
+        },
+        _initLayerStyleEvents: function () {
+            const self = this;
+            this.element.on('change', '.select-layer-styles', function () {
+                let layer = $(this).data('layer');
+                layer.options.style = $(this).val();
+                self.model.updateSource(layer.source);
+            });
+        },
+        _initLayerStyleSelector: function ($layerStyleControl, layer) {
+            const $availableStyles = layer.options.availableStyles || [];
+            const $selectLayerStyles = $layerStyleControl.find('.select-layer-styles');
+            $selectLayerStyles.data('layer', layer);
+            if ($availableStyles.length && $selectLayerStyles.length) {
+                if (layer.options.style.length) {
+                    $selectLayerStyles.append(new Option(layer.options.style));
+                }
+                for (let i = 0; i < $availableStyles.length; i++) {
+                    if ($availableStyles[i].name !== layer.options.style) {
+                        $selectLayerStyles.append(new Option($availableStyles[i].title), $availableStyles[i].name);
+                    }
+                }
+            } else {
+                $('.layer-styles', menu).remove();
             }
         },
         _toggleMenu: function (e) {
@@ -512,7 +540,8 @@
         _getSupportedMenuOptions(layer) {
             return layer.getSupportedMenuOptions();
         },
-        _initDimensionsMenu: function ($element, $actionElement, dims, source) {
+        _initDimensionsMenu: function ($element, $actionElement, source) {
+            var dims = source.configuration.options.dimensions || [];
             var self = this;
             var dimData = $element.data('dimensions') || {};
             var $controls = [];

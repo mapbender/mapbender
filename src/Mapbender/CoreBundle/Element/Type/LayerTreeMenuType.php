@@ -40,6 +40,7 @@ class LayerTreeMenuType extends AbstractType
             'mb.core.layertree.admin.zoomtolayer' => 'zoomtolayer',
             'mb.core.layertree.admin.metadata' => 'metadata',
             'mb.core.layertree.admin.dimension' => 'dimension',
+            'mb.core.layertree.admin.select_style' => 'select_style',
         );
     }
 }

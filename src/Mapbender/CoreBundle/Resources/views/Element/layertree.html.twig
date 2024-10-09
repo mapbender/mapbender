@@ -54,6 +54,18 @@
                     </div>
                 {% endif %}
                 {% endblock %}
+                {% block layertree_menu_select_style %}
+                {% if 'select_style' in configuration.menu %}
+                    <div class="layer-styles input-group mb-1">
+                        <label class="input-group-text">{{ 'mb.core.layertree.label.select_style'|trans }}</label>
+                        <select
+                            class="select-layer-styles form-select"
+                            title="{{ 'mb.core.layertree.label.select_style'|trans }}">
+                        </select>
+                    </div>
+                {% endif %}
+                {% endblock %}
+
                 <div class="text-end">
                   {% block layertree_menu_zoomtolayer %}
                   {% if 'zoomtolayer' in configuration.menu %}

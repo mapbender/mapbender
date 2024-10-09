@@ -157,6 +157,7 @@ mb:
         featureinfo_onoff: FeatureInfo On/Off
         opacity: Opacité
         zoomtolayer: null
+        select_style: Style
         metadata: Metadonnées
         legend: Légende
         kmlexport: Exporter en KML
@@ -166,6 +167,8 @@ mb:
       class:
         title: Arborescence des couches
         description: Arborescence des couches de la carte
+      admin:
+        select_style: Choisir un style
     zoombar:
       zoombybox: Zoomer sur la boite
       zoombyworld: Zoomer sur l'étendue globale
