@@ -613,6 +613,17 @@ window.Mapbender = Mapbender || {};
         }
 
         /**
+         * @param {Mapbender.SourceLayer[]} children
+         */
+        addChildren(children) {
+            for(const child of children) {
+                this.children.push(child);
+                this.children.forEach((child) => child.siblings = this.children);
+            }
+            Mapbender.Model.updateSource(this.source);
+        }
+
+        /**
          * @param {string} projCode
          * @param {boolean} inheritFromParent
          * @returns {number[]|boolean} false if bounds could not be calculated
