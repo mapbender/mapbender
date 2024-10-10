@@ -286,8 +286,20 @@
 
             function resetLayer(layer, $parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
+                const treeOptions = layer.options.treeOptions;
+                const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
+                const $toggleChildrenButton = $li.find('>.leaveContainer>.-fn-toggle-children');
+                $toggleChildrenButton.toggleClass('disabled-placeholder', !symbolState);
+
                 if (!$li.length && $parent) {
-                    $parent.find('ul.layers').append(self._createLayerNode(layer));
+                    let $layers = $parent.find('>ul.layers');
+                    if (!$layers.length) {
+                        $layers = $(document.createElement('ul')).addClass('layers');
+                        $parent.append($layers);
+                        $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
+                    }
+
+                    $layers.append(self._createLayerNode(layer));
                 }
                 self._updateLayerDisplay($li, layer);
                 if (layer.children) {
@@ -298,6 +310,7 @@
             }
 
             resetLayer(source.getRootLayer(), null);
+            this._reset();
         },
         _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
