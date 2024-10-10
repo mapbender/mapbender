@@ -14,6 +14,8 @@ mb:
     reset: Réinitialiser
     save: Sauvegarder
     search: Rechercher
+    sort_ascending: Trier par ordre croissant
+    sort_descending: Trier par ordre décroissant
   terms:
     application:
       singular: Application

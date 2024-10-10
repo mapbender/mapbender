@@ -14,6 +14,8 @@ mb:
     reset: Скинути
     save: Зберегти
     search: Шукати
+    sort_ascending: сортувати за зростанням
+    sort_descending: сортувати за спаданням
   terms:
     application:
       singular: Застосунок

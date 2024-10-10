@@ -15,6 +15,8 @@ mb:
     save: Guardar
     search: Buscar
     duplicate: Duplicar
+    sort_ascending: 'Ordenar de forma ascendente'
+    sort_descending: 'Ordenar de forma descendente'
   terms:
     application:
       singular: Aplicación

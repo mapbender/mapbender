@@ -2,8 +2,14 @@
   <table class="table">
     <thead>
       <tr>
-        <th>{{ "fom.user.group.index.title" | trans }}</th>
-        <th>{{ "fom.user.group.index.description" | trans }}</th>
+        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+            {{ "fom.user.group.index.title" | trans }}
+            <span class="fas fa-arrow-up" style="display: none"></span>
+        </th>
+        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+            {{ "fom.user.group.index.description" | trans }}
+            <span class="fas fa-arrow-up" style="display: none"></span>
+        </th>
         <th></th>
       </tr>
     </thead>
