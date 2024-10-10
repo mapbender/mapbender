@@ -5,6 +5,8 @@ namespace Mapbender\RoutingBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Class RoutingElementAdminType
@@ -28,11 +30,11 @@ class ReverseRoutingElementAdminType extends AbstractType
     /**
      * @inheritdoc
      */
-    public function configureOptions(OptionsResolver $resolver) {
+/*    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
             'application' => null
         ));
-    }
+    }*/
 
 
     /**
@@ -46,7 +48,7 @@ class ReverseRoutingElementAdminType extends AbstractType
 
         # reverseGeocoding Config
         $builder
-            ->add('revGeocodingDriver', 'choice',
+            ->add('revGeocodingDriver', ChoiceType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.geocodeDriver",
                     'required' => false,
@@ -59,7 +61,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'property_path' => '[revGeocodingDriver]'
                 )
             )
-            ->add('revGeoConnection', 'text',
+            ->add('revGeoConnection', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.connection",
                     'required' => false,
@@ -67,7 +69,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'property_path' => '[revGeoConnection]'
                 )
             )
-            ->add('revTableName', 'text',
+            ->add('revTableName', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.revTableName",
                     'required' => false,
@@ -75,7 +77,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'property_path' => '[revTableName]'
                 )
             )
-            ->add('revRowGeoWay', 'text',
+            ->add('revRowGeoWay', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.revRowGeoWay",
                     'required' => false,
@@ -83,7 +85,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'property_path' => '[revRowGeoWay]'
                 )
             )
-            ->add('revRowSearch', 'text',
+            ->add('revRowSearch', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.revRowSearch",
                     'required' => false,
@@ -91,7 +93,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'property_path' => '[revRowSearch]'
                 )
             )
-            ->add('revSearchBuffer', 'text',
+            ->add('revSearchBuffer', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.reverse.revRowSearchBuffer",
                     'required' => false,

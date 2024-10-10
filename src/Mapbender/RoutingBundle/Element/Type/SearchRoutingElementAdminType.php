@@ -5,6 +5,9 @@ namespace Mapbender\RoutingBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Class RoutingElementAdminType
@@ -45,7 +48,7 @@ class SearchRoutingElementAdminType extends AbstractType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('searchDriver', 'choice',
+            ->add('searchDriver', ChoiceType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.shDriver",
                     'required' => false,
@@ -54,18 +57,18 @@ class SearchRoutingElementAdminType extends AbstractType
                         #'sql'         => "PostgreSQL",
                         'solr'        => "Solr")
                 ))
-            ->add('searchUrl', 'text',
+            ->add('searchUrl', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.shUrl",
                     'required' => true
                 ))
-            ->add('query_key', 'text',
+            ->add('query_key', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.query_key",
                     'empty_data' => 'q',
                     'required' => false
                 ))
-            ->add('query_ws_replace', 'text',
+            ->add('query_ws_replace', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.query_ws_replace",#'Query Whitespace replacement pattern',
                     'empty_data' => '',
@@ -73,56 +76,56 @@ class SearchRoutingElementAdminType extends AbstractType
                     'required' => false,
                     'property_path' => '[query_ws_replace]'
                 ))
-            ->add('query_format', 'text',
+            ->add('query_format', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.query_format",#'Query key format',
                     'empty_data' => '%s',
                     'property_path' => '[query_format]',
                     'required' => false
                 ))
-            ->add('token_regex', 'text',
+            ->add('token_regex', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.token_regex",#'Token (JavaScript regex)',
                     'empty_data' => null, #'[^a-zA-Z0-9äöüÄÖÜß]',
                     'property_path' => '[token_regex]',
                     'required' => false
                 ))
-            ->add('token_regex_in', 'text',
+            ->add('token_regex_in', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.token_regex_in",#'Token search (JavaScript regex)',
                     'empty_data' => null, #'([a-zA-ZäöüÄÖÜß]{3,})',
                     'property_path' => '[token_regex_in]',
                     'required' => false
                 ))
-            ->add('token_regex_out', 'text',
+            ->add('token_regex_out', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.token_regex_out", #'Token replace (JavaScript regex)',
                     'empty_data' => null,#'$1*',
                     'property_path' => '[token_regex_out]',
                     'required' => false
                 ))
-            ->add('collection_path', 'text',
+            ->add('collection_path', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.collection_path",
                     'property_path' => '[collection_path]',
                     'empty_data' => 'response.docs',
                     'required' => false
                 ))
-            ->add('label_attribute', 'text',
+            ->add('label_attribute', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.label_attribute",
                     'property_path' => '[label_attribute]',
                     'empty_data' => 'label',
                     'required' => false
                 ))
-            ->add('geom_attribute', 'text',
+            ->add('geom_attribute', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.geom_attribute",
                     'property_path' => '[geom_attribute]',
                     'empty_data' => 'geom',
                     'required' => false
                 ))
-            ->add('geom_format', 'choice',
+            ->add('geom_format', ChoiceType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.geom_format",
                     'property_path' => '[geom_format]',
@@ -134,39 +137,39 @@ class SearchRoutingElementAdminType extends AbstractType
                         'CSV' => 'CSV',
                     )
                 ))
-            ->add('delay', 'number',
+            ->add('delay', NumberType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.delay",
                     'property_path' => '[delay]',
                     'empty_data' => '300',
                     'required' => false
                 ))
-            ->add('result_buffer', 'number',
+            ->add('result_buffer', NumberType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.result_buffer",
                     'property_path' => '[result][buffer]',
                     'empty_data' => '0',
                     'required' => false,
                 ))
-            ->add('result_minscale', 'number',
+            ->add('result_minscale', NumberType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.result_minscale",
                     'property_path' => '[result][minscale]',
                     'required' => false,
                 ))
-            ->add('result_maxscale', 'number',
+            ->add('result_maxscale', NumberType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.result_maxscale",
                     'property_path' => '[result][maxscale]',
                     'required' => false,
                 ))
-            ->add('result_icon_url', 'text',
+            ->add('result_icon_url', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.result_icon_url",
                     'property_path' => '[result][icon_url]',
                     'required' => false,
                 ))
-            ->add('result_icon_offset', 'text',
+            ->add('result_icon_offset', TextType::class,
                 array(
                     'label' => "mb.routing.backend.dialog.label.sh.result_icon_offset",
                     'property_path' => '[result][icon_offset]',

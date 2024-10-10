@@ -18,19 +18,13 @@ class MapbenderRoutingBundle extends Bundle
     /**
      * @inheritdoc
      */
-    /*public function getElements()
-    {
-        return array(
-            'Mapbender\RoutingBundle\Element\RoutingElement'
-        );
-    }*/
 
     public function build(ContainerBuilder $container): void
     {
         $configLocator = new FileLocator(__DIR__ . '/Resources/config');
         $loader = new XmlFileLoader($container, $configLocator);
 //        $loader->load('services.xml');
-//        $loader->load('elements.xml');
+        $loader->load('elements.xml');
 //        $loader->load('commands.xml');
 
 //        $container->addCompilerPass(new AddBasePrintPluginsPass());

@@ -2,20 +2,22 @@
 
 namespace Mapbender\RoutingBundle\Element;
 
-use Doctrine\DBAL\Connection;
-use Mapbender\CoreBundle\Component\Element;
-use Mapbender\RoutingBundle\Component\RequestHandler;
-use Mapbender\RoutingBundle\Component\ReverseSearchHandler;
+use Doctrine\Common\Collections\Collection;
+use Mapbender\Component\Element\AbstractElementService;
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
+use Mapbender\Component\Element\ElementServiceInterface;
+use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\RoutingBundle\Component\RoutingHandler;
-use RuntimeException;
+use Mapbender\RoutingBundle\Component\ReverseSearchHandler;
 use Mapbender\RoutingBundle\Component\SearchHandler;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 /**
  * Class RoutingElement
@@ -23,17 +25,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @author Christian Kuntzsch <christian.kuntzsch@wheregroup.com>
  * @author Robert Klemm <robert.klemm@wheregroup.com>
  */
-class RoutingElement extends Element
+class RoutingElement extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
-    /**
-     * @var Connection|object
-     */
-    protected $connection;
+     /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
+    public function __construct(UrlGeneratorInterface $urlGenerator){
+        $this->urlGenerator = $urlGenerator;
+    }
 
     /**
      * @return string
      */
-    public static function getClassTitle()
+    public static function getClassTitle() : string
     {
         return "mb.routing.backend.title";
     }
@@ -41,23 +44,27 @@ class RoutingElement extends Element
     /**
      * @return string
      */
-    public static function getClassDescription()
+    public static function getClassDescription() : string
     {
         return "mb.routing.backend.description";
     }
 
-    /**
-     * @return array
-     */
-    public static function getClassTags()
+    public static function updateEntityConfig(Element $element) : void
     {
-        return array();
+        //$values = $element->getConfiguration();
+        /*if ($values && !empty($values['scales'])) {
+            // Force all 'scales' values to integer
+            $values['scales'] = array_map('intval', $values['scales']);
+            // Remove (invalid) 0 / null / empty 'scales' values
+            $values['scales'] = array_filter($values['scales']);
+            $element->setConfiguration($values);
+        }*/
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
-    static public function listAssets()
+    public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
@@ -66,30 +73,16 @@ class RoutingElement extends Element
                 "/components/jquery-context-menu/src/jquery.ui.position.js",
                 "/bundles/mapbendercore/proj4js/proj4js-compressed.js",
                 "/components/jquery-ui/ui/widgets/autocomplete.js"
-                ),
+            ),
             'css' => array(
                 '@MapbenderRoutingBundle/Resources/public/sass/element/routing.scss',
                 '@MapbenderRoutingBundle/Resources/public/sass/element/jquery-ui.css',
                 '/components/jquery-context-menu/src/jquery.contextMenu.css'),
-            'trans' => array('MapbenderRoutingBundle:Element:routingelement.json.twig')
+            'trans' => array(
+                'MapbenderRoutingBundle:Element:routingelement.json.twig')
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mbRoutingElement';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getType()
-    {
-        return 'Mapbender\RoutingBundle\Element\Type\RoutingElementAdminType';
-    }
 
     /**
      * @return array
@@ -127,59 +120,84 @@ class RoutingElement extends Element
         );
     }
 
+    public function handleRequest(Element $element, Request $request)
+    {
+        $action = $request->attributes->get('action');
+        $configuration = $element->getConfiguration();
+        $response = new Response();
+        switch ($action) {
+            case 'getRoute':
+                $response = new RoutingHandler();
+                break;
+            case 'search':
+                $response = new SearchHandler();
+                break;
+            case 'revGeocode':
+                $response = new ReverseSearchHandler();
+                break;
+
+            default:
+                //$response = $this->pluginRegistry->handleHttpRequest($request, $element);
+        }
+        if ($response) {
+            return $response;
+        } else {
+            throw new NotFoundHttpException();
+        }
+    }
+
+    public function getView(Element $element)
+    {
+        $config = $element->getConfiguration();
+        $template = '@Mapbender/RoutingBundle/Element/routingelement.html.twig';
+
+        $view = new TemplateView($template);
+        $view->attributes['class'] = 'mb-element-routingelement';
+        $view->attributes['data-title'] = $element->getTitle();
+
+        $submitUrl = $this->urlGenerator->generate('mapbender_core_application_element', array(
+            'slug' => $element->getApplication()->getSlug(),
+            'id' => $element->getId(),
+        ));
+        $view->variables = array(
+            'submitUrl' => $submitUrl,
+            'id' => $element->getId(),
+            'title' => $element->getTitle(),
+            'transportationModes' => $this->getTransportationModes($element),
+            'addIntermediatePoints' => $config['addIntermediatePoints'],
+            'autoSubmit' => $config['autoSubmit'],
+            'configuration' => $config + array(
+                    'required_fields_first' => false,
+                    'type' => 'dialog',
+                ),
+        );
+        return $view;
+    }
+
     /**
      * @inheritdoc
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderRoutingBundle:ElementAdmin:routingelementadmin.html.twig';
+        return '@MapbenderRouting/ElementAdmin/routingelementadmin.html.twig';
     }
-
-
-    /**
-     * Get Configuration from Backend Admintype  or yml-syntax
-     *
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        $configuration = parent::getConfiguration();
-
-        if (!isset($configuration['routingDriver'])) {
-            new \Exception('Routing Driver is not set');
-        }
-
-        if (isset($configuration['search'])) {
-            $configuration = array_merge($configuration, $configuration['search']);
-        }
-
-        return $configuration;
-    }
-
-
-
 
     /**
      * @return string
      */
-    public function render()
+    public function getWidgetName( Element $element )
     {
-        $configuration = $this->getConfiguration();
-        $transportationModes = $this->getTransportationModes();
-
-        return $this->container->get('templating')->render(
-            'MapbenderRoutingBundle:Element:routingelement.html.twig',
-            array(
-                'id' => $this->getId(),
-                'title' => $this->getTitle(),
-                'transportationModes' => $transportationModes,
-                'addIntermediatePoints' => $configuration['addIntermediatePoints'],
-                'autoSubmit' => $configuration['autoSubmit']
-            )
-        );
+        return 'mapbender.mbRoutingElement';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getType()
+    {
+        return 'Mapbender\RoutingBundle\Element\Type\RoutingElementAdminType';
+    }
+
 
     /**
      * @param $action
@@ -213,13 +231,13 @@ class RoutingElement extends Element
     /**
      * @return array
      */
-    protected function getTransportationModes()
+    protected function getTransportationModes(Element $element)
     {
         $defaultTransportationModes = array(
             0 => 'car'
         );
 
-        $configuration = $this->getConfiguration();
+        $configuration = $element->getConfiguration();
         $routingDriver = $configuration['routingDriver'];
         $backendConfig = $configuration['backendConfig'];
 
@@ -241,21 +259,25 @@ class RoutingElement extends Element
     }
 
 
-
     /**
      * Modify Frontend-Configuration
      * @return array|null
      */
-    public function getPublicConfiguration()
+    public function getClientConfiguration(Element $element) : Array|null
     {
-        $pubConfig = $this->entity->getConfiguration();
+        $configuration = $element->getConfiguration();
 
-        // delete Backendconfig
-        unset($pubConfig['backendConfig']);
+        if (!isset($configuration['routingDriver'])) {
+            new \Exception('Routing Driver is not set');
+        }
 
-        return $pubConfig + array(
-                // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
-                'locale' => \locale_get_default(),
-            );
+        if (isset($configuration['search'])) {
+            $configuration = array_merge($configuration, $configuration['search']);
+        }
+
+        return $configuration + array(
+            // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
+            'locale' => \locale_get_default(),
+        );
     }
 }

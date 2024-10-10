@@ -17,6 +17,40 @@
             margin-bottom: 10px;
         }
     </style>
+    {% if not form.vars.valid %}
+        {% set counter = 0 %}
+        <div class="alert alert-danger">
+              {{ form_errors(form) }}
+
+            {% for children in form.children %}
+
+                {% if not children.vars.valid %}
+                    <p>Invalid fields/values (children.vars.name): {{ children.vars.name }}</p>
+                    {{ form_errors(children) }}
+                    <ul>
+                        {% for error in children.vars.errors %}
+                            <li>children error: {{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% for child in children %}
+                    {% if not child.vars.valid %}
+                        <p>child.vars.name: {{ child.vars.name }}</p>
+                        <ul>
+                            {% for error in child.vars.errors %}
+                                <li> Fehler (child.vars.errors): {{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+{#                        {{ form_errors(child) }}#}
+                        {{ "---------------------------" }}
+                    {% endif %}
+                {% endfor %}
+                {{ "---------------------------" }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="left">
     </div>
     <div class="right">
@@ -79,48 +113,48 @@
     <br>
     {{ form_label(form.configuration.routingDriver) }}{{ form_widget(form.configuration.routingDriver) }}
     <div class="clearContainer"></div>
-    <div class="graphhopper drivers" style="display:none">
-        {{ form_label(form.configuration.ghUrl) }}{{ form_widget(form.configuration.ghUrl) }}
-        <div class="clearContainer"></div>
-        {{ form_label(form.configuration.ghTransportationMode) }}{{ form_widget(form.configuration.ghTransportationMode) }}
-        <div class="clearContainer"></div>
-        {{ form_label(form.configuration.ghKey) }}{{ form_widget(form.configuration.ghKey) }}
-        <div class="clearContainer"></div>
-        <div class="graphhopper advanced" style="display:none">
-            {{ form_label(form.configuration.ghWeighting) }}{{ form_widget(form.configuration.ghWeighting)}}
-            <div class="clearContainer"></div>
-            {{ form_label(form.configuration.ghOptimize) }}{{ form_widget(form.configuration.ghOptimize) }}
-            <div class="clearContainer"></div>
-            {{ form_label(form.configuration.ghElevation) }}{{ form_widget(form.configuration.ghElevation)}}
-            <div class="clearContainer"></div>
-            {{ form_label(form.configuration.ghInstructions) }}{{ form_widget(form.configuration.ghInstructions) }}
-            <div class="clearContainer"></div>
-        </div>
-    </div>
-    <div class="pgrouting drivers" style="display:none">
-        {{ form_label(form.configuration.connection) }}{{ form_widget(form.configuration.connection) }}
-        <div class="clearContainer"></div>
-        {{ form_label(form.configuration.pgWayTable) }}{{ form_widget(form.configuration.pgWayTable) }}
-        <div class="clearContainer"></div>
-        {{ form_label(form.configuration.pgWayTableVertices) }}{{ form_widget(form.configuration.pgWayTableVertices) }}
-        <div class="clearContainer"></div>
-        <div class="pgrouting advanced" style="display:none">
-            {{ form_label(form.configuration.pgWeighting) }}{{ form_widget(form.configuration.pgWeighting) }}
-            <div class="clearContainer"></div>
-            {{ form_label(form.configuration.pgSpeed) }}{{ form_widget(form.configuration.pgSpeed) }}
-            <div class="clearContainer"></div>
-            {{ form_label(form.configuration.pgInstructions) }}{{ form_widget(form.configuration.pgInstructions) }}
-            <div class="clearContainer"></div>
-        </div>
-    </div>
-    <div class="osrm drivers" style="display:none">
+{#    <div class="graphhopper drivers" style="display:block">#}
+{#        {{ form_label(form.configuration.ghUrl) }}{{ form_widget(form.configuration.ghUrl) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        {{ form_label(form.configuration.ghTransportationMode) }}{{ form_widget(form.configuration.ghTransportationMode) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        {{ form_label(form.configuration.ghKey) }}{{ form_widget(form.configuration.ghKey) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        <div class="graphhopper advanced" style="display:block">#}
+{#            {{ form_label(form.configuration.ghWeighting) }}{{ form_widget(form.configuration.ghWeighting)}}#}
+{#            <div class="clearContainer"></div>#}
+{#            {{ form_label(form.configuration.ghOptimize) }}{{ form_widget(form.configuration.ghOptimize) }}#}
+{#            <div class="clearContainer"></div>#}
+{#            {{ form_label(form.configuration.ghElevation) }}{{ form_widget(form.configuration.ghElevation)}}#}
+{#            <div class="clearContainer"></div>#}
+{#            {{ form_label(form.configuration.ghInstructions) }}{{ form_widget(form.configuration.ghInstructions) }}#}
+{#            <div class="clearContainer"></div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="pgrouting drivers" style="display:block">#}
+{#        {{ form_label(form.configuration.connection) }}{{ form_widget(form.configuration.connection) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        {{ form_label(form.configuration.pgWayTable) }}{{ form_widget(form.configuration.pgWayTable) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        {{ form_label(form.configuration.pgWayTableVertices) }}{{ form_widget(form.configuration.pgWayTableVertices) }}#}
+{#        <div class="clearContainer"></div>#}
+{#        <div class="pgrouting advanced" style="display:block">#}
+{#            {{ form_label(form.configuration.pgWeighting) }}{{ form_widget(form.configuration.pgWeighting) }}#}
+{#            <div class="clearContainer"></div>#}
+{#            {{ form_label(form.configuration.pgSpeed) }}{{ form_widget(form.configuration.pgSpeed) }}#}
+{#            <div class="clearContainer"></div>#}
+{#            {{ form_label(form.configuration.pgInstructions) }}mit Zombies{{ form_widget(form.configuration.pgInstructions) }}#}
+{#            <div class="clearContainer"></div>#}
+{#        </div>#}
+{#    </div>#}
+    <div class="osrm drivers" style="display:block">
         {{ form_label(form.configuration.osrmUrl) }}{{ form_widget(form.configuration.osrmUrl) }}
         <div class="clearContainer"></div>
         {{ form_label(form.configuration.osrmService) }}{{ form_widget(form.configuration.osrmService) }}
         <div class="clearContainer"></div>
         {{ form_label(form.configuration.osrmTransportationMode) }}{{ form_widget(form.configuration.osrmTransportationMode) }}
         <div class="clearContainer"></div>
-        <div class="osrm advanced" style="display:none">
+        <div class="osrm advanced" style="display:block">
             {{ form_label(form.configuration.osrmVersion) }}{{ form_widget(form.configuration.osrmVersion) }}
             <div class="clearContainer"></div>
             {{ form_label(form.configuration.osrmAlternatives) }}{{ form_widget(form.configuration.osrmAlternatives) }}
@@ -135,7 +169,7 @@
             <div class="clearContainer"></div>
         </div>
     </div>
-    <div class="trias drivers" style="display:none">
+    <div class="trias drivers" style="display:block">
         <p>Currently no driver configuration possible</p>
     </div>
     {#Search Drivers#}
@@ -186,7 +220,7 @@
         {% endif %}
     </div>
     <div class="reverseGeocoding" style="display:none">
-        <br>
+{#         <br>
         {{ form_label(form.configuration.reverse.revGeocodingDriver) }}{{ form_widget(form.configuration.reverse.revGeocodingDriver) }}
         <div class="clearContainer"></div>
         {{ form_label(form.configuration.reverse.revGeoConnection) }}{{ form_widget(form.configuration.reverse.revGeoConnection) }}
@@ -201,6 +235,7 @@
             {{ form_label(form.configuration.reverse.revSearchBuffer) }}{{ form_widget(form.configuration.reverse.revSearchBuffer) }}
             <div class="clearContainer"></div>
         </div>
+#}
     </div>
 </div>
 
@@ -215,7 +250,7 @@
         var $reverseGeocoding = $('.reverseGeocoding');
         var search = $('.search');
 
-        $drivers.hide();
+        $drivers.show();
         $basic.hide();
         $reverseGeocoding.hide();
         search.hide();
