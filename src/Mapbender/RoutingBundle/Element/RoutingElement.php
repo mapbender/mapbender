@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-
 /**
  * Class RoutingElement
  * @package Mapbender\RoutingBundle\Element
@@ -51,14 +50,14 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
 
     public static function updateEntityConfig(Element $element) : void
     {
-        //$values = $element->getConfiguration();
-        /*if ($values && !empty($values['scales'])) {
+        $values = $element->getConfiguration();
+        if ($values && !empty($values['scales'])) {
             // Force all 'scales' values to integer
             $values['scales'] = array_map('intval', $values['scales']);
             // Remove (invalid) 0 / null / empty 'scales' values
             $values['scales'] = array_filter($values['scales']);
             $element->setConfiguration($values);
-        }*/
+        }
     }
 
     /**
