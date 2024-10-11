@@ -148,7 +148,7 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $template = '@Mapbender/RoutingBundle/Element/routingelement.html.twig';
+        $template = '@MapbenderRouting/Element/routingelement.html.twig';
 
         $view = new TemplateView($template);
         $view->attributes['class'] = 'mb-element-routingelement';
