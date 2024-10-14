@@ -44,6 +44,13 @@ class SecurityController
             'groups' => $grants['groups'] ? $this->managerRegistry->getRepository(Group::class)->findAll() : [],
         );
 
+        if (!empty($vars['users'])) {
+            foreach ($vars['users'] as $values) {
+                $sortByUsername[] = $values->getUsername();
+            }
+            array_multisort($sortByUsername, SORT_ASC, $vars['users']);
+        }
+
         return new Response($this->twig->render('@FOMUser/Security/index.html.twig', $vars));
     }
 }
