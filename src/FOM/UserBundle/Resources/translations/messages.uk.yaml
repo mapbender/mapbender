@@ -27,7 +27,7 @@ fom:
         title: Назва
         description: Опис
         edit_group: Змінити групу
-        delete_group: Видалити групу
+        delete_group: Ви справді хочете видалити групу "{group_title}"
         no_groups_available: Немає доступних груп.
       form:
         edit_group: Змінити групу

@@ -27,7 +27,7 @@ fom:
         title: Titel
         description: Beschreibung
         edit_group: 'Gruppe bearbeiten'
-        delete_group: 'Gruppe löschen'
+        delete_group: 'Möchten Sie die Gruppe "{group_title}" wirklich löschen'
         no_groups_available: 'Keine Gruppen verfügbar'
       form:
         edit_group: 'Gruppe bearbeiten'

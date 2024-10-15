@@ -29,7 +29,7 @@ fom:
         title: Title
         description: Description
         edit_group: 'Edit group'
-        delete_group: 'Delete group'
+        delete_group: 'Do you really want to delete the group "{group_title}"'
         no_groups_available: 'No groups available.'
       form:
         edit_group: 'Edit Group'

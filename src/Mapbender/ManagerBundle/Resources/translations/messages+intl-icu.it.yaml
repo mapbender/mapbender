@@ -223,7 +223,7 @@ mb:
           title: 'Conferma eliminazione'
         delete_user_group:
           title: 'Conferma cancellazione'
-          content: 'Cancellare davvero %subject%?'
+          content: 'Cancellare davvero "%subject%"?'
     import:
       application:
         failed: 'L''applicazione non può essere importata'

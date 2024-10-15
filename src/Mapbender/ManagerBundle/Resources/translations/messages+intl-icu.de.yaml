@@ -223,7 +223,7 @@ mb:
           title: 'Instanz löschen'
         delete_user_group:
           title: 'Entfernen bestätigen'
-          content: 'Wollen Sie den Eintrag %subject% wirklich entfernen?'
+          content: 'Wollen Sie den Eintrag "%subject%" wirklich entfernen?'
     import:
       application:
         failed: 'Anwendung kann nicht importiert werden'

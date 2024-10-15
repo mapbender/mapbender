@@ -225,7 +225,7 @@ mb:
           title: 'Confirm delete'
         delete_user_group:
           title: 'Confirm delete'
-          content: 'Really delete %subject%?'
+          content: 'Really delete "%subject%"?'
     import:
       application:
         failed: 'Application cannot be imported'

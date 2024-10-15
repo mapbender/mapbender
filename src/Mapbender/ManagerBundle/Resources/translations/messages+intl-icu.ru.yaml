@@ -220,7 +220,7 @@ mb:
           title: 'Подтвердить удаления'
         delete_user_group:
           title: 'Подтвердите удаление'
-          content: 'Действительно удалить %subject%?'
+          content: 'Действительно удалить "%subject%"?'
     import:
       application:
         failed: 'Приложение не может быть импортировано'

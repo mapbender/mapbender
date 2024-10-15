@@ -20,7 +20,8 @@
             {% endif %}
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_GROUPS')) %}
             <span class="-fn-delete hover-highlight-effect"
-              title="{{"fom.user.group.index.delete_group"|trans}} {{ group.title }}"
+              data-title="{{"fom.user.group.index.delete_group"|trans({'{group_title}': group.title})}}"
+              title="{{"fom.security.resource.installation.delete_groups"|trans}}"
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
               data-token="{{ csrf_token('group_delete') }}"

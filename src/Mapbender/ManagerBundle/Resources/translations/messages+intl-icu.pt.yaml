@@ -223,7 +223,7 @@ mb:
           title: 'Excluir instância'
         delete_user_group:
           title: 'Confirmar exclusão'
-          content: 'Tem certeza de que deseja excluir %subject%?'
+          content: 'Tem certeza de que deseja excluir "%subject%"?'
     import:
       application:
         failed: 'Não foi possível importar o aplicativo'
