@@ -1,6 +1,5 @@
 <div>
   <span class="right">{{ 'mb.manager.admin.template' | trans }}: {{template_name|default('Unknown')}}</span>
-  <div class="clear"></div>
 </div>
 
 {% form_theme form _self %}
@@ -29,12 +28,10 @@
   {% endblock %}
 {%- endif -%}
 
-<div class="row">
-    <div class="col-xs-6 col-6">
-        {%- if application.layersets -%}
-            {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'all-regions'} %}
-        {%- endif -%}
-    </div>
+<div class="col-xs-6 col-6">
+    {%- if application.layersets -%}
+        {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'all-regions'} %}
+    {%- endif -%}
 </div>
 
 <ul id="all-regions">
