@@ -49,7 +49,7 @@
                   ></label>
                 </span>
                 <a href="#" class="-fn-delete-layerset hover-highlight-effect"
-                   title="{{ "mb.manager.admin.layerset.delete.title" | trans }} {{layerset.title}}"
+                   title="{{ "mb.manager.admin.layerset.delete.title" | trans }}"
                    data-token="{{ csrf_token('layerset_delete') }}"
                    data-url="{{ path("mapbender_manager_layerset_delete", {'slug': application.slug, 'layersetId': layerset.id}) }}">
                     <i class="far fa-trash-can"></i>
@@ -113,7 +113,8 @@
                   {%- endif -%}
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
-                     title="{{"mb.manager.admin.instance.delete.title"|trans}} {{instance.title}}"
+                     title="{{"mb.manager.admin.instance.delete.title"|trans}}"
+                     data-title="{{"mb.manager.admin.instance.delete.confirm"|trans({'instance_title': instance.title | e})}}"
                      data-token="{{ csrf_token('layerset') }}"
                      data-url="{{ _delete_url }}">
                     <i class="far fa-trash-can"></i>

@@ -145,9 +145,3 @@ form:
       zipCode: Code postal
       city: Ville
       country: Pays
-mb:
-  manager:
-    admin:
-      element:
-        delete:
-          title: Voulez-vous vraiment supprimer l'élément "%element_name%"

@@ -145,9 +145,3 @@ form:
       zipCode: Поштовий індекс
       city: Місто
       country: Країна
-mb:
-  manager:
-    admin:
-      element:
-        delete:
-          title: Ви дійсно хочете видалити елемент "%element_name%"

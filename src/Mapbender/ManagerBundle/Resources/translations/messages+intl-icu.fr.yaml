@@ -50,6 +50,9 @@ mb:
         type: Type
         add: Ajouter un nouvel élément à
         show_hide: Afficher/Ne pas afficher l'élément
+        delete:
+          title: Supprimer élément
+          confirm: Voulez-vous vraiment supprimer l'élément "{element_name}"
         no_element_added: Aucun élément ajouté
       zoombar:
         draggable: Déplaçable
@@ -62,7 +65,7 @@ mb:
         edit: Modifier l'ensemble de couches
         delete:
           title: Supprimer l'ensemble de couches
-          confirm: Voulez-vous vraiment supprimer l'ensemble de couches  <span class="italic">%layerset_title%</span>?
+          confirm: Voulez-vous vraiment supprimer l'ensemble de couches  "{layerset_title}"?
         id: Id
       instance:
         add: Ajouter une instance
@@ -70,7 +73,7 @@ mb:
         edit: Modifier l'instance
         delete:
           title: Supprimer une instance
-          confirm: Voulez-vous vraiment supprimer l'instance <span class="italic">%instance_title%</span>?
+          confirm: Voulez-vous vraiment supprimer l'instance "{instance_title}"
         no_instance_added: Aucune instance ajoutée
         no_layer_added: Aucun ensemble de couches ajouté
       template: Modèle
@@ -92,7 +95,9 @@ mb:
         duplicate: Dupliquer l'application
         public:
           on_off:  Basculer l'accès public
-        delete: Supprimer l'application
+        delete:
+          title: Supprimer l'application
+          confirm: 'Voulez-vous vraiment supprimer l''application "{application_title}"'
         no_application: Aucune application n'est disponible
         new:
           title: Nouvelle application

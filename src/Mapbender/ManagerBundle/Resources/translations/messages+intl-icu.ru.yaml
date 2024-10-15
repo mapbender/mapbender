@@ -109,6 +109,9 @@ mb:
         add: 'Добавить новый элемент в'
         show_hide: 'Вкл/выкл элемент'
         no_element_added: 'Элемент не добавлен'
+        delete:
+          title: 'Удалить элемент'
+          confirm: 'Вы действительно хотите удалить элемент "{element_name}"'
         anchor:
           label: 'Позиция'
           left-top: 'Вверху слева'
@@ -126,7 +129,7 @@ mb:
         edit: 'Редактировать слои'
         delete:
           title: 'Удалить слои'
-          confirm: 'Вы действительно хотите удалить слои с названием <span class="italic">%layerset_title%</span>?'
+          confirm: 'Вы действительно хотите удалить слои с названием "{layerset_title}"?'
         id: Id
       instance:
         add: 'Добавить'
@@ -134,7 +137,7 @@ mb:
         edit: 'Редактировать'
         delete:
           title: 'Удалить'
-          confirm: 'Вы действительно хотите удалить элемент с заголовком <span class="italic">%instance_title%</span>?'
+          confirm: 'Вы действительно хотите удалить элемент с заголовком "{instance_title}"'
         no_instance_added: 'Элемент не добавлен'
         no_layer_added: 'Слой не добавлен'
         max_input_vars_exceeded: 'Параметр PHP max_input_vars слишком низкий для количества слоев в этом экземпляре.'
@@ -159,7 +162,9 @@ mb:
         duplicate: 'Создать копию приложения'
         public:
           on_off: 'Переключить публичный доступ'
-        delete: 'Удалить приложение'
+        delete:
+          title: 'Удалить приложение'
+          confirm: 'Вы действительно хотите удалить приложение "{application_title}"'
         no_application: 'Нет доступных приложений'
         new:
           title: 'Новое приложение'

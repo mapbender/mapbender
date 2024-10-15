@@ -112,6 +112,9 @@ mb:
         add: 'Aggiungi un nuovo elemento a'
         show_hide: 'Alterna mostra/nascondi elemento'
         no_element_added: 'Nessun elemento aggiunto'
+        delete:
+          title: 'Cancellare elemento'
+          confirm: 'Vuoi davvero cancellare l''elemento "{element_name}"'
         anchor:
           label: 'Posizione'
           left-top: 'In alto a sinistra'
@@ -129,7 +132,7 @@ mb:
         edit: 'Modifica layerset'
         delete:
           title: 'Elimina layerset'
-          confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo <span class="italic">%layerset_title%</span>?'
+          confirm: 'Sei sicuro di voler rimuovere il layerset con il titolo "{layerset_title}"?'
         id: Id
       instance:
         add: 'Aggiungi istanza'
@@ -137,7 +140,7 @@ mb:
         edit: 'Modifica istanza'
         delete:
           title: 'Elimina istanza'
-          confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo <span class="italic">%instance_title%</span>?'
+          confirm: 'Sei sicuro di voler rimuovere l''istanza con il titolo "{instance_title}"'
         no_instance_added: 'Nessuna istanza aggiunta'
         no_layer_added: 'Nessun layer aggiunto'
         max_input_vars_exceeded: 'PHP ha impostato max_input_vars troppo basso per il numero di layer in questa istanza.'
@@ -162,7 +165,9 @@ mb:
         duplicate: 'Copia applicazione'
         public:
           on_off: 'Attiva/disattiva l''accesso pubblico'
-        delete: 'Elimina applicazione'
+        delete:
+          title: 'Elimina applicazione'
+          confirm: 'Vuoi davvero eliminare l''applicazione "{application_title}"'
         no_application: 'Nessuna applicazione disponibile'
         new:
           title: 'Nuova Applicazione'

@@ -147,9 +147,3 @@ form:
       zipCode: Postcode
       city: Plaats
       country: Land
-mb:
-  manager:
-    admin:
-      element:
-        delete:
-          title: Wilt u echt element "%element_name%" verwijderen?

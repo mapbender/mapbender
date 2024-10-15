@@ -112,6 +112,9 @@ mb:
         add: 'Adicionar elemento'
         show_hide: 'ativo/inativo'
         no_element_added: 'Nenhum elemento adicionado'
+        delete:
+          title: 'Apagar elemento'
+          confirm: 'Pretende mesmo apagar o elemento "{element_name}"'
         anchor:
           label: 'Posição'
           left-top: 'Superior esquerdo'
@@ -129,7 +132,7 @@ mb:
         edit: 'Editar layerset'
         delete:
           title: 'Excluir layerset'
-          confirm: 'Realmente remover o layerset <span class="italic">%layerset_title%</span> ?'
+          confirm: 'Realmente remover o layerset "{layerset_title}" ?'
         id: Id
       instance:
         add: 'Adicionar instância'
@@ -137,7 +140,7 @@ mb:
         edit: 'Editar instância'
         delete:
           title: 'Excluir instância'
-          confirm: 'Você realmente deseja remover a instância com o título <span class="italic">%instance_title%</span>?'
+          confirm: 'Você realmente deseja remover a instância com o título "{instance_title}"'
         no_instance_added: 'Instância não adicionada'
         no_layer_added: 'Nenhuma instância adicionada'
         max_input_vars_exceeded: 'A configuração max_input_vars do PHP é muito baixa para o número de layers nesta instância.'
@@ -162,7 +165,9 @@ mb:
         duplicate: 'Duplicar aplicativo'
         public:
           on_off: 'Publicar/Ocultar'
-        delete: 'Excluir aplicativo'
+        delete:
+          title: 'Excluir aplicativo'
+          confirm: 'Você realmente deseja excluir o aplicativo "{application_title}"'
         no_application: 'Aplicativo não encontrado'
         new:
           title: 'Criar aplicativo'

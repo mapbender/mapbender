@@ -147,9 +147,3 @@ form:
       zipCode: 'Zip code'
       city: City
       country: Country
-mb:
-  manager:
-    admin:
-      element:
-        delete:
-          title: 'Do you really want to delete element "%element_name%"'

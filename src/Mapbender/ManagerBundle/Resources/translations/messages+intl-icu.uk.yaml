@@ -102,6 +102,9 @@ mb:
         add: Додати новий елемент до
         show_hide: Переключити показ/приховування елемента
         no_element_added: Немає доданих елементів
+        delete:
+          title: Видалити елемент
+          confirm: Ви дійсно хочете видалити елемент "{element_name}"
         anchor:
           label: Розташування
           left-top: Зверху зліва
@@ -119,7 +122,7 @@ mb:
         edit: Редагувати набір шарів
         delete:
           title: Видалити шари
-          confirm: Ви дійсно хочете видалити набір шарів з назвою <span class="italic">%layerset_title%</span>?
+          confirm: Ви дійсно хочете видалити набір шарів з назвою "{layerset_title}"?
         id: Id
       instance:
         add: Додати екземпляр
@@ -127,7 +130,7 @@ mb:
         edit: Редагувати екземпляр
         delete:
           title: Видалити екземпляр
-          confirm: Ви дійсно хочете видалити екземпляр <span class="italic">%instance_title%</span>?
+          confirm: Ви дійсно хочете видалити екземпляр "{instance_title}"
         no_instance_added: Жодного екземпляра не додано
         no_layer_added: Жодного шару не додано
       template: Шаблон
@@ -149,7 +152,9 @@ mb:
         duplicate: Створити копію застосунку
         public:
           on_off: Перемкнути публічний доступ
-        delete: Видалити застосунок
+        delete:
+          title: Видалити застосунок
+          confirm: 'Ви дійсно хочете видалити додаток "{application_title}"'
         no_application: Немає доступних застосунків
         new:
           title: Новий застосунок

@@ -112,8 +112,9 @@ mb:
         add: 'Element hinzufügen'
         show_hide: aktiv/inaktiv
         no_element_added: 'Kein Element vorhanden'
-        #delete:
-          #title: 'Möchten Sie Element "%element_name%" wirklich löschen'
+        delete:
+          title: 'Element löschen'
+          confirm: 'Möchten Sie Element "{element_name}" wirklich löschen'
         anchor:
           label: Position
           left-top: 'Oben links'
@@ -131,7 +132,7 @@ mb:
         edit: 'Layerset bearbeiten'
         delete:
           title: 'Layerset löschen'
-          confirm: 'Wollen Sie das Layerset <span class="italic">%layerset_title%</span> wirklich löschen?'
+          confirm: 'Wollen Sie das Layerset "{layerset_title}" wirklich löschen?'
         id: Id
       instance:
         add: 'Instanz hinzufügen'
@@ -139,7 +140,7 @@ mb:
         edit: 'Instanz bearbeiten'
         delete:
           title: 'Instanz löschen'
-          confirm: 'Wollen sie wirklich die Instanz mit dem Titel  <span class="italic">%instance_title%</span> entfernen?'
+          confirm: 'Wollen sie wirklich die Instanz mit dem Titel  "{instance_title}" entfernen'
         no_instance_added: 'Keine Instanz vorhanden'
         no_layer_added: 'Keine Ebene hinzugefügt'
         max_input_vars_exceeded: 'PHP-Einstellung max_input_vars zu niedrig für die Anzahl an Layern in dieser Instanz.'
@@ -164,7 +165,9 @@ mb:
         duplicate: 'Anwendung duplizieren'
         public:
           on_off: 'Öffentlichen Zugriff umschalten'
-        delete: 'Anwendung löschen'
+        delete:
+          title: 'Anwendung löschen'
+          confirm: 'Möchten Sie die Anwendung "{application_title}" wirklich löschen'
         no_application: 'Keine Anwendung vorhanden'
         new:
           title: 'Anwendung anlegen'

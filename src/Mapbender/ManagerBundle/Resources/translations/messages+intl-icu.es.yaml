@@ -110,6 +110,9 @@ mb:
         add: 'Añadir un nuevo elemento a'
         show_hide: 'Cambiar mostrar/ocultar el elemento'
         no_element_added: 'No añadido elemento'
+        delete:
+          title: 'Eliminar elemento'
+          confirm: '¿Realmente desea eliminar el elemento "{element_name}"'
         anchor:
           label: 'Posición'
           left-top: 'Arriba a la izquierda'
@@ -127,7 +130,7 @@ mb:
         edit: 'Editar conjunto de capas'
         delete:
           title: 'Borrar conjunto de capas'
-          confirm: '¿Realmente quieres eliminar el conjunto de capas con el título <span class="italic">%layerset_title%</span>?'
+          confirm: '¿Realmente quieres eliminar el conjunto de capas con el título "{layerset_title}"?'
         id: Id
       instance:
         add: 'Añadir instancia'
@@ -135,7 +138,7 @@ mb:
         edit: 'Editar instancia'
         delete:
           title: 'Borrar instancia'
-          confirm: '¿Realmente deseas eliminar la instancia de título <span class="italic">%instance_title%</span>?'
+          confirm: '¿Realmente deseas eliminar la instancia de título "{instance_title}"'
         no_instance_added: 'Instancia no añadida'
         no_layer_added: 'Capa no añadida'
         max_input_vars_exceeded: 'La configuración setting max_input_vars de PHP es demasiado baja para el número de capas en esta instancia.'
@@ -160,7 +163,9 @@ mb:
         duplicate: Duplicar
         public:
           on_off: 'Cambiar acceso público'
-        delete: 'Borrar aplicación'
+        delete:
+          title: 'Borrar aplicación'
+          confirm: '¿Realmente quieres borrar la aplicación "{application_title}"'
         no_application: 'Aplicación no disponible'
         new:
           title: 'Nueva aplicación'

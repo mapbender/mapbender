@@ -112,6 +112,9 @@ mb:
         add: 'Add a new element to'
         show_hide: 'Toggle show/hide element'
         no_element_added: 'No element added'
+        delete:
+          title: 'Delete element'
+          confirm: 'Do you really want to delete element "{element_name}"'
         anchor:
           label: Position
           left-top: 'Top left'
@@ -129,7 +132,7 @@ mb:
         edit: 'Edit layerset'
         delete:
           title: 'Delete layerset'
-          confirm: 'Do you really want to remove the layerset with the title <span class="italic">%layerset_title%</span>?'
+          confirm: 'Do you really want to remove the layerset with the title "{layerset_title}"?'
         id: Id
       instance:
         add: 'Add instance'
@@ -137,7 +140,7 @@ mb:
         edit: 'Edit instance'
         delete:
           title: 'Delete instance'
-          confirm: 'Do you really want to remove the instance with the title <span class="italic">%instance_title%</span>?'
+          confirm: 'Do you really want to remove the instance with the title "{instance_title}"'
         no_instance_added: 'No instance added'
         no_layer_added: 'No layer added'
         max_input_vars_exceeded: 'PHP setting max_input_vars too low for the number of layers in this instance.'
@@ -162,7 +165,9 @@ mb:
         duplicate: 'Duplicate application'
         public:
           on_off: 'Toggle public access'
-        delete: 'Delete application'
+        delete:
+          title: 'Delete application'
+          confirm: 'Do you really want to delete the application "{application_title}"'
         no_application: 'No application available'
         new:
           title: 'New Application'
