@@ -22,38 +22,32 @@ $(function() {
         return false;
     });
 
-    $(document).on('click', ".sortByColumn", function(){
+    $(document).on('click', ".sortByColumn", function () {
         var $this = $(this);
         var asc = true;
 
-        $this.css('text-decoration', 'underline');
-        $this.siblings().css('text-decoration', 'none');
-        $this.siblings().find('span').hide();
+        $this.siblings().find('span').removeClass().addClass('fa fa-sort').prop('title', Mapbender.trans('mb.actions.sort_ascending'));
 
-        if($this.find('span').is(":hidden")){
-            $this.find('span').removeClass('fa-arrow-down').addClass('fa-arrow-up').show();
-        }else if($this.find('span').hasClass('fa-arrow-up')){
+        if ($this.find('span').hasClass('fa fa-sort-amount-asc')) {
             asc = false;
-            $this.find('span').removeClass('fa-arrow-up').addClass('fa-arrow-down');
-            $this.prop('title', Mapbender.trans('mb.actions.sort_ascending'));
-        } else if($this.find('span').hasClass('fa-arrow-down')){
-            $this.find('span').removeClass('fa-arrow-down').addClass('fa-arrow-up');
-            $this.prop('title', Mapbender.trans('mb.actions.sort_descending'));
+            $this.find('span').removeClass().addClass('fa fa-sort-amount-desc').prop('title', Mapbender.trans('mb.actions.sort_ascending'));
+        } else {
+            $this.find('span').removeClass().addClass('fa fa-sort-amount-asc').prop('title', Mapbender.trans('mb.actions.sort_descending'));
         }
 
         var table = $this.parents('table').eq(0);
         var rows = table.find('tr:gt(0)').toArray().sort(comparer($this.index()));
 
-        if(!asc){
+        if (!asc) {
             rows = rows.reverse();
         }
-        for (var i = 0; i < rows.length; i++){
+        for (var i = 0; i < rows.length; i++) {
             table.append(rows[i]);
         }
     });
 
     function comparer(index) {
-        return function(a, b) {
+        return function (a, b) {
             var valA = $(a).children('td').eq(index).text();
             var valB = $(b).children('td').eq(index).text();
             return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);

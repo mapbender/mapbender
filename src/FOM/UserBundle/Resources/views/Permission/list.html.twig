@@ -1,15 +1,16 @@
 <table class="table">
   <thead>
     <tr>
-      <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+      <th class="sortByColumn clickable">
           {{ "fom.user.permissions.index.name" | trans }}
-          <span class="fas fa-arrow-up" style="display: none"></span>
+          <span class="fa fa-sort-amount-asc" title="{{'mb.actions.sort_descending'|trans}}"></span>
       </th>
       <th></th>
     </tr>
   </thead>
   <tbody>
-    {% for category, name in permission_categories %}
+  {% set sorted_permissions = permission_categories|sort((a,b) => a|trans <=> b|trans) %}
+  {% for category, name in sorted_permissions %}
       <tr>
         <td>
           <a href="{{ path('fom_user_permission_edit', {'category': category}) }}" title="{{ 'fom.user.permissions.index.edit' | trans }}">{{ name | trans }}</a>

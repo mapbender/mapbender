@@ -2,25 +2,25 @@
     <table class="table">
     <thead>
       <tr>
-        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+        <th class="sortByColumn clickable">
             {{'fom.user.user.index.name'|trans }}
-            <span class="fas fa-arrow-up" style="display: none"></span>
+              <span class="fa fa-sort-amount-asc" title="{{ 'mb.actions.sort_descending'|trans }}"></span>
         </th>
-        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+        <th class="sortByColumn clickable">
             {{'fom.user.user.index.email'|trans}}
-            <span class="fas fa-arrow-up" style="display: none"></span>
+              <span class="fa fa-sort" title="{{ 'mb.actions.sort_ascending'|trans }}"></span>
         </th>
         {% if show_groups %}
-        <th class="sortByColumn clickable" title="{{'mb.actions.sort_ascending'|trans}}">
+        <th class="sortByColumn clickable">
             {{'fom.user.user.index.groups'|trans}}
-            <span class="fas fa-arrow-up" style="display: none"></span>
+            <span class="fa fa-sort" title="{{ 'mb.actions.sort_ascending'|trans }}"></span>
         </th>
         {% endif %}
         <th></th>
       </tr>
     </thead>
     <tbody id="listFilterUsers">
-      {% for user in users %}
+      {% for user in users|sort((a,b) => a.username <=> b.username) %}
         <tr class="filterItem">
           <td>
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}
