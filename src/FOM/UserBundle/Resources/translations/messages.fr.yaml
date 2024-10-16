@@ -24,7 +24,7 @@ fom:
       index:
         groups: Groupes
         add_new_group: Ajouter un nouveau groupe
-        title: Titre
+        title: Nom
         description: Description
         edit_group: Modifier un groupe
         delete_group: Supprimer un groupe

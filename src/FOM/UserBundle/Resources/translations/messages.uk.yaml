@@ -24,7 +24,7 @@ fom:
       index:
         groups: Групи
         add_new_group: Додати нову групу
-        title: Назва
+        title: Ім'я
         description: Опис
         edit_group: Змінити групу
         delete_group: Видалити групу

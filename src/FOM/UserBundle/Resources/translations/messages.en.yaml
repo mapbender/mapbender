@@ -26,7 +26,7 @@ fom:
       index:
         groups: Groups
         add_new_group: 'Add new group'
-        title: Title
+        title: Name
         description: Description
         edit_group: 'Edit group'
         delete_group: 'Delete group'
