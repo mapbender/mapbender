@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody id="listFilterUsers">
-      {% for user in users|sort((a,b) => a.username <=> b.username) %}
+      {% for user in users|sort((a,b) => a.username|lower <=> b.username|lower) %}
         <tr class="filterItem">
           <td>
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}

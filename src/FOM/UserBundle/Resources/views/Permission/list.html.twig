@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-  {% set sorted_permissions = permission_categories|sort((a,b) => a|trans <=> b|trans) %}
+  {% set sorted_permissions = permission_categories|sort((a,b) => a|trans|lower <=> b|trans|lower) %}
   {% for category, name in sorted_permissions %}
       <tr>
         <td>
