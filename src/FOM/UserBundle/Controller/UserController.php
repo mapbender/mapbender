@@ -114,9 +114,19 @@ class UserController extends UserControllerBase
                 ));
             }
         }
+
+        $view = $form->createView();
+        /*
+         * Display groups sorted by label;
+         * sorting takes place here because it is not easy to implement in twig
+         */
+        $groups = $view->children['groups'];
+        usort($groups->children, function ($a, $b) {
+            return strcasecmp($a->vars['label'], $b->vars['label']);
+        });
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $view,
             'profile_template' => $this->profileTemplate,
             'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
             'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(

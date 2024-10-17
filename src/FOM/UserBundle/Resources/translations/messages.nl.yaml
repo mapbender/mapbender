@@ -24,7 +24,7 @@ fom:
       index:
         groups: Groepen
         add_new_group: Voeg een groep toe
-        title: Titel
+        title: Naam
         description: Omschrijving
         edit_group: Bewerk groep
         delete_group: Verwijder groep
