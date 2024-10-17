@@ -31,25 +31,33 @@ $(function() {
         if (filterTargetId && !filterScope.length) {
             filterScope = $(document.getElementById(filterTargetId));
         }
-        var items = $(">li, >tr, >tbody>tr", filterScope).not('.doNotFilter');
+        var items = $(">li, >tr, >tbody>tr", filterScope);
 
         if(val.length > 0){
             $.each(items, function() {
                 var $item = $(this);
-                var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                $item.toggle(containsInput);
-
-                var $itemRows = $item.find('tr');
-                $.each($itemRows, function() {
-                    var $row = $(this);
-                    var rowContainsInput = $row.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                    if(rowContainsInput) {
-                        $row.find('td').addClass('filter-matches');
+                var $itemRows = $item.find('tr').not('.doNotFilter');
+                if ($itemRows.length > 0) {
+                    let itemContainsInput = -1;
+                    $.each($itemRows, function () {
+                        var $row = $(this);
+                        var rowContainsInput = $row.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                        if (rowContainsInput) {
+                            $row.find('td').addClass('filter-matches');
+                            itemContainsInput = 1;
+                        } else {
+                            $row.find('td').removeClass('filter-matches');
+                        }
+                    });
+                    if (itemContainsInput === 1) {
+                        $item.show();
                     } else {
-                        $row.find('td').removeClass('filter-matches');
+                        $item.hide();
                     }
-                });
-
+                } else {
+                    var itemContainsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                    $item.toggle(itemContainsInput);
+                }
             });
         }else{
             items.show();

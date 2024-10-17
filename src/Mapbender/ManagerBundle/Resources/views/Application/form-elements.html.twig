@@ -104,7 +104,7 @@
               </tr>
             {% endif %}
           {% endfor %}
-          <tr class="dummy" {% if not region_empty %} style="display: none;"{% endif %}>
+          <tr class="dummy doNotFilter" {% if not region_empty %} style="display: none;"{% endif %}>
             <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
           </tr>
         </tbody>

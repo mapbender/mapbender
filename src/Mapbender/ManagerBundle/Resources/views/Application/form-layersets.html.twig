@@ -123,7 +123,7 @@
               </tr>
             {%- endwith -%}{%- endwith -%}
             {% endfor %}
-            <tr class="dummy"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
+            <tr class="dummy doNotFilter"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
               <td></td>
               <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
             </tr>
