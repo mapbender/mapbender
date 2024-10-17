@@ -650,9 +650,10 @@ window.Mapbender = Mapbender || {};
          * Returns the legend for this layer. The legend can be either an external
          * url (e.g. for WMS services) or a style definition that is rendered on a canvas
          *
+         * @param {boolean} forPrint true if the legend is exported for print (false if its for display)
          * @return {null|{type: 'url', url: string, topLevel: boolean}|LegendDefinition}
          */
-        getLegend() {
+        getLegend(forPrint) {
             return null;
         }
 

@@ -22,7 +22,7 @@ class CanvasLegend
         $this->prepareCanvas();
 
         foreach ($this->layers as $layer) {
-            $this->addSubLayer($layer["title"], $layer["style"]);
+            $this->addSubLayer($layer['title'], $layer['canvas'] ?? $layer['style']);
         }
     }
 
@@ -31,9 +31,26 @@ class CanvasLegend
         return $this->image;
     }
 
-    protected function addSubLayer(string $label, array $style)
+    protected function addSubLayer(string $label, array|string $style): void
     {
-        // Set fill color
+        if (is_array($style)) {
+            $this->populateCanvas($style);
+        } else {
+            $this->copyExistingCanvas($style);
+        }
+
+
+        $textBox = imagettfbbox($this->layerTitleFontSize, 0, $this->font, $label);
+        $textHeight = abs($textBox[5] - $textBox[1]);
+        $textY = ($this->symbolHeight + $textHeight) / 2;
+        $black = imagecolorallocate($this->image, 0, 0, 0);
+
+        imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $label);
+        $this->offset += $this->symbolHeight + 10;
+    }
+
+    protected function populateCanvas(array $style): void
+    {
         $fillColor = $this->hexToRgb($style['fillColor']);
         $fillOpacity = $style['fillOpacity'];
         $fill = imagecolorallocatealpha($this->image, $fillColor['red'], $fillColor['green'], $fillColor['blue'], 127 * (1 - $fillOpacity));
@@ -51,15 +68,17 @@ class CanvasLegend
         if (array_key_exists('label', $style) && $style['label']) {
             $this->drawLabelText($style);
         }
+    }
 
+    protected function copyExistingCanvas(string $dataUri): void
+    {
+        $base64String = explode(',', $dataUri)[1];
+        $imageData = base64_decode($base64String);
+        $canvas = imagecreatefromstring($imageData);
+        if (!$canvas) return;
 
-        $textBox = imagettfbbox($this->layerTitleFontSize, 0, $this->font, $label);
-        $textHeight = abs($textBox[5] - $textBox[1]);
-        $textY = ($this->symbolHeight + $textHeight) / 2;
-        $black = imagecolorallocate($this->image, 0, 0, 0);
-
-        imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $label);
-        $this->offset += $this->symbolHeight + 10;
+        imagecopy($this->image, $canvas, 0, $this->offset, 0, 0, imagesx($canvas), imagesy($canvas));
+        imagedestroy($canvas);
     }
 
     private function hexToRgb($hex)
@@ -111,4 +130,5 @@ class CanvasLegend
         // Draw the label
         imagettftext($this->image, $fontSize, 0, $textX, $textY + $this->offset, $textColor, $this->font, "Label");
     }
+
 }

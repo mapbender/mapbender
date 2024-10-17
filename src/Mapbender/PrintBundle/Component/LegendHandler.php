@@ -85,7 +85,7 @@ class LegendHandler
         foreach ($groupData as $key => $data) {
             $block = match($data['type']) {
                 'url' => $this->prepareUrlBlock($data['layerName'], $data['url']),
-                'style' => $this->prepareStyleBlock($data),
+                'style', 'canvas' => $this->prepareStyleBlock($data),
                 default => null,
             };
             if ($block) {

@@ -428,7 +428,7 @@
                         for (let p = -1; p < activeLeaf.parents.length; ++p) {
                             const legendLayer = (p < 0) ? activeLeaf.layer : activeLeaf.parents[p];
 
-                            const legend = legendLayer.getLegend();
+                            const legend = legendLayer.getLegend(true);
                             if (!legend) continue;
 
                             if (legendIds.includes(legendLayer.getId())) break;
