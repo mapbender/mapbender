@@ -22,7 +22,7 @@ class CanvasLegend
         $this->prepareCanvas();
 
         foreach ($this->layers as $layer) {
-            $this->addSubLayer($layer['title'], $layer['canvas'] ?? $layer['style']);
+            $this->addSubLayer($layer['title'] ?? "", $layer['canvas'] ?? $layer['style']);
         }
     }
 
