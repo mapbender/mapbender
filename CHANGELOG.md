@@ -7,6 +7,7 @@ Bugfixes:
 
 Other:
 * Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635))
+* Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
 
 
 ## v4.0.2
