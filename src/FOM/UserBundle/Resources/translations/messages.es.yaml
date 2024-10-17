@@ -27,7 +27,7 @@ fom:
         title: Nombre
         description: Descripción
         edit_group: 'Editar grupo'
-        delete_group: 'Borrar grupo'
+        delete_group: '¿Realmente quieres borrar el grupo "{group_title}"'
         no_groups_available: 'No hay grupos disponibles.'
       form:
         edit_group: 'Editar Grupo'
@@ -67,7 +67,7 @@ fom:
         edit_user: 'Editar usuario'
         contact_user: 'Contactar usuario via e-mail'
         edit_group: 'Editar gupo'
-        delete_user: 'Borrar usuario'
+        delete_user: '¿Realmente quieres borrar el usuario "%user_username%"'
         no_users_available: 'Usuarios no habilitados.'
       form:
         edit_user: 'Editar Usuario'

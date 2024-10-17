@@ -50,7 +50,8 @@
             {% endif %}
             {% if user.id != 1 and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_USERS')) %}
               <span class="-fn-delete hover-highlight-effect"
-                title="{{"fom.user.user.index.delete_user" | trans}}"
+                data-title="{{ 'fom.user.user.index.delete_user' | trans ({'%user_username%': user.username }) }}"
+                title="{{ 'fom.security.resource.installation.delete_users' | trans }}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"
                 data-token="{{ csrf_token('user_delete') }}"

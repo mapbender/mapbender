@@ -4,7 +4,7 @@ fom:
       popup:
         delete_user_group:
           title: 'Confirm delete'
-          content: 'Really delete %userGroup%?'
+          content: 'Really delete "%userGroup%"?'
           btn:
             cancel: Cancel
             ok: OK

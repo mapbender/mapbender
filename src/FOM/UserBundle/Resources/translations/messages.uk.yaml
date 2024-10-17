@@ -27,7 +27,7 @@ fom:
         title: Ім'я
         description: Опис
         edit_group: Змінити групу
-        delete_group: Видалити групу
+        delete_group: Ви справді хочете видалити групу "{group_title}"
         no_groups_available: Немає доступних груп.
       form:
         edit_group: Змінити групу
@@ -67,7 +67,7 @@ fom:
         edit_user: Редагувати користувача
         contact_user: Зв'язатися з користувачем електронною поштою
         edit_group: Змінити групу
-        delete_user: Видалити користувача
+        delete_user: Ви дійсно хочете видалити користувача "%user_username%"
         no_users_available: Немає доступних користувачів.
       form:
         edit_user: Редагувати користувача

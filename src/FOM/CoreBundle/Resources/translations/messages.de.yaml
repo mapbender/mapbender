@@ -4,7 +4,7 @@ fom:
       popup:
         delete_user_group:
           title: 'Entfernen bestätigen'
-          content: 'Wollen Sie die Gruppe %userGroup% wirklich entfernen?'
+          content: 'Wollen Sie die Gruppe "%userGroup%" wirklich entfernen?'
           btn:
             cancel: Abbrechen
             ok: Speichern

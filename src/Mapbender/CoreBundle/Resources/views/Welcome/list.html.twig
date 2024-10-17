@@ -74,7 +74,8 @@
 
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_DELETE'), application) %}
                 <span class="btn btn-light -fn-delete"
-                      title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
+                      title="{{'mb.manager.admin.application.delete.title'|trans}}"
+                      data-title="{{'mb.manager.admin.application.delete.confirm'|trans({'application_title': application.title | e})}}"
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-token="{{ csrf_token('application_delete') }}"
                       data-slug="{{ application.slug }}"
