@@ -201,7 +201,26 @@ The style definition can contain the following all optional properties:
 - labelOutlineColor
 
 
-For both urls and style definitions, there is the additional property `topLevel`. Set this to true, if you manage
+The third option is to return a canvas in your source:
+
+```js
+{
+    type: 'canvas',
+    title: 'Heading for the legend graphic',
+    layers: [
+        {
+            title: 'Sublayer 1',
+            canvas: canvas1 // reference to HTMLCanvasElement
+        },
+        {
+            title: 'Sublayer 2',
+            canvas: canvas2 // reference to HTMLCanvasElement
+        }
+    ]
+}
+```
+
+For all definitions, there is the additional property `topLevel`. Set this to true, if you manage
 your legend on the root layer level.
 
 ## Custom layer tree menu item

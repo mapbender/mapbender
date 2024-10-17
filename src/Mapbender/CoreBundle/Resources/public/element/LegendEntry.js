@@ -36,11 +36,14 @@ class LegendEntry {
     constructor(legendDefinition) {
         this.legendDefinition = legendDefinition;
         this.container = this._createContainer();
+        this.canvas = legendDefinition.type === "canvas";
 
         this._addHeading();
         legendDefinition.layers.forEach((layer) => {
             const subContainer = document.createElement("div");
-            subContainer.append(this._createCanvasForLayer(layer.style.label ? "Label" : null, 35, 15, layer.style));
+            subContainer.append(
+                this.canvas ? layer.canvas : this._createCanvasForLayer(layer.style.label ? "Label" : null, 35, 15, layer.style)
+            );
             subContainer.append(this._createLayerHeading(layer.title));
             this.container.append(subContainer);
         });

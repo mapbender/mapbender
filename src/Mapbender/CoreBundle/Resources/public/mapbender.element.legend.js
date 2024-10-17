@@ -147,6 +147,7 @@
                 case 'url':
                     return this.createImage(layer);
                 case 'style':
+                case 'canvas':
                     return this.createLegendForStyle(layer);
             }
         },
