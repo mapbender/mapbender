@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\EventListener;
 
+use Mapbender\CoreBundle\Form\Type\InstanceLayerStyleChoiceType;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,12 +35,19 @@ class FieldSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $form
-            ->add('style', 'Mapbender\CoreBundle\Form\Type\InstanceLayerStyleChoiceType', array(
-                'label' => 'Style',
-                'layer' => $event->getData(),
-                'required' => false,
-            ))
-        ;
+        $layer = $event->getData();
+        $options = array(
+            'label' => 'Style',
+            'layer' => $layer,
+            'required' => false,
+        );
+        if ($layer->getSublayer()->count() > 0) {
+            $options['attr'] = [
+                'readonly' => true,
+                'title' => 'mb.wms.wmsloader.repo.instancelayerform.style_leafs_only'
+            ];
+        }
+
+        $form->add('style', InstanceLayerStyleChoiceType::class, $options);
     }
 }

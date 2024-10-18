@@ -14,7 +14,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
   padding: 5px;
 }
 
-.input, input {
+.input, input, select, .select {
     &[disabled], &[readonly] {
         color: lighten($inputForegroundColor, 40%);
         background-color: var(--bs-secondary-bg);
@@ -22,11 +22,21 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
         pointer-events: none;
     }
 
-  &::placeholder {
-    color: inherit;
-    opacity: 0.55;
-  }
+    &::placeholder {
+        color: inherit;
+        opacity: 0.55;
+    }
 }
+
+select[readonly] + .dropdownValue {
+    color: lighten($inputForegroundColor, 40%) !important;
+    background-color: var(--bs-secondary-bg) !important;
+}
+
+.dropdown[readonly] {
+    pointer-events: none;
+}
+
 textarea.form-control {
    min-height: 150px;
 }
