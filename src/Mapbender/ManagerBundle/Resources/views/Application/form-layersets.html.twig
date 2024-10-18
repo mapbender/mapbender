@@ -92,7 +92,7 @@
                 <td class="text-end">{{ instance.id }}</td>
                 <td>{{ instance.title }}</td>
                 <td class="sourceColumn"><a href="{{ path('mapbender_manager_repository_view', {sourceId: instance.source.id}) }}">#{{ instance.source.id }} {{ instance.source.title }}</a></td>
-                <td class="text-nowrap"
+                <td class="text-nowrap doNotFilter"
                   {%- if _is_reusable %}
                     title="{{ "mb.terms.sourceinstance.reusable.singular" | trans }}"><i class="fas fa-wifi" ></i>
                   {%- else -%}
@@ -124,7 +124,7 @@
               </tr>
             {%- endwith -%}{%- endwith -%}
             {% endfor %}
-            <tr class="dummy"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
+            <tr class="dummy doNotFilter"{% if layerset.getCombinedInstanceAssignments() | length > 0 %} style="display: none;"{% endif %}">
               <td></td>
               <td colspan="3">{{ 'mb.manager.admin.instance.no_instance_added' | trans }}</td>
             </tr>
