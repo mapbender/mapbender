@@ -69,8 +69,6 @@
             var self = this;
             this.map = mbMap;
             this.olMap = mbMap.map.olMap;
-            this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
-            // this.map.on('mousedown', $.proxy(this._mapClickHandler, this));
 
             if (!this.configuration.disableContextMenu) {
                 this._initializeContextMenu();
@@ -81,192 +79,7 @@
             }
 
             this._initializeEventListeners();
-
-            self._getCoordInputs().each(function(){
-                $(this).on('focusout', function() {
-                    var inputVal = $(this).val();
-                    var coordArray = null;
-                    var coordinates = null;
-                    var $inputEl = null;
-                    var patt = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
-                    var extent = self.olMap.getView().calculateExtent();
-                    // var extent = self.olMap.getMaxExtent().clone();
-
-                    if (self._isValidGPSCoordinates(inputVal)) {
-                        coordArray = $(this).val().split(/[\s,;]+/);
-                        var x = coordArray[0].trim();
-                        var y = coordArray[1].trim();
-                        var destProj = self.olMap.getProjectionObject();
-                        var sourceProj = new OpenLayers.Projection('EPSG:4326');
-                        coordinates = new OpenLayers.LonLat(y,x);
-                        coordinates.transform(sourceProj, destProj);
-                        extent = extent.transform(destProj, sourceProj);
-                        // check if coordinates are inside max extent
-                        if (x > extent['top'] || x < extent['bottom'] || y > extent['right'] || y < extent['left']) {
-                            console.warn('Input: Coordinates out of bounds');
-                            return false;
-                        }
-
-                        $inputEl = $(this); // current Status
-                        self._addPointToInput($inputEl, coordinates);
-
-                        if(self.markerLayer.features.length > 1) {
-                            self.olMap.zoomToExtent(self.markerLayer.getDataExtent());
-                            return true;
-                        }
-
-                        self.olMap.setCenter(coordArray);
-                    } else if (patt.test(inputVal)) {
-                        coordArray = $(this).val().split(',');
-                        coordinates = {
-                            lon: parseFloat(coordArray[0].trim()),
-                            lat: parseFloat(coordArray[1].trim())
-                        };
-
-                        // check if coordinates are inside max extent
-                        if (coordinates.lat > extent['top'] || coordinates.lat < extent['bottom'] || coordinates.lon > extent['right'] || coordinates.lon < extent['left']) {
-                            console.warn('Input: Coordinates out of bounds');
-                            return false;
-                        }
-
-                        $inputEl = $(this); // current Status
-                        self._addPointToInput($inputEl, coordinates);
-
-                        if(self.markerLayer.features.length > 1) {
-                            self.olMap.zoomToExtent(self.markerLayer.getDataExtent());
-                            return true;
-                        }
-
-                        self.olMap.setCenter(coordArray);
-                    }
-                });
-            });
-
-            $(".mb-routing-location-points", this.element).sortable({
-                start: function (event, ui) {
-                    $(this).attr('data-previndex', ui.item.index());
-                },
-                update: function(event, ui) {
-                    $(this).removeAttr('data-previndex');
-                    self._reorderPointDiv();
-                }
-            }).disableSelection();
-
-            // $('.mb-routing-location-points', this.element).on('focus', 'input:text', function() {
-            $('.mb-routing-location-points input', this.element).autocomplete({
-                minLength: 3,
-                source: function (request, response) {
-                    self._search(encodeURI(request.term)).then(function(_response) {
-                        $('> .mb-routing-error', self.element).empty();
-                        if (_response.error) {
-                            self._searchErrorHandling(_response.error);
-                        } else {
-                            response($.map(_response, function (value) {
-                                return {
-                                    label: value[self.options.label_attribute],
-                                    geom: value[self.options.geom_attribute],
-                                    srid: (self.options.geom_proj) ? self.options.geom_proj : self.olMap.getView().getProjection().getCode()
-                                };
-                            }));
-                        }
-                    });
-                },
-                focus: function (event, ui){
-                    $(this).val(ui.item.label);
-                    return false;
-                },
-                select: function (event, ui){
-                    $(this).val(ui.item.label);
-                    let format;
-                    switch (self.options.geom_format) {
-                        case 'WKT':
-                            format = new ol.format.WKT();
-                            break;
-                        case 'GeoJSON':
-                            format = new ol.format.GeoJSON();
-                            break;
-                        default:
-                            const msg = Mapbender.trans('mb.routing.exception.main.format') + ': ' + self.options.geom_format;
-                            Mapbender.error(msg);
-                            throw new Error(msg);
-                    }
-                    const feature = format.readFeature(ui.item.geom, {
-                        dataProjection: ui.item.srid,
-                        featureProjection: self.olMap.getView().getProjection().getCode(),
-                    });
-                    const coords = feature.getGeometry().getCoordinates();
-                    $(this).data('coords', coords);
-                    self._createMarker(this, coords);
-                    const source = self.markerLayer.getSource();
-                    source.addFeature(feature);
-                    let geometryOrExtent = source.getExtent();
-
-                    if (source.getFeatures().length === 1) {
-                        geometryOrExtent = feature.getGeometry();
-                    }
-
-                    self.olMap.getView().fit(geometryOrExtent, {
-                        padding: [75, 75, 75, 75],
-                    });
-
-                    if (self.options.autoSubmit) {
-                        self._getRoute();
-                        event.target.blur();
-                    }
-
-                    return false;
-                }
-            }).autocomplete('instance')._renderItem = function (ul, item) {
-                return $('<li>')
-                    .append('<a>' + item.label + '</a>')
-                    .appendTo(ul);
-            };
-
-            if (self.element.closest('.tabContainer,.accordionContainer')) {
-                // set up marker layer visibility switching depending on "active" vs "inactive"
-                console.log(MapbenderContainerInfo);
-                /*
-                var _ = new MapbenderContainerInfo(self, {
-                    onactive: $.proxy(self.activate, self),
-                    oninactive: $.proxy(self.deactivate, self)
-                });
-                */
-            }
-
             this._trigger('ready');
-        },
-
-        _initializeEventListeners: function() {
-            var self = this;
-            // flush points when srs is changed
-            $(document).on('mbmapsrschanged', function() {
-                self._emptyPoints();
-            });
-
-            // add point on click
-            $('button[name=addPoint]', this.element).click(function() {
-                self._addInputWrapper();
-            });
-
-            // remove input on click
-            $('.mb-routing-location-points', this.element).on('click', 'span.iconCancel', function() {
-                self._removeInputWrapper(this);
-            });
-
-            // reset route and input on click
-            $('#resetRoute', this.element).click(function() {
-                self._clearRoute();
-            });
-
-            // swap points on click
-            $('#swapPoints', this.element).click(function() {
-                self._flipPoints();
-            });
-
-            // calculate route button click
-            $('#calculateRoute', this.element).click(function() {
-                self._getRoute();
-            });
         },
 
         defaultAction: function (callback) {
@@ -280,7 +93,7 @@
          */
         open: function(callback) {
             this.callback = callback ? callback : null;
-            var me = $(this.element);
+            const element = $(this.element);
 
             if (this.options.type !== 'dialog') {
                 return false;
@@ -299,13 +112,10 @@
                     height: 490,
                     buttons: {}
                 });
-
                 this.popup.$element.on('close', $.proxy(this.close, this));
                 this.activate();
-                me.show();
+                element.show();
             }
-
-
         },
 
         activate: function() {
@@ -315,11 +125,111 @@
             this.markerLayer && this.markerLayer.setVisibility(true);
             this.routingLayer && this.routingLayer.setVisibility(true);
         },
+
         deactivate: function() {
             $(this.olMap.div).off('contextmenu');
             this.markerLayer && this.markerLayer.setVisibility(false);
             this.routingLayer && this.routingLayer.setVisibility(false);
         },
+
+        _initializeEventListeners: function() {
+            var self = this;
+
+            this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
+
+            // flush points when srs is changed
+            $(document).on('mbmapsrschanged', () => {
+                self._emptyPoints();
+            });
+
+            // add point on click
+            $('button[name=addPoint]', this.element).click(() => {
+                self._addInputWrapper();
+            });
+
+            // remove input on click
+            $('.clearField', this.element).on('click', (e) => {
+                self._removeInputWrapper(e.target);
+            });
+
+            // reset route and input on click
+            $('#resetRoute', this.element).click(() => {
+                self._clearRoute();
+            });
+
+            // swap points on click
+            $('#swapPoints', this.element).click(() => {
+                self._flipPoints();
+            });
+
+            // calculate route button click
+            $('#calculateRoute', this.element).click(() => {
+                self._getRoute();
+            });
+
+            this._findLocationInputFields().each((e) => {
+                $(e.target).on('focusout', self._handleInputFocusOut.bind(self));
+            });
+
+            $('.mb-routing-location-points input', this.element).autocomplete({
+                minLength: 3,
+                source: this._handleAutocompleteSource.bind(this),
+                focus: (event, ui) => {
+                    $(this).val(ui.item.label);
+                    return false;
+                },
+                select: this._handleAutocompleteSelect.bind(this)
+            }).autocomplete('instance')._renderItem = (ul, item) => {
+                return $('<li>')
+                    .append('<a>' + item.label + '</a>')
+                    .appendTo(ul);
+            };
+
+            $('.mb-routing-location-points', this.element).sortable({
+                start: function (event, ui) {
+                    $(this).attr('data-previndex', ui.item.index());
+                },
+                update: function(event, ui) {
+                    $(this).removeAttr('data-previndex');
+                    self._reorderPointDiv();
+                }
+            }).disableSelection();
+
+            if (self.element.closest('.tabContainer,.accordionContainer')) {
+                // set up marker layer visibility switching depending on "active" vs "inactive"
+                console.log(MapbenderContainerInfo);
+                /*
+                var _ = new MapbenderContainerInfo(self, {
+                    onactive: $.proxy(self.activate, self),
+                    oninactive: $.proxy(self.deactivate, self)
+                });
+                */
+            }
+        },
+
+        /**
+         * On right click on map, coordinate needs to be extracted so the context menu can access it
+         * @todo: We store the click coords in the instance so the context menu can get them. This is pretty ugly.
+         *        Unfortunately, there doesn't seem to be a way to access the click event directly in the context menu
+         *        event handler. See docs at https://swisnl.github.io/jQuery-contextMenu/docs.html#events
+         *        Maybe we should open an issue to ask for access to the event in a future release.
+         *
+         * @param event
+         * @private
+         */
+        _mapClickHandler: function(event) {
+            // TODO ugly!!
+            this.mapClickHandlerCoordinate = event.coordinate;
+        },
+
+        /**
+         * Get all coordinate inputs (jQuery collection)
+         * @private
+         */
+        _findLocationInputFields: function() {
+            return $('.mb-routing-location-points .input-group input', this.element);
+        },
+
         _initializeContextMenu: function() {
             /*
             var self = this;
@@ -388,6 +298,132 @@
             return items;
         },
 
+        _handleInputFocusOut: function () {
+            console.log('geht')
+            return;
+            var inputVal = $(this).val();
+            var coordArray = null;
+            var coordinates = null;
+            var $inputEl = null;
+            var patt = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
+            var extent = this.olMap.getView().calculateExtent();
+            // var extent = self.olMap.getMaxExtent().clone();
+
+            if (this._isValidGPSCoordinates(inputVal)) {
+                coordArray = $(this).val().split(/[\s,;]+/);
+                var x = coordArray[0].trim();
+                var y = coordArray[1].trim();
+                var destProj = this.olMap.getProjectionObject();
+                var sourceProj = new OpenLayers.Projection('EPSG:4326');
+                coordinates = new OpenLayers.LonLat(y,x);
+                coordinates.transform(sourceProj, destProj);
+                extent = extent.transform(destProj, sourceProj);
+                // check if coordinates are inside max extent
+                if (x > extent['top'] || x < extent['bottom'] || y > extent['right'] || y < extent['left']) {
+                    console.warn('Input: Coordinates out of bounds');
+                    return false;
+                }
+
+                $inputEl = $(this); // current Status
+                this._addPointToInput($inputEl, coordinates);
+
+                if(this.markerLayer.features.length > 1) {
+                    this.olMap.zoomToExtent(this.markerLayer.getDataExtent());
+                    return true;
+                }
+
+                this.olMap.setCenter(coordArray);
+            } else if (patt.test(inputVal)) {
+                coordArray = $(this).val().split(',');
+                coordinates = {
+                    lon: parseFloat(coordArray[0].trim()),
+                    lat: parseFloat(coordArray[1].trim())
+                };
+
+                // check if coordinates are inside max extent
+                if (coordinates.lat > extent['top'] || coordinates.lat < extent['bottom'] || coordinates.lon > extent['right'] || coordinates.lon < extent['left']) {
+                    console.warn('Input: Coordinates out of bounds');
+                    return false;
+                }
+
+                $inputEl = $(this); // current Status
+                this._addPointToInput($inputEl, coordinates);
+
+                if(this.markerLayer.features.length > 1) {
+                    this.olMap.zoomToExtent(this.markerLayer.getDataExtent());
+                    return true;
+                }
+
+                this.olMap.setCenter(coordArray);
+            }
+        },
+
+        _handleAutocompleteSource: function (request, _response) {
+            const self = this;
+            return $.ajax({
+                type: 'GET',
+                url: this.elementUrl + 'search',
+                data: {
+                    terms: encodeURI(request.term),
+                    srsId: this.olMap.getView().getProjection().getCode()
+                }
+            }).then(function(response) {
+                $('> .mb-routing-error', self.element).empty();
+                if (response.error) {
+                    self._searchErrorHandling(response.error);
+                } else {
+                    _response($.map(response, function (value) {
+                        return {
+                            label: value[self.options.label_attribute],
+                            geom: value[self.options.geom_attribute],
+                            srid: (self.options.geom_proj) ? self.options.geom_proj : self.olMap.getView().getProjection().getCode()
+                        };
+                    }));
+                }
+            });
+        },
+
+        _handleAutocompleteSelect: function (event, ui) {
+            $(event.target).val(ui.item.label);
+            let format;
+            switch (this.options.geom_format) {
+                case 'WKT':
+                    format = new ol.format.WKT();
+                    break;
+                case 'GeoJSON':
+                    format = new ol.format.GeoJSON();
+                    break;
+                default:
+                    const msg = Mapbender.trans('mb.routing.exception.main.format') + ': ' + this.options.geom_format;
+                    Mapbender.error(msg);
+                    throw new Error(msg);
+            }
+            const feature = format.readFeature(ui.item.geom, {
+                dataProjection: ui.item.srid,
+                featureProjection: this.olMap.getView().getProjection().getCode(),
+            });
+            //const coords = feature.getGeometry().getCoordinates();
+            //$(this).data('coords', coords);
+            this._createMarker(event.target, feature);
+            const source = this.markerLayer.getSource();
+            let geometryOrExtent = source.getExtent();
+
+            if (source.getFeatures().length === 1) {
+                geometryOrExtent = feature.getGeometry();
+            }
+
+            this.olMap.getView().fit(geometryOrExtent, {
+                padding: new Array(4).fill(this.options.buffer)
+            });
+
+            if (this.options.autoSubmit) {
+                this._getRoute();
+                event.target.blur();
+            }
+
+            return false;
+        },
+
         _isActive: function() {
             var $sidebarContainer = $(this.element).closest('.container-accordion,.container');
             if ($sidebarContainer) {
@@ -396,21 +432,6 @@
                 console.warn("Warning: _mapbender.mbRoutingElement._isActive not implemented for current container; only supports 'accordion' or 'tabs' style sidebar");
                 return true;
             }
-        },
-
-        /**
-         * On right click on map, coordinate needs to be extracted so the context menu can access it
-         * @todo: We store the click coords in the instance so the context menu can get them. This is pretty ugly.
-         *        Unfortunately, there doesn't seem to be a way to access the click event directly in the context menu
-         *        event handler. See docs at https://swisnl.github.io/jQuery-contextMenu/docs.html#events
-         *        Maybe we should open an issue to ask for access to the event in a future release.
-         *
-         * @param event
-         * @private
-         */
-        _mapClickHandler: function(event) {
-            // TODO ugly!!
-            this.mapClickHandlerCoordinate = event.coordinate;
         },
 
         /**
@@ -443,54 +464,39 @@
             }
         },
 
-            /**
-             * Create marker based on user input from context menu
-             * @param inputEl, string, valid = {"start", "destination"} or integer for intermediate points
-             * @param coordinates
-             * @private
-             */
-        _createMarker: function(inputEl, coordinates) {
-            var self = this;
-            self._createMarkerLayer();
-            return;
-
-            var countAllInputs = this._getCoordInputs().length;
-            var inputIndex = $(inputEl).parent().index();
-            var style,point,oldMarker,newMarker;
+        _createMarker: function(inputElement, feature) {
+            this._createMarkerLayer();
+            const inputIndex = $(inputElement).parent().index();
+            const inputLength = this._findLocationInputFields().length;
+            let style = {};
+            console.log(inputIndex, inputLength)
+            console.log(this.options.styleMap)
 
             if (inputIndex === 0) {
-                style = self._setIconStyle('start');
-            } else if (inputIndex === countAllInputs - 1) {
-                style = self._setIconStyle('destination');
+                style = this._getMarkerStyle('start');
+            } else if (inputIndex === inputLength - 1) {
+                style = this._getMarkerStyle('destination');
             } else {
-                style = self._setIconStyle('intermediate');
+                style = this._getMarkerStyle('intermediate');
             }
-            // Create Markerlayer
-            self._createMarkerLayer();
-            // move old marker attributs
-            oldMarker = $(inputEl).data('marker');
-            if (oldMarker) {
-                self.markerLayer.removeFeatures(oldMarker);
+
+            feature.setStyle(style);
+            let previousMarker = $(inputElement).data('marker');
+
+            if (previousMarker) {
+                this.markerLayer.getSource().removeFeature(previousMarker);
             }
-            point = new OpenLayers.Geometry.Point(
-                coordinates.lon,
-                coordinates.lat
-            );
-            newMarker = new OpenLayers.Feature.Vector(point, {input: inputEl}, style);
-            // tie the input to the marker via attributes, so the drag control can find it
-            $(inputEl).data('marker', newMarker);
-            self.markerLayer.addFeatures(newMarker);
-            self.markerLayer.redraw();
+
+            $(inputElement).data('marker', feature);
+            this.markerLayer.getSource().addFeature(feature);
         },
 
         _createMarkerLayer: function() {
-            var self = this;
-            // if marker layer does not exist, create it
-            if (!self.markerLayer) {
-                self.markerLayer = new ol.layer.Vector({
+            if (!this.markerLayer) {
+                this.markerLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
                 });
-                self.olMap.addLayer(self.markerLayer);
+                this.olMap.addLayer(this.markerLayer);
                 // Make features draggable
                 /*
                 self.olMap.addControl(new OpenLayers.Control.DragFeature(self.markerLayer, {
@@ -522,13 +528,7 @@
             var olPoint =  olLonLat.transform(fromProj, toProj);
             return [olPoint.lon, olPoint.lat];
         },
-        /**
-         * Get all coordinate inputs (jQuery collection)
-         * @private
-         */
-        _getCoordInputs: function() {
-            return $('.mb-routing-location-points .input-wrapper input', this.element);
-        },
+
             /**
              * Returns a serialzed form of point array
              * @private
@@ -536,7 +536,7 @@
         _getSerializedPoints: function() {
             var isValid = true;
             var pointsArrayNew = [];
-            this._getCoordInputs().each(function(i,element) {
+            this._findLocationInputFields().each(function(i,element) {
                 var coords = $(element).data('coords');
                 if ($.trim(coords) === '') {
                     isValid = false;
@@ -969,7 +969,7 @@
             var $inputEl = $('input', $(element).parent());
             $inputEl.val('');
             this._removeMarker($inputEl);
-            if (this._getCoordInputs().length > 2) {
+            if (this._findLocationInputFields().length > 2) {
                 currentDiv.remove();
                 self._reorderPointDiv();
             }
@@ -996,7 +996,7 @@
              */
         _emptyPoints: function() {
             var self = this;
-            var $inputs = this._getCoordInputs();
+            var $inputs = this._findLocationInputFields();
             $.each($inputs, function() {
                 self._removeMarker(this);
                 $(this).val('').data('coords', null);
@@ -1039,7 +1039,7 @@
                 $input.attr('placeholder', self.placeholders.intermediate);
                 var marker = $input.data('marker');
                 if (marker) {
-                    marker.style = self._setIconStyle('intermediate');
+                    marker.style = self._getMarkerStyle('intermediate');
                 }
             });
 
@@ -1047,10 +1047,10 @@
             var startMarker = $('input', list.first()).data('marker');
             var destMarker = $('input', list.last()).data('marker');
             if (startMarker) {
-                startMarker.style = this._setIconStyle('start');
+                startMarker.style = this._getMarkerStyle('start');
             }
             if (destMarker) {
-                destMarker.style = this._setIconStyle('destination');
+                destMarker.style = this._getMarkerStyle('destination');
             }
             if (this.markerLayer) {
                 this.markerLayer.redraw();
@@ -1066,8 +1066,18 @@
          * @returns {{graphicWidth: number, graphicHeight: number, graphicXOffset: number|*, graphicYOffset: number|*}}
          * @private
          */
-        _setIconStyle: function(marker) {
-            var style = null;
+        _getMarkerStyle: function(marker) {
+            let styleConfig = this.options.styleMap[marker];
+            console.log(styleConfig);
+            return new ol.style.Style({
+                image: new ol.style.Icon({
+                    anchor: [0.5, 46],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    src: styleConfig.imagePath,
+                }),
+            });
+            //var style = null;
             if (!!this.configuration.styleMap[marker].externalGraphic) {
                 style = this.configuration.styleMap[marker];
                 style.externalGraphic = style.externalGraphic.replace(Mapbender.configuration.application.urls.asset, '');
@@ -1126,26 +1136,6 @@
             console.log('drag started');
         },
         //_destroy: $.noop
-
-        /**
-         *
-         * @param terms
-         * @returns {*}
-         * @private
-         */
-        _search: function(terms) {
-            var self = this;
-            return $.ajax({
-                type: 'GET',
-                url: self.elementUrl + 'search',
-                data: {
-                    terms: terms,
-                    srsId: this.olMap.getView().getProjection().getCode()
-                }
-            }).then(function(response) {
-                return response;
-            });
-        },
 
         /**
          * ReversGeocoding

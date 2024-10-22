@@ -97,51 +97,51 @@ class RoutingElementAdminType extends AbstractType
             ])
             ->add('startImagePath', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.startImagePath',
-                'empty_data' => null,
+                'empty_data' => '/bundles/mapbenderrouting/image/start-map.png',
                 'required' => false,
-                'property_path' => '[styleMap][start][startImagePath]',
+                'property_path' => '[styleMap][start][imagePath]',
             ])
             ->add('startImageSize', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.startImageSize',
                 'required' => false,
-                'property_path' => '[styleMap][start][startImageSize]'
+                'property_path' => '[styleMap][start][imageSize]'
             ])
             ->add('startImageOffset', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.startImageOffset',
                 'required' => false,
-                'property_path' => '[styleMap][start][startImageOffset]',
+                'property_path' => '[styleMap][start][imageOffset]',
             ])
             ->add('intermediateImagePath', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.intermediateImagePath',
                 'empty_data' => null,
                 'required' => false,
-                'property_path' => '[styleMap][intermediate][intermediateImagePath]',
+                'property_path' => '[styleMap][intermediate][imagePath]',
             ])
             ->add('intermediateImageSize', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.intermediateImageSize',
                 'required' => false,
-                'property_path' => '[styleMap][intermediate][intermediateImageSize]',
+                'property_path' => '[styleMap][intermediate][imageSize]',
             ])
             ->add('intermediateImageOffset', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.intermediateImageOffset',
                 'required' => false,
-                'property_path' => '[styleMap][intermediate][intermediateImageOffset]',
+                'property_path' => '[styleMap][intermediate][imageOffset]',
             ])
             ->add('destinationImagePath', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.destinationImagePath',
-                'empty_data' => null,
+                'empty_data' => '/bundles/mapbenderrouting/image/destination-map.png',
                 'required' => false,
-                'property_path' => '[styleMap][destination][destinationImagePath]',
+                'property_path' => '[styleMap][destination][imagePath]',
             ])
             ->add('destinationImageSize', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.destinationImageSize',
                 'required' => false,
-                'property_path' => '[styleMap][destination][destinationImageSize]',
+                'property_path' => '[styleMap][destination][imageSize]',
             ])
             ->add('destinationImageOffset', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.destinationImageOffset',
                 'required' => false,
-                'property_path' => '[styleMap][destination][destinationImageOffset]',
+                'property_path' => '[styleMap][destination][imageOffset]',
             ])
             ->add('infoText', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.infoText',
