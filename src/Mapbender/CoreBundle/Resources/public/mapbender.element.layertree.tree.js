@@ -749,7 +749,7 @@
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
                 if(hideLayerNameWhenCheckboxDisabled){
-                    $('>span',$el.prevObject).closest('.layer-title').toggleClass('disabled', true);
+                    $('>span', $el.prevObject).closest('.layer-title').toggleClass('disabled', true);
                 }
             }
         },
