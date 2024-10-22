@@ -2,56 +2,59 @@
 
 namespace Mapbender\RoutingBundle\Component;
 
-use Exception;
-use Mapbender\RoutingBundle\Component\RequestHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Exception;
+use Mapbender\RoutingBundle\Component\RequestHandler;
 
 class SearchHandler extends RequestHandler {
 
+    protected HttpClientInterface $httpClient;
 
-    protected function createQuery($configuration,$terms) {
-        $query = "";
-        $q =  trim(urldecode($terms));
+    public function __construct(HttpClientInterface $httpClient) {
+        $this->httpClient = $httpClient;
+    }
+
+    protected function createQuery($configuration, $terms) {
+        $query = '';
+        $q = trim(urldecode($terms));
         // Delete to many WhiteSpaces
         $q = preg_replace('/\s\s+/', ' ', $q);
         // Check isset Params of 'token_regex_in' and 'token_regex_out' and 'token_regex' then search and replace with this Params
         // If False then take 'token_regex' or default Search/Replace  params for query-String
-        if ( isset($configuration['token_regex_in']) && isset($configuration['token_regex_out']) && isset($configuration['token_regex'])){
+        if (isset($configuration['token_regex_in']) && isset($configuration['token_regex_out']) && isset($configuration['token_regex'])) {
             # token_regex Tokenizer split regexp.            'token_regex'     => '[^a-zA-Z0-9äöüÄÖÜß]',
             # token_regex_in Tokenizer search regexp.        'token_regex_in'  => '([a-zA-ZäöüÄÖÜß]{3,})',
             # token_regex_out Tokenizer replace regexp.      'token_regex_out' => '$1*',
             // check SplitPattern
             if (isset($configuration['token_regex'])) {
                 $splitPattern = $configuration['token_regex'];
-                $q = preg_replace($splitPattern, " ", $q);
+                $q = preg_replace($splitPattern, ' ', $q);
             }
 
             $tokens = explode(" ", $q);
             $searchPattern = $configuration['token_regex_in'];
             $replacePattern = $configuration['token_regex_out'];
 
-            foreach($tokens as $term) {
-                if ($term == "") {
+            foreach ($tokens as $term) {
+                if ($term == '') {
                     continue;
                 }
 
                 $query .= preg_replace($searchPattern, $replacePattern, $term);
             }
 
-            $query = "*" . trim($query,$replacePattern) . "*";
-        }
-        else{
-
+            $query = '*' . trim($query,$replacePattern) . '*';
+        } else {
             // check if isset 'token_regex'/ Replace-Pattern
             // not set then take Default[^a-zA-Z0-9äöüÄÖÜß] as Pattern
             if (isset($configuration['token_regex'])) {
                 $pattern = $configuration['token_regex'];
-                $q = preg_replace($pattern, " ", $q);
-            }
-            else{
-                $q = preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", " ", $q);
+                $q = preg_replace($pattern, ' ', $q);
+            } else {
+                $q = preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", ' ', $q);
             }
 
             // Replace Whitespace if desired
@@ -65,86 +68,56 @@ class SearchHandler extends RequestHandler {
 
             // Split with " "-Delimter to 2 Words für SQLR-Query
             // Example= 'Anne Frank' => '*Anne*+*Frank*'
-            foreach(explode(" ", $q) as $term) {
-                if ($term == "") {
+            foreach(explode(' ', $q) as $term) {
+                if ($term == '') {
                     continue;
                 }
-                $query .= " *" . $term . "*";
+                $query .= ' *' . $term . '*';
             }
         }
 
         return trim($query);
     }
 
-    /**
-     * @param array $configuration
-     * @param ContainerInterface $container
-     * @return Response
-     * @throws Exception
-     */
-
-    public function getAction($configuration,$container)
+    public function getAction($request, $configuration)
     {
-
         $configuration = $this->getSearchConfiguration($configuration);
-
-        $request       = $container->get('request');
-
-        $qf            = $configuration['query_format'] ?? '%s';
-        $query         =  $this->createQuery($configuration,$request->get('terms', ''));
-
-        // Encode-Query
-        $encoded_query = urlencode($query);
-
-        // Build query URL
+        $queryFormat = $configuration['query_format'] ?? '%s';
+        $query = $this->createQuery($configuration, $request->get('terms', ''));
+        $encodedQuery = urlencode($query);
         $url = $configuration['query_url'];
-        $url .= (false === strpos($url, '?') ? '?' : '&');
-        $url .= $configuration['query_key'] . '=' . sprintf($qf, $encoded_query);
+        $url .= (!str_contains($url, '?') ? '?' : '&');
+        $url .= $configuration['query_key'] . '=' . sprintf($queryFormat, $encodedQuery);
+        $searchEngineResponse = $this->httpClient->request('POST', $url, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        $statusCode = $searchEngineResponse->getStatusCode();
 
-        // Response via php-curl
-        // temp-Search-Wrapper
-        // get Response
-        $curlResponse = self::getCurlResponse($url);
-
-        // Search-Curl-Response Error-Handling
-        if ($curlResponse['responseCode'] != 200 ){
-
-            $inputCode = $curlResponse['responseCode'];
-            $responseArrayMessage= 'SearchDriver is not valid';
-            $responseArrayMessageDetails = $curlResponse['curl_error'];
-
-            // create Error-Array
-            $errorArray = array(
-                'error' =>array(
-                    'code' => $inputCode,
+        if ($statusCode != 200 ) {
+            $responseArrayMessage = 'SearchDriver is not valid';
+            $responseArrayMessageDetails = 'There is an error in your Query'; // $responseArray['response']['errorMessage'];
+            $response = [
+                'error' => [
+                    'code' => $statusCode,
                     'apiMessage' => $responseArrayMessage,
                     'messageDetails' => $responseArrayMessageDetails,
-                )
-            );
+                ],
+            ];
+        } else {
+            $response = $searchEngineResponse->toArray(false);
 
-            // Set Response and fill with Responsedata
-            $response = new JsonResponse($errorArray['error'], 500, array('Content-Type', 'application/json'));
-
-
-        }else {
-
-            // decompose curlResponse
-            $response = $curlResponse['responseData'];
-
-            // Dive into result JSON if needed (Solr for example 'response.docs')
             if (!empty($configuration['collection_path'])) {
-                $data = json_decode($response, true);
                 foreach (explode('.', $configuration['collection_path']) as $key) {
-                    $data = $data[$key];
+                    $response = $response[$key];
                 }
-
-                // Set Response and fill with Responsedata
-                $response = new JsonResponse($data, 200, array('Content-Type', 'application/json'));
-
             }
         }
 
-        return $response;
+        return new JsonResponse($response, $statusCode, [
+            'Content-Type', 'application/json',
+        ]);
     }
 
 

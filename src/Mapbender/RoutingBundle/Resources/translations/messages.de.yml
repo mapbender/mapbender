@@ -4,6 +4,7 @@ mb:
       main:
         general: Es ist ein Fehler aufgetreten
         noResult: Es konnte keine Route gefunden werden.
+        format: Format wird nicht unterstützt.
       graphhopper:
         400: Bei der Anfrage ist ein Fehler aufgetreten (zu wenige oder zu viele Punkte).
         401: Authentifizierung ist erforderlich! Registrieren Sie sich und erhalten Sie einen gültigen API-Schlüssel unter https://www.graphhopper.com/developers/.
@@ -137,6 +138,7 @@ mb:
             label_attribute: Attributname
             geom_attribute: Attributname Geodaten
             geom_format: Geodatenformat
+            geom_proj: Projektion Geodaten
             delay: Automatische Vervollständigungs-Verzögerung
             result_buffer: Zoompuffer (m)
             result_minscale: Zoompuffer min.

@@ -6,8 +6,7 @@
         <service id="mapbender.element.RoutingElement" class="Mapbender\RoutingBundle\Element\RoutingElement">
             <tag name="mapbender.element" />
             <argument type="service" id="Symfony\Component\Routing\Generator\UrlGeneratorInterface" />
-
+            <argument type="service" id="monolog.http_client"/>
         </service>
-
     </services>
 </container>

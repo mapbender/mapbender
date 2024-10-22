@@ -151,7 +151,7 @@ class RoutingElementAdminType extends AbstractType
             ->add('routingDriver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.routingDriver',
                 'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
-                'empty_data' => 'graphhopper',
+                #'empty_data' => 'graphhopper',
                 'required' => true,
                 'choices' => [
                     'mb.routing.backend.dialog.label.gh.titel' => 'graphhopper',
@@ -375,7 +375,7 @@ class RoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.frontend.dialog.label.transportationmode',
                 'required' => false,
                 'multiple' => true,
-                'empty_data' => null,
+                'empty_data' => ['car'],
                 'choices' => [
                     'mb.routing.frontend.dialog.label.car' => 'car',
                     'mb.routing.frontend.dialog.label.bike' => 'bike',

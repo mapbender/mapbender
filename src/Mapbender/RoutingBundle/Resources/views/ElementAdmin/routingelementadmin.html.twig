@@ -1,5 +1,7 @@
 
 {{ form_row(form.configuration.advanced) }}
+<hr>
+<h3 class="my-4">Element</h3>
 {{ form_row(form.title) }}
 
 <div class="mb-3">
@@ -17,7 +19,7 @@
 {{ form_row(form.configuration.width) }}
 {{ form_row(form.configuration.opacity) }}
 
-<div class="basic advanced" style="display:none">
+<div class="basic advanced d-none">
     {{ form_row(form.configuration.infoText) }}
     {{ form_row(form.configuration.dateTimeFormat) }}
     {{ form_row(form.configuration.startImagePath) }}
@@ -30,14 +32,15 @@
     {{ form_row(form.configuration.destinationImageSize) }}
     {{ form_row(form.configuration.destinationImageOffset) }}
 </div>
-<br>
+<hr>
+<h3 class="my-4">Routingsoftware</h3>
 {{ form_row(form.configuration.routingDriver) }}
 
-<div class="graphhopper drivers" style="display:block">
+<div class="graphhopper drivers d-none">
     {{ form_row(form.configuration.ghUrl) }}
     {{ form_row(form.configuration.ghTransportationMode) }}
     {{ form_row(form.configuration.ghKey) }}
-    <div class="graphhopper advanced" style="display:block">
+    <div class="advanced d-none">
         {{ form_row(form.configuration.ghWeighting) }}
         {{ form_row(form.configuration.ghOptimize) }}
         {{ form_row(form.configuration.ghElevation) }}
@@ -45,22 +48,22 @@
     </div>
 </div>
 
-<div class="pgrouting drivers" style="display:block">
+<div class="pgrouting drivers d-none">
     {{ form_row(form.configuration.connection) }}
     {{ form_row(form.configuration.pgWayTable) }}
     {{ form_row(form.configuration.pgWayTableVertices) }}
-    <div class="pgrouting advanced" style="display:block">
+    <div class="advanced d-none">
         {{ form_row(form.configuration.pgWeighting) }}
         {{ form_row(form.configuration.pgSpeed) }}
         {{ form_row(form.configuration.pgInstructions) }}
     </div>
 </div>
 
-<div class="osrm drivers" style="display:block">
+<div class="osrm drivers d-none">
     {{ form_row(form.configuration.osrmUrl) }}
     {{ form_row(form.configuration.osrmService) }}
     {{ form_row(form.configuration.osrmTransportationMode) }}
-    <div class="osrm advanced" style="display:block">
+    <div class="advanced d-none">
         {{ form_row(form.configuration.osrmVersion) }}
         {{ form_row(form.configuration.osrmAlternatives) }}
         {{ form_row(form.configuration.osrmSteps) }}
@@ -70,19 +73,20 @@
     </div>
 </div>
 
-<div class="trias drivers" style="display:block">
+<div class="trias drivers d-none">
     <p>Currently no driver configuration possible</p>
 </div>
 
-<br>
-<div class="search">
+<div class="search d-none">
+    <hr>
+    <h3 class="my-4">Suche</h3>
     {{ form_row(form.configuration.search.searchDriver) }}
     {% if form.configuration.search.searchDriver is defined %}
         {% for searchTag in form.configuration.search %}
             {# form_label(searchTag) }}{{ form_widget(searchTag) #}
         {% endfor %}
         {{ form_row(form.configuration.search.searchUrl) }}
-        <div class="search advanced" style="display:none">
+        <div class="advanced d-none">
             {{ form_row(form.configuration.search.query_key) }}
             {{ form_row(form.configuration.search.query_ws_replace) }}
             {{ form_row(form.configuration.search.query_format) }}
@@ -93,6 +97,7 @@
             {# !! The following values are not evaluated !! #}
             {{ form_row(form.configuration.search.label_attribute) }}
             {{ form_row(form.configuration.search.geom_attribute) }}
+            {{ form_row(form.configuration.search.geom_proj) }}
             {{ form_row(form.configuration.search.geom_format) }}
             {{ form_row(form.configuration.search.result_buffer) }}
             {{ form_row(form.configuration.search.result_minscale) }}
@@ -103,137 +108,59 @@
     {% endif %}
 </div>
 
-<br>
-<div class="reverseGeocoding" style="display:none">
+<div class="reverseGeocoding d-none">
+    <hr>
+    <h3 class="my-4">Reverse Geocoding</h3>
     {{ form_row(form.configuration.reverse.revGeocodingDriver) }}
     {{ form_row(form.configuration.reverse.revGeoConnection) }}
     {{ form_row(form.configuration.reverse.revTableName) }}
     {{ form_row(form.configuration.reverse.revRowGeoWay) }}
     {{ form_row(form.configuration.reverse.revRowSearch) }}
-    <div class="reverseGeocoding advanced" style="display:none">
+    <div class="advanced d-none">
         {{ form_row(form.configuration.reverse.revSearchBuffer) }}
     </div>
 </div>
 
 <script>
     $(document).ready(function() {
-        var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
-        var value_type_advanced = $('#form_configuration_advanced').is(':checked');
-        var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(':checked');
-        var value_type_search = $('#form_configuration_addSearch').is(':checked');
-        var $drivers = $('.drivers');
-        var $basic = $('.basic.advanced');
-        var $reverseGeocoding = $('.reverseGeocoding');
-        var search = $('.search');
+        const advancedSettings = $('#form_configuration_advanced');
+        const activateSearch = $('#form_configuration_addSearch');
+        const activateReverseGeocoding = $('#form_configuration_addReverseGeocoding');
+        const routingDriverSelection = $('#form_configuration_routingDriver');
+        const selectedRoutingDriver = routingDriverSelection.find('option:selected').val() || false;
 
-        $drivers.hide();
-        $basic.hide();
-        $reverseGeocoding.hide();
-        search.hide();
-
-        if (typeof value_type_routingDriver !== false) {
-            $('.' + value_type_routingDriver).show();
-
-            if (value_type_advanced === false) {
-                $('.basic.advanced').hide();
-                $('.' + value_type_routingDriver).children('.advanced').hide();
-            } else {
-                $('.basic.advanced').show();
-                $('.' + value_type_routingDriver).children('.advanced').show();
-            }
+        if (advancedSettings.is(':checked')) {
+            $('.advanced').removeClass('d-none');
         }
 
-        if (value_type_search === true) {
-            search.show();
-
-            if (value_type_advanced === false) {
-                $(search).children('.advanced').hide();
-            } else {
-                $(search).children('.advanced').show();
-            }
+        if (activateSearch.is(':checked')) {
+            $('.search').removeClass('d-none');
         }
 
-        if (value_type_reverseGeocoding === true) {
-            $reverseGeocoding.show();
+        if (activateReverseGeocoding.is(':checked')) {
+            $('.reverseGeocoding').removeClass('d-none');
         }
 
-        $('#form_configuration_advanced').bind('change', function() {
-            var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
-            var value_type_Search = $('#form_configuration_addSearch').is(':checked');
-            var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(':checked');
-            var value_type_routingDriver_advanced = $('#form_configuration_advanced').is(':checked');
+        if (selectedRoutingDriver) {
+            $('.' + selectedRoutingDriver).removeClass('d-none');
+        }
 
-            if (value_type_routingDriver_advanced !== false) {
-                $('.basic.advanced').show();
-                $('.' + value_type_routingDriver).children('.advanced').show();
-            } else {
-                $('.basic.advanced').hide();
-                $('.' + value_type_routingDriver).children('.advanced').hide();
-            }
-
-            if (value_type_Search !== false) {
-                $('.search').children('.advanced').show();
-            } else {
-                $('.search').children('.advanced').hide();
-            }
-
-            if (value_type_reverseGeocoding !== false) {
-                $('.reverseGeocoding').children('.advanced').show();
-            } else {
-                $('.reverseGeocoding').children('.advanced').hide();
-            }
+        advancedSettings.on('change', () => {
+            $('.advanced').toggleClass('d-none');
         });
 
-        $('#form_configuration_routingDriver').bind('change', function() {
-            var value_type_routingDriver = $('#form_configuration_routingDriver').find('option:selected').val() || false;
-            var value_type_routingDriver_advanced = $('#form_configuration_advanced').is(':checked');
-            var $drivers = $('.drivers');
-            var $basic = $('.basic.advanced');
-            $drivers.hide();
-            $basic.hide();
-
-            if (typeof value_type_routingDriver !== false) {
-                $('.' + value_type_routingDriver).show();
-
-                if (value_type_routingDriver_advanced === false) {
-                    $('.' + value_type_routingDriver).children('.advanced').hide();
-                    $('.basic.advanced').hide();
-                }
-            }
+        activateSearch.on('change', () => {
+            $('.search').toggleClass('d-none');
         });
 
-        $('#form_configuration_addReverseGeocoding').bind('change', function() {
-            var value_type_reverseGeocoding = $('#form_configuration_addReverseGeocoding').is(':checked');
-            var $reverseGeocoding = $('.reverseGeocoding');
-
-            if (value_type_reverseGeocoding === true) {
-                $reverseGeocoding.show();
-
-                if (value_type_advanced === false) {
-                    $($reverseGeocoding).children('.advanced').hide();
-                } else {
-                    $($reverseGeocoding).children('.advanced').show();
-                }
-            } else {
-                $reverseGeocoding.hide();
-            }
+        activateReverseGeocoding.on('change', () => {
+            $('.reverseGeocoding').toggleClass('d-none');
         });
 
-        $('#form_configuration_addSearch').bind('change', function() {
-            var value_type_Search = $('#form_configuration_addSearch').is(':checked');
-            var search = $('.search');
-
-            if (value_type_Search === true) {
-                search.show();
-
-                if (value_type_advanced === false) {
-                    $(search).children('.advanced').hide();
-                } else {
-                    $(search).children('.advanced').show();
-                }
-            } else {
-                search.hide();
-            }
+        routingDriverSelection.on('change', (e) => {
+            $('.drivers').addClass('d-none');
+            const selectedDriver = '.' + $(e.target).val();
+            $(selectedDriver).removeClass('d-none');
         });
     });
 </script>

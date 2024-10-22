@@ -91,6 +91,11 @@ class SearchRoutingElementAdminType extends AbstractType
                 'empty_data' => 'geom',
                 'required' => false,
             ])
+            ->add('geom_proj', TextType::class, [
+                'label' => 'mb.routing.backend.dialog.label.sh.geom_proj',
+                'property_path' => '[geom_proj]',
+                'required' => false,
+            ])
             ->add('geom_format', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.geom_format',
                 'property_path' => '[geom_format]',
@@ -99,7 +104,6 @@ class SearchRoutingElementAdminType extends AbstractType
                 'choices' => [
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON',
-                    'CSV' => 'CSV',
                 ],
             ])
             ->add('delay', NumberType::class, [
@@ -138,9 +142,6 @@ class SearchRoutingElementAdminType extends AbstractType
 
         # Search-Settings
         $builder
-            ->add('searchDriver', TextType::class, [
-                'label' => 'mb.routing.backend.dialog.label.searchDriver',
-            ])
             ->add('connectionSearchName', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.connectionSearchName',
                 'required' => false,

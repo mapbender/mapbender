@@ -2,6 +2,11 @@
 
 namespace Mapbender\RoutingBundle\Element;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Doctrine\Common\Collections\Collection;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
@@ -13,10 +18,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\RoutingBundle\Component\RoutingHandler;
 use Mapbender\RoutingBundle\Component\ReverseSearchHandler;
 use Mapbender\RoutingBundle\Component\SearchHandler;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class RoutingElement
@@ -26,10 +27,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RoutingElement extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
-     /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-    public function __construct(UrlGeneratorInterface $urlGenerator){
+    protected UrlGeneratorInterface $urlGenerator;
+
+    protected HttpClientInterface $httpClient;
+
+    public function __construct(UrlGeneratorInterface $urlGenerator, HttpClientInterface $httpClient) {
         $this->urlGenerator = $urlGenerator;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -78,7 +82,9 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
                 '@MapbenderRoutingBundle/Resources/public/sass/element/jquery-ui.css',
                 '/components/jquery-context-menu/src/jquery.contextMenu.css'),
             'trans' => array(
-                'MapbenderRoutingBundle:Element:routingelement.json.twig')
+                'mb.routing.*',
+                //'@MapbenderRoutingBundle/Resources/views/Element/routingelement.json.twig'
+            )
         );
     }
 
@@ -119,22 +125,27 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
         );
     }
 
+    public function getHttpHandler(Element $element)
+    {
+        return $this;
+    }
+
     public function handleRequest(Element $element, Request $request)
     {
         $action = $request->attributes->get('action');
         $configuration = $element->getConfiguration();
         $response = new Response();
+
         switch ($action) {
             case 'getRoute':
                 $response = new RoutingHandler();
                 break;
             case 'search':
-                $response = new SearchHandler();
-                break;
+                $searchHandler = new SearchHandler($this->httpClient);
+                return $searchHandler->getAction($request, $configuration);
             case 'revGeocode':
                 $response = new ReverseSearchHandler();
                 break;
-
             default:
                 //$response = $this->pluginRegistry->handleHttpRequest($request, $element);
         }

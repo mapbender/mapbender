@@ -4,6 +4,7 @@ mb:
       main:
         general: There was an error in your request
         noResult: No route could be found.
+        format: Format not supported.
       graphhopper:
         400: Something was wrong in your request (too few or too many points)
         401: Authentication necessary! Register and get a valid API key at https://www.graphhopper.com/developers/.
@@ -137,6 +138,7 @@ mb:
             label_attribute: Label attribute
             geom_attribute: Geom attribute
             geom_format: Geom format
+            geom_proj: Projection Geom
             delay: Delay
             result_buffer: Zoom buffer (m)
             result_minscale: Zoom buffer min.
