@@ -69,23 +69,25 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
      */
     public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderRoutingBundle/Resources/public/mapbender.element.routingelement.js',
-                "/components/jquery-context-menu/src/jquery.contextMenu.js",
-                "/components/jquery-context-menu/src/jquery.ui.position.js",
-                "/bundles/mapbendercore/proj4js/proj4js-compressed.js",
-                "/components/jquery-ui/ui/widgets/autocomplete.js"
-            ),
-            'css' => array(
-                '@MapbenderRoutingBundle/Resources/public/sass/element/routing.scss',
+                # "/components/jquery-context-menu/src/jquery.contextMenu.js",
+                # "/components/jquery-context-menu/src/jquery.ui.position.js",
+                # "/bundles/mapbendercore/proj4js/proj4js-compressed.js",
+                # "/components/jquery-ui/ui/widgets/autocomplete.js",
+            ],
+            'css' => [
                 '@MapbenderRoutingBundle/Resources/public/sass/element/jquery-ui.css',
-                '/components/jquery-context-menu/src/jquery.contextMenu.css'),
-            'trans' => array(
+                # '@MapbenderRoutingBundle/Resources/public/sass//mapbender.element.routing.scss',
+                # '@MapbenderRoutingBundle/Resources/public/sass/element/routing.scss',
+                # '/components/jquery-context-menu/src/jquery.contextMenu.css'),
+            ],
+            'trans' => [
                 'mb.routing.*',
-                //'@MapbenderRoutingBundle/Resources/views/Element/routingelement.json.twig'
-            )
-        );
+                //'@MapbenderRoutingBundle/Resources/views/Element/routingelement.json.twig',
+            ],
+        ];
     }
 
 

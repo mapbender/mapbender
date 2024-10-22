@@ -243,11 +243,6 @@
                 self._emptyPoints();
             });
 
-            // get route in button click
-            $('button[name=getRoute]', this.element).click(function() {
-                self._getRoute();
-            });
-
             // add point on click
             $('button[name=addPoint]', this.element).click(function() {
                 self._addInputWrapper();
@@ -258,14 +253,19 @@
                 self._removeInputWrapper(this);
             });
 
-            // flip (reverse) points on click
-            $('button[name=flipPoints]', this.element).click(function() {
+            // reset route and input on click
+            $('#resetRoute', this.element).click(function() {
+                self._clearRoute();
+            });
+
+            // swap points on click
+            $('#swapPoints', this.element).click(function() {
                 self._flipPoints();
             });
 
-            // clear route and input on click
-            $('button[name=clearRoute]', this.element).click(function() {
-                self._clearRoute();
+            // calculate route button click
+            $('#calculateRoute', this.element).click(function() {
+                self._getRoute();
             });
         },
 
