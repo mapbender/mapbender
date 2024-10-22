@@ -14,6 +14,8 @@ mb:
     reset: Sıfırla
     save: Kaydet
     search: Ara
+    sort_ascending: Artan sırada sırala
+    sort_descending: Azalan sıralama
   terms:
     application:
       singular: Uygulama
@@ -157,6 +159,7 @@ mb:
         featureinfo_onoff: Detay bilgisi açık/kapalı
         opacity: Opaklık
         zoomtolayer: Katmana yakınlaştır
+        select_style: Stil
         metadata: ' Üstveri (Metadata)'
         legend: Lejant
         kmlexport: KML formatında dışa aktar (Export)
@@ -166,6 +169,8 @@ mb:
       class:
         title: Katman ağacı
         description: Haritanın katman ağacı
+      admin:
+        select_style: Stil seçin
     zoombar:
       zoombybox: Çizilen alana yakınlaştır
       zoombyworld: Tüm dünyayı göster

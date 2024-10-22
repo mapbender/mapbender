@@ -1,20 +1,44 @@
-## next bugfix release
+## next release
+Features:
+* Allow selecting WMS layer styles via the layer tree contextmenu ([PR#1636](https://github.com/mapbender/mapbender/pull/1636))
+* [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
+* [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
+
+Bugfixes:
+* [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
+
+Other:
+* Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
+* Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639))
+* [Manager] Provide detailed information in all "delete"-dialogs ([PR#1631](https://github.com/mapbender/mapbender/pull/1631)) 
+
+
+## v4.0.2
+Bugfix:
+* Fix ajax requests fail in YAML applications (regression introduced in 4.0.1) ([#1628](https://github.com/mapbender/mapbender/issues/1628), [PR#1634](https://github.com/mapbender/mapbender/pull/1634))
+
+
+## v4.0.1
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
 Bugfixes:
+* Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
 * Do not crash when passport does not exist in FailedLoginListener ([PR#1601](https://github.com/mapbender/mapbender/pull/1601))
 * [Security] Fix `published: false` was ignored in YAML applications ([PR#1614](https://github.com/mapbender/mapbender/pull/1614))
 * [Manager] Fix empty region placeholder in layout editor ([#1606](https://github.com/mapbender/mapbender/issues/1606), [PR#1611](https://github.com/mapbender/mapbender/pull/1611))
 * [DataUpload] Fix data type recognition in some browsers / operating systems ([#1603](https://github.com/mapbender/mapbender/issues/1603), [PR#1610](https://github.com/mapbender/mapbender/pull/1610))
-* [Map] Transformation failed in some cases when EPSG:3847 is transformed into UTM coordinates ([#1602](https://github.com/mapbender/mapbender/issues/1602), [PR#1613](https://github.com/mapbender/mapbender/pull/1613))
-* Never use a disabled map element ([#1608](https://github.com/mapbender/mapbender/issues/1608), [PR#1609](https://github.com/mapbender/mapbender/pull/1609))
-* Fix compatibility with OracleDB ([PR#1619](https://github.com/mapbender/mapbender/pull/1619))
+* [Map] Transformation failed in some cases when EPSG:3847 is transformed into UTM or GK coordinates ([#1602](https://github.com/mapbender/mapbender/issues/1602), [#1615](https://github.com/mapbender/mapbender/issues/1615), [PR#1613](https://github.com/mapbender/mapbender/pull/1613), [PR#1626](https://github.com/mapbender/mapbender/pull/1626))
+* [Map] Never use a disabled map element ([#1608](https://github.com/mapbender/mapbender/issues/1608), [PR#1609](https://github.com/mapbender/mapbender/pull/1609))
 * [Mobile Template] Allow scrolling layer tree on the left edge ([#1617](https://github.com/mapbender/mapbender/issues/1617), [PR#1620](https://github.com/mapbender/mapbender/pull/1620))
 * [SearchRouter] Upper case column names did not work in SearchRouter ([PR#1623](https://github.com/mapbender/mapbender/pull/1623))
+* Fix base path when using AssetOverriding (check PR text if you used asset overriding before) ([#1618](https://github.com/mapbender/mapbender/issues/1618), [PR#1622](https://github.com/mapbender/mapbender/pull/1622))
+* Allow visiblelayers to activate root layer ([#1624](https://github.com/mapbender/mapbender/issues/1624), [PR#1625](https://github.com/mapbender/mapbender/pull/1625))
 
 Other:
 * Extract Application Resolving Logic to separate service that can be overwritten by DI ([PR#1604](https://github.com/mapbender/mapbender/pull/1604))
 * Add ValidatableConfigurationInterface to validate an element's configuration ([PR#1607](https://github.com/mapbender/mapbender/pull/1607))
+* [LegendHandler] Allow page margins to be configured independently ([PR#1627](https://github.com/mapbender/mapbender/pull/1627))
+
 
 ## v4.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):

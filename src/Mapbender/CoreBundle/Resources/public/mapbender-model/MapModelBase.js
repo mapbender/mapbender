@@ -206,11 +206,10 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-            var source = this.getSourceById(sourceId);
-            Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
+            const source = this.getSourceById(sourceId);
+            source.setLayerOrder(newLayerIdOrder);
             this._checkSource(source, false);
-            // @todo: rename this event; it's about layers within a source
-            $(this.mbMap.element).trigger('mbmapsourcemoved', {
+            $(this.mbMap.element).trigger('mbmapsourcelayersreordered', {
                 mbMap: this.mbMap,
                 source: source
             });
@@ -485,26 +484,26 @@ window.Mapbender.MapModelBase = (function() {
             var self = this;
             var specs = (paramValue || '').split(',');
             $.each(specs, function(idx, layerSpec) {
-                var idParts = layerSpec.split('/');
-                if (idParts.length >= 2) {
-                    var sourceId = idParts[0];
-                    var layerId = idParts[1];
-                    if (isNaN(sourceId) || isNaN(layerId)) {
-                        var sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
-                        sourceId = sourceAndLayerId.sourceId;
-                        layerId = sourceAndLayerId.layerId;
-                    }
-                    console.log("Activating", sourceId, layerId);
-                    var source = self.getSourceById(sourceId);
-                    var layer = source && source.getLayerById(layerId);
-                    if (layer) {
-                        layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
-                    }
-                    while (layer) {
-                        layer.setSelected(true);
-                        layer.source.layerset?.setSelected(true);
-                        layer = layer.parent;
-                    }
+                const idParts = layerSpec.split('/');
+                let sourceId = idParts[0];
+                let layerId = idParts.length >= 2 ? idParts[1] : null;
+                if ((sourceId && isNaN(sourceId)) || (layerId && isNaN(layerId))) {
+                    const sourceAndLayerId = self.findSourceAndLayerIdByName(sourceId, layerId);
+                    sourceId = sourceAndLayerId.sourceId;
+                    layerId = sourceAndLayerId.layerId;
+                }
+                console.log("Activating", sourceId, layerId);
+                const source = self.getSourceById(sourceId);
+                if (!source) return;
+
+                let layer = layerId ? source.getLayerById(layerId) : source.getRootLayer();
+                if (layer) {
+                    layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
+                }
+                while (layer) {
+                    layer.setSelected(true);
+                    layer.source.layerset?.setSelected(true);
+                    layer = layer.parent;
                 }
             });
         },
@@ -516,6 +515,7 @@ window.Mapbender.MapModelBase = (function() {
                 const config = source.children[0];
                 if (config.options.name === sourceName || config.options.title === sourceName) {
                     sourceAndLayerId.sourceId = config.source.id;
+                    if (!layerName) return sourceAndLayerId;
                     config.children.forEach(function (child) {
                         if (child.options.name === layerName || child.options.title === layerName) {
                             sourceAndLayerId.layerId = child.options.id;
@@ -588,7 +588,7 @@ window.Mapbender.MapModelBase = (function() {
                     mbMap: this.mbMap,
                     source: source
                 });
-                var olLayers = source.initializeLayers(projCode, this.mbMap.options);
+                var olLayers = source.createNativeLayers(projCode, this.mbMap.options);
                 for (var j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
                     Mapbender.mapEngine.setLayerVisibility(olLayer, false);
@@ -723,7 +723,7 @@ window.Mapbender.MapModelBase = (function() {
             for (var i = 0; i < this.sourceTree.length; ++i) {
                 var source = this.sourceTree[i];
                 if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                    var olLayers = source.initializeLayers(srsNameTo, this.mbMap.options);
+                    var olLayers = source.createNativeLayers(srsNameTo, this.mbMap.options);
                     for (var j = 0; j < olLayers.length; ++j) {
                         var olLayer = olLayers[j];
                         Mapbender.mapEngine.setLayerVisibility(olLayer, false);

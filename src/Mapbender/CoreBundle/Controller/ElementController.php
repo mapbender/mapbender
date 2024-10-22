@@ -39,6 +39,7 @@ class ElementController extends AbstractController
     public function element(Request $request, $slug, $id, string $action)
     {
         $application = $this->applicationResolver->getApplicationEntity($slug);
+        $id = is_numeric($id) ? intval($id) : $id;
         $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
         if (!$element) {
             throw new NotFoundHttpException();
@@ -67,7 +68,7 @@ class ElementController extends AbstractController
     #[Route(path: '/application/{slug}/elements', methods: ['GET'])]
     public function reloadMarkup(Request $request, $slug)
     {
-        $application = $this->getApplicationEntity($slug);
+        $application = $this->applicationResolver->getApplicationEntity($slug);
         $idsParam = $request->query->get('ids', '');
         $ids = \array_filter(explode(',', $idsParam));
 

@@ -14,6 +14,8 @@ mb:
     reset: Скинути
     save: Зберегти
     search: Шукати
+    sort_ascending: сортувати за зростанням
+    sort_descending: сортувати за спаданням
   terms:
     application:
       singular: Застосунок
@@ -176,6 +178,7 @@ mb:
         featureinfo_onoff: Інформація про об'єкт вмк/вимк
         opacity: Непрозорість
         zoomtolayer: Збільшити шар
+        select_style: Стиль
         metadata: Метадані
         legend: Легенда
         kmlexport: Експорт Kml
@@ -185,6 +188,8 @@ mb:
       class:
         title: Дерево шарів
         description: Дерево шарів мапи
+      admin:
+        select_style: Виберіть стиль
     zoombar:
       zoombybox: Збільшити за вікном
       zoombyworld: Збільшити за світом

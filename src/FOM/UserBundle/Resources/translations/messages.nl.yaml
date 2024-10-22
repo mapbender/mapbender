@@ -24,10 +24,10 @@ fom:
       index:
         groups: Groepen
         add_new_group: Voeg een groep toe
-        title: Titel
+        title: Naam
         description: Omschrijving
         edit_group: Bewerk groep
-        delete_group: Verwijder groep
+        delete_group: 'Wil je de groep "{group_title}" echt verwijderen'
         no_groups_available: Geen groepen beschikbaar.
       form:
         edit_group: Wijzig groep
@@ -67,7 +67,7 @@ fom:
         edit_user: Wijzig gebruiker
         contact_user: Contact een gebruiker via e-mail
         edit_group: Wijzig groep
-        delete_user: Verwijder gebruiker
+        delete_user: Wil je de gebruiker "%user_username%" echt verwijderen
         no_users_available: Geen gebruikers beschikbaar.
       form:
         edit_user: Wijzig gebruiker

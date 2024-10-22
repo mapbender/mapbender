@@ -1,6 +1,5 @@
 <div>
   <span class="right">{{ 'mb.manager.admin.template' | trans }}: {{template_name|default('Unknown')}}</span>
-  <div class="clear"></div>
 </div>
 
 {% form_theme form _self %}
@@ -29,11 +28,19 @@
   {% endblock %}
 {%- endif -%}
 
+<div class="col-xs-6 col-6">
+    {%- if application.layersets -%}
+        {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'all-regions'} %}
+    {%- endif -%}
+</div>
+
+<ul id="all-regions">
 {% for region in regions %}
+    <li class="filterItem">
   <div class="{{region}} region">
       <table class="application-component-table table table-condensed elementsTable" data-region="{{ region }}">
         <thead>
-          <tr>
+          <tr class='doNotFilter'>
             <th colspan="1">
               <h3 class="subTitle">{{ application_region_title(application, region) | trans }}</h3>
             </th>
@@ -43,7 +50,7 @@
               {% endif %}
             </th>
           </tr>
-          <tr>
+          <tr class='doNotFilter'>
             <th class="titleColumn">{{ 'mb.manager.admin.element.title' | trans }}</th>
             <th class="typeColumn">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
@@ -87,8 +94,10 @@
                       data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
                     <i class="fas fa-key"></i>
                 </span>
+                  {% set element_name = element_title(element) | trans %}
                 <span class="-fn-delete hover-highlight-effect"
-                      title="{{ 'mb.actions.delete' | trans }}"
+                      title="{{ 'mb.manager.admin.element.delete.title'|trans}}"
+                      data-title="{{ 'mb.manager.admin.element.delete.confirm'|trans({'element_name': element_name})}}"
                       data-slug="{{ application.slug }}"
                       data-token="{{ csrf_token('element_delete') }}"
                       data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
@@ -97,10 +106,12 @@
               </tr>
             {% endif %}
           {% endfor %}
-          <tr class="dummy" {% if not region_empty %} style="display: none;"{% endif %}>
+          <tr class="dummy doNotFilter" {% if not region_empty %} style="display: none;"{% endif %}>
             <td colspan="3">{{ 'mb.manager.admin.element.no_element_added' | trans }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+    </li>
   {% endfor %}
+</ul>

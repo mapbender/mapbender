@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class LayertreeAdminType extends AbstractType
@@ -15,27 +16,27 @@ class LayertreeAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('autoOpen', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
             ))
-            ->add('useTheme', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('useTheme', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.usetheme',
             ))
-            ->add('allowReorder', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('allowReorder', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
             ))
-            ->add('showBaseSource', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('showBaseSource', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.showbasesources',
             ))
-            ->add('hideInfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('hideInfo', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
             ))
-            ->add('menu', 'Mapbender\CoreBundle\Element\Type\LayerTreeMenuType', array(
+            ->add('menu', $this->getMenuCollectionType(), array(
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.menu',
             ))
@@ -44,5 +45,10 @@ class LayertreeAdminType extends AbstractType
                 'required' => false,
             ))
         ;
+    }
+
+    public function getMenuCollectionType(): string
+    {
+        return LayerTreeMenuType::class;
     }
 }

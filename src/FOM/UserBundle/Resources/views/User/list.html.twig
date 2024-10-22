@@ -2,16 +2,25 @@
     <table class="table">
     <thead>
       <tr>
-        <th>{{ "fom.user.user.index.name" | trans }}</th>
-        <th>{{ "fom.user.user.index.email" | trans }}</th>
+        <th class="sortByColumn clickable">
+            {{'fom.user.user.index.name'|trans }}
+              <span class="fa fa-sort-amount-asc" title="{{ 'mb.actions.sort_descending'|trans }}"></span>
+        </th>
+        <th class="sortByColumn clickable">
+            {{'fom.user.user.index.email'|trans}}
+              <span class="fa fa-sort" title="{{ 'mb.actions.sort_ascending'|trans }}"></span>
+        </th>
         {% if show_groups %}
-        <th>{{ "fom.user.user.index.groups" | trans }}</th>
+        <th class="sortByColumn clickable">
+            {{'fom.user.user.index.groups'|trans}}
+            <span class="fa fa-sort" title="{{ 'mb.actions.sort_ascending'|trans }}"></span>
+        </th>
         {% endif %}
         <th></th>
       </tr>
     </thead>
     <tbody id="listFilterUsers">
-      {% for user in users %}
+      {% for user in users|sort((a,b) => a.username|lower <=> b.username|lower) %}
         <tr class="filterItem">
           <td>
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}
@@ -41,7 +50,8 @@
             {% endif %}
             {% if user.id != 1 and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_USERS')) %}
               <span class="-fn-delete hover-highlight-effect"
-                title="{{"fom.user.user.index.delete_user" | trans}}"
+                data-title="{{ 'fom.user.user.index.delete_user' | trans ({'%user_username%': user.username }) }}"
+                title="{{ 'fom.security.resource.installation.delete_users' | trans }}"
                 data-url="{{ path('fom_user_user_delete', { 'id': user.id}) }}"
                 data-id="{{ user.id }}"
                 data-token="{{ csrf_token('user_delete') }}"

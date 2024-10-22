@@ -24,10 +24,10 @@ fom:
       index:
         groups: Gruppen
         add_new_group: 'Neue Gruppe hinzufügen'
-        title: Titel
+        title: Name
         description: Beschreibung
         edit_group: 'Gruppe bearbeiten'
-        delete_group: 'Gruppe löschen'
+        delete_group: 'Möchten Sie die Gruppe "{group_title}" wirklich löschen'
         no_groups_available: 'Keine Gruppen verfügbar'
       form:
         edit_group: 'Gruppe bearbeiten'
@@ -67,7 +67,7 @@ fom:
         edit_user: 'Benutzer bearbeiten'
         contact_user: 'Kontaktieren Sie den Benutzer per E-Mail'
         edit_group: 'Gruppe bearbeiten'
-        delete_user: 'Benutzer löschen'
+        delete_user: 'Möchten Sie den Benutzer "%user_username%" wirklich löschen'
         no_users_available: 'Kein Benutzer verfügbar.'
       form:
         edit_user: 'Benutzer bearbeiten'

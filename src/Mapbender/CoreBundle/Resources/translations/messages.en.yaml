@@ -15,6 +15,8 @@ mb:
     save: Save
     search: Search
     duplicate: Duplicate
+    sort_ascending: 'Sort in ascending order'
+    sort_descending: 'Sort in descending order'
   terms:
     application:
       singular: Application
@@ -260,6 +262,7 @@ mb:
         featureinfo_onoff: 'Featureinfo on/off'
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
+        select_style: 'Style'
         metadata: Metadata
         legend: Legend
         kmlexport: 'KML export'
@@ -273,6 +276,7 @@ mb:
         layerremove: 'Remove layer'
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
+        select_style: 'Select style'
         metadata: Metadata
         dimension: Dimension
     zoombar:

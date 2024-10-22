@@ -26,39 +26,69 @@
           <span class="error-icon-wrapper"><i class="fas fa-triangle-exclamation"></i></span>
           <span class="loading-icon-wrapper"><i class="fas fa-spinner"></i></span>
           {% if configuration.menu is defined and configuration.menu %}
-          <span class="layer-menu-btn"><i class="fas fa-bars"></i></span>
-            <div class="layer-menu hidden">
-              <div class="text-end">
-                <span class="exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"><i class="fa fas fa-xmark"></i></span>
-              </div>
-              {% if 'opacity' in configuration.menu %}
-                  <div class="layer-control-opacity layer-control-root-only">
-                    <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
-                        <div class="layer-opacity-handle layer-slider-handle">100</div>
-                    </div>
-              </div>
-              {% endif %}
-              {% if 'dimension' in configuration.menu %}
-                  <div class="layer-control-dimensions layer-control-root-only">
-                      <div class="checkbox"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
-                      <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
-                        <div class="layer-dimension-handle layer-slider-handle"></div>
-                      </div>
-                      <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+            {% block layertree_menu %}
+              <span class="layer-menu-btn"><i class="fas fa-bars"></i></span>
+              <div class="layer-menu hidden">
+                {% block layertree_menu_close %}
+                  <div class="text-end">
+                    <span class="exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"><i class="fa fas fa-xmark"></i></span>
                   </div>
-              {% endif %}
-              <div class="text-end">
-                {% if 'zoomtolayer' in configuration.menu %}
-                <span class="layer-zoom fa fas fa-search hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+                {% endblock %}
+                {% block layertree_menu_opacity %}
+                {% if 'opacity' in configuration.menu %}
+                    <div class="layer-control-opacity" data-menu-action="opacity">
+                      <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
+                          <div class="layer-opacity-handle layer-slider-handle">100</div>
+                      </div>
+                </div>
                 {% endif %}
-                {% if 'metadata' in configuration.menu %}
-                <span class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+                {% endblock %}
+                {% block layertree_menu_dimension %}
+                {% if 'dimension' in configuration.menu %}
+                    <div class="layer-control-dimensions" data-menu-action="dimension">
+                        <div class="checkbox"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
+                        <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
+                          <div class="layer-dimension-handle layer-slider-handle"></div>
+                        </div>
+                        <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+                    </div>
                 {% endif %}
-                {% if 'layerremove' in configuration.menu %}
-                <span class="layer-remove-btn fa fas fa-circle-xmark hover-highlight-effect clickable" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+                {% endblock %}
+                {% block layertree_menu_select_style %}
+                {% if 'select_style' in configuration.menu %}
+                    <div class="layer-styles input-group mb-1" data-menu-action="select_style">
+                        <label class="input-group-text">{{ 'mb.core.layertree.label.select_style'|trans }}</label>
+                        <select
+                            class="select-layer-styles form-select"
+                            title="{{ 'mb.core.layertree.label.select_style'|trans }}">
+                        </select>
+                    </div>
                 {% endif %}
-              </div>
-            </div>
+                {% endblock %}
+
+                <div class="text-end">
+                  {% block layertree_menu_zoomtolayer %}
+                  {% if 'zoomtolayer' in configuration.menu %}
+                  <span data-menu-action="zoomtolayer" class="layer-zoom fa fas fa-search hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+                  {% endif %}
+                  {% endblock %}
+                  {% block layertree_menu_metadata %}
+                  {% if 'metadata' in configuration.menu %}
+                  <span data-menu-action="metadata" class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect clickable" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+                  {% endif %}
+                  {% endblock %}
+                  {% block layertree_menu_layerremove %}
+                  {% if 'layerremove' in configuration.menu %}
+                  <span data-menu-action="layerremove" class="layer-remove-btn fa fas fa-circle-xmark hover-highlight-effect clickable" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+                  {% endif %}
+                  {% endblock %}
+                  {% block layertree_menu_custom_textend %}
+                  {% endblock %}
+                </div>
+                {% block layertree_menu_custom %}
+                {% endblock %}
+                </div>
+              {% endblock %}
           {% endif %}
         </div>
         <ul class="layers"></ul>

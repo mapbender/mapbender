@@ -158,6 +158,7 @@ class WmsSourceService extends SourceService
             "bbox" => $this->getLayerBboxConfiguration($sourceItem),
             "treeOptions" => $this->getTreeOptionsLayerConfig($instanceLayer),
             'metadataUrl' => $this->getMetadataUrl($instanceLayer),
+            'availableStyles' => $this->getAvailableStyles($sourceItem),
         );
         $configuration += array_filter(array(
             'legend' => $this->getLegendConfig($instanceLayer),
@@ -282,6 +283,11 @@ class WmsSourceService extends SourceService
             $configs[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         return $configs;
+    }
+
+    protected function getAvailableStyles(WmsLayerSource $layer)
+    {
+        return $layer->getStyles(true);
     }
 
     /**

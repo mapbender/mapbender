@@ -2,13 +2,19 @@
   <table class="table">
     <thead>
       <tr>
-        <th>{{ "fom.user.group.index.title" | trans }}</th>
-        <th>{{ "fom.user.group.index.description" | trans }}</th>
+        <th class="sortByColumn clickable">
+            {{ "fom.user.group.index.title" | trans }}
+            <span class="fa fa-sort-amount-asc" title="{{ 'mb.actions.sort_descending'|trans }}"></span>
+        </th>
+        <th class="sortByColumn clickable">
+            {{ "fom.user.group.index.description" | trans }}
+            <span class="fa fa-sort" title="{{ 'mb.actions.sort_ascending'|trans }}"></span>
+        </th>
         <th></th>
       </tr>
     </thead>
     <tbody id="listFilterGroups">
-      {% for group in groups %}
+      {% for group in groups|sort((a,b) => a.title|lower <=> b.title|lower) %}
       <tr class="filterItem">
         <td>
           <a href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
@@ -20,7 +26,8 @@
             {% endif %}
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_GROUPS')) %}
             <span class="-fn-delete hover-highlight-effect"
-              title="{{"fom.user.group.index.delete_group"|trans}} {{ group.title }}"
+              data-title="{{"fom.user.group.index.delete_group"|trans({'{group_title}': group.title})}}"
+              title="{{"fom.security.resource.installation.delete_groups"|trans}}"
               data-url="{{ path('fom_user_group_delete', { 'id': group.id}) }}"
               data-id="{{ group.id }}"
               data-token="{{ csrf_token('group_delete') }}"

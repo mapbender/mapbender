@@ -24,10 +24,10 @@ fom:
       index:
         groups: Grupos
         add_new_group: 'Adicionar um novo grupo'
-        title: Título
+        title: Nome
         description: Descrição
         edit_group: 'Editar grupo'
-        delete_group: 'Excluir grupo'
+        delete_group: 'Você realmente quer excluir o grupo "{group_title}"?'
         no_groups_available: 'Nenhum grupo disponível'
       form:
         edit_group: 'Editar grupo'
@@ -67,7 +67,7 @@ fom:
         edit_user: 'Editar usuário'
         contact_user: 'Contactar usuário por e-mail'
         edit_group: 'Editar grupo'
-        delete_user: 'Excluir usuário'
+        delete_user: 'Pretende mesmo apagar o utilizador "%user_username%"'
         no_users_available: 'Nenhum usuário disponível'
       form:
         edit_user: 'Editar usuário'

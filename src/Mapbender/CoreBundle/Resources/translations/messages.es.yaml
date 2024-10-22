@@ -15,6 +15,8 @@ mb:
     save: Guardar
     search: Buscar
     duplicate: Duplicar
+    sort_ascending: 'Ordenar de forma ascendente'
+    sort_descending: 'Ordenar de forma descendente'
   terms:
     application:
       singular: Aplicación
@@ -257,6 +259,7 @@ mb:
         featureinfo_onoff: 'Activar/desactivar  información de objetos'
         opacity: Opacidad
         zoomtolayer: 'Zoom a la capa'
+        select_style: 'Estilo'
         metadata: Metadatos
         legend: Leyenda
         kmlexport: 'Exportar KML'
@@ -270,6 +273,7 @@ mb:
         layerremove: 'Eliminar capa'
         opacity: Opacidad
         zoomtolayer: 'Zoom a la capa'
+        select_style: 'Seleccione el estilo'
         metadata: Metadatos
         dimension: Dimensión
     zoombar:
