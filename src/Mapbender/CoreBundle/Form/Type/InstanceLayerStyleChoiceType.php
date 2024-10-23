@@ -28,11 +28,13 @@ class InstanceLayerStyleChoiceType extends AbstractType
                 $layer = $options['layer'];
                 $arrStyles = $layer->getSourceItem()->getStyles(true);
                 $styleOpt = array('default' => '');
-                foreach ($arrStyles as $style) {
-                    if(strtolower($style->getName()) !== 'default') {
-                        $styleOpt[$style->getTitle()] = $style->getName();
-                    }
+                if (!$layer->getSublayer()->count()) {
+                    foreach ($arrStyles as $style) {
+                        if(strtolower($style->getName()) !== 'default') {
+                            $styleOpt[$style->getTitle()] = $style->getName();
+                        }
 
+                    }
                 }
                 return $styleOpt;
             },
