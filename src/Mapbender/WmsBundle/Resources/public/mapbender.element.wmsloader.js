@@ -189,14 +189,13 @@
             var source;
             for (var i = 0; i < sourceDefs.length; ++i) {
                 var sourceDef = sourceDefs[i];
-                var sourceId = srcIdPrefix + '-' + (this.loadedSourcesCount++);
-                sourceDef.id = sourceId;
+                sourceDef.id = srcIdPrefix + '-' + (this.loadedSourcesCount++);
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.isDynamicSource = true;
-                this.activateLayersByName(sourceDef, options.layers || [], keepStates);
 
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
+                this.activateLayersByName(source, options.layers || [], keepStates);
             }
             return source || null;
         },
