@@ -49,8 +49,14 @@ $panelBorderColor: #888 !default;
             left: -1px;
         }
     }
-    .basesourcegroup:hover .basesourcesubswitcher, .basesourcegroup.active .basesourcesubswitcher {
+    .basesourcegroup:hover .basesourcesubswitcher {
       display: initial;
+    }
+    .basesourcegroup.active .basesourcesubswitcher {
+        display: initial;
+    }
+    .basesourcegroup.deactivated:hover .basesourcesubswitcher {  // nach deaktivierendem Mausklick bleibt basesourcesubswitcher unsichtbar
+        display: none;
     }
   }
   .toolBar.top & {
