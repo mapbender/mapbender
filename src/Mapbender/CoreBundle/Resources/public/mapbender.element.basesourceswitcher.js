@@ -11,7 +11,7 @@
                 self.mbMap = mbMap;
                 self._setup();
             }, function() {
-                Mapbender.checkTarget('mbBaseSourceSwitcher')
+                //Mapbender.checkTarget('mbBaseSourceSwitcher')
             });
         },
 
@@ -26,12 +26,17 @@
             this.updateHighlights();
             this.element.on('mouseover click', '.basesourcegroup', (evt) => {
                 const $group = $(evt.target).closest('.basesourcegroup');
+                $group.removeClass('deactivated');
                 if (evt.type === 'click') {
-                    $group.addClass('active');
-                    evt.stopPropagation();
-                    $(document).one('click', () => {
-                        $group.removeClass('active')
-                    });
+                    if($group.hasClass('active')){
+                        $group.addClass('deactivated').removeClass('active');
+                    } else {
+                        $group.addClass('active');
+                        evt.stopPropagation();
+                        $(document).one('click', () => {
+                            $group.removeClass('active');
+                        });
+                    }
                 }
                 $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
             });
