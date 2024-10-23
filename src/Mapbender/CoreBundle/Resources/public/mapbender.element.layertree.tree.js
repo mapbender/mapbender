@@ -86,6 +86,7 @@
             this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
             this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
             this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-title:not(.disabled)', this._toggleSelectedLayer.bind(this));
             this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
             this.element.on('click', '.layer-menu .exit-button', function () {
                 $(this).closest('.layer-menu').remove();
@@ -378,6 +379,9 @@
                 .toggleClass('fa-folder-open', active)
                 .toggleClass('fa-folder', !active)
             ;
+        },
+        _toggleSelectedLayer: function (e) {
+            $(e.currentTarget.parentNode).find('span.-fn-toggle-selected').click();
         },
         _toggleSelected: function (e) {
             const $target = $(e.currentTarget);
@@ -731,10 +735,12 @@
         updateIconVisual_: function ($el, active, enabled) {
             $el.toggleClass('active', !!active);
             var icons;
+            var hideLayerNameWhenCheckboxDisabled = false;
             if ($el.is('.-fn-toggle-info')) {
                 icons = ['fa-info', 'fa-info-circle'];
             } else {
                 icons = ['fa-square', 'fa-square-check'];
+                hideLayerNameWhenCheckboxDisabled = !enabled && active;
             }
             $('>i', $el)
                 .toggleClass(icons[1], !!active)
@@ -742,6 +748,9 @@
             ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
+                if(hideLayerNameWhenCheckboxDisabled){
+                    $('>span', $el.prevObject).closest('.layer-title').toggleClass('disabled', true);
+                }
             }
         },
         reIndent_: function ($lists, recursive) {
