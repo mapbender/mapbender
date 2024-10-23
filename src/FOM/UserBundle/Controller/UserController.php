@@ -120,10 +120,12 @@ class UserController extends UserControllerBase
          * Display groups sorted by label;
          * sorting takes place here because it is not easy to implement in twig
          */
-        $groups = $view->children['groups'];
-        usort($groups->children, function ($a, $b) {
-            return strcasecmp($a->vars['label'], $b->vars['label']);
-        });
+        if (array_key_exists('groups', $view->children)) {
+            $groups = $view->children['groups'];
+            usort($groups->children, function ($a, $b) {
+                return strcasecmp($a->vars['label'], $b->vars['label']);
+            });
+        }
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user' => $user,
             'form' => $view,
