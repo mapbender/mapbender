@@ -48,8 +48,8 @@ mb:
     visibility: Visibilità
     element:
       screentype:
-        mobile: Mostra su schermi mobili
-        desktop: Mostra su schermi desktop
+        mobile: 'Mostra su schermi mobili'
+        desktop: 'Mostra su schermi desktop'
     sidepane:
       width: Larghezza
       resizable: Ridimensionabile
@@ -61,12 +61,7 @@ mb:
           left: Sinistra
           right: Destra
     sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Questa istanza non è utilizzata in nessuna applicazione}
-            one   {Questa istanza è utilizzata in un''applicazione}
-            other {Questa istanza non è utilizzata in # applicazioni}
-        }
+      embedded_in_applications: "{count, plural,\n    =0    {Questa istanza non è utilizzata in nessuna applicazione}\n    one   {Questa istanza è utilizzata in un''applicazione}\n    other {Questa istanza non è utilizzata in # applicazioni}\n}\n"
       convert_to_reusable: 'Converti in istanza condivisa'
       convert_to_bound: 'Convertire in istanza vincolata'
       converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
@@ -93,12 +88,7 @@ mb:
           ok: 'Risorsa OK'
           toupdate: 'Risorsa non più attuale'
           unreachable: 'Risorsa irraggiungibile'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
-          }
+        embedded_in_applications: "{count, plural,\n    =0    {This source is not used in any application}\n    one   {This source is used in one application}\n    other {This source is used in # applications}\n}\n"
       map:
         max_extent: 'Max. estensione'
         max_extent.help: 'Bounding Box (min/max x/y) in cui l''utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
@@ -116,7 +106,7 @@ mb:
           title: 'Cancellare elemento'
           confirm: 'Vuoi davvero cancellare l''elemento "{element_name}"'
         anchor:
-          label: 'Posizione'
+          label: Posizione
           left-top: 'In alto a sinistra'
           left-bottom: 'In basso a sinistra'
           right-top: 'In alto a destra'

@@ -41,7 +41,7 @@ mb:
     security: Seguridad
   form:
     choice_required: 'Selecciona uno'
-    choice_optional: 'Ninguno'
+    choice_optional: Ninguno
     unnamed_entry: 'Entrada sin nombre'
   states:
     active: activo
@@ -153,7 +153,7 @@ mb:
         snippet: 'Puedes usar el siguiente fragmento en un correo electrónico para enviar el POI'
       popup:
         btn:
-          position: 'Posicionamiento'
+          position: Posicionamiento
       class:
         title: POI
         description: 'Crear un POI para compartir'
@@ -175,7 +175,7 @@ mb:
         instancesets: 'Conjuntos de instancias'
       admin:
         tooltip: Tooltip
-        instances: 'Instancias'
+        instances: Instancias
         instancesets: 'Conjuntos de instancias'
     legend:
       class:
@@ -259,7 +259,7 @@ mb:
         featureinfo_onoff: 'Activar/desactivar  información de objetos'
         opacity: Opacidad
         zoomtolayer: 'Zoom a la capa'
-        select_style: 'Estilo'
+        select_style: Estilo
         metadata: Metadatos
         legend: Leyenda
         kmlexport: 'Exportar KML'
@@ -423,7 +423,7 @@ mb:
         public: 'Entrada pública'
         private: 'Entrada privada'
       confirmDelete: '¿Realmente deseas borrar la entrada?'
-      no_data: Sin datos
+      no_data: 'Sin datos'
       title: Título
       date: Fecha
       enter_title: 'Introducir título'
@@ -481,7 +481,7 @@ mb:
       featureinfo:
         label:
           deactivateonclose: 'Desactivar al cerrar'
-          printResult:  'Mostrar botón "Imprimir"'
+          printResult: 'Mostrar botón "Imprimir"'
           onlyvalid: 'Mostrar sólo válidos'
           highlighting_group: Destacar
           highlighting: 'Destacar activo'
@@ -660,4 +660,3 @@ mb:
 'User account is disabled.': 'La cuenta de usuario está deshabilitada.'
 'User account has expired.': 'La cuenta de usuario ha caducado.'
 'User credentials have expired.': 'Las credenciales del usuario han caducado.'
-

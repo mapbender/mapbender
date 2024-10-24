@@ -61,12 +61,7 @@ mb:
           left: Left
           right: Right
     sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {This instance is not used in any application}
-            one   {This instance is used in one application}
-            other {This instance is used in # applications}
-        }
+      embedded_in_applications: "{count, plural,\n    =0    {This instance is not used in any application}\n    one   {This instance is used in one application}\n    other {This instance is used in # applications}\n}\n"
       convert_to_reusable: 'Convert to shared instance'
       convert_to_bound: 'Convert to bound instance'
       converted_to_bound: 'A bound copy of the shared instance has been added to the application'
@@ -93,12 +88,7 @@ mb:
           ok: 'Source OK'
           toupdate: 'Source not current anymore'
           unreachable: 'Source unreachable'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
-          }
+        embedded_in_applications: "{count, plural,\n    =0    {This source is not used in any application}\n    one   {This source is used in one application}\n    other {This source is used in # applications}\n}\n"
       map:
         max_extent: 'Max. extent'
         max_extent.help: 'Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
@@ -171,9 +161,7 @@ mb:
         no_application: 'No application available'
         new:
           title: 'New Application'
-        create_use: |-
-          Create a new application by providing basic information and then
-                    use the edit mode to add elements and layers.
+        create_use: "Create a new application by providing basic information and then\n          use the edit mode to add elements and layers."
         btn:
           create: Create
           cancel: Cancel

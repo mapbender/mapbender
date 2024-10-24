@@ -1,30 +1,30 @@
 mb:
   application:
     create:
-      success: Seu aplicativo foi criado.
+      success: 'Seu aplicativo foi criado.'
       failure:
-        create.directory: O diretório do aplicativo não pôde ser criado.
+        create.directory: 'O diretório do aplicativo não pôde ser criado.'
     save:
-      success: Seu aplicativo foi salvo.
+      success: 'Seu aplicativo foi salvo.'
       failure:
-        general: Ocorreu um erro ao salvar a seu aplicativo.
-        create.directory: Seu aplicativo foi atualizado, mas o diretório do aplicativo não pôde ser criado.
+        general: 'Ocorreu um erro ao salvar a seu aplicativo.'
+        create.directory: 'Seu aplicativo foi atualizado, mas o diretório do aplicativo não pôde ser criado.'
     remove:
-      success: Seu aplicativo foi deletado.
+      success: 'Seu aplicativo foi deletado.'
       failure:
-        general: Seu aplicativo não pôde ser deletado.
+        general: 'Seu aplicativo não pôde ser deletado.'
   layerset:
     create:
-      success: Seu Layerset foi criado.
+      success: 'Seu Layerset foi criado.'
     remove:
-      success: Seu Layerset foi deletado.
-      failure: Seu Layerset não pode ser deletado.
+      success: 'Seu Layerset foi deletado.'
+      failure: 'Seu Layerset não pode ser deletado.'
   source:
     instance:
       create:
-        success: Uma nova instância foi criada. Por favor, ajuste-a conforme necessário.
+        success: 'Uma nova instância foi criada. Por favor, ajuste-a conforme necessário.'
   manager:
-    automatic: 'Automático'
+    automatic: Automático
     autoActivate: 'Ativar automaticamente'
     autoOpen: 'Abrir automaticamente'
     confirm_form_discard: 'Descartar alterações?'
@@ -33,40 +33,35 @@ mb:
     screentype:
       label: 'Tipo de tela'
       choice:
-        all: 'Indiferente'
-        mobile: 'Móvel'
-        desktop: 'Desktop'
+        all: Indiferente
+        mobile: Móvel
+        desktop: Desktop
     toolbar:
       alignment:
-        label: 'Alinhamento'
+        label: Alinhamento
         choice:
-          left: 'Esquerda'
-          right: 'Direita'
-          center: 'Centralizado'
+          left: Esquerda
+          right: Direita
+          center: Centralizado
       generate_button_menu: 'Agrupar botões em um menu'
       menu_label: 'Rótulo do menu'
-    visibility: 'Visibilidade'
+    visibility: Visibilidade
     element:
       screentype:
         mobile: 'Mostrar em dispositivos móveis'
         desktop: 'Mostrar em telas de desktop'
     sidepane:
-      width: 'Largura'
-      resizable: 'Redimensionável'
+      width: Largura
+      resizable: Redimensionável
       resizable_help: 'Se marcado, o usuário pode redimensionar o painel lateral arrastando sua borda interna. Se desejar limitar a largura mínima/máxima, use CSS personalizado (min-width/max-width em .sidePane.resizable).'
       closed: 'Iniciar fechado'
       align:
-        label: 'Posição'
+        label: Posição
         choice:
-          left: 'Esquerda'
-          right: 'Direita'
+          left: Esquerda
+          right: Direita
     sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Esta instância não está sendo usada em nenhum aplicativo}
-            one   {Esta instância está sendo usada em um aplicativo}
-            other {Esta instância está sendo usada em # aplicativos}
-        }
+      embedded_in_applications: "{count, plural,\n    =0    {Esta instância não está sendo usada em nenhum aplicativo}\n    one   {Esta instância está sendo usada em um aplicativo}\n    other {Esta instância está sendo usada em # aplicativos}\n}\n"
       convert_to_reusable: 'Converter para instância compartilhada'
       convert_to_bound: 'Converter para instância vinculada'
       converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada ao aplicativo'
@@ -93,12 +88,7 @@ mb:
           ok: 'Esta fonte de dados está válida'
           toupdate: 'Esta fonte de dados não está mais atualizada'
           unreachable: 'Esta fonte de dados está inacessível'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {Esta fonte não está sendo usada em nenhum aplicativo}
-              one   {Esta fonte está sendo usada em um aplicativo}
-              other {Esta fonte está sendo usada em # aplicativos}
-          }
+        embedded_in_applications: "{count, plural,\n    =0    {Esta fonte não está sendo usada em nenhum aplicativo}\n    one   {Esta fonte está sendo usada em um aplicativo}\n    other {Esta fonte está sendo usada em # aplicativos}\n}\n"
       map:
         max_extent: 'Extensão máxima do mapa'
         max_extent.help: 'Bounding Box com mín/máx x/y, marcando o alcance permitido de navegação do usuário. Clicando no globo terrestre na barra de escala, será feito zoom para esta extensão.'
@@ -110,13 +100,13 @@ mb:
         title: Rótulo
         type: Tipo
         add: 'Adicionar elemento'
-        show_hide: 'ativo/inativo'
+        show_hide: ativo/inativo
         no_element_added: 'Nenhum elemento adicionado'
         delete:
           title: 'Apagar elemento'
           confirm: 'Pretende mesmo apagar o elemento "{element_name}"'
         anchor:
-          label: 'Posição'
+          label: Posição
           left-top: 'Superior esquerdo'
           left-bottom: 'Inferior esquerdo'
           right-top: 'Superior direito'
@@ -154,7 +144,7 @@ mb:
           base_data: 'Dados básicos'
         screenshot: 'Imagem de pré-visualização'
         layouts: Elementos
-        layersets: 'Layerset'
+        layersets: Layerset
         custom_css: CSS
         security:
           title: Segurança
@@ -164,7 +154,7 @@ mb:
         view_this: 'Visualizar aplicativo'
         duplicate: 'Duplicar aplicativo'
         public:
-          on_off: 'Publicar/Ocultar'
+          on_off: Publicar/Ocultar
         delete:
           title: 'Excluir aplicativo'
           confirm: 'Você realmente deseja excluir o aplicativo "{application_title}"'
@@ -188,7 +178,7 @@ mb:
             import: Importar
         title: Título
         url:
-          title: 'URL'
+          title: URL
         description: Descrição
         template: Modelo
     source:
@@ -236,8 +226,8 @@ mb:
       button:
         show_label: 'Mostrar rótulo'
       element:
-        autostart: Iniciar automaticamente
-      title: 'Título'
+        autostart: 'Iniciar automaticamente'
+      title: Título
     entity:
       app:
         screenshotfile:
@@ -255,5 +245,5 @@ mb:
       repo:
         instance:
           label:
-            title: 'Rótulo'
-            opacity: 'Opacidade'
+            title: Rótulo
+            opacity: Opacidade

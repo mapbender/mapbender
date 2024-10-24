@@ -98,11 +98,7 @@ fom:
         name: Имя
         no_groups_users: 'Нет групп и пользователей.'
     password:
-      email_body_html: |2-
-
-                  <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.
-                  <br/>Нажмите, пожалуйста, <a href="%url%">сюда</a>.
-
+      email_body_html: "\n          <p>Привет, %user_username%.</p><p>Вы запросили новый пароль.\n          <br/>Нажмите, пожалуйста, <a href=\"%url%\">сюда</a>."
       done:
         password_reset: 'Восстановление пароля'
         congratulations: Поздравляем!

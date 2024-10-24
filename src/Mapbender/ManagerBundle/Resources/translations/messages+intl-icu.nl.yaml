@@ -1,113 +1,113 @@
 mb:
   application:
     create:
-      success: Uw applicatie is aangemaakt.
+      success: 'Uw applicatie is aangemaakt.'
       failure:
-        create.directory: Applicatie map kon niet aangemaakt worden.
+        create.directory: 'Applicatie map kon niet aangemaakt worden.'
     save:
-      success: Uw applicatie is bewaard.
+      success: 'Uw applicatie is bewaard.'
       failure:
-        general: Fout bij bewaren applicatie.
-        create.directory: Uw applicatie is bijgewerkt maar de mappen van de applicatie konden niet worden aangemaakt.
+        general: 'Fout bij bewaren applicatie.'
+        create.directory: 'Uw applicatie is bijgewerkt maar de mappen van de applicatie konden niet worden aangemaakt.'
     remove:
-      success: Uw applicatie is verwijderd.
+      success: 'Uw applicatie is verwijderd.'
       failure:
-        general: Uw applicatie kon niet verwijderd worden.
+        general: 'Uw applicatie kon niet verwijderd worden.'
   layerset:
     create:
-      success: Uw lagenset is aangemaakt.
+      success: 'Uw lagenset is aangemaakt.'
     remove:
-      success: Uw lagenset is verwijderd.
-      failure: Uw lagenset kon niet verwijderd worden.
+      success: 'Uw lagenset is verwijderd.'
+      failure: 'Uw lagenset kon niet verwijderd worden.'
   source:
     instance:
       create:
-        success: Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.
+        success: 'Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.'
   manager:
-    autoActivate: Automatisch geactiveerd
-    autoOpen: Automatisch openen
+    autoActivate: 'Automatisch geactiveerd'
+    autoOpen: 'Automatisch openen'
     admin:
       sources: Bronnen
       source:
-        add: Voeg bron toe
-        show_metadata: Toon metadata
-        delete: verwijder bron
+        add: 'Voeg bron toe'
+        show_metadata: 'Toon metadata'
+        delete: 'verwijder bron'
         new:
-          add: Voeg bron toe
+          add: 'Voeg bron toe'
         valid: geldig
         notvalid: ongeldig
-        no_source: Geen bron beschikbaar
+        no_source: 'Geen bron beschikbaar'
         update: bijwerken
         status:
-          ok: Bron OK
-          toupdate: Bron is niet meer actueel
-          unreachable: Bron is onbereikbaar
+          ok: 'Bron OK'
+          toupdate: 'Bron is niet meer actueel'
+          unreachable: 'Bron is onbereikbaar'
       map:
-        max_extent: Max. omvang (extent)
-        start_extent: Start omvang (extent)
+        max_extent: 'Max. omvang (extent)'
+        start_extent: 'Start omvang (extent)'
       element:
         title: Titel
         type: Type
-        add: Voeg een nieuw element toe
-        show_hide: Wissel toon/verberg element
+        add: 'Voeg een nieuw element toe'
+        show_hide: 'Wissel toon/verberg element'
         delete:
-          title: Element verwijderen
-          confirm: Wilt u echt element "{element_name}" verwijderen?
-        no_element_added: Geen element toegevoegd
+          title: 'Element verwijderen'
+          confirm: 'Wilt u echt element "{element_name}" verwijderen?'
+        no_element_added: 'Geen element toegevoegd'
       zoombar:
         draggable: Versleepbaar
       overview:
         fix: Repareer
       layerset:
-        add: Voeg een lagenset toe
+        add: 'Voeg een lagenset toe'
         title: Titel
         type: Type
-        edit: Wijzig lagenset
+        edit: 'Wijzig lagenset'
         delete:
-          title: Verwijder lagenset
-          confirm: Wilt u werkelijk de lagenset getiteld "{layerset_title}" verwijderen?
+          title: 'Verwijder lagenset'
+          confirm: 'Wilt u werkelijk de lagenset getiteld "{layerset_title}" verwijderen?'
         id: Id
       instance:
-        add: Voeg instantie toe
-        show_hide: Wissel toon/verberg instantie
-        edit: Wijzig instantie
+        add: 'Voeg instantie toe'
+        show_hide: 'Wissel toon/verberg instantie'
+        edit: 'Wijzig instantie'
         delete:
-          title: verwijder instantie
-          confirm: Wilt u werkelijk de instantie getiteld "{instance_title}" verwijderen
-        no_instance_added: Geen instantie toegevoegd
-        no_layer_added: Geen laag toegevoegd
+          title: 'verwijder instantie'
+          confirm: 'Wilt u werkelijk de instantie getiteld "{instance_title}" verwijderen'
+        no_instance_added: 'Geen instantie toegevoegd'
+        no_layer_added: 'Geen laag toegevoegd'
       template: Sjabloon
       application:
         view: Toon
         edit:
-          title: Wijzig applicatie
-          base_data: Basis data
+          title: 'Wijzig applicatie'
+          base_data: 'Basis data'
         screenshot: Schermafbeelding
         layouts: Layouts
         layersets: Lagensets
         custom_css: CSS
         security:
           title: Beveiliging
-          public: Publieke toegang
+          public: 'Publieke toegang'
         save: Bewaar
         cancel: Annuleren
-        view_this: Toon deze applicatie
-        duplicate: Dupliceer applicatie
+        view_this: 'Toon deze applicatie'
+        duplicate: 'Dupliceer applicatie'
         public:
-          on_off: Openbare toegang in-/uitschakelen
+          on_off: 'Openbare toegang in-/uitschakelen'
         delete:
-          title: Verwijder applicatie
+          title: 'Verwijder applicatie'
           confirm: 'Wilt u de applicatie "{application_title}" echt verwijderen'
-        no_application: Geen applicatie beschikbaar
+        no_application: 'Geen applicatie beschikbaar'
         new:
-          title: Nieuwe Applicatie
+          title: 'Nieuwe Applicatie'
         create_use: "Maak nieuwe applicatie aan met algemene informatie, \n          en gebruik vervolgens de bewerk-modus om elementen en lagen toe te voegen."
         btn:
           create: Aanmaken
           cancel: Annuleren
         upload:
-          button: Selecteer bestand
-          label: Geen bestand geselecteerd
+          button: 'Selecteer bestand'
+          label: 'Geen bestand geselecteerd'
         export:
           addSources: Bronnen
           btn:
@@ -118,57 +118,57 @@ mb:
             import: Importeer
         title: Titel
         url:
-          title: URL Titel
+          title: 'URL Titel'
         description: Beschrijving
         template: Sjabloon
     source:
-      serviceurl: Service URL
-      username: Gebruikers naam
+      serviceurl: 'Service URL'
+      username: 'Gebruikers naam'
       password: Wachtwoord
       load: Laad
     managerbundle:
-      new_application: Nieuwe applicatie
-      add_source: Voeg bron toe
-      add_user_group: Voeg gebruikers en groepen toe
+      new_application: 'Nieuwe applicatie'
+      add_source: 'Voeg bron toe'
+      add_user_group: 'Voeg gebruikers en groepen toe'
       import_application: Importeer
       export_application: Exporteer
     components:
       popup:
         add_element:
-          title: Voeg element toe
+          title: 'Voeg element toe'
         edit_element:
-          title: Wijzig element
+          title: 'Wijzig element'
         delete_element:
-          title: Bevestig verwijderen
+          title: 'Bevestig verwijderen'
         add_edit_layerset:
-          title_edit: Wijzig lagenset
-          title_add: Voeg lagenset toe
+          title_edit: 'Wijzig lagenset'
+          title_add: 'Voeg lagenset toe'
         delete_layerset:
-          title: Verwijder lagenset
+          title: 'Verwijder lagenset'
         add_instance:
-          title: Kies bron
+          title: 'Kies bron'
         delete_instance:
-          title: Bevestig verwijderen
+          title: 'Bevestig verwijderen'
         delete_user_group:
-          title: Bevestig verwijderen
+          title: 'Bevestig verwijderen'
           content: '"%subject%" echt verwijderen?'
     import:
       application:
-        failed: Applicatie kan niet geimporteerd
-    xml_invalid: Ongeldig document
-    xml_malformed: Ongeldig document
+        failed: 'Applicatie kan niet geimporteerd'
+    xml_invalid: 'Ongeldig document'
+    xml_malformed: 'Ongeldig document'
   core:
     admin:
       button:
-        show_label: Toon label
+        show_label: 'Toon label'
       element:
         autostart: Autostart
     entity:
       app:
         screenshotfile:
-          error: Bestand is te groot (%uploadFileSize% bytes). Maximum grootte is %maxFileSize% bytes.
-          format_error: Dit formaat wordt niet ondersteund!
+          error: 'Bestand is te groot (%uploadFileSize% bytes). Maximum grootte is %maxFileSize% bytes.'
+          format_error: 'Dit formaat wordt niet ondersteund!'
           resolution:
-            error: Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.
+            error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
   actions:
     secureelement: 'Toegang tot het element beperken'

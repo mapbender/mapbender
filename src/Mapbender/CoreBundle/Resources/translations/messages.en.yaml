@@ -262,7 +262,7 @@ mb:
         featureinfo_onoff: 'Featureinfo on/off'
         opacity: Opacity
         zoomtolayer: 'Zoom to layer'
-        select_style: 'Style'
+        select_style: Style
         metadata: Metadata
         legend: Legend
         kmlexport: 'KML export'
@@ -591,25 +591,25 @@ mb:
         separator: Separator
         label: 'Show label'
     dataupload:
-        class:
-            title: 'Data Upload'
-            description: 'Data upload for files in GeoJSON, KML, GML or GPX format.'
-        text:
-            filearea: 'Drop file'
-            fileupload: 'or choose your file/s'
-            projection: 'Determine projection automatically'
-            tablehead:
-              name: 'Name'
-        error:
-            filesize: 'Max. filesize exceeded!'
-            filetype: 'Unsupported file type:'
-            gml: 'GML format could not be identified!'
-            projection: 'Projection could not be identified'
-        admin:
-            maxFileSize: 'Max. filesize (MB)'
-            helpLabel: 'Help text'
-            helpText: 'You can upload files in GeoJSON, KML, GML and GPX format.'
-            helpInfo: 'The default value <code>mb.core.dataupload.admin.helpText</code> means "Here you can upload files in GeoJSON, KML, GML and GPX format." in the language of the user'
+      class:
+        title: 'Data Upload'
+        description: 'Data upload for files in GeoJSON, KML, GML or GPX format.'
+      text:
+        filearea: 'Drop file'
+        fileupload: 'or choose your file/s'
+        projection: 'Determine projection automatically'
+        tablehead:
+          name: Name
+      error:
+        filesize: 'Max. filesize exceeded!'
+        filetype: 'Unsupported file type:'
+        gml: 'GML format could not be identified!'
+        projection: 'Projection could not be identified'
+      admin:
+        maxFileSize: 'Max. filesize (MB)'
+        helpLabel: 'Help text'
+        helpText: 'You can upload files in GeoJSON, KML, GML and GPX format.'
+        helpInfo: 'The default value <code>mb.core.dataupload.admin.helpText</code> means "Here you can upload files in GeoJSON, KML, GML and GPX format." in the language of the user'
     searchrouterroute:
       admin:
         title: Title

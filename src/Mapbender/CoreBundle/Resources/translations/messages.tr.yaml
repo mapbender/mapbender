@@ -2,7 +2,7 @@ mb:
   actions:
     accept: Oldu
     add: Ekle
-    back: Geri git
+    back: 'Geri git'
     cancel: Vazgeç
     close: Kapat
     delete: Sil
@@ -14,8 +14,8 @@ mb:
     reset: Sıfırla
     save: Kaydet
     search: Ara
-    sort_ascending: Artan sırada sırala
-    sort_descending: Azalan sıralama
+    sort_ascending: 'Artan sırada sırala'
+    sort_descending: 'Azalan sıralama'
   terms:
     application:
       singular: Uygulama
@@ -38,21 +38,21 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: Detay bilgisi katmanı bulunamadı.
+        nolayer: 'Detay bilgisi katmanı bulunamadı.'
         unknownoption: '% Namespace%.% Widgetname% için bilinmeyen veya işlenmemiş seçenek %key%.'
-        noresult: Sonuç bulunamadı
+        noresult: 'Sonuç bulunamadı'
       class:
-        title: Detay bilgisi
-        description: Detay bilgisi
+        title: 'Detay bilgisi'
+        description: 'Detay bilgisi'
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: Mapbender hakkında daha fazla bilgi için tıklayınız >>
-        linktitle: Resmi Mapbender web sitemizi ziyaret edin
-        website: Web sitesi
+        learnmore: 'Mapbender hakkında daha fazla bilgi için tıklayınız >>'
+        linktitle: 'Resmi Mapbender web sitemizi ziyaret edin'
+        website: 'Web sitesi'
       class:
-        title: İletişim hakkında
-        description: Hakkında diyalog penceresini gösterir
+        title: 'İletişim hakkında'
+        description: 'Hakkında diyalog penceresini gösterir'
       tag:
         help: Yardim
         info: Bilgi
@@ -61,52 +61,52 @@ mb:
       input:
         search: Ara
       class:
-        title: Basit arama
-        description: JSON kaynaklarında tek alan arama (ör. Solr)
+        title: 'Basit arama'
+        description: 'JSON kaynaklarında tek alan arama (ör. Solr)'
       error:
         geometry:
-          missing: Seçilen giriş geometri içermiyor
+          missing: 'Seçilen giriş geometri içermiyor'
     searchrouter:
-      no_results: Sonuç bulunamadı
+      no_results: 'Sonuç bulunamadı'
       result_counter: 'Sonuçlar: %count%'
-      exportcsv: Sonuçları CSV'ye aktarma.
+      exportcsv: 'Sonuçları CSV''ye aktarma.'
       class:
-        title: Arama yönlendiricisi
-        description: Yapılandırılabilir arama yönlendirme
+        title: 'Arama yönlendiricisi'
+        description: 'Yapılandırılabilir arama yönlendirme'
       tag:
         search: Ara
         router: Yönlendirici
     poi:
-      sharepoi: İlgi noktası (POI) Paylaş
+      sharepoi: 'İlgi noktası (POI) Paylaş'
       text:
-        snippet: İlgi noktası (POI) göndermek için e-postada şu alıntıyı kullan
+        snippet: 'İlgi noktası (POI) göndermek için e-postada şu alıntıyı kullan'
       class:
-        title: İlgi noktası (POI)
-        description: Paylaşmak için İlgi noktası (POI) oluştur
+        title: 'İlgi noktası (POI)'
+        description: 'Paylaşmak için İlgi noktası (POI) oluştur'
       label:
         text: Metin
       accept: 'Bağlantı oluştur'
     basesourceswitcher:
       error:
-        sourcenotavailable: Kimliği %id% olan bir kaynak bulunamadı.
+        sourcenotavailable: 'Kimliği %id% olan bir kaynak bulunamadı.'
       class:
-        title: Altlık değiştirici
-        Description: Haritanın altlık kaynağını değiştirin.
+        title: 'Altlık değiştirici'
+        Description: 'Haritanın altlık kaynağını değiştirin.'
       form:
-        mesage: Altlık kaynağı ayarı tanımlanmadı.
+        mesage: 'Altlık kaynağı ayarı tanımlanmadı.'
         instancesets: Instancesets
     legend:
       class:
         title: Lejant
-        description: Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir
+        description: 'Lejant haritanın katmanlarındaki sembollerin açıklamasını gösterir'
     ruler:
       create_error: 'İpucu: Tip hat veya bölge olmalıdır.'
       class:
-        title: Hat/KapalıAlan Ölçümü
-        description: Hat/KapalıAlan çizmek ve bir iletişim kutusunda uzunluk/alan görüntülemek için ölçüm aracı
+        title: 'Hat/KapalıAlan Ölçümü'
+        description: 'Hat/KapalıAlan çizmek ve bir iletişim kutusunda uzunluk/alan görüntülemek için ölçüm aracı'
       tag:
         line: Hat
-        area: Kapalı Alan
+        area: 'Kapalı Alan'
         measure: Ölç
     printclient:
       label:
@@ -114,70 +114,70 @@ mb:
         quality: Kalite
         scale: Ölçek
         rotation: Dönüklük
-        legend: Lejant yazdır
+        legend: 'Lejant yazdır'
       class:
-        title: Yazıcı istemcisi
-        description: Yazdır penceresi gösterir
+        title: 'Yazıcı istemcisi'
+        description: 'Yazdır penceresi gösterir'
       btn:
-        deactivate: Yazdırılan Alan Çerçevesini Devre Dışı Bırak
-        activate: Yazdırılan Alan Çerçevesini Etkinleştir
+        deactivate: 'Yazdırılan Alan Çerçevesini Devre Dışı Bırak'
+        activate: 'Yazdırılan Alan Çerçevesini Etkinleştir'
     overview:
-      nolayer: Genel görünüm öğesinin katmanı yoktur.
+      nolayer: 'Genel görünüm öğesinin katmanı yoktur.'
       class:
-        title: Genel görünüm
-        description: Küçük bir genel görünüm haritası oluşturur
+        title: 'Genel görünüm'
+        description: 'Küçük bir genel görünüm haritası oluşturur'
       tag:
-        overview: Genel görünüm
+        overview: 'Genel görünüm'
         map: Harita
     metadata:
       popup:
-        title: Üstveri (MetaData)
+        title: 'Üstveri (MetaData)'
     gpsposition:
       error:
-        notsupported: Coğrafi konum servisleri tarayıcınız tarafından desteklenmiyor.
-        nosignal: Şu anda konumunuzu bulmak mümkün değil.
+        notsupported: 'Coğrafi konum servisleri tarayıcınız tarafından desteklenmiyor.'
+        nosignal: 'Şu anda konumunuzu bulmak mümkün değil.'
       class:
-        title: GPS Konumu
-        description: GPS Konumunu göstermek için bir buton oluşturur
+        title: 'GPS Konumu'
+        description: 'GPS Konumunu göstermek için bir buton oluşturur'
       tag:
-        gpsposition: GPS Konumu
+        gpsposition: 'GPS Konumu'
         gps: GPS
         position: Konum
         button: Buton
     layertree:
       const:
-        outofscale: Ölçeksiz bakış
-        outofbounds: Sınırın dışından bakış
-        parentinvisible: Üst katmanı gizle
+        outofscale: 'Ölçeksiz bakış'
+        outofbounds: 'Sınırın dışından bakış'
+        parentinvisible: 'Üst katmanı gizle'
       tooltip:
-        sublayers_openclose: Alt katmanları aç/kapa
-        removelayer: Katmanı kaldır
+        sublayers_openclose: 'Alt katmanları aç/kapa'
+        removelayer: 'Katmanı kaldır'
         menu:
           close: Kapat
       label:
-        visibility_onoff: Görünürlük aç/kapa
-        featureinfo_onoff: Detay bilgisi açık/kapalı
+        visibility_onoff: 'Görünürlük aç/kapa'
+        featureinfo_onoff: 'Detay bilgisi açık/kapalı'
         opacity: Opaklık
-        zoomtolayer: Katmana yakınlaştır
+        zoomtolayer: 'Katmana yakınlaştır'
         select_style: Stil
         metadata: ' Üstveri (Metadata)'
         legend: Lejant
-        kmlexport: KML formatında dışa aktar (Export)
-        dimension_onoff: Boyutlar Açık/Kapalı
+        kmlexport: 'KML formatında dışa aktar (Export)'
+        dimension_onoff: 'Boyutlar Açık/Kapalı'
         dimension: Boyut
-        sourcevisibility_onoff: Kaynaklari göster
+        sourcevisibility_onoff: 'Kaynaklari göster'
       class:
-        title: Katman ağacı
-        description: Haritanın katman ağacı
+        title: 'Katman ağacı'
+        description: 'Haritanın katman ağacı'
       admin:
-        select_style: Stil seçin
+        select_style: 'Stil seçin'
     zoombar:
-      zoombybox: Çizilen alana yakınlaştır
-      zoombyworld: Tüm dünyayı göster
+      zoombybox: 'Çizilen alana yakınlaştır'
+      zoombyworld: 'Tüm dünyayı göster'
       zoomin: Yakınlaştır
       zoomout: Uzaklaştır
       class:
-        title: Gezinme araç çubuğu
+        title: 'Gezinme araç çubuğu'
         description: 'Gezinme Çubuğu, OpenLayers PanZoomBar denetimine benzer şekilde kaydırmak ve yakınlaştırmak için bir araç sağlar. Bu araç, özelleştirmeye ihtiyaç duyulduğunda kullanımı kolaylaştırır. '
       tag:
         zoom: Yakınlaştırma
@@ -187,8 +187,8 @@ mb:
         panel: panel
     activityindicator:
       class:
-        title: Etkinlik göstergeci
-        description: HTTP etkinliğini gösterir
+        title: 'Etkinlik göstergeci'
+        description: 'HTTP etkinliğini gösterir'
       tag:
         activity: Etkinlik
         indicator: Gösterge
@@ -200,8 +200,8 @@ mb:
         button: Buton
     coordinatesdisplay:
       class:
-        title: Koordinatları göster
-        description: Koordinat göstergesi, farenizin harita üzerindeki konumunu gösterir.
+        title: 'Koordinatları göster'
+        description: 'Koordinat göstergesi, farenizin harita üzerindeki konumunu gösterir.'
       tag:
         coordinates: Koordinatlar
         display: Gösterge
@@ -209,15 +209,15 @@ mb:
         position: Konum
     copyright:
       class:
-        title: Telif hakkı
-        description: Kullanım koşullarını gösterir
+        title: 'Telif hakkı'
+        description: 'Kullanım koşullarını gösterir'
       tag:
-        copyright: Telif hakkı
+        copyright: 'Telif hakkı'
         dialog: İletişim
     map:
       class:
         title: Harita
-        description: OpenLayers altlıkları olan harita
+        description: 'OpenLayers altlıkları olan harita'
       tag:
         map: Harita
         mapquery: MapQuery
@@ -225,67 +225,67 @@ mb:
       srsnotfound: '%Srslist% için SRS özellikleri bulunamadı'
     scalebar:
       class:
-        title: Ölçek çubuğu
-        description: Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi gösterir.
+        title: 'Ölçek çubuğu'
+        description: 'Ölçek çubuğu, geçerli harita ölçeğini temsil eden küçük bir çizgi gösterir.'
       tag:
         scale: Ölçek
         bar: Çubuk
     scaledisplay:
       class:
-        title: Ölçek göstergesi
-        description: Geçerli harita ölçeğini görüntüler
+        title: 'Ölçek göstergesi'
+        description: 'Geçerli harita ölçeğini görüntüler'
       tag:
         scale: Ölçek
         display: Gösterge
     scaleselector:
       class:
-        title: Ölçek seçicisi
-        description: Haritanın ölçeğini görüntüler ve değiştirir
+        title: 'Ölçek seçicisi'
+        description: 'Haritanın ölçeğini görüntüler ve değiştirir'
       tag:
         scale: Ölçek
         selector: Seçici
     srsselector:
       class:
-        title: SRS seçici
-        description: Uzamsal referans sistemi seçici, haritanın uzamsal referans sistemini değiştirir
+        title: 'SRS seçici'
+        description: 'Uzamsal referans sistemi seçici, haritanın uzamsal referans sistemini değiştirir'
       tag:
         srs: SRS
         selector: Seçici
     admin:
       poi:
         label:
-          usemailto: Mailto`yu kullanın
+          usemailto: 'Mailto`yu kullanın'
       legend:
         label:
-          hideemptylayers: Boş katmanları gizle
-          generatelegendurl: Lejant URL`si oluştur
-          showsourcetitle: Kaynak başlığını göster
-          showlayertitle: Katman başlığını göster
-          showgroupedlayertitle: Gruplanmış katman başlığını göster
+          hideemptylayers: 'Boş katmanları gizle'
+          generatelegendurl: 'Lejant URL`si oluştur'
+          showsourcetitle: 'Kaynak başlığını göster'
+          showlayertitle: 'Katman başlığını göster'
+          showgroupedlayertitle: 'Gruplanmış katman başlığını göster'
       featureinfo:
         label:
-          deactivateonclose: Kapandığında devre dışı bırak
+          deactivateonclose: 'Kapandığında devre dışı bırak'
           printResult: '"Yazdır" düğmesini göster'
-          onlyvalid: Sadece geçerli olan
+          onlyvalid: 'Sadece geçerli olan'
           highlighting: null
       printclient:
         label:
           rotatable: Döndürülebilir
-          legend: Lejant yazdır
-          legend_default_behaviour: Lejant onay kutusu etkin
+          legend: 'Lejant yazdır'
+          legend_default_behaviour: 'Lejant onay kutusu etkin'
       layertree:
         label:
-          showbasesources: Altlık kaynaklarını göster
-          showlayerremove: Katman kaldır aracını göster
-          usetheme: Tematik katman
+          showbasesources: 'Altlık kaynaklarını göster'
+          showlayerremove: 'Katman kaldır aracını göster'
+          usetheme: 'Tematik katman'
           themes: Temalar
           theme:
             opened: Açıldı
-            activate: Katman ekle/kaldır aracını ekler
-            useTheme: Temaları göster
-            label: Tema isimleri
-          hidenottoggleable: Açılıp kapanamayan(lar)ı gizle
-          hideinfo: Bilgileri gizle
+            activate: 'Katman ekle/kaldır aracını ekler'
+            useTheme: 'Temaları göster'
+            label: 'Tema isimleri'
+          hidenottoggleable: 'Açılıp kapanamayan(lar)ı gizle'
+          hideinfo: 'Bilgileri gizle'
       template:
         sidepane:
           type:
@@ -296,7 +296,7 @@ mb:
     htmlelement:
       class:
         title: HTML
-        description: HTML kodu ekle
+        description: 'HTML kodu ekle'
     entity:
       app:
         screenshotfile:
@@ -310,14 +310,14 @@ mb:
         circle: Çember
       geometry:
         action:
-          remove: Geometriyi kaldır
-          edit: Geometriyi düzenle
-          zoom: Geometriye yakınlaştır
+          remove: 'Geometriyi kaldır'
+          edit: 'Geometriyi düzenle'
+          zoom: 'Geometriye yakınlaştır'
       class:
         title: İşaretleme
-        description: İşaretleme aracı
+        description: 'İşaretleme aracı'
       admin:
-        deactivate_on_close: Kapandığında devre dışı bırak
+        deactivate_on_close: 'Kapandığında devre dışı bırak'
     redlining:
       class:
         title: İşaretleme

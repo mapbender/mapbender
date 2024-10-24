@@ -262,7 +262,7 @@ mb:
         featureinfo_onoff: 'Information an/aus'
         opacity: Deckkraft
         zoomtolayer: 'Zoom auf Ebene'
-        select_style: 'Stil'
+        select_style: Stil
         metadata: Metadaten
         legend: Legende
         kmlexport: 'KML Export'
@@ -599,7 +599,7 @@ mb:
         fileupload: 'oder Datei/en auswählen'
         projection: 'Projektion automatisch wählen'
         tablehead:
-          name: 'Name'
+          name: Name
       error:
         filesize: 'Max. Dateigröße überschritten!'
         filetype: 'Nicht unterstützter Dateityp:'
@@ -607,7 +607,7 @@ mb:
         projection: 'Projektion konnte nicht ermittelt werden'
       admin:
         maxFileSize: 'Max. Dateigröße (MB)'
-        helpLabel: 'Hilfetext'
+        helpLabel: Hilfetext
         helpText: 'Es können Dateien im Format GeoJSON, KML, GML und GPX hochgeladen werden.'
         helpInfo: 'Der Standardwert <code>mb.core.dataupload.admin.helpText</code> bedeutet "Hier können Sie Dateien im Format GeoJSON, KML, GML und GPX hochladen." in der Sprache des Nutzers'
     searchrouterroute:

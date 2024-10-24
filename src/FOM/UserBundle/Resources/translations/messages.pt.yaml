@@ -4,7 +4,7 @@ fom:
       email_body_html: '<p>Olá %user_username%,</p><p> você criou uma conta recentemente. Para completar o seu registro, por favor clique <a href="%url%">aqui</a>.</p>'
       done:
         title: Registro
-        congratulations: 'Parabéns!'
+        congratulations: Parabéns!
         account_activated: 'Sua conta foi ativada com sucesso e está pronta para uso.'
         back_to_login: 'Voltar à página de login'
       form:
@@ -48,7 +48,7 @@ fom:
         title: Login
         username: Usuário
         password: Senha
-        register: Criar conta
+        register: 'Criar conta'
         forgot_password: 'Esqueci a senha'
         login: Login
       error_notocken:
@@ -82,7 +82,7 @@ fom:
         name: Nome
         users_of_selected: 'Grupo(s) de %users_count% selecionado(s)'
         no_groups_defined: 'Nenhum grupo definido'
-        username: Nome de Usuário
+        username: 'Nome de Usuário'
         description: Descrição
         activated: ativado
     permissions:
@@ -93,7 +93,7 @@ fom:
         edit: Editar
       required: 'Os campos obrigatórios são marcados com letras escuras e os campos opcionais têm as letras mais claras.'
       edit:
-        edit_permission: Editar permissões para %name%
+        edit_permission: 'Editar permissões para %name%'
       groups_users:
         name: Nome
         no_goups_users: 'Nenhum grupo/usuário definido'
@@ -126,7 +126,7 @@ fom:
       groups: Grupos
       new_group: 'Novo grupo'
       classes:
-        permissions: Controle de acesso geral
+        permissions: 'Controle de acesso geral'
         users: Usuários
         groups: Grupos
       roles:

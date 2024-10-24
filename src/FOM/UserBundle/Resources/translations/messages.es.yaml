@@ -4,7 +4,7 @@ fom:
       email_body_html: '<p>Hola %user_username%,</p><p>Acabas de registrarte. Para concluir tu registro, favor, haz clic <a href="%url%">aqui</a>.</p>'
       done:
         title: Registro
-        congratulations: '¡Felicidades!'
+        congratulations: ¡Felicidades!
         account_activated: 'Tu cuenta ha sido satisfactoriamente activada y esta lista para usarla.'
         back_to_login: 'Regresar al inicio de sesión'
       form:
@@ -101,7 +101,7 @@ fom:
       email_body_html: '<p>Hola, %user_username%,</p><p> se ha solicitado una nueva contraseña para Mapbender. <p>Ckica aquí, por favor, <a href="%url%">hier</a>, para cambiar tu contraseña.</p>'
       done:
         password_reset: 'Restablecer contraseña'
-        congratulations: '¡Felicidades!'
+        congratulations: ¡Felicidades!
         password_been_reset: 'Contraseña restablecida correctamente.'
         back_to_login: 'Regresar al inicio de sesión.'
       reset:
@@ -126,7 +126,7 @@ fom:
       groups: Grupos
       new_group: 'Nuevo grupo'
       classes:
-        permissions: 'Autorizaciones'
+        permissions: Autorizaciones
         users: Usuarios
         groups: grupos
       roles:

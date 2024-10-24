@@ -17,9 +17,7 @@ fom:
       email_subject: 'Your registration'
       send:
         title: Registration
-        account_created: |-
-          Your account has been created. An email with your activation code
-                      and link has been sent to the address you provided.
+        account_created: "Your account has been created. An email with your activation code\n            and link has been sent to the address you provided."
         back_to_login: 'Back to login'
       email_body_text: 'Hello %user_username%, You have just recently registered to the Mapbender instance. To conclude your registration, please, call in your browser the link %url%.'
     group:
@@ -100,7 +98,7 @@ fom:
         name: Name
         no_groups_users: 'No groups and users defined.'
     password:
-      email_body_html: '<p>Hello %user_username%,</p><p>You have requested a new password for your Mapbender3 account. Please click <a href="%url%"> here to change it.</p>'
+      email_body_html: '<p>Hello %user_username%,</p><p>You have requested a new password for your Mapbender account. Please click <a href="%url%"> here to change it.</p>'
       done:
         password_reset: 'Password reset'
         congratulations: Congratulations!
@@ -120,7 +118,7 @@ fom:
         title: 'Password Reset'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Back to login'
-      email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender3 account. Please follow this link to change it: "%url%".'
+      email_body_text: 'Hello %user_username%, You have requested a new password for your Mapbender account. Please follow this link to change it: "%url%".'
     userbundle:
       user_control: 'User control'
       users: Users

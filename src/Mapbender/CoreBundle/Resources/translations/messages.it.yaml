@@ -153,7 +153,7 @@ mb:
         snippet: 'E'' possibile usare il seguente snippet in un''email per condividere un POI'
       popup:
         btn:
-          position: 'Posizione'
+          position: Posizione
       class:
         title: POI
         description: 'Crea un POI per la condivisione'
@@ -223,7 +223,7 @@ mb:
         visibility.closed_initially: 'Inizialmente chiusa'
         visibility.open_initially: 'Inizialmente aperta'
         visibility.open_permanent: 'Permanentemente aperta'
-        layerset: 'Layerset'
+        layerset: Layerset
     metadata:
       popup:
         title: Metadata
@@ -259,7 +259,7 @@ mb:
         featureinfo_onoff: 'Featureinfo on/off'
         opacity: Opacità
         zoomtolayer: 'Fai zoom sul layer'
-        select_style: 'Stile'
+        select_style: Stile
         metadata: Metadata
         legend: Legenda
         kmlexport: 'esporta KML'
@@ -427,7 +427,7 @@ mb:
       title: Titolo
       date: Data
       enter_title: 'Inserisci titolo'
-      apply:  Applica
+      apply: Applica
       replace: Sostituisci
       details: 'Mostra dettagli'
       admin:
@@ -523,18 +523,18 @@ mb:
               unstyled: 'Senza stile'
       button:
         show_label: 'Mostra label'
-        label: 'Label'
+        label: Label
       layerset:
         label:
           title: Titolo
-          selected: 'Selezionato'
+          selected: Selezionato
     htmlelement:
       class:
         title: HTML
         description: 'Aggiungi HTML'
       admin:
-        content: 'Contenuto'
-        classes: 'Classi'
+        content: Contenuto
+        classes: Classi
     entity:
       app:
         screenshotfile:
@@ -594,7 +594,7 @@ mb:
         fileupload: 'oppure seleziona il/i file'
         projection: 'Seleziona la proiezione automaticamente'
         tablehead:
-          name: 'Nome'
+          name: Nome
       error:
         filesize: 'Dimensione massima del file superata!'
         filetype: 'Tipo di file non supportato:'
@@ -614,7 +614,7 @@ mb:
         title: Titolo
         group: Gruppo
         instances: Istanze
-        instancesets: Set delle istanze
+        instancesets: 'Set delle istanze'
     basebutton:
       admin:
         tooltip: Tooltip
@@ -633,13 +633,13 @@ mb:
         about: Gruppo
         info: 'Informazione (invertita)'
         pin: Marker
-        home: 'Home'
+        home: Home
         legend: Lista
         print: Stampa
         search: Cerca
         layer_tree: Gerarchia
         logout: Logout
-        wms:  Globo
+        wms: Globo
         edit: Edita
         wmc: Cartella
         coordinates: Coordinate

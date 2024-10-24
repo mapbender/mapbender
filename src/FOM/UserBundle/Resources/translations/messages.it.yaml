@@ -1,7 +1,7 @@
 fom:
   user:
     registration:
-      email_body_html: '<p>Ciao %user_username%,</p><p> Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, clicca <a href="%url%">here</a>.</p>'
+      email_body_html: '<p>Ciao %user_username%,</p><p> Ti sei appena registrato all''istanza di Mapbender. Per concludere la registrazione, clicca <a href="%url%">here</a>.</p>'
       done:
         title: Registrazione
         congratulations: Congratulazioni!
@@ -17,11 +17,9 @@ fom:
       email_subject: 'Tua registrazione'
       send:
         title: Registrazione
-        account_created: |-
-          Il tuo account è stato creato. Un''email con il tuo codice di attivazione
-           e il link sono stati inviati all''indirizzo che hai fornito.
+        account_created: "Il tuo account è stato creato. Un''email con il tuo codice di attivazione\n e il link sono stati inviati all''indirizzo che hai fornito."
         back_to_login: 'Torna alla login'
-      email_body_text: 'Ciao %user_username%, Ti sei appena registrato all''istanza di Mapbender3. Per concludere la registrazione, si prega di chiamare nel browser il link %url%.'
+      email_body_text: 'Ciao %user_username%, Ti sei appena registrato all''istanza di Mapbender. Per concludere la registrazione, si prega di chiamare nel browser il link %url%.'
     group:
       index:
         groups: Gruppi
@@ -69,7 +67,7 @@ fom:
         edit_user: 'Edita utente'
         contact_user: 'Contatta utente via e-mail'
         edit_group: 'Edita gruppa'
-        delete_user: Si vuole davvero cancellare l'utente "%user_username%"
+        delete_user: 'Si vuole davvero cancellare l''utente "%user_username%"'
         no_users_available: 'Nessun utente disponibile.'
       form:
         edit_user: 'Modifica utente'
@@ -100,7 +98,7 @@ fom:
         name: Name
         no_groups_users: 'Nessun gruppo e utente definito.'
     password:
-      email_body_html: '<p>Ciao %user_username%,</p><p>Hai richiesto una nuova password per il tuo account Mapbender3.<a href="%url%"> qui per cambiarlo.</p>'
+      email_body_html: '<p>Ciao %user_username%,</p><p>Hai richiesto una nuova password per il tuo account Mapbender.<a href="%url%"> qui per cambiarlo.</p>'
       done:
         password_reset: 'Reimpostazione della password'
         congratulations: Congratulazioni!
@@ -120,7 +118,7 @@ fom:
         title: 'Reimpostazione della password'
         email_been_sent: 'An email with your reset code and link has been sent to the address you provided.'
         back_to_login: 'Torna alla login'
-      email_body_text: 'Ciao %user_username%, hai richiesto una nuova password per il tuo account Mapbender3. Si prega di seguire questo link per cambiarlo: "%url%".'
+      email_body_text: 'Ciao %user_username%, hai richiesto una nuova password per il tuo account Mapbender. Si prega di seguire questo link per cambiarlo: "%url%".'
     userbundle:
       user_control: 'Controllo dell''utente'
       users: Users

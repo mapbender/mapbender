@@ -1,7 +1,7 @@
 mb:
   actions:
     accept: Ok
-    add: Voeg toe
+    add: 'Voeg toe'
     back: Terug
     cancel: Annuleren
     close: Sluit
@@ -14,8 +14,8 @@ mb:
     reset: Wissen
     save: Bewaar
     search: Zoek
-    sort_ascending: Oplopend sorteren
-    sort_descending: Aflopend sorteren
+    sort_ascending: 'Oplopend sorteren'
+    sort_descending: 'Aflopend sorteren'
   terms:
     application:
       singular: Applicatie
@@ -38,21 +38,21 @@ mb:
   core:
     featureinfo:
       error:
-        nolayer: Object-informatie laag bestaat niet.
-        unknownoption: Onbekende of onverwerkbare optie %key% voor %namespace%.%widgetname%.
-        noresult: geen resultaat
+        nolayer: 'Object-informatie laag bestaat niet.'
+        unknownoption: 'Onbekende of onverwerkbare optie %key% voor %namespace%.%widgetname%.'
+        noresult: 'geen resultaat'
       class:
-        title: Object informatie
-        description: Object informatie
+        title: 'Object informatie'
+        description: 'Object informatie'
     aboutdialog:
       content:
         versionprefix: v.
-        learnmore: Leer meer over Mapbender
-        linktitle: Bezoek onze officieële Mapbender website
+        learnmore: 'Leer meer over Mapbender'
+        linktitle: 'Bezoek onze officieële Mapbender website'
         website: website
       class:
         title: Over
-        description: Toont de Over... info dialoog
+        description: 'Toont de Over... info dialoog'
       tag:
         help: Help
         info: Info
@@ -61,49 +61,49 @@ mb:
       input:
         search: Zoek
       class:
-        title: Eenvoudig zoeken
-        description: Enkel zoekveld voor JSON bronnen (e.g. Solr)
+        title: 'Eenvoudig zoeken'
+        description: 'Enkel zoekveld voor JSON bronnen (e.g. Solr)'
       error:
         geometry:
-          missing: Geselecteerde entiteit bevat geen geometrie.
+          missing: 'Geselecteerde entiteit bevat geen geometrie.'
     searchrouter:
-      no_results: Geen resultaten gevonden.
+      no_results: 'Geen resultaten gevonden.'
       result_counter: 'Resultaten: %count%'
-      exportcsv: Exporteer de resultaten naar CSV.
+      exportcsv: 'Exporteer de resultaten naar CSV.'
       class:
-        title: Zoek route
-        description: Configureer de zoek-route opdracht
+        title: 'Zoek route'
+        description: 'Configureer de zoek-route opdracht'
       tag:
         search: zoek
         router: router
     poi:
-      sharepoi: Deel POI
+      sharepoi: 'Deel POI'
       text:
-        snippet: U kunt dit tekstfragment in uw mail gebruiken om een POI te versturen
+        snippet: 'U kunt dit tekstfragment in uw mail gebruiken om een POI te versturen'
       class:
         title: POI
-        description: Maak een bijzondere plaats (POI) aan om te delen
+        description: 'Maak een bijzondere plaats (POI) aan om te delen'
       label:
         text: Tekst
       accept: 'Link maken'
     basesourceswitcher:
       error:
-        sourcenotavailable: Bron met ID %id% is niet beschikbaar
+        sourcenotavailable: 'Bron met ID %id% is niet beschikbaar'
       class:
-        title: Achtergrond-bron wisselaar
-        Description: Wijzig de achtergrond-bronnen
+        title: 'Achtergrond-bron wisselaar'
+        Description: 'Wijzig de achtergrond-bronnen'
       form:
-        mesage: Geen basis-bron set is gedefinieerd.
+        mesage: 'Geen basis-bron set is gedefinieerd.'
         instancesets: Instancesets
     legend:
       class:
         title: Legenda
-        description: Toon de legenda van de kaartlagen
+        description: 'Toon de legenda van de kaartlagen'
     ruler:
       create_error: 'Liniaal: Type moet lijn of vlak zijn.'
       class:
-        title: Lijn/Vlak lineaal
-        description: Dialoog venster voor tekenen en meten van een lijn of vlak. Toont tevens lengte of oppervlakte.
+        title: 'Lijn/Vlak lineaal'
+        description: 'Dialoog venster voor tekenen en meten van een lijn of vlak. Toont tevens lengte of oppervlakte.'
       tag:
         line: lijn
         area: vlak
@@ -117,15 +117,15 @@ mb:
         legend: Legenda
       class:
         title: Printen
-        description: Toont Print dialoog
+        description: 'Toont Print dialoog'
       btn:
-        deactivate: Deactiveer Print Venster
-        activate: Activeer Print Venster
+        deactivate: 'Deactiveer Print Venster'
+        activate: 'Activeer Print Venster'
     overview:
-      nolayer: Overzichtskaart venster heeft geen laag.
+      nolayer: 'Overzichtskaart venster heeft geen laag.'
       class:
         title: Overzichtskaart
-        description: Laat een kleine overzichtskaart zien
+        description: 'Laat een kleine overzichtskaart zien'
       tag:
         overview: overzicht
         map: map
@@ -134,51 +134,50 @@ mb:
         title: Metadata
     gpsposition:
       error:
-        notsupported: Geo-locatie wordt niet ondersteund door deze browser.
-        nosignal: Het is niet mogelijk uw geo-locatie te bepalen.
+        notsupported: 'Geo-locatie wordt niet ondersteund door deze browser.'
+        nosignal: 'Het is niet mogelijk uw geo-locatie te bepalen.'
       class:
-        title: GPS Positie
-        description: Knop om de geo-locatie (GPS positie) te tonen
+        title: 'GPS Positie'
+        description: 'Knop om de geo-locatie (GPS positie) te tonen'
       tag:
-        gpsposition: GPS Positie
+        gpsposition: 'GPS Positie'
         gps: GPS
         position: positie
         button: knop
     layertree:
       const:
-        outofscale: Laag buiten geldige schaal
-        outofbounds: Laag buiten geldig gebied
-        parentinvisible: Onderliggende laag niet zichtbaar
+        outofscale: 'Laag buiten geldige schaal'
+        outofbounds: 'Laag buiten geldig gebied'
+        parentinvisible: 'Onderliggende laag niet zichtbaar'
       tooltip:
-        sublayers_openclose: Sub-lagen openen/sluiten
-        removelayer: Verwijder laag
+        sublayers_openclose: 'Sub-lagen openen/sluiten'
+        removelayer: 'Verwijder laag'
         menu:
           close: Sluiten
       label:
-        visibility_onoff: Zichtbaarheid aan/uit
-        featureinfo_onoff: Object informatie aan/uit
+        visibility_onoff: 'Zichtbaarheid aan/uit'
+        featureinfo_onoff: 'Object informatie aan/uit'
         opacity: Doorzichtigheid
-        zoomtolayer: Zoom naar laag
+        zoomtolayer: 'Zoom naar laag'
         select_style: Stijl
         metadata: Metadata
         legend: Legenda
-        kmlexport: Kml export
-        dimension_onoff: Dimensie Aan/Uit
+        kmlexport: 'Kml export'
+        dimension_onoff: 'Dimensie Aan/Uit'
         dimension: Dimensie
-        sourcevisibility_onoff: Toon Bronnen
+        sourcevisibility_onoff: 'Toon Bronnen'
       class:
         title: Lagenboom
-        description: Mappen-structuur (LayerTree) van kaartlagen
-      admin:
-        Selecteer stijl
+        description: 'Mappen-structuur (LayerTree) van kaartlagen'
+      admin: 'Selecteer stijl'
     zoombar:
-      zoombybox: zoom in via rechthoek
-      zoombyworld: zoom uit
-      zoomin: zoom in
-      zoomout: zoom uit
+      zoombybox: 'zoom in via rechthoek'
+      zoombyworld: 'zoom uit'
+      zoomin: 'zoom in'
+      zoomout: 'zoom uit'
       class:
-        title: Navigatie knoppenbalk
-        description: De Navigatie Knoppenbalk levert een vrij plaatsbaar element voor verschuiven en zoomen, vergelijkbaar met de OpenLayers PanZoomBar control. Dit element is gemakkelijk van stijl te wijzigen.
+        title: 'Navigatie knoppenbalk'
+        description: 'De Navigatie Knoppenbalk levert een vrij plaatsbaar element voor verschuiven en zoomen, vergelijkbaar met de OpenLayers PanZoomBar control. Dit element is gemakkelijk van stijl te wijzigen.'
       tag:
         zoom: zoom
         pan: verschuif
@@ -188,7 +187,7 @@ mb:
     activityindicator:
       class:
         title: Activiteits-indicator
-        description: Toont HTTP activiteit
+        description: 'Toont HTTP activiteit'
       tag:
         activity: Activiteit
         indicator: Indicator
@@ -200,8 +199,8 @@ mb:
         button: Knop
     coordinatesdisplay:
       class:
-        title: Coordinaten scherm
-        description: Het coordinaten scherm toont uw muispositie in kaart-coordinaten.
+        title: 'Coordinaten scherm'
+        description: 'Het coordinaten scherm toont uw muispositie in kaart-coordinaten.'
       tag:
         coordinates: Coordinaten
         display: Scherm
@@ -210,91 +209,91 @@ mb:
     copyright:
       class:
         title: Copyright
-        description: Toon de gebruikscondities
+        description: 'Toon de gebruikscondities'
       tag:
         copyright: Copyright
         dialog: dialoog
     map:
       class:
         title: Kaart
-        description: OpenLayers-gebaseerde kaart
+        description: 'OpenLayers-gebaseerde kaart'
       tag:
         map: kaart
         mapquery: MapQuery
         openlayers: OpenLayers
-      srsnotfound: SRS-eigenschappen voor %srslist% niet gevonden
+      srsnotfound: 'SRS-eigenschappen voor %srslist% niet gevonden'
     scalebar:
       class:
-        title: Kaartschaal Balk
-        description: De Kaartschaal Balk toont een smalle indicator lijn welke de huidige kaartschaal weergeeft.
+        title: 'Kaartschaal Balk'
+        description: 'De Kaartschaal Balk toont een smalle indicator lijn welke de huidige kaartschaal weergeeft.'
       tag:
         scale: schaal
         bar: bar
     scaledisplay:
       class:
-        title: Schaal zichtbaarheid
-        description: Toont de huidige kaartschaal
+        title: 'Schaal zichtbaarheid'
+        description: 'Toont de huidige kaartschaal'
       tag:
         scale: schaal
         display: toon
     scaleselector:
       class:
         title: Schaalkiezer
-        description: Toon en wijzig de kaartschaal
+        description: 'Toon en wijzig de kaartschaal'
       tag:
         scale: schaal
         selector: kiezer
     srsselector:
       class:
-        title: SRS Kiezer
-        description: Kiezer om ruimtelijk referentie systeem (SRS) van de kaart te wijzigen
+        title: 'SRS Kiezer'
+        description: 'Kiezer om ruimtelijk referentie systeem (SRS) van de kaart te wijzigen'
       tag:
         srs: SRS
         selector: kiezer
     admin:
       poi:
         label:
-          usemailto: Gebruik mail-link
+          usemailto: 'Gebruik mail-link'
       legend:
         label:
-          hideemptylayers: Verberg lege lagen
-          generatelegendurl: Genereer legenda url
-          showsourcetitle: Toon bron-titel
-          showlayertitle: Toon laag-titel
-          showgroupedlayertitle: Toon gegroepeerde laag-titel
+          hideemptylayers: 'Verberg lege lagen'
+          generatelegendurl: 'Genereer legenda url'
+          showsourcetitle: 'Toon bron-titel'
+          showlayertitle: 'Toon laag-titel'
+          showgroupedlayertitle: 'Toon gegroepeerde laag-titel'
       featureinfo:
         label:
           deactivateonclose: 'Deactiveren bij sluiten'
           printResult: 'Toon de knop "Afdrukken"'
           onlyvalid: 'Alleen geldig'
-          highlighting_group: 'Markering'
+          highlighting_group: Markering
           highlighting: 'Markering ingeschakeld'
-          default_group: 'Standaard'
+          default_group: Standaard
           hover_group: 'Bij zweven'
-          fillColor: 'Opvulkleur'
-          strokeColor: 'Randkleur'
+          fillColor: Opvulkleur
+          strokeColor: Randkleur
           opacity_pct: 'Opaciteit (%)'
           stroke_width_px: 'Randbreedte (pixels)'
-          fontColor: 'Tekstkleur'
-          fontSize: 'Tekstgrootte'
+          fontColor: Tekstkleur
+          fontSize: Tekstgrootte
       printclient:
         label:
           rotatable: Roteerbaar
           legend: Legenda
-          legend_default_behaviour: Legenda aan/uit actief
+          legend_default_behaviour: 'Legenda aan/uit actief'
       layertree:
         label:
-          showbasesources: Toon basis-bronnen
-          showlayerremove: Toon verwijder-laag knop
-          usetheme: Gebruik thema
+          showbasesources: 'Toon basis-bronnen'
+          showlayerremove: 'Toon verwijder-laag knop'
+          usetheme: 'Gebruik thema'
           themes: Themas
           theme:
             opened: geopend
-            activate: Voeg activatie-knop toe
-            useTheme: Gebruik thema
-            label: thema naam
-          hidenottoggleable: Verberg niet-schakelbaar
-          hideinfo: Verberg info
+            activate: 'Voeg activatie-knop toe'
+            useTheme: 'Gebruik thema'
+            label: 'thema naam'
+          hidenottoggleable: 'Verberg niet-schakelbaar'
+          hideinfo: 'Verberg info'
     htmlelement:
       class:
         title: null
@@ -312,19 +311,19 @@ mb:
         circle: Cirkel
       geometry:
         action:
-          remove: Verwijder geometrie
-          edit: Bewerk geometrie
-          zoom: Zoom naar geometrie
+          remove: 'Verwijder geometrie'
+          edit: 'Bewerk geometrie'
+          zoom: 'Zoom naar geometrie'
       class:
         title: Tekenen
         description: Tekentool
       admin:
-        deactivate_on_close: Deactiveer bij sluiten
+        deactivate_on_close: 'Deactiveer bij sluiten'
     redlining:
       class:
         title: Tekenen
-Bad credentials.: Ongeldige inloggegevens.
-User account is locked.: Gebruikers account is geblokkeerd.
-User account is disabled.: Gebruikers account is uitgeschakeld.
-User account has expired.: Gebruikers account is verlopen.
-User credentials have expired.: Login gegevens zijn verlopen.
+'Bad credentials.': 'Ongeldige inloggegevens.'
+'User account is locked.': 'Gebruikers account is geblokkeerd.'
+'User account is disabled.': 'Gebruikers account is uitgeschakeld.'
+'User account has expired.': 'Gebruikers account is verlopen.'
+'User credentials have expired.': 'Login gegevens zijn verlopen.'

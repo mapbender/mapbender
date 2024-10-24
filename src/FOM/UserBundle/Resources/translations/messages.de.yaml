@@ -126,7 +126,7 @@ fom:
       groups: Gruppen
       new_group: 'Neue Gruppe'
       classes:
-        permissions: 'Rechteverwaltung'
+        permissions: Rechteverwaltung
         users: Benutzer
         groups: Gruppen
       roles:

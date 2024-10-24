@@ -14,7 +14,7 @@ mb:
     reset: Сброс
     save: Сохранить
     search: Поиск
-    duplicate: 'Дублировать'
+    duplicate: Дублировать
     sort_ascending: 'сортировать по возрастанию'
     sort_descending: 'сортировать по убыванию'
   terms:
@@ -57,11 +57,11 @@ mb:
         description: Инфосвойства
       admin:
         maxcount: 'Максимальное количество'
-        height: 'Высота'
-        width: 'Ширина'
+        height: Высота
+        width: Ширина
         displaytype: 'Тип дисплея'
-        tabs: 'Вкладки'
-        accordion: 'Вкладки'
+        tabs: Вкладки
+        accordion: Вкладки
     aboutdialog:
       content:
         versionprefix: v.
@@ -81,7 +81,7 @@ mb:
       input:
         searchterm: 'Поисковый запрос'
         search: Поиск
-        clear: 'Очистить'
+        clear: Очистить
       class:
         title: 'Простой Поиск'
         description: 'Поле поиска источников (например Solr)'
@@ -89,8 +89,8 @@ mb:
         geometry:
           missing: 'Выбраный объект не содержит геометрии.'
       admin:
-        configurations: 'Настройки'
-        title: 'Заголовок'
+        configurations: Настройки
+        title: Заголовок
         title.help: 'Текст, который показывается в выпадающем меню настроек.'
         placeholder: 'Временный текст [placeholder]'
         placeholder.help: 'Текст, который показывается в поле поиска, когда оно пустое. Если замещающий текст не указан, используется заголовок.'
@@ -110,7 +110,7 @@ mb:
         token_regex_out.help: 'В каждом токене (смотрите "Разбитое" регулярное выражение) регулярное выражение поиска будет заменено этим значением. Найденные группы будут пронумерованы в помощью <code>$</code>. Напривер <code>$1*</code> дополнит каждое поисковое слово звездочкой.'
         collection_path: 'Путь к результатам'
         collection_path.help: 'Путь к спису результатов внутри ответа поискового URL-адреса. Каждый уровень иерархии отделен точкой, например <code>response.docs</code> (Solr-стандарт), <code>features</code> (GeoJSON).'
-        label_attribute: Атрибут подписи
+        label_attribute: 'Атрибут подписи'
         label_attribute.help: 'Путь (в рамках одного результата) к атрибубу, который должен быть показан как подпись, например <code>label</code>. Как альтернатива могут применяться шаблонные строки, например <code>Stadt ${properties.address.city} - ${properties.address.road}</code>.'
         geom_attribute: 'Атрибут геометрии'
         geom_attribute.help: 'Путь (в рамках одного результата) к атрибубу, который предоставляет геометрию, например <code>geom</code>, <code>geometry</code> (GeoJSON).'
@@ -144,24 +144,24 @@ mb:
         search: поиск
         router: маршрут
       admin:
-        width: 'Ширина'
-        height: 'Высота'
-        routes: 'Маршруты'
+        width: Ширина
+        height: Высота
+        routes: Маршруты
     poi:
       sharepoi: 'Поделиться достопримечательностью'
       text:
         snippet: 'Вы можете использовать следующий фрагмент кода в электронной почте, чтобы поделиться достопримечательностью'
       popup:
         btn:
-          position: 'Позиционирование'
+          position: Позиционирование
       class:
         title: Достопримечательность
         description: 'Создать достопримечательность для обмена'
       label:
         text: Текст
       admin:
-        body: 'Текст'
-        gps: 'GPS'
+        body: Текст
+        gps: GPS
         placeholder: 'Пожалуйста, посмотри на эту достопримечательность'
       accept: 'Создать ссылку'
     basesourceswitcher:
@@ -175,7 +175,7 @@ mb:
         instancesets: 'Наборы экземпляров'
       admin:
         tooltip: 'Всплывающая подсказка'
-        instances: 'Экземпляры'
+        instances: Экземпляры
         instancesets: 'Наборы экземпляров'
     legend:
       class:
@@ -190,20 +190,20 @@ mb:
         line: Линия
         area: Область
         measure: Мера
-      help: Двойной клик чтобы закончить.
+      help: 'Двойной клик чтобы закончить.'
       admin:
-        type: 'Геометрия'
-        help: 'Примечание'
+        type: Геометрия
+        help: Примечание
         help_help: 'Стандартно <code>mb.core.ruler.help</code>  означает "Двойной клик чтобы закончить" на языке пользователя.'
         stroke_width_while_drawing: 'Толщина линии рисования'
         only_for_area: 'актуально, только если <i>Fläche</i> выбрана как геометрия'
-        style: 'Стиль'
+        style: Стиль
     printclient:
       label:
         template: Шаблон
         quality: Качество
         scale: Масштаб
-        rotation: Угол поворота
+        rotation: 'Угол поворота'
         legend: Легенда
         title: Заголовок
       class:
@@ -241,8 +241,8 @@ mb:
         position: положение
         button: кнопка
       admin:
-        average: 'Средний'
-        follow: 'Подписаться'
+        average: Средний
+        follow: Подписаться
         centeronfirstposition: 'Центрирован на первой позиции'
         zoomtoaccuracyonfirstposition: 'Увеличьте масштаб до точности первой позиции'
     layertree:
@@ -260,7 +260,7 @@ mb:
         featureinfo_onoff: 'Инфосвойства вкл/выкл'
         opacity: Непрозрачность
         zoomtolayer: 'Масштаб по слоюr'
-        select_style: 'Стиль'
+        select_style: Стиль
         metadata: Метаданные
         legend: Легенда
         kmlexport: 'Kml экспорт'
@@ -272,11 +272,11 @@ mb:
         description: 'Дерево слоев карты'
       admin:
         layerremove: 'Удалить слой'
-        opacity: 'Непрозрачность'
+        opacity: Непрозрачность
         zoomtolayer: 'Масштабирование до слоя'
         select_style: 'Выберите стиль'
-        metadata: 'Метаданные'
-        dimension: 'Измерение'
+        metadata: Метаданные
+        dimension: Измерение
     zoombar:
       zoombybox: Масштаб
       zoombyworld: Кругозор
@@ -294,7 +294,7 @@ mb:
         navigation: навигация
         panel: панель
       admin:
-        components: 'Компоненты'
+        components: Компоненты
         rotation: 'Угол поворота'
         zoommax: 'Увеличьте масштаб до максимального значения'
         zoominout: 'Увеличивать и уменьшать масштаб'
@@ -319,18 +319,18 @@ mb:
       tag:
         button: кнопка
       admin:
-        click: 'Клик'
-        action: 'Действие'
-        deactivate: 'Отключить'
+        click: Клик
+        action: Действие
+        deactivate: Отключить
     controlbutton:
       class:
         description: 'Управляет другим элементом'
       admin:
-        group: 'Группа'
-        target: 'Цель'
+        group: Группа
+        target: Цель
     linkbutton:
       class:
-        title: 'Ссылка'
+        title: Ссылка
         description: 'Ссылка на сторонний URL-адрес'
       admin:
         click: 'Целевой URL-адрес'
@@ -351,7 +351,7 @@ mb:
         copyright: Copyright
         dialog: Раздел
       admin:
-        content: 'Контент'
+        content: Контент
     map:
       class:
         title: Карта
@@ -365,10 +365,10 @@ mb:
         fixedZoomSteps: 'Фиксированные шаги масштабирования'
         layersets: 'Набор слоев'
         tilesize: 'Размер плитки'
-        SRS: 'SRS'
+        SRS: SRS
         scales: 'Масштабы (разделенные запятой)'
         othersrs: 'Другие SRS'
-        srs: 'SRS'
+        srs: SRS
     scalebar:
       class:
         title: 'Масштабная линейка'
@@ -380,11 +380,11 @@ mb:
         maxwidth: 'Максимальная ширина'
         units: 'Единица измерения'
     scaledisplay:
-      label: 'Масштаб'
-      scale_prefix: 'Префикс'
+      label: Масштаб
+      scale_prefix: Префикс
       scale_prefix.help: 'Обозначение, которое предшествует указанию масштаба. Стандартно <code>mb.core.scaledisplay.label</code> будет заменено на <code>Масштаб</code> на языке пользователя.'
-      unit_prefix: Maßstab abkürzen
-      unit_prefix.help: Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.
+      unit_prefix: 'Maßstab abkürzen'
+      unit_prefix.help: 'Falls aktiviert, werden Maßstabszahlen über 1.000 nicht ausgeschrieben, sondern mit nachgestelltem <code>K</code> oder <code>M</code> versehen.'
       class:
         title: 'Масштаб отображения'
         description: 'Отображает текущий масштаб карты'
@@ -425,11 +425,11 @@ mb:
         private: 'Приватная запись'
       confirmDelete: 'Подтвердите удаление'
       no_data: 'Нет данных'
-      title: 'Заголовок'
-      date: 'Дата'
+      title: Заголовок
+      date: Дата
       enter_title: 'Введите заголовок'
-      apply: 'Вызвать'
-      replace: 'Перезаписать'
+      apply: Вызвать
+      replace: Перезаписать
       details: 'Показать детали'
       admin:
         access.none: 'Не показывать'
@@ -484,9 +484,9 @@ mb:
           deactivateonclose: 'Деактивировать при закрытии'
           printResult: 'Показать кнопку "Печать"'
           onlyvalid: 'Только действительные'
-          highlighting_group: 'Выделение'
+          highlighting_group: Выделение
           highlighting: 'Выделение активно'
-          default_group: 'Стандартный'
+          default_group: Стандартный
           hover_group: 'Наведение курсора'
           fillColor: 'Цвет заливки'
           strokeColor: 'Цвет обводки'
@@ -513,22 +513,22 @@ mb:
             label: Рубрика
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideinfo: 'Скрыть информацию'
-          menu: 'Меню'
+          menu: Меню
       template:
         sidepane:
           type:
-            label: 'Тип'
+            label: Тип
             choice:
               tabs: Вкладки
               accordion: Вкладки
-              unstyled: 'Неформатированный'
+              unstyled: Неформатированный
     htmlelement:
       class:
         title: HTML
         description: 'Добавить тэги HTML'
       admin:
-        content: 'Контент'
-        classes: 'Классы'
+        content: Контент
+        classes: Классы
     entity:
       app:
         screenshotfile:
@@ -541,8 +541,8 @@ mb:
         rectangle: Прямоугольник
         circle: Круг
       inputs:
-        label: 'Надпись'
-        radius: 'Радиус'
+        label: Надпись
+        radius: Радиус
       geometry:
         action:
           remove: 'Удалить геометрию'
@@ -550,16 +550,16 @@ mb:
           zoom: 'Приблизить геометрию'
           stop_drawing: 'Прекратить рисование'
       class:
-        title: 'Эскизы'
+        title: Эскизы
         description: 'Инструмент рисования'
       admin:
         deactivate_on_close: 'Деактивировать при закрытии'
-        colors: 'Цвета'
+        colors: Цвета
         allow_custom_color: 'Разрешить мененять цвет'
         geometrytypes: 'Типы геометрии'
     redlining:
       class:
-        title: 'Эскизы'
+        title: Эскизы
     resetView:
       class:
         title: 'Сбросить вид'
@@ -575,9 +575,9 @@ mb:
     coordinesdisplay:
       admin:
         numdigits: 'Количество знаков после запятой'
-        empty: 'Пусто'
-        prefix: 'Префикс'
-        separator: 'Разделитель'
+        empty: Пусто
+        prefix: Префикс
+        separator: Разделитель
         label: 'Показать подпись'
     dataupload:
       class:
@@ -588,7 +588,7 @@ mb:
         fileupload: 'или выберите файл(ы)'
         projection: 'Выбрать проекцию автоматически'
         tablehead:
-          name: 'Имя'
+          name: Имя
       error:
         filesize: 'Превышен максимальный размер файла!'
         filetype: 'Неподдерживаемый тип файла:'
@@ -596,57 +596,57 @@ mb:
         projection: 'Не удалось определить проекцию'
       admin:
         maxFileSize: 'Максимальный размер файла (MB)'
-        helpLabel: 'Подсказка'
+        helpLabel: Подсказка
         helpText: 'Файлы могут быть загружены в форматах GeoJSON, KML, GML и GPX.'
         helpInfo: 'Стандартное значение <code>mb.core.dataupload.admin.helpText</code> означает: "Здесь вы можете загружать файлы в форматах GeoJSON, KML, GML и GPX" на языке пользователя.'
     searchrouterroute:
       admin:
-        title: 'Заголовок'
-        configuration: 'Конфигурация'
+        title: Заголовок
+        configuration: Конфигурация
     instanceset:
       admin:
-        title: 'Название'
-        group: 'Группа'
-        instances: 'Экземпляры'
+        title: Название
+        group: Группа
+        instances: Экземпляры
         instancesets: 'Наборы экземпляров'
     basebutton:
       admin:
         tooltip: 'Всплывающая подсказка'
-        icon: 'Символ'
+        icon: Символ
     icon:
       mb:
-        about: 'Информация'
+        about: Информация
         layer_tree: 'Дерево слоев'
         feature_info: 'Информация о возможностях'
         area_ruler: 'Измерить площадь'
-        polygon: 'Область'
+        polygon: Область
         line_ruler: 'Измерить расстояние'
         image_export: 'Экспорт изображений'
-        legend: 'Легенда'
+        legend: Легенда
       fa:
-        about: 'Группа'
+        about: Группа
         info: 'Информация (перевернутая)'
-        pin: 'Маркер'
+        pin: Маркер
         home: 'Обратно к началу'
-        legend: 'Список'
-        print: 'Печать'
-        search: 'Поиск'
-        layer_tree: 'Иерархия'
-        logout: 'Выход'
-        wms: 'Глобус'
-        edit: 'Редактировать'
-        wmc: 'Папка'
-        coordinates: 'Координаты'
+        legend: Список
+        print: Печать
+        search: Поиск
+        layer_tree: Иерархия
+        logout: Выход
+        wms: Глобус
+        edit: Редактировать
+        wmc: Папка
+        coordinates: Координаты
         poi: 'Маркер достопримечательности'
-        camera: 'Камера'
-        copyright: 'Copyright'
-        share: 'Поделиться'
-        forward: 'Переслать'
-        refresh: 'Обновить'
+        camera: Камера
+        copyright: Copyright
+        share: Поделиться
+        forward: Переслать
+        refresh: Обновить
         earth: 'Земной шар'
-        map: 'Карта'
+        map: Карта
         pin_alt: 'Маркер достопримечательности (альтернатива)'
-        help: 'Помощь'
+        help: Помощь
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:
@@ -655,10 +655,10 @@ mb:
       sidepane: 'Боковая панель'
       content: 'Область карты'
   demoapps:
-    themes: 'Темы'
+    themes: Темы
     backgroundThemes: 'Темы фона'
-    baseMaps: 'Карты'
-    aerialView: 'Аэрофотоснимки'
+    baseMaps: Карты
+    aerialView: Аэрофотоснимки
     noBackground: 'Без фона'
     poi: 'Пожалуйста, взгляните на это POI'
     search: 'Поиск местоположения'
@@ -668,7 +668,7 @@ mb:
       repo:
         instancelayerform:
           label:
-            title: 'Заголовок'
+            title: Заголовок
 'Bad credentials.': 'Ошибка аутентификации'
 'User account is locked.': 'Учетная запись заблокирована.'
 'User account is disabled.': 'Учетная запись деактивирована.'

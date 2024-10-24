@@ -22,8 +22,8 @@ mb:
       singular: Aplicação
       plural: Aplicações
     source:
-      singular: Fonte de dados
-      plural: Fontes de dados
+      singular: 'Fonte de dados'
+      plural: 'Fontes de dados'
     layerset:
       singular: Layerset
       plural: Layersets
@@ -59,7 +59,7 @@ mb:
         maxcount: 'Quantidade máxima'
         height: Altura
         width: Largura
-        displaytype: Tipo de exibição
+        displaytype: 'Tipo de exibição'
         tabs: Abas
         accordion: Acordeão
     aboutdialog:
@@ -74,12 +74,12 @@ mb:
       tag:
         help: Ajuda
         info: Informação
-        about: Sobre Mapbender
+        about: 'Sobre Mapbender'
       admin:
-        tooltip: Sobre Mapbender
+        tooltip: 'Sobre Mapbender'
     simplesearch:
       input:
-        searchterm: Termo de busca
+        searchterm: 'Termo de busca'
         search: Procurar
         clear: 'Limpar entrada'
       class:
@@ -94,7 +94,7 @@ mb:
         title.help: 'Texto exibido no menu drop-down para selecionar as configurações'
         placeholder: Placeholder
         placeholder.help: 'Texto exibido no campo de busca quando vazio. Se o placeholder não for definido, o título será usado.'
-        query_url: 'URL'
+        query_url: URL
         query_url.help: 'URL Solr ou Nominatim para onde o termo de busca é enviado (ex.: <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>).'
         query_key: 'Parâmetro de consulta da URL'
         query_key.help: 'O parâmetro de consulta da URL preenchido com o termo de busca inserido (ex.: <code>q</code>)'
@@ -114,9 +114,9 @@ mb:
         label_attribute.help: 'Propriedade (dentro de um único resultado) para o atributo exibido como rótulo nos resultado, ex.: <code>label</code>. Alternativamente, pode ser fornecido um template de string, ex.: <code>Cidade ${properties.address.city} - ${properties.address.road}</code>'
         geom_attribute: 'Atributo de geometria'
         geom_attribute.help: 'Propriedade (dentro de um único resultado) para o atributo onde a geometria está disponível, ex.: <code>geom</code>, <code>geometry</code> (GeoJSON)'
-        geom_format: Formato da geometria
+        geom_format: 'Formato da geometria'
         geom_format.help: 'Formato no qual a geometria está disponível, seja <a href="https://de.wikipedia.org/wiki/Simple_Feature_Access#Well-known_Text" target="_blank">Well Known Text</a> ou <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
-        sourceSrs: SRS de origem
+        sourceSrs: 'SRS de origem'
         sourceSrs.help: 'Código <a href="https://epsg.io/" target="_blank">EPSG</a> da projeção usada na URL de consulta, incluindo o prefixo <code>EPSG:</code>, ex.: <code>EPSG:25832</code>. Se não for fornecido, será assumido que os resultados estão na projeção padrão do mapa.'
         delay: 'Atraso da consulta [ms]'
         delay.help: 'Tempo em milissegundos após a última entrada de tecla antes de executar a consulta automaticamente. Padrão: 300ms'
@@ -172,11 +172,11 @@ mb:
         Description: 'Mapas de fundo podem ser definidos. Na aplicação, é possível alternar entre eles.'
       form:
         mesage: 'Nenhuma definição de fundo disponível.'
-        instancesets: Conjuntos de instâncias
+        instancesets: 'Conjuntos de instâncias'
       admin:
         tooltip: Ajuda
         instances: Instâncias
-        instancesets: Conjuntos de instâncias
+        instancesets: 'Conjuntos de instâncias'
     legend:
       class:
         title: Legenda
@@ -193,7 +193,7 @@ mb:
       help: 'Clique duplo para finalizar'
       admin:
         type: Geometria
-        help: Texto de ajuda
+        help: 'Texto de ajuda'
         help_help: 'O valor padrão <code>mb.core.ruler.help</code> significa "Clique duplo para finalizar" no idioma do usuário'
         stroke_width_while_drawing: 'Largura da linha ao desenhar'
         only_for_area: 'relevante apenas se <i>Área</i> estiver selecionado como geometria'
@@ -218,12 +218,12 @@ mb:
         description: 'Exibe um pequeno mapa de visão geral (overview).'
       tag:
         overview: 'Visão geral'
-        map: 'Mapa'
+        map: Mapa
       admin:
         visibility.closed_initially: 'Inicialmente fechado'
         visibility.open_initially: 'Inicialmente aberto'
         visibility.open_permanent: 'Permanentemente aberto'
-        layerset: Layerset'
+        layerset: 'Layerset'''
     metadata:
       popup:
         title: Metadados
@@ -232,10 +232,10 @@ mb:
         notsupported: 'O serviço de geolocalização não é suportado pelo seu navegador.'
         nosignal: 'Não é possível determinar sua posição.'
       class:
-        title: Posição GPS
+        title: 'Posição GPS'
         description: 'Botão para exibir a posição GPS.'
       tag:
-        gpsposition: Posição GPS
+        gpsposition: 'Posição GPS'
         gps: GPS
         position: Posição
         button: Botão
@@ -259,7 +259,7 @@ mb:
         featureinfo_onoff: 'Informação ligar/desligar'
         opacity: Opacidade
         zoomtolayer: 'Zoom na camada'
-        select_style: 'Estilo'
+        select_style: Estilo
         metadata: Metadados
         legend: Legenda
         kmlexport: 'Exportar KML'
@@ -267,7 +267,7 @@ mb:
         dimension: Dimensão
         sourcevisibility_onoff: 'Mostrar/ocultar serviços'
       class:
-        title: Árvore de camadas
+        title: 'Árvore de camadas'
         description: 'Árvore das camadas do mapa'
       admin:
         layerremove: 'Remover camada'
@@ -281,8 +281,8 @@ mb:
       zoombyworld: 'Zoom na extensão total'
       zoom_home: 'Voltar ao início'
       zoomHomeRestoresLayers: '"Voltar ao início" restaura o estado dos serviços'
-      zoomin: Aumentar zoom
-      zoomout: Diminuir zoom
+      zoomin: 'Aumentar zoom'
+      zoomout: 'Diminuir zoom'
       class:
         title: 'Ferramenta de navegação'
         description: 'A ferramenta de navegação oferece zoom e mover, parecido com OpenLayers'
@@ -293,14 +293,14 @@ mb:
         navigation: Navegação
         panel: Painel
       admin:
-        components: 'Componentes'
-        rotation: 'Rotação'
-        zoommax: Zoom to maximum extent'
+        components: Componentes
+        rotation: Rotação
+        zoommax: 'Zoom to maximum extent'''
         zoominout: 'Zoom in/out'
-        zoomslider: Controle deslizante de zoom
+        zoomslider: 'Controle deslizante de zoom'
     activityindicator:
       class:
-        title: Indicador de atividade
+        title: 'Indicador de atividade'
         description: 'Mostra atividade HTTP.'
       tag:
         activity: Atividade
@@ -332,10 +332,10 @@ mb:
         title: Link
         description: 'Link para URL externa'
       admin:
-        click: URL de destino
+        click: 'URL de destino'
     coordinatesdisplay:
       class:
-        title: Exibição de coordenadas
+        title: 'Exibição de coordenadas'
         description: 'Exibe a posição do mouse em coordenadas do mapa.'
       tag:
         coordinates: Coordenadas
@@ -344,10 +344,10 @@ mb:
         position: Posição
     copyright:
       class:
-        title: Direitos autorais
+        title: 'Direitos autorais'
         description: 'Mostra os termos de uso.'
       tag:
-        copyright: Direitos autorais
+        copyright: 'Direitos autorais'
         dialog: Diálogo
       admin:
         content: Conteúdo
@@ -362,8 +362,8 @@ mb:
       srsnotfound: 'Propriedades SRS para %srslist% não foram encontradas.'
       admin:
         fixedZoomSteps: 'Passos de zoom fixos'
-        layersets: Conjuntos de camadas
-        tilesize: Tamanho dos blocos
+        layersets: 'Conjuntos de camadas'
+        tilesize: 'Tamanho dos blocos'
         SRS: SRS
         scales: 'Escalas (separadas por vírgulas)'
         othersrs: 'Outros SRS'
@@ -385,14 +385,14 @@ mb:
       unit_prefix: 'Abreviar escala'
       unit_prefix.help: 'Se ativado, números de escala acima de 1.000 não serão escritos completamente, mas com um <code>K</code> ou <code>M</code>'
       class:
-        title: Exibição de escala
+        title: 'Exibição de escala'
         description: 'A escala atual é exibida.'
       tag:
         scale: Escala
         display: Exibição
     scaleselector:
       class:
-        title: Seletor de escala
+        title: 'Seletor de escala'
         description: 'Caixa de seleção com escalas disponíveis para alterar a escala. Mostra a escala atual.'
       tag:
         scale: Escala
@@ -407,7 +407,7 @@ mb:
         srs: SRS
         selector: Seleção
       admin:
-        srsselector: Seletor de SRS
+        srsselector: 'Seletor de SRS'
         tooltip: Ajuda
     ShareUrl:
       class:
@@ -416,7 +416,7 @@ mb:
       copied_to_clipboard: 'URL copiada para a área de transferência'
     viewManager:
       class:
-        title: Gerenciador de visualizações
+        title: 'Gerenciador de visualizações'
         description: 'Salva estados do mapa para recuperação futura'
       saveAsPublic: 'Salvar como entrada pública'
       recordStatus:
@@ -442,7 +442,7 @@ mb:
         showDate: 'Mostrar data'
     coordinatesutility:
       class:
-        title: Ferramenta de coordenadas
+        title: 'Ferramenta de coordenadas'
         description: 'Transformação de coordenadas. Navegação para coordenadas no mapa.'
       widget:
         error:
@@ -450,8 +450,8 @@ mb:
           invalidCoordinates: 'Coordenadas inválidas'
       view:
         srs:
-          title: Sistema de coordenadas
-          tooltip: Sistema de coordenadas
+          title: 'Sistema de coordenadas'
+          tooltip: 'Sistema de coordenadas'
         transformedCoordinates:
           tooltip: 'Coordenadas transformadas'
         copytoclipboard:
@@ -460,13 +460,13 @@ mb:
           title: 'Coordenadas no sistema de referência do mapa'
           tooltip: 'não editável'
         button:
-          search: Buscar coordenadas
+          search: 'Buscar coordenadas'
           centermap: 'Centralizar mapa'
       backend:
         addMapSrsList: 'Adicionar sistemas de referência do mapa'
       admin:
-        srslist: Lista de SRS
-        zoomlevel: Nível de zoom
+        srslist: 'Lista de SRS'
+        zoomlevel: 'Nível de zoom'
     admin:
       poi:
         label:
@@ -483,16 +483,16 @@ mb:
           deactivateonclose: 'Desativar ao fechar'
           printResult: 'Mostrar botão "Imprimir"'
           onlyvalid: 'Mostrar apenas válidos'
-          highlighting_group: Realce (Highlighting)
+          highlighting_group: 'Realce (Highlighting)'
           highlighting: 'Realce ativo'
           default_group: Padrão
-          hover_group: Passar o mouse
-          fillColor: Cor de preenchimento
-          strokeColor: Cor do traçado
+          hover_group: 'Passar o mouse'
+          fillColor: 'Cor de preenchimento'
+          strokeColor: 'Cor do traçado'
           opacity_pct: 'Opacidade (%)'
           stroke_width_px: 'Largura do traçado (pixels)'
-          fontColor: Cor da fonte
-          fontSize: Tamanho da fonte
+          fontColor: 'Cor da fonte'
+          fontSize: 'Tamanho da fonte'
       printclient:
         label:
           rotatable: Girável
@@ -509,7 +509,7 @@ mb:
             opened: 'Tema aberto/fechado'
             activate: 'Adicionar/remover ativação de camadas'
             useTheme: 'Mostrar tema'
-            label: Nome do tema
+            label: 'Nome do tema'
           hidenottoggleable: 'Ocultar pastas não expansíveis'
           hideinfo: 'Ocultar info'
           menu: Menu
@@ -520,7 +520,7 @@ mb:
             choice:
               tabs: Botões
               accordion: Acordeão
-              unstyled: Sem estilo
+              unstyled: 'Sem estilo'
       button:
         show_label: 'Mostrar rótulo'
         label: Rótulo
@@ -557,12 +557,12 @@ mb:
           stop_drawing: 'Parar de desenhar'
       class:
         title: Esboços
-        description: Ferramenta de desenho
+        description: 'Ferramenta de desenho'
       admin:
         deactivate_on_close: 'Desativar ao fechar'
         colors: Cores
         allow_custom_color: 'Permitir personalização de cores'
-        geometrytypes: Tipos de geometria
+        geometrytypes: 'Tipos de geometria'
     redlining:
       class:
         title: Esboços
@@ -594,7 +594,7 @@ mb:
         title: Título
         group: Grupo
         instances: Instâncias
-        instancesets: Conjuntos de instâncias
+        instancesets: 'Conjuntos de instâncias'
     basebutton:
       admin:
         tooltip: Ajuda
@@ -602,12 +602,12 @@ mb:
     icon:
       mb:
         about: Informação
-        layer_tree: Árvore de camadas
+        layer_tree: 'Árvore de camadas'
         feature_info: 'Informações detalhadas'
         area_ruler: 'Medição de área'
         polygon: Polígono
         line_ruler: 'Medição de linha'
-        image_export: Exportar imagem
+        image_export: 'Exportar imagem'
         legend: Legenda
       fa:
         about: Grupo
@@ -625,11 +625,11 @@ mb:
         coordinates: Coordenadas
         poi: Alfinete
         camera: Câmera
-        copyright: Direitos autorais
+        copyright: 'Direitos autorais'
         share: Compartilhar
         forward: Encaminhar
-        refresh: 'Recarregar'
-        earth: Globo terrestre
+        refresh: Recarregar
+        earth: 'Globo terrestre'
         map: Mapa
         pin_alt: 'Alfinete (alternativo)'
         help: Ajuda
@@ -638,13 +638,13 @@ mb:
     region:
       toolbar: 'Barra de ferramentas superior'
       footer: Rodapé
-      sidepane: Painel lateral
-      content: Área do mapa
+      sidepane: 'Painel lateral'
+      content: 'Área do mapa'
   demoapps:
     themes: Temas
-    backgroundThemes: Temas de fundo
+    backgroundThemes: 'Temas de fundo'
     baseMaps: Mapas
-    aerialView: Vista aérea
+    aerialView: 'Vista aérea'
     noBackground: 'sem fundo'
     poi: 'Por favor, veja este POI'
     search: 'Procurar local'
