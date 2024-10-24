@@ -5,7 +5,7 @@ fom:
       done:
         title: Registration
         congratulations: Congratulations!
-        account_activated: 'You''re account has been successfully activated and is ready for use.'
+        account_activated: "You're account has been successfully activated and is ready for use."
         back_to_login: 'Back to login'
       form:
         title: Registration
@@ -17,7 +17,9 @@ fom:
       email_subject: 'Your registration'
       send:
         title: Registration
-        account_created: "Your account has been created. An email with your activation code\n            and link has been sent to the address you provided."
+        account_created: |-
+          Your account has been created. An email with your activation code
+                      and link has been sent to the address you provided.
         back_to_login: 'Back to login'
       email_body_text: 'Hello %user_username%, You have just recently registered to the Mapbender instance. To conclude your registration, please, call in your browser the link %url%.'
     group:
@@ -102,7 +104,7 @@ fom:
       done:
         password_reset: 'Password reset'
         congratulations: Congratulations!
-        password_been_reset: 'You''re password has been successfully reset.'
+        password_been_reset: "You're password has been successfully reset."
         back_to_login: 'Back to login'
       reset:
         title: 'Reset password'

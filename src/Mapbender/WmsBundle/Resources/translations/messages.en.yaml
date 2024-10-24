@@ -8,7 +8,7 @@ mb:
           wmsuser: User
           wmspass: Password
       error:
-        load: 'WMSLoader: wms capabilities can''t be loaded!'
+        load: "WMSLoader: wms capabilities can't be loaded!"
       repo:
         macros:
           label:
@@ -115,7 +115,7 @@ mb:
             featurelisturl: 'Featurelist URL'
         instancelayerform:
           label:
-            layerstitle: 'Layer''s Title'
+            layerstitle: "Layer's Title"
             minscale: Minscale
             maxsclase: Maxsclase
             active: active
@@ -132,7 +132,7 @@ mb:
             id:
               title: ID
               description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Layer''s Name'
+            layersname: "Layer's Name"
             style: Style
       class:
         title: 'WMS loader'

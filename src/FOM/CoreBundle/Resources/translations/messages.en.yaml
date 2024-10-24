@@ -16,36 +16,36 @@ fom:
       registered: 'All Registered Users'
     resource:
       installation:
-        create_applications: "Create"
-        view_all_applications: "View"
-        view_all_applications_help: "Allows viewing all applications, regardless of the permissions defined in the application."
-        edit_all_applications: "Edit"
-        edit_all_applications_help: "Allows editing all applications, regardless of the permissions defined in the application."
-        delete_all_applications: "Delete"
-        delete_all_applications_help: "Allows deleting all applications, regardless of the permissions defined in the application."
-        own_all_applications: "Manage Permissions"
-        own_all_applications_help: "Allows editing permissions for all applications, regardless of the permissions defined in the application."
-        view_sources: "View"
-        create_sources: "Edit"
-        refresh_sources: "Refresh"
-        edit_free_instances: "Edit Free Instances"
-        delete_sources: "Delete"
-        manage_permissions: "Global Permission Management"
-        view_users: "View"
-        create_users: "Create"
-        edit_users: "Edit"
-        delete_users: "Delete"
-        view_groups: "View"
-        create_groups: "Create"
-        edit_groups: "Edit"
-        delete_groups: "Delete"
+        create_applications: Create
+        view_all_applications: View
+        view_all_applications_help: 'Allows viewing all applications, regardless of the permissions defined in the application.'
+        edit_all_applications: Edit
+        edit_all_applications_help: 'Allows editing all applications, regardless of the permissions defined in the application.'
+        delete_all_applications: Delete
+        delete_all_applications_help: 'Allows deleting all applications, regardless of the permissions defined in the application.'
+        own_all_applications: 'Manage Permissions'
+        own_all_applications_help: 'Allows editing permissions for all applications, regardless of the permissions defined in the application.'
+        view_sources: View
+        create_sources: Edit
+        refresh_sources: Refresh
+        edit_free_instances: 'Edit Free Instances'
+        delete_sources: Delete
+        manage_permissions: 'Global Permission Management'
+        view_users: View
+        create_users: Create
+        edit_users: Edit
+        delete_users: Delete
+        view_groups: View
+        create_groups: Create
+        edit_groups: Edit
+        delete_groups: Delete
       application:
-        view: "View"
-        view_help: "Authorizes the user/group to view and use the application on the front end, including all elements for which no special permissions are defined."
-        edit: "Edit"
+        view: View
+        view_help: 'Authorizes the user/group to view and use the application on the front end, including all elements for which no special permissions are defined.'
+        edit: Edit
         edit_help: "Allows editing the application, excluding the 'Security' tab. Editing layersets requires global permissions."
-        delete: "Delete"
-        manage_permissions: "Permission Management"
-        manage_permissions_help: "Allows managing permissions for this application (the current page)."
+        delete: Delete
+        manage_permissions: 'Permission Management'
+        manage_permissions_help: 'Allows managing permissions for this application (the current page).'
       element:
-        view: "View"
+        view: View
