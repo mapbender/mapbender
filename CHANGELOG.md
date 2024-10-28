@@ -8,9 +8,16 @@ Bugfixes:
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
 
 Other:
-* Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
 * Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639))
 * [Manager] Provide detailed information in all "delete"-dialogs ([PR#1631](https://github.com/mapbender/mapbender/pull/1631)) 
+
+
+## v4.0.3
+Bugfix: 
+* Map did not load when using a start extent with negative longitude or latitude in WGS 84 ([#1642](https://github.com/mapbender/mapbender/issues/1642), [PR#1645](https://github.com/mapbender/mapbender/pull/1645))
+
+Other:
+* Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
 
 
 ## v4.0.2
