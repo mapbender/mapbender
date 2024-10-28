@@ -1,4 +1,8 @@
-## next release
+## v4.0.3
+Bugfix: 
+* Map did not load when using a start extent with negative longitude or latitude in WGS 84 ([#1642](https://github.com/mapbender/mapbender/issues/1642), [PR#1645](https://github.com/mapbender/mapbender/pull/1645))
+
+Other:
 * Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
 
 
