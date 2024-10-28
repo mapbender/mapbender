@@ -154,7 +154,7 @@ class UserController extends UserControllerBase
             throw new NotFoundHttpException('The root user can not be deleted');
         }
 
-        $this->denyAccessUnlessGranted('DELETE', $user);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_USERS);
 
         if (!$this->isCsrfTokenValid('user_delete', $request->request->get('token'))) {
             $this->addFlash('error', 'Invalid CSRF token.');
