@@ -6,6 +6,7 @@ Features:
 
 Bugfixes:
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
+* Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
 
 Other:
 * Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639))
