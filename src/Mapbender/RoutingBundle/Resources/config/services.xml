@@ -1,0 +1,20 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mapbender.routing.routinghandler.class">Mapbender\RoutingBundle\Component\RoutingHandler</parameter>
+        <parameter key="mapbender.routing.searchhandler.class">Mapbender\RoutingBundle\Component\SearchHandler</parameter>
+        <parameter key="mapbender.routing.driver.osrm.class">Mapbender\RoutingBundle\Component\Driver\OsrmDriver</parameter>
+    </parameters>
+    <services>
+        <service id="mapbender.routing.searchhandler" class="%mapbender.routing.searchhandler.class%">
+            <argument type="service" id="monolog.http_client"/>
+        </service>
+        <service id="mapbender.routing.routinghandler" class="%mapbender.routing.routinghandler.class%">
+            <argument type="service" id="mapbender.routing.driver.osrm" />
+        </service>
+        <service id="mapbender.routing.driver.osrm" class="%mapbender.routing.driver.osrm.class%">
+            <argument type="service" id="monolog.http_client"/>
+        </service>
+    </services>
+</container>

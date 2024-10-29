@@ -37,12 +37,13 @@ abstract class RoutingDriver {
     protected $timeField = "time";
     protected $timeScale = "ms";
 
-
+/*
     public function __construct(string $locale,TranslatorInterface $translator)
     {
         $this->translator = $translator;
         $this->locale = $locale;
     }
+*/
 
     abstract public function getResponse() : array;
 

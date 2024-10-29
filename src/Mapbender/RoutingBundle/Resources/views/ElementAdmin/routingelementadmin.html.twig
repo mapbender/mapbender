@@ -1,23 +1,23 @@
 
-{{ form_row(form.configuration.advanced) }}
+{{ form_row(form.configuration.advancedSettings) }}
 <hr>
 <h3 class="my-4">Element</h3>
 {{ form_row(form.title) }}
 
 <div class="mb-3">
     {{ form_widget(form.configuration.autoSubmit, {'label_attr': {'class': 'checkbox-inline'}}) }}
-    {{ form_widget(form.configuration.addIntermediatePoints, {'label_attr': {'class': 'checkbox-inline'}}) }}
-    {{ form_widget(form.configuration.disableContextMenu, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {{ form_widget(form.configuration.allowIntermediatePoints, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {{ form_widget(form.configuration.allowContextMenu, {'label_attr': {'class': 'checkbox-inline'}}) }}
 </div>
 <div class="mb-3">
-    {{ form_widget(form.configuration.addSearch, {'label_attr': {'class': 'checkbox-inline'}}) }}
-    {{ form_widget(form.configuration.addReverseGeocoding, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {{ form_widget(form.configuration.useSearch, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {{ form_widget(form.configuration.useReverseGeocoding, {'label_attr': {'class': 'checkbox-inline'}}) }}
 </div>
 
 {{ form_row(form.configuration.buffer) }}
-{{ form_row(form.configuration.color) }}
-{{ form_row(form.configuration.width) }}
-{{ form_row(form.configuration.opacity) }}
+{{ form_row(form.configuration.lineColor) }}
+{{ form_row(form.configuration.lineWidth) }}
+{{ form_row(form.configuration.lineOpacity) }}
 
 <div class="basic advanced d-none">
     {{ form_row(form.configuration.infoText) }}
@@ -80,30 +80,27 @@
 <div class="search d-none">
     <hr>
     <h3 class="my-4">Suche</h3>
-    {{ form_row(form.configuration.search.searchDriver) }}
-    {% if form.configuration.search.searchDriver is defined %}
-        {% for searchTag in form.configuration.search %}
-            {# form_label(searchTag) }}{{ form_widget(searchTag) #}
-        {% endfor %}
-        {{ form_row(form.configuration.search.searchUrl) }}
+    {{ form_row(form.configuration.searchConfig.driver) }}
+    {% if form.configuration.searchConfig.driver is defined %}
+        {{ form_row(form.configuration.searchConfig.url) }}
         <div class="advanced d-none">
-            {{ form_row(form.configuration.search.query_key) }}
-            {{ form_row(form.configuration.search.query_ws_replace) }}
-            {{ form_row(form.configuration.search.query_format) }}
-            {{ form_row(form.configuration.search.token_regex) }}
-            {{ form_row(form.configuration.search.token_regex_in) }}
-            {{ form_row(form.configuration.search.token_regex_out) }}
-            {{ form_row(form.configuration.search.collection_path) }}
+            {{ form_row(form.configuration.searchConfig.query_key) }}
+            {{ form_row(form.configuration.searchConfig.query_ws_replace) }}
+            {{ form_row(form.configuration.searchConfig.query_format) }}
+            {{ form_row(form.configuration.searchConfig.token_regex) }}
+            {{ form_row(form.configuration.searchConfig.token_regex_in) }}
+            {{ form_row(form.configuration.searchConfig.token_regex_out) }}
+            {{ form_row(form.configuration.searchConfig.collection_path) }}
             {# !! The following values are not evaluated !! #}
-            {{ form_row(form.configuration.search.label_attribute) }}
-            {{ form_row(form.configuration.search.geom_attribute) }}
-            {{ form_row(form.configuration.search.geom_proj) }}
-            {{ form_row(form.configuration.search.geom_format) }}
-            {{ form_row(form.configuration.search.result_buffer) }}
-            {{ form_row(form.configuration.search.result_minscale) }}
-            {{ form_row(form.configuration.search.result_maxscale) }}
-            {{ form_row(form.configuration.search.result_icon_url) }}
-            {{ form_row(form.configuration.search.result_icon_offset) }}
+            {{ form_row(form.configuration.searchConfig.label_attribute) }}
+            {{ form_row(form.configuration.searchConfig.geom_attribute) }}
+            {{ form_row(form.configuration.searchConfig.geom_proj) }}
+            {{ form_row(form.configuration.searchConfig.geom_format) }}
+            {{ form_row(form.configuration.searchConfig.result_buffer) }}
+            {{ form_row(form.configuration.searchConfig.result_minscale) }}
+            {{ form_row(form.configuration.searchConfig.result_maxscale) }}
+            {{ form_row(form.configuration.searchConfig.result_icon_url) }}
+            {{ form_row(form.configuration.searchConfig.result_icon_offset) }}
         </div>
     {% endif %}
 </div>
@@ -111,21 +108,21 @@
 <div class="reverseGeocoding d-none">
     <hr>
     <h3 class="my-4">Reverse Geocoding</h3>
-    {{ form_row(form.configuration.reverse.revGeocodingDriver) }}
-    {{ form_row(form.configuration.reverse.revGeoConnection) }}
-    {{ form_row(form.configuration.reverse.revTableName) }}
-    {{ form_row(form.configuration.reverse.revRowGeoWay) }}
-    {{ form_row(form.configuration.reverse.revRowSearch) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.driver) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.connection) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.table) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.rowGeoWay) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.rowSearch) }}
     <div class="advanced d-none">
-        {{ form_row(form.configuration.reverse.revSearchBuffer) }}
+        {{ form_row(form.configuration.reverseGeocodingConfig.searchBuffer) }}
     </div>
 </div>
 
 <script>
     $(document).ready(function() {
-        const advancedSettings = $('#form_configuration_advanced');
-        const activateSearch = $('#form_configuration_addSearch');
-        const activateReverseGeocoding = $('#form_configuration_addReverseGeocoding');
+        const advancedSettings = $('#form_configuration_advancedSettings');
+        const activateSearch = $('#form_configuration_useSearch');
+        const activateReverseGeocoding = $('#form_configuration_useReverseGeocoding');
         const routingDriverSelection = $('#form_configuration_routingDriver');
         const selectedRoutingDriver = routingDriverSelection.find('option:selected').val() || false;
 

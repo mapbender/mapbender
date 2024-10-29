@@ -5,6 +5,7 @@ mb:
         general: Es ist ein Fehler aufgetreten
         noResult: Es konnte keine Route gefunden werden.
         format: Format wird nicht unterstützt.
+        icon: Es ist kein Icon konfiguriert.
       graphhopper:
         400: Bei der Anfrage ist ein Fehler aufgetreten (zu wenige oder zu viele Punkte).
         401: Authentifizierung ist erforderlich! Registrieren Sie sich und erhalten Sie einen gültigen API-Schlüssel unter https://www.graphhopper.com/developers/.
@@ -76,8 +77,8 @@ mb:
           buffer: Zoompuffer (m)
           autoSubmit: Route direkt ausgeben
           addIntermediatePoints: Zwischenpunkte erlauben
-          advanced: weitere Einstellungen
-          disableContextMenu: Kontextmenü deaktivieren
+          advanced: Erweiterte Einstellungen
+          allowContextMenu: Kontextmenü aktivieren
           search: Suche aktivieren
           reverseGeocoding: Geokodierung aktivieren
           color: Linienfarbe

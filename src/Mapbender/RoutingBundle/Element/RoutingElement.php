@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\ElementServiceInterface;
@@ -27,13 +28,13 @@ use Mapbender\RoutingBundle\Component\SearchHandler;
  */
 class RoutingElement extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
-    protected UrlGeneratorInterface $urlGenerator;
+    protected SearchHandler $searchHandler;
 
-    protected HttpClientInterface $httpClient;
+    protected RoutingHandler $routingHandler;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, HttpClientInterface $httpClient) {
-        $this->urlGenerator = $urlGenerator;
-        $this->httpClient = $httpClient;
+    public function __construct(SearchHandler $searchHandler, RoutingHandler $routingHandler) {
+        $this->searchHandler = $searchHandler;
+        $this->routingHandler = $routingHandler;
     }
 
     /**
@@ -41,7 +42,7 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
      */
     public static function getClassTitle() : string
     {
-        return "mb.routing.backend.title";
+        return 'mb.routing.backend.title';
     }
 
     /**
@@ -49,7 +50,7 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
      */
     public static function getClassDescription() : string
     {
-        return "mb.routing.backend.description";
+        return 'mb.routing.backend.description';
     }
 
     public static function updateEntityConfig(Element $element) : void
@@ -79,7 +80,7 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
             ],
             'css' => [
                 '@MapbenderRoutingBundle/Resources/public/sass/element/jquery-ui.css',
-                # '@MapbenderRoutingBundle/Resources/public/sass//mapbender.element.routing.scss',
+                '@MapbenderRoutingBundle/Resources/public/sass//mapbender.element.routing.scss',
                 # '@MapbenderRoutingBundle/Resources/public/sass/element/routing.scss',
                 # '/components/jquery-context-menu/src/jquery.contextMenu.css'),
             ],
@@ -96,35 +97,31 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
      */
     public static function getDefaultConfiguration()
     {
-        return array(
+        return [
             'title' => 'Routing',
-            'target' => null,
+            'advancedSettings' => false,
             'autoSubmit' => false,
-            'addIntermediatePoints' => false,
-            'disableContextMenu' => false,
-            'addSearch' => false,
-            'addReverseGeocoding' => false,
-            'advanced' => false,
-            'routingDriver' => null,
+            'allowIntermediatePoints' => false,
+            'allowContextMenu' => false,
+            'useSearch' => false,
+            'useReverseGeocoding' => false,
             'buffer' => 0,
-            'color' => '#4286F4',
-            'width' => 3,
-            'opacity' => 1,
-            'styleMap' => array(
-                'start' => array(),
-                'intermediate' => array(),
-                'destination' => array(),
-                'route' => array(
-                    'strokeWidth' => 3,
-                    'strokeColor' => '#4286F4',
-                    'strokeOpacity' => 0.8,
-                    'fillOpacity' => 0.8
-                )
-            ),
             'infoText' => '{start} → {destination} </br> {length} will take {time}',
             'dateTimeFormat' => 'ms',
-            'backendConfig' => array()
-        );
+            'routingDriver' => null,
+            'routingStyles' => [
+                'lineColor' => '#4286F4',
+                'lineWidth' => 3,
+                'lineOpacity' => 1,
+                'startIcon' => [
+                    'imagePath' => '/bundles/mapbenderrouting/image/start.png',
+                ],
+                'intermediateIcon' => [],
+                'destinationIcon' => [
+                    'imagePath' => '/bundles/mapbenderrouting/image/destination.png',
+                ],
+            ],
+        ];
     }
 
     public function getHttpHandler(Element $element)
@@ -132,139 +129,77 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
         return $this;
     }
 
+    /**
+     * @throws Exception
+     */
     public function handleRequest(Element $element, Request $request)
     {
         $action = $request->attributes->get('action');
         $configuration = $element->getConfiguration();
-        $response = new Response();
 
         switch ($action) {
             case 'getRoute':
-                $response = new RoutingHandler();
-                break;
+                return $this->routingHandler->calculateRoute($request->request->all(), $configuration);
             case 'search':
-                $searchHandler = new SearchHandler($this->httpClient);
-                return $searchHandler->getAction($request, $configuration);
+                return $this->searchHandler->search($request->query->all(), $configuration);
             case 'revGeocode':
                 $response = new ReverseSearchHandler();
                 break;
             default:
-                //$response = $this->pluginRegistry->handleHttpRequest($request, $element);
-        }
-        if ($response) {
-            return $response;
-        } else {
-            throw new NotFoundHttpException();
+                throw new NotFoundHttpException('No such action.');
         }
     }
 
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $template = '@MapbenderRouting/Element/routingelement.html.twig';
-
-        $view = new TemplateView($template);
-        $view->attributes['class'] = 'mb-element-routingelement';
+        $view = new TemplateView('@MapbenderRouting/Element/routingelement.html.twig');
+        $view->attributes['class'] = 'mb-element-routing';
         $view->attributes['data-title'] = $element->getTitle();
-
-        $submitUrl = $this->urlGenerator->generate('mapbender_core_application_element', array(
-            'slug' => $element->getApplication()->getSlug(),
-            'id' => $element->getId(),
-        ));
-        $view->variables = array(
-            'submitUrl' => $submitUrl,
+        $view->variables = [
             'id' => $element->getId(),
             'title' => $element->getTitle(),
             'transportationModes' => $this->getTransportationModes($element),
-            'addIntermediatePoints' => $config['addIntermediatePoints'],
-            'autoSubmit' => $config['autoSubmit'],
-            'configuration' => $config + array(
-                    'required_fields_first' => false,
-                    'type' => 'dialog',
-                ),
-        );
+            'allowIntermediatePoints' => $config['allowIntermediatePoints'],
+        ];
         return $view;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderRouting/ElementAdmin/routingelementadmin.html.twig';
     }
 
-    /**
-     * @return string
-     */
-    public function getWidgetName( Element $element )
+    public function getWidgetName( Element $element ): string
     {
         return 'mapbender.mbRoutingElement';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getType()
+    public static function getType(): ?string
     {
         return 'Mapbender\RoutingBundle\Element\Type\RoutingElementAdminType';
     }
 
-
-    /**
-     * @param $action
-     * @throws $action if fail
-     * @return JsonResponse|Response
-     */
-    public function httpAction($action)
+    protected function getTransportationModes(Element $element): array
     {
-        /**
-         * @var $hander RequestHandler
-         */
-        switch($action) {
-            case 'getRoute':
-                $handler = new RoutingHandler();
-                break;
-            case 'search':
-                $handler = new SearchHandler();
-                break;
-            case 'revGeocode':
-                $handler = new ReverseSearchHandler();
-                break;
-            default:
-                throw new NotFoundHttpException('No such action');
-        }
-
-        return $handler->getAction($this->getConfiguration(),$this->container);
-
-    }
-
-
-    /**
-     * @return array
-     */
-    protected function getTransportationModes(Element $element)
-    {
-        $defaultTransportationModes = array(
-            0 => 'car'
-        );
+        $transportationModes = [
+            0 => 'car',
+        ];
 
         $configuration = $element->getConfiguration();
         $routingDriver = $configuration['routingDriver'];
-        $backendConfig = $configuration['backendConfig'];
+        $routingConfigs = $configuration['routingConfig'];
 
         // Check TransportationsMode from backend
-        foreach($backendConfig as $key=>$value) {
-            If ($key === $routingDriver) {
-                $backendConfig=$value;
+        foreach ($routingConfigs as $name => $config) {
+            if ($name === $routingDriver) {
+                $routingConfig = $config;
             }
         }
 
         // check ist set TransportationMode => else Default-Mode
-        if(isset($backendConfig['transportationMode'])){
-            $transportationModes=$backendConfig['transportationMode'];
-        }else {
-            $transportationModes= $defaultTransportationModes;
+        if (isset($routingConfig['transportationMode'])){
+            $transportationModes = $routingConfig['transportationMode'];
         }
 
         return $transportationModes;
@@ -280,7 +215,7 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
         $configuration = $element->getConfiguration();
 
         if (!isset($configuration['routingDriver'])) {
-            new \Exception('Routing Driver is not set');
+            new Exception('Routing Driver is not set');
         }
 
         if (isset($configuration['search'])) {

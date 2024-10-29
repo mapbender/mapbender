@@ -5,6 +5,7 @@ mb:
         general: There was an error in your request
         noResult: No route could be found.
         format: Format not supported.
+        icon: No Icon configured.
       graphhopper:
         400: Something was wrong in your request (too few or too many points)
         401: Authentication necessary! Register and get a valid API key at https://www.graphhopper.com/developers/.
@@ -76,8 +77,8 @@ mb:
           buffer: Zoom buffer (m)
           autoSubmit: Route immediately
           addIntermediatePoints: Allow intermediate points
-          advanced: More route settings
-          disableContextMenu: Disable context menu
+          advanced: Advanced route settings
+          allowContextMenu: Activate context menu
           search: Enable Search
           reverseGeocoding: Reverse Geocoding
           color: Line color

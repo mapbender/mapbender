@@ -1,127 +1,71 @@
-{% block transportation_modes %}
-    <div class="mb-routing-transportation-mode">
-        {% if transportationModes is not defined or transportationModes|length == 0 %}
-            <div class="transportation-mode-box-input"></div>
-        {% else %}
-            <ul class="transportation-mode-box-input" {% if transportationModes|length == 1 %}style="display:none"{% endif %}>
-                {% for transportationMode in transportationModes %}
-                    <li class="mb-routing-transportation-mode-box-content">
-                        <input type="radio"
-                               name="vehicle"
-                               value="{{ transportationMode }}"
-                               id="{{ transportationMode }}"
-                               checked />
-                        <label class="button mb-routing-icon" for="{{ transportationMode }}">
-                            <span class="routing-icon-{{ transportationMode }}"></span>
-                        </label>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    <div class="clear"></div>
-{% endblock transportation_modes %}
-{% block point_inputs %}
-    <form class="ui-sortable mb-routing-location-points">
-        <div class="input-group mb-3">
-            <span class="input-group-text">
-                <i class="fa-solid fa-location-dot text-success"></i>
-            </span>
-            <input id="startingPoint" class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.start' | trans }}">
-            <button class="btn btn-outline-secondary clearField" type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">
-                <i class="fa-solid fa-location-dot text-danger"></i>
-            </span>
-            <input id="endPoint" class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.destination' | trans }}">
-            <button class="btn btn-outline-secondary clearField" type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <!--
-        <div class="input-wrapper start">
-            <label for="startPoint" class="input-icon">
-                <span class="iconGps"></span>
+{% if transportationModes is defined and transportationModes|length > 0 %}
+    {% for transportationMode in transportationModes %}
+        <div class="form-check mb-3 ms-1 form-check-inline{% if transportationModes|length == 1 %} d-none{% endif %}">
+            <input id="{{ transportationMode }}" class="form-check-input" type="radio" name="vehicle" value="{{ transportationMode }}" checked>
+            <label for="{{ transportationMode }}" class="form-check-label">
+                {# @todo: check why the following if statements cannot be implemented with switch case #}
+                {% if transportationMode == 'car' %}
+                    <i class="fa-solid fa-car"></i>
+                {% elseif transportationMode == 'bike' %}
+                    <i class="fa-solid fa-person-biking"></i>
+                {% elseif transportationMode == 'foot' %}
+                    <i class="fa-solid fa-person-walking"></i>
+                {% else %}
+                    <i class="fa-solid fa-minus"></i>
+                {% endif %}
             </label>
-            <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.start"|trans }}"/>
-            <span class="iconCancel"></span>
-            <span class="clear"></span>
         </div>
-        <div class="input-wrapper destination">
-            <label for="destinationPoint" class="input-icon">
-                <span class="iconGps"></span>
-            </label>
-            <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.destination"|trans }}"/>
-            <span class="iconCancel"></span>
-            <span class="clear"></span>
-        </div>
-        -->
-    </form>
-    <div class="input-wrapper intermediate wrapper-clone" style="display:none">
-        <label for="intermediatePoint" class="input-icon">
-            <span class="iconGps"></span>
-        </label>
-        <input name="point" class="input" type="text" placeholder="{{ "mb.routing.frontend.dialog.label.intermediate"|trans }}"/>
-        <span class="iconCancel"></span>
-        <span class="clear"></span>
+    {% endfor %}
+{% endif %}
+<form class="mb-routing-location-points ui-sortable">
+    <div class="input-group mb-3">
+        <span class="input-group-text">
+            <i class="fa-solid fa-location-dot text-success"></i>
+        </span>
+        <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.start' | trans }}" autocomplete="off">
+        <button class="btn btn-outline-secondary clearField" type="button">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
-{% endblock point_inputs %}
-{% block button_inputs %}
-    <div class="right">
-        <button id="resetRoute" class="btn btn-danger" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
-            <i class="fa-solid fa-rotate-left"></i>
+    <div class="input-group mb-3">
+        <span class="input-group-text">
+            <i class="fa-solid fa-location-dot text-danger"></i>
+        </span>
+        <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.destination' | trans }}" autocomplete="off">
+        <button class="btn btn-outline-secondary clearField" type="button">
+            <i class="fa-solid fa-xmark"></i>
         </button>
-        <button id="swapPoints" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
-            <i class="fa-solid fa-shuffle"></i>
-        </button>
-        <button id="calculateRoute" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.getroute' | trans }}">
-            <i class="fa-regular fa-paper-plane"></i>
-        </button>
-
-        <!--
-        <button
-                type="button"
-                class="button critical mb-routing-icon"
-                name="clearRoute"
-                title="{{ "mb.routing.frontend.dialog.label.clearroute"|trans }}">
-            <span class="routing-icon-reset"></span>
-        </button>
-        <button
-                type="button"
-                class="button mb-routing-icon"
-                name="flipPoints"
-                title="{{ "mb.routing.frontend.dialog.label.flippoints"|trans }}">
-            <span class="routing-icon-swap"></span>
-        </button>
-        -->
-        {% if addIntermediatePoints %}
-            <button
-                    type="button"
-                    class="button mb-routing-icon"
-                    name="addPoint"
-                    title="{{ "mb.routing.frontend.dialog.label.addintermediate"|trans }}">
-                <span class="routing-icon-add-point"></span>
-            </button>
-        {% endif %}
-        <!--
-        <button
-                type="button"
-                class="button mb-routing-icon"
-                name="getRoute"
-                title="{{ "mb.routing.frontend.dialog.label.getroute"|trans }}">
-            <span class="routing-icon-start-routing"></span>
-        </button>
-        -->
     </div>
-    <div class="clear"></div>
-{% endblock button_inputs %}
-{% block routing_results %}
-    <div class="mb-routing-results">
-        <div class="mb-routing-info" style="display: none;"></div>
-        <div class="mb-routing-instructions"> </div>
+</form>
+<div class="right">
+    <button id="resetRoute" class="btn btn-danger" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
+        <i class="fa-solid fa-rotate-left"></i>
+    </button>
+    <button id="swapPoints" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
+        <i class="fa-solid fa-shuffle"></i>
+    </button>
+    <button id="calculateRoute" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.getroute' | trans }}">
+        <i class="fa-regular fa-paper-plane"></i>
+    </button>
+    {% if allowIntermediatePoints %}
+        <button id="addPoint" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.addintermediate' | trans }}">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    {% endif %}
+</div>
+<div class="mb-routing-results">
+    <div class="mb-routing-info d-none"></div>
+    <div class="mb-routing-instructions"> </div>
+</div>
+<!-- Templates -->
+<template id="tplIntermediatePoint">
+    <div class="input-group mb-3 intermediatePoints">
+        <span class="input-group-text">
+            <i class="fa-solid fa-location-dot text-primary"></i>
+        </span>
+        <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.intermediate' | trans }}" autocomplete="off">
+        <button class="btn btn-outline-secondary clearField" type="button">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
-    <div class="mb-routing-error"></div>
-{% endblock routing_results %}
+</template>

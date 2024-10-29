@@ -4,8 +4,14 @@ namespace Mapbender\RoutingBundle\Component\Driver;
 
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OSRMDriver extends RoutingDriver {
+class OsrmDriver extends RoutingDriver {
 
 
     /**
@@ -74,7 +80,14 @@ class OSRMDriver extends RoutingDriver {
     protected $timeField = "duration";
     protected $timeScale = "s";
 
+    protected HttpClientInterface $httpClient;
 
+    public function __construct(HttpClientInterface $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
+    /*
     public function __construct(array $config, array $request, string $locale, TranslatorInterface $translator)
     {
         parent::__construct($locale,$translator);
@@ -98,37 +111,63 @@ class OSRMDriver extends RoutingDriver {
         }
 
     }
+    */
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function getRoute($requestParams, $configuration)
+    {
+        $osrmConfig = $configuration['routingConfig']['osrm'];
+        $query = $this->buildQuery($requestParams, $osrmConfig);
+        $response = $this->httpClient->request('GET', $query);
+        $response = $response->toArray(false);
 
+        return [
+            'type' => 'Feature',
+            'geometry' => [
+                'type' => $response['routes'][0]['geometry']['type'],
+                'coordinates' => $response['routes'][0]['geometry']['coordinates'],
+            ],
+            'properties' => [
+                'srs' => 'EPSG:4326',
+            ],
+        ];
+    }
+
+    private function buildQuery($requestParams, $config): string
+    {
+        $service = ($config['service']) ? $config['service'] : 'route';
+        $version = ($config['version']) ? $config['version'] : 'v1';
+        $profile = ($requestParams['vehicle']) ? $requestParams['vehicle'] : 'car';
+        $url = trim($config['url'], '/') . '/' . $service . '/' . $version . '/' . $profile . '/';
+        $coordinates = [];
+
+        foreach ($requestParams['points'] as $point) {
+            $coordinates[] = $point[0] . ',' .  $point[1];
+        }
+
+        $coordinateString = implode(';', $coordinates);
+        $queryParams = [
+            #'alternatives' => $this->alternatives,
+            #'steps' => $this->instructions,
+            'geometries' => 'geojson',
+            #'overview' => $this->overview,
+            #'annotations' => $this->annotations,
+            #'continue_straight' => 'default',
+        ];
+
+        return $url . $coordinateString . '?' . http_build_query($queryParams);
+    }
 
     public function getResponse() : array {
         # create URL-String from config & routing params
         $query = $this->createQuery();
         return self::getCurlResponse($query);
-    }
-
-    private function createQuery()
-    {
-
-        $continueStraight = 'default';
-        $geometries = "geojson";
-
-        $points = array();
-        foreach ($this->points as $pointPair) {
-            $points[] = $pointPair[0] . ',' .  $pointPair[1];
-        }
-        $graphPair = implode(';',$points);
-
-        $query = array ("alternatives" => $this->alternatives, "steps" => $this->instructions, "geometries" => $geometries,
-            "overview" => $this->overview, "annotations" => $this->annotations, "continue_straight" => $continueStraight);
-
-        #setQueryDataUrl
-        # GET /{service}/{version}/{profile}/{coordinates}[.{format}]?option=value&option=value
-        # GET /route/v1/{profile}/{coordinates}?alternatives={true|false|number}&steps={true|false}&geometries={polyline|polyline6|geojson}&overview={full|simplified|false}&annotations={true|false}
-
-        $queryUrl = rtrim($this->url,"/").'/'.$this->service.'/'.$this->version.'/'.$this->vehicle.'/'.$graphPair.'?'.http_build_query($query);
-        return $queryUrl;
-
     }
 
     public function processResponse($response) {

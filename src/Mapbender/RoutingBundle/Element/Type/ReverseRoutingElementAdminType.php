@@ -25,7 +25,7 @@ class ReverseRoutingElementAdminType extends AbstractType
 
         # reverseGeocoding Config
         $builder
-            ->add('revGeocodingDriver', ChoiceType::class, [
+            ->add('driver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.geocodeDriver',
                 'required' => false,
                 'empty_data' => 'sql',
@@ -34,33 +34,33 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'PostgreSQL' => 'sql',
                     # 'Solr' => 'solr',
                 ],
-                'property_path' => '[revGeocodingDriver]',
+                #'property_path' => '[revGeocodingDriver]',
             ])
-            ->add('revGeoConnection', TextType::class, [
+            ->add('connection', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.connection',
                 'required' => false,
                 'empty_data' => null,
-                'property_path' => '[revGeoConnection]',
+                #'property_path' => '[revGeoConnection]',
             ])
-            ->add('revTableName', TextType::class, [
+            ->add('table', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revTableName',
                 'required' => false,
                 'empty_data' => null,
-                'property_path' => '[revTableName]',
+                #'property_path' => '[revTableName]',
             ])
-            ->add('revRowGeoWay', TextType::class, [
+            ->add('rowGeoWay', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowGeoWay',
                 'required' => false,
                 'empty_data' => 'the_geom',
-                'property_path' => '[revRowGeoWay]',
+                #'property_path' => '[revRowGeoWay]',
             ])
-            ->add('revRowSearch', TextType::class, [
+            ->add('rowSearch', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowSearch',
                 'required' => false,
                 'empty_data' => null,
-                'property_path' => '[revRowSearch]',
+                #'property_path' => '[revRowSearch]',
             ])
-            ->add('revSearchBuffer', TextType::class, [
+            ->add('searchBuffer', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowSearchBuffer',
                 'required' => false,
                 'empty_data' => 50,
@@ -68,7 +68,7 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'type' => 'number',
                     'min' => 0,
                 ],
-                'property_path' => '[revSearchBuffer]',
+                #'property_path' => '[revSearchBuffer]',
             ])
         ;
     }
