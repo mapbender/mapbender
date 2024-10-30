@@ -27,11 +27,6 @@ mb:
           flippoints: Umkehren
           addintermediate: Punkt hinzufügen
           getroute: Los!
-      context:
-        btn:
-          start: Start setzen
-          intermediate: Zwischenpunkt setzen
-          destination: Ziel setzen
       info: benötigen
     backend:
       title: Routing
@@ -78,7 +73,6 @@ mb:
           autoSubmit: Route direkt ausgeben
           addIntermediatePoints: Zwischenpunkte erlauben
           advanced: Erweiterte Einstellungen
-          allowContextMenu: Kontextmenü aktivieren
           search: Suche aktivieren
           reverseGeocoding: Geokodierung aktivieren
           color: Linienfarbe

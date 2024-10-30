@@ -127,15 +127,43 @@ class OsrmDriver extends RoutingDriver {
         $response = $this->httpClient->request('GET', $query);
         $response = $response->toArray(false);
 
+        $formatDistance = function ($distance) {
+            if (floatval($distance) >= 1000) {
+                return round((floatval($distance) / 1000.0), 2) . ' KM';
+            }
+            return $distance . 'm';
+        };
+
+        $formatTime = function ($time) {
+            $time = gmdate('H:i', $time);
+            if (substr($time, 0, 2) == '00') {
+                $minutes = substr($time, 3, strlen($time));
+                return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . ' Min' : $minutes . ' Min';
+            }
+            return $time . ' Std.';
+        };
+
+        $destinationIndex = count($response['waypoints']) - 1;
+        $search = ['{start}', '{destination}', '{length}', '{time}'];
+        $replace = [
+            $response['waypoints'][0]['name'],
+            $response['waypoints'][$destinationIndex]['name'],
+            $formatDistance($response['routes'][0]['distance']),
+            $formatTime($response['routes'][0]['duration']),
+        ];
+
         return [
-            'type' => 'Feature',
-            'geometry' => [
-                'type' => $response['routes'][0]['geometry']['type'],
-                'coordinates' => $response['routes'][0]['geometry']['coordinates'],
+            'featureCollection' => [
+                'type' => 'Feature',
+                'geometry' => [
+                    'type' => $response['routes'][0]['geometry']['type'],
+                    'coordinates' => $response['routes'][0]['geometry']['coordinates'],
+                ],
+                'properties' => [
+                    'srs' => 'EPSG:4326',
+                ],
             ],
-            'properties' => [
-                'srs' => 'EPSG:4326',
-            ],
+            'routeInfo' => str_replace($search, $replace, $configuration['infoText']),
         ];
     }
 

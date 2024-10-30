@@ -3,3 +3,6 @@
         pointer-events: none;
     }
 }
+ul.ui-autocomplete.ui-front {
+    z-index: 1000 !important;
+}

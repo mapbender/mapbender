@@ -27,11 +27,6 @@ mb:
           flippoints: Reverse
           addintermediate: Add point
           getroute: Go!
-      context:
-        btn:
-          start: Set as start
-          intermediate: Set as intermediate
-          destination: Set as destination
       info: will take
     backend:
       title: Routing
@@ -78,7 +73,6 @@ mb:
           autoSubmit: Route immediately
           addIntermediatePoints: Allow intermediate points
           advanced: Advanced route settings
-          allowContextMenu: Activate context menu
           search: Enable Search
           reverseGeocoding: Reverse Geocoding
           color: Line color

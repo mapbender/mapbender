@@ -6,48 +6,36 @@
      * @namespace mapbender.mbRoutingElement
      */
     $.widget('mapbender.mbRoutingElement', {
-        options: {
-            styleLinearDistance: {
-                pointRadius: 0,
-                strokeLinecap : 'square',
-                strokeDashstyle: 'dash'
-            }
-        },
         map: null,
         olMap: null,
+        popup: null,
         routingLayer: null,
         markerLayer: null,
-        mapClickHandlerCoordinate: null,
         elementUrl: null,
-        pointsSet: {
-            start: false,
-            destination: false
-        },
         snappedWayPoint: null,
-        popup: null,
         routeData: null,
+        styleLinearDistance: {
+            pointRadius: 0,
+            strokeLinecap : 'square',
+            strokeDashstyle: 'dash'
+        },
 
         _create: function() {
             const self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 self._setup(mbMap);
-            }, function () {
+            }, () => {
                 Mapbender.checkTarget('mbRoutingElement');
             });
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             const searchDriver = this.options.searchConfig.driver;
             this.searchConfig = this.options.searchConfig[searchDriver];
-            console.log('options', this.options)
         },
 
         _setup: function(mbMap) {
-            var self = this;
+            const self = this;
             this.map = mbMap;
             this.olMap = mbMap.map.olMap;
-
-            if (!this.options.allowContextMenu) {
-                this._initializeContextMenu();
-            }
 
             if (this.options.autoSubmit) {
                 self._autoSubmit();
@@ -57,22 +45,8 @@
             this._trigger('ready');
         },
 
-        defaultAction: function (callback) {
-            this.open(callback);
-        },
-
-        /**
-         * open popoup dialog
-         * @param callback
-         * @returns {boolean}
-         */
         open: function(callback) {
             this.callback = callback ? callback : null;
-            const element = $(this.element);
-
-            if (this.options.type !== 'dialog') {
-                return false;
-            }
 
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
@@ -88,8 +62,7 @@
                     buttons: {}
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-                this.activate();
-                element.show();
+                $(this.element).show();
             }
         },
 
@@ -101,32 +74,18 @@
                 }
                 this.popup = null;
             }
-            this.deactivate();
-            this.callback ? this.callback.call() : this.callback = null;
-        },
-
-        activate: function() {
-            if (!this.options.allowContextMenu) {
-                this._initializeContextMenu();
-            }
-            this.markerLayer && this.markerLayer.setVisibility(true);
-            this.routingLayer && this.routingLayer.setVisibility(true);
-        },
-
-        deactivate: function() {
-            $(this.olMap.div).off('contextmenu');
-            this.markerLayer && this.markerLayer.setVisibility(false);
-            this.routingLayer && this.routingLayer.setVisibility(false);
+            this._clearRoute();
+            this.olMap.removeLayer(this.markerLayer);
+            this.olMap.removeLayer(this.routingLayer);
+            this.callback ? this.callback.call() : this.callback;
         },
 
         _initializeEventListeners: function() {
-            var self = this;
+            const self = this;
             this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
 
             // flush points when srs is changed
-            $(document).on('mbmapsrschanged', () => {
-                self._emptyPoints();
-            });
+            $(document).on('mbmapsrschanged', $.proxy(this._emptyPoints, this));
 
             // add point on click
             $('#addPoint', this.element).click(() => {
@@ -153,8 +112,8 @@
                 self._getRoute();
             });
 
-            this._findLocationInputFields().each((e) => {
-                $(e.target).on('focusout', self._handleInputFocusOut.bind(self));
+            $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
+                self.focusedInputField = e.target;
             });
 
             if (this.options.useSearch) {
@@ -184,164 +143,156 @@
                     self._reorderInputFields();
                 }
             }).disableSelection();
-
-            $('.mb-element-map canvas').on('contextmenu', (e) => {
-                e.preventDefault();
-                // built right mouseclick context menu here
-            });
-
-            if (self.element.closest('.tabContainer,.accordionContainer')) {
-                // set up marker layer visibility switching depending on "active" vs "inactive"
-                console.log(MapbenderContainerInfo);
-                /*
-                var _ = new MapbenderContainerInfo(self, {
-                    onactive: $.proxy(self.activate, self),
-                    oninactive: $.proxy(self.deactivate, self)
-                });
-                */
-            }
         },
 
-        /**
-         * On right click on map, coordinate needs to be extracted so the context menu can access it
-         * @todo: We store the click coords in the instance so the context menu can get them. This is pretty ugly.
-         *        Unfortunately, there doesn't seem to be a way to access the click event directly in the context menu
-         *        event handler. See docs at https://swisnl.github.io/jQuery-contextMenu/docs.html#events
-         *        Maybe we should open an issue to ask for access to the event in a future release.
-         */
+        _autoSubmit: function() {
+            const self = this;
+            $('.mb-routing-location-points', this.element).change(() => {
+                if (self._isInputValid()) {
+                    self._getRoute();
+                }
+            });
+        },
+
+        _isInputValid: function() {
+            let isValid = true;
+            $.each($(this).find('.mb-routing-location-points input'), (index, element) => {
+                isValid = isValid && ($(element).val() !== '');
+            });
+            return isValid;
+        },
+
         _mapClickHandler: function(event) {
-            // TODO ugly!!
-            this.mapClickHandlerCoordinate = event.coordinate;
-        },
+            if (this.focusedInputField) {
+                let coordinates = event.coordinate.toString();
+                $(this.focusedInputField).val(coordinates);
+                const regex = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
 
-        _findLocationInputFields: function() {
-            return $('.mb-routing-location-points .input-group input', this.element);
-        },
+                if (regex.test(coordinates)) {
+                    coordinates = coordinates.split(',');
+                    coordinates[0] = parseFloat(coordinates[0].trim());
+                    coordinates[1] = parseFloat(coordinates[1].trim());
+                    this._addPointWithMarker(this.focusedInputField, coordinates);
+                    const source = this.markerLayer.getSource();
+                    const extent = source.getExtent();
 
-        _initializeContextMenu: function() {
-            /*
-            var self = this;
-            $(this.olMap.div).contextMenu({
-                selector: 'div',
-                events: {
-                    'show': function(options) {
-                        // suppress context menu, if dialog is currently not open.
-                        if (self.options.type === 'dialog' && !self.popup) {
-                            return false;
-
-                        // suppress context menu, if element is currently not activated
-                        } else if (self.options.type === 'element' && !self._isActive()) {
-                            return false;
-                        }
+                    if (source.getFeatures().length > 1) {
+                        this.olMap.getView().fit(extent, {
+                            padding: new Array(4).fill(this.options.buffer)
+                        });
                     }
-                },
-                items: this._createContextMenuItems()
+                } else {
+                    Mapbender.error('Invalid coordinates provided!')
+                }
+            }
+        },
+
+        _emptyPoints: function() {
+            const self = this;
+            const $inputs = this._findLocationInputFields();
+            $.each($inputs, (idx, input) => {
+                self._removeMarker(input);
+                $(input).val('').data('coords', null);
             });
-            */
         },
 
-        _createContextMenuItems: function() {
-            var items = {},
-                self = this;
-            var start = {
-                name: Mapbender.trans('mb.routing.frontend.context.btn.start'),
-                callback: function(){
-                    var inputEl = $('.input-wrapper.start input', self.element);
-                    self._addPointToInput(inputEl, self.mapClickHandlerCoordinate);
-                }
-            };
-            var intermediate = {
-                name: Mapbender.trans('mb.routing.frontend.context.btn.intermediate'),
-                callback: function(){
-                    var inputEl = self._addInputField();
-                    self._addPointToInput(inputEl, self.mapClickHandlerCoordinate);
-                },
-                disabled: function (){
-                    return ($(".start > input", self.element).val() === '' ||
-                        $(".destination > input", self.element).val() === '');
-                }
-            };
-            var destination = {
-                name: Mapbender.trans('mb.routing.frontend.context.btn.destination'),
-                callback: function(){
-                    var inputEl = $('.input-wrapper.destination input', self.element);
-                    self._addPointToInput(inputEl, self.mapClickHandlerCoordinate);
-                }
-            };
-            if (this.options.allowIntermediatePoints) {
-                items = {
-                    'start': start,
-                    'sep1': '---------',
-                    'intermediate': intermediate,
-                    'sep2': '---------',
-                    'destination': destination
-                };
-                return items;
-            }
-            items = {
-                'start': start,
-                'sep1': '---------',
-                'destination': destination
-            };
-            return items;
+        _addInputField: function() {
+            const htmlIntermediatePoint = $($('#tplIntermediatePoint').html());
+            const lastInputElement = $('.mb-routing-location-points div:last-child', this.element);
+            htmlIntermediatePoint.insertBefore(lastInputElement);
         },
 
-        _handleInputFocusOut: function () {
-            var inputVal = $(this).val();
-            var coordArray = null;
-            var coordinates = null;
-            var $inputEl = null;
-            var patt = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
-            var extent = this.olMap.getView().calculateExtent();
-            // var extent = self.olMap.getMaxExtent().clone();
-
-            if (this._isValidGPSCoordinates(inputVal)) {
-                coordArray = $(this).val().split(/[\s,;]+/);
-                var x = coordArray[0].trim();
-                var y = coordArray[1].trim();
-                var destProj = this.olMap.getProjectionObject();
-                var sourceProj = new OpenLayers.Projection('EPSG:4326');
-                coordinates = new OpenLayers.LonLat(y,x);
-                coordinates.transform(sourceProj, destProj);
-                extent = extent.transform(destProj, sourceProj);
-                // check if coordinates are inside max extent
-                if (x > extent['top'] || x < extent['bottom'] || y > extent['right'] || y < extent['left']) {
-                    console.warn('Input: Coordinates out of bounds');
-                    return false;
-                }
-
-                $inputEl = $(this); // current Status
-                this._addPointToInput($inputEl, coordinates);
-
-                if(this.markerLayer.features.length > 1) {
-                    this.olMap.zoomToExtent(this.markerLayer.getDataExtent());
-                    return true;
-                }
-
-                this.olMap.setCenter(coordArray);
-            } else if (patt.test(inputVal)) {
-                coordArray = $(this).val().split(',');
-                coordinates = {
-                    lon: parseFloat(coordArray[0].trim()),
-                    lat: parseFloat(coordArray[1].trim())
-                };
-
-                // check if coordinates are inside max extent
-                if (coordinates.lat > extent['top'] || coordinates.lat < extent['bottom'] || coordinates.lon > extent['right'] || coordinates.lon < extent['left']) {
-                    console.warn('Input: Coordinates out of bounds');
-                    return false;
-                }
-
-                $inputEl = $(this); // current Status
-                this._addPointToInput($inputEl, coordinates);
-
-                if(this.markerLayer.features.length > 1) {
-                    this.olMap.zoomToExtent(this.markerLayer.getDataExtent());
-                    return true;
-                }
-
-                this.olMap.setCenter(coordArray);
+        _removeInputWrapper: function(btn) {
+            const self = this;
+            const inputGroup = $(btn).parent();
+            let inputField = $('input', inputGroup);
+            inputField.val('');
+            this._removeMarker(inputField);
+            if (this._findLocationInputFields().length > 2) {
+                inputGroup.remove();
+                self._reorderInputFields();
             }
+        },
+
+        _clearRoute: function() {
+            if (this.markerLayer !== null) {
+                this.markerLayer.getSource().clear();
+            }
+            if (this.routingLayer !== null) {
+                this.routingLayer.getSource().clear();
+            }
+            this._emptyPoints();
+            $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
+            $('.mb-routing-info', this.element).addClass('d-none').html('');
+            return true;
+        },
+
+        _flipPoints: function() {
+            const form = $('.mb-routing-location-points', this.element);
+            const inputFields = form.children('div');
+            form.append(inputFields.get().reverse());
+            this._reorderInputFields();
+        },
+
+        _getRoute: function() {
+            const self = this;
+            const requestProj = 'EPSG:4326';
+            const mapProj = this.olMap.getView().getProjection().getCode();
+            let points = this._getRoutingPoints();
+
+            if (!points) {
+                console.warn('No valid points for routing.');
+                return false;
+            }
+
+            if (requestProj !== mapProj) {
+                points = points.map((point) => {
+                    return self._transformCoordinates(point, mapProj, requestProj);
+                });
+            }
+
+            this.setSpinnerVisible(true);
+            $.ajax({
+                type: 'POST',
+                url: this.elementUrl + 'getRoute',
+                data: {
+                    'vehicle': $('input[name=vehicle]:checked', this.element).val(),
+                    'points': points,
+                    'srs': mapProj
+                }
+            }).fail(() =>  {
+                Mapbender.error('route service is not available');
+                self.setSpinnerVisible(false);
+            }).done((response) => {
+                if (response.error) {
+                    Mapbender.error(response.error.message);
+                } else {
+                    self._renderRoute(response.featureCollection);
+                    self._displayRouteInfo(response.routeInfo);
+                    self.setSpinnerVisible(false);
+                    return;
+
+                    var routeData = response.routeData;
+                    self.routeData = routeData;
+                    var srs = parseInt(routeData.crs.properties.name.split("::")[1]);
+                    var respProj =  srs > 0 ? new OpenLayers.Projection('EPSG:'+srs) : requestProj.projCode;
+
+                    // Check requestProj and Transform LineGeometry array
+                    // ol2 can not transform whole geometry objects therefore this way.
+                    if (mapProj.projCode !== respProj.projCode) {
+                        self._transformFeatures(routeData,respProj,mapProj);
+                    }
+
+                    var routeStyle = self._getRouteStyle();
+                    self._renderRoute(routeData, routeStyle);
+                    if (routeData.features[0].properties.instructions) {
+                        self._parseRouteInstructions(routeData.features[0].properties.instructions);
+                    }
+                    var routeInfo = self._parseRouteData(routeData.features[0].properties);
+                    self._displayRouteInfo(routeInfo);
+                }
+                self.setSpinnerVisible(false);
+            });
         },
 
         _handleAutocompleteSource: function (request, _response) {
@@ -409,90 +360,71 @@
             return false;
         },
 
-        _isActive: function() {
-            var $sidebarContainer = $(this.element).closest('.container-accordion,.container');
-            if ($sidebarContainer) {
-                return $sidebarContainer.hasClass('active');
-            } else {
-                console.warn("Warning: _mapbender.mbRoutingElement._isActive not implemented for current container; only supports 'accordion' or 'tabs' style sidebar");
-                return true;
+        _reorderInputFields: function() {
+            const self = this;
+            let inputFields = $('.mb-routing-location-points > div', this.element);
+            inputFields.removeClass('intermediatePoints');
+            inputFields.first().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-success');
+            inputFields.last().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-danger');
+            $('input', inputFields.first()).attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.start'));
+            $('input', inputFields.last()).attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.destination'));
+            // update intermediate points, if any
+            inputFields.slice(1, -1).each((idx, inputField) => {
+                const $el = $(inputField);
+                const $input = $('input', $el);
+                $el.addClass('intermediatePoints');
+                $el.find('.fa-location-dot').removeClass('text-success text-danger').addClass('text-primary');
+                $input.attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.intermediate'));
+                let marker = $input.data('marker');
+                if (marker) {
+                    marker.setStyle(self._getMarkerStyle('intermediateIcon'));
+                }
+            });
+            // intermediate markers can keep their styling, but start end destination markers have to switch
+            const startMarker = $('input', inputFields.first()).data('marker');
+            const destMarker = $('input', inputFields.last()).data('marker');
+            if (startMarker) {
+                startMarker.setStyle(self._getMarkerStyle('startIcon'));
+            }
+            if (destMarker) {
+                destMarker.setStyle(self._getMarkerStyle('destinationIcon'));
+            }
+            if (this.options.autoSubmit) {
+                self._getRoute();
             }
         },
 
-        _addPointToInput: function(inputEl, coordinates) {
-            var self = this;
-
-            if (self.options.useReverseGeocoding) {
-                var p = {
-                    name: "point",
+        _addPointWithMarker: function(inputEl, coordinates) {
+            if (this.options.useReverseGeocoding) {
+                const p = {
+                    name: 'point',
                     value: [coordinates.lon,coordinates.lat]
                 };
-
-                self._getRevGeocode([p]).then(function(response) {
-                    var resultLabel = self._checkResultLabel(coordinates,response);
-                    $(inputEl).val(resultLabel).data('coords', [coordinates.lon,coordinates.lat]).change();
+                this._getRevGeocode([p]).then(function(response) {
+                    const resultLabel = this._checkResultLabel(coordinates, response);
+                    $(inputEl).val(resultLabel).data('coords', coordinates).change();
                 });
-
-                self._createMarker(inputEl, coordinates);
+                this._createMarker(inputEl, coordinates);
 
             } else {
-
-                $(inputEl).val(Number((coordinates.lon).toFixed(2)) + "," + Number((coordinates.lat).toFixed(2))).data('coords', [coordinates.lon, coordinates.lat]).change();
-                self._createMarker(inputEl, coordinates);
-            }
-        },
-
-        _createMarker: function(inputElement, feature) {
-            this._createMarkerLayer();
-            const inputIndex = $(inputElement).parent().index();
-            const inputLength = this._findLocationInputFields().length;
-            let style = {};
-
-            if (inputIndex === 0) {
-                style = this._getMarkerStyle('startIcon');
-            } else if (inputIndex === inputLength - 1) {
-                style = this._getMarkerStyle('destinationIcon');
-            } else {
-                style = this._getMarkerStyle('intermediateIcon');
-            }
-
-            feature.setStyle(style);
-            let previousMarker = $(inputElement).data('marker');
-
-            if (previousMarker) {
-                this.markerLayer.getSource().removeFeature(previousMarker);
-            }
-
-            $(inputElement).data('marker', feature);
-            this.markerLayer.getSource().addFeature(feature);
-        },
-
-        _createMarkerLayer: function() {
-            if (!this.markerLayer) {
-                this.markerLayer = new ol.layer.Vector({
-                    source: new ol.source.Vector(),
+                const feature = new ol.Feature({
+                    geometry: new ol.geom.Point(coordinates)
                 });
-                this.olMap.addLayer(this.markerLayer);
-                // Make features draggable
-                /*
-                self.olMap.addControl(new OpenLayers.Control.DragFeature(self.markerLayer, {
-                    autoActivate: true,
-                    onComplete: function (feature) {
-                        // Check ReversGeocode and change features attribute
-                        if (self._revGeocode(feature) === false) {
-                            $(feature.attributes.input)
-                                .val(Number(feature.geometry.x).toFixed(2) + "," + Number(feature.geometry.y).toFixed(2))
-                                .data('coords', [feature.geometry.x, feature.geometry.y])
-                                .change();
-                        }
-                    }
-                }));
-                */
+                $(inputEl).data('coords', coordinates).change();
+                this._createMarker(inputEl, feature);
             }
         },
 
-        _transformCoordinates: function(coordinatePair, srcProj, destinationProj) {
-            return ol.proj.transform(coordinatePair, srcProj, destinationProj);
+        _findLocationInputFields: function() {
+            return $('.mb-routing-location-points .input-group input', this.element);
+        },
+
+        _removeMarker: function(inputEl) {
+            const marker = $(inputEl).data('marker');
+            if (marker && this.markerLayer) {
+                this.markerLayer.getSource().removeFeature(marker);
+            }
+            $(inputEl).data('marker', null);
         },
 
         _getRoutingPoints: function() {
@@ -520,68 +452,17 @@
             }
         },
 
-        _getRouteStyle: function() {
-            return this.options.styleMap.route;
+        _transformCoordinates: function(coordinatePair, srcProj, destinationProj) {
+            return ol.proj.transform(coordinatePair, srcProj, destinationProj);
         },
 
-        _getRoute: function() {
-            const self = this;
-            const requestProj = 'EPSG:4326';
-            const mapProj = this.olMap.getView().getProjection().getCode();
-            let points = this._getRoutingPoints();
-
-            if (!points) {
-                console.warn('No valid points for routing.');
-                return false;
+        setSpinnerVisible: function(setVisible){
+            let calculateRouteBtn = $('#calculateRoute i');
+            if (setVisible) {
+                calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
+            } else {
+                calculateRouteBtn.attr('class', 'fa-regular fa-paper-plane').parent().prop('disabled', false);
             }
-
-            if (requestProj !== mapProj) {
-                points = points.map(function(point) {
-                    return self._transformCoordinates(point, mapProj, requestProj);
-                });
-            }
-
-            this.setSpinnerVisible(true);
-            $.ajax({
-                type: 'POST',
-                url: this.elementUrl + 'getRoute',
-                data: {
-                    'vehicle': $('input[name=vehicle]:checked', this.element).val(),
-                    'points': points,
-                    'srs': mapProj
-                }
-            }).fail(function () {
-                Mapbender.error('route service is not available');
-                self.setSpinnerVisible(false);
-            }).done(function (response) {
-                if (response.error) {
-                    Mapbender.error(response.error.message);
-                } else {
-                    self._renderRoute(response);
-                    self.setSpinnerVisible(false);
-                    return;
-
-                    var routeData = response.routeData;
-                    self.routeData = routeData;
-                    var srs = parseInt(routeData.crs.properties.name.split("::")[1]);
-                    var respProj =  srs > 0 ? new OpenLayers.Projection('EPSG:'+srs) : requestProj.projCode;
-
-                    // Check requestProj and Transform LineGeometry array
-                    // ol2 can not transform whole geometry objects therefore this way.
-                    if (mapProj.projCode !== respProj.projCode) {
-                        self._transformFeatures(routeData,respProj,mapProj);
-                    }
-
-                    var routeStyle = self._getRouteStyle();
-                    self._renderRoute(routeData, routeStyle);
-                    if (routeData.features[0].properties.instructions) {
-                        self._parseRouteInstructions(routeData.features[0].properties.instructions);
-                    }
-                    var routeInfo = self._parseRouteData(routeData.features[0].properties);
-                    self._displayRouteInfo(routeInfo);
-                }
-                self.setSpinnerVisible(false);
-            });
         },
 
         _renderRoute: function(response) {
@@ -638,6 +519,73 @@
             this.olMap.getView().fit(extent, {
                 padding: new Array(4).fill(this.options.buffer)
             });
+        },
+
+        _createMarker: function(inputElement, feature) {
+            this._createMarkerLayer();
+            const inputIndex = $(inputElement).parent().index();
+            const inputLength = this._findLocationInputFields().length;
+            let style = {};
+
+            if (inputIndex === 0) {
+                style = this._getMarkerStyle('startIcon');
+            } else if (inputIndex === inputLength - 1) {
+                style = this._getMarkerStyle('destinationIcon');
+            } else {
+                style = this._getMarkerStyle('intermediateIcon');
+            }
+
+            feature.setStyle(style);
+            let previousMarker = $(inputElement).data('marker');
+
+            if (previousMarker) {
+                this.markerLayer.getSource().removeFeature(previousMarker);
+            }
+
+            $(inputElement).data('marker', feature);
+            this.markerLayer.getSource().addFeature(feature);
+        },
+
+        _createMarkerLayer: function() {
+            if (!this.markerLayer) {
+                this.markerLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector(),
+                });
+                this.olMap.addLayer(this.markerLayer);
+            }
+        },
+
+        _getMarkerStyle: function(marker) {
+            const styleConfig = this.options.routingStyles[marker];
+            if (!styleConfig.imagePath) {
+                const msg = Mapbender.trans('mb.routing.exception.main.icon');
+                Mapbender.error(msg);
+                return null;
+            }
+            let options = {
+                src: styleConfig.imagePath,
+            };
+            if (styleConfig.imageSize) {
+                const size = styleConfig.imageSize.split(',');
+                options['width'] = Number(size[0]);
+                options['height'] = Number(size[1]);
+            }
+            if (styleConfig.imageOffset) {
+                const offset = styleConfig.imageOffset.split(',');
+                // options['anchor'] = [Number(offset[0]), Number(offset[1])];
+            }
+            return new ol.style.Style({
+                image: new ol.style.Icon(options),
+            });
+        },
+
+        _getRouteStyle: function() {
+            return this.options.styleMap.route;
+        },
+
+        _displayRouteInfo: function(routeInfo) {
+            console.log(routeInfo)
+            $('.mb-routing-info', this.element).html(routeInfo).removeClass('d-none');
         },
 
         _transformFeatures: function(routeData,respProj,mapProj) {
@@ -781,18 +729,6 @@
             return hrs === 0 ? mins + ' min' : hrs + ' h ' + mins + ' min ';
         },
 
-        _displayRouteInfo: function(routeInfo) {
-            var $routeInfoDiv = $(".mb-routing-info", this.element),
-                infoText = this.options.infoText;
-            infoText = infoText.replace(/{start}|{destination}|{time}|{length}/g,
-                function(matched) {
-                    matched = matched.replace(/{|}/gi, '');
-                    return routeInfo[matched];
-                });
-            $routeInfoDiv.html("<p>" + infoText + "<p/>").show();
-            return true;
-        },
-
         _transformLineGeometry: function(lineGeometry, inputProj, mapProj) {
             var transformedLineGeometry = [];
             var self = this;
@@ -811,145 +747,6 @@
                 transformedLineGeometry.push(l);
             });
             return transformedLineGeometry;
-        },
-
-        _addInputField: function() {
-            const htmlIntermediatePoint = $($('#tplIntermediatePoint').html());
-            const lastInputElement = $('.mb-routing-location-points div:last-child', this.element);
-            htmlIntermediatePoint.insertBefore(lastInputElement);
-        },
-
-        _removeInputWrapper: function(btn) {
-            const self = this;
-            const inputGroup = $(btn).parent();
-            let inputField = $('input', inputGroup);
-            inputField.val('');
-            this._removeMarker(inputField);
-            if (this._findLocationInputFields().length > 2) {
-                inputGroup.remove();
-                self._reorderInputFields();
-            }
-        },
-
-        _removeMarker: function(inputEl) {
-            const marker = $(inputEl).data('marker');
-            if (marker && this.markerLayer) {
-                this.markerLayer.getSource().removeFeature(marker);
-            }
-            $(inputEl).data('marker', null);
-        },
-
-        /**
-         * TODO implement coordinate AND geometry transformation
-         */
-        _emptyPoints: function() {
-            const self = this;
-            const $inputs = this._findLocationInputFields();
-            $.each($inputs, (idx, input) => {
-                self._removeMarker(input);
-                $(input).val('').data('coords', null);
-            });
-        },
-
-        _flipPoints: function() {
-            const form = $('.mb-routing-location-points', this.element);
-            const inputFields = form.children('div');
-            form.append(inputFields.get().reverse());
-            this._reorderInputFields();
-        },
-
-        _reorderInputFields: function() {
-            const self = this;
-            let inputFields = $('.mb-routing-location-points > div', this.element);
-            inputFields.removeClass('intermediatePoints');
-            inputFields.first().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-success');
-            inputFields.last().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-danger');
-            $('input', inputFields.first()).attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.start'));
-            $('input', inputFields.last()).attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.destination'));
-            // update intermediate points, if any
-            inputFields.slice(1, -1).each((idx, inputField) => {
-                const $el = $(inputField);
-                const $input = $('input', $el);
-                $el.addClass('intermediatePoints');
-                $el.find('.fa-location-dot').removeClass('text-success text-danger').addClass('text-primary');
-                $input.attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.intermediate'));
-                let marker = $input.data('marker');
-                if (marker) {
-                    marker.setStyle(self._getMarkerStyle('intermediateIcon'));
-                }
-            });
-            // intermediate markers can keep their styling, but start end destination markers have to switch
-            const startMarker = $('input', inputFields.first()).data('marker');
-            const destMarker = $('input', inputFields.last()).data('marker');
-            if (startMarker) {
-                startMarker.setStyle(self._getMarkerStyle('startIcon'));
-            }
-            if (destMarker) {
-                destMarker.setStyle(self._getMarkerStyle('destinationIcon'));
-            }
-            if (this.options.autoSubmit) {
-                self._getRoute();
-            }
-        },
-
-        _getMarkerStyle: function(marker) {
-            const styleConfig = this.options.routingStyles[marker];
-            if (!styleConfig.imagePath) {
-                const msg = Mapbender.trans('mb.routing.exception.main.icon');
-                Mapbender.error(msg);
-                return null;
-            }
-            let options = {
-                src: styleConfig.imagePath,
-            };
-            if (styleConfig.imageSize) {
-                const size = styleConfig.imageSize.split(',');
-                options['width'] = Number(size[0]);
-                options['height'] = Number(size[1]);
-            }
-            if (styleConfig.imageOffset) {
-                const offset = styleConfig.imageOffset.split(',');
-                // options['anchor'] = [Number(offset[0]), Number(offset[1])];
-            }
-            return new ol.style.Style({
-                image: new ol.style.Icon(options),
-            });
-        },
-
-        _clearRoute: function() {
-            if (this.markerLayer !== null) {
-                this.markerLayer.getSource().clear();
-            }
-            if (this.routingLayer !== null) {
-                this.routingLayer.getSource().clear();
-            }
-            this._emptyPoints();
-            $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
-            $('.mb-routing-info', this.element).hide().html('');
-            return true;
-        },
-
-        _isInputValid: function() {
-            var isValid = true;
-            $.each($(this).find('input.input'), function(index, element){
-                isValid = isValid && ($(element).val() !== '');
-                console.log(isValid);
-            });
-            return isValid;
-        },
-
-        _autoSubmit: function() {
-            var self = this;
-            $('.mb-routing-location-points', this.element).change(function() {
-                if (self._isInputValid()) {
-                    self._getRoute();
-                }
-            });
-        },
-
-        // TODO implement "drag marker on map to define start point"-feature
-        _dragStartMarker: function(){
-            console.log('drag started');
         },
 
         _revGeocode: function (feature){
@@ -986,19 +783,6 @@
                     srsId: self.olMap.getProjectionObject().projCode
                 }
             });
-        },
-
-        _isValidGPSCoordinates:function(coordinates){
-            // Breite, Länge = latitude, longitude = lat, lon
-            var args = coordinates.split(/[\s,;]+/);
-            var lat = new RegExp(/^(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)$/);
-            var lon = new RegExp(/^(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)$/);
-
-            if (isNaN(args[0]) || isNaN(args[1])) {
-                return false;
-            }
-
-            return lat.test(args[0].trim()) === true && lon.test(args[1].trim()) === true;
         },
 
         _getAirLineFeature: function (response, style) {
@@ -1055,15 +839,6 @@
             }
 
             return resultLabel;
-        },
-
-        setSpinnerVisible: function(setVisible){
-            let calculateRouteBtn = $('#calculateRoute i');
-            if (setVisible) {
-                calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
-            } else {
-                calculateRouteBtn.attr('class', 'fa-regular fa-paper-plane').parent().prop('disabled', false);
-            }
         }
     });
 })(jQuery);

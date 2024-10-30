@@ -79,8 +79,8 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
                 # "/components/jquery-ui/ui/widgets/autocomplete.js",
             ],
             'css' => [
+                '@MapbenderRoutingBundle/Resources/public/sass/mapbender.element.routing.scss',
                 '@MapbenderRoutingBundle/Resources/public/sass/element/jquery-ui.css',
-                '@MapbenderRoutingBundle/Resources/public/sass//mapbender.element.routing.scss',
                 # '@MapbenderRoutingBundle/Resources/public/sass/element/routing.scss',
                 # '/components/jquery-context-menu/src/jquery.contextMenu.css'),
             ],
@@ -102,7 +102,6 @@ class RoutingElement extends AbstractElementService implements ConfigMigrationIn
             'advancedSettings' => false,
             'autoSubmit' => false,
             'allowIntermediatePoints' => false,
-            'allowContextMenu' => false,
             'useSearch' => false,
             'useReverseGeocoding' => false,
             'buffer' => 0,

@@ -39,11 +39,6 @@ class RoutingElementAdminType extends AbstractType
                 #'property_path' => '[allowIntermediatePoints]',
                 'label' => 'mb.routing.backend.dialog.label.addIntermediatePoints',
             ])
-            ->add('allowContextMenu', CheckboxType::class, [
-                'required' => false,
-                #'property_path' => '[allowContextMenu]',
-                'label' => 'mb.routing.backend.dialog.label.allowContextMenu',
-            ])
             ->add('useSearch', CheckboxType::class, [
                 'required' => false,
                 #'property_path' => '[addSearch]',
