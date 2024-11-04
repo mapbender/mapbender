@@ -489,13 +489,10 @@
             var $selectLayerStyles = $('.select-layer-styles', menu);
             $selectLayerStyles.data('layer', layer);
             if ($availableStyles.length && $selectLayerStyles.length) {
-                if(layer.options.style.length){
-                    $selectLayerStyles.append(new Option(layer.options.style));
-                }
+                var selected = false;
                 for(let i = 0; i < $availableStyles.length; i++){
-                    if($availableStyles[i].name !== layer.options.style) {
-                        $selectLayerStyles.append(new Option($availableStyles[i].title), $availableStyles[i].name);
-                    }
+                    selected = $availableStyles[i].name === layer.options.style;
+                    $selectLayerStyles.append(new Option($availableStyles[i].title, $availableStyles[i].name, false, selected));
                 }
             } else {
                 $('.layer-styles', menu).remove();
