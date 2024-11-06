@@ -2,12 +2,12 @@
 
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
-use DateTime;
+use Symfony\Component\Translation\TranslatorInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
+use DateTime;
 use Exception;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PgRoutingDriver extends RoutingDriver
 {
@@ -71,11 +71,11 @@ class PgRoutingDriver extends RoutingDriver
 
     protected $srid;
 
-    protected HttpClientInterface $httpClient;
+    protected DoctrineRegistry $doctrine;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(DoctrineRegistry $doctrine)
     {
-        $this->httpClient = $httpClient;
+        $this->doctrine = $doctrine;
         /*
         parent::__construct($locale, $translator);
 

@@ -26,7 +26,8 @@ class ReverseRoutingElementAdminType extends AbstractType
         $builder
             ->add('driver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.geocodeDriver',
-                'required' => false,
+                'required' => true,
+                'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
                 'empty_data' => 'sql',
                 'choices' => [
                     # 'Nominatim' => 'nominatim',

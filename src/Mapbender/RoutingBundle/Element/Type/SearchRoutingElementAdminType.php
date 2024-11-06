@@ -26,7 +26,8 @@ class SearchRoutingElementAdminType extends AbstractType
         $builder
             ->add('driver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.shDriver',
-                'required' => false,
+                'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
+                'required' => true,
                 'choices' => [
                     'Solr' => 'solr',
                     # 'PostgreSQL' => 'sql',

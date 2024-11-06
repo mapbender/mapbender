@@ -20,15 +20,15 @@ use Mapbender\RoutingBundle\Component\ReverseGeocodingHandler;
  */
 class RoutingElement extends AbstractElementService
 {
-    protected SearchHandler $searchHandler;
-
     protected RoutingHandler $routingHandler;
+
+    protected SearchHandler $searchHandler;
 
     protected ReverseGeocodingHandler $reverseGeocodingHandler;
 
-    public function __construct(SearchHandler $searchHandler, RoutingHandler $routingHandler, ReverseGeocodingHandler $reverseGeocodingHandler) {
-        $this->searchHandler = $searchHandler;
+    public function __construct(RoutingHandler $routingHandler, SearchHandler $searchHandler, ReverseGeocodingHandler $reverseGeocodingHandler) {
         $this->routingHandler = $routingHandler;
+        $this->searchHandler = $searchHandler;
         $this->reverseGeocodingHandler = $reverseGeocodingHandler;
     }
 

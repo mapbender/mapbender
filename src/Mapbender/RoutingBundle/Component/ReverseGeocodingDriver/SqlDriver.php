@@ -1,14 +1,16 @@
 <?php
+
 namespace Mapbender\RoutingBundle\Component\ReverseGeocodingDriver;
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Connection;
+use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 use Mapbender\DataSourceBundle\Component\Drivers\Interfaces\Geographic;
 use Mapbender\DataSourceBundle\Component\Drivers\Interfaces\Manageble;
 use Mapbender\DataSourceBundle\Component\Drivers\Interfaces\Routable;
 use Mapbender\DataSourceBundle\Component\Drivers\PostgreSQL;
-use Doctrine\DBAL\Connection;
 
-class SqlDriver extends PostgreSQL implements Manageble, Routable, Geographic
+class SqlDriver extends PostgreSQL implements Geographic
 {
     /**
      * @var string
@@ -65,14 +67,12 @@ class SqlDriver extends PostgreSQL implements Manageble, Routable, Geographic
      */
     protected $searchBuffer = 50;
 
-    /**
-     * revGeocodeDriver constructor.
-     * @param array $config
-     * @param array $requestParams
-     * @param $connection
-     */
-    public function __construct($config,$requestParams,$connection)
+    protected DoctrineRegistry $doctrine;
+
+    public function __construct(DoctrineRegistry $doctrine)
     {
+        $this->doctrine = $doctrine;
+        /*
         $this->geometryColumn = $config['geometryColumn'];
         $this->tableName = $config['tableName'];
         $this->searchColumn = $config['searchColumn'];
@@ -80,7 +80,7 @@ class SqlDriver extends PostgreSQL implements Manageble, Routable, Geographic
         $this->viewSrid = $requestParams['srsId'];
         $this->coordinates = $requestParams['coordinate'];
         $this->connection = $connection;
-
+        */
     }
 
 

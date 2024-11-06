@@ -138,7 +138,7 @@ mb:
             result_buffer: Zoom buffer (m)
             result_minscale: Zoom buffer min.
             result_maxscale: Zoom buffer max.
-            result_icon_url: Icon pfad
+            result_icon_url: Icon path
             result_icon_offset: Icon offset (x,y)
           reverse:
             label:

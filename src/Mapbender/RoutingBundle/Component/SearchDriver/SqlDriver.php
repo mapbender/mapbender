@@ -2,15 +2,15 @@
 
 namespace Mapbender\RoutingBundle\Component\SearchDriver;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 
 class SqlDriver
 {
-    protected HttpClientInterface $httpClient;
+    protected DoctrineRegistry $doctrine;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(DoctrineRegistry $doctrine)
     {
-        $this->httpClient = $httpClient;
+        $this->doctrine = $doctrine;
     }
 
     public function search($requestParams, $searchConfig)
