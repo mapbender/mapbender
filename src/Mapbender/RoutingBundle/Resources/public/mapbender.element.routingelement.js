@@ -12,7 +12,7 @@
         routingLayer: null,
         markerLayer: null,
         elementUrl: null,
-        snappedWayPoint: null,
+        isActive: false,
         routeData: null,
         styleLinearDistance: {
             pointRadius: 0,
@@ -47,6 +47,7 @@
 
         open: function(callback) {
             this.callback = callback ? callback : null;
+            this.isActive = true;
 
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
@@ -75,9 +76,18 @@
                 this.popup = null;
             }
             this._clearRoute();
+            this.isActive = false;
             this.olMap.removeLayer(this.markerLayer);
             this.olMap.removeLayer(this.routingLayer);
             this.callback ? this.callback.call() : this.callback;
+        },
+
+        reveal: function () {
+            this.isActive = true;
+        },
+
+        hide: function () {
+            this.isActive = false;
         },
 
         _initializeEventListeners: function() {
@@ -163,7 +173,7 @@
         },
 
         _mapClickHandler: function(event) {
-            if (this.focusedInputField) {
+            if (this.isActive && this.focusedInputField) {
                 let coordinates = event.coordinate.toString();
                 $(this.focusedInputField).val(coordinates);
                 const regex = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
@@ -467,18 +477,11 @@
 
         _renderRoute: function(response) {
             if (!this.routingLayer) {
-                const hex2rgba = function (hex, opacity) {
-                    const r = parseInt(hex.substring(1, 3), 16);
-                    const g = parseInt(hex.substring(3, 5), 16);
-                    const b = parseInt(hex.substring(5, 7), 16);
-                    return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
-                };
                 const styleConfig = this.options.routingStyles;
                 const lineColor = styleConfig.lineColor;
                 const lineWidth = styleConfig.lineWidth;
-                const lineOpacity = styleConfig.lineOpacity;
                 const fill = new ol.style.Fill({
-                    color: hex2rgba(lineColor, lineOpacity),
+                    color: lineColor,
                 });
                 const stroke = new ol.style.Stroke({
                     color: lineColor,
@@ -584,7 +587,6 @@
         },
 
         _displayRouteInfo: function(routeInfo) {
-            console.log(routeInfo)
             $('.mb-routing-info', this.element).html(routeInfo).removeClass('d-none');
         },
 
@@ -657,13 +659,6 @@
         },
 
         _parseRouteData: function(properties) {
-            // passes parameters to _get Snapped WayPoint otherwise no parameter
-            if (properties.waypoints){
-                this._setSnappedWayPoint(properties.waypoints);
-            }else{
-                this._setSnappedWayPoint();
-            }
-
             var routeInfo = {
                     length: properties.length,
                     lengthUnit: properties.lengthUnit,
@@ -680,53 +675,6 @@
             routeInfo.length = (routeInfo.length < 1000) ? Math.round(routeInfo.length * 100) / 100 + 'm' :  Math.round(routeInfo.length/1000*100) /100 + 'km';
 
             return routeInfo;
-        },
-
-        _setSnappedWayPoint: function(responseWayPoints){
-            var inputStartEle = $('.input-wrapper.start input', this.element);
-            var inputDestEle  = $('.input-wrapper.destination input', this.element);
-            var resultValue;
-
-            var inputContainsCoords = (input) => {
-                return input.val() === input.data('coords').join(',');
-            }
-
-            if (responseWayPoints){
-                var responseWayPointLength = responseWayPoints.length;
-                var responseStartName = responseWayPoints[0].name;
-                var responseDestinationName = responseWayPoints[responseWayPointLength - 1].name;
-            }
-
-            if (this.options.useSearch || this.options.useReverseGeocoding){
-
-
-                var start = (responseStartName && inputContainsCoords(inputStartEle)) ? responseStartName : inputStartEle.val();
-                var dest = (responseDestinationName && inputContainsCoords(inputDestEle)) ? responseDestinationName : inputDestEle.val();
-
-                console.log(start,responseStartName,inputStartEle.val());
-                console.log(dest,responseDestinationName,inputDestEle.val());
-                resultValue ={
-                    startValue: start,
-                    destinationValue: dest
-                };
-            } else {
-                resultValue = {
-                    startValue:  responseStartName || inputStartEle.val(),
-                    destinationValue: responseDestinationName || inputDestEle.val()
-                };
-            }
-            this.snappedWayPoint = resultValue;
-        },
-
-        __msToTime: function(s) {
-            var ms = s % 1000;
-            s = (s - ms) / 1000;
-            var secs = s % 60;
-            s = (s - secs) / 60;
-            var mins = s % 60;
-            var hrs = (s - mins) / 60;
-
-            return hrs === 0 ? mins + ' min' : hrs + ' h ' + mins + ' min ';
         },
 
         _transformLineGeometry: function(lineGeometry, inputProj, mapProj) {

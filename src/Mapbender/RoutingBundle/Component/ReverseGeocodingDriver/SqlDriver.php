@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\RoutingBundle\Component;
+namespace Mapbender\RoutingBundle\Component\ReverseGeocodingDriver;
 
 use Doctrine\DBAL\DBALException;
 use Mapbender\DataSourceBundle\Component\Drivers\Interfaces\Geographic;
@@ -8,7 +8,7 @@ use Mapbender\DataSourceBundle\Component\Drivers\Interfaces\Routable;
 use Mapbender\DataSourceBundle\Component\Drivers\PostgreSQL;
 use Doctrine\DBAL\Connection;
 
-class RevGeocodeDriver extends PostgreSQL implements Manageble, Routable, Geographic
+class SqlDriver extends PostgreSQL implements Manageble, Routable, Geographic
 {
     /**
      * @var string

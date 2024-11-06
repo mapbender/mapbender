@@ -23,7 +23,6 @@ class ReverseRoutingElementAdminType extends AbstractType
     {
         parent::buildForm($builder, $options);
 
-        # reverseGeocoding Config
         $builder
             ->add('driver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.geocodeDriver',
@@ -34,31 +33,26 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'PostgreSQL' => 'sql',
                     # 'Solr' => 'solr',
                 ],
-                #'property_path' => '[revGeocodingDriver]',
             ])
             ->add('connection', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.connection',
                 'required' => false,
                 'empty_data' => null,
-                #'property_path' => '[revGeoConnection]',
             ])
             ->add('table', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revTableName',
                 'required' => false,
                 'empty_data' => null,
-                #'property_path' => '[revTableName]',
             ])
             ->add('rowGeoWay', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowGeoWay',
                 'required' => false,
                 'empty_data' => 'the_geom',
-                #'property_path' => '[revRowGeoWay]',
             ])
             ->add('rowSearch', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowSearch',
                 'required' => false,
                 'empty_data' => null,
-                #'property_path' => '[revRowSearch]',
             ])
             ->add('searchBuffer', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.reverse.revRowSearchBuffer',
@@ -68,7 +62,6 @@ class ReverseRoutingElementAdminType extends AbstractType
                     'type' => 'number',
                     'min' => 0,
                 ],
-                #'property_path' => '[revSearchBuffer]',
             ])
         ;
     }

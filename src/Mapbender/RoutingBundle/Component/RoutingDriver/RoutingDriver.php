@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\RoutingBundle\Component\Driver;
+namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;

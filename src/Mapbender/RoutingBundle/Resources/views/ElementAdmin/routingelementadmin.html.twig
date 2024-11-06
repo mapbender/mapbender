@@ -16,7 +16,6 @@
 {{ form_row(form.configuration.buffer) }}
 {{ form_row(form.configuration.lineColor) }}
 {{ form_row(form.configuration.lineWidth) }}
-{{ form_row(form.configuration.lineOpacity) }}
 
 <div class="basic advanced d-none">
     {{ form_row(form.configuration.infoText) }}
@@ -117,7 +116,11 @@
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
+    !(function($) {
+        $('#{{ form.vars.attr.id }} .-js-init-colorpicker').colorpicker({format: 'rgba'});
+    }(jQuery));
+
     $(document).ready(function() {
         const advancedSettings = $('#form_configuration_advancedSettings');
         const activateSearch = $('#form_configuration_useSearch');

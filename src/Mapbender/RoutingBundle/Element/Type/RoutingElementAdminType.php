@@ -8,7 +8,6 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\RangeType;
 
 /**
  * Class RoutingElementAdminType
@@ -87,11 +86,11 @@ class RoutingElementAdminType extends AbstractType
             ->add('lineColor', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.color',
                 'required' => false,
-                'attr' => [
-                    'type' => 'color',
-                ],
-                'empty_data' => '#4286F4',
+                'empty_data' => 'rgba(66, 134, 244, 1)',
                 'property_path' => '[routingStyles][lineColor]',
+                'attr' => [
+                    'class' => '-js-init-colorpicker',
+                ],
             ])
             ->add('lineWidth', NumberType::class, [
                 'label' => 'mb.routing.backend.dialog.label.width',
@@ -102,18 +101,6 @@ class RoutingElementAdminType extends AbstractType
                     'min' => 0,
                 ],
                 'property_path' => '[routingStyles][lineWidth]',
-            ])
-            ->add('lineOpacity', RangeType::class, [
-                'label' => 'mb.routing.backend.dialog.label.opacity',
-                'required' => false,
-                'empty_data' => 1,
-                'attr' => [
-                    'type' => 'number',
-                    'step' => 0.1,
-                    'min' => 0,
-                    'max' => 1,
-                ],
-                'property_path' => '[routingStyles][lineOpacity]',
             ])
             ->add('startImagePath', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.startImagePath',

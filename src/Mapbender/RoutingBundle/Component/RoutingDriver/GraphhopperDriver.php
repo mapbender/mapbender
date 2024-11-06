@@ -1,9 +1,10 @@
 <?php
 
-namespace Mapbender\RoutingBundle\Component\Driver;
+namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GraphhopperDriver extends RoutingDriver {
 
@@ -61,16 +62,13 @@ class GraphhopperDriver extends RoutingDriver {
     protected $srid = "4326";
     protected $type = "LineString";
 
+    protected HttpClientInterface $httpClient;
 
-    /**
-     * GraphhopperDriver constructor.
-     * @param array $config
-     * @param array $request
-     * @param string $locale
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(array $config, array $request, string $locale, TranslatorInterface $translator)
+    public function __construct(HttpClientInterface $httpClient)
     {
+        $this->httpClient = $httpClient;
+
+        /*
         parent::__construct($locale,$translator);
 
         $this->responseType = "json";
@@ -87,6 +85,12 @@ class GraphhopperDriver extends RoutingDriver {
         # params from Frontend
         $this->vehicle = $request["vehicle"];
         $this->points = $request['points'];
+        */
+    }
+
+    public function getRoute($requestParams, $configuration)
+    {
+        // TODO: Implement getRoute() method.
     }
 
     public function getResponse() : array {
@@ -94,7 +98,6 @@ class GraphhopperDriver extends RoutingDriver {
         $query = $this->createQuery();
         return self::getCurlResponse($query);
     }
-
 
     /**
      * Create $queryUrl for Curl-Request
@@ -119,7 +122,6 @@ class GraphhopperDriver extends RoutingDriver {
        $queryUrl = $this->url.$points_query."&".http_build_query($query);
        return $queryUrl;
     }
-
 
     public function processResponse($response) {
 
@@ -158,16 +160,4 @@ class GraphhopperDriver extends RoutingDriver {
         return $this->createFeatureInGeoJson($points,$graphLength,$graphLengthUnit,$graphTime,$graphTimeFormat,$instructions,$waypointsList);
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

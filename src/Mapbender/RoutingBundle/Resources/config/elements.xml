@@ -5,8 +5,9 @@
     <services>
         <service id="mapbender.element.RoutingElement" class="Mapbender\RoutingBundle\Element\RoutingElement">
             <tag name="mapbender.element" />
-            <argument type="service" id="mapbender.routing.searchhandler" />
             <argument type="service" id="mapbender.routing.routinghandler" />
+            <argument type="service" id="mapbender.routing.searchhandler" />
+            <argument type="service" id="mapbender.routing.reverseGeocodingHandler" />
         </service>
     </services>
 </container>

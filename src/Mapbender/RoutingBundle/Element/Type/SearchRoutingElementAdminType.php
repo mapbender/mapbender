@@ -28,9 +28,9 @@ class SearchRoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.sh.shDriver',
                 'required' => false,
                 'choices' => [
-                    # 'Nominatim' => 'nominatim',
-                    # 'PostgreSQL' => 'sql',
                     'Solr' => 'solr',
+                    # 'PostgreSQL' => 'sql',
+                    # 'Nominatim' => 'nominatim',
                 ],
             ])
             ->add('url', TextType::class, [
@@ -142,7 +142,7 @@ class SearchRoutingElementAdminType extends AbstractType
             ]);
         ;
 
-        # Search-Settings
+        # Database SQL Search
         $builder
             ->add('connection', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.connectionSearchName',
@@ -151,7 +151,7 @@ class SearchRoutingElementAdminType extends AbstractType
                 'attr' => [
                     'advanced' => 'false',
                 ],
-                'property_path' => '[database][connection]',
+                'property_path' => '[sql][connection]',
             ])
             ->add('table', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchTable',
@@ -160,7 +160,7 @@ class SearchRoutingElementAdminType extends AbstractType
                 'attr' => [
                     'advanced' => 'false',
                 ],
-                'property_path' => '[database][table]',
+                'property_path' => '[sql][table]',
             ])
             ->add('searchStrColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchStrColumn',
@@ -169,7 +169,7 @@ class SearchRoutingElementAdminType extends AbstractType
                 'attr' => [
                     'advanced' => 'false',
                 ],
-                'property_path' => '[database][searchStrColumn]',
+                'property_path' => '[sql][searchStrColumn]',
             ])
             ->add('searchAdressColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchAdressColumn',
@@ -178,7 +178,7 @@ class SearchRoutingElementAdminType extends AbstractType
                 'attr' => [
                     'advanced' => 'false',
                 ],
-                'property_path' => '[database][searchAdressColumn]',
+                'property_path' => '[sql][searchAdressColumn]',
             ])
             ->add('searchGeomColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchGeomColumn',
@@ -187,7 +187,7 @@ class SearchRoutingElementAdminType extends AbstractType
                 'attr' => [
                     'advanced' => 'false',
                 ],
-                'property_path' => '[database][searchGeomColumn]',
+                'property_path' => '[sql][searchGeomColumn]',
             ])
         ;
     }

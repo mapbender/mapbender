@@ -1,12 +1,13 @@
 <?php
 
-namespace Mapbender\RoutingBundle\Component\Driver;
+namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Exception;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PgRoutingDriver extends RoutingDriver
 {
@@ -70,19 +71,12 @@ class PgRoutingDriver extends RoutingDriver
 
     protected $srid;
 
+    protected HttpClientInterface $httpClient;
 
-    /**
-     * PgRoutingDriver constructor.
-     * @param array $config
-     * @param array $request
-     * @param string $locale
-     * @param TranslatorInterface $translator
-     * @param Connection $connection
-     * @throws DBALException
-     */
-
-    public function __construct(array $config, array $request, string $locale, TranslatorInterface $translator,Connection $connection)
+    public function __construct(HttpClientInterface $httpClient)
     {
+        $this->httpClient = $httpClient;
+        /*
         parent::__construct($locale, $translator);
 
         $this->waysTable = $config['wayTable'];
@@ -96,7 +90,12 @@ class PgRoutingDriver extends RoutingDriver
         $this->srid = str_replace("EPSG:","",$request['srs']);
 
         $this->db = new PgRoutingDBInterface($connection,$this->waysTable,$this->verticesTable,$this->srid);
+        */
+    }
 
+    public function getRoute($requestParams, $configuration)
+    {
+        // TODO: Implement getRoute() method.
     }
 
     public function getWayPointsList() {
