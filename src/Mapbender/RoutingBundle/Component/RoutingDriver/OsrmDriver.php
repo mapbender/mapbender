@@ -2,8 +2,6 @@
 
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
-use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -13,68 +11,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class OsrmDriver extends RoutingDriver {
 
-
-    /**
-     * @var null|string
-     */
-    public $url;
-
-    /**
-     * @var null|string
-     */
-    public $service;
-
-    /**
-     * @var null|string
-     */
-    public $locale;
-
-    /**
-     * @var null|string
-     */
-    public $version;
-
-    /**
-     * @var string
-     */
-    public $alternatives;
-
-    /**
-     * @var null|string
-     */
-    public $instructions;
-
-    /**
-     * @var string
-     */
-    public $annotations;
-
-    /**
-     * @var string
-     */
-    public $geometries;
-
-    /**
-     * @var string
-     */
-    public $overview;
-
-    /**
-     * @var string
-     */
-    public $vehicle;
-
-    /**
-     * @var bool
-     */
-    public $continueStraight;
-
     /**
      * @var array
      */
     public $points = array();
 
     protected $srid = "4326";
+
     protected $type = "LineString";
 
     protected $timeField = "duration";
@@ -87,32 +30,6 @@ class OsrmDriver extends RoutingDriver {
         $this->httpClient = $httpClient;
     }
 
-    /*
-    public function __construct(array $config, array $request, string $locale, TranslatorInterface $translator)
-    {
-        parent::__construct($locale,$translator);
-
-        # params from RoutingElementAdminType
-        $this->url = $config['url'];
-        $this->service = $config['service'];
-        $this->version = $config['version'];
-        $this->alternatives = $config['alternatives'];
-        $this->instructions = $config['steps'];
-        $this->overview = $config['overview'];
-        $this->annotations = $config['annotations'];
-
-        # params from Frontend
-        $this->vehicle = $request['vehicle'];
-        $this->points = $request['points'];
-
-        // Denormalize Vehicle and replace Profile-Pattern of URL-String
-        if (strpos(strtolower($this->url), "{profile}") !== false) {
-            $this->url = str_ireplace("{profile}",$this->vehicle, $this->url);
-        }
-
-    }
-    */
-
     /**
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
@@ -122,6 +39,7 @@ class OsrmDriver extends RoutingDriver {
      */
     public function getRoute($requestParams, $configuration)
     {
+        $this->locale = $configuration['locale'];
         $osrmConfig = $configuration['routingConfig']['osrm'];
         $query = $this->buildQuery($requestParams, $osrmConfig);
         $response = $this->httpClient->request('GET', $query);
@@ -151,6 +69,11 @@ class OsrmDriver extends RoutingDriver {
             $formatDistance($response['routes'][0]['distance']),
             $formatTime($response['routes'][0]['duration']),
         ];
+        $routingInstructions = [];
+
+        if (!empty($osrmConfig['steps']) && isset($response['routes'][0]['legs'][0]['steps'])) {
+            $routingInstructions = $this->addInstructionSymbols($this->translateInstructions($response['routes'][0]['legs'][0]['steps']));
+        }
 
         return [
             'featureCollection' => [
@@ -164,14 +87,15 @@ class OsrmDriver extends RoutingDriver {
                 ],
             ],
             'routeInfo' => str_replace($search, $replace, $configuration['infoText']),
+            'routingInstructions' => $routingInstructions,
         ];
     }
 
     private function buildQuery($requestParams, $config): string
     {
-        $service = ($config['service']) ? $config['service'] : 'route';
-        $version = ($config['version']) ? $config['version'] : 'v1';
-        $profile = ($requestParams['vehicle']) ? $requestParams['vehicle'] : 'car';
+        $service = ($config['service']) ?: 'route';
+        $version = ($config['version']) ?: 'v1';
+        $profile = ($requestParams['vehicle']) ?: 'car';
         $url = trim($config['url'], '/') . '/' . $service . '/' . $version . '/' . $profile . '/';
         $coordinates = [];
 
@@ -180,13 +104,11 @@ class OsrmDriver extends RoutingDriver {
         }
 
         $coordinateString = implode(';', $coordinates);
+        $steps = ($config['steps']) ?: false;
         $queryParams = [
-            #'alternatives' => $this->alternatives,
-            #'steps' => $this->instructions,
             'geometries' => 'geojson',
-            #'overview' => $this->overview,
-            #'annotations' => $this->annotations,
-            #'continue_straight' => 'default',
+            'steps' => $steps,
+            # 'alternatives' => ($config['alternatives']) ?: false,
         ];
 
         return $url . $coordinateString . '?' . http_build_query($queryParams);
@@ -259,14 +181,82 @@ class OsrmDriver extends RoutingDriver {
 
     }
 
-
     public function getInstructionSign($instruction) {
-        $mod = isset($instruction['maneuver']['modifier']) ? $instruction['maneuver']['modifier'] : "straight";
+        $mod = isset($instruction['maneuver']['modifier']) ? $instruction['maneuver']['modifier'] : 'default';
         return $mod;
     }
 
     protected function getInstructionText($instruction) {
-        return $instruction['maneuver']['type'].", ".$this->getInstructionSign($instruction)." - ".$instruction['name'];
+        $translatedInstructions = $this->translate($instruction);
+        if (!$translatedInstructions) {
+            return $instruction['maneuver']['type'].", ".$this->getInstructionSign($instruction)." - ".$instruction['name'];
+        }
+        return $translatedInstructions;
     }
 
+    protected function translate($instruction)
+    {
+        $path = realpath(__DIR__ . '/../../Resources/translations/osrm') . '/';
+        $filename = 'osrm.' . $this->locale . '.json';
+        if (!file_exists($path . $filename)) {
+            $filename = 'osrm.en.json';
+        }
+        $translations = file_get_contents($path . $filename);
+        $translations = json_decode($translations, true);
+        $translations = $translations['v5'];
+        $type = $instruction['maneuver']['type'];
+        $modifier = (isset($instruction['maneuver']['modifier'])) ? $instruction['maneuver']['modifier'] : false;
+        $streetName = $instruction['name'];
+
+        if (empty($streetName) && isset($instruction['ref'])) {
+            $streetName = $instruction['ref'];
+        }
+
+        if (empty($streetName) && isset($instruction['destinations'])) {
+            $streetName = $instruction['destinations'];
+        }
+
+        if ($type == 'depart') {
+            $direction = $this->getDirection($instruction);
+            $direction = $translations['constants']['direction'][$direction];
+            return str_replace(['{direction}', '{way_name}'], [$direction, $streetName], $translations[$type]['default']['name']);
+        }
+
+        if ($type == 'rotary' || $type == 'roundabout') {
+            return str_replace('{way_name}', $streetName, $translations[$type]['default']['default']['name']);
+        }
+
+        if (isset($translations[$type][$modifier])) {
+            return str_replace('{way_name}', $streetName, $translations[$type][$modifier]['name']);
+        } elseif (isset($translations[$type]['default'])) {
+            $modifier = $translations['constants']['modifier'][$modifier];
+            return str_replace(['{way_name}', '{modifier}'], [$streetName, $modifier], $translations[$type]['default']['name']);
+        } else {
+            return false;
+        }
+    }
+
+    protected function getDirection($instruction) {
+        $bearing = floatval($instruction['maneuver']['bearing_after']);
+
+        if ($bearing >= 337.5 && $bearing < 22.5) {
+            return 'north';
+        } elseif ($bearing >= 22.5 && $bearing < 67.5) {
+            return 'northeast';
+        } elseif ($bearing >= 67.5 && $bearing < 112.5) {
+            return 'east';
+        } elseif ($bearing >= 112.5 && $bearing < 157.5) {
+            return 'southeast';
+        } elseif ($bearing >= 157.5 && $bearing < 202.5) {
+            return 'south';
+        } elseif ($bearing >= 202.5 && $bearing < 247.5) {
+            return 'southwest';
+        } elseif ($bearing >= 247.5 && $bearing < 292.5) {
+            return 'west';
+        } elseif ($bearing >= 292.5 && $bearing < 337.5) {
+            return 'northwest';
+        } else {
+            return false;
+        }
+    }
 }

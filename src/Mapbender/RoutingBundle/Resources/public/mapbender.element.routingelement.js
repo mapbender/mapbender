@@ -13,7 +13,6 @@
         markerLayer: null,
         elementUrl: null,
         isActive: false,
-        routeData: null,
         styleLinearDistance: {
             pointRadius: 0,
             strokeLinecap : 'square',
@@ -234,6 +233,7 @@
             this._emptyPoints();
             $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
             $('.mb-routing-info', this.element).addClass('d-none').html('');
+            $('.mb-routing-instructions', this.element).html('');
             return true;
         },
 
@@ -278,28 +278,8 @@
                     Mapbender.error(response.error.message);
                 } else {
                     self._renderRoute(response.featureCollection);
-                    self._displayRouteInfo(response.routeInfo);
-                    self.setSpinnerVisible(false);
-                    return;
-
-                    var routeData = response.routeData;
-                    self.routeData = routeData;
-                    var srs = parseInt(routeData.crs.properties.name.split("::")[1]);
-                    var respProj =  srs > 0 ? new OpenLayers.Projection('EPSG:'+srs) : requestProj.projCode;
-
-                    // Check requestProj and Transform LineGeometry array
-                    // ol2 can not transform whole geometry objects therefore this way.
-                    if (mapProj.projCode !== respProj.projCode) {
-                        self._transformFeatures(routeData,respProj,mapProj);
-                    }
-
-                    var routeStyle = self._getRouteStyle();
-                    self._renderRoute(routeData, routeStyle);
-                    if (routeData.features[0].properties.instructions) {
-                        self._parseRouteInstructions(routeData.features[0].properties.instructions);
-                    }
-                    var routeInfo = self._parseRouteData(routeData.features[0].properties);
-                    self._displayRouteInfo(routeInfo);
+                    self._showRouteInfo(response.routeInfo);
+                    self._showRouteInstructions(response.routingInstructions);
                 }
                 self.setSpinnerVisible(false);
             });
@@ -586,8 +566,51 @@
             return this.options.styleMap.route;
         },
 
-        _displayRouteInfo: function(routeInfo) {
+        _showRouteInfo: function(routeInfo) {
             $('.mb-routing-info', this.element).html(routeInfo).removeClass('d-none');
+        },
+
+        _showRouteInstructions: function(instructions) {
+            let $table = $('<table/>');
+            $table.addClass('table table-striped table-bordered table-sm instructions');
+            let $tbody = $('<tbody/>');
+            instructions.forEach(function(inst) {
+                let $icon;
+                let $tr = $('<tr/>');
+                let $td = $('<td/>');
+                if (inst.icon) {
+                    $icon = $('<img/>');
+                    $icon.attr('src', inst.icon);
+                    $td.addClass('inst-marker text-center').append($icon);
+                    $tr.append($td);
+                    $td = $('<td/>');
+                } else {
+                    $icon = $('<span/>');
+                    $td.addClass('inst-marker').append($icon);
+                    $tr.append($td);
+                    $td = $('<td/>');
+                }
+                if (inst.text) {
+                    $td.text(inst.text).addClass('inst-text');
+                    $tr.append($td);
+                    $td = $('<td/>');
+                }
+                if (inst.metersOnLeg && inst.secondsOnLeg) {
+                    let span = '<span>' + inst.metersOnLeg + '<br>' + inst.secondsOnLeg + '</span>';
+                    $td.addClass('inst-dist').append(span);
+                    $tr.append($td);
+                }
+                $tbody.append($tr);
+            });
+            let $instructionsDiv = $('.mb-routing-instructions', this.element);
+            let $instructionsTable = $instructionsDiv.children(':first');
+            const maxHeight = ($instructionsDiv.offset().top - $('.mb-routing-info').offset().top);
+            $instructionsTable.remove();
+            if (!$instructionsTable.length) {
+                $instructionsDiv.css('max-height', maxHeight);
+            }
+            $table.append($tbody);
+            $instructionsDiv.append($table);
         },
 
         _transformFeatures: function(routeData,respProj,mapProj) {
@@ -615,66 +638,6 @@
                     });
                 }
             });
-        },
-
-        _parseRouteInstructions: function(instructions) {
-            var $t = $('<table/>');
-            $t.addClass('instructions');
-            instructions.forEach(function(inst) {
-                var $icon;
-                var $tr = $('<tr/>');
-                var $td = $('<td/>');
-                if (inst.icon) {
-                    $icon = $('<img/>');
-                    $icon.attr('src', inst.icon);
-                    $td.addClass('inst-marker').append($icon);
-                    $tr.append($td);
-                    $td = $('<td/>');
-                } else {
-                    $icon = $('<span/>');
-                    $td.addClass('inst-marker').append($icon);
-                    $tr.append($td);
-                    $td = $('<td/>');
-                }
-                if (inst.text) {
-                    $td.text(inst.text).addClass('inst-text');
-                    $tr.append($td);
-                    $td = $('<td/>');
-                }
-                if (inst.metersOnLeg && inst.secondsOnLeg) {
-                    var span = '<span>' + inst.metersOnLeg + '<br>' + inst.secondsOnLeg + '</span>';
-                    $td.addClass('inst-dist').append(span);
-                    $tr.append($td);
-                }
-                $t.append($tr);
-            });
-            var $instructionsDiv = $('.mb-routing-instructions', this.element);
-            var $instructionsTable = $instructionsDiv.children(':first');
-            var maxHeight = ($instructionsDiv.offset().top - $('.mb-routing-info').offset().top);
-            $instructionsTable.remove();
-            if (!$instructionsTable.length) {
-                $instructionsDiv.css('max-height', maxHeight)
-            }
-            $instructionsDiv.append($t);
-        },
-
-        _parseRouteData: function(properties) {
-            var routeInfo = {
-                    length: properties.length,
-                    lengthUnit: properties.lengthUnit,
-                    time: properties.graphTime,
-                    timeUnit: properties.graphTimeFormat,
-                    instructions: [],
-                    start: this.snappedWayPoint.startValue,
-                    destination: this.snappedWayPoint.destinationValue
-                };
-
-            if (routeInfo.timeUnit === "ms" ) {
-                routeInfo.time = this.__msToTime(routeInfo.time);
-            }
-            routeInfo.length = (routeInfo.length < 1000) ? Math.round(routeInfo.length * 100) / 100 + 'm' :  Math.round(routeInfo.length/1000*100) /100 + 'km';
-
-            return routeInfo;
         },
 
         _transformLineGeometry: function(lineGeometry, inputProj, mapProj) {

@@ -3,6 +3,7 @@
 namespace Mapbender\RoutingBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -68,9 +69,6 @@ class RoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.dateTimeFormat',
                 'required' => false,
                 'empty_data' => 'ms',
-                'attr' => [
-                    'advanced' => 'true',
-                ],
             ])
             ->add('routingDriver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.routingDriver',
@@ -162,37 +160,25 @@ class RoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.pg.connection',
                 'required' => false,
                 'empty_data' => null,
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][pgrouting][connection]',
             ])
             ->add('pgWayTable', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.pg.pgWayTable',
                 'required' => false,
                 'empty_data' => 'routing',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][pgrouting][wayTable]',
             ])
             ->add('pgWayTableVertices', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.pg.pgWayTableVertices',
                 'required' => false,
                 'empty_data' => 'routing_vertices_pgr',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][pgrouting][wayTableVertices]',
             ])
             ->add('pgWeighting', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.gh.weighting.title',
                 'required' => false,
                 'empty_data' => 'length',
-                'attr' => [
-                    'advanced' => 'true',
-                ],
-               'property_path' => '[routingConfig][pgrouting][weighting]',
+                'property_path' => '[routingConfig][pgrouting][weighting]',
             ])
             ->add('pgSpeed',NumberType::class, [
                 'label' => 'mb.routing.backend.dialog.label.pg.speed',
@@ -201,9 +187,6 @@ class RoutingElementAdminType extends AbstractType
                 'scale' => 1,
                 //'rounding_mode' => IntegerToLocalizedStringTransformer::ROUND_UP,
                 //'rounding_mode' => IntegerToLocalizedStringTransformer::class,
-                'attr' => [
-                    'advanced' => 'true',
-                ],
                 'property_path' => '[routingConfig][pgrouting][speed]',
             ])
             ->add('pgInstructions', ChoiceType::class, [
@@ -213,9 +196,6 @@ class RoutingElementAdminType extends AbstractType
                 'choices' => [
                     'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
                 ],
                 'property_path' => '[routingConfig][pgrouting][instructions]',
             ])
@@ -227,9 +207,6 @@ class RoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.url',
                 'required' => false,
                 'empty_data' => null,
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][graphhopper][url]',
             ])
             ->add('ghWeighting', ChoiceType::class, [
@@ -238,9 +215,6 @@ class RoutingElementAdminType extends AbstractType
                 'empty_data' => 'fastest',
                 'choices' => [
                     'mb.routing.backend.dialog.label.gh.weighting.fastest' => 'fastest',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
                 ],
                 'property_path' => '[routingConfig][graphhopper][weighting]',
             ])
@@ -254,20 +228,12 @@ class RoutingElementAdminType extends AbstractType
                     'mb.routing.frontend.dialog.label.bike' => 'bike',
                     'mb.routing.frontend.dialog.label.foot' => 'foot',
                 ],
-                'attr' => [
-                    'advanced' => 'false',
-                    'driver' => 'graphhopper'
-                ],
                 'property_path' => '[routingConfig][graphhopper][transportationMode]',
             ])
             ->add('ghKey', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.gh.key',
                 'required' => false,
                 'empty_data' => null,
-                'attr' => [
-                    'advanced' => 'false',
-                    'driver' => 'graphhopper',
-                ],
                 'property_path' => '[routingConfig][graphhopper][key]',
             ])
             ->add('ghOptimize',ChoiceType::class, [
@@ -277,10 +243,6 @@ class RoutingElementAdminType extends AbstractType
                 'choices' => [
                     'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
-                ],
-                'attr' => [
-                    'advanced' => 'false',
-                    'driver' => 'graphhopper',
                 ],
                 'property_path' => '[routingConfig][graphhopper][optimize]',
             ])
@@ -292,10 +254,6 @@ class RoutingElementAdminType extends AbstractType
                     'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
                 ],
-                'attr' => [
-                    'advanced' => 'false',
-                    'driver' => 'graphhopper',
-                ],
                 'property_path' => '[routingConfig][graphhopper][elevation]',
             ])
             ->add('ghInstructions', ChoiceType::class, [
@@ -305,9 +263,6 @@ class RoutingElementAdminType extends AbstractType
                 'choices' => [
                     'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
-                ],
-                'attr' => [
-                    'advanced' => 'false',
                 ],
                 'property_path' => '[routingConfig][graphhopper][instructions]',
             ])
@@ -319,34 +274,24 @@ class RoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.url',
                 'required' => false,
                 'empty_data' => null,
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][osrm][url]',
             ])
             ->add('osrmService', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.osrm.service',
-                'required' => false,
+                'required' => true,
                 'empty_data' => 'route',
                 'choices' => [
                     'mb.routing.backend.dialog.input.osrmservice.route' => 'route',
-                    'mb.routing.backend.dialog.input.osrmservice.nearest' => 'nearest',
-                    'mb.routing.backend.dialog.input.osrmservice.table' => 'table',
-                    'mb.routing.backend.dialog.input.osrmservice.match' => 'match',
-                    'mb.routing.backend.dialog.input.osrmservice.trip' => 'trip',
-                    'mb.routing.backend.dialog.input.osrmservice.tile' => 'tile',
-                ],
-                'attr' => [
-                    'advanced' => 'false',
                 ],
                 'property_path' => '[routingConfig][osrm][service]',
             ])
-            ->add('osrmVersion', TextType::class, [
+            ->add('osrmVersion', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.osrm.version',
-                'required' => false,
+                'required' => true,
                 'empty_data' => 'v1',
-                'attr' => [
-                    'advanced' => 'false',
+                // add more osrm versions here, if available
+                'choices' => [
+                    'v1' => 'v1',
                 ],
                 'property_path' => '[routingConfig][osrm][version]',
             ])
@@ -360,83 +305,30 @@ class RoutingElementAdminType extends AbstractType
                     'mb.routing.frontend.dialog.label.bike' => 'bike',
                     'mb.routing.frontend.dialog.label.foot' => 'foot',
                 ],
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[routingConfig][osrm][transportationMode]',
             ])
-            ->add('osrmAlternatives', ChoiceType::class, [
+            // uncomment, if alternative routes should be implemented
+            /*
+            ->add('osrmAlternatives', IntegerType::class, [
                 'label' => 'mb.routing.backend.dialog.label.osrm.alternatives',
                 'required' => false,
-                'empty_data' => 'false',
-                'choices' => [
-                    'mb.routing.backend.dialog.input.no' => 'false',
-                    'mb.routing.backend.dialog.input.yes' => 'true',
-                    'mb.routing.backend.dialog.input.number' => 'number',
-                ],
+                'empty_data' => 0,
                 'attr' => [
-                    'advanced' => 'true',
+                    'min' => 0,
+                    'max' => 3,
                 ],
                 'property_path' => '[routingConfig][osrm][alternatives]',
             ])
+            */
             ->add('osrmSteps', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.instructions',
-                'required' => false,
+                'required' => true,
                 'empty_data' => 'false',
                 'choices' => [
                     'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
                 ],
                 'property_path' => '[routingConfig][osrm][steps]',
-            ])
-            ->add('osrmAnnotations', ChoiceType::class, [
-                'label' => 'mb.routing.backend.dialog.label.osrm.annotations',
-                'required' => false,
-                'empty_data' => 'false',
-                'choices' => [
-                    'mb.routing.backend.dialog.input.no' => 'false',
-                    'mb.routing.backend.dialog.input.yes' => 'true',
-                    'mb.routing.backend.dialog.input.nodes' => 'nodes',
-                    'mb.routing.backend.dialog.input.distance' => 'distance',
-                    'mb.routing.backend.dialog.input.duration' => 'duration',
-                    'mb.routing.backend.dialog.input.datasources' => 'datasources',
-                    'mb.routing.backend.dialog.input.weight' => 'weight',
-                    'mb.routing.backend.dialog.input.speed' => 'speed',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
-                ],
-                'property_path' => '[routingConfig][osrm][annotations]',
-            ])
-            ->add('osrmOverview', ChoiceType::class, [
-                'label' => 'mb.routing.backend.dialog.label.osrm.overview',
-                'required' => false,
-                'empty_data' => 'full',
-                'choices' => [
-                    'mb.routing.backend.dialog.input.full' => 'full',
-                    'mb.routing.backend.dialog.input.simplified' => 'simplified',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
-                ],
-                'property_path' => '[routingConfig][osrm][overview]',
-            ])
-            ->add('osrmContinueStraight', ChoiceType::class, [
-                'label' => 'mb.routing.backend.dialog.label.osrm.continueStraight',
-                'required' => false,
-                'empty_data' => 'false',
-                'choices' => [
-                    'mb.routing.backend.dialog.input.default' => 'default',
-                    'mb.routing.backend.dialog.input.no' => 'false',
-                    'mb.routing.backend.dialog.input.yes' => 'true',
-                ],
-                'attr' => [
-                    'advanced' => 'true',
-                ],
-                'property_path' => '[routingConfig][osrm][continueStraight]',
             ])
         ;
     }

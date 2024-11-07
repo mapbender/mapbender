@@ -63,11 +63,9 @@
     {{ form_row(form.configuration.osrmTransportationMode) }}
     <div class="advanced d-none">
         {{ form_row(form.configuration.osrmVersion) }}
-        {{ form_row(form.configuration.osrmAlternatives) }}
+        {# alternative Routes are not yet implemented: #}
+        {# form_row(form.configuration.osrmAlternatives) #}
         {{ form_row(form.configuration.osrmSteps) }}
-        {{ form_row(form.configuration.osrmAnnotations) }}
-        {{ form_row(form.configuration.osrmOverview) }}
-        {{ form_row(form.configuration.osrmContinueStraight) }}
     </div>
 </div>
 

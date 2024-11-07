@@ -149,45 +149,30 @@ class SearchRoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.connectionSearchName',
                 'required' => false,
                 'empty_data' => 'search_db',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[sql][connection]',
             ])
             ->add('table', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchTable',
                 'required' => false,
                 'empty_data' => 'search_db',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[sql][table]',
             ])
             ->add('searchStrColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchStrColumn',
                 'required' => false,
                 'empty_data' => 'search_db',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[sql][searchStrColumn]',
             ])
             ->add('searchAdressColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchAdressColumn',
                 'required' => false,
                 'empty_data' => 'search_db',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[sql][searchAdressColumn]',
             ])
             ->add('searchGeomColumn', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.searchGeomColumn',
                 'required' => false,
                 'empty_data' => 'search_db',
-                'attr' => [
-                    'advanced' => 'false',
-                ],
                 'property_path' => '[sql][searchGeomColumn]',
             ])
         ;

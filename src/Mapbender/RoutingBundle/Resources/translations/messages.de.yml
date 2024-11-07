@@ -92,7 +92,7 @@ mb:
           routingDriver: Routingsoftware
           chooseOption: Bitte auswählen
           url: URL
-          instructions: Routingbeschreibung
+          instructions: Wegbeschreibung ausgeben
           pg:
             titel: PgRouting
             connection: DB-Konfigurationsname

@@ -41,8 +41,6 @@ class RoutingHandler {
     public function calculateRoute($requestParams, $configuration): JsonResponse
     {
         $driver = $configuration['routingDriver'];
-        // $locale = $request->getLocale();
-        // $translator = $container->get('translator');
 
         switch ($driver) {
             case 'osrm':

@@ -95,7 +95,9 @@ class RoutingElement extends AbstractElementService
                 'startIcon' => [
                     'imagePath' => '/bundles/mapbenderrouting/image/start.png',
                 ],
-                'intermediateIcon' => [],
+                'intermediateIcon' => [
+                    'imagePath' => '/bundles/mapbenderrouting/image/intermediate.png',
+                ],
                 'destinationIcon' => [
                     'imagePath' => '/bundles/mapbenderrouting/image/destination.png',
                 ],
@@ -140,6 +142,7 @@ class RoutingElement extends AbstractElementService
     {
         $action = $request->attributes->get('action');
         $configuration = $element->getConfiguration();
+        $configuration['locale'] = $request->getLocale();
 
         switch ($action) {
             case 'getRoute':

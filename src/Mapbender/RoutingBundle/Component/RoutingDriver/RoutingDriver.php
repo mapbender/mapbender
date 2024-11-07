@@ -16,13 +16,10 @@ abstract class RoutingDriver {
     const INSTR_RIGHT2 = 'right2';
     const INSTR_RIGHT3 = 'right3';
     const INSTR_RIGHT4 = 'right4';
-
     const INSTR_KEEP_LEFT = 'keep-left';
     const INSTR_KEEP_RIGHT = 'keep-right';
-
     const INSTR_UTURN_LEFT = 'u-turn-left';
     const INSTR_UTURN_RIGHT = 'u-turn-right';
-
     const INSTR_FINISH = 'finish';
     const INSTR_VIA = 'via';
     const INSTR_ROUNDABOUT = 'roundabout';
