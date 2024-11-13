@@ -28,7 +28,6 @@
                 const $group = $(evt.target).closest('.basesourcegroup');
                 if (evt.type === 'click') {
                     $group.addClass('active');
-                    evt.stopPropagation();
                     $(document).one('click', () => {
                         $group.removeClass('active')
                     });
