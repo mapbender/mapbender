@@ -14,16 +14,21 @@ class CanvasLegend
     protected int $symbolHeight = 15;
     protected int $symbolWidth = 35;
     protected int $layerTitleFontSize = 12;
+    protected float $layerTitleLineHeight = 1.5;
     protected string $layerLabelString = "Label";
 
     public function __construct(private array $layers)
     {
-        $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers));
+        $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers) * 2);
         $this->prepareCanvas();
 
         foreach ($this->layers as $layer) {
             $this->addSubLayer($layer['title'] ?? "", $layer['canvas'] ?? $layer['style']);
         }
+
+        $existingCanvas = $this->image;
+        $this->image = imagecrop($existingCanvas, ['x' => 0, 'y' => 0, 'width' => imagesx($existingCanvas), 'height' => $this->offset]);
+        imagedestroy($existingCanvas);
     }
 
     function getImage(): \GdImage
@@ -45,8 +50,8 @@ class CanvasLegend
         $textY = ($this->symbolHeight + $textHeight) / 2;
         $black = imagecolorallocate($this->image, 0, 0, 0);
 
-        imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $label);
-        $this->offset += $this->symbolHeight + 10;
+        $this->drawMultilineText($textY, $black, $label);
+        $this->offset += $this->symbolHeight - $this->layerTitleFontSize * $this->layerTitleLineHeight + 10;
     }
 
     protected function populateCanvas(array $style): void
@@ -129,6 +134,34 @@ class CanvasLegend
 
         // Draw the label
         imagettftext($this->image, $fontSize, 0, $textX, $textY + $this->offset, $textColor, $this->font, "Label");
+    }
+
+    public function drawMultilineText(float|int $textY, bool|int $black, string $label): void
+    {
+        $words = explode(" ", $label);
+
+        $line = '';
+        $currentWord = 0;
+
+        while($currentWord < count($words)) {
+            $dimensions = imagettfbbox($this->layerTitleFontSize, 0, $this->font, $line . $words[$currentWord]);
+            $lineWidth = $dimensions[2] - $dimensions[0];
+
+            if ($lineWidth > $this->legendWidth - $this->symbolWidth - 10) {
+                imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $line);
+                $this->offset += $this->layerTitleFontSize * $this->layerTitleLineHeight;
+                $line = '';
+            } else {
+                $line .= $words[$currentWord] . ' ';
+            }
+            $currentWord++;
+        }
+
+        if ($line) {
+            imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $line);
+            $this->offset += $this->layerTitleFontSize * 1.3;
+        }
+
     }
 
 }
