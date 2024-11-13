@@ -9,19 +9,13 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OsrmDriver extends RoutingDriver {
+class OsrmDriver extends RoutingDriver
+{
+    const SRID = '4326';
 
-    /**
-     * @var array
-     */
-    public $points = array();
+    protected string $timeField = 'duration';
 
-    protected $srid = "4326";
-
-    protected $type = "LineString";
-
-    protected $timeField = "duration";
-    protected $timeScale = "s";
+    protected string $timeScale = 's';
 
     protected HttpClientInterface $httpClient;
 
@@ -37,58 +31,14 @@ class OsrmDriver extends RoutingDriver {
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function getRoute($requestParams, $configuration)
+    public function getRoute($requestParams, $configuration): array
     {
         $this->locale = $configuration['locale'];
         $osrmConfig = $configuration['routingConfig']['osrm'];
         $query = $this->buildQuery($requestParams, $osrmConfig);
         $response = $this->httpClient->request('GET', $query);
         $response = $response->toArray(false);
-
-        $formatDistance = function ($distance) {
-            if (floatval($distance) >= 1000) {
-                return round((floatval($distance) / 1000.0), 2) . ' KM';
-            }
-            return $distance . 'm';
-        };
-
-        $formatTime = function ($time) {
-            $time = gmdate('H:i', $time);
-            if (substr($time, 0, 2) == '00') {
-                $minutes = substr($time, 3, strlen($time));
-                return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . ' Min' : $minutes . ' Min';
-            }
-            return $time . ' Std.';
-        };
-
-        $destinationIndex = count($response['waypoints']) - 1;
-        $search = ['{start}', '{destination}', '{length}', '{time}'];
-        $replace = [
-            $response['waypoints'][0]['name'],
-            $response['waypoints'][$destinationIndex]['name'],
-            $formatDistance($response['routes'][0]['distance']),
-            $formatTime($response['routes'][0]['duration']),
-        ];
-        $routingInstructions = [];
-
-        if (!empty($osrmConfig['steps']) && isset($response['routes'][0]['legs'][0]['steps'])) {
-            $routingInstructions = $this->addInstructionSymbols($this->translateInstructions($response['routes'][0]['legs'][0]['steps']));
-        }
-
-        return [
-            'featureCollection' => [
-                'type' => 'Feature',
-                'geometry' => [
-                    'type' => $response['routes'][0]['geometry']['type'],
-                    'coordinates' => $response['routes'][0]['geometry']['coordinates'],
-                ],
-                'properties' => [
-                    'srs' => 'EPSG:4326',
-                ],
-            ],
-            'routeInfo' => str_replace($search, $replace, $configuration['infoText']),
-            'routingInstructions' => $routingInstructions,
-        ];
+        return $this->processResponse($response, $configuration);
     }
 
     private function buildQuery($requestParams, $config): string
@@ -114,87 +64,62 @@ class OsrmDriver extends RoutingDriver {
         return $url . $coordinateString . '?' . http_build_query($queryParams);
     }
 
-    public function getResponse() : array {
-        # create URL-String from config & routing params
-        $query = $this->createQuery();
-        return self::getCurlResponse($query);
-    }
+    public function processResponse($response, $configuration): array
+    {
+        $osrmConfig = $configuration['routingConfig']['osrm'];
+        $coordinates = $response['routes'][0]['geometry']['coordinates'];
+        $type = $response['routes'][0]['geometry']['type'];
+        $start = $response['waypoints'][0]['name'];
+        $destinationIndex = count($response['waypoints']) - 1;
+        $destination = $response['waypoints'][$destinationIndex]['name'];
+        $distance = $response['routes'][0]['distance'];
+        $time = $response['routes'][0]['duration'];
+        $infoText = $configuration['infoText'];
+        $routingInstructions = [];
 
-    public function processResponse($response) {
-
-        $instructions = null;
-        $wayPointsResponse = null;
-
-        $path = $response['routes'][0];
-        # SRID to EPSG-Code
-        $srid = '4326';
-
-        # Coordinate Points
-        $points = $path['geometry']['coordinates'];
-
-
-        # ResultGraphLength to meters
-        $graphLength = $path['distance'];
-        $graphLengthUnit = 'Meters';
-
-        $graphTimeFormat = 'ms';
-        $graphTime = $path['duration'] * 1000; // seconds to miliseconds
-
-        if (isset($path['legs'][0]["steps"])) {
-            $instructions = $this->addInstructionSymbols($this->translateInstructions($path['legs'][0]['steps']));
+        if (!empty($osrmConfig['steps']) && isset($response['routes'][0]['legs'][0]['steps'])) {
+            $routingInstructions = $this->getRoutingInstructions($response['routes'][0]['legs'][0]['steps']);
         }
 
-        $waypointsList = [];
-
-        $waypointsInput = $response['waypoints'];
-
-        foreach ($waypointsInput as $value) {
-            $waypointsName = $value['name'];
-            $waypointsCoord = $value['location'];
-            $waypoints = array(
-                'name' => $waypointsName,
-                'srid' => 'EPSG:' . $srid,
-                'coordinates' => $waypointsCoord
-            );
-            $waypointsList[] = $waypoints;
-        }
-
-        return $this->createFeatureInGeoJson($points,$graphLength,$graphLengthUnit,$graphTime,$graphTimeFormat,$instructions,$waypointsList);
-
+        return [
+            'featureCollection' => $this->createFeatureCollection($coordinates, $type, self::SRID),
+            'routeInfo' => $this->getRouteInfo($start, $destination, $distance, $time, $infoText),
+            'routingInstructions' => $routingInstructions,
+        ];
     }
 
     /**
      * @return array
      */
-    protected function getInstructionSignMapping()
+    protected function getInstructionSignMapping(): array
     {
-        return array(
-            "uturn"	=> static::INSTR_UTURN_RIGHT,
-            "sharp right" => static::INSTR_RIGHT3,
-            "right"	=> static::INSTR_RIGHT2,
-            "slight right" => static::INSTR_RIGHT1,
-            "straight" => static::INSTR_CONTINUE,
-            "slight left" => static::INSTR_LEFT1,
-            "left" => static::INSTR_LEFT2,
-            "sharp left" => static::INSTR_LEFT1,
-        );
-
+        return [
+            'uturn'	=> static::INSTR_UTURN_RIGHT,
+            'sharp right' => static::INSTR_RIGHT3,
+            'right'	=> static::INSTR_RIGHT2,
+            'slight right' => static::INSTR_RIGHT1,
+            'straight' => static::INSTR_CONTINUE,
+            'slight left' => static::INSTR_LEFT1,
+            'left' => static::INSTR_LEFT2,
+            'sharp left' => static::INSTR_LEFT1,
+        ];
     }
 
-    public function getInstructionSign($instruction) {
-        $mod = isset($instruction['maneuver']['modifier']) ? $instruction['maneuver']['modifier'] : 'default';
-        return $mod;
+    public function getInstructionSign($instruction): string
+    {
+        return $instruction['maneuver']['modifier'] ?? 'default';
     }
 
-    protected function getInstructionText($instruction) {
-        $translatedInstructions = $this->translate($instruction);
+    protected function getInstructionText($instruction): string
+    {
+        $translatedInstructions = $this->translateOsrmInstruction($instruction);
         if (!$translatedInstructions) {
-            return $instruction['maneuver']['type'].", ".$this->getInstructionSign($instruction)." - ".$instruction['name'];
+            return $instruction['maneuver']['type'] . ', ' . $this->getInstructionSign($instruction) . ' - ' . $instruction['name'];
         }
         return $translatedInstructions;
     }
 
-    protected function translate($instruction)
+    protected function translateOsrmInstruction($instruction): array|bool|string
     {
         $path = realpath(__DIR__ . '/../../Resources/translations/osrm') . '/';
         $filename = 'osrm.' . $this->locale . '.json';
@@ -236,7 +161,8 @@ class OsrmDriver extends RoutingDriver {
         }
     }
 
-    protected function getDirection($instruction) {
+    protected function getDirection($instruction): bool|string
+    {
         $bearing = floatval($instruction['maneuver']['bearing_after']);
 
         if ($bearing >= 337.5 && $bearing < 22.5) {

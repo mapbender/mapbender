@@ -18,7 +18,7 @@ use Mapbender\RoutingBundle\Component\ReverseGeocodingHandler;
  * @author Christian Kuntzsch <christian.kuntzsch@wheregroup.com>
  * @author Robert Klemm <robert.klemm@wheregroup.com>
  */
-class RoutingElement extends AbstractElementService
+class Routing extends AbstractElementService
 {
     protected RoutingHandler $routingHandler;
 
@@ -55,7 +55,7 @@ class RoutingElement extends AbstractElementService
     {
         return [
             'js' => [
-                '@MapbenderRoutingBundle/Resources/public/mapbender.element.routingelement.js',
+                '@MapbenderRoutingBundle/Resources/public/mapbender.element.routing.js',
             ],
             'css' => [
                 '@MapbenderRoutingBundle/Resources/public/sass/mapbender.element.routing.scss',
@@ -69,7 +69,7 @@ class RoutingElement extends AbstractElementService
 
     public function getWidgetName( Element $element ): string
     {
-        return 'mapbender.mbRoutingElement';
+        return 'mapbender.mbRouting';
     }
 
     /**
@@ -102,23 +102,40 @@ class RoutingElement extends AbstractElementService
                     'imagePath' => '/bundles/mapbenderrouting/image/destination.png',
                 ],
             ],
+            'routingConfig' => [
+                'osrm' => [
+                    'url' => 'https://',
+                ],
+            ],
+            'searchConfig' => [
+                'solr' => [
+                    'url' => 'https://',
+                    'query_key' => 'q',
+                    'query_format' => '%s',
+                    'collection_path' => 'response.docs',
+                    'label_attribute' => 'label',
+                    'geom_attribute' => 'geom',
+                    'geom_format' => 'WKT',
+                    'geom_proj' => 'EPSG:4326',
+                ],
+            ],
         ];
     }
 
     public static function getFormTemplate(): string
     {
-        return '@MapbenderRouting/ElementAdmin/routingelementadmin.html.twig';
+        return '@MapbenderRouting/ElementAdmin/routing.html.twig';
     }
 
     public static function getType(): ?string
     {
-        return 'Mapbender\RoutingBundle\Element\Type\RoutingElementAdminType';
+        return 'Mapbender\RoutingBundle\Element\Type\RoutingAdminType';
     }
 
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
-        $view = new TemplateView('@MapbenderRouting/Element/routingelement.html.twig');
+        $view = new TemplateView('@MapbenderRouting/Element/routing.html.twig');
         $view->attributes['class'] = 'mb-element-routing';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables = [

@@ -13,17 +13,12 @@ class TriasDriver extends RoutingDriver
         $this->httpClient = $httpClient;
     }
 
-    public function getRoute($requestParams, $configuration)
+    public function getRoute($requestParams, $configuration): array
     {
         // TODO: Implement getRoute() method.
     }
 
-    public function getResponse(): array
-    {
-        // TODO: Implement getResponse() method.
-    }
-
-    public function processResponse($response)
+    public function processResponse($response, $config)
     {
         // TODO: Implement processResponse() method.
     }

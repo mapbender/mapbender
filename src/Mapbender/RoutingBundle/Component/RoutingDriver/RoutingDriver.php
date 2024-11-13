@@ -3,7 +3,6 @@
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class RoutingDriver {
 
@@ -24,71 +23,79 @@ abstract class RoutingDriver {
     const INSTR_VIA = 'via';
     const INSTR_ROUNDABOUT = 'roundabout';
 
+    protected string $timeField = 'time';
+    protected string $timeScale = 'ms';
 
-    protected $translator;
-    protected $locale;
+    abstract public function getRoute($requestParams, $configuration) : array;
 
-    protected $srid;
-    protected $type;
+    abstract public function processResponse($response, $configuration);
 
-    protected $timeField = "time";
-    protected $timeScale = "ms";
-
-/*
-    public function __construct(string $locale,TranslatorInterface $translator)
+    protected function createFeatureCollection($coordinates, $type, $srid): array
     {
-        $this->translator = $translator;
-        $this->locale = $locale;
+        $feature = $this->createFeature($coordinates, $type);
+        return [
+            'type' => 'FeatureCollection',
+            'crs' => [
+                'type' => 'name',
+                'properties' => [
+                    'name' => 'urn:ogc:def:crs:EPSG::' . $srid,
+                ],
+            ],
+            'features' => [$feature],
+        ];
     }
-*/
 
-    abstract public function getResponse() : array;
-
-    abstract public function processResponse($response);
-
-    protected function createFeature($points,$graphLength,$graphLengthUnit,$graphTime,$graphTimeFormat,$instructions,$waypointsList) {
-        $feature = array(
+    protected function createFeature($coordinates, $type): array
+    {
+        return [
             'type' => 'Feature',
-            'geometry' => array(
-                'type' => $this->type,
-                'coordinates' => $points,
-            ),
-            'properties' => array(
-                'length' => $graphLength,                 # require
-                'lengthUnit' => $graphLengthUnit,         # require
-                'graphTime' => $graphTime,                # time Default is Kilometers per Hours or Kilometers per Minutes
-                'graphTimeFormat' => $graphTimeFormat,    # timeUnit Default is mircosec or Hours:Min:Sec
-                'instructions' => $instructions,          # array (distance,heading,sign,interval,text,time and street_name)
-                'waypoints' => $waypointsList
-            )
-
-        );
-        return $feature;
+            'geometry' => [
+                'type' => $type,
+                'coordinates' => $coordinates,
+            ],
+            # implement properties if needed:
+            /*
+            'properties' => [
+                'key' => 'value',
+            ],
+            */
+        ];
     }
 
-    protected function createFeatureInGeoJson($points,$graphLength,$graphLengthUnit,$graphTime,$graphTimeFormat,$instructions,$waypointsList) {
-            $geojson = array(
-                'type' => 'FeatureCollection',
-                'crs' => array(
-                    'type' => 'name',
+    protected function getRouteInfo($start, $destination, $distance, $time, $infoText): string
+    {
+        $search = ['{start}', '{destination}', '{length}', '{time}'];
+        $replace = [$start, $destination, $this->formatDistance($distance), $this->formatTime($time)];
+        return str_replace($search, $replace, $infoText);
+    }
 
-                    # TODO create crs name based of ogcwkt
-                    'properties' => array(
-                        'name' => "urn:ogc:def:crs:EPSG::" . $this->srid
-                        #"href" => urldecode("https://epsg.io/".$srid.".wkt"),
-                        #"type" => "ogcwkt"
-                    )
-                ),
-                'features' => [$this->createFeature($points,$graphLength,$graphLengthUnit,$graphTime,$graphTimeFormat,$instructions,$waypointsList)]
-            );
+    protected function getRoutingInstructions($steps): array
+    {
+        return $this->addInstructionSymbols($this->translateInstructions($steps));
+    }
 
-            return $geojson;
+    protected function formatTime($time): string
+    {
+        $time = gmdate('H:i', $time);
+        if (substr($time, 0, 2) == '00') {
+            $minutes = substr($time, 3, strlen($time));
+            return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . ' Min' : $minutes . ' Min';
+        }
+        return $time . ' Std.';
+    }
+
+    protected function formatDistance($distance): string
+    {
+        if (floatval($distance) >= 1000) {
+            return round((floatval($distance) / 1000.0), 2) . ' KM';
+        }
+        return $distance . 'm';
     }
 
     /**
      * @return array
      */
-    protected function getInstructionSignMapping()
+    protected function getInstructionSignMapping(): array
     {
         return array(
             8 => static::INSTR_UTURN_RIGHT, // gh: U_TURN_RIGHT
@@ -147,7 +154,8 @@ abstract class RoutingDriver {
         return $instructionsOut;
     }
 
-    protected function calculateDuration($instruction) {
+    protected function calculateDuration($instruction): ?string
+    {
         if ($instruction[$this->timeField] != null) {
             if ($this->timeScale == "ms") {
                 $seconds = floor($instruction[$this->timeField] / 1000);
@@ -176,73 +184,37 @@ abstract class RoutingDriver {
     protected function getInstructionText($instruction) {
         return $instruction['text'];
     }
+
     /**
      * @param array[] $nativeInstructions
      * @return array[]
      */
-    public function translateInstructions(array $nativeInstructions)
+    public function translateInstructions(array $nativeInstructions): array
     {
-        $instructionsOut = array();
-
+        $instructionsOut = [];
 
         foreach ($nativeInstructions as $nativeInstruction) {
             $distanceOnLeg = ($nativeInstruction['distance'] < 1000) ? round($nativeInstruction['distance']) . 'm'
                 : round($nativeInstruction['distance'] / 1000, 3) . 'km';
 
             $minutesOnLeg = $this->calculateDuration($nativeInstruction);
-
             // TODO check if & why this is necessary
-            if(!$minutesOnLeg) {
+            if (!$minutesOnLeg) {
                 continue;
             }
-
             if (!next($nativeInstructions)) {
                 $distanceOnLeg = $minutesOnLeg = '';
             }
-            $instruction = array(
+            $instruction = [
                 'action' => $this->getInstructionAction($nativeInstruction),
                 'metersOnLeg' => $distanceOnLeg,
                 'secondsOnLeg' => $minutesOnLeg,
-                'text' => $this->getInstructionText($nativeInstruction)
-            );
-            $instruction['leg'] = isset($nativeInstruction['interval']) ? $nativeInstruction['interval'] : null;
-            $instructionsOut[] = array_merge($instruction,$this->addSpecificInstruction($nativeInstruction));
-
+                'text' => $this->getInstructionText($nativeInstruction),
+            ];
+            $instruction['leg'] = $nativeInstruction['interval'] ?? null;
+            $instructionsOut[] = $instruction;
         }
+
         return $instructionsOut;
-    }
-
-    protected function addSpecificInstruction(array $nativeInstruction) {
-        return array();
-    }
-
-    public static function getCurlResponse($graphQueryUrl)
-    {
-        # curl-setting
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-
-            CURLOPT_URL => $graphQueryUrl,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER, array('Content-type: application/json') // Assuming you're requesting JSON
-        ));
-
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        # Create Curl-Response
-        $curlResponse = array(
-            'responseData' => $response,
-            'responseCode' => $code,
-            'curl_error' => $err
-        );
-
-        return $curlResponse;
     }
 }

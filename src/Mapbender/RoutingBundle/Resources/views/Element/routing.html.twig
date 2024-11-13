@@ -5,7 +5,7 @@
             <label for="{{ transportationMode }}" class="form-check-label">
                 {# @todo: check why the following if statements cannot be implemented with switch case #}
                 {% if transportationMode == 'car' %}
-                    <i class="fa-solid fa-car"></i>
+                    <i class="fa-solid fa-car-side"></i>
                 {% elseif transportationMode == 'bike' %}
                     <i class="fa-solid fa-person-biking"></i>
                 {% elseif transportationMode == 'foot' %}
@@ -19,7 +19,7 @@
 {% endif %}
 <form class="mb-routing-location-points ui-sortable">
     <div class="input-group mb-3">
-        <span class="input-group-text">
+        <span class="input-group-text" title="{{ 'mb.routing.frontend.dialog.label.start' | trans }}">
             <i class="fa-solid fa-location-dot text-success"></i>
         </span>
         <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.start' | trans }}" autocomplete="off">
@@ -28,7 +28,7 @@
         </button>
     </div>
     <div class="input-group mb-3">
-        <span class="input-group-text">
+        <span class="input-group-text" title="{{ 'mb.routing.frontend.dialog.label.destination' | trans }}">
             <i class="fa-solid fa-location-dot text-danger"></i>
         </span>
         <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.destination' | trans }}" autocomplete="off">
@@ -38,14 +38,14 @@
     </div>
 </form>
 <div class="right">
-    <button id="resetRoute" class="btn btn-danger" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
+    <button id="resetRoute" class="btn btn-light" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
         <i class="fa-solid fa-rotate-left"></i>
     </button>
     <button id="swapPoints" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
-        <i class="fa-solid fa-shuffle"></i>
+        <i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i>
     </button>
     <button id="calculateRoute" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.getroute' | trans }}">
-        <i class="fa-regular fa-paper-plane"></i>
+        <i class="fa-solid fa-flag-checkered"></i>
     </button>
     {% if allowIntermediatePoints %}
         <button id="addPoint" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.addintermediate' | trans }}">
@@ -61,7 +61,7 @@
 <!-- Templates -->
 <template id="tplIntermediatePoint">
     <div class="input-group mb-3 intermediatePoints">
-        <span class="input-group-text">
+        <span class="input-group-text" title="{{ 'mb.routing.frontend.dialog.label.intermediate' | trans }}">
             <i class="fa-solid fa-location-dot text-primary"></i>
         </span>
         <input class="form-control" type="text" placeholder="{{ 'mb.routing.frontend.dialog.label.intermediate' | trans }}" autocomplete="off">

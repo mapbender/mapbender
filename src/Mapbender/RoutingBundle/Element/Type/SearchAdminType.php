@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * @author Christian Kuntzsch
  * @author Robert Klemm
  */
-class SearchRoutingElementAdminType extends AbstractType
+class SearchAdminType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -26,7 +26,7 @@ class SearchRoutingElementAdminType extends AbstractType
         $builder
             ->add('driver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.shDriver',
-                'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
+                #'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
                 'required' => true,
                 'choices' => [
                     'Solr' => 'solr',
@@ -42,7 +42,7 @@ class SearchRoutingElementAdminType extends AbstractType
             ->add('query_key', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.query_key',
                 'empty_data' => 'q',
-                'required' => false,
+                'required' => true,
                 'property_path' => '[solr][query_key]',
             ])
             ->add('query_ws_replace', TextType::class, [
@@ -86,28 +86,28 @@ class SearchRoutingElementAdminType extends AbstractType
                 'label' => 'mb.routing.backend.dialog.label.sh.label_attribute',
                 'property_path' => '[solr][label_attribute]',
                 'empty_data' => 'label',
-                'required' => false,
+                'required' => true,
             ])
             ->add('geom_attribute', TextType::class, [
                 'label' => "mb.routing.backend.dialog.label.sh.geom_attribute",
                 'property_path' => '[solr][geom_attribute]',
                 'empty_data' => 'geom',
-                'required' => false,
-            ])
-            ->add('geom_proj', TextType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.geom_proj',
-                'property_path' => '[solr][geom_proj]',
-                'required' => false,
+                'required' => true,
             ])
             ->add('geom_format', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.geom_format',
                 'property_path' => '[solr][geom_format]',
                 'empty_data' => 'WKT',
-                'required' => false,
+                'required' => true,
                 'choices' => [
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON',
                 ],
+            ])
+            ->add('geom_proj', TextType::class, [
+                'label' => 'mb.routing.backend.dialog.label.sh.geom_proj',
+                'property_path' => '[solr][geom_proj]',
+                'required' => true,
             ])
             ->add('delay', NumberType::class, [
                 'label' => 'mb.routing.backend.dialog.label.sh.delay',
@@ -115,32 +115,6 @@ class SearchRoutingElementAdminType extends AbstractType
                 'empty_data' => '300',
                 'required' => false,
             ])
-            ->add('result_buffer', NumberType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.result_buffer',
-                'property_path' => '[solr][result][buffer]',
-                'empty_data' => '0',
-                'required' => false,
-            ])
-            ->add('result_minscale', NumberType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.result_minscale',
-                'property_path' => '[solr][result][minscale]',
-                'required' => false,
-            ])
-            ->add('result_maxscale', NumberType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.result_maxscale',
-                'property_path' => '[solr][result][maxscale]',
-                'required' => false,
-            ])
-            ->add('result_icon_url', TextType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.result_icon_url',
-                'property_path' => '[solr][result][icon_url]',
-                'required' => false,
-            ])
-            ->add('result_icon_offset', TextType::class, [
-                'label' => 'mb.routing.backend.dialog.label.sh.result_icon_offset',
-                'property_path' => '[solr][result][icon_offset]',
-                'required' => false,
-            ]);
         ;
 
         # Database SQL Search

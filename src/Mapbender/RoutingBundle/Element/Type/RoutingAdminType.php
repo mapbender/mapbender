@@ -16,7 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * @author Christian Kuntzsch
  * @author Robert Klemm
  */
-class RoutingElementAdminType extends AbstractType
+class RoutingAdminType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -147,10 +147,10 @@ class RoutingElementAdminType extends AbstractType
                 'property_path' => '[routingStyles][destinationIcon][imageOffset]',
             ])
             ->add(
-                $builder->create('searchConfig', SearchRoutingElementAdminType::class)
+                $builder->create('searchConfig', SearchAdminType::class)
             )
             ->add(
-                $builder->create('reverseGeocodingConfig',ReverseRoutingElementAdminType::class)
+                $builder->create('reverseGeocodingConfig',ReverseGeocodingAdminType::class)
             )
         ;
 

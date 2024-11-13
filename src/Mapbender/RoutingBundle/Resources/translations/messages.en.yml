@@ -59,6 +59,7 @@ mb:
           full: Full
           simplified: Simplified
           default: Default
+          search: Search
           osrmservice:
             route: Route
             nearest: Nearest

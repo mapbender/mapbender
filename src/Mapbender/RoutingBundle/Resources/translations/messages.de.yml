@@ -21,12 +21,12 @@ mb:
           bike: Fahrrad
           foot: Fußgänger
           start: Start
-          intermediate: Über
+          intermediate: Via
           destination: Ziel
           clearroute: Zurücksetzen
-          flippoints: Umkehren
-          addintermediate: Punkt hinzufügen
-          getroute: Los!
+          flippoints: Route Umkehren
+          addintermediate: Zwischenstop hinzufügen
+          getroute: Los geht's!
       info: benötigen
     backend:
       title: Routing
@@ -59,6 +59,7 @@ mb:
           full: Voll
           simplified: Vereinfacht
           default: Standard
+          search: Suche
           osrmservice:
             route: Route
             nearest: nächste
@@ -122,18 +123,18 @@ mb:
           sh:
             label: Such-Einstellung
             shDriver: Suchsoftware
-            shUrl: Such-URL
-            query_key: Suchparameterschlüssel
-            query_ws_replace: Leerzeichenersetzung
-            query_format: Suchformat
-            token_regex: Tokenizer spaltet
-            token_regex_in: Tokenizer sucht
-            token_regex_out: Tokenizer ersetzt
-            collection_path: Attributspfad
-            label_attribute: Attributname
-            geom_attribute: Attributname Geodaten
-            geom_format: Geodatenformat
-            geom_proj: Projektion Geodaten
+            shUrl: Query URL
+            query_key: Query URL-Parameter
+            query_ws_replace: Query Whitespace Ersetzung
+            query_format: Query Key Format
+            token_regex: 'Tokenizer: Split Regex'
+            token_regex_in: 'Tokenizer: Such-Regex'
+            token_regex_out: 'Tokenizer: Ersetzungs-Regex'
+            collection_path: Pfad zu den Ergebnissen
+            label_attribute: Attribut für Beschriftung
+            geom_attribute: Attribut für Geometrie
+            geom_format: Geometrie-Format
+            geom_proj: Quell-SRS
             delay: Automatische Vervollständigungs-Verzögerung
             result_buffer: Zoompuffer (m)
             result_minscale: Zoompuffer min.

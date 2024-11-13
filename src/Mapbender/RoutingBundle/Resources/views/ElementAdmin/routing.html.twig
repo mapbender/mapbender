@@ -75,7 +75,7 @@
 
 <div class="search d-none">
     <hr>
-    <h3 class="my-4">Suche</h3>
+    <h3 class="my-4">{{ 'mb.routing.backend.dialog.input.search' | trans }}</h3>
     {{ form_row(form.configuration.searchConfig.driver) }}
     {% if form.configuration.searchConfig.driver is defined %}
         {{ form_row(form.configuration.searchConfig.url) }}
@@ -90,13 +90,8 @@
             {# !! The following values are not evaluated !! #}
             {{ form_row(form.configuration.searchConfig.label_attribute) }}
             {{ form_row(form.configuration.searchConfig.geom_attribute) }}
-            {{ form_row(form.configuration.searchConfig.geom_proj) }}
             {{ form_row(form.configuration.searchConfig.geom_format) }}
-            {{ form_row(form.configuration.searchConfig.result_buffer) }}
-            {{ form_row(form.configuration.searchConfig.result_minscale) }}
-            {{ form_row(form.configuration.searchConfig.result_maxscale) }}
-            {{ form_row(form.configuration.searchConfig.result_icon_url) }}
-            {{ form_row(form.configuration.searchConfig.result_icon_offset) }}
+            {{ form_row(form.configuration.searchConfig.geom_proj) }}
         </div>
     {% endif %}
 </div>

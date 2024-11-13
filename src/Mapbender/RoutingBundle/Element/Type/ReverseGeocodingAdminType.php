@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  * @author Christian Kuntzsch
  * @author Robert Klemm
  */
-class ReverseRoutingElementAdminType extends AbstractType
+class ReverseGeocodingAdminType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder

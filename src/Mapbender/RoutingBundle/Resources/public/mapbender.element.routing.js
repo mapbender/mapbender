@@ -5,7 +5,7 @@
      * @author Robert Klemm <robert.klemm@wheregroup.com>
      * @namespace mapbender.mbRoutingElement
      */
-    $.widget('mapbender.mbRoutingElement', {
+    $.widget('mapbender.mbRouting', {
         map: null,
         olMap: null,
         popup: null,
@@ -209,17 +209,20 @@
             const htmlIntermediatePoint = $($('#tplIntermediatePoint').html());
             const lastInputElement = $('.mb-routing-location-points div:last-child', this.element);
             htmlIntermediatePoint.insertBefore(lastInputElement);
+            htmlIntermediatePoint.find('input').focus();
         },
 
         _removeInputWrapper: function(btn) {
             const self = this;
             const inputGroup = $(btn).parent();
             let inputField = $('input', inputGroup);
-            inputField.val('');
+            inputField.val('').data('coords', null);
             this._removeMarker(inputField);
             if (this._findLocationInputFields().length > 2) {
                 inputGroup.remove();
                 self._reorderInputFields();
+            } else {
+                this.routingLayer.getSource().clear();
             }
         },
 
@@ -451,7 +454,7 @@
             if (setVisible) {
                 calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
             } else {
-                calculateRouteBtn.attr('class', 'fa-regular fa-paper-plane').parent().prop('disabled', false);
+                calculateRouteBtn.attr('class', 'fa-solid fa-flag-checkered').parent().prop('disabled', false);
             }
         },
 
@@ -483,16 +486,18 @@
             }
 
             const format = new ol.format.GeoJSON();
-            const feature = format.readFeature(response);
+            const features = format.readFeatures(response);
             const mapProj = this.olMap.getView().getProjection().getCode();
-            const featureProj = feature.get('srs');
+            const featureProj = 'EPSG:' + response.crs.properties.name.split('::')[1];
 
             if (mapProj !== featureProj) {
-                feature.getGeometry().transform(featureProj, mapProj);
+                features.forEach((feature) => {
+                    feature.getGeometry().transform(featureProj, mapProj);
+                });
             }
 
             this.routingLayer.getSource().clear();
-            this.routingLayer.getSource().addFeature(feature);
+            this.routingLayer.getSource().addFeatures(features);
 
             // create and add result or airline Features
             // var air_line = self._getAirLineFeature(response, style);
@@ -555,7 +560,7 @@
             }
             if (styleConfig.imageOffset) {
                 const offset = styleConfig.imageOffset.split(',');
-                // options['anchor'] = [Number(offset[0]), Number(offset[1])];
+                options['displacement'] = [Number(offset[0]), Number(offset[1])];
             }
             return new ol.style.Style({
                 image: new ol.style.Icon(options),
