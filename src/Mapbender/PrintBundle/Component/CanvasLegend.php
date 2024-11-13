@@ -150,7 +150,7 @@ class CanvasLegend
             if ($lineWidth > $this->legendWidth - $this->symbolWidth - 10) {
                 imagettftext($this->image, $this->layerTitleFontSize, 0, $this->symbolWidth + 10, $textY + $this->offset, $black, $this->font, $line);
                 $this->offset += $this->layerTitleFontSize * $this->layerTitleLineHeight;
-                $line = '';
+                $line = $words[$currentWord] . ' ';
             } else {
                 $line .= $words[$currentWord] . ' ';
             }
