@@ -19,7 +19,7 @@ class CanvasLegend
 
     public function __construct(private array $layers)
     {
-        $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers) * 2);
+        $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers) * 4);
         $this->prepareCanvas();
 
         foreach ($this->layers as $layer) {
