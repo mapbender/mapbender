@@ -79,6 +79,7 @@
                       data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                       data-token="{{ csrf_token('application_delete') }}"
                       data-slug="{{ application.slug }}"
+                      data-test="{{ application.slug }}-{{'delete'}}"
                 ><i class="far fa-trash-can"></i></span>
               {% endif %}
 {%- endblock -%}
