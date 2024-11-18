@@ -584,14 +584,14 @@
                 let $tr = $('<tr/>');
                 let $td = $('<td/>');
                 if (inst.icon) {
-                    $icon = $('<img/>');
-                    $icon.attr('src', inst.icon);
-                    $td.addClass('inst-marker text-center').append($icon);
+                    $icon = $('<span/>');
+                    $icon.addClass('routing-icon ' + inst.icon);
+                    $td.addClass('text-center').append($icon);
                     $tr.append($td);
                     $td = $('<td/>');
                 } else {
                     $icon = $('<span/>');
-                    $td.addClass('inst-marker').append($icon);
+                    $td.append($icon);
                     $tr.append($td);
                     $td = $('<td/>');
                 }

@@ -165,7 +165,7 @@ class OsrmDriver extends RoutingDriver
     {
         $bearing = floatval($instruction['maneuver']['bearing_after']);
 
-        if ($bearing >= 337.5 && $bearing < 22.5) {
+        if (($bearing >= 337.5 && $bearing <= 360) || ($bearing >= 0 && $bearing < 22.5)) {
             return 'north';
         } elseif ($bearing >= 22.5 && $bearing < 67.5) {
             return 'northeast';

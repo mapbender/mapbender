@@ -1,0 +1,51 @@
+$iconPath: '../../../../bundles/mapbenderrouting/image/';
+$iconWidth: 32px;
+$iconHeight: 32px;
+
+.routing-icon {
+    display: inline-block;
+    width: $iconWidth;
+    height: $iconHeight;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+.icon-slight-left {
+    background-image: url(#{$iconPath}slight_left.png);
+}
+.icon-left {
+    background-image: url(#{$iconPath}left.png);
+}
+.icon-sharp-left {
+    background-image: url(#{$iconPath}sharp_left.png);
+}
+.icon-keep-left {
+    background-image: url(#{$iconPath}keep_left.png);
+}
+.icon-uturn-left {
+    background-image: url(#{$iconPath}u_turn_left.png);
+}
+.icon-slight-right {
+    background-image: url(#{$iconPath}slight_right.png);
+}
+.icon-right {
+    background-image: url(#{$iconPath}right.png);
+}
+.icon-sharp-right {
+    background-image: url(#{$iconPath}sharp_right.png);
+}
+.icon-keep-right {
+    background-image: url(#{$iconPath}keep_right.png);
+}
+.icon-uturn-right {
+    background-image: url(#{$iconPath}u_turn_right.png);
+}
+.icon-continue {
+    background-image: url(#{$iconPath}continue.png);
+}
+.icon-destination {
+    background-image: url(#{$iconPath}destination.png);
+}
+.icon-roundabout {
+    background-image: url(#{$iconPath}roundabout.png);
+}

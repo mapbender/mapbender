@@ -128,25 +128,25 @@ abstract class RoutingDriver {
     {
         $instructionsOut = array();
         $iconMap = array(
-            static::INSTR_LEFT1 => 'slight_left.png',
-            static::INSTR_LEFT2 => 'left.png',
-            static::INSTR_LEFT3 => 'sharp_left.png',
-            static::INSTR_KEEP_LEFT => 'keep_left.png',
-            static::INSTR_UTURN_LEFT => 'u_turn_left.png',
-            static::INSTR_RIGHT1 => 'slight_right.png',
-            static::INSTR_RIGHT2 => 'right.png',
-            static::INSTR_RIGHT3 => 'sharp_right.png',
-            static::INSTR_KEEP_RIGHT => 'keep_right.png',
-            static::INSTR_UTURN_RIGHT => 'u_turn_right.png',
-            static::INSTR_CONTINUE => 'continue.png',
-            static::INSTR_FINISH => 'destination.png',
-            static::INSTR_ROUNDABOUT => 'roundabout.png',
+            static::INSTR_LEFT1 => 'icon-slight-left',
+            static::INSTR_LEFT2 => 'icon-left',
+            static::INSTR_LEFT3 => 'icon-sharp-left',
+            static::INSTR_KEEP_LEFT => 'icon-keep-left',
+            static::INSTR_UTURN_LEFT => 'icon-uturn-left',
+            static::INSTR_RIGHT1 => 'icon-slight-right',
+            static::INSTR_RIGHT2 => 'icon-right',
+            static::INSTR_RIGHT3 => 'icon-sharp-right',
+            static::INSTR_KEEP_RIGHT => 'icon-keep-right',
+            static::INSTR_UTURN_RIGHT => 'icon-uturn-right',
+            static::INSTR_CONTINUE => 'icon-continue',
+            static::INSTR_FINISH => 'icon-destination',
+            static::INSTR_ROUNDABOUT => 'icon-roundabout',
         );
         foreach ($instructions as $instruction) {
-            $icon = ArrayUtil::getDefault($iconMap, $instruction['action'], null);
-            if ($icon) {
+            $iconClass = ArrayUtil::getDefault($iconMap, $instruction['action'], null);
+            if ($iconClass) {
                 $instruction += array(
-                    'icon' => "../../bundles/mapbenderrouting/image/{$icon}",
+                    'icon' => $iconClass,
                 );
             }
             $instructionsOut[] = $instruction;
