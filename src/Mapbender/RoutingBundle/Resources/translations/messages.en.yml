@@ -88,7 +88,7 @@ mb:
           intermediateImageSize: Size intermediate icon w, h
           intermediateImageOffset: Offset intermediate icon x, y
           destinationImagePath: Path destination icon
-          destinationImageSize: Path destination icon w, h
+          destinationImageSize: Size destination icon w, h
           destinationImageOffset: Offset destination icon x, y
           routingDriver: Routing software
           chooseOption: Choose an option
