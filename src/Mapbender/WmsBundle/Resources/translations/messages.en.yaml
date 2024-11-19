@@ -189,7 +189,7 @@ mb:
       legendurltype:
         width: Width
         height: Height
-        onlineresource: 'Online resource'
+        onlineresource: 'Online Resource'
       vendorspecifictype:
         hidden: Hidden
         setdefaults: 'Set defaults'

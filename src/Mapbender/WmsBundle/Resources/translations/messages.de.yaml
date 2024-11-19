@@ -6,7 +6,7 @@ mb:
           example: Beispiel
           wmsurl: URL
           wmsuser: Benutzername
-          wmspass: Password
+          wmspass: Passwort
       error:
         load: 'WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden!'
       repo:
@@ -24,8 +24,8 @@ mb:
             version: Version
             originurl: Ursprungs-URL
             abstract: Beschreibung
-            onlineresource: Onlineresource
-            exceptionformats: Ausnahmeformate
+            onlineresource: Online-Resource
+            exceptionformats: Fehler-Formate
             fees: Gebühren
             accessconstraints: Zugangsbeschränkungen
             person: Person
@@ -66,9 +66,9 @@ mb:
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
             layerorder: Layer-Reihenfolge
-            layerorder.standard: 'Standard (umgekehrt)'
-            layerorder.reverse: 'QGIS Style (gleiche Reihenfolge)'
-            exceptionformat: Fehlerformat
+            layerorder.standard: 'Standard'
+            layerorder.reverse: 'QGIS'
+            exceptionformat: Fehler-Format
             infoformat: 'Format der GetFeatureInfo-Anfrage'
             format: 'Format der GetMap-Anfrage'
             dimensions: Dimensions
@@ -88,7 +88,7 @@ mb:
             abstract: Beschreibung
             queryable: abfragbar
             cascaded: kaskadiert
-            opaque: undurchsichtig
+            opaque: Opak
             nosubset: 'Keine Untergruppe'
             fixedwidth: 'feste Breite'
             fixedheight: 'feste Höhe'
@@ -143,9 +143,9 @@ mb:
           splitlayers: 'Layer aufteilen'
     repository:
       parser:
-        couldnotparse: 'Das XML Dokument kann  nicht geparst werden.'
-        not_supported_document: 'Das XML Dokument ist nicht unterstützt.'
-        not_supported_version: 'Die WMS Version ist nicht unterstützt.'
+        couldnotparse: 'Das XML-Dokument kann nicht geparst werden.'
+        not_supported_document: 'Das Dokument wird nicht unterstützt.'
+        not_supported_version: 'Die WMS Version wird nicht unterstützt.'
     metadata:
       section:
         common:
@@ -166,9 +166,9 @@ mb:
     dimhandler:
       class:
         title: Di­mensions-Handler
-        description: 'Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen'
+        description: 'Dimensions-Handler gruppiert und steuert die Anfrage von Dimensionen in der Karte.'
     dimensionsets:
-      no_dimension: 'Keine Dimension vorhanden.'
+      no_dimension: 'Keine Dimensionen vorhanden.'
   core:
     dimensionset:
       admin:
@@ -189,7 +189,7 @@ mb:
       legendurltype:
         width: Breite
         height: Höhe
-        onlineresource: Online-Ressource
+        onlineresource: Online-Resource
       vendorspecifictype:
         hidden: Versteckt
         setdefaults: 'Standardwerte festlegen'
