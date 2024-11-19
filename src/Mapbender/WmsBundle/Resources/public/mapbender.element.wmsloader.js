@@ -99,6 +99,7 @@
             var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];
             var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
             var sourceUrl = elm.attr('mb-url') || elm.attr('href');
+            var infoFormat = elm.attr('mb-infoformat') || 'text/html';
             var customParams = this.parseCustomParams(elm);
 
             var source = mergeSource && this.mergeDeclarative(elm, sourceUrl, layerNamesToActivate);
@@ -108,7 +109,8 @@
                 this.loadWms(sourceUrl, {
                     layers: layerNamesToActivate,
                     // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
-                    keepOtherLayerStates: false
+                    keepOtherLayerStates: false,
+                    infoFormat : infoFormat
                 }).then(function(source) {
                     if (typeof (source.addParams) === 'function') {
                         source.addParams(customParams);
@@ -146,7 +148,8 @@
             return $.ajax({
                 url: self.elementUrl + 'loadWms',
                 data: {
-                    url: url
+                    url: url,
+                    infoFormat: options.infoFormat
                 },
                 dataType: 'json',
                 error: function(jqXHR, textStatus, errorThrown){
