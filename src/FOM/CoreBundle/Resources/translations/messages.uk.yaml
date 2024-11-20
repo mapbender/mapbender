@@ -4,7 +4,7 @@ fom:
       popup:
         delete_user_group:
           title: Підтвердити видалення
-          content: Дійсно видалити %userGroup%?
+          content: Дійсно видалити "%userGroup%"?
           btn:
             cancel: Відміна
             ok: Підтвердити

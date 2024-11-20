@@ -86,6 +86,7 @@
             this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
             this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
             this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-title:not(.disabled)', this._toggleSelectedLayer.bind(this));
             this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
             this.element.on('click', '.layer-menu .exit-button', function () {
                 $(this).closest('.layer-menu').remove();
@@ -115,11 +116,7 @@
                     $('.-fn-toggle-selected', this).click();
                 });
             }
-            this.element.on('change', '.select-layer-styles', function(){
-                let layer = $(this).data('layer');
-                layer.options.style = $(this).val();
-                self.model.updateSource(layer.source);
-            });
+            this._initLayerStyleEvents();
         },
         /**
          * Applies the new (going by DOM) layer order inside a source.
@@ -208,7 +205,6 @@
 
             var $li = this.template.clone();
             $li.data('layer', layer);
-
             $li.attr('data-id', layer.options.id);
             $li.attr('data-sourceid', layer.source.id);
 
@@ -246,8 +242,7 @@
             return $li;
         },
         _createSourceTree: function (source) {
-            var li = this._createLayerNode(source.configuration.children[0]);
-            return li;
+            return this._createLayerNode(source.getRootLayer());
         },
         _onSourceAdded: function (event, data) {
             var source = data.source;
@@ -290,17 +285,33 @@
         _resetSourceAtTree: function (source) {
             var self = this;
 
-            function resetLayer(layer) {
+            function resetLayer(layer, $parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
+                const treeOptions = layer.options.treeOptions;
+                const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
+                const $toggleChildrenButton = $li.find('>.leaveContainer>.-fn-toggle-children');
+                $toggleChildrenButton.toggleClass('disabled-placeholder', !symbolState);
+
+                if (!$li.length && $parent) {
+                    let $layers = $parent.find('>ul.layers');
+                    if (!$layers.length) {
+                        $layers = $(document.createElement('ul')).addClass('layers');
+                        $parent.append($layers);
+                        $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
+                    }
+
+                    $layers.append(self._createLayerNode(layer));
+                }
                 self._updateLayerDisplay($li, layer);
                 if (layer.children) {
                     for (var i = 0; i < layer.children.length; i++) {
-                        resetLayer(layer.children[i]);
+                        resetLayer(layer.children[i], $li);
                     }
                 }
             }
 
-            resetLayer(source.configuration.children[0]);
+            resetLayer(source.getRootLayer(), null);
+            this._reset();
         },
         _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
@@ -362,12 +373,15 @@
             this._updateFolderState($node);
             return false;
         },
-        _updateFolderState: function($node) {
+        _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
                 .toggleClass('fa-folder-open', active)
                 .toggleClass('fa-folder', !active)
             ;
+        },
+        _toggleSelectedLayer: function (e) {
+            $(e.currentTarget.parentNode).find('span.-fn-toggle-selected').click();
         },
         _toggleSelected: function (e) {
             const $target = $(e.currentTarget);
@@ -431,24 +445,49 @@
          * @param $layerNode jQuery
          */
         _initMenu: function ($layerNode) {
-            var layer = $layerNode.data('layer');
-            var source = layer.source;
-            var menu = $(this.menuTemplate.clone());
-            var mapModel = this.model;
-            if (layer.getParent()) {
-                $('.layer-control-root-only', menu).remove();
-            }
+            const layer = $layerNode.data('layer');
+            const $menu = $(this.menuTemplate.clone());
 
             const activeMenuItems = this._filterMenu(layer);
             if (!activeMenuItems.length) {
-                menu.remove();
+                $menu.remove();
                 return;
             }
+            $layerNode.find('.leaveContainer:first', $layerNode).after($menu);
 
-            // element must be added to dom and sized before Dragdealer init...
-            $('.leaveContainer:first', $layerNode).after(menu);
-
-            var $opacityControl = $('.layer-control-opacity', menu);
+            $menu.find('[data-menu-action]').each((index, el) => {
+                const $actionElement = $(el);
+                const action = $actionElement.attr('data-menu-action');
+                if (activeMenuItems.includes(action)) {
+                    this._initMenuAction($menu, action, $actionElement, $layerNode, layer);
+                } else {
+                    $actionElement.remove();
+                }
+            });
+        },
+        /**
+         *
+         * @param {string} action
+         * @param {jQuery} $menu the menu container dom element
+         * @param {jQuery} $actionElement the dom element with the data-action attribute
+         * @param {jQuery} $layerNode the dom element for the layer node
+         * @param {Mapbender.SourceLayer} layer
+         * @private
+         */
+        _initMenuAction($menu, action, $actionElement, $layerNode, layer) {
+            switch (action) {
+                case 'opacity':
+                    return this._initOpacitySlider($actionElement, layer);
+                case 'dimension':
+                    return this._initDimensionsMenu($layerNode, $menu, layer.source);
+                case 'select_style':
+                    return this._initLayerStyleSelector($actionElement, layer);
+                case 'zoomtolayer':
+                    return $actionElement.on('click', this._zoomToLayer.bind(this));
+            }
+        },
+        _initOpacitySlider: function ($opacityControl, layer) {
+            const source = layer.source;
             if ($opacityControl.length) {
                 var $handle = $('.layer-opacity-handle', $opacityControl);
                 $handle.attr('unselectable', 'on');
@@ -459,43 +498,35 @@
                     speed: 1,
                     steps: 100,
                     handleClass: "layer-opacity-handle",
-                    animationCallback: function (x, y) {
+                    animationCallback: (x, y) => {
                         var opacity = Math.max(0.0, Math.min(1.0, x));
                         var percentage = Math.round(opacity * 100);
                         $handle.text(percentage);
-                        mapModel.setSourceOpacity(source, opacity);
+                        this.model.setSourceOpacity(source, opacity);
                     }
                 });
             }
-            var $zoomControl = $('.layer-zoom', menu);
-            if ($zoomControl.length && layer.hasBounds()) {
-                $zoomControl.on('click', $.proxy(this._zoomToLayer, this));
-            } else {
-                $zoomControl.remove();
-            }
-            if (!layer.options.metadataUrl || !$('.layer-metadata', menu).length) {
-                $('.layer-metadata', menu).remove();
-            }
-
-            var dims = source.configuration.options.dimensions || [];
-            var $dimensionsControl = $('.layer-control-dimensions', menu);
-            if (dims.length && $dimensionsControl.length) {
-                this._initDimensionsMenu($layerNode, menu, dims, source);
-            } else {
-                $dimensionsControl.remove();
-            }
-
-            var $availableStyles = layer.options.availableStyles || [];
-            var $selectLayerStyles = $('.select-layer-styles', menu);
+        },
+        _initLayerStyleEvents: function () {
+            const self = this;
+            this.element.on('change', '.select-layer-styles', function () {
+                let layer = $(this).data('layer');
+                layer.options.style = $(this).val();
+                self.model.updateSource(layer.source);
+            });
+        },
+        _initLayerStyleSelector: function ($layerStyleControl, layer) {
+            const $availableStyles = layer.options.availableStyles || [];
+            const $selectLayerStyles = $layerStyleControl.find('.select-layer-styles');
             $selectLayerStyles.data('layer', layer);
             if ($availableStyles.length && $selectLayerStyles.length) {
                 var selected = false;
-                for(let i = 0; i < $availableStyles.length; i++){
+                for (let i = 0; i < $availableStyles.length; i++) {
                     selected = $availableStyles[i].name === layer.options.style;
                     $selectLayerStyles.append(new Option($availableStyles[i].title, $availableStyles[i].name, false, selected));
                 }
             } else {
-                $('.layer-styles', menu).remove();
+                $layerStyleControl.remove();
             }
         },
         _toggleMenu: function (e) {
@@ -517,30 +548,16 @@
         },
         /**
          * returns a list of supported menu options for this layer. Override this if you have a custom menu option
-         * @param layer Mapbender.SourceLayer
+         * @param {Mapbender.SourceLayer} layer
          * @returns {string[]}
          */
         _getSupportedMenuOptions(layer) {
-            const supported = ['layerremove'];
-            if (layer.options.metadataUrl) {
-                supported.push('metadata');
-            }
-            // opacity + dimension are only available on root layer
-            if (!layer.getParent()) {
-                supported.push('opacity');
-                if ((layer.source.configuration.options.dimensions || []).length) {
-                    supported.push('dimension');
-                }
-            }
-            if (layer.hasBounds()) {
-                supported.push('zoomtolayer');
-            }
-            return supported;
+            return layer.getSupportedMenuOptions();
         },
-        _initDimensionsMenu: function ($element, menu, dims, source) {
+        _initDimensionsMenu: function ($element, $actionElement, source) {
+            var dims = source.configuration.options.dimensions || [];
             var self = this;
             var dimData = $element.data('dimensions') || {};
-            var template = $('.layer-control-dimensions', menu);
             var $controls = [];
             var dragHandlers = [];
             var updateData = function (key, props) {
@@ -551,7 +568,7 @@
                 $element.data('dimensions', mergedData);
             };
             $.each(dims, function (idx, item) {
-                var $control = template.clone();
+                var $control = $actionElement.clone();
                 var label = $('.layer-dimension-title', $control);
 
                 var dimDataKey = source.id + '~' + idx;
@@ -599,7 +616,7 @@
                 }
                 $controls.push($control);
             });
-            template.replaceWith($controls);
+            $actionElement.replaceWith($controls);
             dragHandlers.forEach(function (dh) {
                 dh.reflow();
             });
@@ -715,10 +732,12 @@
         updateIconVisual_: function ($el, active, enabled) {
             $el.toggleClass('active', !!active);
             var icons;
+            var hideLayerNameWhenCheckboxDisabled = false;
             if ($el.is('.-fn-toggle-info')) {
                 icons = ['fa-info', 'fa-info-circle'];
             } else {
                 icons = ['fa-square', 'fa-square-check'];
+                hideLayerNameWhenCheckboxDisabled = !enabled && active;
             }
             $('>i', $el)
                 .toggleClass(icons[1], !!active)
@@ -726,6 +745,9 @@
             ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
+                if(hideLayerNameWhenCheckboxDisabled){
+                    $('>span', $el.prevObject).closest('.layer-title').toggleClass('disabled', true);
+                }
             }
         },
         reIndent_: function ($lists, recursive) {

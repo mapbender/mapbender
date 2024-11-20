@@ -103,9 +103,18 @@ class GroupController extends AbstractController
             ));
         }
 
+        $view = $form->createView();
+        /*
+         * Display users sorted by label;
+         * sorting takes place here because it is not easy to implement in twig
+         */
+        $users = $view->children['users'];
+        usort($users->children, function ($a, $b) {
+            return strcasecmp($a->vars['label'], $b->vars['label']);
+        });
         return $this->render('@FOMUser/Group/form.html.twig', array(
             'group' => $group,
-            'form' => $form->createView(),
+            'form' => $view,
             'title' => 'fom.user.group.form.edit_group',
         ));
     }

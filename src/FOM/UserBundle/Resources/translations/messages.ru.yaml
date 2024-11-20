@@ -24,10 +24,10 @@ fom:
       index:
         groups: Группы
         add_new_group: 'Добавить новую группу'
-        title: Название
+        title: Имя
         description: Описание
         edit_group: 'Изменить группу'
-        delete_group: 'Удалить группу'
+        delete_group: 'Вы действительно хотите удалить группу "{group_title}"'
         no_groups_available: 'Нет доступных групп.'
       form:
         edit_group: 'Изменить группу'
@@ -67,7 +67,7 @@ fom:
         edit_user: 'Редактирование пользователя'
         contact_user: 'Связаться с пользователем по электронной почте'
         edit_group: 'Изменить группу'
-        delete_user: 'Удалить пользователя'
+        delete_user: 'Вы действительно хотите удалить пользователя "%user_username%"'
         no_users_available: 'Нет доступных пользователей.'
       form:
         edit_user: 'Редактировать пользователя'

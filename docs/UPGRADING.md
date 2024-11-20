@@ -1,5 +1,31 @@
 # Upgrading Guide
 
+## next release
+
+### Sources refactored
+Sources now use native ES6 classes instead of prototype pseudo-classes. This means, for custom sources, you
+must also use this syntax now. Refer to the [new docs entry](sources/sources.md) for details.
+
+The following has changed apart from the class syntax:
+- several methods that were already present in the WMSSource have been moved to the abstract Mapbender.Source
+- new event `mbmapsourcelayersreordered` that fires when the layer order within a source is moved. In earlier versions, `mbmapsourcemoved` was called then.
+- `Mapbender.Source.wmsloader` renamed to `Mapbender.Source.isDynamicSource`
+
+A layer's legend can now also be a style definition instead of a plain url. If you handle legend urls, adapt accordingly (see [documentation]((sources/sources.md)) for new syntax):
+- In mapbender.element.legend.js:  New methods `createLegendForLayer`, `createLegendForStyle`
+- In LegendHandler.php: New method `prepareStyleBlock`
+- New parameter `mapbender.print.canvas_legend.class` defaulting to `Mapbender\PrintBundle\Component\CanvasLegend` for the rendering class for custom styled legends
+
+The layer tree menu option handling has been changed:
+- New method `Mapbender.SourceLayer.getSupportedMenuOptions` that should be overridden by sources, was handled in the LayerTree element until now
+- Menu item markup now require the `data-menu-action` attribute
+- New method in the layertree element for easier overriding: `_initMenuAction`
+
+The following methods are removed:
+- `Mapbender.Geo.SourceHandler.isLayerInScale`: Use `layer.isInScale`
+- `Mapbender.Geo.SourceHandler.isLayerWithinBounds`: Use `layer.intersectsExtent`. The method requires an srsname which can be obtained using `Mapbender.Model.getCurrentProjectionCode()`
+- `Mapbender.Source.initializeLayers()`: Use `Mapbender.Source.createNativeLayers()`
+
 ## v4.0.0
 
 ### Upgrade database

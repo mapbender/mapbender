@@ -22,6 +22,39 @@ $(function() {
         return false;
     });
 
+    $(document).on('click', ".sortByColumn", function () {
+        var $this = $(this);
+        var asc = true;
+
+        $this.siblings().find('span').removeClass().addClass('fa fa-sort').prop('title', Mapbender.trans('mb.actions.sort_ascending'));
+
+        if ($this.find('span').hasClass('fa fa-sort-amount-asc')) {
+            asc = false;
+            $this.find('span').removeClass().addClass('fa fa-sort-amount-desc').prop('title', Mapbender.trans('mb.actions.sort_ascending'));
+        } else {
+            $this.find('span').removeClass().addClass('fa fa-sort-amount-asc').prop('title', Mapbender.trans('mb.actions.sort_descending'));
+        }
+
+        var table = $this.parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(comparer($this.index()));
+
+        if (!asc) {
+            rows = rows.reverse();
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    });
+
+    function comparer(index) {
+        return function (a, b) {
+            var valA = $(a).children('td').eq(index).text();
+            var valB = $(b).children('td').eq(index).text();
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        };
+    }
+
+
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);
@@ -31,16 +64,47 @@ $(function() {
         if (filterTargetId && !filterScope.length) {
             filterScope = $(document.getElementById(filterTargetId));
         }
-        var items = $(">li, >tr, >tbody>tr", filterScope).not('.doNotFilter');
+        var items = $(">li, >tr, >tbody>tr", filterScope);
 
         if(val.length > 0){
             $.each(items, function() {
                 var $item = $(this);
-                var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                $item.toggle(containsInput);
+                if (filterScope.hasClass('listFilterBoxes')) {
+                    var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                    $item.toggle(containsInput);
+                } else {
+                    var $allItemRows = $item.find('tr');
+                    var $filterItemRows = $allItemRows.not('.doNotFilter');
+                    if ($filterItemRows.length > 0) {
+                        let itemContainsInput = -1;
+                        $.each($filterItemRows, function () {
+                            var $row = $(this);
+                            var $filterText = $row.find('td').not('.doNotFilter');
+                            var rowContainsInput = $filterText.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                            if (rowContainsInput) {
+                                $row.find('td').addClass('filter-matches');
+                                itemContainsInput = 1;
+                            } else {
+                                $row.find('td').removeClass('filter-matches');
+                            }
+                        });
+                        if (itemContainsInput === 1) {
+                            $item.show();
+                        } else {
+                            $item.hide();
+                        }
+                    } else if ($allItemRows.length > 0) {
+                        $item.hide();
+                    } else {
+                        //
+                        var itemContainsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
+                        $item.toggle(itemContainsInput);
+                    }
+                }
             });
-        }else{
+        } else {
             items.show();
+            items.find('tr').find('td').removeClass('filter-matches');
         }
     });
 

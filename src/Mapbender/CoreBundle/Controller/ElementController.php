@@ -39,7 +39,7 @@ class ElementController extends AbstractController
     public function element(Request $request, $slug, $id, string $action)
     {
         $application = $this->applicationResolver->getApplicationEntity($slug);
-        $id = intval($id);
+        $id = is_numeric($id) ? intval($id) : $id;
         $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
         if (!$element) {
             throw new NotFoundHttpException();

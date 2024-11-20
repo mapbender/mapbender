@@ -1,6 +1,33 @@
 ## next release
 Features:
 * [LayerTree] If a WMS has several styles, the user now has the option of selecting these in the context menu of the layertree ([PR#1636](https://github.com/mapbender/mapbender/pull/1636), [PR#1648](https://github.com/mapbender/mapbender/pull/1648))
+* [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
+* [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
+* [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
+
+Bugfixes:
+* [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
+* [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
+* [BaseSourceSwitcher] Submenu is closed as soon as the mouse pointer moves out of the menu ([#PR1644](https://github.com/mapbender/mapbender/pull/1644))
+* Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
+
+Other:
+* Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639))
+* [Manager] Provide detailed information in all "delete"-dialogs ([PR#1631](https://github.com/mapbender/mapbender/pull/1631)) 
+
+
+## v4.0.3
+Bugfix: 
+* Map did not load when using a start extent with negative longitude or latitude in WGS 84 ([#1642](https://github.com/mapbender/mapbender/issues/1642), [PR#1645](https://github.com/mapbender/mapbender/pull/1645))
+
+Other:
+* Updated OpenLayers to version 10.2 ([PR#1638](https://github.com/mapbender/mapbender/pull/1638))
+
+
+## v4.0.2
+Bugfix:
+* Fix ajax requests fail in YAML applications (regression introduced in 4.0.1) ([#1628](https://github.com/mapbender/mapbender/issues/1628), [PR#1634](https://github.com/mapbender/mapbender/pull/1634))
+
 
 ## v4.0.1
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`

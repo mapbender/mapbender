@@ -75,7 +75,7 @@
         "datatables/datatables": "^1.10.16",
         "twbs/bootstrap": "^5.0",
 
-        "mapbender/openlayers6-es5": "^9"
+        "mapbender/openlayers6-es5": "^10"
     },
     "provide": {
         "mapbender/fom": "3.3",

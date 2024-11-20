@@ -114,9 +114,21 @@ class UserController extends UserControllerBase
                 ));
             }
         }
+
+        $view = $form->createView();
+        /*
+         * Display groups sorted by label;
+         * sorting takes place here because it is not easy to implement in twig
+         */
+        if (array_key_exists('groups', $view->children)) {
+            $groups = $view->children['groups'];
+            usort($groups->children, function ($a, $b) {
+                return strcasecmp($a->vars['label'], $b->vars['label']);
+            });
+        }
         return $this->render('@FOMUser/User/form.html.twig', array(
             'user' => $user,
-            'form' => $form->createView(),
+            'form' => $view,
             'profile_template' => $this->profileTemplate,
             'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
             'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
@@ -142,7 +154,7 @@ class UserController extends UserControllerBase
             throw new NotFoundHttpException('The root user can not be deleted');
         }
 
-        $this->denyAccessUnlessGranted('DELETE', $user);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_USERS);
 
         if (!$this->isCsrfTokenValid('user_delete', $request->request->get('token'))) {
             $this->addFlash('error', 'Invalid CSRF token.');

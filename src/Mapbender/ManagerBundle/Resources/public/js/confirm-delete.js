@@ -2,7 +2,7 @@
     window.Mapbender = Mapbender || {};
     window.Mapbender.Manager = Mapbender.Manager || {};
     window.Mapbender.Manager.confirmDelete = function($el, deleteUrl, strings, popupContent) {
-        var defaultContent = $el && ($('<div/>').text($el.attr('title') + '?').html());
+        var defaultContent = $el && ($('<div/>').text(($el.attr('data-title') || $el.attr('title')) + '?').html());
         var deleteUrl_ = deleteUrl || ($el && ($el.attr('data-url') || $el.attr('href')));
         var csrfToken = $el && $el.attr('data-token');
         var deferred = $.Deferred();

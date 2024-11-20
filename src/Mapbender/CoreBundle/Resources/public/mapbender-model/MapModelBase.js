@@ -206,11 +206,10 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         setSourceLayerOrder: function(sourceId, newLayerIdOrder) {
-            var source = this.getSourceById(sourceId);
-            Mapbender.Geo.SourceHandler.setLayerOrder(source, newLayerIdOrder);
+            const source = this.getSourceById(sourceId);
+            source.setLayerOrder(newLayerIdOrder);
             this._checkSource(source, false);
-            // @todo: rename this event; it's about layers within a source
-            $(this.mbMap.element).trigger('mbmapsourcemoved', {
+            $(this.mbMap.element).trigger('mbmapsourcelayersreordered', {
                 mbMap: this.mbMap,
                 source: source
             });
@@ -589,7 +588,7 @@ window.Mapbender.MapModelBase = (function() {
                     mbMap: this.mbMap,
                     source: source
                 });
-                var olLayers = source.initializeLayers(projCode, this.mbMap.options);
+                var olLayers = source.createNativeLayers(projCode, this.mbMap.options);
                 for (var j = 0; j < olLayers.length; ++j) {
                     var olLayer = olLayers[j];
                     Mapbender.mapEngine.setLayerVisibility(olLayer, false);
@@ -724,7 +723,7 @@ window.Mapbender.MapModelBase = (function() {
             for (var i = 0; i < this.sourceTree.length; ++i) {
                 var source = this.sourceTree[i];
                 if (source.checkRecreateOnSrsSwitch(srsNameFrom, srsNameTo)) {
-                    var olLayers = source.initializeLayers(srsNameTo, this.mbMap.options);
+                    var olLayers = source.createNativeLayers(srsNameTo, this.mbMap.options);
                     for (var j = 0; j < olLayers.length; ++j) {
                         var olLayer = olLayers[j];
                         Mapbender.mapEngine.setLayerVisibility(olLayer, false);
@@ -810,7 +809,7 @@ window.Mapbender.MapModelBase = (function() {
             var coords = Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || targetSrs, targetSrs);
 
             layer.addMarker(coords.x, coords.y);
-            if (poi.label) {
+            if (poi.label && typeof(poi.label) === 'string') {
                 this.openPopup(coords.x, coords.y, poi.label);
             }
         },

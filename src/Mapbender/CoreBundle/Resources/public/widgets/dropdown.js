@@ -80,6 +80,12 @@ $(function () {
         }
 
         var dropdownList = $(".dropdownList", this);
+        if ($select.attr('readonly')) {
+            $(this).attr('readonly', 'readonly');
+            if ($select.attr('title')) {
+                $(this).parent().attr('title', $select.attr('title'));
+            }
+        }
         if (dropdownList.children().length === 0) {
             $('option', $select).each(function (i, e) {
                 var node = $('<li>');

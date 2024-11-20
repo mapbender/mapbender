@@ -4,7 +4,7 @@ fom:
       popup:
         delete_user_group:
           title: 'Confirmar remoção'
-          content: 'Tem certeza que deseja excluir o grupo %userGroup%?'
+          content: 'Tem certeza que deseja excluir o grupo "%userGroup%"?'
           btn:
             cancel: Cancelar
             ok: Salvar

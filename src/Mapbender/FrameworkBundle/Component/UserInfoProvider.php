@@ -41,7 +41,7 @@ class UserInfoProvider
             );
         } else {
             return array(
-                'name' => $token->getUsername(),
+                'name' => $token->getUserIdentifier(),
                 'roles' => $token->getRoleNames(),
                 'isAnonymous' => false,
             );
