@@ -5,6 +5,7 @@ Features:
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
 
 Bugfixes:
+* [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
 * Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
 
