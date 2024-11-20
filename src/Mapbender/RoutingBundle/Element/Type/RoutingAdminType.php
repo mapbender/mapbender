@@ -75,10 +75,10 @@ class RoutingAdminType extends AbstractType
                 'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
                 'required' => true,
                 'choices' => [
-                    'mb.routing.backend.dialog.label.gh.titel' => 'graphhopper',
                     'mb.routing.backend.dialog.label.osrm.titel' => 'osrm',
-                    'mb.routing.backend.dialog.label.pg.titel' => 'pgrouting',
-                    'Trias' => 'trias',
+                    #'mb.routing.backend.dialog.label.gh.titel' => 'graphhopper',
+                    #'mb.routing.backend.dialog.label.pg.titel' => 'pgrouting',
+                    #'Trias' => 'trias',
                 ],
             ])
             ->add('lineColor', TextType::class, [

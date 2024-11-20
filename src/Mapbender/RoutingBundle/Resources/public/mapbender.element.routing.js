@@ -123,6 +123,7 @@
 
             $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
                 self.focusedInputField = e.target;
+                $('.mb-element-map').css('cursor', 'crosshair');
             });
 
             if (this.options.useSearch) {
@@ -237,6 +238,7 @@
             $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
             $('.mb-routing-info', this.element).addClass('d-none').html('');
             $('.mb-routing-instructions', this.element).html('');
+            $('.mb-element-map').css('cursor', 'auto');
             return true;
         },
 
@@ -483,6 +485,7 @@
                     })
                 });
                 this.olMap.addLayer(this.routingLayer);
+                this.routingLayer.setZIndex(1);
             }
 
             const format = new ol.format.GeoJSON();
@@ -540,6 +543,7 @@
                     source: new ol.source.Vector(),
                 });
                 this.olMap.addLayer(this.markerLayer);
+                this.markerLayer.setZIndex(10);
             }
         },
 
@@ -551,7 +555,7 @@
                 return null;
             }
             let options = {
-                src: styleConfig.imagePath,
+                src: Mapbender.configuration.application.urls.base + styleConfig.imagePath,
             };
             if (styleConfig.imageSize) {
                 const size = styleConfig.imageSize.split(',');
