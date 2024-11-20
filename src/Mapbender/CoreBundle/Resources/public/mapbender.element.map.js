@@ -34,6 +34,12 @@
             if (!this.options.extent_start) {
                 this.options.extent_start = this.options.extent_max.slice();
             }
+            this.options.extent_start = this.options.extent_start.map(function(value) {
+                return parseFloat(value);
+            });
+            this.options.extent_max = this.options.extent_max.map(function(value) {
+                return parseFloat(value);
+            });
             if (!this.options.srs) {
                 throw new Error("Invalid map configuration: missing srs");
             }

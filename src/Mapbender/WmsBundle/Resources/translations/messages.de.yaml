@@ -133,7 +133,8 @@ mb:
               title: ID
               description: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
             layersname: Name
-            style: Style
+            style: Stil
+          style_leafs_only: 'Mapbender untersützt individuelle Stile nicht für Gruppen'
       class:
         title: 'WMS laden'
         description: 'Lädt einen WMS per getCapabilities-Request'

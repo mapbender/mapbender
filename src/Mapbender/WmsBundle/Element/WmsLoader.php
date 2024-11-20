@@ -157,6 +157,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     {
         $source = $this->getSource($request);
         $instance = $this->getSourceTypeDirectory()->createInstance($source);
+        $infoFormat = $request->get('infoFormat');
 
         $sourceService = $this->getSourceService($instance);
         $layerConfiguration = $sourceService->getConfiguration($instance);
@@ -168,7 +169,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         }
         // amend info_format and format options
         foreach ($layerConfigurations as &$layerConfiguration) {
-            $layerConfiguration['configuration']['options']['info_format'] = $config['defaultInfoFormat'];
+            $layerConfiguration['configuration']['options']['info_format'] = $infoFormat ?? $config['defaultInfoFormat'];
             $layerConfiguration['configuration']['options']['format'] = $config['defaultFormat'];
         }
 
