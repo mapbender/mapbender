@@ -149,7 +149,7 @@
                 url: self.elementUrl + 'loadWms',
                 data: {
                     url: url,
-                    infoFormat: options.infoFormat
+                    infoFormat: options?.infoFormat
                 },
                 dataType: 'json',
                 error: function(jqXHR, textStatus, errorThrown){

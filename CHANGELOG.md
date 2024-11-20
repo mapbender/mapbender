@@ -3,6 +3,7 @@ Features:
 * Allow selecting WMS layer styles via the layer tree contextmenu ([PR#1636](https://github.com/mapbender/mapbender/pull/1636))
 * [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
+* [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
 
 Bugfixes:
 * [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
