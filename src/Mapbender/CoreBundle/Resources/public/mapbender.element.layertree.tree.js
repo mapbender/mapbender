@@ -516,17 +516,13 @@
             });
         },
         _initLayerStyleSelector: function ($layerStyleControl, layer) {
-            const $availableStyles = layer.options.availableStyles || [];
+            const availableStyles = layer.options.availableStyles || [];
             const $selectLayerStyles = $layerStyleControl.find('.select-layer-styles');
             $selectLayerStyles.data('layer', layer);
-            if ($availableStyles.length && $selectLayerStyles.length) {
-                if (layer.options.style.length) {
-                    $selectLayerStyles.append(new Option(layer.options.style));
-                }
-                for (let i = 0; i < $availableStyles.length; i++) {
-                    if ($availableStyles[i].name !== layer.options.style) {
-                        $selectLayerStyles.append(new Option($availableStyles[i].title), $availableStyles[i].name);
-                    }
+            if (availableStyles.length && $selectLayerStyles.length) {
+                for (let i = 0; i < availableStyles.length; i++) {
+                    const selected = availableStyles[i].name === layer.options.style;
+                    $selectLayerStyles.append(new Option(availableStyles[i].title, availableStyles[i].name, false, selected));
                 }
             } else {
                 $layerStyleControl.remove();
