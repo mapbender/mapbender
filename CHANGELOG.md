@@ -1,3 +1,7 @@
+## next release
+Features:
+* [LayerTree] If a WMS has several styles, the user now has the option of selecting these in the context menu of the layertree ([#1636](https://github.com/mapbender/mapbender/pull/1636), [#1648](https://github.com/mapbender/mapbender/pull/1648))
+
 ## v4.0.1
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
