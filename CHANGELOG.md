@@ -3,6 +3,8 @@ Features:
 * Allow selecting WMS layer styles via the layer tree contextmenu ([PR#1636](https://github.com/mapbender/mapbender/pull/1636))
 * [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
+* [LayerTree] Allow de-/activation of a layer via clicking the layername ([PR#1641](https://github.com/mapbender/mapbender/pull/1641))   
+* [WMSLoader] Allow to set GetFeatureInfo format via new parameter mb-informat for WMS added via link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
 
 Bugfixes:
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
