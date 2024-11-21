@@ -9,6 +9,7 @@ use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
 use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
 use Mapbender\PrintBundle\Component\Region\FontStyle;
 use Mapbender\PrintBundle\Component\Region\FullPage;
+use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 
 /**
@@ -23,7 +24,6 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  * @todo: calculate fit to region for individual blocks and whole groups
  * @todo: add option to keep groups together if they fit
  * @todo: add configuration knob for column width (now: hardcoded to 100mm, because of also hard-coded A4 spill page size)
- * @todo: support line breaks in titles (will impact region fit calculations)
  * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
  * @todo: (optionally) suppress legend repetitions, based on ~equal url; careful with assigned title...
  */
@@ -33,11 +33,15 @@ class LegendHandler
     protected float $maxColumnWidthMm = 100.;
     protected float $maxImageDpi = 96.;
     protected string $legendPageFontName = 'Arial';
+    /**
+     * @var bool if true, the columns are rendered only as wide as they need to be. If false, all columns are $maxColumnWidthMm wide
+     */
+    protected bool $dynamicColumnSizes = false;
 
     public function __construct(
         protected ImageTransport $imageTransport,
         protected string         $resourceDir,
-        ?string                   $tempDir,
+        ?string                  $tempDir,
         protected string         $canvasLegendClass,
     )
     {
@@ -83,7 +87,7 @@ class LegendHandler
     {
         $group = new LegendBlockGroup();
         foreach ($groupData as $key => $data) {
-            $block = match($data['type']) {
+            $block = match ($data['type']) {
                 'url' => $this->prepareUrlBlock($data['layerName'], $data['url']),
                 'style', 'canvas' => $this->prepareStyleBlock($data),
                 default => null,
@@ -110,62 +114,53 @@ class LegendHandler
         $x = $pageMargins['x'];
         $y = $pageMargins['y'];
         $titleFontSize = $this->getLegendTitleFontSize($region);
+        $currentColumnMaxWidth = 0;
 
         foreach ($blockGroups as $group) {
             foreach ($group->getBlocks() as $block) {
                 if ($block->isRendered()) {
                     continue;
                 }
-                $imageMmWidth = PrintService::dotsToMm($block->getWidth(), $this->maxImageDpi);
-                $imageMmHeight = PrintService::dotsToMm($block->getHeight(), $this->maxImageDpi);
-                // limit to column width, keep aspect ratio when shrinking
-                if ($imageMmWidth > $this->maxColumnWidthMm) {
-                    $scaleFactor = $this->maxColumnWidthMm / $imageMmWidth;
-                } else {
-                    $scaleFactor = 1;
-                }
-                $scaledImageWidth = $imageMmWidth * $scaleFactor;
-                $scaledImageHeight = $imageMmHeight * $scaleFactor;
+                $measures = $this->measureLegendBlock($block, $region, $pageMargins, $margins, $pdf, $titleFontSize);
 
-                // allot a little extra height for the title text
-                // @todo: support multi-line text
-                $blockHeightMm = round($scaledImageHeight + $titleFontSize);
-
-                if ($y != $margins['y'] && $y + $blockHeightMm > $region->getHeight()) {
+                if ($y != $margins['y'] && $y + $measures['height'] > $region->getHeight()) {
                     // spill to next column
-                    $x += $this->maxColumnWidthMm + $pageMargins['x'];
+                    $x += $this->dynamicColumnSizes
+                        ? $currentColumnMaxWidth + 2 * $pageMargins['x']
+                        : $this->maxColumnWidthMm + $pageMargins['x'];
                     $y = $pageMargins['y'];
+                    $currentColumnMaxWidth = $measures['width'];
                 }
-                if ($x + 20 > $region->getWidth()) {
+                if ($x + $measures['width'] > $region->getWidth() || $region instanceof NullRegion) {
                     if (!$allowPageBreaks) {
                         return;
                     }
-                    // we need a page break
+                    // we need a page break. Reset all region-specific metrics and remeasure current legend entry
                     $this->addPage($pdf, $templateData, $jobData);
                     $region = FullPage::fromCurrentPdfPage($pdf);
                     $margins = $this->getMargins($region);
                     $x = $pageMargins['x'];
                     $y = $pageMargins['y'];
                     $titleFontSize = $this->getLegendTitleFontSize($region, true);
+                    $currentColumnMaxWidth = 0;
+                    $measures = $this->measureLegendBlock($block, $region, $pageMargins, $margins, $pdf, $titleFontSize);
                 }
 
-                $pageX = $x + $region->getOffsetX();
-                $pageY = $y + $region->getOffsetY();
-                $pdf->SetXY($pageX, $pageY);
+                $currentColumnMaxWidth = max($measures['width'], $currentColumnMaxWidth);
+
+                // print title text
+                $pdf->SetXY($x + $region->getOffsetX(), $y + $region->getOffsetY());
                 $text = mb_convert_encoding($block->getTitle(), 'ISO-8859-1', 'UTF-8');
-                $nLines = $pdf->getMultiCellTextHeight($text, $this->maxColumnWidthMm);
-                // Font size is in 'pt'. Convert pt to mm for line height.
-                // see https://en.wikipedia.org/wiki/Point_(typography)
-                $lineHeightMm = $titleFontSize * .353;
-                $blockTitleHeightMm = $lineHeightMm * $nLines;
-                $pdf->MultiCell($this->maxColumnWidthMm, $lineHeightMm, $text, 0, 'L');
+                $pdf->MultiCell($measures['width'], $measures['lineHeight'], $text, 0, 'L');
+
+                // print image
                 $this->pdfUtil->addImageToPdf($pdf, $block->resource,
-                    $pageX,
-                    $pageY + $blockTitleHeightMm,
-                    $scaledImageWidth, $scaledImageHeight);
+                    $x + $region->getOffsetX(),
+                    $y + $region->getOffsetY() + $measures['titleHeight'],
+                    $measures['imageWidth'], $measures['imageHeight']);
                 $block->setIsRendered(true);
 
-                $y += $blockHeightMm + $margins['y'];
+                $y += $measures['height'] + $margins['y'];
             }
         }
     }
@@ -222,24 +217,18 @@ class LegendHandler
     }
 
     /**
-     * Returns the desired outer margin around the rendered legends
+     * Returns the desired outer margins and the distance between layer title and layer graphic around the rendered legends
      *
-     * @return int[] with keys 'x' and 'y', values in mm
+     * @return int[] with keys 'x', 'y' and 'title_to_image', values in mm
      */
     protected function getMargins(TemplateRegion $region): array
     {
         // @todo: config values please
-        if ($region instanceof FullPage) {
-            return array(
-                'x' => 5,
-                'y' => 10,
-            );
-        } else {
-            return array(
-                'x' => 5,
-                'y' => 5,
-            );
-        }
+        return array(
+            'x' => 5,
+            'y' => $region instanceof FullPage ? 5 : 10,
+            'title_to_image' => 0,
+        );
     }
 
     protected function getPageMargins(TemplateRegion $region): array
@@ -251,5 +240,57 @@ class LegendHandler
     {
         $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
         return $fontStyle->getSize();
+    }
+
+    protected function measureLegendBlock(
+        LegendBlock          $block,
+        TemplateRegion       $region,
+        array                $pageMargins,
+        array                $margins,
+        PDF_Extensions|\FPDF $pdf,
+        float                $titleFontSize,
+    ): array
+    {
+        $imageMmWidth = PrintService::dotsToMm($block->getWidth(), $this->maxImageDpi);
+        $imageMmHeight = PrintService::dotsToMm($block->getHeight(), $this->maxImageDpi);
+
+        // calculate maximum available space
+        $maxColumnWidth = min($this->maxColumnWidthMm, $region->getWidth()) - 2 * $pageMargins['x'];
+        $maxColumnHeight = $region->getHeight() - 2 * $pageMargins['y'];
+
+        // calculate space for the title text
+        $text = mb_convert_encoding($block->getTitle(), 'ISO-8859-1', 'UTF-8');
+        $nLines = $pdf->getMultiCellTextHeight($text, $maxColumnWidth);
+        $textWidth = $nLines > 1 ? $maxColumnWidth : $pdf->GetStringWidth($text);
+        // Font size is in 'pt'. Convert pt to mm for line height.
+        // see https://en.wikipedia.org/wiki/Point_(typography)
+        $lineHeightMm = $titleFontSize * .353;
+        $titleHeightMm = $lineHeightMm * $nLines;
+        if (array_key_exists('title_to_image', $margins)) {
+            $titleHeightMm += $margins['title_to_image'];
+        }
+
+        // calculate scale factor for image
+        // limit to column width and container height, keep aspect ratio when shrinking
+        if ($imageMmWidth > $maxColumnWidth) {
+            $scaleFactor = $maxColumnWidth / $imageMmWidth;
+        } else {
+            $scaleFactor = 1;
+        }
+        if ($imageMmHeight > $maxColumnHeight - $titleHeightMm) {
+            $scaleFactor = min($scaleFactor, ($maxColumnHeight - $titleHeightMm) / $imageMmHeight);
+        }
+
+        $scaledImageWidth = $imageMmWidth * $scaleFactor;
+        $scaledImageHeight = $imageMmHeight * $scaleFactor;
+
+        return [
+            "width" => max($textWidth, $scaledImageWidth),
+            "height" => round($scaledImageHeight + $titleHeightMm),
+            "imageWidth" => $scaledImageWidth,
+            "imageHeight" => $scaledImageHeight,
+            "lineHeight" => $lineHeightMm,
+            "titleHeight" => $titleHeightMm,
+        ];
     }
 }

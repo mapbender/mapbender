@@ -28,7 +28,7 @@ class ImageTransport
      *
      * @param string $url
      * @param float $opacity in [0;1]
-     * @return resource|null GDish
+     * @return ?\GdImage GDish
      */
     public function downloadImage($url, $opacity=1.0)
     {

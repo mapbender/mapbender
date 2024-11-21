@@ -14,7 +14,7 @@ class LegendBlock extends GdCanvas implements LegendBlockContainer
     protected $rendered = false;
 
     /**
-     * @param resource $image GDish
+     * @param \GdImage $image GDish
      * @param string $title
      */
     public function __construct($image, $title)
