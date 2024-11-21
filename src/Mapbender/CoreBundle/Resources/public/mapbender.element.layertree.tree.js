@@ -582,7 +582,7 @@
                     self._callDimension(source, $(e.target));
                 });
                 label.attr('title', label.attr('title') + ' ' + item.name);
-                $('.layer-dimension-bar', menu).toggleClass('hidden', item.type === 'single');
+                $('.layer-dimension-bar', $actionElement).toggleClass('hidden', item.type === 'single');
                 $('.layer-dimension-textfield', $control)
                     .toggleClass('hidden', item.type !== 'single')
                     .val(dimData.value || item.extent)
