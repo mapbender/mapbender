@@ -9,9 +9,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Mapbender routing bundle
- *
- * @author David Patzke
- * @author Andriy Oblivantsev
  */
 class MapbenderRoutingBundle extends Bundle
 {

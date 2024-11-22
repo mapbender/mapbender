@@ -1,9 +1,7 @@
 (function($) {
     'use strict';
     /**
-     * @author Christian Kuntzsch <christian.kuntzsch@wheregroup.com>
-     * @author Robert Klemm <robert.klemm@wheregroup.com>
-     * @namespace mapbender.mbRoutingElement
+     * @namespace mapbender.mbRouting
      */
     $.widget('mapbender.mbRouting', {
         map: null,

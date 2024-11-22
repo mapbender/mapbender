@@ -15,8 +15,6 @@ use Mapbender\RoutingBundle\Component\ReverseGeocodingHandler;
 /**
  * Class RoutingElement
  * @package Mapbender\RoutingBundle\Element
- * @author Christian Kuntzsch <christian.kuntzsch@wheregroup.com>
- * @author Robert Klemm <robert.klemm@wheregroup.com>
  */
 class Routing extends AbstractElementService
 {

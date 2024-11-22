@@ -11,8 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 /**
  * Class RoutingElementAdminType
  * @package Mapbender\RoutingBundle\Element\Type
- * @author Christian Kuntzsch
- * @author Robert Klemm
  */
 class SearchAdminType extends AbstractType
 {
