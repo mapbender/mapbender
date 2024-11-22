@@ -590,7 +590,7 @@
                 if (inst.icon) {
                     $icon = $('<span/>');
                     $icon.addClass('routing-icon ' + inst.icon);
-                    $td.addClass('text-center').append($icon);
+                    $td.addClass('text-center align-middle').append($icon);
                     $tr.append($td);
                     $td = $('<td/>');
                 } else {
