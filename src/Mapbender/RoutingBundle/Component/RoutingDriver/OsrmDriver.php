@@ -4,6 +4,7 @@ namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Mapbender\Component\Transport\ConnectionErrorException;
 use Mapbender\Component\Transport\HttpTransportInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OsrmDriver extends RoutingDriver
 {
@@ -17,9 +18,13 @@ class OsrmDriver extends RoutingDriver
 
     protected HttpTransportInterface $httpTransport;
 
-    public function __construct(HttpTransportInterface $httpTransport)
+    protected TranslatorInterface $translator;
+
+    public function __construct(HttpTransportInterface $httpTransport, TranslatorInterface $translator)
     {
         $this->httpTransport = $httpTransport;
+        $this->translator = $translator;
+        parent::__construct($translator);
     }
 
     /**

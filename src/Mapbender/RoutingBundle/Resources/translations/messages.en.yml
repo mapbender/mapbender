@@ -28,6 +28,8 @@ mb:
           addintermediate: Add point
           getroute: Go!
       info: will take
+      minutes: Min
+      hours: Hours
     backend:
       title: Routing
       description: Routing functionality

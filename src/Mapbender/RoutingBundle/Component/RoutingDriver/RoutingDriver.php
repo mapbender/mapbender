@@ -2,6 +2,7 @@
 
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 abstract class RoutingDriver {
@@ -25,6 +26,13 @@ abstract class RoutingDriver {
 
     protected string $timeField = 'time';
     protected string $timeScale = 'ms';
+
+    protected TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     abstract public function getRoute($requestParams, $configuration) : array;
 
@@ -79,17 +87,18 @@ abstract class RoutingDriver {
         $time = gmdate('H:i', $time);
         if (substr($time, 0, 2) == '00') {
             $minutes = substr($time, 3, strlen($time));
-            return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . ' Min' : $minutes . ' Min';
+            $min = ' ' . $this->translator->trans('mb.routing.frontend.minutes');
+            return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . $min : $minutes . $min;
         }
-        return $time . ' Std.';
+        return $time . ' ' . $this->translator->trans('mb.routing.frontend.hours');
     }
 
     protected function formatDistance($distance): string
     {
         if (floatval($distance) >= 1000) {
-            return round((floatval($distance) / 1000.0), 2) . ' KM';
+            return round((floatval($distance) / 1000.0), 2) . ' km';
         }
-        return $distance . 'm';
+        return $distance . ' m';
     }
 
     /**

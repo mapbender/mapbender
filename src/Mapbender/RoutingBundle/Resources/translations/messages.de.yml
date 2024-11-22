@@ -28,6 +28,8 @@ mb:
           addintermediate: Zwischenstop hinzufügen
           getroute: Los geht's!
       info: benötigen
+      minutes: Min
+      hours: Std
     backend:
       title: Routing
       description: Streckenführungs-Werkzeug (Routing)

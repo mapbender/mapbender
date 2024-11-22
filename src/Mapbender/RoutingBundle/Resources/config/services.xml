@@ -29,6 +29,7 @@
         </service>
         <service id="mapbender.routing.driver.routing.osrm" class="%mapbender.routing.driver.routing.osrm.class%">
             <argument type="service" id="mapbender.http_transport.service" />
+            <argument type="service" id="translator" />
         </service>
         <service id="mapbender.routing.driver.routing.graphhopper" class="%mapbender.routing.driver.routing.graphhopper.class%">
             <argument type="service" id="mapbender.http_transport.service" />
