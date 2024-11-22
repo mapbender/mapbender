@@ -20,9 +20,8 @@
         },
 
         _create: function() {
-            const self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
-                self._setup(mbMap);
+                this._setup(mbMap);
             }, () => {
                 Mapbender.checkTarget('mbRoutingElement');
             });
@@ -32,12 +31,11 @@
         },
 
         _setup: function(mbMap) {
-            const self = this;
             this.map = mbMap;
             this.olMap = mbMap.map.olMap;
 
             if (this.options.autoSubmit) {
-                self._autoSubmit();
+                this._autoSubmit();
             }
 
             this._initializeEventListeners();
@@ -90,7 +88,6 @@
         },
 
         _initializeEventListeners: function() {
-            const self = this;
             this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
 
             // flush points when srs is changed
@@ -98,31 +95,31 @@
 
             // add point on click
             $('#addPoint', this.element).click(() => {
-                self._addInputField();
+                this._addInputField();
             });
 
             // remove input on click
             $('.mb-routing-location-points', this.element).on('click', '.clearField', (e) => {
-                self._removeInputWrapper(e.target);
+                this._removeInputWrapper(e.target);
             });
 
             // reset route and input on click
             $('#resetRoute', this.element).click(() => {
-                self._clearRoute();
+                this._clearRoute();
             });
 
             // swap points on click
             $('#swapPoints', this.element).click(() => {
-                self._flipPoints();
+                this._flipPoints();
             });
 
             // calculate route button click
             $('#calculateRoute', this.element).click(() => {
-                self._getRoute();
+                this._getRoute();
             });
 
             $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
-                self.focusedInputField = e.target;
+                this.focusedInputField = e.target;
                 $('.mb-element-map').css('cursor', 'crosshair');
             });
 
@@ -130,12 +127,12 @@
                 $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
                     $(e.target).autocomplete({
                         minLength: 3,
-                        source: self._handleAutocompleteSource.bind(self),
+                        source: this._handleAutocompleteSource.bind(this),
                         focus: (event, ui) => {
                             $(this).val(ui.item.label);
                             return false;
                         },
-                        select: self._handleAutocompleteSelect.bind(self)
+                        select: this._handleAutocompleteSelect.bind(this)
                     }).autocomplete('instance')._renderItem = (ul, item) => {
                         return $('<li>')
                             .append('<a>' + item.label + '</a>')
@@ -150,23 +147,22 @@
                 },
                 update: (e) => {
                     $(e.target).removeAttr('data-previndex');
-                    self._reorderInputFields();
+                    this._reorderInputFields();
                 }
             }).disableSelection();
         },
 
         _autoSubmit: function() {
-            const self = this;
             $('.mb-routing-location-points', this.element).change(() => {
-                if (self._isInputValid()) {
-                    self._getRoute();
+                if (this._isInputValid()) {
+                    this._getRoute();
                 }
             });
         },
 
         _isInputValid: function() {
             let isValid = true;
-            $.each($(this).find('.mb-routing-location-points input'), (index, element) => {
+            $.each(this.element.find('.mb-routing-location-points input'), (index, element) => {
                 isValid = isValid && ($(element).val() !== '');
             });
             return isValid;
@@ -198,10 +194,9 @@
         },
 
         _emptyPoints: function() {
-            const self = this;
             const $inputs = this._findLocationInputFields();
             $.each($inputs, (idx, input) => {
-                self._removeMarker(input);
+                this._removeMarker(input);
                 $(input).val('').data('coords', null);
             });
         },
@@ -214,14 +209,13 @@
         },
 
         _removeInputWrapper: function(btn) {
-            const self = this;
             const inputGroup = $(btn).parent();
             let inputField = $('input', inputGroup);
             inputField.val('').data('coords', null);
             this._removeMarker(inputField);
             if (this._findLocationInputFields().length > 2) {
                 inputGroup.remove();
-                self._reorderInputFields();
+                this._reorderInputFields();
             } else {
                 this.routingLayer.getSource().clear();
             }
@@ -250,7 +244,6 @@
         },
 
         _getRoute: function() {
-            const self = this;
             const requestProj = 'EPSG:4326';
             const mapProj = this.olMap.getView().getProjection().getCode();
             let points = this._getRoutingPoints();
@@ -262,7 +255,7 @@
 
             if (requestProj !== mapProj) {
                 points = points.map((point) => {
-                    return self._transformCoordinates(point, mapProj, requestProj);
+                    return this._transformCoordinates(point, mapProj, requestProj);
                 });
             }
 
@@ -277,16 +270,16 @@
                 }
             }).fail(() =>  {
                 Mapbender.error('route service is not available');
-                self.setSpinnerVisible(false);
+                this.setSpinnerVisible(false);
             }).done((response) => {
                 if (response.error) {
                     Mapbender.error(response.error.message);
                 } else {
-                    self._renderRoute(response.featureCollection);
-                    self._showRouteInfo(response.routeInfo);
-                    self._showRouteInstructions(response.routingInstructions);
+                    this._renderRoute(response.featureCollection);
+                    this._showRouteInfo(response.routeInfo);
+                    this._showRouteInstructions(response.routingInstructions);
                 }
-                self.setSpinnerVisible(false);
+                this.setSpinnerVisible(false);
             });
         },
 
@@ -356,7 +349,6 @@
         },
 
         _reorderInputFields: function() {
-            const self = this;
             let inputFields = $('.mb-routing-location-points > div', this.element);
             inputFields.removeClass('intermediatePoints');
             inputFields.first().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-success');
@@ -372,20 +364,20 @@
                 $input.attr('placeholder', Mapbender.trans('mb.routing.frontend.dialog.label.intermediate'));
                 let marker = $input.data('marker');
                 if (marker) {
-                    marker.setStyle(self._getMarkerStyle('intermediateIcon'));
+                    marker.setStyle(this._getMarkerStyle('intermediateIcon'));
                 }
             });
             // intermediate markers can keep their styling, but start end destination markers have to switch
             const startMarker = $('input', inputFields.first()).data('marker');
             const destMarker = $('input', inputFields.last()).data('marker');
             if (startMarker) {
-                startMarker.setStyle(self._getMarkerStyle('startIcon'));
+                startMarker.setStyle(this._getMarkerStyle('startIcon'));
             }
             if (destMarker) {
-                destMarker.setStyle(self._getMarkerStyle('destinationIcon'));
+                destMarker.setStyle(this._getMarkerStyle('destinationIcon'));
             }
             if (this.options.autoSubmit) {
-                self._getRoute();
+                this._getRoute();
             }
         },
 
@@ -452,7 +444,7 @@
         },
 
         setSpinnerVisible: function(setVisible){
-            let calculateRouteBtn = $('#calculateRoute i');
+            let calculateRouteBtn = $('#calculateRoute i', this.element);
             if (setVisible) {
                 calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
             } else {
@@ -501,11 +493,6 @@
 
             this.routingLayer.getSource().clear();
             this.routingLayer.getSource().addFeatures(features);
-
-            // create and add result or airline Features
-            // var air_line = self._getAirLineFeature(response, style);
-            // self.routingLayer.addFeatures(air_line);
-
             const extent = this.routingLayer.getSource().getExtent();
             this.olMap.getView().fit(extent, {
                 padding: new Array(4).fill(this.options.buffer)
@@ -620,145 +607,6 @@
             }
             $table.append($tbody);
             $instructionsDiv.append($table);
-        },
-
-        _transformFeatures: function(routeData,respProj,mapProj) {
-            var lineGeometry = routeData.features;
-            var self = this;
-            lineGeometry.forEach(function (feature, index) {
-                var geomCoordinates = feature.geometry.coordinates;
-                var propWayPoints = feature.properties.waypoints || null;
-
-                routeData.features[index].geometry.coordinates = self._transformLineGeometry(
-                    geomCoordinates,
-                    respProj,
-                    mapProj
-                );
-
-                // transform snapped WayPoints
-                if (propWayPoints){
-                    propWayPoints.forEach(function (element) {
-                        element.coordinates = self._transformCoordinates(
-                            element.coordinates,
-                            respProj,
-                            mapProj
-                        );
-                        element.srid = mapProj.projCode;
-                    });
-                }
-            });
-        },
-
-        _transformLineGeometry: function(lineGeometry, inputProj, mapProj) {
-            var transformedLineGeometry = [];
-            var self = this;
-            lineGeometry.forEach(function(pt) {
-                var p = self._transformCoordinates(pt, inputProj, mapProj);
-                transformedLineGeometry.push([p[0], p[1]]);
-            });
-            return transformedLineGeometry;
-        },
-
-        _transformMultiLineGeometry: function(multilineGeometry, requestProj, mapProj) {
-            var self = this;
-            var transformedLineGeometry = [];
-            multilineGeometry.forEach(function(line) {
-                var l = self._transformLineGeometry(line, requestProj, mapProj);
-                transformedLineGeometry.push(l);
-            });
-            return transformedLineGeometry;
-        },
-
-        _revGeocode: function (feature){
-            var self = this;
-
-            if (self.options.useReverseGeocoding) {
-                var p = {
-                    name: "point",
-                    value: [feature.geometry.x,feature.geometry.y]
-                };
-
-                self._getRevGeocode([p]).then(function(response) {
-                    var resultLabel = self._checkResultLabel(feature,response);
-                    $(feature.attributes.input)
-                        .val(resultLabel)
-                        .data('coords', [feature.geometry.x, feature.geometry.y])
-                        .change();
-                });
-
-                return true;
-
-            }else{
-                return false;
-            }
-        },
-
-        _getRevGeocode: function(coordinate) {
-            var self = this;
-            return $.ajax({
-                type: "GET",
-                url: self.elementUrl + 'revGeocode',
-                data: {
-                    coordinate: coordinate,
-                    srsId: self.olMap.getProjectionObject().projCode
-                }
-            });
-        },
-
-        _getAirLineFeature: function (response, style) {
-            var self = this;
-            var points = self._getRoutingPoints();
-            var airLineFeatures = [];
-            var waypoints = response.features[0].properties.waypoints;
-            //IE doesn't support Object.assign()
-            //https://stackoverflow.com/questions/42091600/how-to-merge-objects-in-ie-11
-            var styleLinearDistance = self.options.styleLinearDistance;
-            var stylesToCombine = [styleLinearDistance, style];
-            var styleLinearDistance = stylesToCombine.reduce(function (r, o) {
-                Object.keys(o).forEach(function (k) {
-                    r[k] = o[k];
-                });
-                return r;
-            }, {});
-
-            // Loop inputPoints of Frontend
-            points.forEach(function (element, index) {
-                var coordPoints = element; // coordinatePair (Input)
-                var inputPoint =  new OpenLayers.Geometry.Point (coordPoints[0],coordPoints[1]); // geomety of points
-                var wayCoord = waypoints[index].coordinates; // wayPoints of Response
-                var wayPoint = new OpenLayers.Geometry.Point (wayCoord[0],wayCoord[1]);
-
-                var lineGeometry = new OpenLayers.Geometry.LineString([inputPoint, wayPoint]);
-                airLineFeatures.push(new OpenLayers.Feature.Vector(lineGeometry, null, styleLinearDistance));
-            });
-            return airLineFeatures;
-        },
-
-        _checkResultLabel: function (feature,response) {
-            var resultLabel = "", x, y;
-
-            if (feature instanceof OpenLayers.Feature.Vector) {
-
-                x = feature.geometry.x;
-                y = feature.geometry.y;
-            } else {
-
-                x = feature.lon;
-                y = feature.lat;
-            }
-
-            resultLabel = x + "," + y;
-
-            if (Array.isArray(response)) {
-                response.forEach(function (element, index) {
-                    resultLabel = element.label || resultLabel ;
-                    if (element.hasOwnProperty('messages')){
-                        console.log('ReversGeocoding: '+element.messages);
-                    }
-                });
-            }
-
-            return resultLabel;
         }
     });
 })(jQuery);
