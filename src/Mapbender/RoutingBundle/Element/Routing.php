@@ -75,7 +75,6 @@ class Routing extends AbstractElementService
             'useReverseGeocoding' => false,
             'buffer' => 0,
             'infoText' => '{start} → {destination} </br> {length} will take {time}',
-            'dateTimeFormat' => 'ms',
             'routingDriver' => null,
             'routingStyles' => [
                 'lineColor' => 'rgba(66, 134, 244, 1)',

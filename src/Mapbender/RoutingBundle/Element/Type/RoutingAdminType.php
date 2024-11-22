@@ -61,11 +61,6 @@ class RoutingAdminType extends AbstractType
                 'required' => false,
                 'empty_data' => "{start} → {destination} </br> {length} will take {time}",
             ])
-            ->add('dateTimeFormat',TextType::class, [
-                'label' => 'mb.routing.backend.dialog.label.dateTimeFormat',
-                'required' => false,
-                'empty_data' => 'ms',
-            ])
             ->add('routingDriver', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.routingDriver',
                 'placeholder' => 'mb.routing.backend.dialog.label.chooseOption',
