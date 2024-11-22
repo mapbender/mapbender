@@ -87,9 +87,6 @@ class OsrmDriver extends RoutingDriver
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getInstructionSignMapping(): array
     {
         return [

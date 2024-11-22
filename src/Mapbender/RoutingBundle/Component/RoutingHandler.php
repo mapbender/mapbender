@@ -2,12 +2,8 @@
 
 namespace Mapbender\RoutingBundle\Component;
 
+use Mapbender\Component\Transport\ConnectionErrorException;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use \Exception;
 use Mapbender\RoutingBundle\Component\RoutingDriver\OsrmDriver;
 use Mapbender\RoutingBundle\Component\RoutingDriver\GraphhopperDriver;
@@ -32,11 +28,7 @@ class RoutingHandler {
     }
 
     /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
+     * @throws ConnectionErrorException
      */
     public function calculateRoute($requestParams, $configuration): JsonResponse
     {

@@ -30,17 +30,11 @@ class Routing extends AbstractElementService
         $this->reverseGeocodingHandler = $reverseGeocodingHandler;
     }
 
-    /**
-     * @return string
-     */
     public static function getClassTitle() : string
     {
         return 'mb.routing.backend.title';
     }
 
-    /**
-     * @return string
-     */
     public static function getClassDescription() : string
     {
         return 'mb.routing.backend.description';
@@ -49,7 +43,7 @@ class Routing extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         return [
             'js' => [
@@ -70,10 +64,7 @@ class Routing extends AbstractElementService
         return 'mapbender.mbRouting';
     }
 
-    /**
-     * @return array
-     */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
         return [
             'title' => 'Routing',
@@ -130,7 +121,7 @@ class Routing extends AbstractElementService
         return 'Mapbender\RoutingBundle\Element\Type\RoutingAdminType';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $config = $element->getConfiguration();
         $view = new TemplateView('@MapbenderRouting/Element/routing.html.twig');

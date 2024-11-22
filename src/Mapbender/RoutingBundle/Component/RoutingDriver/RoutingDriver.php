@@ -101,9 +101,6 @@ abstract class RoutingDriver {
         return $distance . ' m';
     }
 
-    /**
-     * @return array
-     */
     protected function getInstructionSignMapping(): array
     {
         return array(
@@ -129,11 +126,10 @@ abstract class RoutingDriver {
     /**
      * Adds urls to appropriate icons to given instructions.
      * See constants defined in @param array[] $instructions
-     * @return array[]
      * @see IDriverInterface
      *
      */
-    protected function addInstructionSymbols(array $instructions)
+    protected function addInstructionSymbols(array $instructions): array
     {
         $instructionsOut = array();
         $iconMap = array(
@@ -196,7 +192,6 @@ abstract class RoutingDriver {
 
     /**
      * @param array[] $nativeInstructions
-     * @return array[]
      */
     public function translateInstructions(array $nativeInstructions): array
     {
