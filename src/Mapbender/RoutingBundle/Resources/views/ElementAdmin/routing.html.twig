@@ -10,7 +10,8 @@
 </div>
 <div class="mb-3">
     {{ form_widget(form.configuration.useSearch, {'label_attr': {'class': 'checkbox-inline'}}) }}
-    {{ form_widget(form.configuration.useReverseGeocoding, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {# uncomment, if reverse geocoding is implemented #}
+    {# form_widget(form.configuration.useReverseGeocoding, {'label_attr': {'class': 'checkbox-inline'}}) #}
 </div>
 
 {{ form_row(form.configuration.buffer) }}

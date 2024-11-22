@@ -31,24 +31,23 @@ class RoutingAdminType extends AbstractType
             ])
             ->add('autoSubmit', CheckboxType::class, [
                 'required' => false,
-                #'property_path' => '[autoSubmit]',
                 'label' => 'mb.routing.backend.dialog.label.autoSubmit',
             ])
             ->add('allowIntermediatePoints', CheckboxType::class, [
                 'required' => false,
-                #'property_path' => '[allowIntermediatePoints]',
                 'label' => 'mb.routing.backend.dialog.label.addIntermediatePoints',
             ])
             ->add('useSearch', CheckboxType::class, [
                 'required' => false,
-                #'property_path' => '[addSearch]',
                 'label' => 'mb.routing.backend.dialog.label.search',
             ])
+            // uncomment once reverse geocoding is implemented:
+            /*
             ->add('useReverseGeocoding', CheckboxType::class, [
                 'required' => false,
-                #'property_path' => '[addReverseGeocoding]',
                 'label' => 'mb.routing.backend.dialog.label.reverseGeocoding',
             ])
+            */
             ->add('buffer', NumberType::class, [
                 'label' => 'mb.routing.backend.dialog.label.buffer',
                 'empty_data' => 0,
@@ -58,7 +57,6 @@ class RoutingAdminType extends AbstractType
                     'type' => 'number',
                     'min' => 0,
                 ],
-                #'property_path' => '[buffer]',
             ])
             ->add('infoText', TextType::class, [
                 'label' => 'mb.routing.backend.dialog.label.infoText',
