@@ -58,7 +58,6 @@ class Routing extends AbstractElementService
                 '@MapbenderRoutingBundle/Resources/public/mapbender.element.routing.js',
             ],
             'css' => [
-                '@MapbenderRoutingBundle/Resources/public/css/jquery-ui.css',
                 '@MapbenderRoutingBundle/Resources/public/sass/routing-icons.scss',
                 '@MapbenderRoutingBundle/Resources/public/sass/mapbender.element.routing.scss',
             ],
