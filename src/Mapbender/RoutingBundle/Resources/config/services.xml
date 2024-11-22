@@ -28,19 +28,19 @@
             <argument type="service" id="mapbender.routing.driver.reverseGeocoding.sql" />
         </service>
         <service id="mapbender.routing.driver.routing.osrm" class="%mapbender.routing.driver.routing.osrm.class%">
-            <argument type="service" id="monolog.http_client"/>
+            <argument type="service" id="mapbender.http_transport.service" />
         </service>
         <service id="mapbender.routing.driver.routing.graphhopper" class="%mapbender.routing.driver.routing.graphhopper.class%">
-            <argument type="service" id="monolog.http_client"/>
+            <argument type="service" id="mapbender.http_transport.service" />
         </service>
         <service id="mapbender.routing.driver.routing.pgRouting" class="%mapbender.routing.driver.routing.pgRouting.class%">
             <argument type="service" id="doctrine"/>
         </service>
         <service id="mapbender.routing.driver.routing.trias" class="%mapbender.routing.driver.routing.trias.class%">
-            <argument type="service" id="monolog.http_client"/>
+            <argument type="service" id="mapbender.http_transport.service" />
         </service>
         <service id="mapbender.routing.driver.search.solr" class="%mapbender.routing.driver.search.solr.class%">
-            <argument type="service" id="monolog.http_client"/>
+            <argument type="service" id="mapbender.http_transport.service" />
         </service>
         <service id="mapbender.routing.driver.search.sql" class="%mapbender.routing.driver.search.sql.class%">
             <argument type="service" id="doctrine" />

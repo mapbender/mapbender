@@ -2,15 +2,15 @@
 
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Mapbender\Component\Transport\HttpTransportInterface;
 
 class TriasDriver extends RoutingDriver
 {
-    protected HttpClientInterface $httpClient;
+    protected HttpTransportInterface $httpTransport;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(HttpTransportInterface $httpTransport)
     {
-        $this->httpClient = $httpClient;
+        $this->httpTransport = $httpTransport;
     }
 
     public function getRoute($requestParams, $configuration): array
@@ -18,7 +18,7 @@ class TriasDriver extends RoutingDriver
         // TODO: Implement getRoute() method.
     }
 
-    public function processResponse($response, $config)
+    public function processResponse($response, $configuration)
     {
         // TODO: Implement processResponse() method.
     }

@@ -2,16 +2,20 @@
 
 namespace Mapbender\RoutingBundle\Component\SearchDriver;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Mapbender\Component\Transport\ConnectionErrorException;
+use Mapbender\Component\Transport\HttpTransportInterface;
 
 class SolrDriver {
 
-    protected HttpClientInterface $httpClient;
+    protected HttpTransportInterface $httpTransport;
 
-    public function __construct(HttpClientInterface $httpClient) {
-        $this->httpClient = $httpClient;
+    public function __construct(HttpTransportInterface $httpTransport) {
+        $this->httpTransport = $httpTransport;
     }
 
+    /**
+     * @throws ConnectionErrorException
+     */
     public function search($requestParams, $searchConfig)
     {
         $queryFormat = $searchConfig['query_format'] ?? '%s';
@@ -20,11 +24,7 @@ class SolrDriver {
         $url = $searchConfig['url'];
         $url .= (!str_contains($url, '?') ? '?' : '&');
         $url .= $searchConfig['query_key'] . '=' . sprintf($queryFormat, $encodedQuery);
-        $searchEngineResponse = $this->httpClient->request('POST', $url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        $searchEngineResponse = $this->httpTransport->getUrl($url);
         $statusCode = $searchEngineResponse->getStatusCode();
 
         if ($statusCode != 200 ) {
@@ -34,7 +34,7 @@ class SolrDriver {
                 ],
             ];
         } else {
-            $response = $searchEngineResponse->toArray(false);
+            $response = json_decode($searchEngineResponse->getContent(), true);
 
             if (!empty($searchConfig['collection_path'])) {
                 foreach (explode('.', $searchConfig['collection_path']) as $key) {

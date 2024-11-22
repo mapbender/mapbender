@@ -2,12 +2,8 @@
 
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Mapbender\Component\Transport\ConnectionErrorException;
+use Mapbender\Component\Transport\HttpTransportInterface;
 
 class OsrmDriver extends RoutingDriver
 {
@@ -17,27 +13,25 @@ class OsrmDriver extends RoutingDriver
 
     protected string $timeScale = 's';
 
-    protected HttpClientInterface $httpClient;
+    protected string $locale;
 
-    public function __construct(HttpClientInterface $httpClient)
+    protected HttpTransportInterface $httpTransport;
+
+    public function __construct(HttpTransportInterface $httpTransport)
     {
-        $this->httpClient = $httpClient;
+        $this->httpTransport = $httpTransport;
     }
 
     /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
+     * @throws ConnectionErrorException
      */
     public function getRoute($requestParams, $configuration): array
     {
         $this->locale = $configuration['locale'];
         $osrmConfig = $configuration['routingConfig']['osrm'];
         $query = $this->buildQuery($requestParams, $osrmConfig);
-        $response = $this->httpClient->request('GET', $query);
-        $response = $response->toArray(false);
+        $response = $this->httpTransport->getUrl($query);
+        $response = json_decode($response->getContent(), true);
         return $this->processResponse($response, $configuration);
     }
 
