@@ -100,7 +100,7 @@ class LegendHandler
     }
 
     /**
-     * @param PDF_Extensions|\FPDF $pdf $pdf
+     * @param PDF_Extensions $pdf $pdf
      * @param TemplateRegion $region
      * @param LegendBlockContainer[] $blockGroups
      * @param bool $allowPageBreaks
@@ -115,6 +115,7 @@ class LegendHandler
         $y = $pageMargins['y'];
         $titleFontSize = $this->getLegendTitleFontSize($region);
         $currentColumnMaxWidth = 0;
+        $pdf->SetFont($this->getLegendPageFont(), 'B', $titleFontSize);
 
         foreach ($blockGroups as $group) {
             foreach ($group->getBlocks() as $block) {
@@ -151,7 +152,8 @@ class LegendHandler
                 // print title text
                 $pdf->SetXY($x + $region->getOffsetX(), $y + $region->getOffsetY());
                 $text = mb_convert_encoding($block->getTitle(), 'ISO-8859-1', 'UTF-8');
-                $pdf->MultiCell($measures['width'], $measures['lineHeight'], $text, 0, 'L');
+                // add a fraction of a mm because otherwise floating point arithmetic may cause an unnecessary line break
+                $pdf->MultiCell($measures['width'] + 0.00001, $measures['lineHeight'], $text, 0, 'L');
 
                 // print image
                 $this->pdfUtil->addImageToPdf($pdf, $block->resource,

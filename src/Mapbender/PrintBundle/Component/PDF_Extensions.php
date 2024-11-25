@@ -56,4 +56,9 @@ class PDF_Extensions extends Fpdi
         $tempPdf->MultiCell($width, 1, $text);
         return $tempPdf->GetY();
     }
+
+    public function GetStringWidth($s): float
+    {
+        return parent::GetStringWidth($s) + 2*$this->cMargin;
+    }
 }
