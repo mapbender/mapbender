@@ -243,6 +243,11 @@ class LegendHandler
         $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
         return $fontStyle->getSize();
     }
+    
+    public function getLegendPageFont(): string
+    {
+        return $this->legendPageFontName;
+    }
 
     protected function measureLegendBlock(
         LegendBlock          $block,
