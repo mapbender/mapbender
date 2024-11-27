@@ -88,7 +88,7 @@ mb:
             abstract: Beschreibung
             queryable: abfragbar
             cascaded: kaskadiert
-            opaque: Opak
+            opaque: undurchsichtig
             nosubset: 'Keine Untergruppe'
             fixedwidth: 'feste Breite'
             fixedheight: 'feste Höhe'
@@ -189,7 +189,7 @@ mb:
       legendurltype:
         width: Breite
         height: Höhe
-        onlineresource: Online-Resource
+        onlineresource: Online-Ressource
       vendorspecifictype:
         hidden: Versteckt
         setdefaults: 'Standardwerte festlegen'
