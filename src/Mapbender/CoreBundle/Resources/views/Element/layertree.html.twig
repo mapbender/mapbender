@@ -13,16 +13,16 @@
       </li>
       <li class="-fn-template hidden leave showLeaves">
         <div class="leaveContainer">
-          <span class="-fn-toggle-children clickable" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}">
+          <span class="-fn-toggle-children clickable" data-test="mb-lt-layer-folder-icon" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}">
             <i class="fas fa-folder fa-fw"></i>
           </span>
-          <span class="clickable -fn-toggle-selected" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}">
+          <span class="clickable -fn-toggle-selected" data-test="mb-lt-layer-visibility" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}">
               <i class="far fa-square fa-fw"></i>
           </span>
           <span class="clickable -fn-toggle-info" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}">
             <i class="fas fa-info fa-fw"></i>
           </span>
-          <span class="layer-title clickable"></span>
+          <span class="layer-title clickable" data-test="mb-lt-layer-title"></span>
           <span class="error-icon-wrapper"><i class="fas fa-triangle-exclamation"></i></span>
           <span class="loading-icon-wrapper"><i class="fas fa-spinner"></i></span>
           {% if configuration.menu is defined and configuration.menu %}
