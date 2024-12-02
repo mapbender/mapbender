@@ -3,6 +3,7 @@ Features:
 * Allow selecting WMS layer styles via the layer tree contextmenu ([PR#1636](https://github.com/mapbender/mapbender/pull/1636))
 * [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
+* [Routing] Added Routing element ([PR#1655](https://github.com/mapbender/mapbender/pull/1655))
 
 Bugfixes:
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
