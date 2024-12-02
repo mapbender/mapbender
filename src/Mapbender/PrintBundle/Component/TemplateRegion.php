@@ -143,10 +143,10 @@ class TemplateRegion implements \ArrayAccess
     public function offsetGet($offset): mixed
     {
         return match ($offset) {
-            'x' => $this->offsets[0],
-            'y' => $this->offsets[1],
-            'width' => $this->width,
-            'height' => $this->height,
+            'x' => $this->getOffsetX(),
+            'y' => $this->getOffsetY(),
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight(),
             'font' => $this->style->getFontName(),
             'fontsize' => $this->style->getSize(),
             'color' => $this->style->getColor(),
