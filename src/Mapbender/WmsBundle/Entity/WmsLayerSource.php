@@ -240,7 +240,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setQueryable($queryable)
     {
-        $this->queryable = (bool) $queryable;
+        $this->queryable = (bool)$queryable;
         return $this;
     }
 
@@ -284,7 +284,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setOpaque($opaque)
     {
-        $this->opaque = (bool) $opaque;
+        $this->opaque = (bool)$opaque;
         return $this;
     }
 
@@ -306,7 +306,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function setNoSubset($noSubset)
     {
-        $this->noSubset = (bool) $noSubset;
+        $this->noSubset = (bool)$noSubset;
         return $this;
     }
 
@@ -480,7 +480,18 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     public function getStyles($inherit = false)
     {
         if ($inherit && $this->getParent() !== null) {
-            return array_merge($this->getParent()->getStyles(true), $this->styles);
+            $styles = array_values($this->getParent()->getStyles(true) ?? []);
+            // ignore title&name combinations that are present both in the parent and in the child
+            foreach ($this->styles as $childStyle) {
+                foreach ($styles as $parentStyle) {
+                    if ($parentStyle->getTitle() === $childStyle->getTitle()
+                        && $parentStyle->getName() === $childStyle->getTitle()) {
+                        continue 2;
+                    }
+                }
+                $styles[] = $childStyle;
+            }
+            return $styles;
         } else {
             return $this->styles;
         }

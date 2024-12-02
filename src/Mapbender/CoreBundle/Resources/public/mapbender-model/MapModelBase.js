@@ -809,7 +809,7 @@ window.Mapbender.MapModelBase = (function() {
             var coords = Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || targetSrs, targetSrs);
 
             layer.addMarker(coords.x, coords.y);
-            if (poi.label) {
+            if (poi.label && typeof(poi.label) === 'string') {
                 this.openPopup(coords.x, coords.y, poi.label);
             }
         },

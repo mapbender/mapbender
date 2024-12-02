@@ -86,6 +86,7 @@
             this.element.on('click', '.-fn-toggle-info:not(.disabled)', this._toggleInfo.bind(this));
             this.element.on('click', '.-fn-toggle-children', this._toggleFolder.bind(this));
             this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
+            this.element.on('click', '.layer-title:not(.disabled)', this._toggleSelectedLayer.bind(this));
             this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
             this.element.on('click', '.layer-menu .exit-button', function () {
                 $(this).closest('.layer-menu').remove();
@@ -379,6 +380,9 @@
                 .toggleClass('fa-folder', !active)
             ;
         },
+        _toggleSelectedLayer: function (e) {
+            $(e.currentTarget.parentNode).find('span.-fn-toggle-selected').click();
+        },
         _toggleSelected: function (e) {
             const $target = $(e.currentTarget);
             const newState = $target.toggleClass('active').hasClass('active');
@@ -512,17 +516,13 @@
             });
         },
         _initLayerStyleSelector: function ($layerStyleControl, layer) {
-            const $availableStyles = layer.options.availableStyles || [];
+            const availableStyles = layer.options.availableStyles || [];
             const $selectLayerStyles = $layerStyleControl.find('.select-layer-styles');
             $selectLayerStyles.data('layer', layer);
-            if ($availableStyles.length && $selectLayerStyles.length) {
-                if (layer.options.style.length) {
-                    $selectLayerStyles.append(new Option(layer.options.style));
-                }
-                for (let i = 0; i < $availableStyles.length; i++) {
-                    if ($availableStyles[i].name !== layer.options.style) {
-                        $selectLayerStyles.append(new Option($availableStyles[i].title), $availableStyles[i].name);
-                    }
+            if (availableStyles.length && $selectLayerStyles.length) {
+                for (let i = 0; i < availableStyles.length; i++) {
+                    const selected = availableStyles[i].name === layer.options.style;
+                    $selectLayerStyles.append(new Option(availableStyles[i].title, availableStyles[i].name, false, selected));
                 }
             } else {
                 $layerStyleControl.remove();
@@ -582,7 +582,7 @@
                     self._callDimension(source, $(e.target));
                 });
                 label.attr('title', label.attr('title') + ' ' + item.name);
-                $('.layer-dimension-bar', menu).toggleClass('hidden', item.type === 'single');
+                $('.layer-dimension-bar', $actionElement).toggleClass('hidden', item.type === 'single');
                 $('.layer-dimension-textfield', $control)
                     .toggleClass('hidden', item.type !== 'single')
                     .val(dimData.value || item.extent)
@@ -731,10 +731,12 @@
         updateIconVisual_: function ($el, active, enabled) {
             $el.toggleClass('active', !!active);
             var icons;
+            var hideLayerNameWhenCheckboxDisabled = false;
             if ($el.is('.-fn-toggle-info')) {
                 icons = ['fa-info', 'fa-info-circle'];
             } else {
                 icons = ['fa-square', 'fa-square-check'];
+                hideLayerNameWhenCheckboxDisabled = !enabled && active;
             }
             $('>i', $el)
                 .toggleClass(icons[1], !!active)
@@ -742,6 +744,9 @@
             ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
+                if(hideLayerNameWhenCheckboxDisabled){
+                    $('>span', $el.prevObject).closest('.layer-title').toggleClass('disabled', true);
+                }
             }
         },
         reIndent_: function ($lists, recursive) {

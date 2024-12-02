@@ -112,7 +112,7 @@ Mapbender.DimensionTime = function DimensionTime(options) {
     if (this.end.toString() === invalidDate.toString()) {
         throw new Error("Invalid end date input" + options.extent[1]);
     }
-    this.step = new PeriodISO8601(options.extent[2]);
+    this.step = new PeriodISO8601(options.extent.length > 2 ? options.extent[2] : "P1D");
     if (this.start > this.end) {
         var swapTmp = this.end;
         this.end = this.start;
