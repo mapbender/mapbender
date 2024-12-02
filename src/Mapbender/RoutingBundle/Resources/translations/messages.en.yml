@@ -1,0 +1,155 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: There was an error in your request
+        noResult: No route could be found.
+        format: Format not supported.
+        icon: No Icon configured.
+      graphhopper:
+        400: Something was wrong in your request (too few or too many points)
+        401: Authentication necessary! Register and get a valid API key at https://www.graphhopper.com/developers/.
+        413: Too many parameters in the URL. You'll have to use the JSON format and POST requests.
+        429: API limit reached. You will get an email. Also the header properties will give you more information (see the section about 'HTTP Headers').
+        500: Internal server error. We get automatically a notification and will try to fix this fast.
+        501: Only a special list of vehicles is supported.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Transportation mode
+          car: Car
+          bike: Bike
+          foot: Foot
+          start: Start
+          intermediate: Via
+          destination: Destination
+          clearroute: Clear
+          flippoints: Reverse
+          addintermediate: Add point
+          getroute: Go!
+      info: will take
+      minutes: Min
+      hours: Hours
+    backend:
+      title: Routing
+      description: Routing functionality
+      sign:
+        -98: U-Turn
+        -7: Keep left
+        -3: Turn sharp left
+        -2: Turn left
+        -1: Turn slightly left
+        0: Continue
+        1: Turn slightly right
+        2: Turn right
+        3: Turn sharp right
+        7: Keep rigth
+        4: Destination reached
+        5: Waypoint reached
+        on: on
+      dialog:
+        input:
+          yes: yes
+          no: no
+          number: Number
+          nodes: Nodes
+          distance: Distance
+          duration: Duration
+          datasources: Datasources
+          weight: Weight
+          speed: Speed
+          full: Full
+          simplified: Simplified
+          default: Default
+          search: Search
+          osrmservice:
+            route: Route
+            nearest: Nearest
+            table: Matrix
+            match: Match
+            trip: trip
+            tile: Mapbox Vector Tiles
+        label:
+          title: Title
+          target: Target
+          buffer: Zoom buffer (m)
+          autoSubmit: Route immediately
+          addIntermediatePoints: Allow intermediate points
+          advanced: Advanced route settings
+          search: Enable Search
+          reverseGeocoding: Reverse Geocoding
+          color: Line color
+          width: Line width
+          opacity: Line opacity
+          dateTimeFormat: Time output format
+          infoText: Route info text
+          startImagePath: Path start icon
+          startImageSize: Size start icon w, h
+          startImageOffset: Offset start icon x, y
+          intermediateImagePath: Path intermediate icon
+          intermediateImageSize: Size intermediate icon w, h
+          intermediateImageOffset: Offset intermediate icon x, y
+          destinationImagePath: Path destination icon
+          destinationImageSize: Size destination icon w, h
+          destinationImageOffset: Offset destination icon x, y
+          routingDriver: Routing software
+          chooseOption: Choose an option
+          url: URL
+          instructions: Route description
+          pg:
+            titel: PgRouting
+            connection: Connection-Name
+            pgWayTable: Way-Table
+            pgWayTableVertices: Way-Vertices-Table
+            speed: ∅ Speed (km/h)
+          osrm:
+            titel: OSRM
+            service: Services
+            version: API-Version
+            alternatives: Alternative Route
+            annotations: Annotations
+            overview: Overview
+            continueStraight: continue Straight
+          gh:
+            titel: GraphHopper
+            key: API key
+            weighting:
+              title: Routing weighting
+              fastest: Fastest route
+              shortest: Shortest route
+            optimize:
+              label: Point order
+              yes: Optimize
+              no: Do not optimize
+            elevation: Elevation information
+          sh:
+            label: Search settings
+            shDriver: Search software
+            shUrl: Search URL
+            query_key: Search parameter key
+            query_ws_replace: Whitespace replacement pattern
+            query_format: Search format
+            token_regex: Tokenizer split
+            token_regex_in: Tokenizer search
+            token_regex_out: Tokenizer replace
+            collection_path: Collection path
+            label_attribute: Label attribute
+            geom_attribute: Geom attribute
+            geom_format: Geom format
+            geom_proj: Projection Geom
+            delay: Delay
+            result_buffer: Zoom buffer (m)
+            result_minscale: Zoom buffer min.
+            result_maxscale: Zoom buffer max.
+            result_icon_url: Icon path
+            result_icon_offset: Icon offset (x,y)
+          reverse:
+            label:
+            geocodeDriver: Reverse software
+            connection: Connection name
+            revTableName: Table name
+            revRowGeoWay: Geometery row
+            revRowSearch: Search row
+            revRowSearchBuffer: Search buffer
+        error:
+          buffer: Input must be integer

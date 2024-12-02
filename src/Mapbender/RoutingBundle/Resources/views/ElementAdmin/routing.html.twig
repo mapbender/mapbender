@@ -1,0 +1,158 @@
+
+{{ form_row(form.configuration.advancedSettings) }}
+<hr>
+<h3 class="my-4">Element</h3>
+{{ form_row(form.title) }}
+
+<div class="mb-3">
+    {{ form_widget(form.configuration.autoSubmit, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {{ form_widget(form.configuration.allowIntermediatePoints, {'label_attr': {'class': 'checkbox-inline'}}) }}
+</div>
+<div class="mb-3">
+    {{ form_widget(form.configuration.useSearch, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    {# uncomment, if reverse geocoding is implemented #}
+    {# form_widget(form.configuration.useReverseGeocoding, {'label_attr': {'class': 'checkbox-inline'}}) #}
+</div>
+
+{{ form_row(form.configuration.buffer) }}
+{{ form_row(form.configuration.lineColor) }}
+{{ form_row(form.configuration.lineWidth) }}
+
+<div class="basic advanced d-none">
+    {{ form_row(form.configuration.infoText) }}
+    {{ form_row(form.configuration.startImagePath) }}
+    {{ form_row(form.configuration.startImageSize) }}
+    {{ form_row(form.configuration.startImageOffset) }}
+    {{ form_row(form.configuration.intermediateImagePath) }}
+    {{ form_row(form.configuration.intermediateImageSize) }}
+    {{ form_row(form.configuration.intermediateImageOffset) }}
+    {{ form_row(form.configuration.destinationImagePath) }}
+    {{ form_row(form.configuration.destinationImageSize) }}
+    {{ form_row(form.configuration.destinationImageOffset) }}
+</div>
+<hr>
+<h3 class="my-4">Routingsoftware</h3>
+{{ form_row(form.configuration.routingDriver) }}
+
+<div class="graphhopper drivers d-none">
+    {{ form_row(form.configuration.ghUrl) }}
+    {{ form_row(form.configuration.ghTransportationMode) }}
+    {{ form_row(form.configuration.ghKey) }}
+    <div class="advanced d-none">
+        {{ form_row(form.configuration.ghWeighting) }}
+        {{ form_row(form.configuration.ghOptimize) }}
+        {{ form_row(form.configuration.ghElevation) }}
+        {{ form_row(form.configuration.ghInstructions) }}
+    </div>
+</div>
+
+<div class="pgrouting drivers d-none">
+    {{ form_row(form.configuration.connection) }}
+    {{ form_row(form.configuration.pgWayTable) }}
+    {{ form_row(form.configuration.pgWayTableVertices) }}
+    <div class="advanced d-none">
+        {{ form_row(form.configuration.pgWeighting) }}
+        {{ form_row(form.configuration.pgSpeed) }}
+        {{ form_row(form.configuration.pgInstructions) }}
+    </div>
+</div>
+
+<div class="osrm drivers d-none">
+    {{ form_row(form.configuration.osrmUrl) }}
+    {{ form_row(form.configuration.osrmService) }}
+    {{ form_row(form.configuration.osrmTransportationMode) }}
+    <div class="advanced d-none">
+        {{ form_row(form.configuration.osrmVersion) }}
+        {# alternative Routes are not yet implemented: #}
+        {# form_row(form.configuration.osrmAlternatives) #}
+        {{ form_row(form.configuration.osrmSteps) }}
+    </div>
+</div>
+
+<div class="trias drivers d-none">
+    <p>Currently no driver configuration possible</p>
+</div>
+
+<div class="search d-none">
+    <hr>
+    <h3 class="my-4">{{ 'mb.routing.backend.dialog.input.search' | trans }}</h3>
+    {{ form_row(form.configuration.searchConfig.driver) }}
+    {% if form.configuration.searchConfig.driver is defined %}
+        {{ form_row(form.configuration.searchConfig.url) }}
+        <div class="advanced d-none">
+            {{ form_row(form.configuration.searchConfig.query_key) }}
+            {{ form_row(form.configuration.searchConfig.query_ws_replace) }}
+            {{ form_row(form.configuration.searchConfig.query_format) }}
+            {{ form_row(form.configuration.searchConfig.token_regex) }}
+            {{ form_row(form.configuration.searchConfig.token_regex_in) }}
+            {{ form_row(form.configuration.searchConfig.token_regex_out) }}
+            {{ form_row(form.configuration.searchConfig.collection_path) }}
+            {# !! The following values are not evaluated !! #}
+            {{ form_row(form.configuration.searchConfig.label_attribute) }}
+            {{ form_row(form.configuration.searchConfig.geom_attribute) }}
+            {{ form_row(form.configuration.searchConfig.geom_format) }}
+            {{ form_row(form.configuration.searchConfig.geom_proj) }}
+        </div>
+    {% endif %}
+</div>
+
+<div class="reverseGeocoding d-none">
+    <hr>
+    <h3 class="my-4">Reverse Geocoding</h3>
+    {{ form_row(form.configuration.reverseGeocodingConfig.driver) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.connection) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.table) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.rowGeoWay) }}
+    {{ form_row(form.configuration.reverseGeocodingConfig.rowSearch) }}
+    <div class="advanced d-none">
+        {{ form_row(form.configuration.reverseGeocodingConfig.searchBuffer) }}
+    </div>
+</div>
+
+<script type="text/javascript">
+    !(function($) {
+        $('#{{ form.vars.attr.id }} .-js-init-colorpicker').colorpicker({format: 'rgba'});
+    }(jQuery));
+
+    $(document).ready(function() {
+        const advancedSettings = $('#form_configuration_advancedSettings');
+        const activateSearch = $('#form_configuration_useSearch');
+        const activateReverseGeocoding = $('#form_configuration_useReverseGeocoding');
+        const routingDriverSelection = $('#form_configuration_routingDriver');
+        const selectedRoutingDriver = routingDriverSelection.find('option:selected').val() || false;
+
+        if (advancedSettings.is(':checked')) {
+            $('.advanced').removeClass('d-none');
+        }
+
+        if (activateSearch.is(':checked')) {
+            $('.search').removeClass('d-none');
+        }
+
+        if (activateReverseGeocoding.is(':checked')) {
+            $('.reverseGeocoding').removeClass('d-none');
+        }
+
+        if (selectedRoutingDriver) {
+            $('.' + selectedRoutingDriver).removeClass('d-none');
+        }
+
+        advancedSettings.on('change', () => {
+            $('.advanced').toggleClass('d-none');
+        });
+
+        activateSearch.on('change', () => {
+            $('.search').toggleClass('d-none');
+        });
+
+        activateReverseGeocoding.on('change', () => {
+            $('.reverseGeocoding').toggleClass('d-none');
+        });
+
+        routingDriverSelection.on('change', (e) => {
+            $('.drivers').addClass('d-none');
+            const selectedDriver = '.' + $(e.target).val();
+            $(selectedDriver).removeClass('d-none');
+        });
+    });
+</script>

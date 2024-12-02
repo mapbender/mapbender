@@ -1,0 +1,53 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="mapbender.routing.handler.routing.class">Mapbender\RoutingBundle\Component\RoutingHandler</parameter>
+        <parameter key="mapbender.routing.handler.search.class">Mapbender\RoutingBundle\Component\SearchHandler</parameter>
+        <parameter key="mapbender.routing.handler.reverseGeocoding.class">Mapbender\RoutingBundle\Component\ReverseGeocodingHandler</parameter>
+        <parameter key="mapbender.routing.driver.routing.osrm.class">Mapbender\RoutingBundle\Component\RoutingDriver\OsrmDriver</parameter>
+        <parameter key="mapbender.routing.driver.routing.graphhopper.class">Mapbender\RoutingBundle\Component\RoutingDriver\GraphhopperDriver</parameter>
+        <parameter key="mapbender.routing.driver.routing.pgRouting.class">Mapbender\RoutingBundle\Component\RoutingDriver\PgRoutingDriver</parameter>
+        <parameter key="mapbender.routing.driver.routing.trias.class">Mapbender\RoutingBundle\Component\RoutingDriver\TriasDriver</parameter>
+        <parameter key="mapbender.routing.driver.search.solr.class">Mapbender\RoutingBundle\Component\SearchDriver\SolrDriver</parameter>
+        <parameter key="mapbender.routing.driver.search.sql.class">Mapbender\RoutingBundle\Component\SearchDriver\SqlDriver</parameter>
+        <parameter key="mapbender.routing.driver.reverseGeocoding.sql.class">Mapbender\RoutingBundle\Component\ReverseGeocodingDriver\SqlDriver</parameter>
+    </parameters>
+    <services>
+        <service id="mapbender.routing.handler.routing" class="%mapbender.routing.handler.routing.class%">
+            <argument type="service" id="mapbender.routing.driver.routing.osrm" />
+            <argument type="service" id="mapbender.routing.driver.routing.graphhopper" />
+            <argument type="service" id="mapbender.routing.driver.routing.pgRouting" />
+            <argument type="service" id="mapbender.routing.driver.routing.trias" />
+        </service>
+        <service id="mapbender.routing.handler.search" class="%mapbender.routing.handler.search.class%">
+            <argument type="service" id="mapbender.routing.driver.search.solr" />
+            <argument type="service" id="mapbender.routing.driver.search.sql" />
+        </service>
+        <service id="mapbender.routing.handler.reverseGeocoding" class="%mapbender.routing.handler.reverseGeocoding.class%">
+            <argument type="service" id="mapbender.routing.driver.reverseGeocoding.sql" />
+        </service>
+        <service id="mapbender.routing.driver.routing.osrm" class="%mapbender.routing.driver.routing.osrm.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
+            <argument type="service" id="translator" />
+        </service>
+        <service id="mapbender.routing.driver.routing.graphhopper" class="%mapbender.routing.driver.routing.graphhopper.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
+        </service>
+        <service id="mapbender.routing.driver.routing.pgRouting" class="%mapbender.routing.driver.routing.pgRouting.class%">
+            <argument type="service" id="doctrine"/>
+        </service>
+        <service id="mapbender.routing.driver.routing.trias" class="%mapbender.routing.driver.routing.trias.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
+        </service>
+        <service id="mapbender.routing.driver.search.solr" class="%mapbender.routing.driver.search.solr.class%">
+            <argument type="service" id="mapbender.http_transport.service" />
+        </service>
+        <service id="mapbender.routing.driver.search.sql" class="%mapbender.routing.driver.search.sql.class%">
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="mapbender.routing.driver.reverseGeocoding.sql" class="%mapbender.routing.driver.reverseGeocoding.sql.class%">
+            <argument type="service" id="doctrine" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,21 @@
+.mb-element-routing {
+    .fa-xmark {
+        pointer-events: none;
+    }
+}
+ul.ui-autocomplete.ui-front {
+    z-index: 1000 !important;
+    background-color: white;
+    display: inline-block;
+    cursor: pointer;
+    .ui-menu-item {
+        padding: 2px 5px;
+    }
+    .ui-menu-item:hover {
+        color: white;
+        background-color: #0a53be;
+    }
+}
+.mb-routing-instructions table td {
+    font-size: .875em;
+}
