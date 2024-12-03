@@ -56,6 +56,7 @@
                         {
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'btn btn-sm btn-primary',
+                            attrDataTest: 'mb-wms-btn-add',
                             callback: function(){
                                 var form = this.$element.find('form').get(0);
                                 if (form.reportValidity && !form.reportValidity()) return;
@@ -73,7 +74,8 @@
                         },
                         {
                             label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-sm btn-light popupClose'
+                            cssClass: 'btn btn-sm btn-light popupClose',
+                            attrDataTest: 'mb-wms-btn-close',
                         }
                     ]
                 });
