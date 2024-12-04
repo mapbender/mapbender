@@ -1,7 +1,7 @@
 <div class="row list-head">
     <div class="col-sm-5 col-xs-12 col-12">
     {%- if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_CREATE_GROUPS')) -%}
-        <div class="content-box content-box-md">
+        <div class="content-box content-box-md" data-test="mb-security-group-add">
             <a href="{{path('fom_user_group_create')}}">
                 <i class="fas fa-lg fa-plus"></i>
                 <span>{{ 'fom.user.group.index.add_new_group' | trans }}</span>
