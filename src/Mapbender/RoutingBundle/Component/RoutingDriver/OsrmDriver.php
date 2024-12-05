@@ -44,7 +44,7 @@ class OsrmDriver extends RoutingDriver
     {
         $service = ($config['service']) ?: 'route';
         $version = ($config['version']) ?: 'v1';
-        $profile = ($requestParams['vehicle']) ?: 'car';
+        $profile = (!empty($requestParams['vehicle'])) ?: 'car';
         $url = trim($config['url'], '/') . '/' . $service . '/' . $version . '/' . $profile . '/';
         $coordinates = [];
 
