@@ -58,6 +58,7 @@
                               <a href="#" class="btn btn-light -fn-delete"
                                           title="{{"mb.manager.admin.source.delete"|trans}} {{ item.title }}"
                                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":item.id}) }}"
+                                          data-test="mb-delete-source-{{item.title}}"
                                           data-id="{{ item.id }}"><i class="far fa-trash-can"></i></a>
                             {% endif %}
             {%- endblock -%}
