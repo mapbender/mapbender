@@ -6,6 +6,7 @@ Welcome to the Mapbender Development Documentation! This documentation is intend
 
 ## Table of Contents
 
+- [API](api/setup.md)
 - [Commands](workflows/commands.md)
 - [Components](architecture/components.md)
 - [Contributing Guide](CONTRIBUTING.md)

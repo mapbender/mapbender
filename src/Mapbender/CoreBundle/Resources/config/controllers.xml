@@ -3,6 +3,14 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Mapbender\CoreBundle\Controller\ApiController"
+                 class="Mapbender\CoreBundle\Controller\ApiController"
+                 public="true">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
         <service id="Mapbender\CoreBundle\Controller\ApplicationController"
                  class="Mapbender\CoreBundle\Controller\ApplicationController"
                  public="true">
