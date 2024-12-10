@@ -184,6 +184,9 @@
             }
             $btn.text(confOrNode.label);
             $btn.addClass(confOrNode.cssClass || '');
+            if (confOrNode.attrDataTest !== undefined){
+                $btn.attr('data-test', confOrNode.attrDataTest);
+            }
             return $btn.get(0);
         },
     };

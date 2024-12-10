@@ -122,9 +122,11 @@
             this.container.append(this.segments);
         },
         createRadioButton: function (type, checked) {
+            let dataTest = (type == 'line') ? 'mb-ruler-rb-line' : 'mb-ruler-rb-area';
             const radioLine = $(document.createElement("input"))
                 .attr("type", "radio")
                 .attr("name", "draw_type")
+                .attr('data-test', dataTest)
                 .attr("checked", checked)
                 .on('click', () => {
                     if (this.options.type === type) return;

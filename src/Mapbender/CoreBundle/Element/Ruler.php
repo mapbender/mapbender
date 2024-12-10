@@ -93,6 +93,7 @@ class Ruler extends AbstractElementService
         $view = new StaticView('');
         $view->attributes['class'] = 'mb-element-ruler';
         $view->attributes['data-title'] = $element->getTitle();
+        $view->attributes['data-test'] = 'mb-ruler-test';
         return $view;
     }
 }
