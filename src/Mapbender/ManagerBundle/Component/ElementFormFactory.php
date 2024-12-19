@@ -4,10 +4,17 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
+use Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType;
+use Mapbender\ManagerBundle\Form\Type\ElementTitleType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRegistryInterface;
+use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * Service for element configuration and permission forms.
@@ -31,10 +38,10 @@ class ElementFormFactory
      * @param FormRegistryInterface $formRegistry
      * @param bool $strict
      */
-    public function __construct(ElementFilter $elementFilter,
-                                FormFactoryInterface $formFactory,
+    public function __construct(ElementFilter         $elementFilter,
+                                FormFactoryInterface  $formFactory,
                                 FormRegistryInterface $formRegistry,
-                                $strict = false)
+                                                      $strict = false)
     {
         $this->elementFilter = $elementFilter;
         $this->formFactory = $formFactory;
@@ -73,14 +80,8 @@ class ElementFormFactory
         $this->elementFilter->prepareForForm($element);
         $handlingClass = $this->elementFilter->getHandlingClassName($element);
 
-        $formType = $this->formFactory->createBuilder('Symfony\Component\Form\Extension\Core\Type\FormType', $element, $options);
-        $formType
-            ->add('title', 'Mapbender\ManagerBundle\Form\Type\ElementTitleType', array(
-                'element_class' => $handlingClass,
-                'label' => 'mb.core.admin.title',
-                'required' => false,
-            ))
-        ;
+        $formType = $this->formFactory->createBuilder(FormType::class, $element, $options);
+        $this->addCommonTypes($formType, $handlingClass);
         $configurationType = $this->getConfigurationFormType($element);
 
         $options = array();
@@ -97,18 +98,32 @@ class ElementFormFactory
         $formType->add('configuration', $configurationType, $options);
 
         $regionName = $element->getRegion();
-        if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\FloatableElement', true)) {
-            if (!$regionName || false !== strpos($regionName, 'content')) {
-                $formType->get('configuration')->add('anchor', 'Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType');
-            } else {
-                $formType->get('configuration')->add('anchor', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
-            }
-        }
+        $this->addRegionDependantConfiguration($handlingClass, $regionName, $formType);
 
         return array(
             'form' => $formType->getForm(),
             'theme' => $twigTemplate,
         );
+    }
+
+    protected function addCommonTypes(FormBuilderInterface $form, string $elementClass): void
+    {
+        $form->add('title', ElementTitleType::class, array(
+            'element_class' => $elementClass,
+            'label' => 'mb.core.admin.title',
+            'required' => false,
+        ));
+    }
+
+    protected function addRegionDependantConfiguration(string $elementClass, ?string $regionName, FormBuilderInterface $form): void
+    {
+        if (is_a($elementClass, FloatableElement::class, true)) {
+            if (!$regionName || str_contains($regionName, 'content')) {
+                $form->get('configuration')->add('anchor', FloatingAnchorType::class);
+            } else {
+                $form->get('configuration')->add('anchor', HiddenType::class);
+            }
+        }
     }
 
     protected function deprecated($message)
@@ -131,7 +146,7 @@ class ElementFormFactory
         $typeName = $handlingClass::getType();
         if (is_string($typeName) && preg_match('#^[\w\d]+(\\\\[\w\d]+)+$#', $typeName)) {
             // typename is a fully qualified class name, which is good (forward compatible with Symfony 3)
-            if (!is_a($typeName, 'Symfony\Component\Form\FormTypeInterface', true)) {
+            if (!is_a($typeName, FormTypeInterface::class, true)) {
                 throw new \RuntimeException("Not a valid form type " . print_r($typeName, true));
             }
             return $typeName;
