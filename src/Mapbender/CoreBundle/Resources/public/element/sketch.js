@@ -384,10 +384,6 @@
         },
         _updateFeatureLabel: function(feature, label) {
             this._setFeatureAttribute(feature, 'label', label);
-            // OpenLayers 2 only
-            if (feature.layer) {
-                feature.layer.redraw();
-            }
         },
         /**
          * @param {*} feature

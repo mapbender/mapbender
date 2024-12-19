@@ -280,6 +280,7 @@
             if (layer.state.outOfBounds) {
                 tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofbounds"));
             }
+            $title.text(layer.options.title);
             $title.attr('title', tooltipParts.join("\n"));
         },
         _resetSourceAtTree: function (source) {
