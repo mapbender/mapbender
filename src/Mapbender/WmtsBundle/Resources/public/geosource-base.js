@@ -229,10 +229,6 @@ window.Mapbender = Mapbender || {};
     }
 
     Mapbender.WmtsTmsBaseSourceLayer = class WmtsTmsBaseSourceLayer extends Mapbender.SourceLayer {
-        constructor(definition, source, parent) {
-            super(definition, source, parent);
-        }
-
         /**
          * @param {String} srsName
          * @return {WmtsTileMatrixSet|null}
