@@ -578,6 +578,7 @@ mb:
         description: 'Passa a un''altra applicazione mantenendo la posizione corrente della mappa.'
       admin:
         open_in_new_tab: 'Apri in un nuovo tab'
+        drag_to_reorder: 'Trascina per riordinare'
     coordinesdisplay:
       admin:
         numdigits: 'Numero di cifre decimali'

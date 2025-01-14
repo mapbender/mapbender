@@ -330,7 +330,10 @@ mb:
     redlining:
       class:
         title: Annotation
-Bad credentials.: Le mot de passe ou le nom d'utilisateur est invalide
+    applicationSwitcher:
+      admin:
+        drag_to_reorder: 'Faites glisser pour réorganiser'
+'Bad credentials.': 'Le mot de passe ou le nom d''utilisateur est invalide'
 Search: __Search
 FeatureInfo: Données caractéristiques
 Services: Services

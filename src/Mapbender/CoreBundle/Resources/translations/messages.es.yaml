@@ -578,6 +578,7 @@ mb:
         description: 'Cambia a otra aplicación manteniendo la posición actual del mapa'
       admin:
         open_in_new_tab: 'Abrir en una nueva pestaña'
+        drag_to_reorder: 'Arrastra para reorganizar'
     coordinesdisplay:
       admin:
         numdigits: 'Número de decimales'

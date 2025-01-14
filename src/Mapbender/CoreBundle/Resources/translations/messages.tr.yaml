@@ -321,3 +321,6 @@ mb:
     redlining:
       class:
         title: İşaretleme
+    applicationSwitcher:
+      admin:
+        drag_to_reorder: 'Yeniden sıralamak için sürükleyin'

@@ -18,8 +18,8 @@ class ApplicationChoiceType extends AbstractType
 {
     protected ObjectRepository $dbRepository;
 
-    public function __construct(EntityManagerInterface $em,
-                                protected ApplicationYAMLMapper $yamlRepository,
+    public function __construct(EntityManagerInterface                  $em,
+                                protected ApplicationYAMLMapper         $yamlRepository,
                                 protected AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->dbRepository = $em->getRepository('Mapbender\CoreBundle\Entity\Application');
@@ -35,16 +35,17 @@ class ApplicationChoiceType extends AbstractType
         $type = $this;
         $resolver->setDefaults(array(
             'choices' => function (Options $options) use ($type) {
-                return $type->loadChoices($options['required_grant']);
+                return $type->loadChoices($options['required_grant'], $options['sort_first']);
             },
             'required_grant' => null,
+            'sort_first' => [],
         ));
     }
 
     /**
      * @return string[]
      */
-    protected function loadChoices(?string $requiredGrant): array
+    protected function loadChoices(?string $requiredGrant, array $sortFirst): array
     {
         $apps = $this->yamlRepository->getApplications();
         $apps = array_merge($apps, $this->dbRepository->findBy(array(), array(
@@ -57,6 +58,17 @@ class ApplicationChoiceType extends AbstractType
                 $choices[$application->getTitle()] = $application->getSlug();
             }
         }
+
+        // make sure to sort previously selected items to the start
+        uasort($choices, function ($a, $b) use ($sortFirst) {
+           $indexA = array_search($a, $sortFirst);
+           $indexB = array_search($b, $sortFirst);
+           if ($indexA === false && $indexB === false) return 0;
+           if ($indexA === false) return 1;
+           if ($indexB === false) return -1;
+           return $indexA - $indexB;
+        });
+
         return $choices;
     }
 }

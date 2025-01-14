@@ -312,19 +312,22 @@ mb:
         circle: Cirkel
       geometry:
         action:
-          remove: Verwijder geometrie
-          edit: Bewerk geometrie
-          zoom: Zoom naar geometrie
+          remove: 'Verwijder geometrie'
+          edit: 'Bewerk geometrie'
+          zoom: 'Zoom naar geometrie'
       class:
         title: Tekenen
         description: Tekentool
       admin:
-        deactivate_on_close: Deactiveer bij sluiten
+        deactivate_on_close: 'Deactiveer bij sluiten'
     redlining:
       class:
         title: Tekenen
-Bad credentials.: Ongeldige inloggegevens.
-User account is locked.: Gebruikers account is geblokkeerd.
-User account is disabled.: Gebruikers account is uitgeschakeld.
-User account has expired.: Gebruikers account is verlopen.
-User credentials have expired.: Login gegevens zijn verlopen.
+    applicationSwitcher:
+      admin:
+        drag_to_reorder: 'Sleep om opnieuw te ordenen'
+'Bad credentials.': 'Ongeldige inloggegevens.'
+'User account is locked.': 'Gebruikers account is geblokkeerd.'
+'User account is disabled.': 'Gebruikers account is uitgeschakeld.'
+'User account has expired.': 'Gebruikers account is verlopen.'
+'User credentials have expired.': 'Login gegevens zijn verlopen.'
