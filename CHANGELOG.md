@@ -8,7 +8,7 @@ Features:
 * [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
 
 Bugfixes:
-* [WMTS] Fix WMTS sources with a TileSize other than 256px were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))
+* [WMTS] WMTS sources with a TileSize other than 256px and/or individual origins per TileMatrix were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))
 * [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
 * [LayerTree] Update layer title after changing source ([PR#1660](https://github.com/mapbender/mapbender/pull/1660))

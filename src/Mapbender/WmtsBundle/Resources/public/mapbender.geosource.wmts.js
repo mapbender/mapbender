@@ -6,7 +6,7 @@
             const fallbackTileSize = Array.isArray(matrixSet.tileSize) ? matrixSet.tileSize[0] : 256;
 
             const gridOpts = {
-                origin: matrixSet.origin,
+                origins: matrixSet.tilematrices.map((matrix) => matrix.topLeftCorner ?? matrixSet.origin),
                 resolutions: matrixSet.tilematrices.map((tileMatrix) => this._getMatrixResolution(tileMatrix, srsName)),
                 matrixIds: matrixSet.tilematrices.map((matrix) => matrix.identifier),
                 tileSizes: matrixSet.tilematrices.map((matrix) => matrix.tileWidth ?? fallbackTileSize),
