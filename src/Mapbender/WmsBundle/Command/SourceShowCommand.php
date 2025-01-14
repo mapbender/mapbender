@@ -86,7 +86,7 @@ class SourceShowCommand extends AbstractSourceCommand
     private function showAllSources(InputInterface $input, OutputInterface $output): int
     {
         $json = $input->getOption('json');
-        $sources = $this->getEntityManager()->getRepository(Source::class)->findAll();
+        $sources = $this->getEntityManager()->getRepository(WmsSource::class)->findAll();
 
         if ($json) {
             $output->writeln(json_encode(array_map(function ($source) {
