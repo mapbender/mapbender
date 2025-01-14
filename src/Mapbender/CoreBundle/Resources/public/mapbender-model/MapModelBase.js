@@ -278,8 +278,8 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * @param {Mapbender.Source} source
-         * @param {boolean} state: layer source will be set to visible if true
-         * @param {boolean} ignoreAllowSelectedSetting: if set to true the setting allowSelected will be ignored
+         * @param {boolean} state layer source will be set to visible if true
+         * @param {boolean} ignoreAllowSelectedSetting if set to true the setting allowSelected will be ignored
          * engine-agnostic
          */
         setSourceVisibility: function(source, state, ignoreAllowSelectedSetting) {

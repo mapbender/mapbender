@@ -388,13 +388,12 @@
             const $target = $(e.currentTarget);
             const newState = $target.toggleClass('active').hasClass('active');
             this.updateIconVisual_($target, newState, null);
-            var layer = $target.closest('li.leave').data('layer');
-            var source = layer && layer.source;
-            var themeId = !source && $target.closest('.themeContainer').attr('data-layersetid');
+            const $layer = $target.closest('li.leave');
+            const layer = $layer.data('layer');
+            const source = layer && layer.source;
+            const themeId = !source && $target.closest('.themeContainer').attr('data-layersetid');
             if (themeId) {
-                var theme = Mapbender.layersets.filter(function (x) {
-                    return x.id === themeId;
-                })[0];
+                const theme = Mapbender.layersets.filter((x) => x.id === themeId)[0];
                 this.model.controlTheme(theme, newState);
             } else {
                 if (layer.parent) {
@@ -406,6 +405,11 @@
 
             if (newState) {
                 this._updateParentState($(e.currentTarget).closest('li.leave'));
+            }
+
+            if (e.shiftKey) {
+                // $layer is only set for "regular" layers, for themes the css class is themeContainer
+                this._updateChildrenState($layer.length ? $layer : $target.closest('li.themeContainer'), newState);
             }
 
             return false;
@@ -432,6 +436,14 @@
                 // _toggleSelected will take care of checking for the higher hierarchy levels
                 $parentCheckbox.trigger('click');
             }
+        },
+        _updateChildrenState: function ($layer, newState) {
+            $layer.children('.layers').children('.leave').each((index, child)  => {
+                const $child = $(child);
+                const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected');
+                this.updateIconVisual_($childToggle, newState, null);
+                this.model.controlLayer($child.data('layer'), newState);
+            });
         },
 
         _toggleInfo: function (e) {
@@ -745,7 +757,7 @@
             ;
             if (enabled !== null && (typeof enabled !== 'undefined')) {
                 $el.toggleClass('disabled', !enabled);
-                if(hideLayerNameWhenCheckboxDisabled){
+                if (hideLayerNameWhenCheckboxDisabled) {
                     $('>span', $el.prevObject).closest('.layer-title').toggleClass('disabled', true);
                 }
             }

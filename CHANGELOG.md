@@ -5,6 +5,7 @@ Features:
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
 * [Routing] Added Routing element ([PR#1655](https://github.com/mapbender/mapbender/pull/1655))
 * [LayerTree] Allow de-/activation of a layer via clicking the layername ([PR#1641](https://github.com/mapbender/mapbender/pull/1641))
+* [LayerTree] Toggle state of all sublayers when holding shift while toggling a layer ([PR#1664](https://github.com/mapbender/mapbender/pull/1664))
 * [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
 
 Bugfixes:
