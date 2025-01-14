@@ -6,7 +6,6 @@ namespace Mapbender\WmsBundle\Component\Presenter;
 use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -59,12 +58,12 @@ class WmsSourceService extends SourceService
     public function getInnerConfiguration(SourceInstance $sourceInstance)
     {
         /** @var WmsInstance $sourceInstance */
-        $configuration =  parent::getInnerConfiguration($sourceInstance) + array(
-            'options' => $this->getOptionsConfiguration($sourceInstance),
-            'children' => array(
-                $this->getLayerConfiguration($sourceInstance->getRootlayer()),
-            ),
-        );
+        $configuration = parent::getInnerConfiguration($sourceInstance) + array(
+                'options' => $this->getOptionsConfiguration($sourceInstance),
+                'children' => array(
+                    $this->getLayerConfiguration($sourceInstance->getRootlayer()),
+                ),
+            );
         return $this->postProcessUrls($sourceInstance, $configuration);
     }
 
@@ -114,7 +113,7 @@ class WmsSourceService extends SourceService
         if ($children) {
             $layerOrder = $instanceLayer->getSourceInstance()->getLayerOrder()
                 ?: $this->defaultLayerOrder
-                ?: WmsInstance::LAYER_ORDER_TOP_DOWN;
+                    ?: WmsInstance::LAYER_ORDER_TOP_DOWN;
             if ($layerOrder == WmsInstance::LAYER_ORDER_BOTTOM_UP) {
                 $children = array_reverse($children);
             }
@@ -207,11 +206,11 @@ class WmsSourceService extends SourceService
     }
 
     /**
-     * @todo: tunnel vs no-tunnel based on "sensitive" VendorSpecifics may not be cachable, investigate
-     *
      * @param WmsInstance $sourceInstance
      * @param mixed[] $configuration
      * @return mixed[] modified configuration
+     * @todo: tunnel vs no-tunnel based on "sensitive" VendorSpecifics may not be cachable, investigate
+     *
      */
     public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
     {
@@ -223,7 +222,7 @@ class WmsSourceService extends SourceService
         } else {
             if ($this->useProxy($sourceInstance)) {
                 $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
-                $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0]);
+                $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0], $sourceInstance);
             } else {
                 // Don't proxify, but do provide signature to allow OpenLayers to bypass CORB
                 $configuration['options']['url'] = $this->urlProcessor->signUrl($configuration['options']['url']);
@@ -346,7 +345,7 @@ class WmsSourceService extends SourceService
                 $publicLegendUrl = $legendUrl;
             }
             return array(
-                "url"   => $publicLegendUrl,
+                "url" => $publicLegendUrl,
             );
         }
         return array();
@@ -401,7 +400,7 @@ class WmsSourceService extends SourceService
         if ($this->useTunnel($sourceInstance)) {
             return false;
         } else {
-            if (!$sourceInstance->getId() && ($sourceInstance->getSource()->getUsername() || \preg_match('#//[^/]+@#', $sourceInstance->getSource()->getOriginUrl()))) {
+            if ($sourceInstance->isProtectedDynamicWms()) {
                 // WmsLoader special: proxify url with embedded credentials to bypass browser
                 // filtering of basic auth in img tags.
                 // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
@@ -415,20 +414,41 @@ class WmsSourceService extends SourceService
 
     /**
      * Extend all URLs in the layer to run over owsproxy
-     * @todo: this should and can be part of the initial generation
-     *
      * @param mixed[] $layerConfig
      * @return mixed[]
+     * @todo: this should and can be part of the initial generation
+     *
      */
-    protected function proxifyLayerUrls($layerConfig)
+    protected function proxifyLayerUrls($layerConfig, ?SourceInstance $sourceInstance = null)
     {
         if (isset($layerConfig['children'])) {
             foreach ($layerConfig['children'] as $ix => $childConfig) {
-                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig);
+                $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig, $sourceInstance);
             }
         }
         if (!empty($layerConfig['options']['legend']['url'])) {
-            $layerConfig['options']['legend']['url'] = $this->urlProcessor->proxifyUrl($layerConfig['options']['legend']['url']);
+            $url = $layerConfig['options']['legend']['url'];
+            if ($sourceInstance->isProtectedDynamicWms() && !$sourceInstance->getSource()->getUsername()) {
+                // for dynamically loaded WMS with password (WMSLoader), the legend url is read from GetCapabilities but
+                // does not include the basic auth data. This results in the legend not being displayed.
+                // As a workaround, insert the basic auth data manually.
+                $url = $this->injectBasicAuthData($url, $sourceInstance);
+            }
+            $layerConfig['options']['legend']['url'] = $this->urlProcessor->proxifyUrl($url);
+        }
+        if (is_array($layerConfig['options']['availableStyles'])) {
+            foreach ($layerConfig['options']['availableStyles'] as $style) {
+                /** @var $style Style */
+                $resource = $style->getLegendUrl()->getOnlineResource();
+                $url = $resource->getHref();
+                if ($sourceInstance->isProtectedDynamicWms() && !$sourceInstance->getSource()->getUsername()) {
+                    // for dynamically loaded WMS with password (WMSLoader), the legend url is read from GetCapabilities but
+                    // does not include the basic auth data. This results in the legend not being displayed.
+                    // As a workaround, insert the basic auth data manually.
+                    $url = $this->injectBasicAuthData($url, $sourceInstance);
+                }
+                $resource->setHref($this->urlProcessor->proxifyUrl($url));
+            }
         }
         return $layerConfig;
     }
@@ -439,5 +459,29 @@ class WmsSourceService extends SourceService
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
             '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
         );
+    }
+
+    protected function injectBasicAuthData(?string $sourceUrl, ?SourceInstance $sourceInstance): string
+    {
+        if ($sourceInstance === null) return $sourceUrl;
+        $originUrl = $sourceInstance->getSource()->getOriginUrl();
+
+        // if the legend url has basic auth data already, just return it
+        if (preg_match('/^(https?:\/\/)([^@]+)@/', $sourceUrl)) {
+            return $sourceUrl;
+        }
+
+        // Regex to extract the auth info (user:pass) from the source URL
+        preg_match('/^(https?:\/\/)([^@]+)@/', $originUrl, $sourceMatches);
+
+        // If the origin url doesn't have authentication info, return the source url unchanged
+        if (empty($sourceMatches) || !isset($sourceMatches[2])) {
+            return $sourceUrl;
+        }
+
+        $authInfo = $sourceMatches[2];
+
+        return preg_replace('/^(https?:\/\/)/', '${1}' . $authInfo . '@', $sourceUrl);
+
     }
 }
