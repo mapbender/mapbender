@@ -2,20 +2,18 @@
     window.Mapbender = Mapbender || {};
     window.Mapbender.WmtsSource = class WmtsSource extends Mapbender.WmtsTmsBaseSource {
         _layerFactory(layer, srsName) {
-            var matrixSet = layer.selectMatrixSet(srsName);
-            var self = this;
-            var gridOpts = {
+            const matrixSet = layer.selectMatrixSet(srsName);
+            const fallbackTileSize = Array.isArray(matrixSet.tileSize) ? matrixSet.tileSize[0] : 256;
+
+            const gridOpts = {
                 origin: matrixSet.origin,
-                resolutions: matrixSet.tilematrices.map(function (tileMatrix) {
-                    return self._getMatrixResolution(tileMatrix, srsName);
-                }),
-                matrixIds: matrixSet.tilematrices.map(function (matrix) {
-                    return matrix.identifier;
-                }),
-                extent: layer.getBounds(srsName, true)
+                resolutions: matrixSet.tilematrices.map((tileMatrix) => this._getMatrixResolution(tileMatrix, srsName)),
+                matrixIds: matrixSet.tilematrices.map((matrix) => matrix.identifier),
+                tileSizes: matrixSet.tilematrices.map((matrix) => matrix.tileWidth ?? fallbackTileSize),
+                extent: layer.getBounds(srsName, true),
             };
 
-            var sourceOpts = {
+            const sourceOpts = {
                 version: this.configuration.version,
                 requestEncoding: 'REST',
                 urls: layer.options.tileUrls.map(function (tileUrlTemplate) {
@@ -24,7 +22,7 @@
                 projection: srsName,
                 tileGrid: new ol.tilegrid.WMTS(gridOpts)
             };
-            var layerOpts = {
+            const layerOpts = {
                 opacity: this.configuration.options.opacity,
                 source: new ol.source.WMTS(sourceOpts)
             };
