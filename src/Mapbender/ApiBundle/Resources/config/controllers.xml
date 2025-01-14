@@ -11,5 +11,13 @@
                 <argument type="service" id="service_container"/>
             </call>
         </service>
+        <service id="Mapbender\ApiBundle\Controller\CommandController"
+                 class="Mapbender\ApiBundle\Controller\CommandController"
+                 public="true">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
     </services>
 </container>
