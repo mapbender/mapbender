@@ -3,3 +3,17 @@
 {{ form_row(form.configuration.autoStart) }}
 {{ form_row(form.title) }}
 {{ form_rest(form.configuration) }}
+
+<script type="text/javascript">
+    const $triggerInput = $('#form_configuration_centerOnFirstPosition');
+    const $dependentInput = $('#form_configuration_zoomToAccuracyOnFirstPosition');
+    const onChange = function() {
+        if ($triggerInput.is(':checked')) {
+            $dependentInput.removeAttr('disabled');
+        } else {
+            $dependentInput.attr('disabled', 'disabled');
+        }
+    };
+    $triggerInput.on('change', onChange);
+    onChange();
+</script>
