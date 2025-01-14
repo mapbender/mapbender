@@ -95,6 +95,8 @@ class ElementFormFactory
             $options['application'] = $element->getApplication();
         }
 
+        $options = $handlingClass::getFormOptions($element, $options);
+
         $formType->add('configuration', $configurationType, $options);
 
         $regionName = $element->getRegion();
