@@ -319,11 +319,5 @@
 
         <service id="mapbender.application.resolver" alias="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
 
-        <service id="mapbender.api.handler.authentication_failure"
-                 class="Mapbender\CoreBundle\EventHandler\ApiFailureHandler"
-                 parent="lexik_jwt_authentication.handler.authentication_failure"
-        >
-            <tag name="kernel.event_listener" event="Symfony\Component\Security\Http\Event\LoginFailureEvent" method="onLoginFailure" dispatcher="event_dispatcher"/>
-        </service>
     </services>
 </container>

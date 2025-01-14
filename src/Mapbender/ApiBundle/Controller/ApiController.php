@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\CoreBundle\Controller;
+namespace Mapbender\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
