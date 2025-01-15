@@ -19,5 +19,13 @@
                 <argument type="service" id="service_container"/>
             </call>
         </service>
+        <service id="Mapbender\ApiBundle\Controller\AuthController"
+                 class="Mapbender\ApiBundle\Controller\AuthController"
+                 public="true">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
     </services>
 </container>

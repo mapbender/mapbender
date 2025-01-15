@@ -10,11 +10,40 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
+use OpenApi\Attributes as OA;
 
 
 class CommandController extends AbstractController
 {
     #[Route('/api/wms/show', name: 'api_wms_show', methods: ['GET'])]
+    #[OA\Tag(name: 'wms')]
+    #[OA\Get(
+        path: '/api/wms/show',
+        description: 'Executes the console command mapbender:wms:show',
+        summary: 'Displays layer information of a persisted WMS source',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'Id or url of the source. If omitted, all sources are shown',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 2)
+            ),
+            new OA\Parameter(
+                name: 'json',
+                description: 'if set, output is formatted as json',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success message with WMS data',
+            )
+        ]
+    )]
     public function prepareWmsShowCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
         $outputAsJson = filter_var($request->get('json', true), FILTER_VALIDATE_BOOLEAN);
@@ -34,6 +63,34 @@ class CommandController extends AbstractController
     }
 
     #[Route('/api/wms/reload', name: 'api_wms_reload', methods: ['GET'])]
+    #[OA\Tag(name: 'wms')]
+    #[OA\Get(
+        path: '/api/wms/reload',
+        description: 'Executes the console command mapbender:wms:reload:url',
+        summary: 'Reloads a WMS source from given url',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'Id of the source',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 2)
+            ),
+            new OA\Parameter(
+                name: 'serviceUrl',
+                description: 'URL to WMS',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: "https://osm-demo.wheregroup.com/service")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success message',
+            )
+        ]
+    )]
     public function prepareWmsReloadCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
         $id = $request->get('id');
@@ -67,6 +124,27 @@ class CommandController extends AbstractController
     }
 
     #[Route('/api/wms/add', name: 'api_wms_add', methods: ['GET'])]
+    #[OA\Tag(name: 'wms')]
+    #[OA\Get(
+        path: '/api/wms/add',
+        description: 'Executes the console command mapbender:wms:add',
+        summary: 'Adds a new WMS source',
+        parameters: [
+            new OA\Parameter(
+                name: 'serviceUrl',
+                description: 'URL to WMS',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: "https://osm-demo.wheregroup.com/service")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success message with layer description and the generated Id',
+            )
+        ]
+    )]
     public function prepareWmsAddCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
         $serviceUrl = $request->get('serviceUrl');
@@ -97,6 +175,41 @@ class CommandController extends AbstractController
     }
 
     #[Route('/api/wms/assign', name: 'api_wms_assign', methods: ['GET'])]
+    #[OA\Tag(name: 'wms')]
+    #[OA\Get(
+        path: '/api/wms/assign',
+        description: 'Executes the console command mapbender:wms:assign',
+        summary: 'Assigns a WMS source to an application',
+        parameters: [
+            new OA\Parameter(
+                name: 'application',
+                description: 'id or slug of the application',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'mixed', example: "mapbender_user")
+            ),
+            new OA\Parameter(
+                name: 'source',
+                description: 'id of the wms source',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: "2")
+            ),
+            new OA\Parameter(
+                name: 'layerset',
+                description: 'id or name of the layerset. Defaults to "main" or the first layerset in the application',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'mixed', example: "main")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success message',
+            )
+        ]
+    )]
     public function prepareWmsAssignCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
         $application = $request->get('application');
@@ -122,6 +235,27 @@ class CommandController extends AbstractController
     }
 
     #[Route('/api/application/clone', name: 'api_application_clone', methods: ['GET'])]
+    #[OA\Tag(name: 'application')]
+    #[OA\Get(
+        path: '/api/application/clone',
+        description: 'Executes the console command mapbender:application:clone',
+        summary: 'Creates a copy of an application',
+        parameters: [
+            new OA\Parameter(
+                name: 'application',
+                description: 'slug of the application',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: "mapbender_user")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success message with the new slug',
+            )
+        ]
+    )]
     public function prepareApplicationCloneCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
         $slug = $request->get('slug');
