@@ -46,7 +46,7 @@ class SQLSearchEngine
         $qb->where($this->getTextMatchExpression($connection, $key, $value, 'ilike', $qb));
         if ($srs && $extent && !empty($config['class_options']['geometry_attribute'])) {
             $geomColumn = 't.' . $connection->quoteIdentifier(trim($config['class_options']['geometry_attribute'], '"'));
-            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs, $config));
         }
 
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
@@ -119,7 +119,7 @@ class SQLSearchEngine
             $qb->andWhere($this->getTextMatchExpression($connection, $key, $value, $matchMode, $qb));
         }
         if ($srs && $extent) {
-            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs));
+            $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs, $config));
         }
 
         $stmt = $qb->executeQuery()->fetchAllAssociative();
@@ -224,16 +224,22 @@ class SQLSearchEngine
      * @param string $srsName
      * @return string
      */
-    protected function getBoundsExpression(QueryBuilder $qb, $geomReference, $extent, $srsName)
+    protected function getBoundsExpression(QueryBuilder $qb, $geomReference, $extent, $srsName, array $config)
     {
+        // per default, the map extent is compared to a feature by converting both to EPSG:3857 (WGS84).
+        // comparing in a non-global SRS (like UTM32) can result in errors when comparing it to an extent defined
+        // in a global CRS. This may reduce performance, so the transformation to EPSG:3857 can be disabled
+        // by passing noTransform:true to class_options
+        $noTransform = isset($config['class_options']['noTransform']) && $config['class_options']['noTransform'];
+
         $boxPoints = array(
             'ST_Point(' . $qb->createNamedParameter($extent[0]) . ', ' . $qb->createNamedParameter($extent[1]) . ')',
             'ST_Point(' . $qb->createNamedParameter($extent[2]) . ', ' . $qb->createNamedParameter($extent[3]) . ')',
         );
         $srsId = $this->srsIdFromName($srsName);
         $box = 'ST_SetSRID(ST_MakeBox2D(' . implode(', ', $boxPoints) . '), ' . $qb->createNamedParameter($srsId) . ')';
-        $transformedBox = "ST_Transform({$box}, ST_Srid({$geomReference}))";
-        return "{$transformedBox} && {$geomReference}";
+        $transformedBox = $noTransform ? "ST_Transform({$box}, ST_Srid({$geomReference}))" : "ST_Transform($box, 3857)";
+        return $noTransform ? "$transformedBox && $geomReference" : "$transformedBox && ST_Transform($geomReference, 3857)";
     }
 
     /**
