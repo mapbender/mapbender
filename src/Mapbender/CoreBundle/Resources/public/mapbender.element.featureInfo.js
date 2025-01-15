@@ -404,14 +404,16 @@
                 stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
                 strokeWidth: this.options.strokeWidthHover,
             };
-            var defaultStyle = this.processStyle_(settingsDefault, false);
-            var hoverStyle = this.processStyle_(settingsHover, true);
-            hoverStyle.setZIndex(1);
+
+            const self = this;
             return function (feature) {
-                return [feature.get('hover') && hoverStyle || defaultStyle];
+                return [feature.get('hover')
+                    ? self.processStyle_(settingsHover, true, feature)
+                    : self.processStyle_(settingsDefault, false, feature)
+                ];
             }
         },
-        processStyle_: function (settings, hover) {
+        processStyle_: function (settings, hover, feature) {
             var fillRgba = Mapbender.StyleUtil.parseCssColor(settings.fill);
             var strokeRgba = Mapbender.StyleUtil.parseCssColor(settings.stroke);
             var strokeWidth = parseInt(settings.strokeWidth);
@@ -424,7 +426,16 @@
                 stroke: strokeWidth && new ol.style.Stroke({
                     color: strokeRgba,
                     width: strokeWidth
-                })
+                }),
+                text: strokeWidth && new ol.style.Text({
+                    font: '24px Arial',
+                    stroke: new ol.style.Stroke({
+                        color: strokeRgba,
+                        width: strokeWidth
+                    }),
+                    text: feature.get("label"),
+                }),
+                zIndex: hover ? 1 : undefined,
             });
         },
         _postMessage: function (message) {
@@ -447,6 +458,7 @@
                 var feature = Mapbender.Model.parseWktFeature(featureData.wkt, featureData.srid);
                 feature.setId(featureData.id);
                 feature.set('sourceId', data.sourceId);
+                feature.set('label', featureData.label);
                 return feature;
             });
 
