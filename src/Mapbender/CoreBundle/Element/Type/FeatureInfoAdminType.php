@@ -58,16 +58,22 @@ class FeatureInfoAdminType extends AbstractType
             ->add('defaultStyle', PaintType::class, array(
                 'label' => 'mb.core.admin.featureinfo.label.default_group',
                 'inherit_data' => true,
+                'hasFont' => true,
                 'fieldNameFillColor' => 'fillColorDefault',
                 'fieldNameStrokeColor' => 'strokeColorDefault',
                 'fieldNameStrokeWidth' => 'strokeWidthDefault',
+                'fieldNameFontColor' => 'fontColorDefault',
+                'fieldNameFontSize' => 'fontSizeDefault',
             ))
             ->add('hoverStyle', PaintType::class, array(
                 'label' => 'mb.core.admin.featureinfo.label.hover_group',
                 'inherit_data' => true,
+                'hasFont' => true,
                 'fieldNameFillColor' => 'fillColorHover',
                 'fieldNameStrokeColor' => 'strokeColorHover',
                 'fieldNameStrokeWidth' => 'strokeWidthHover',
+                'fieldNameFontColor' => 'fontColorHover',
+                'fieldNameFontSize' => 'fontSizeHover',
             ))
         ;
     }

@@ -10,6 +10,10 @@
             highlighting: false,
             fillColorDefault: 'rgba(255,165,0,0.4)',
             fillColorHover: 'rgba(255,0,0,0.7)',
+            fontColorDefault: '#000000',
+            fontSizeDefault: 12,
+            fontColorHover: '#000000',
+            fontSizeHover: 12,
             maxCount: 100,
             width: 700,
             height: 500
@@ -398,11 +402,15 @@
                 fill: this.options.fillColorDefault,
                 stroke: this.options.strokeColorDefault || this.options.fillColorDefault,
                 strokeWidth: this.options.strokeWidthDefault,
+                fontColor: this.options.fontColorDefault || this.options.strokeColorDefault,
+                fontSize: this.options.fontSizeDefault,
             };
             var settingsHover = {
                 fill: this.options.fillColorHover || settingsDefault.fill,
                 stroke: this.options.strokeColorHover || this.options.fillColorHover || settingsDefault.stroke,
                 strokeWidth: this.options.strokeWidthHover,
+                fontColor: this.options.fontColorHover || this.options.strokeColorHover || settingsDefault.fontColor,
+                fontSize: this.options.fontSizeHover || settingsDefault.fontSize,
             };
 
             const self = this;
@@ -428,10 +436,9 @@
                     width: strokeWidth
                 }),
                 text: strokeWidth && new ol.style.Text({
-                    font: '24px Arial',
-                    stroke: new ol.style.Stroke({
-                        color: strokeRgba,
-                        width: strokeWidth
+                    font: parseInt(settings.fontSize) + 'px sans-serif',
+                    fill: new ol.style.Fill({
+                        color: settings.fontColor,
                     }),
                     text: feature.get("label"),
                 }),
