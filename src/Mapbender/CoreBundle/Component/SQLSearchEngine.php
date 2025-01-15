@@ -226,9 +226,9 @@ class SQLSearchEngine
      */
     protected function getBoundsExpression(QueryBuilder $qb, $geomReference, $extent, $srsName, array $config)
     {
-        // per default, the map extent is compared to a feature by converting both to EPSG:3857 (WGS84).
+        // per default, the map extent is compared to a feature by converting both to EPSG:4326 (WGS84).
         // comparing in a non-global SRS (like UTM32) can result in errors when comparing it to an extent defined
-        // in a global CRS. This may reduce performance, so the transformation to EPSG:3857 can be disabled
+        // in a global CRS. This may reduce performance, so the transformation to EPSG:4326 can be disabled
         // by passing noTransform:true to class_options
         $noTransform = isset($config['class_options']['noTransform']) && $config['class_options']['noTransform'];
 
@@ -238,8 +238,8 @@ class SQLSearchEngine
         );
         $srsId = $this->srsIdFromName($srsName);
         $box = 'ST_SetSRID(ST_MakeBox2D(' . implode(', ', $boxPoints) . '), ' . $qb->createNamedParameter($srsId) . ')';
-        $transformedBox = $noTransform ? "ST_Transform({$box}, ST_Srid({$geomReference}))" : "ST_Transform($box, 3857)";
-        return $noTransform ? "$transformedBox && $geomReference" : "$transformedBox && ST_Transform($geomReference, 3857)";
+        $transformedBox = $noTransform ? "ST_Transform({$box}, ST_Srid({$geomReference}))" : "ST_Transform($box, 4326)";
+        return $noTransform ? "$transformedBox && $geomReference" : "$transformedBox && ST_Transform($geomReference, 4326)";
     }
 
     /**
