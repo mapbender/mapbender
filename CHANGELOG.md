@@ -6,6 +6,7 @@ Features:
 * [Routing] Added Routing element ([PR#1655](https://github.com/mapbender/mapbender/pull/1655))
 * [LayerTree] Allow de-/activation of a layer via clicking the layername ([PR#1641](https://github.com/mapbender/mapbender/pull/1641))
 * [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
+* [FeatureInfo] Support labels in FeatureInfo-Highlighting ([PR#1670](https://github.com/mapbender/mapbender/pull/1670))
 
 Bugfixes:
 * [WMTS] WMTS sources with a TileSize other than 256px and/or individual origins per TileMatrix were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))
