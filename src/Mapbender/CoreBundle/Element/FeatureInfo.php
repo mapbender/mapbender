@@ -75,6 +75,10 @@ class FeatureInfo extends AbstractElementService
             'strokeColorHover' => 'rgba(255,0,0,0.7)',
             'strokeWidthDefault' => 1,
             'strokeWidthHover' => 3,
+            'fontColorDefault' => '#000000',
+            'fontColorHover' => '#000000',
+            'fontSizeDefault' => 12,
+            'fontSizeHover' => 12,
         );
     }
 

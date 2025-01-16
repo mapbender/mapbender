@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return {
                 srid: node.getAttribute('data-srid'),
                 wkt: node.getAttribute('data-geometry'),
+                label: node.getAttribute('data-label'),
                 id: featureIdFromElement(node)
             };
         });
