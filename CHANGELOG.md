@@ -10,6 +10,7 @@ Features:
 Bugfixes:
 * [WMTS] WMTS sources with a TileSize other than 256px and/or individual origins per TileMatrix were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))
 * [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
+* [SearchRouter] Always show "no results" message, independent of results.count setting ([PR#1668](https://github.com/mapbender/mapbender/pull/1668))
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
 * [LayerTree] Update layer title after changing source ([PR#1660](https://github.com/mapbender/mapbender/pull/1660))
 * [BaseSourceSwitcher] Submenu is closed as soon as the mouse pointer moves out of the menu ([#PR1644](https://github.com/mapbender/mapbender/pull/1644))

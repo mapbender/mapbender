@@ -439,7 +439,7 @@
 
             var currentRoute = this.getCurrentRoute();
 
-            if (!$counter.length && currentRoute.results.count === true) {
+            if (!$counter.length) {
                 $counter = $('<div/>', {'class': 'result-counter'}).prependTo($('.search-results', element));
             }
 
@@ -450,16 +450,20 @@
             }
 
             if (results.length > 0) {
-                $counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
-                    count: results.length
-                }));
+                if (currentRoute.results.count === true) {
+                    $counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
+                        count: results.length
+                    }));
+                } else {
+                    $counter.hide();
+                }
 
                 $exportcsv.show().unbind().on('click', () => this._exportCsv(results));
                 $table.show();
             } else {
                 $table.hide();
                 $exportcsv.hide();
-                $counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
+                $counter.text(Mapbender.trans('mb.core.searchrouter.no_results')).show();
             }
         },
         _exportCsv: function (features) {
