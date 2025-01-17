@@ -27,5 +27,14 @@
                 <argument type="service" id="service_container"/>
             </call>
         </service>
+        <service id="Mapbender\ApiBundle\Controller\UploadController"
+                 class="Mapbender\ApiBundle\Controller\UploadController"
+                 public="true">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <argument>%api_upload_dir%</argument>
+        </service>
     </services>
 </container>
