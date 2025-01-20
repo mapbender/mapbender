@@ -10,7 +10,9 @@ window.Mapbender.VectorLayerBridge = (function() {
             return this.wrappedLayer_;
         },
         addMarker: function(lon, lat) {
-            this.addNativeFeatures([this.getMarkerFeature_(lon, lat, this.markerStyle_ || null)]);
+            const markerFeature = this.getMarkerFeature_(lon, lat, this.markerStyle_ || null);
+            this.addNativeFeatures([markerFeature]);
+            return markerFeature;
         },
         /**
          * @param {String} iconStyleName

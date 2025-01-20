@@ -794,7 +794,7 @@ window.Mapbender.MapModelBase = (function() {
                 return [];
             }
         },
-        displayPois: function(poiOptions) {
+        displayPois: function (poiOptions) {
             if (!poiOptions.length) {
                 return;
             }
@@ -803,14 +803,24 @@ window.Mapbender.MapModelBase = (function() {
             for (var i = 0; i < poiOptions.length; ++i) {
                 this.displayPoi(layer, poiOptions[i]);
             }
+
+            layer.olMap.on('singleclick', (e) => {
+                layer.olMap.forEachFeatureAtPixel(e.pixel, (f) => {
+                    if (f.get('mbPoiLabel')) {
+                        const coords = f.getGeometry().getCoordinates();
+                        this.openPopup(coords[0], coords[1], f.get("mbPoiLabel")).then(() => layer.removeNativeFeatures([f]))
+                    }
+                }, {hitTolerance: this.hitTolerance});
+            });
         },
         displayPoi: function(layer, poi) {
-            var targetSrs = this.getCurrentProjectionCode();
-            var coords = Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || targetSrs, targetSrs);
+            const targetSrs = this.getCurrentProjectionCode();
+            const coords = Mapbender.mapEngine.transformCoordinate({x: poi.x, y: poi.y}, poi.srs || targetSrs, targetSrs);
 
-            layer.addMarker(coords.x, coords.y);
+            const marker = layer.addMarker(coords.x, coords.y);
+            marker.set('mbPoiLabel', poi.label);
             if (poi.label && typeof(poi.label) === 'string') {
-                this.openPopup(coords.x, coords.y, poi.label);
+                this.openPopup(coords.x, coords.y, poi.label).then(() => layer.removeNativeFeatures([marker]))
             }
         },
         /**

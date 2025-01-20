@@ -40,7 +40,7 @@
     user-select: text;
   }
 
-  // Popup styling (Openlayers >= 4 only)
+  // Popup styling
   .mbmappopup {
     background: #fff;
     font-size: 1rem;
@@ -49,10 +49,9 @@
     border-radius: 0.5em;
 
     .close-btn {
-      font-size: 153%;
+      font-size: 120%;
       float: right;
-      padding-left: 0.5em;
-      padding-bottom: 0.5em;
+      padding: 0 4px 0 4px;
     }
     // Offset and anchor the whole popup, add an "arrow" with the usual border hacks
     position: absolute;
