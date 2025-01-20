@@ -27,7 +27,7 @@ class CommandController extends AbstractController
                 description: 'Id or url of the source. If omitted, all sources are shown',
                 in: 'query',
                 required: false,
-                schema: new OA\Schema(type: 'integer', example: 2)
+                schema: new OA\Schema(type: 'mixed', example: 2)
             ),
             new OA\Parameter(
                 name: 'json',
