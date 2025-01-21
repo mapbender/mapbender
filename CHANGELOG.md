@@ -1,6 +1,6 @@
 ## next release
 Features:
-* [LayerTree] If a WMS has several styles, the user now has the option of selecting these in the context menu of the layertree ([PR#1636](https://github.com/mapbender/mapbender/pull/1636), [PR#1648](https://github.com/mapbender/mapbender/pull/1648))
+* [LayerTree] If a WMS has several styles, the user now has the option of selecting these in the context menu of the layertree ([PR#1636](https://github.com/mapbender/mapbender/pull/1636), [PR#1648](https://github.com/mapbender/mapbender/pull/1648), [PR#1674](https://github.com/mapbender/mapbender/pull/1674))
 * [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
 * [Manager] Added filter for layersets, improved filter for elements and sources ([PR#1632](https://github.com/mapbender/mapbender/pull/1632))
 * [Routing] Added Routing element ([PR#1655](https://github.com/mapbender/mapbender/pull/1655))

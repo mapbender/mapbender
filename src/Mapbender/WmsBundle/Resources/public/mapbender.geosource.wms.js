@@ -11,6 +11,16 @@ window.Mapbender = Mapbender || {};
         }
 
         getLegend() {
+            if (this.options.style && this.options.style !== 'default' && this.options.availableStyles) {
+                for(const style of this.options.availableStyles) {
+                    if (style.name === this.options.style && style.legendUrl?.onlineResource?.href) {
+                        return {
+                            type: 'url',
+                            url: style.legendUrl.onlineResource.href
+                        };
+                    }
+                }
+            }
             if (this.options.legend && this.options.legend.url) {
                 return {
                     type: 'url',
