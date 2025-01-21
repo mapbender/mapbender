@@ -780,6 +780,9 @@ window.Mapbender.MapModelOl4 = (function() {
             const $popup = $(
                 '<div class="mbmappopup"><a href="#" class="close-btn -fn-minimize"><i class="fas fa-window-minimize"></i></a><a href="#" class="close-btn -fn-close"><i class="fas fa-xmark"></i></a></div>'
             );
+            if (content.innerText.length < 30) {
+                $popup.addClass("small");
+            }
             $popup.append(content);
             $popup.append('<div class="clear"></div>');
             const overlay = new ol.Overlay({element: $popup.get(0)});
