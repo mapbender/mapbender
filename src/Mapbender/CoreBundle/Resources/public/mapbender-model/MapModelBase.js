@@ -1231,18 +1231,19 @@ window.Mapbender.MapModelBase = (function() {
          * @return {mmMapSettings}
          */
         mergeSettings: function(base, diff) {
-            var settings = Object.assign({}, base, {
+            const sources = base.sources.map(/** @param {SourceSettings} baseSettings */ function(baseSettings) {
+                var diffMatch = diff.sources.find(function(diffEntry) {
+                    return ('' + diffEntry.id) === ('' + baseSettings.id);
+                });
+                if (diffMatch) {
+                    return Mapbender.Source.prototype.mergeSettings.call(null, baseSettings, diffMatch);
+                }
+                return baseSettings;
+            });
+
+            return Object.assign({}, base, {
                 viewParams: diff.viewParams,
-                sources: base.sources.map(/** @param {SourceSettings} baseSettings */ function(baseSettings) {
-                    var diffMatch = diff.sources.find(function(diffEntry) {
-                        return ('' + diffEntry.id) === ('' + baseSettings.id);
-                    });
-                    if (diffMatch) {
-                        return Mapbender.Source.prototype.mergeSettings.call(null, baseSettings, diffMatch);
-                    } else {
-                        return baseSettings;
-                    }
-                }),
+                sources: sources,
                 layersets: base.layersets.map((layersetConfig) => {
                     if (layersetConfig.selected && diff.layersets.deactivate?.includes(layersetConfig.id) === true) {
                         layersetConfig.selected = false;
@@ -1253,8 +1254,6 @@ window.Mapbender.MapModelBase = (function() {
                     return layersetConfig;
                 }),
             });
-
-            return settings;
         },
         /**
          * @param {mmMapSettings} settings

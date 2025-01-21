@@ -138,7 +138,7 @@ window.Mapbender = Mapbender || {};
         applySettingsDiff(diff) {
             super.applySettingsDiff(diff);
 
-            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
+            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length || (diff.changeStyle || []).length);
             if (!isDiffValid) return;
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
@@ -149,6 +149,11 @@ window.Mapbender = Mapbender || {};
                 for (let index in (diff.deactivate || [])) {
                     const id = ((typeof diff.deactivate[index]) === 'object') ? diff.deactivate[index].id : diff.deactivate[index];
                     if (id === layer.getId()) layer.setSelected(false);
+                }
+                for (let index in (diff.changeStyle || [])) {
+                    if (diff.changeStyle[index].id === layer.getId()) {
+                        layer.options.style = diff.changeStyle[index].style;
+                    }
                 }
 
             }.bind(this));
