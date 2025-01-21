@@ -23,6 +23,7 @@ class PermissionController extends AbstractController
     public const CATEGORY_PERMISSIONS = "permissions";
     public const CATEGORY_USERS = "users";
     public const CATEGORY_GROUPS = "groups";
+    public const CATEGORY_API = "api";
 
     public static function categoryList(): array
     {
@@ -32,6 +33,7 @@ class PermissionController extends AbstractController
             self::CATEGORY_PERMISSIONS => "fom.user.userbundle.classes.permissions",
             self::CATEGORY_USERS => "fom.user.userbundle.classes.users",
             self::CATEGORY_GROUPS => "fom.user.userbundle.classes.groups",
+            self::CATEGORY_API => "fom.user.userbundle.classes.api",
         ];
     }
 
@@ -73,6 +75,10 @@ class PermissionController extends AbstractController
                 ResourceDomainInstallation::ACTION_CREATE_GROUPS,
                 ResourceDomainInstallation::ACTION_EDIT_GROUPS,
                 ResourceDomainInstallation::ACTION_DELETE_GROUPS,
+            ],
+            self::CATEGORY_API => [
+                ResourceDomainInstallation::ACTION_ACCESS_API,
+                ResourceDomainInstallation::ACTION_UPLOAD_FILES,
             ],
             default => throw $this->createNotFoundException("Invalid category $category")
         };

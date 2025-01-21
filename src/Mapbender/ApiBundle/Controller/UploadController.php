@@ -2,6 +2,7 @@
 
 namespace Mapbender\ApiBundle\Controller;
 
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +22,9 @@ class UploadController extends AbstractController
     #[Route('/api/upload/zip', name: 'api_upload_zip', methods: ['POST'])]
     #[OA\Tag(name: 'file-upload')]
     #[OA\Post(
-        description: 'Uploads a ZIP file to the server and extracts its contents into the upload directory,
-                        which is configured using the "api_upload_dir" parameter.',
+        description: "Uploads a ZIP file to the server and extracts its contents into the upload directory,
+                        which is configured using the 'api_upload_dir' parameter.
+                        \nUsers must have the 'access api' and 'upload files' permissions",
         summary: 'Upload a ZIP file',
         requestBody: new OA\RequestBody(
             description: 'The ZIP file to upload',
@@ -58,6 +60,9 @@ class UploadController extends AbstractController
     )]
     public function uploadZipAction(Request $request): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_UPLOAD_FILES);
+
         $file = $request->files->get('file');
 
         if (!$file) {

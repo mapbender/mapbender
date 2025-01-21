@@ -2,6 +2,7 @@
 
 namespace Mapbender\ApiBundle\Controller;
 
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,11 +16,12 @@ use OpenApi\Attributes as OA;
 
 class CommandController extends AbstractController
 {
+
     #[Route('/api/wms/show', name: 'api_wms_show', methods: ['GET'])]
     #[OA\Tag(name: 'wms')]
     #[OA\Get(
         path: '/api/wms/show',
-        description: 'Executes the console command mapbender:wms:show',
+        description: "Executes the console command mapbender:wms:show  \nUsers must have the 'access api' and 'view sources' permissions",
         summary: 'Displays layer information of a persisted WMS source',
         parameters: [
             new OA\Parameter(
@@ -46,6 +48,9 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsShowCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
+
         $outputAsJson = filter_var($request->get('json', true), FILTER_VALIDATE_BOOLEAN);
 
         $inputArgs = [
@@ -66,7 +71,7 @@ class CommandController extends AbstractController
     #[OA\Tag(name: 'wms')]
     #[OA\Get(
         path: '/api/wms/reload',
-        description: 'Executes the console command mapbender:wms:reload:url',
+        description: "Executes the console command mapbender:wms:reload:url  \nUsers must have the 'access api' and 'refresh sources' permissions",
         summary: 'Reloads a WMS source from given url',
         parameters: [
             new OA\Parameter(
@@ -93,6 +98,9 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsReloadCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
+
         $id = $request->get('id');
         $serviceUrl = $request->get('serviceUrl');
         $deactivateNewLayers = filter_var($request->get('deactivateNewLayers', false), FILTER_VALIDATE_BOOLEAN);
@@ -127,7 +135,7 @@ class CommandController extends AbstractController
     #[OA\Tag(name: 'wms')]
     #[OA\Get(
         path: '/api/wms/add',
-        description: 'Executes the console command mapbender:wms:add',
+        description: "Executes the console command mapbender:wms:add  \nUsers must have the 'access api' and 'create sources' permissions",
         summary: 'Adds a new WMS source',
         parameters: [
             new OA\Parameter(
@@ -147,6 +155,9 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsAddCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
+
         $serviceUrl = $request->get('serviceUrl');
         $deactivateNewLayers = filter_var($request->get('deactivateNewLayers', false), FILTER_VALIDATE_BOOLEAN);
         $deselectNewLayers = filter_var($request->get('deselectNewLayers', false), FILTER_VALIDATE_BOOLEAN);
@@ -178,7 +189,7 @@ class CommandController extends AbstractController
     #[OA\Tag(name: 'wms')]
     #[OA\Get(
         path: '/api/wms/assign',
-        description: 'Executes the console command mapbender:wms:assign',
+        description: "Executes the console command mapbender:wms:assign  \nUsers must have the 'access api' and 'edit all applications' permissions",
         summary: 'Assigns a WMS source to an application',
         parameters: [
             new OA\Parameter(
@@ -212,6 +223,9 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsAssignCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
+
         $application = $request->get('application');
         $source = $request->get('source');
         $layerset = $request->get('layerset');
@@ -258,6 +272,9 @@ class CommandController extends AbstractController
     )]
     public function prepareApplicationCloneCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
+
         $slug = $request->get('slug');
 
         if (!$slug) {

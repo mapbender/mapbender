@@ -32,6 +32,9 @@ class ResourceDomainInstallation extends AbstractResourceDomain
     const ACTION_EDIT_GROUPS = "edit_groups";
     const ACTION_DELETE_GROUPS = "delete_groups";
 
+    const ACTION_ACCESS_API = "access_api";
+    const ACTION_UPLOAD_FILES = "upload_files";
+
     public function getSlug(): string
     {
         return self::SLUG;
@@ -65,6 +68,8 @@ class ResourceDomainInstallation extends AbstractResourceDomain
             self::ACTION_CREATE_GROUPS,
             self::ACTION_EDIT_GROUPS,
             self::ACTION_DELETE_GROUPS,
+            self::ACTION_ACCESS_API,
+            self::ACTION_UPLOAD_FILES,
         ];
     }
 
@@ -85,6 +90,8 @@ class ResourceDomainInstallation extends AbstractResourceDomain
             self::ACTION_MANAGE_PERMISSION,
             self::ACTION_DELETE_SOURCES,
             self::ACTION_DELETE_USERS,
+            self::ACTION_ACCESS_API,
+            self::ACTION_UPLOAD_FILES,
             self::ACTION_DELETE_GROUPS => self::CSS_CLASS_DANGER,
             default => self::CSS_CLASS_SUCCESS,
         };

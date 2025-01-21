@@ -7,32 +7,36 @@
                  class="Mapbender\ApiBundle\Controller\ApiController"
                  public="true">
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ApiBundle\Controller\CommandController"
                  class="Mapbender\ApiBundle\Controller\CommandController"
                  public="true">
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ApiBundle\Controller\AuthController"
                  class="Mapbender\ApiBundle\Controller\AuthController"
                  public="true">
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
         <service id="Mapbender\ApiBundle\Controller\UploadController"
                  class="Mapbender\ApiBundle\Controller\UploadController"
                  public="true">
             <tag name="controller.service_arguments"/>
+            <tag name="container.service_subscriber" />
             <call method="setContainer">
-                <argument type="service" id="service_container"/>
+                <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
             <argument>%api_upload_dir%</argument>
         </service>
