@@ -578,6 +578,7 @@ mb:
         description: 'Troca para outra aplicação mantendo a posição atual do mapa'
       admin:
         open_in_new_tab: 'Abrir em nova aba'
+        drag_to_reorder: 'Arraste para reorganizar'
     coordinesdisplay:
       admin:
         numdigits: 'Número de casas decimais'

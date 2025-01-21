@@ -55,6 +55,12 @@ class ApplicationSwitcher extends AbstractElementService
         );
     }
 
+    public static function getFormOptions(Element $element, array $options): array
+    {
+        $options['sort_first'] = $element->getConfiguration()['applications'];
+        return $options;
+    }
+
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType';
@@ -62,7 +68,7 @@ class ApplicationSwitcher extends AbstractElementService
 
     public static function getFormTemplate()
     {
-        return null;
+        return '@MapbenderCore/ElementAdmin/applicationswitcher.html.twig';
     }
 
     public function getWidgetName(Element $element)

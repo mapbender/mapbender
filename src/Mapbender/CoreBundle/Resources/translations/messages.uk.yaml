@@ -418,7 +418,8 @@ mb:
         title: Перемикач застосунків
         description: Перемикається на інший застосунок, зберігаючи поточне положення на мапі
       admin:
-        open_in_new_tab: Відкрити в новій вкладці
+        open_in_new_tab: 'Відкрити в новій вкладці'
+        drag_to_reorder: 'Перетягніть, щоб змінити порядок'
   template:
     toolbar_menu_tooltip: Перемкнути меню
     region:

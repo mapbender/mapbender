@@ -43,4 +43,12 @@ abstract class AbstractElementService
     {
         return null;
     }
+
+    /**
+     * If needed, additional options can be passed to the backend configuration form here
+     */
+    public static function getFormOptions(Element $element, array $options): array
+    {
+        return $options;
+    }
 }

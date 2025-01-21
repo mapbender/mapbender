@@ -3,6 +3,8 @@
 
 namespace Mapbender\CoreBundle\Component\ElementBase;
 
+use Mapbender\CoreBundle\Entity\Element;
+
 /**
  * Methods that an Element must implement to support backend configuration forms, which happens when
  * 1) a new Element is added to an application
@@ -26,4 +28,9 @@ interface EditableInterface extends AddableInterface
      * @return string
      */
     public static function getFormTemplate();
+
+    /**
+     * If needed, additional options can be passed to the backend configuration form defined in `getType` here
+     */
+    public static function getFormOptions(Element $element, array $options): array;
 }
