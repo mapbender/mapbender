@@ -15,6 +15,7 @@ Bugfixes:
 * [SearchRouter] Always show "no results" message, independent of results.count setting ([PR#1668](https://github.com/mapbender/mapbender/pull/1668))
 * [LayerTree] Added source layers with children did not show up in the layer tree ([PR#1637](https://github.com/mapbender/mapbender/pull/1637))
 * [LayerTree] Update layer title after changing source ([PR#1660](https://github.com/mapbender/mapbender/pull/1660))
+* [SearchRouter] Searching for data stored in a non-global SRS (like UTM32) when map extent is in a global SRS did not always yield all results ([PR#1669](https://github.com/mapbender/mapbender/pull/1669))
 * [BaseSourceSwitcher] Submenu is closed as soon as the mouse pointer moves out of the menu ([#PR1644](https://github.com/mapbender/mapbender/pull/1644))
 * [WMSLoader] For protected WMS, the user data was not added to legend requests ([#PR1667](https://github.com/mapbender/mapbender/pull/1667))
 * Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
