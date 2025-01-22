@@ -77,7 +77,7 @@ class ActivityIndicator extends AbstractElementService
     public function getView(Element $element)
     {
         $view = new StaticView(HtmlUtil::renderTag('i', '', array(
-            'class' => 'fa fas fa-spinner fa-spin',
+            'class' => 'fa fas fa-spinner fa-spin activityindicator-spinner',
         )));
         $view->attributes['class'] = 'mb-element-activityindicator';
         $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle() ?: $this->getClassTitle();
