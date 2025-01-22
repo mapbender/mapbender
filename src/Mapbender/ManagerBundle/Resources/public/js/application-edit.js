@@ -144,6 +144,7 @@ $(function() {
                 {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
                     cssClass: 'btn btn-primary btn-sm',
+                    dataTest: 'mb-element-save',
                     callback: function() {
                         elementFormSubmit(this.$element, formUrl)
                             .then(function(data) {
@@ -170,7 +171,8 @@ $(function() {
                 },
                 {
                     label: Mapbender.trans(strings.cancel || 'mb.actions.cancel'),
-                    cssClass: 'btn btn-light btn-sm popupClose'
+                    cssClass: 'btn btn-light btn-sm popupClose',
+                    dataTest: 'mb-element-cancel'
                 }
             ])
         });
@@ -347,7 +349,8 @@ $(function() {
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.cancel'),
-                        cssClass: 'btn btn-light btn-sm popupClose'
+                        cssClass: 'btn btn-light btn-sm popupClose',
+                        dataTest: 'mb-add-'
                     }
                 ]
             });

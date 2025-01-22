@@ -3,7 +3,11 @@
     <ul id="listFilterElements">
     {%- for meta in elements | sort((a, b) => (a.title | trans) <=> (b.title | trans)) -%}
         <li class="filterItem">
-            <a class="checkContainer chooseElement" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}" data-element-title="{{ meta.title | trans }}">
+            <a class="checkContainer chooseElement"
+               href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}"
+               data-element-title="{{ meta.title | trans }}"
+               data-test="mb-{{ meta.testName }}"
+            >
                 <h3>{{- meta.title | trans -}}</h3>
                 <div>{{- meta.description | trans -}}</div>
             </a>

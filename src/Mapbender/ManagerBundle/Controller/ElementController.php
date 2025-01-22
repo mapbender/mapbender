@@ -73,10 +73,14 @@ class ElementController extends ApplicationControllerBase
             if (!$this->checkRegionCompatibility($elementClassName, $region)) {
                 continue;
             }
+
+            $teile = explode("\\", $elementClassName);
+            $testName = end($teile); // Letztes Element des Arrays extrahieren
             $elements[] = array(
                 'class' => $elementClassName,
                 'title' => $elementClassName::getClassTitle(),
                 'description' => $elementClassName::getClassDescription(),
+                'testName' => $testName,
             );
         }
 

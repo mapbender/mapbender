@@ -59,7 +59,10 @@
                 <a class="btn btn-light" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
                   <i class="fas fa-download"></i>
                 </a>
-                <a class="btn btn-light" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.actions.edit' | trans }}">
+                <a class="btn btn-light"
+                   href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}"
+                   title="{{ 'mb.actions.edit' | trans }}"
+                   data-test="{{ application.slug }}-{{'edit'}}">
                   <i class="fas fa-gear"></i>
                 </a>
               {% endif %}
