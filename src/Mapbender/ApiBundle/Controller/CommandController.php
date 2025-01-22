@@ -87,6 +87,21 @@ class CommandController extends AbstractController
                 in: 'query',
                 required: true,
                 schema: new OA\Schema(type: 'string', example: "https://osm-demo.wheregroup.com/service")
+            ),
+            new OA\Parameter(
+                name: 'deactivateNewLayers',
+                description: 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            ),
+            new OA\Parameter(
+                name: 'deselectNewLayers',
+                description: ' If set, newly added layers will be deselected in existing instances.
+                                Deselected layers are not visible on the map by default, but appear in the layer tree and can be selected by users.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
             )
         ],
         responses: [
@@ -144,6 +159,21 @@ class CommandController extends AbstractController
                 in: 'query',
                 required: true,
                 schema: new OA\Schema(type: 'string', example: "https://osm-demo.wheregroup.com/service")
+            ),
+            new OA\Parameter(
+                name: 'deactivateNewLayers',
+                description: 'If set, newly added layers will be deactivated in existing instances. Deactivated layers are not visible in the frontend.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            ),
+            new OA\Parameter(
+                name: 'deselectNewLayers',
+                description: ' If set, newly added layers will be deselected in existing instances.
+                                Deselected layers are not visible on the map by default, but appear in the layer tree and can be selected by users.',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
             )
         ],
         responses: [
