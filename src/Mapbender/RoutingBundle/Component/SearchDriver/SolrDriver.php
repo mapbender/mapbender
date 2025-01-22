@@ -61,7 +61,7 @@ class SolrDriver {
             // check SplitPattern
             if (isset($configuration['token_regex'])) {
                 $splitPattern = $configuration['token_regex'];
-                $q = preg_replace($splitPattern, ' ', $q);
+                $q = preg_replace('/' . $splitPattern . '/', ' ', $q);
             }
 
             $tokens = explode(" ", $q);
@@ -73,16 +73,16 @@ class SolrDriver {
                     continue;
                 }
 
-                $query .= preg_replace($searchPattern, $replacePattern, $term);
+                $query .= preg_replace('/' . $searchPattern . '/', $replacePattern, $term);
             }
 
-            $query = '*' . trim($query,$replacePattern) . '*';
+            $query = trim($query,$replacePattern);
         } else {
             // check if isset 'token_regex'/ Replace-Pattern
             // not set then take Default[^a-zA-Z0-9äöüÄÖÜß] as Pattern
             if (isset($configuration['token_regex'])) {
                 $pattern = $configuration['token_regex'];
-                $q = preg_replace($pattern, ' ', $q);
+                $q = preg_replace('/' . $pattern . '/', ' ', $q);
             } else {
                 $q = preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", ' ', $q);
             }
@@ -95,17 +95,8 @@ class SolrDriver {
                     $q = preg_replace('/\s+/', $pattern, $q);
                 }
             }
-
-            // Split with " "-Delimter to 2 Words für SQLR-Query
-            // Example= 'Anne Frank' => '*Anne*+*Frank*'
-            foreach(explode(' ', $q) as $term) {
-                if ($term == '') {
-                    continue;
-                }
-                $query .= ' *' . $term . '*';
-            }
         }
 
-        return trim($query);
+        return trim($q);
     }
 }
