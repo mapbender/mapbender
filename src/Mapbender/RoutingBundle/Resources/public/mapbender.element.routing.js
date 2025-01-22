@@ -296,13 +296,57 @@
                 } else {
                     _response($.map(response, function (value) {
                         return {
-                            label: value[self.searchConfig.label_attribute],
+                            label: self._formatLabel(value),
                             geom: value[self.searchConfig.geom_attribute],
                             srid: (self.searchConfig.geom_proj) ? self.searchConfig.geom_proj : self.olMap.getView().getProjection().getCode()
                         };
                     }));
                 }
             });
+        },
+
+        _extractAttribute: function(obj, path) {
+            var props = obj;
+            var parts = path.split('.');
+            var last = parts.pop();
+            for (var i = 0; i < parts.length; ++i) {
+                props = props && props[parts[i]];
+                if (!props) {
+                    break;
+                }
+            }
+            if (props && (props[last] || (typeof props[last] === 'number'))) {
+                return [props[last]].join('');  // force to string
+            } else {
+                return null;
+            }
+        },
+
+        _formatLabel: function(doc) {
+            // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
+            const label_attribute = this.searchConfig.label_attribute;
+            var templateParts = label_attribute.split(/\${([^}]+)}/g);
+            if (templateParts.length > 1) {
+                var parts = [];
+                for (var i = 0; i < templateParts.length; i += 2) {
+                    var fixedText = templateParts[i];
+                    // NOTE: attributePath is undefined (index >= length of list) if label_attribute defines static text after last placeholder
+                    var attributePath = templateParts[i + 1];
+                    var attributeValue = attributePath && this._extractAttribute(doc, attributePath);
+                    if (attributeValue) {
+                        parts.push(fixedText);
+                        parts.push(attributeValue);
+                    } else {
+                        // Show text before label component only if attribute data was non-empty
+                        if (!attributePath) {
+                            parts.push(fixedText);
+                        }
+                    }
+                }
+                return parts.join('').replace(/(^[\s.,:]+)|([\s.,:]+$)/g, '');
+            } else {
+                return this._extractAttribute(doc, label_attribute);
+            }
         },
 
         _handleAutocompleteSelect: function (e, ui) {
