@@ -9,6 +9,7 @@ Features:
 * [WMSLoader] Added option to customise feature info format when adding wms via mb-action link ([PR#1653](https://github.com/mapbender/mapbender/pull/1653))
 * [FeatureInfo] Support labels in FeatureInfo-Highlighting ([PR#1670](https://github.com/mapbender/mapbender/pull/1670))
 * [ApplicationSwitcher] Allow reordering applications by drag and drop in manager ([PR#1666](https://github.com/mapbender/mapbender/pull/1666))
+* [POI] Add option to minimize and completely remove POI popup ([#1273](https://github.com/mapbender/mapbender/issues/1273), [PR#1673](https://github.com/mapbender/mapbender/pull/1673))
 
 Bugfixes:
 * [WMTS] WMTS sources with a TileSize other than 256px and/or individual origins per TileMatrix were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))

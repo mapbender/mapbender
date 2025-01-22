@@ -775,24 +775,35 @@ window.Mapbender.MapModelOl4 = (function() {
          * @private
          * @return {Promise}
          */
-        openPopupInternal_: function(x, y, content) {
-            var olMap = this.olMap;
-            // @todo: use native Promise (needs polyfill)
-            var def = $.Deferred();
-            // Always make a new clone of the template
-            var $popup = $(
-                '<div class="mbmappopup"><span class="close-btn -fn-close"><i class="fas fa-circle-xmark"></i></span></div>'
+        openPopupInternal_: function (x, y, content) {
+            const olMap = this.olMap;
+            const $popup = $(
+                '<div class="mbmappopup"><a href="#" class="close-btn -fn-minimize"><i class="fas fa-window-minimize"></i></a><a href="#" class="close-btn -fn-close"><i class="fas fa-xmark"></i></a></div>'
             );
+            if (content.innerText.length < 30) {
+                $popup.addClass("small");
+            }
             $popup.append(content);
             $popup.append('<div class="clear"></div>');
-            var overlay = new ol.Overlay({element: $popup.get(0)});
+            const overlay = new ol.Overlay({element: $popup.get(0)});
             olMap.addOverlay(overlay);
             overlay.setPosition([x, y]);
-            $popup.one('click', '.-fn-close', function() {
-                olMap.removeOverlay(overlay);
-                def.resolve();
+
+            let promiseResolve = undefined;
+            const promise = new Promise((resolve, reject) => {
+                promiseResolve = resolve;
             });
-            return def.promise();
+
+            $popup.on('click', '.-fn-close', function () {
+                olMap.removeOverlay(overlay);
+                promiseResolve();
+            });
+
+            $popup.on('click', '.-fn-minimize', function () {
+                olMap.removeOverlay(overlay);
+            });
+
+            return promise;
         },
         /**
          * @param {mmViewParams} viewParams
