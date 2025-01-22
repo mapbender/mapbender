@@ -2,7 +2,9 @@
 
 namespace Mapbender\ApiBundle\Controller;
 
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +18,9 @@ use OpenApi\Attributes as OA;
 
 class CommandController extends AbstractController
 {
+    public function __construct(protected ApplicationResolver $applicationResolver)
+    {
+    }
 
     #[Route('/api/wms/show', name: 'api_wms_show', methods: ['GET'])]
     #[OA\Tag(name: 'wms')]
@@ -48,8 +53,20 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsShowCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
+            $missingPermissions[] = 'View Sources';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         $outputAsJson = filter_var($request->get('json', true), FILTER_VALIDATE_BOOLEAN);
 
@@ -113,8 +130,20 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsReloadCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES)) {
+            $missingPermissions[] = 'Refresh Sources';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         $id = $request->get('id');
         $serviceUrl = $request->get('serviceUrl');
@@ -185,8 +214,20 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsAddCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES)) {
+            $missingPermissions[] = 'Create Sources';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         $serviceUrl = $request->get('serviceUrl');
         $deactivateNewLayers = filter_var($request->get('deactivateNewLayers', false), FILTER_VALIDATE_BOOLEAN);
@@ -253,9 +294,6 @@ class CommandController extends AbstractController
     )]
     public function prepareWmsAssignCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_ALL_APPLICATIONS);
-
         $application = $request->get('application');
         $source = $request->get('source');
         $layerset = $request->get('layerset');
@@ -265,6 +303,23 @@ class CommandController extends AbstractController
                 'success' => false,
                 'error' => 'Both "application" and "source" are required',
             ], 400);
+        }
+
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+
+        $appEntity = $this->applicationResolver->getApplicationEntity($application);
+        if (!$this->isGranted(ResourceDomainApplication::ACTION_EDIT, $appEntity)) {
+            $missingPermissions[] = 'Edit Application';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
         }
 
         $inputArgs = [
@@ -286,7 +341,7 @@ class CommandController extends AbstractController
         summary: 'Creates a copy of an application',
         parameters: [
             new OA\Parameter(
-                name: 'application',
+                name: 'slug',
                 description: 'slug of the application',
                 in: 'query',
                 required: true,
@@ -302,9 +357,6 @@ class CommandController extends AbstractController
     )]
     public function prepareApplicationCloneCommand(Request $request, KernelInterface $kernel): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
-
         $slug = $request->get('slug');
 
         if (!$slug) {
@@ -312,6 +364,27 @@ class CommandController extends AbstractController
                 'success' => false,
                 'error' => 'Parameter "slug" is required',
             ], 400);
+        }
+
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS)) {
+            $missingPermissions[] = 'Create Applications';
+        }
+
+        $appEntity = $this->applicationResolver->getApplicationEntity($slug);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $appEntity);
+        if (!$this->isGranted(ResourceDomainApplication::ACTION_VIEW)) {
+            $missingPermissions[] = 'View Application';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
         }
 
         $inputArgs = [

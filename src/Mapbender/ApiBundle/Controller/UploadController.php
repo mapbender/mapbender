@@ -4,19 +4,19 @@ namespace Mapbender\ApiBundle\Controller;
 
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use OpenApi\Attributes as OA;
 
 class UploadController extends AbstractController
 {
-    private string $uploadDir;
 
-    public function __construct(string $uploadDir)
+    public function __construct(private string $uploadDir)
     {
-        $this->uploadDir = $uploadDir;
+        // Ensure the upload directory always ends with a directory separator
+        $this->uploadDir = rtrim($this->uploadDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     #[Route('/api/upload/zip', name: 'api_upload_zip', methods: ['POST'])]
@@ -58,21 +58,39 @@ class UploadController extends AbstractController
             )
         ]
     )]
-    public function uploadZipAction(Request $request): Response
+    public function uploadZipAction(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_ACCESS_API);
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_UPLOAD_FILES);
+        $missingPermissions = [];
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
+            $missingPermissions[] = 'Access API';
+        }
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_UPLOAD_FILES)) {
+            $missingPermissions[] = 'Upload Files';
+        }
+
+        if (!empty($missingPermissions)) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Access Denied: Missing permissions - ' . implode(', ', $missingPermissions),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         $file = $request->files->get('file');
 
         if (!$file) {
-            return new Response('No file uploaded', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'No file uploaded',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Validate the MIME type
         $validMimeTypes = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
         if (!in_array($file->getMimeType(), $validMimeTypes, true)) {
-            return new Response('Only ZIP files are allowed', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Only ZIP files are allowed',
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if (!is_dir($this->uploadDir)) {
@@ -85,7 +103,10 @@ class UploadController extends AbstractController
         try {
             $file->move($this->uploadDir, $originalFileName . '.zip');
         } catch (FileException $e) {
-            return new Response('Failed to upload file: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Failed to upload file: ' . $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Extract the ZIP file
@@ -96,9 +117,15 @@ class UploadController extends AbstractController
 
             unlink($zipFilePath);
 
-            return new Response('ZIP file uploaded and extracted successfully', Response::HTTP_OK);
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'ZIP file uploaded and extracted successfully',
+            ], JsonResponse::HTTP_OK);
         } else {
-            return new Response('Failed to extract ZIP file', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Failed to extract ZIP file',
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
