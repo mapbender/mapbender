@@ -375,8 +375,7 @@ class CommandController extends AbstractController
         }
 
         $appEntity = $this->applicationResolver->getApplicationEntity($slug);
-        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $appEntity);
-        if (!$this->isGranted(ResourceDomainApplication::ACTION_VIEW)) {
+        if (!$this->isGranted(ResourceDomainApplication::ACTION_VIEW, $appEntity)) {
             $missingPermissions[] = 'View Application';
         }
 
