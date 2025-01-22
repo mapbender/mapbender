@@ -2,6 +2,7 @@
 
 namespace Mapbender\RoutingBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class RoutingElementAdminType
@@ -16,6 +18,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  */
 class RoutingAdminType extends AbstractType
 {
+    use MapbenderTypeTrait;
+
+    public function __construct(protected TranslatorInterface $translator) {
+
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -261,12 +269,13 @@ class RoutingAdminType extends AbstractType
 
         # OSRM
         $builder
-            ->add('osrmUrl', TextType::class, [
+            ->add('osrmUrl', TextType::class, $this->createInlineHelpText([
                 'label' => 'mb.routing.backend.dialog.label.url',
                 'required' => false,
                 'empty_data' => null,
                 'property_path' => '[routingConfig][osrm][url]',
-            ])
+                'help' => 'mb.routing.backend.dialog.label.url_help',
+            ], $this->translator))
             ->add('osrmService', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.osrm.service',
                 'required' => true,
