@@ -6,15 +6,6 @@
         <parameter key="api_upload_dir">%kernel.project_dir%/uploads/</parameter>
     </parameters>
     <services>
-        <service id="Mapbender\ApiBundle\Controller\ApiController"
-                 class="Mapbender\ApiBundle\Controller\ApiController"
-                 public="true">
-            <tag name="controller.service_arguments"/>
-            <tag name="container.service_subscriber" />
-            <call method="setContainer">
-                <argument type="service" id="Psr\Container\ContainerInterface" />
-            </call>
-        </service>
         <service id="Mapbender\ApiBundle\Controller\CommandController"
                  class="Mapbender\ApiBundle\Controller\CommandController"
                  public="true">
