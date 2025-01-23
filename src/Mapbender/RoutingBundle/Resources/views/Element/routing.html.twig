@@ -54,9 +54,11 @@
     {% endif %}
 </div>
 <div class="clear"></div>
-<div class="attribution form-text d-none mt-3">
-    {{ attribution|raw }}
-</div>
+{% if attribution is not empty %}
+    <div class="attribution form-text d-none mt-3">
+        {{ attribution|raw }}
+    </div>
+{% endif %}
 <div class="mb-routing-results">
     <div class="mb-routing-info alert alert-info d-none mt-3"></div>
     <div class="mb-routing-instructions"></div>
