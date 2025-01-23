@@ -39,7 +39,7 @@
 </form>
 <div class="right">
     <button id="resetRoute" class="btn btn-light" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
-        <i class="fa-solid fa-rotate-left"></i>
+        <i class="far fa-trash-can"></i>
     </button>
     <button id="swapPoints" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
         <i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i>
@@ -54,6 +54,9 @@
     {% endif %}
 </div>
 <div class="clear"></div>
+<div class="attribution form-text d-none mt-3">
+    {{ attribution|raw }}
+</div>
 <div class="mb-routing-results">
     <div class="mb-routing-info alert alert-info d-none mt-3"></div>
     <div class="mb-routing-instructions"></div>

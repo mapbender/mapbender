@@ -110,6 +110,7 @@ mb:
             annotations: Annotations
             overview: Overview
             continueStraight: continue Straight
+            attribution: Attribution
           gh:
             titel: GraphHopper
             key: API key
