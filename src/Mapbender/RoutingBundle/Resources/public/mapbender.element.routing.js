@@ -228,6 +228,7 @@
             }
             this._emptyPoints();
             $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
+            $('.attribution', this.element).addClass('d-none');
             $('.mb-routing-info', this.element).addClass('d-none').html('');
             $('.mb-routing-instructions', this.element).html('');
             $('.mb-element-map').css('cursor', 'auto');
@@ -274,6 +275,7 @@
                     Mapbender.error(response.error.message);
                 } else {
                     this._renderRoute(response.featureCollection);
+                    this._showAttribution();
                     this._showRouteInfo(response.routeInfo);
                     this._showRouteInstructions(response.routingInstructions);
                 }
@@ -649,6 +651,10 @@
             }
             $table.append($tbody);
             $instructionsDiv.append($table);
+        },
+
+        _showAttribution: function () {
+            $('.attribution', this.element).removeClass('d-none');
         }
     });
 })(jQuery);

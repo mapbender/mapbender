@@ -93,6 +93,10 @@ class Routing extends AbstractElementService
             'routingConfig' => [
                 'osrm' => [
                     'url' => 'https://',
+                    'attribution' => 'Daten © <a href="https://www.openstreetmap.org/copyright" class="link-primary">OpenStreetMap</a>-Mitwirkende
+  (<a href="https://opendatacommons.org/licenses/odbl/index.html" class="link-primary">ODbL</a>), <a
+  href="https://creativecommons.org/licenses/by-sa/2.0/" class="link-primary">CC-BY-SA</a>, <a
+  href="https://openstreetmap.org/fixthemap" class="link-primary">mitmachen/Fehler melden</a>',
                 ],
             ],
             'searchConfig' => [
@@ -131,6 +135,7 @@ class Routing extends AbstractElementService
             'title' => $element->getTitle(),
             'transportationModes' => $this->getTransportationModes($element),
             'allowIntermediatePoints' => $config['allowIntermediatePoints'],
+            'attribution' => $config['routingConfig']['osrm']['attribution'],
         ];
         return $view;
     }

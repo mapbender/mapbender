@@ -4,6 +4,7 @@ namespace Mapbender\RoutingBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -320,6 +321,11 @@ class RoutingAdminType extends AbstractType
                     'mb.routing.backend.dialog.input.yes' => 'true',
                 ],
                 'property_path' => '[routingConfig][osrm][steps]',
+            ])
+            ->add('osrmAttribution', TextareaType::class, [
+                'required' => false,
+                'label' => 'mb.routing.backend.dialog.label.osrm.attribution',
+                'property_path' => '[routingConfig][osrm][attribution]',
             ])
         ;
     }
