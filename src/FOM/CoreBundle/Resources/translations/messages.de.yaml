@@ -39,6 +39,8 @@ fom:
         create_groups: "Erstellen"
         edit_groups: "Bearbeiten"
         delete_groups: "Löschen"
+        access_api: "API Zugang"
+        upload_files: "Dateien hochladen"
       application:
         view: "Anzeige"
         view_help: "Berechtigt den Nutzer/die Gruppe die Anwendung im Frontend anzuschauen und zu benutzen, inklusiver aller Element für die keine gesonderten Rechte definiert sind"

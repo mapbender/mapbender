@@ -131,6 +131,7 @@ fom:
         permissions: 'Permission management'
         users: Users
         groups: groups
+        api: API
       roles:
         super_admin: 'Can administrate everything (super admin)'
         user_admin: 'Can administrate users and groups'
