@@ -49,5 +49,10 @@
         <service id="mapbender.routing.driver.reverseGeocoding.sql" class="%mapbender.routing.driver.reverseGeocoding.sql.class%">
             <argument type="service" id="doctrine" />
         </service>
+        <service id="mapbender.routing.form_type.routing_admin" class="Mapbender\RoutingBundle\Element\Type\RoutingAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
     </services>
 </container>

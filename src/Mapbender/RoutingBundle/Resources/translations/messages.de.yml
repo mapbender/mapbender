@@ -95,6 +95,7 @@ mb:
           routingDriver: Routingsoftware
           chooseOption: Bitte auswählen
           url: URL
+          url_help: "<code>%profile</code> wird durch das gewählte Profil ersetzt"
           instructions: Wegbeschreibung ausgeben
           pg:
             titel: PgRouting
