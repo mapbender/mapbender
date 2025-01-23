@@ -241,7 +241,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
      * @param int $order
      * @return WmsLayerSource
      */
-    protected function layerFromConfig(WmsSource $source, array $data, WmsLayerSource $parent = null, $order = 0)
+    protected function layerFromConfig(WmsSource $source, array $data, ?WmsLayerSource $parent = null, $order = 0)
     {
         $layer = new WmsLayerSource();
         $minScale = !isset($data["minScale"]) ? null : $data["minScale"];
