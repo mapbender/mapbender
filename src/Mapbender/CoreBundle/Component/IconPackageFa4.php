@@ -52,6 +52,7 @@ class IconPackageFa4 implements IconPackageInterface
             'mb.core.icon.fa.map' => 'iconMap',
             'mb.core.icon.fa.pin_alt' => 'iconMapPin',
             'mb.core.icon.fa.dataupload' => 'iconDataUpload',
+            'mb.routing.backend.iconTitle' => 'iconRouting',
         ];
 
         foreach ($this->additionalIcons as $icon) {
@@ -125,6 +126,8 @@ class IconPackageFa4 implements IconPackageInterface
                 $class = 'fas fa-earth-africa'; break;
             case 'iconDataUpload':
                 $class = 'fas fa-upload'; break;
+            case 'iconRouting':
+                $class = 'fa-solid fa-route'; break;
 
         }
         }

@@ -1,23 +1,24 @@
+{% if transportationModes is defined and transportationModes|length > 0 %}
+    {% for transportationMode in transportationModes %}
+        <div class="form-check mb-3 ms-1 form-check-inline{% if transportationModes|length == 1 %} d-none{% endif %}">
+            <input id="{{ transportationMode }}" class="form-check-input" type="radio" name="vehicle" value="{{ transportationMode }}" checked>
+            <label for="{{ transportationMode }}" class="form-check-label">
+                {# @todo: check why the following if statements cannot be implemented with switch case #}
+                {% if transportationMode == 'car' %}
+                    <i class="fa-solid fa-car-side"></i>
+                {% elseif transportationMode == 'bike' %}
+                    <i class="fa-solid fa-person-biking"></i>
+                {% elseif transportationMode == 'foot' %}
+                    <i class="fa-solid fa-person-walking"></i>
+                {% else %}
+                    <i class="fa-solid fa-minus"></i>
+                {% endif %}
+            </label>
+        </div>
+    {% endfor %}
+{% endif %}
 <form class="mb-routing-location-points ui-sortable">
-    {% if transportationModes is defined and transportationModes|length > 0 %}
-        {% for transportationMode in transportationModes %}
-            <div class="form-check mb-3 ms-1 form-check-inline{% if transportationModes|length == 1 %} d-none{% endif %}">
-                <input id="{{ transportationMode }}" class="form-check-input" type="radio" name="vehicle" value="{{ transportationMode }}" checked>
-                <label for="{{ transportationMode }}" class="form-check-label">
-                    {# @todo: check why the following if statements cannot be implemented with switch case #}
-                    {% if transportationMode == 'car' %}
-                        <i class="fa-solid fa-car-side"></i>
-                    {% elseif transportationMode == 'bike' %}
-                        <i class="fa-solid fa-person-biking"></i>
-                    {% elseif transportationMode == 'foot' %}
-                        <i class="fa-solid fa-person-walking"></i>
-                    {% else %}
-                        <i class="fa-solid fa-minus"></i>
-                    {% endif %}
-                </label>
-            </div>
-        {% endfor %}
-    {% endif %}
+
     <div class="input-group mb-3">
         <span class="input-group-text" title="{{ 'mb.routing.frontend.dialog.label.start' | trans }}">
             <i class="fa-solid fa-location-dot text-success"></i>

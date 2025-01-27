@@ -32,6 +32,7 @@ mb:
       hours: Hours
     backend:
       title: Routing
+      iconTitle: Routing
       description: Routing functionality
       sign:
         -98: U-Turn
