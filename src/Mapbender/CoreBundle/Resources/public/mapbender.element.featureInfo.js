@@ -31,6 +31,9 @@
         },
         iframeScriptContent_: '',
         headerIdPrefix_: '',
+        // when requesting feature info for new coordinates, the previous
+        // features should be deleted (but not when results from different sources arrive one by one)
+        startedNewRequest: false,
 
         _create: function () {
             this.iframeScriptContent_ = $('.-js-iframe-script-template[data-script]', this.element).remove().attr('data-script');
@@ -161,6 +164,7 @@
             if (!requestsPending) {
                 self._handleZeroResponses();
             }
+            this.startedNewRequest = true;
             sourceUrlPairs.forEach(function (entry) {
                 var source = entry.source;
                 var url = entry.url;
@@ -229,8 +233,9 @@
             }
         },
         _open: function () {
-            if (this.highlightLayer) {
+            if (this.highlightLayer && this.startedNewRequest) {
                 this.highlightLayer.getSource().clear();
+                this.startedNewRequest = false;
             }
 
             if (this.mobilePane.length) {
