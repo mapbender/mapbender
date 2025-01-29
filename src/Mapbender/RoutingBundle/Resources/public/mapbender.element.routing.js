@@ -151,7 +151,7 @@
         },
 
         _autoSubmit: function() {
-            $('.mb-routing-location-points', this.element).change(() => {
+            $('.mb-routing-location-points, input[type="radio"]', this.element).change(() => {
                 if (this._isInputValid()) {
                     this._getRoute();
                 }
@@ -168,14 +168,12 @@
 
         _mapClickHandler: function(event) {
             if (this.isActive && this.focusedInputField) {
-                let coordinates = event.coordinate.toString();
-                $(this.focusedInputField).val(coordinates);
+                let coordinates = event.coordinate;
+                let formattedCoordinates = this._formatCoordinates(coordinates);
+                $(this.focusedInputField).val(formattedCoordinates);
                 const regex = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
 
-                if (regex.test(coordinates)) {
-                    coordinates = coordinates.split(',');
-                    coordinates[0] = parseFloat(coordinates[0].trim());
-                    coordinates[1] = parseFloat(coordinates[1].trim());
+                if (regex.test(coordinates.toString())) {
                     this._addPointWithMarker(this.focusedInputField, coordinates);
                     const source = this.markerLayer.getSource();
                     const extent = source.getExtent();
@@ -189,6 +187,16 @@
                     Mapbender.error('Invalid coordinates provided!')
                 }
             }
+        },
+
+        _formatCoordinates: function (coordinates) {
+            coordinates = [...coordinates];
+            // do not format coordinates for WGS 84 / EPSG:4326
+            if (this.olMap.getView().getProjection().getCode() !== 'EPSG:4326') {
+                coordinates[0] = coordinates[0].toFixed(2);
+                coordinates[1] = coordinates[1].toFixed(2);
+            }
+            return coordinates[0] + ', ' + coordinates[1];
         },
 
         _emptyPoints: function() {

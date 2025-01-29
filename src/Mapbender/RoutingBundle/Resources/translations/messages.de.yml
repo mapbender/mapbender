@@ -32,6 +32,7 @@ mb:
       hours: Std
     backend:
       title: Routing
+      iconTitle: Routing
       description: Streckenführungs-Werkzeug (Routing)
       sign:
         -98: Wenden
