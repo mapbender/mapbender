@@ -168,15 +168,12 @@
 
         _mapClickHandler: function(event) {
             if (this.isActive && this.focusedInputField) {
-                let coordinates = event.coordinate.toString();
+                let coordinates = event.coordinate;
+                $(this.focusedInputField).val(this._formatCoordinates(coordinates));
                 const regex = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
 
-                if (regex.test(coordinates)) {
-                    coordinates = coordinates.split(',');
-                    coordinates[0] = parseFloat(parseFloat(coordinates[0].trim()).toFixed(2));
-                    coordinates[1] = parseFloat(parseFloat(coordinates[1].trim()).toFixed(2));
+                if (regex.test(coordinates.toString())) {
                     this._addPointWithMarker(this.focusedInputField, coordinates);
-                    $(this.focusedInputField).val(coordinates[0] + ', ' + coordinates[1]);
                     const source = this.markerLayer.getSource();
                     const extent = source.getExtent();
 
@@ -189,6 +186,12 @@
                     Mapbender.error('Invalid coordinates provided!')
                 }
             }
+        },
+
+        _formatCoordinates: function (coordinates) {
+            coordinates[0] = coordinates[0].toFixed(2);
+            coordinates[1] = coordinates[1].toFixed(2);
+            return coordinates[0] + ', ' + coordinates[1];
         },
 
         _emptyPoints: function() {
