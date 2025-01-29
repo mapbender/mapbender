@@ -169,7 +169,8 @@
         _mapClickHandler: function(event) {
             if (this.isActive && this.focusedInputField) {
                 let coordinates = event.coordinate;
-                $(this.focusedInputField).val(this._formatCoordinates(coordinates));
+                let formattedCoordinates = this._formatCoordinates(coordinates);
+                $(this.focusedInputField).val(formattedCoordinates);
                 const regex = new RegExp(/^(\-?\d+(\.\d+)?)(?:,|;|\s)+(\-?\d+(\.\d+)?)$/);
 
                 if (regex.test(coordinates.toString())) {
@@ -189,8 +190,12 @@
         },
 
         _formatCoordinates: function (coordinates) {
-            coordinates[0] = coordinates[0].toFixed(2);
-            coordinates[1] = coordinates[1].toFixed(2);
+            coordinates = [...coordinates];
+            // do not format coordinates for WGS 84 / EPSG:4326
+            if (this.olMap.getView().getProjection().getCode() !== 'EPSG:4326') {
+                coordinates[0] = coordinates[0].toFixed(2);
+                coordinates[1] = coordinates[1].toFixed(2);
+            }
             return coordinates[0] + ', ' + coordinates[1];
         },
 
