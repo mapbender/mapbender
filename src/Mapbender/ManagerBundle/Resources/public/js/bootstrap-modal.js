@@ -48,6 +48,9 @@ window.Mapbender.bootstrapModal = (function ($) {
                 .attr({type: buttonOptions.type || 'button', 'class': buttonOptions.cssClass})
                 .text(buttonOptions.label)
             ;
+            if(buttonOptions.dataTest){
+                $b.attr('data-test', buttonOptions.dataTest);
+            }
             if (/popupClose/.test(buttonOptions.cssClass)) {
                 $b.attr('data-bs-dismiss', 'modal');
             } else if (buttonOptions.callback) {

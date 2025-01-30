@@ -15,8 +15,8 @@
     <div class="hidden -fn-hidden-fields"></div>
     <div class="text-end">
         {% block form_buttons %}
-        <input type="submit" class="btn btn-primary btn-sm" value="{{ 'mb.print.imageexport.popup.btn.ok' | trans() }}" />
-        <button type="button" class="btn btn-light btn-sm popupClose">{{ 'mb.print.imageexport.popup.btn.cancel' | trans() }}</button>
+        <input type="submit" class="btn btn-primary btn-sm" value="{{ 'mb.print.imageexport.popup.btn.ok' | trans() }}" data-test="imageexport-btn-submit" />
+        <button type="button" class="btn btn-light btn-sm popupClose" data-test="imageexport-btn-cancel">{{ 'mb.print.imageexport.popup.btn.cancel' | trans() }}</button>
         {% endblock form_buttons %}
     </div>
 </form>

@@ -25,7 +25,8 @@
                 {%- apply spaceless -%}
                 <a href="#" class="-fn-add-instance hover-highlight-effect"
                    title="{{ "mb.manager.admin.instance.add" | trans }}"
-                   data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}">
+                   data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"
+                   data-test="mb-add-instance-{{ layerset.title }}">
                   <i class="fas fa-plus"></i>
                 </a>
                 <a href="#" class="-fn-edit-layerset hover-highlight-effect"

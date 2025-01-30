@@ -119,13 +119,15 @@
                     {
                         label: Mapbender.trans('mb.core.poi.accept'),
                         cssClass: 'btn btn-sm btn-primary',
+                        attrDataTest: 'mb-poi-btn-add',
                         callback: function () {
                             self._sendPoi(this.$element);
                         }
                     },
                     {
                         label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
+                        cssClass: 'btn btn-sm btn-light popupClose',
+                        attrDataTest: 'mb-poi-btn-close'
                     }
                 ]
             };
