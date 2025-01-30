@@ -74,13 +74,13 @@ class ElementController extends ApplicationControllerBase
                 continue;
             }
 
-            $teile = explode("\\", $elementClassName);
-            $testName = end($teile); // Letztes Element des Arrays extrahieren
+            $fqcnComponents = explode("\\", $elementClassName);
+            $elementName = end($fqcnComponents);
             $elements[] = array(
                 'class' => $elementClassName,
                 'title' => $elementClassName::getClassTitle(),
                 'description' => $elementClassName::getClassDescription(),
-                'testName' => $testName,
+                'testName' => $elementName,
             );
         }
 

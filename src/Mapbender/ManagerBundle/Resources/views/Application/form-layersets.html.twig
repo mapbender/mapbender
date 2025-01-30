@@ -23,7 +23,6 @@
               <th colspan="3" class="text-end valign-top">
                 <p class="text-nowrap iconColumn">
                 {%- apply spaceless -%}
-{#                    {{ dump(layerset) }}#}
                 <a href="#" class="-fn-add-instance hover-highlight-effect"
                    title="{{ "mb.manager.admin.instance.add" | trans }}"
                    data-url="{{ path("mapbender_manager_application_listsources",{'slug': application.slug, 'layersetId': layerset.id}) }}"
