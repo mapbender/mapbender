@@ -834,7 +834,7 @@ window.Mapbender.MapModelBase = (function() {
             if (content) {
                 if (typeof content === 'string') {
                     contentNode.innerText = content;
-                } else {
+                } else if (content instanceof jQuery) {
                     $(content).appendTo(contentNode);
                 }
             }
