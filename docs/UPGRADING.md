@@ -1,6 +1,14 @@
 # Upgrading Guide
 
-## next release
+## 4.1.0
+
+### Added REST-API
+The REST-API enables access to mapbender functionality that previously was only available via console commands.  
+The API uses JWT authentication which requires a JWT passphrase via the JWT_PASSPHRASE environment variable.  
+Either execute the `bootstrap` script once after updating to generate a random passphrase, or override the variable
+in the `.env.local` file and manually execute `php bin/console lexik:jwt:generate-keypair` afterward.  
+Also, make sure to set the new global permission "access_api" for all users that should be able to access the API.  
+More info on the API can be found in the [docs entry](api/setup.md).
 
 ### Sources refactored
 Sources now use native ES6 classes instead of prototype pseudo-classes. This means, for custom sources, you

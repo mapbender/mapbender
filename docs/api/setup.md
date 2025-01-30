@@ -26,6 +26,12 @@ curl -X POST <server_url>/api/login_check  -H "Content-Type: application/json"  
 
 You will get a JSON response like `{"token": "<token>"}` in the success case. 
 
+## Security
+
+All users (except for the super user with the id 1, where this permission is automatically granted) need to have the global permission `access_api` in order to perform any operation on the API.  
+Additionally, users need to have the specific permission required to perform an action, e.g. to duplicate an application,
+they need to have read rights on the existing application as well as the global permission `create_applications`
+
 ## Calling the API
 
 Call the API by supplying the obtained token in the Authorization header:
