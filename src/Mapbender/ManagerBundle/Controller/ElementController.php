@@ -284,6 +284,7 @@ class ElementController extends ApplicationControllerBase
         $higherWeightCriteria = Criteria::create()
             ->where(Criteria::expr()->eq('region', $element->getRegion()))
             ->andWhere(Criteria::expr()->gt('weight', $element->getWeight()))
+            ->andWhere(Criteria::expr()->eq('application', $application))
         ;
         $higherWeightElements = $this->getRepository()->matching($higherWeightCriteria);
         foreach ($higherWeightElements as $otherElement) {
