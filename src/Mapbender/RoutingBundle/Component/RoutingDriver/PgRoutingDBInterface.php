@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\RoutingBundle\Component\Driver;
+namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
