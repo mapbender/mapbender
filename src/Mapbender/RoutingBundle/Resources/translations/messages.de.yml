@@ -112,7 +112,7 @@ mb:
             annotations: Anmerkungen
             overview: Übersicht
             continueStraight: direkt weitermachen
-            attribution: Attribuierung
+            attribution: Quellenangabe
           gh:
             titel: GraphHopper
             key: API-Schlüssel
