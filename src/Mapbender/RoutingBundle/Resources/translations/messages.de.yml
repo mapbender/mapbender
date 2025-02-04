@@ -24,7 +24,7 @@ mb:
           intermediate: Via
           destination: Ziel
           clearroute: Zurücksetzen
-          flippoints: Route Umkehren
+          flippoints: Route umkehren
           addintermediate: Zwischenstop hinzufügen
           getroute: Los geht's!
       info: benötigen
@@ -108,7 +108,7 @@ mb:
             titel: OSRM
             service: Services
             version: API-Version
-            alternatives: Alternativ Route
+            alternatives: Alternative Route
             annotations: Anmerkungen
             overview: Übersicht
             continueStraight: direkt weitermachen
