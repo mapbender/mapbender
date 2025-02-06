@@ -8,7 +8,7 @@ mb:
         icon: Simge yapılandırılmadı.
       graphhopper:
         400: İsteğinizde bir hata var (çok az veya çok fazla nokta)
-        401: Kimlik doğrulama gerekli! Kaydolun ve geçerli bir API anahtarı alın: https://www.graphhopper.com/developers/.
+        401: "Kimlik doğrulama gerekli! Kaydolun ve geçerli bir API anahtarı alın: https://www.graphhopper.com/developers/."
         413: URL'de çok fazla parametre var. JSON formatını ve POST isteklerini kullanmalısınız.
         429: API limiti aşıldı. Bir e-posta alacaksınız. Ayrıca başlık özellikleri hakkında daha fazla bilgi verir (bkz. 'HTTP Headers' bölümü).
         500: İç sunucu hatası. Otomatik olarak bir bildirim alıyoruz ve bunu hızlıca düzeltmeye çalışacağız.
