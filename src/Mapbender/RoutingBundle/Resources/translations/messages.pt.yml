@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Ocorreu um erro na sua solicitação
+        noResult: Nenhuma rota pôde ser encontrada.
+        format: Formato não suportado.
+        icon: Nenhum ícone configurado.
+      graphhopper:
+        400: Algo estava errado na sua solicitação (muito poucos ou muitos pontos)
+        401: Autenticação necessária! Registre-se e obtenha uma chave de API válida em https://www.graphhopper.com/developers/.
+        413: Muitos parâmetros na URL. Você precisará usar o formato JSON e solicitações POST.
+        429: Limite da API atingido. Você receberá um e-mail. As propriedades do cabeçalho também fornecerão mais informações (consulte a seção sobre 'HTTP Headers').
+        500: Erro interno do servidor. Recebemos automaticamente uma notificação e tentaremos corrigir isso rapidamente.
+        501: Apenas uma lista especial de veículos é suportada.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Modo de transporte
+          car: Carro
+          bike: Bicicleta
+          foot: A pé
+          start: Início
+          intermediate: Via
+          destination: Destino
+          clearroute: Limpar
+          flippoints: Inverter
+          addintermediate: Adicionar ponto
+          getroute: Ir!
+      info: levará
+      minutes: Min
+      hours: Horas
+    backend:
+      title: Roteamento
+      iconTitle: Roteamento
+      description: Funcionalidade de roteamento
+      sign:
+        -98: Retorno
+        -7: Mantenha-se à esquerda
+        -3: Vire à esquerda acentuada
+        -2: Vire à esquerda
+        -1: Vire ligeiramente à esquerda
+        0: Continue
+        1: Vire ligeiramente à direita
+        2: Vire à direita
+        3: Vire à direita acentuada
+        7: Mantenha-se à direita
+        4: Destino alcançado
+        5: Ponto de passagem alcançado
+        on: em
+      dialog:
+        input:
+          yes: sim
+          no: não
+          number: Número
+          nodes: Nós
+          distance: Distância
+          duration: Duração
+          datasources: Fontes de dados
+          weight: Peso
+          speed: Velocidade
+          full: Completo
+          simplified: Simplificado
+          default: Padrão
+          search: Buscar
+          osrmservice:
+            route: Rota
+            nearest: Mais próximo
+            table: Matriz
+            match: Correspondência
+            trip: Viagem
+            tile: Mapbox Vector Tiles
+        label:
+          title: Título
+          target: Destino
+          buffer: Buffer de zoom (m)
+          autoSubmit: Roteamento imediato
+          addIntermediatePoints: Permitir pontos intermediários
+          advanced: Configurações avançadas de rota
+          search: Ativar pesquisa
+          reverseGeocoding: Geocodificação reversa
+          color: Cor da linha
+          width: Largura da linha
+          opacity: Opacidade da linha
+          dateTimeFormat: Formato de saída de tempo
+          infoText: Texto informativo da rota
+          startImagePath: Caminho do ícone inicial
+          startImageSize: Tamanho do ícone inicial (l, a)
+          startImageOffset: Deslocamento do ícone inicial (x, y)
+          intermediateImagePath: Caminho do ícone intermediário
+          intermediateImageSize: Tamanho do ícone intermediário (l, a)
+          intermediateImageOffset: Deslocamento do ícone intermediário (x, y)
+          destinationImagePath: Caminho do ícone de destino
+          destinationImageSize: Tamanho do ícone de destino (l, a)
+          destinationImageOffset: Deslocamento do ícone de destino (x, y)
+          routingDriver: Software de roteamento
+          chooseOption: Escolha uma opção
+          url: URL
+          url_help: "<code>%profile</code> será substituído pelo perfil escolhido"
+          instructions: Descrição da rota
+          pg:
+            titel: PgRouting
+            connection: Nome da conexão
+            pgWayTable: Tabela de vias
+            pgWayTableVertices: Tabela de vértices das vias
+            speed: ∅ Velocidade (km/h)
+          osrm:
+            titel: OSRM
+            service: Serviços
+            version: Versão da API
+            alternatives: Rota alternativa
+            annotations: Anotações
+            overview: Visão geral
+            continueStraight: Continue reto
+            attribution: Atribuição
+          gh:
+            titel: GraphHopper
+            key: Chave da API
+            weighting:
+              title: Peso do roteamento
+              fastest: Rota mais rápida
+              shortest: Rota mais curta
+            optimize:
+              label: Ordem dos pontos
+              yes: Otimizar
+              no: Não otimizar
+            elevation: Informação de elevação
+          sh:
+            label: Configurações de pesquisa
+            shDriver: Software de pesquisa
+            shUrl: URL de pesquisa
+            query_key: Chave do parâmetro de pesquisa
+            query_ws_replace: Padrão de substituição de espaço em branco
+            query_format: Formato de pesquisa
+            token_regex: Padrão do tokenizador
+            token_regex_in: Pesquisa do tokenizador
+            token_regex_out: Substituição do tokenizador
+            collection_path: Caminho da coleção
+            label_attribute: Atributo do rótulo
+            geom_attribute: Atributo da geometria
+            geom_format: Formato da geometria
+            geom_proj: Projeção da geometria
+            delay: Atraso
+            result_buffer: Buffer de zoom (m)
+            result_minscale: Escala mínima de zoom
+            result_maxscale: Escala máxima de zoom
+            result_icon_url: Caminho do ícone
+            result_icon_offset: Deslocamento do ícone (x, y)
+          reverse:
+            label:
+            geocodeDriver: Software de geocodificação reversa
+            connection: Nome da conexão
+            revTableName: Nome da tabela
+            revRowGeoWay: Linha de geometria
+            revRowSearch: Linha de pesquisa
+            revRowSearchBuffer: Buffer de pesquisa
+        error:
+          buffer: A entrada deve ser um número inteiro

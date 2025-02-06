@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Произошла ошибка в вашем запросе
+        noResult: Маршрут не найден.
+        format: Формат не поддерживается.
+        icon: Иконка не настроена.
+      graphhopper:
+        400: В вашем запросе ошибка (слишком мало или слишком много точек)
+        401: Требуется аутентификация! Зарегистрируйтесь и получите действительный API-ключ на https://www.graphhopper.com/developers/.
+        413: Слишком много параметров в URL. Вам нужно использовать формат JSON и POST-запросы.
+        429: Достигнут лимит API. Вы получите уведомление по электронной почте. Также свойства заголовка дадут вам больше информации (см. раздел о 'HTTP Headers').
+        500: Внутренняя ошибка сервера. Мы автоматически получаем уведомление и постараемся быстро исправить проблему.
+        501: Поддерживается только специальный список транспортных средств.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Режим транспорта
+          car: Автомобиль
+          bike: Велосипед
+          foot: Пешком
+          start: Начало
+          intermediate: Промежуточная точка
+          destination: Назначение
+          clearroute: Очистить
+          flippoints: Обратить
+          addintermediate: Добавить точку
+          getroute: Поехали!
+      info: займет
+      minutes: Мин
+      hours: Часы
+    backend:
+      title: Маршрутизация
+      iconTitle: Маршрутизация
+      description: Функциональность маршрутизации
+      sign:
+        -98: Разворот
+        -7: Держитесь левее
+        -3: Резкий поворот налево
+        -2: Поверните налево
+        -1: Легкий поворот налево
+        0: Продолжайте движение
+        1: Легкий поворот направо
+        2: Поверните направо
+        3: Резкий поворот направо
+        7: Держитесь правее
+        4: Пункт назначения достигнут
+        5: Промежуточная точка достигнута
+        on: на
+      dialog:
+        input:
+          yes: да
+          no: нет
+          number: Число
+          nodes: Узлы
+          distance: Расстояние
+          duration: Длительность
+          datasources: Источники данных
+          weight: Вес
+          speed: Скорость
+          full: Полный
+          simplified: Упрощенный
+          default: По умолчанию
+          search: Поиск
+          osrmservice:
+            route: Маршрут
+            nearest: Ближайший
+            table: Матрица
+            match: Совпадение
+            trip: Поездка
+            tile: Векторные тайлы Mapbox
+        label:
+          title: Заголовок
+          target: Цель
+          buffer: Буфер масштабирования (м)
+          autoSubmit: Немедленный маршрут
+          addIntermediatePoints: Разрешить промежуточные точки
+          advanced: Расширенные настройки маршрута
+          search: Включить поиск
+          reverseGeocoding: Обратное геокодирование
+          color: Цвет линии
+          width: Ширина линии
+          opacity: Прозрачность линии
+          dateTimeFormat: Формат времени
+          infoText: Информационный текст маршрута
+          startImagePath: Путь к значку начала
+          startImageSize: Размер значка начала (ш, в)
+          startImageOffset: Смещение значка начала (x, y)
+          intermediateImagePath: Путь к значку промежуточной точки
+          intermediateImageSize: Размер значка промежуточной точки (ш, в)
+          intermediateImageOffset: Смещение значка промежуточной точки (x, y)
+          destinationImagePath: Путь к значку назначения
+          destinationImageSize: Размер значка назначения (ш, в)
+          destinationImageOffset: Смещение значка назначения (x, y)
+          routingDriver: Программное обеспечение маршрутизации
+          chooseOption: Выберите вариант
+          url: URL
+          url_help: "<code>%profile</code> будет заменен выбранным профилем"
+          instructions: Описание маршрута
+          pg:
+            titel: PgRouting
+            connection: Имя соединения
+            pgWayTable: Таблица дорог
+            pgWayTableVertices: Таблица вершин дорог
+            speed: ∅ Скорость (км/ч)
+          osrm:
+            titel: OSRM
+            service: Сервисы
+            version: Версия API
+            alternatives: Альтернативный маршрут
+            annotations: Аннотации
+            overview: Обзор
+            continueStraight: Продолжайте движение прямо
+            attribution: Атрибуция
+          gh:
+            titel: GraphHopper
+            key: API-ключ
+            weighting:
+              title: Взвешивание маршрутизации
+              fastest: Самый быстрый маршрут
+              shortest: Самый короткий маршрут
+            optimize:
+              label: Порядок точек
+              yes: Оптимизировать
+              no: Не оптимизировать
+            elevation: Информация о высоте
+          sh:
+            label: Настройки поиска
+            shDriver: Программное обеспечение поиска
+            shUrl: URL поиска
+            query_key: Ключ параметра поиска
+            query_ws_replace: Шаблон замены пробела
+            query_format: Формат поиска
+            token_regex: Разделитель токенов
+            token_regex_in: Поиск токенов
+            token_regex_out: Замена токенов
+            collection_path: Путь коллекции
+            label_attribute: Атрибут метки
+            geom_attribute: Геометрический атрибут
+            geom_format: Формат геометрии
+            geom_proj: Проекция геометрии
+            delay: Задержка
+            result_buffer: Буфер масштабирования (м)
+            result_minscale: Минимальный масштаб буфера
+            result_maxscale: Максимальный масштаб буфера
+            result_icon_url: Путь к значку
+            result_icon_offset: Смещение значка (x, y)
+          reverse:
+            label:
+            geocodeDriver: Программное обеспечение обратного геокодирования
+            connection: Имя соединения
+            revTableName: Имя таблицы
+            revRowGeoWay: Геометрия строки
+            revRowSearch: Поисковая строка
+            revRowSearchBuffer: Буфер поиска
+        error:
+          buffer: Входные данные должны быть целым числом

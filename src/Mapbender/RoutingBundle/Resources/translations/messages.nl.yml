@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Er is een fout opgetreden in uw verzoek
+        noResult: Er kon geen route worden gevonden.
+        format: Formaat niet ondersteund.
+        icon: Geen pictogram geconfigureerd.
+      graphhopper:
+        400: Er is iets mis met uw verzoek (te weinig of te veel punten)
+        401: Authenticatie vereist! Registreer en verkrijg een geldige API-sleutel op https://www.graphhopper.com/developers/.
+        413: Te veel parameters in de URL. U moet het JSON-formaat en POST-verzoeken gebruiken.
+        429: API-limiet bereikt. U ontvangt een e-mail. De header-eigenschappen geven ook meer informatie (zie de sectie over 'HTTP Headers').
+        500: Interne serverfout. We ontvangen automatisch een melding en proberen dit snel op te lossen.
+        501: Alleen een speciale lijst met voertuigen wordt ondersteund.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Transportmodus
+          car: Auto
+          bike: Fiets
+          foot: Te voet
+          start: Start
+          intermediate: Via
+          destination: Bestemming
+          clearroute: Wissen
+          flippoints: Omkeren
+          addintermediate: Punt toevoegen
+          getroute: Ga!
+      info: zal duren
+      minutes: Min
+      hours: Uren
+    backend:
+      title: Routering
+      iconTitle: Routering
+      description: Routeringsfunctionaliteit
+      sign:
+        -98: Keer om
+        -7: Houd links aan
+        -3: Sla scherp linksaf
+        -2: Sla linksaf
+        -1: Sla licht linksaf
+        0: Ga door
+        1: Sla licht rechtsaf
+        2: Sla rechtsaf
+        3: Sla scherp rechtsaf
+        7: Houd rechts aan
+        4: Bestemming bereikt
+        5: Wegpunt bereikt
+        on: op
+      dialog:
+        input:
+          yes: ja
+          no: nee
+          number: Nummer
+          nodes: Knooppunten
+          distance: Afstand
+          duration: Duur
+          datasources: Gegevensbronnen
+          weight: Gewicht
+          speed: Snelheid
+          full: Volledig
+          simplified: Vereenvoudigd
+          default: Standaard
+          search: Zoeken
+          osrmservice:
+            route: Route
+            nearest: Dichtstbijzijnde
+            table: Matrix
+            match: Overeenkomst
+            trip: Reis
+            tile: Mapbox Vector Tiles
+        label:
+          title: Titel
+          target: Doel
+          buffer: Zoom buffer (m)
+          autoSubmit: Route onmiddellijk
+          addIntermediatePoints: Tussenpunten toestaan
+          advanced: Geavanceerde route-instellingen
+          search: Zoeken inschakelen
+          reverseGeocoding: Omgekeerde geocodering
+          color: Lijnkleur
+          width: Lijnbreedte
+          opacity: Lijntransparantie
+          dateTimeFormat: Tijdweergaveformaat
+          infoText: Route-informatietekst
+          startImagePath: Pad startpictogram
+          startImageSize: Grootte startpictogram (b, h)
+          startImageOffset: Offset startpictogram (x, y)
+          intermediateImagePath: Pad tussenpictogram
+          intermediateImageSize: Grootte tussenpictogram (b, h)
+          intermediateImageOffset: Offset tussenpictogram (x, y)
+          destinationImagePath: Pad bestemmingspictogram
+          destinationImageSize: Grootte bestemmingspictogram (b, h)
+          destinationImageOffset: Offset bestemmingspictogram (x, y)
+          routingDriver: Routeringssoftware
+          chooseOption: Kies een optie
+          url: URL
+          url_help: "<code>%profile</code> wordt vervangen door het gekozen profiel"
+          instructions: Routebeschrijving
+          pg:
+            titel: PgRouting
+            connection: Verbindingsnaam
+            pgWayTable: Wegen-tabel
+            pgWayTableVertices: Wegen-knooppunten-tabel
+            speed: ∅ Snelheid (km/u)
+          osrm:
+            titel: OSRM
+            service: Diensten
+            version: API-versie
+            alternatives: Alternatieve route
+            annotations: Annotaties
+            overview: Overzicht
+            continueStraight: Ga rechtdoor
+            attribution: Toeschrijving
+          gh:
+            titel: GraphHopper
+            key: API-sleutel
+            weighting:
+              title: Routeringsweging
+              fastest: Snelste route
+              shortest: Kortste route
+            optimize:
+              label: Puntenvolgorde
+              yes: Optimaliseren
+              no: Niet optimaliseren
+            elevation: Hoogte-informatie
+          sh:
+            label: Zoekinstellingen
+            shDriver: Zoeksoftware
+            shUrl: Zoek-URL
+            query_key: Zoekparameter sleutel
+            query_ws_replace: Patroon voor witruimtevervanging
+            query_format: Zoekformaat
+            token_regex: Tokenizer patroon
+            token_regex_in: Tokenizer zoeken
+            token_regex_out: Tokenizer vervangen
+            collection_path: Collectiepad
+            label_attribute: Label attribuut
+            geom_attribute: Geometrie attribuut
+            geom_format: Geometrieformaat
+            geom_proj: Geometrieprojectie
+            delay: Vertraging
+            result_buffer: Zoom buffer (m)
+            result_minscale: Minimale zoomschaal
+            result_maxscale: Maximale zoomschaal
+            result_icon_url: Pictogrampad
+            result_icon_offset: Pictogram offset (x, y)
+          reverse:
+            label:
+            geocodeDriver: Omgekeerde software
+            connection: Verbindingsnaam
+            revTableName: Tabelnaam
+            revRowGeoWay: Geometrie rij
+            revRowSearch: Zoek rij
+            revRowSearchBuffer: Zoek buffer
+        error:
+          buffer: Invoer moet een geheel getal zijn
