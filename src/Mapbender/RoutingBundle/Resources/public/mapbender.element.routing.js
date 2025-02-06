@@ -124,6 +124,9 @@
             if (this.options.useSearch) {
                 $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
                     $(e.target).autocomplete({
+                        classes: {
+                            'ui-autocomplete': 'mb-routing-autocomplete',
+                        },
                         minLength: 3,
                         source: this._handleAutocompleteSource.bind(this),
                         focus: (event, ui) => {
