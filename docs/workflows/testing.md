@@ -1,4 +1,9 @@
 # Testing
+The testing procedure describes here refers to unit tests that test only backend (PHP) code.  
+There is an additional repository [mapbender-tests](https://github.com/mapbender/mapbender-tests) that contains 
+End-to-End (E2E)-Tests written in [Cypress](https://www.cypress.io/app). Documentation on their usage can be found 
+in the README file there.
+
 
 ## Prerequisites
 
