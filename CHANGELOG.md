@@ -12,6 +12,7 @@ Features:
 * [POI] Add option to minimize and completely remove POI popup ([#1273](https://github.com/mapbender/mapbender/issues/1273), [PR#1673](https://github.com/mapbender/mapbender/pull/1673))
 
 Bugfixes:
+* Fix order of elements within an application could get lost ([#PR1682](https://github.com/mapbender/mapbender/pull/1682))
 * [FeatureInfo] Fix highlighting did not work with multiple layers simultaneously ([#PR1680](https://github.com/mapbender/mapbender/pull/1680))
 * [WMTS] WMTS sources with a TileSize other than 256px and/or individual origins per TileMatrix were not rendered correctly ([#PR1663](https://github.com/mapbender/mapbender/pull/1663))
 * [POI] Fix application crash when poi label is empty ([PR#1649](https://github.com/mapbender/mapbender/pull/1649))
