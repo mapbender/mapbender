@@ -2,16 +2,12 @@
 
 namespace Mapbender\CoreBundle\Command;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Platforms\SQLServerPlatform;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Entity\UserLogEntry;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Entity\QueuedPrintJob;
@@ -48,6 +44,7 @@ class DatabaseUpgradeCommand extends Command
     {
         $this->updateMapElementConfigs($input, $output);
         $this->updateDoctrineTypes($input, $output);
+        $this->updateButtonTypes($input, $output);
         return 0;
     }
 
@@ -166,5 +163,24 @@ class DatabaseUpgradeCommand extends Command
         }
 
     }
+
+    protected function updateButtonTypes(InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('Updating old button classes …');
+        $oldButtons = $this->em->getRepository(Element::class)->findBy(array(
+            'class' => 'Mapbender\CoreBundle\Element\Button',
+        ));
+
+        $output->writeln('Found ' . count($oldButtons) . ' Mapbender\CoreBundle\Element\Button elements');
+        foreach ($oldButtons as $oldButton) {
+            if (str_contains(json_encode($oldButton->getConfiguration()), 'http')) {
+                $oldButton->setClass("Mapbender\\CoreBundle\\Element\\LinkButton");
+            } else {
+                $oldButton->setClass("Mapbender\\CoreBundle\\Element\\ControlButton");
+            }
+        }
+        $this->em->flush();
+    }
+
 }
 
