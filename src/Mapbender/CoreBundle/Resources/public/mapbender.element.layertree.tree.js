@@ -382,7 +382,9 @@
             ;
         },
         _toggleSelectedLayer: function (e) {
-            $(e.currentTarget.parentNode).find('span.-fn-toggle-selected').click();
+            const clickEvent = $.Event("click");
+            clickEvent.shiftKey = e.shiftKey;
+            $(e.currentTarget.parentNode).find('span.-fn-toggle-selected').trigger(clickEvent);
         },
         _toggleSelected: function (e) {
             const $target = $(e.currentTarget);
