@@ -33,8 +33,15 @@
             if (queryParams.wms_id) {
                 this._getInstances(queryParams.wms_id);
             }
-            if (this.checkAutoOpen()) {
-                this.open();
+
+            if (Mapbender.ElementUtil.checkDialogMode(this.element)) {
+                if (this.checkAutoOpen()) {
+                    this.open();
+                }
+                // Button is added via the popup constructor in dialog mode
+                this.element.find('.-js-submit').remove();
+            } else {
+                this.element.find('.-js-submit').on('click', this._submit.bind(this));
             }
         },
         defaultAction: function(callback){
@@ -42,14 +49,13 @@
         },
         open: function(callback){
             this.callback = callback ? callback : null;
-            var self = this;
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup({
-                    title: self.element.attr('data-title'),
+                    title: this.element.attr('data-title'),
                     draggable: true,
                     modal: false,
                     closeOnESC: true,
-                    content: self.element,
+                    content: this.element,
                     detachOnClose: false,
                     width: 500,
                     buttons: [
@@ -57,20 +63,7 @@
                             label: Mapbender.trans('mb.actions.add'),
                             cssClass: 'btn btn-sm btn-primary',
                             attrDataTest: 'mb-wms-btn-add',
-                            callback: function(){
-                                var form = this.$element.find('form').get(0);
-                                if (form.reportValidity && !form.reportValidity()) return;
-                                var url = $('input[name="loadWmsUrl"]', self.element).val();
-                                if(url === ''){
-                                    $('input[name="loadWmsUrl"]', self.element).focus();
-                                    return false;
-                                }
-                                var urlObj = new Mapbender.Util.Url(url);
-                                urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
-                                urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
-                                self.loadWms(urlObj.asString());
-                                self.close();
-                            }
+                            callback: this._submit.bind(this),
                         },
                         {
                             label: Mapbender.trans('mb.actions.close'),
@@ -86,6 +79,21 @@
             }
 
             this.notifyWidgetActivated();
+        },
+        _submit: function(e) {
+            if (e) e.preventDefault();
+            var form = this.element.find('form').get(0);
+            if (form.reportValidity && !form.reportValidity()) return;
+            var url = $('input[name="loadWmsUrl"]', this.element).val();
+            if (url === '') {
+                $('input[name="loadWmsUrl"]', this.element).focus();
+                return false;
+            }
+            var urlObj = new Mapbender.Util.Url(url);
+            urlObj.username = $('input[name="loadWmsUser"]', this.element).val();
+            urlObj.password = $('input[name="loadWmsPass"]', this.element).val();
+            this.loadWms(urlObj.asString());
+            if (this.popup) this.close();
         },
         close: function(){
             if (this.popup && this.popup.$element) {
