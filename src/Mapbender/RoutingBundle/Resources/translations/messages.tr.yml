@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: İsteğinizde bir hata oluştu
+        noResult: Rota bulunamadı.
+        format: Format desteklenmiyor.
+        icon: Simge yapılandırılmadı.
+      graphhopper:
+        400: İsteğinizde bir hata var (çok az veya çok fazla nokta)
+        401: Kimlik doğrulama gerekli! Kaydolun ve geçerli bir API anahtarı alın: https://www.graphhopper.com/developers/.
+        413: URL'de çok fazla parametre var. JSON formatını ve POST isteklerini kullanmalısınız.
+        429: API limiti aşıldı. Bir e-posta alacaksınız. Ayrıca başlık özellikleri hakkında daha fazla bilgi verir (bkz. 'HTTP Headers' bölümü).
+        500: İç sunucu hatası. Otomatik olarak bir bildirim alıyoruz ve bunu hızlıca düzeltmeye çalışacağız.
+        501: Yalnızca belirli bir araç listesi desteklenmektedir.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Ulaşım modu
+          car: Araba
+          bike: Bisiklet
+          foot: Yürüyerek
+          start: Başlangıç
+          intermediate: Ara Nokta
+          destination: Hedef
+          clearroute: Temizle
+          flippoints: Ters çevir
+          addintermediate: Nokta ekle
+          getroute: Git!
+      info: sürecek
+      minutes: Dakika
+      hours: Saat
+    backend:
+      title: Rota Belirleme
+      iconTitle: Rota Belirleme
+      description: Rota belirleme işlevi
+      sign:
+        -98: U-dönüşü
+        -7: Sola yanaşın
+        -3: Keskin sola dönüş
+        -2: Sola dön
+        -1: Hafif sola dön
+        0: Devam et
+        1: Hafif sağa dön
+        2: Sağa dön
+        3: Keskin sağa dönüş
+        7: Sağa yanaşın
+        4: Hedefe ulaşıldı
+        5: Ara noktaya ulaşıldı
+        on: üzerinde
+      dialog:
+        input:
+          yes: evet
+          no: hayır
+          number: Numara
+          nodes: Düğümler
+          distance: Mesafe
+          duration: Süre
+          datasources: Veri kaynakları
+          weight: Ağırlık
+          speed: Hız
+          full: Tam
+          simplified: Basitleştirilmiş
+          default: Varsayılan
+          search: Arama
+          osrmservice:
+            route: Rota
+            nearest: En yakın
+            table: Matris
+            match: Eşleşme
+            trip: Gezi
+            tile: Mapbox Vektör Karoları
+        label:
+          title: Başlık
+          target: Hedef
+          buffer: Yakınlaştırma aralığı (m)
+          autoSubmit: Hemen rota oluştur
+          addIntermediatePoints: Ara noktaları eklemeye izin ver
+          advanced: Gelişmiş rota ayarları
+          search: Aramayı etkinleştir
+          reverseGeocoding: Ters coğrafi kodlama
+          color: Çizgi rengi
+          width: Çizgi genişliği
+          opacity: Çizgi saydamlığı
+          dateTimeFormat: Zaman çıkış formatı
+          infoText: Rota bilgi metni
+          startImagePath: Başlangıç simgesi yolu
+          startImageSize: Başlangıç simgesi boyutu (g, y)
+          startImageOffset: Başlangıç simgesi kaydırması (x, y)
+          intermediateImagePath: Ara nokta simgesi yolu
+          intermediateImageSize: Ara nokta simgesi boyutu (g, y)
+          intermediateImageOffset: Ara nokta simgesi kaydırması (x, y)
+          destinationImagePath: Hedef simgesi yolu
+          destinationImageSize: Hedef simgesi boyutu (g, y)
+          destinationImageOffset: Hedef simgesi kaydırması (x, y)
+          routingDriver: Rota belirleme yazılımı
+          chooseOption: Bir seçenek seçin
+          url: URL
+          url_help: "<code>%profile</code> seçilen profille değiştirilecektir"
+          instructions: Rota açıklaması
+          pg:
+            titel: PgRouting
+            connection: Bağlantı adı
+            pgWayTable: Yol Tablosu
+            pgWayTableVertices: Yol Düğümleri Tablosu
+            speed: ∅ Hız (km/sa)
+          osrm:
+            titel: OSRM
+            service: Hizmetler
+            version: API Sürümü
+            alternatives: Alternatif Rota
+            annotations: Açıklamalar
+            overview: Genel Bakış
+            continueStraight: Düz devam et
+            attribution: Atıf
+          gh:
+            titel: GraphHopper
+            key: API anahtarı
+            weighting:
+              title: Rota ağırlığı
+              fastest: En hızlı rota
+              shortest: En kısa rota
+            optimize:
+              label: Nokta sırası
+              yes: Optimize et
+              no: Optimize etme
+            elevation: Yükseklik bilgisi
+          sh:
+            label: Arama ayarları
+            shDriver: Arama yazılımı
+            shUrl: Arama URL’si
+            query_key: Arama parametresi anahtarı
+            query_ws_replace: Boşluk değiştirme deseni
+            query_format: Arama formatı
+            token_regex: Belirteç ayırıcı
+            token_regex_in: Belirteç arama
+            token_regex_out: Belirteç değiştirme
+            collection_path: Koleksiyon yolu
+            label_attribute: Etiket özelliği
+            geom_attribute: Geometri özelliği
+            geom_format: Geometri formatı
+            geom_proj: Geometri projeksiyonu
+            delay: Gecikme
+            result_buffer: Yakınlaştırma aralığı (m)
+            result_minscale: Minimum yakınlaştırma
+            result_maxscale: Maksimum yakınlaştırma
+            result_icon_url: Simge yolu
+            result_icon_offset: Simge kaydırması (x, y)
+          reverse:
+            label:
+            geocodeDriver: Ters coğrafi kodlama yazılımı
+            connection: Bağlantı adı
+            revTableName: Tablo adı
+            revRowGeoWay: Geometri satırı
+            revRowSearch: Arama satırı
+            revRowSearchBuffer: Arama aralığı
+        error:
+          buffer: Giriş tam sayı olmalıdır

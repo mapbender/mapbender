@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Une erreur s'est produite dans votre demande
+        noResult: Aucun itinéraire trouvé.
+        format: Format non pris en charge.
+        icon: Aucun icône configuré.
+      graphhopper:
+        400: Une erreur s'est produite dans votre demande (trop ou trop peu de points)
+        401: Authentification requise ! Inscrivez-vous et obtenez une clé API valide sur https://www.graphhopper.com/developers/.
+        413: Trop de paramètres dans l'URL. Vous devez utiliser le format JSON et les requêtes POST.
+        429: Limite de l'API atteinte. Vous recevrez un e-mail. Les propriétés de l'en-tête vous donneront également plus d'informations (voir la section sur les 'En-têtes HTTP').
+        500: Erreur interne du serveur. Nous recevons une notification automatique et essayerons de la corriger rapidement.
+        501: Seule une liste spéciale de véhicules est prise en charge.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Mode de transport
+          car: Voiture
+          bike: Vélo
+          foot: À pied
+          start: Départ
+          intermediate: Via
+          destination: Destination
+          clearroute: Effacer
+          flippoints: Inverser
+          addintermediate: Ajouter un point
+          getroute: Aller !
+      info: prendra
+      minutes: Min
+      hours: Heures
+    backend:
+      title: Itinéraire
+      iconTitle: Itinéraire
+      description: Fonctionnalité d'itinéraire
+      sign:
+        -98: Demi-tour
+        -7: Restez à gauche
+        -3: Tournez fortement à gauche
+        -2: Tournez à gauche
+        -1: Tournez légèrement à gauche
+        0: Continuez
+        1: Tournez légèrement à droite
+        2: Tournez à droite
+        3: Tournez fortement à droite
+        7: Restez à droite
+        4: Destination atteinte
+        5: Point intermédiaire atteint
+        on: sur
+      dialog:
+        input:
+          yes: oui
+          no: non
+          number: Numéro
+          nodes: Nœuds
+          distance: Distance
+          duration: Durée
+          datasources: Sources de données
+          weight: Poids
+          speed: Vitesse
+          full: Complet
+          simplified: Simplifié
+          default: Par défaut
+          search: Rechercher
+          osrmservice:
+            route: Itinéraire
+            nearest: Le plus proche
+            table: Matrice
+            match: Correspondance
+            trip: Voyage
+            tile: Tuiles vectorielles Mapbox
+        label:
+          title: Titre
+          target: Cible
+          buffer: Zone tampon de zoom (m)
+          autoSubmit: Itinéraire immédiat
+          addIntermediatePoints: Autoriser les points intermédiaires
+          advanced: Paramètres avancés de l'itinéraire
+          search: Activer la recherche
+          reverseGeocoding: Géocodage inversé
+          color: Couleur de la ligne
+          width: Largeur de la ligne
+          opacity: Opacité de la ligne
+          dateTimeFormat: Format de sortie du temps
+          infoText: Texte d'information sur l'itinéraire
+          startImagePath: Chemin de l'icône de départ
+          startImageSize: Taille de l'icône de départ (largeur, hauteur)
+          startImageOffset: Décalage de l'icône de départ (x, y)
+          intermediateImagePath: Chemin de l'icône intermédiaire
+          intermediateImageSize: Taille de l'icône intermédiaire (largeur, hauteur)
+          intermediateImageOffset: Décalage de l'icône intermédiaire (x, y)
+          destinationImagePath: Chemin de l'icône de destination
+          destinationImageSize: Taille de l'icône de destination (largeur, hauteur)
+          destinationImageOffset: Décalage de l'icône de destination (x, y)
+          routingDriver: Logiciel d'itinéraire
+          chooseOption: Choisissez une option
+          url: URL
+          url_help: "<code>%profile</code> sera remplacé par le profil choisi"
+          instructions: Description de l'itinéraire
+          pg:
+            titel: PgRouting
+            connection: Nom de connexion
+            pgWayTable: Table des chemins
+            pgWayTableVertices: Table des sommets des chemins
+            speed: Vitesse ∅ (km/h)
+          osrm:
+            titel: OSRM
+            service: Services
+            version: Version de l'API
+            alternatives: Itinéraire alternatif
+            annotations: Annotations
+            overview: Vue d'ensemble
+            continueStraight: Continuer tout droit
+            attribution: Attribution
+          gh:
+            titel: GraphHopper
+            key: Clé API
+            weighting:
+              title: Pondération de l'itinéraire
+              fastest: Itinéraire le plus rapide
+              shortest: Itinéraire le plus court
+            optimize:
+              label: Ordre des points
+              yes: Optimiser
+              no: Ne pas optimiser
+            elevation: Informations sur l'altitude
+          sh:
+            label: Paramètres de recherche
+            shDriver: Logiciel de recherche
+            shUrl: URL de recherche
+            query_key: Clé du paramètre de recherche
+            query_ws_replace: Modèle de remplacement des espaces
+            query_format: Format de recherche
+            token_regex: Modèle de tokenisation
+            token_regex_in: Recherche de tokenisation
+            token_regex_out: Remplacement de tokenisation
+            collection_path: Chemin de la collection
+            label_attribute: Attribut d'étiquette
+            geom_attribute: Attribut géométrique
+            geom_format: Format géométrique
+            geom_proj: Projection géométrique
+            delay: Délai
+            result_buffer: Zone tampon de zoom (m)
+            result_minscale: Échelle minimale du zoom
+            result_maxscale: Échelle maximale du zoom
+            result_icon_url: Chemin de l'icône
+            result_icon_offset: Décalage de l'icône (x, y)
+          reverse:
+            label:
+            geocodeDriver: Logiciel de géocodage inversé
+            connection: Nom de connexion
+            revTableName: Nom de la table
+            revRowGeoWay: Ligne de géométrie
+            revRowSearch: Ligne de recherche
+            revRowSearchBuffer: Zone tampon de recherche
+        error:
+          buffer: L'entrée doit être un entier

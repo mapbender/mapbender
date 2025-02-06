@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Si è verificato un errore nella tua richiesta
+        noResult: Nessun percorso trovato.
+        format: Formato non supportato.
+        icon: Nessuna icona configurata.
+      graphhopper:
+        400: Qualcosa non va nella tua richiesta (troppi o troppo pochi punti)
+        401: Autenticazione necessaria! Registrati e ottieni una chiave API valida su https://www.graphhopper.com/developers/.
+        413: Troppi parametri nell'URL. Devi usare il formato JSON e le richieste POST.
+        429: Limite API raggiunto. Riceverai un'email. Anche le proprietà dell'intestazione forniranno ulteriori informazioni (vedi la sezione sugli 'Header HTTP').
+        500: Errore interno del server. Riceviamo automaticamente una notifica e cercheremo di risolverlo rapidamente.
+        501: Solo un elenco speciale di veicoli è supportato.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Modalità di trasporto
+          car: Auto
+          bike: Bicicletta
+          foot: A piedi
+          start: Partenza
+          intermediate: Via
+          destination: Destinazione
+          clearroute: Cancella
+          flippoints: Inverti
+          addintermediate: Aggiungi punto
+          getroute: Vai!
+      info: impiegherà
+      minutes: Min
+      hours: Ore
+    backend:
+      title: Navigazione
+      iconTitle: Navigazione
+      description: Funzionalità di navigazione
+      sign:
+        -98: Inversione a U
+        -7: Mantieni la sinistra
+        -3: Svolta a sinistra stretta
+        -2: Svolta a sinistra
+        -1: Svolta leggermente a sinistra
+        0: Continua
+        1: Svolta leggermente a destra
+        2: Svolta a destra
+        3: Svolta a destra stretta
+        7: Mantieni la destra
+        4: Destinazione raggiunta
+        5: Punto intermedio raggiunto
+        on: su
+      dialog:
+        input:
+          yes: sì
+          no: no
+          number: Numero
+          nodes: Nodi
+          distance: Distanza
+          duration: Durata
+          datasources: Fonti di dati
+          weight: Peso
+          speed: Velocità
+          full: Completo
+          simplified: Semplificato
+          default: Predefinito
+          search: Cerca
+          osrmservice:
+            route: Percorso
+            nearest: Più vicino
+            table: Matrice
+            match: Corrispondenza
+            trip: Viaggio
+            tile: Mapbox Vector Tiles
+        label:
+          title: Titolo
+          target: Destinazione
+          buffer: Buffer di zoom (m)
+          autoSubmit: Percorso immediato
+          addIntermediatePoints: Consenti punti intermedi
+          advanced: Impostazioni avanzate del percorso
+          search: Abilita ricerca
+          reverseGeocoding: Geocodifica inversa
+          color: Colore della linea
+          width: Larghezza della linea
+          opacity: Opacità della linea
+          dateTimeFormat: Formato di uscita dell'ora
+          infoText: Testo informativo sul percorso
+          startImagePath: Percorso icona di partenza
+          startImageSize: Dimensione icona di partenza (larghezza, altezza)
+          startImageOffset: Offset icona di partenza (x, y)
+          intermediateImagePath: Percorso icona intermedia
+          intermediateImageSize: Dimensione icona intermedia (larghezza, altezza)
+          intermediateImageOffset: Offset icona intermedia (x, y)
+          destinationImagePath: Percorso icona di destinazione
+          destinationImageSize: Dimensione icona di destinazione (larghezza, altezza)
+          destinationImageOffset: Offset icona di destinazione (x, y)
+          routingDriver: Software di navigazione
+          chooseOption: Scegli un'opzione
+          url: URL
+          url_help: "<code>%profile</code> verrà sostituito con il profilo scelto"
+          instructions: Descrizione del percorso
+          pg:
+            titel: PgRouting
+            connection: Nome della connessione
+            pgWayTable: Tabella dei percorsi
+            pgWayTableVertices: Tabella dei vertici dei percorsi
+            speed: Velocità ∅ (km/h)
+          osrm:
+            titel: OSRM
+            service: Servizi
+            version: Versione API
+            alternatives: Percorso alternativo
+            annotations: Annotazioni
+            overview: Panoramica
+            continueStraight: Continua dritto
+            attribution: Attribuzione
+          gh:
+            titel: GraphHopper
+            key: Chiave API
+            weighting:
+              title: Peso del percorso
+              fastest: Percorso più veloce
+              shortest: Percorso più breve
+            optimize:
+              label: Ordine dei punti
+              yes: Ottimizza
+              no: Non ottimizzare
+            elevation: Informazioni sull'altitudine
+          sh:
+            label: Impostazioni di ricerca
+            shDriver: Software di ricerca
+            shUrl: URL di ricerca
+            query_key: Chiave parametro di ricerca
+            query_ws_replace: Modello di sostituzione degli spazi
+            query_format: Formato di ricerca
+            token_regex: Modello di tokenizzazione
+            token_regex_in: Ricerca di tokenizzazione
+            token_regex_out: Sostituzione di tokenizzazione
+            collection_path: Percorso della collezione
+            label_attribute: Attributo etichetta
+            geom_attribute: Attributo geometrico
+            geom_format: Formato geometrico
+            geom_proj: Proiezione geometrica
+            delay: Ritardo
+            result_buffer: Buffer di zoom (m)
+            result_minscale: Scala minima di zoom
+            result_maxscale: Scala massima di zoom
+            result_icon_url: Percorso icona
+            result_icon_offset: Offset icona (x, y)
+          reverse:
+            label:
+            geocodeDriver: Software di geocodifica inversa
+            connection: Nome della connessione
+            revTableName: Nome della tabella
+            revRowGeoWay: Riga geometria
+            revRowSearch: Riga di ricerca
+            revRowSearchBuffer: Buffer di ricerca
+        error:
+          buffer: L'input deve essere un numero intero

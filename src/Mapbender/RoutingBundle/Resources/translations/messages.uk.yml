@@ -1,0 +1,158 @@
+mb:
+  routing:
+    exception:
+      main:
+        general: Сталася помилка у вашому запиті
+        noResult: Маршрут не знайдено.
+        format: Формат не підтримується.
+        icon: Іконка не налаштована.
+      graphhopper:
+        400: Щось не так у вашому запиті (занадто мало або занадто багато точок)
+        401: Потрібна аутентифікація! Зареєструйтесь і отримайте дійсний API-ключ на https://www.graphhopper.com/developers/.
+        413: Занадто багато параметрів у URL. Вам потрібно використовувати формат JSON та POST-запити.
+        429: Д reached ліміт API. Ви отримаєте електронний лист. Також заголовки нададуть більше інформації (див. розділ про 'HTTP Headers').
+        500: Внутрішня помилка сервера. Ми отримаємо автоматичне повідомлення і намагатимемось виправити це швидко.
+        501: Підтримується лише спеціальний список транспортних засобів.
+    frontend:
+      dialog:
+        label:
+          transportationmode: Режим транспорту
+          car: Автомобіль
+          bike: Велосипед
+          foot: Пішки
+          start: Початок
+          intermediate: Проміжний
+          destination: Кінцева точка
+          clearroute: Очистити
+          flippoints: Перевернути
+          addintermediate: Додати точку
+          getroute: Рухатися!
+      info: займе
+      minutes: Хв
+      hours: Год
+    backend:
+      title: Маршрутизація
+      iconTitle: Маршрутизація
+      description: Функціональність маршрутизації
+      sign:
+        -98: Поворот на 180°
+        -7: Тримати ліворуч
+        -3: Поворот різко ліворуч
+        -2: Поворот ліворуч
+        -1: Поворот трохи ліворуч
+        0: Продовжувати
+        1: Поворот трохи праворуч
+        2: Поворот праворуч
+        3: Поворот різко праворуч
+        7: Тримати праворуч
+        4: Мета досягнута
+        5: Точка досягнута
+        on: на
+      dialog:
+        input:
+          yes: так
+          no: ні
+          number: Число
+          nodes: Вузли
+          distance: Відстань
+          duration: Тривалість
+          datasources: Джерела даних
+          weight: Вага
+          speed: Швидкість
+          full: Повний
+          simplified: Спрощений
+          default: За замовчуванням
+          search: Пошук
+          osrmservice:
+            route: Маршрут
+            nearest: Найближчий
+            table: Матриця
+            match: Співпадіння
+            trip: Подорож
+            tile: Векторні плитки Mapbox
+        label:
+          title: Назва
+          target: Мета
+          buffer: Буфер зуму (м)
+          autoSubmit: Маршрут одразу
+          addIntermediatePoints: Дозволити проміжні точки
+          advanced: Розширені налаштування маршруту
+          search: Увімкнути пошук
+          reverseGeocoding: Зворотний геокодування
+          color: Колір лінії
+          width: Ширина лінії
+          opacity: Непрозорість лінії
+          dateTimeFormat: Формат часу виведення
+          infoText: Текст інформації про маршрут
+          startImagePath: Шлях до іконки початку
+          startImageSize: Розмір іконки початку в, ш
+          startImageOffset: Зсув іконки початку x, y
+          intermediateImagePath: Шлях до іконки проміжної точки
+          intermediateImageSize: Розмір іконки проміжної точки в, ш
+          intermediateImageOffset: Зсув іконки проміжної точки x, y
+          destinationImagePath: Шлях до іконки кінцевої точки
+          destinationImageSize: Розмір іконки кінцевої точки в, ш
+          destinationImageOffset: Зсув іконки кінцевої точки x, y
+          routingDriver: Програмне забезпечення для маршрутизації
+          chooseOption: Виберіть опцію
+          url: URL
+          url_help: "<code>%profile</code> буде замінено вибраним профілем"
+          instructions: Опис маршруту
+          pg:
+            titel: PgRouting
+            connection: Назва з'єднання
+            pgWayTable: Таблиця шляхів
+            pgWayTableVertices: Таблиця вершин шляхів
+            speed: ∅ Швидкість (км/год)
+          osrm:
+            titel: OSRM
+            service: Послуги
+            version: API-версія
+            alternatives: Альтернативний маршрут
+            annotations: Анотації
+            overview: Огляд
+            continueStraight: продовжуйте прямо
+            attribution: Атрібут
+          gh:
+            titel: GraphHopper
+            key: API-ключ
+            weighting:
+              title: Вага маршруту
+              fastest: Найшвидший маршрут
+              shortest: Найкоротший маршрут
+            optimize:
+              label: Оптимізація порядку точок
+              yes: Оптимізувати
+              no: Не оптимізувати
+            elevation: Інформація про висоту
+          sh:
+            label: Налаштування пошуку
+            shDriver: Програмне забезпечення для пошуку
+            shUrl: URL пошуку
+            query_key: Ключ параметра пошуку
+            query_ws_replace: Патерн заміни пробілів
+            query_format: Формат пошуку
+            token_regex: Токенізатор розбиття
+            token_regex_in: Токенізатор пошуку
+            token_regex_out: Токенізатор заміни
+            collection_path: Шлях колекції
+            label_attribute: Атрибут позначки
+            geom_attribute: Атрибут геометрії
+            geom_format: Формат геометрії
+            geom_proj: Проекція геометрії
+            delay: Затримка
+            result_buffer: Буфер зуму (м)
+            result_minscale: Мінімальний масштаб буфера зуму
+            result_maxscale: Максимальний масштаб буфера зуму
+            result_icon_url: Шлях до іконки
+            result_icon_offset: Зсув іконки (x, y)
+          reverse:
+            label:
+            geocodeDriver: Програмне забезпечення для зворотного геокодування
+            connection: Назва з'єднання
+            revTableName: Назва таблиці
+            revRowGeoWay: Рядок геометрії
+            revRowSearch: Рядок пошуку
+            revRowSearchBuffer: Буфер пошуку
+        error:
+          buffer: Вхід повинен бути цілим числом
