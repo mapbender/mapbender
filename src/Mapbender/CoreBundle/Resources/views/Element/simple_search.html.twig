@@ -1,4 +1,4 @@
-<form>
+<form role="search">
     <div class="autocompleteWrapper">
         <div class="input-group ps-1">
             <input type="text" class="form-control searchterm"
@@ -11,7 +11,7 @@
                 <i class="fa fas fa-xmark"></i>
             </button>
             {% if configuration_titles is defined %}
-                <div class="dropdown -fn-simple_search-toggle-dropdown" href="#">
+                <div class="dropdown -fn-simple_search-toggle-dropdown">
                     <select class="hiddenDropdown -fn-simple_search-select-configuration">
                         {% for title in configuration_titles %}
                             <option value="{{ loop.index - 1 }}">{{ title }}</option>
@@ -21,7 +21,7 @@
                     <ul class="dropdownList"></ul>
                 </div><!-- /btn-group -->
             {% endif %}
-            <button class="btn btn-outline-secondary -fn-search" role="search"
+            <button class="btn btn-outline-secondary -fn-search"
                  title="{{ 'mb.core.simplesearch.input.search'|trans }}"
                  aria-label="{{ 'mb.core.simplesearch.input.search'|trans }}">
                 <i class="fas fa-magnifying-glass"></i>

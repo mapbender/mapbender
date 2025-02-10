@@ -43,7 +43,9 @@ $.widget('mapbender.mbSimpleSearch', {
                 delay: configuration.delay || 300,
             });
             this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
-            this._saveConfiguration(this.selectedConfiguration)
+            this._saveConfiguration(this.selectedConfiguration);
+        } else {
+            this.element.find('.-fn-simple_search-toggle-dropdown').find('[data-value=' + index + ']').trigger('click');
         }
 
     },
