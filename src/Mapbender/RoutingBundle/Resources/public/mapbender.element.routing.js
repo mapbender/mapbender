@@ -48,6 +48,7 @@
                 this.popup = new Mapbender.Popup2({
                     title: Mapbender.trans('mb.routing.backend.title'),
                     draggable: true,
+                    resizable: true,
                     header: true,
                     modal: false,
                     closeButton: false,
