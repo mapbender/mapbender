@@ -3,14 +3,14 @@ mb:
     exception:
       main:
         general: Hubo un error en tu solicitud
-        noResult: No se pudo encontrar una ruta.
+        noResult: No se pudo encontrar ninguna ruta.
         format: Formato no soportado.
-        icon: No hay icono configurado.
+        icon: No hay ningún icono configurado.
       graphhopper:
-        400: Algo estuvo mal en tu solicitud (demasiados o muy pocos puntos)
-        401: ¡Autenticación necesaria! Regístrate y obtén una clave API válida en https://www.graphhopper.com/developers/.
-        413: Demasiados parámetros en la URL. Debes usar el formato JSON y solicitudes POST.
-        429: Límite de API alcanzado. Recibirás un correo electrónico. Además, las propiedades del encabezado te darán más información (consulta la sección sobre 'Encabezados HTTP').
+        400: Algo falló en tu solicitud (demasiados o muy pocos puntos)
+        401: ¡Acreditación necesaria! Regístrate y obtén una clave API válida en https://www.graphhopper.com/developers/.
+        413: Demasiados parámetros en la URL. Debes usar el formato JSON y peticiones POST.
+        429: Límite de API alcanzado. Recibirá un correo electrónico. Las propiedades del encabezado le darán más información (consulta la sección 'HTTP-Header').
         500: Error interno del servidor. Recibimos una notificación automática e intentaremos solucionarlo rápidamente.
         501: Solo se admite una lista especial de vehículos.
     frontend:
@@ -27,13 +27,13 @@ mb:
           flippoints: Invertir
           addintermediate: Añadir punto
           getroute: ¡Ir!
-      info: tardará
+      info: tomará
       minutes: Min
       hours: Horas
     backend:
-      title: Enrutamiento
-      iconTitle: Enrutamiento
-      description: Funcionalidad de enrutamiento
+      title: Ruta
+      iconTitle: Ruta
+      description: Guía de ruta
       sign:
         -98: Cambio de sentido
         -7: Mantente a la izquierda
@@ -82,7 +82,7 @@ mb:
           color: Color de línea
           width: Ancho de línea
           opacity: Opacidad de línea
-          dateTimeFormat: Formato de salida de tiempo
+          dateTimeFormat: Formato de fecha/hora
           infoText: Texto informativo de ruta
           startImagePath: Ruta del icono de inicio
           startImageSize: Tamaño del icono de inicio (ancho, alto)
@@ -93,7 +93,7 @@ mb:
           destinationImagePath: Ruta del icono de destino
           destinationImageSize: Tamaño del icono de destino (ancho, alto)
           destinationImageOffset: Desplazamiento del icono de destino (x, y)
-          routingDriver: Software de enrutamiento
+          routingDriver: Software de ruteo
           chooseOption: Elige una opción
           url: URL
           url_help: "<code>%profile</code> será reemplazado por el perfil elegido"
@@ -115,9 +115,9 @@ mb:
             attribution: Atribución
           gh:
             titel: GraphHopper
-            key: Clave API
+            key: Clave de la API
             weighting:
-              title: Peso de enrutamiento
+              title: Ponderación
               fastest: Ruta más rápida
               shortest: Ruta más corta
             optimize:
@@ -132,27 +132,27 @@ mb:
             query_key: Clave del parámetro de búsqueda
             query_ws_replace: Patrón de reemplazo de espacios
             query_format: Formato de búsqueda
-            token_regex: Patrón de tokenización
-            token_regex_in: Búsqueda de tokenización
-            token_regex_out: Reemplazo de tokenización
-            collection_path: Ruta de colección
+            token_regex: 'Tokenización: Regex de separación'
+            token_regex_in: 'Tokenización: Regex de búsqueda'
+            token_regex_out: 'Tokenización: Regex de reemplazo'
+            collection_path: Ruta de los resultados
             label_attribute: Atributo de etiqueta
             geom_attribute: Atributo geométrico
             geom_format: Formato geométrico
             geom_proj: Proyección geométrica
             delay: Retraso
             result_buffer: Búfer de zoom (m)
-            result_minscale: Escala mínima del zoom
-            result_maxscale: Escala máxima del zoom
-            result_icon_url: Ruta del icono
+            result_minscale: Escala mínima del búfer
+            result_maxscale: Escala máxima del búfer
+            result_icon_url: URL del icono
             result_icon_offset: Desplazamiento del icono (x, y)
           reverse:
             label:
             geocodeDriver: Software de geocodificación inversa
-            connection: Nombre de conexión
-            revTableName: Nombre de tabla
-            revRowGeoWay: Fila de geometría
-            revRowSearch: Fila de búsqueda
-            revRowSearchBuffer: Búfer de búsqueda
+            connection: Nombre de la conexión
+            revTableName: Nombre de la tabla
+            revRowGeoWay: Columna con la geometría
+            revRowSearch: Columna de búsqueda
+            revRowSearchBuffer: Radio de búsqueda
         error:
-          buffer: La entrada debe ser un entero
+          buffer: La entrada debe ser un número entero
