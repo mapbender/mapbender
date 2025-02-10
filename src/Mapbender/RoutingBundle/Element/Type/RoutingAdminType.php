@@ -57,7 +57,7 @@ class RoutingAdminType extends AbstractType
             */
             ->add('buffer', NumberType::class, [
                 'label' => 'mb.routing.backend.dialog.label.buffer',
-                'empty_data' => 0,
+                'empty_data' => 100,
                 'invalid_message' => 'mb.routing.backend.dialog.error.buffer',
                 'error_bubbling' => true,
                 'attr' => [
@@ -324,10 +324,10 @@ class RoutingAdminType extends AbstractType
             ->add('osrmSteps', ChoiceType::class, [
                 'label' => 'mb.routing.backend.dialog.label.instructions',
                 'required' => true,
-                'empty_data' => 'false',
+                'empty_data' => 'true',
                 'choices' => [
-                    'mb.routing.backend.dialog.input.no' => 'false',
                     'mb.routing.backend.dialog.input.yes' => 'true',
+                    'mb.routing.backend.dialog.input.no' => 'false',
                 ],
                 'property_path' => '[routingConfig][osrm][steps]',
             ])

@@ -73,8 +73,8 @@ class Routing extends AbstractElementService
             'allowIntermediatePoints' => false,
             'useSearch' => false,
             'useReverseGeocoding' => false,
-            'buffer' => 0,
-            'infoText' => '{start} → {destination} </br> {length} will take {time}',
+            'buffer' => 100,
+            'infoText' => '{start} → {destination} </br> {length} / {time}',
             'routingDriver' => null,
             'routingStyles' => [
                 'lineColor' => 'rgba(66, 134, 244, 1)',
@@ -92,7 +92,7 @@ class Routing extends AbstractElementService
             ],
             'routingConfig' => [
                 'osrm' => [
-                    'url' => 'https://',
+                    'url' => 'https://routing.openstreetmap.de/routed-%profile',
                     'attribution' => 'Daten © <a href="https://www.openstreetmap.org/copyright" class="link-primary">OpenStreetMap</a>-Mitwirkende
   (<a href="https://opendatacommons.org/licenses/odbl/index.html" class="link-primary">ODbL</a>), <a
   href="https://creativecommons.org/licenses/by-sa/2.0/" class="link-primary">CC-BY-SA</a>, <a
@@ -101,13 +101,13 @@ class Routing extends AbstractElementService
             ],
             'searchConfig' => [
                 'solr' => [
-                    'url' => 'https://',
+                    'url' => 'https://osm-photon-search.wheregroup.com/search/api?limit=20&lat=50.7163&lon=7.1366&osm_tag=!railway&osm_tag=!highway:elevator&osm_tag=!tourism&osm_tag=!amenity',
                     'query_key' => 'q',
                     'query_format' => '%s',
-                    'collection_path' => 'response.docs',
-                    'label_attribute' => 'label',
-                    'geom_attribute' => 'geom',
-                    'geom_format' => 'WKT',
+                    'collection_path' => 'features',
+                    'label_attribute' => '${properties.name} ${properties.street} ${properties.housenumber} ${properties.city} ${properties.country}',
+                    'geom_attribute' => 'geometry',
+                    'geom_format' => 'GeoJSON',
                     'geom_proj' => 'EPSG:4326',
                 ],
             ],
