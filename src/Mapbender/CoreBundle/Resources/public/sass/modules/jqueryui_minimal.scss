@@ -67,3 +67,9 @@
         margin-left: -0.5em; // != base theme -8px (not font-size responsive)
     }
 }
+
+/* Really hide the element that is intended to be hidden, but leave it accessible for screenreaders */
+.ui-helper-hidden-accessible {
+    position: absolute;
+    left: -9999px;
+}
