@@ -12,7 +12,7 @@ interface GlobalPermissionProvider
     public function getCategories(): array;
 
     /**
-     * returns all permission groups for this provider
+     * returns all permissions for this provider
      * @return array keys: unique string aliases for the permission. values: array with the keys `group` (string alias for
      * the category, see self::getCategories), `cssClass` (optional): see AbstractResourceDomain::getCssClassForAction, `label`: translation label,
      * `help` (optional): translation label for help text
