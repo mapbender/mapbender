@@ -37,11 +37,13 @@
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="twig" />
             <argument>%fom.user_entity%</argument>
+            <argument type="service" id="fom.security.resource_domain.installation" />
         </service>
         <service id="FOM\UserBundle\Controller\PermissionController"
                  class="FOM\UserBundle\Controller\PermissionController"
                  public="true">
             <argument type="service" id="fom.security.permission_manager" />
+            <argument type="service" id="fom.security.resource_domain.installation" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />

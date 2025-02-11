@@ -21,6 +21,7 @@ class SecurityController
                                 protected AuthorizationCheckerInterface $authorizationChecker,
                                 protected \Twig\Environment             $twig,
                                 protected string                        $userEntityClass,
+                                protected ResourceDomainInstallation    $installationPermissions,
     )
     {
     }
@@ -39,7 +40,7 @@ class SecurityController
         }
         $vars = array(
             'grants' => $grants,
-            'permission_categories' => PermissionController::categoryList(),
+            'permission_categories' => $this->installationPermissions->getCategoryList(),
             'users' => $grants['users'] ? $this->managerRegistry->getRepository(User::class)->findAll() : [],
             'groups' => $grants['groups'] ? $this->managerRegistry->getRepository(Group::class)->findAll() : [],
         );

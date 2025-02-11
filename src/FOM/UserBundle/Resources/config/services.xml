@@ -87,6 +87,8 @@
         <service id="fom.security.resource_domain.installation"
                  class="FOM\UserBundle\Security\Permission\ResourceDomainInstallation">
             <tag name="fom.security.resource_domain" priority="1" />
+            <!-- will contain all services tagged with "fom.security.global_permission", sorted by priority -->
+            <argument type="collection" />
         </service>
 
         <service id="fom.security.subject_domain.public"

@@ -92,6 +92,58 @@ And further down after checking if the form is submitted and valid:
 $this->permissionManager->savePermissions($myEntity, $form->get('security')->getData());
 ```
 
+## Adding global permissions
+If you want to add an installation-wide permission that is not dependent on a single resource, create a class implementing the `FOM\UserBundle\Security\Permission\GlobalPermissionProvider` interface and tag it with `fom.security.global_permission`.
+
+The interface has two methods that need to implemented:
+- `getCategories()`: Returns the permission categories you want to add to the list that appears when navigating to Security / Global Permissions.
+  can be left empty if you only want to extend a category that already exists.  
+  The keys should be unique string aliases for the category, the values translation keys for the human-readable values.
+- `getPermissions()`: Returns the actual permissions you want to add. The keys are unique (unique across all categories!) string aliases,
+  the values should be an array with the following keys:
+  - `category`: The alias for the category this permission should be added to
+  - `cssClass` (optional, default 'success'): The css class the permission should get when displayed in the backend (background color)
+
+For localisation, use the keys `fom.security.resource.installation.<alias>` resp. `fom.security.resource.installation.<alias>_help` for the help text.
+
+Example:
+
+```php
+#[AutoconfigureTag('fom.security.global_permission')
+class QueryBuilderPermissionProvider implements GlobalPermissionProvider
+{
+    const CATEGORY_NAME = "query_builder";
+    const PERMISSION_CREATE = "qb_create";
+    const PERMISSION_EDIT = "qb_edit";
+
+    public function getCategories(): array
+    {
+        return [self::CATEGORY_NAME => 'query_builder'];
+    }
+
+    public function getPermissions(): array
+    {
+        return [
+            self::PERMISSION_CREATE => [
+                'category' => self::CATEGORY_NAME,
+                'cssClass' => AbstractResourceDomain::CSS_CLASS_WARNING,
+            ],
+            self::PERMISSION_EDIT => [
+                'category' => self::CATEGORY_NAME,
+                'cssClass' => AbstractResourceDomain::CSS_CLASS_WARNING,
+            ],
+        ];
+    }
+}
+```
+
+If you don't use Autowiring, you need to add the tag definition in XML, for example:
+
+```xml
+<service id="mb.querybuilder.permission_provider" class="Mapbender\QueryBuilderBundle\Permission\QueryBuilderPermissionProvider">
+    <tag name="fom.security.global_permission" />
+</service>
+```
 
 ## Yaml Applications
 Yaml application's security is also stated in the yaml file, therefore the regular PermissionManager can't be used. 

@@ -2,8 +2,6 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
-use Doctrine\ORM\QueryBuilder;
-
 class ResourceDomainInstallation extends AbstractResourceDomain
 {
     const SLUG = "installation";
@@ -35,6 +33,31 @@ class ResourceDomainInstallation extends AbstractResourceDomain
     const ACTION_ACCESS_API = "access_api";
     const ACTION_UPLOAD_FILES = "upload_files";
 
+    public const CATEGORY_APPLICATION = "applications";
+    public const CATEGORY_SOURCES = "sources";
+    public const CATEGORY_PERMISSIONS = "permissions";
+    public const CATEGORY_USERS = "users";
+    public const CATEGORY_GROUPS = "groups";
+    public const CATEGORY_API = "api";
+
+    protected array $categoryList;
+    protected array $permissionList;
+
+
+    /**
+     * @param GlobalPermissionProvider[] $globalPermissionProviders
+     */
+    public function __construct(array $globalPermissionProviders)
+    {
+        $this->categoryList = $this->defaultGroups();
+        $this->permissionList = $this->defaultPermissions();
+
+        foreach ($globalPermissionProviders as $provider) {
+            $this->categoryList += $provider->getCategories();
+            $this->permissionList += $provider->getPermissions();
+        }
+    }
+
     public function getSlug(): string
     {
         return self::SLUG;
@@ -48,57 +71,129 @@ class ResourceDomainInstallation extends AbstractResourceDomain
 
     public function getActions(): array
     {
-        return [
-            self::ACTION_CREATE_APPLICATIONS,
-            self::ACTION_VIEW_ALL_APPLICATIONS,
-            self::ACTION_EDIT_ALL_APPLICATIONS,
-            self::ACTION_DELETE_ALL_APPLICATIONS,
-            self::ACTION_OWN_ALL_APPLICATIONS,
-            self::ACTION_VIEW_SOURCES,
-            self::ACTION_CREATE_SOURCES,
-            self::ACTION_REFRESH_SOURCES,
-            self::ACTION_EDIT_FREE_INSTANCES,
-            self::ACTION_DELETE_SOURCES,
-            self::ACTION_MANAGE_PERMISSION,
-            self::ACTION_VIEW_USERS,
-            self::ACTION_CREATE_USERS,
-            self::ACTION_EDIT_USERS,
-            self::ACTION_DELETE_USERS,
-            self::ACTION_VIEW_GROUPS,
-            self::ACTION_CREATE_GROUPS,
-            self::ACTION_EDIT_GROUPS,
-            self::ACTION_DELETE_GROUPS,
-            self::ACTION_ACCESS_API,
-            self::ACTION_UPLOAD_FILES,
-        ];
+        return array_keys($this->permissionList);
     }
 
     public function getCssClassForAction(string $action): string
     {
-        return match ($action) {
-            self::ACTION_EDIT_ALL_APPLICATIONS,
-            self::ACTION_CREATE_APPLICATIONS,
-            self::ACTION_CREATE_USERS,
-            self::ACTION_CREATE_GROUPS,
-            self::ACTION_CREATE_SOURCES,
-            self::ACTION_EDIT_USERS,
-            self::ACTION_EDIT_GROUPS,
-            self::ACTION_REFRESH_SOURCES,
-            self::ACTION_EDIT_FREE_INSTANCES => self::CSS_CLASS_WARNING,
-            self::ACTION_DELETE_ALL_APPLICATIONS,
-            self::ACTION_OWN_ALL_APPLICATIONS,
-            self::ACTION_MANAGE_PERMISSION,
-            self::ACTION_DELETE_SOURCES,
-            self::ACTION_DELETE_USERS,
-            self::ACTION_ACCESS_API,
-            self::ACTION_UPLOAD_FILES,
-            self::ACTION_DELETE_GROUPS => self::CSS_CLASS_DANGER,
-            default => self::CSS_CLASS_SUCCESS,
-        };
+        return $this->permissionList[$action]['cssClass'] ?? self::CSS_CLASS_SUCCESS;
     }
 
     function getTranslationPrefix(): string
     {
         return "fom.security.resource.installation";
+    }
+
+
+    public function getCategoryList(): array
+    {
+        return $this->categoryList;
+    }
+
+    public function getPermissions(string $category): array
+    {
+        return array_keys(array_filter($this->permissionList, fn($permission) => $permission['category'] === $category));
+    }
+
+    protected function defaultGroups(): array
+    {
+        return [
+            self::CATEGORY_APPLICATION => "mb.terms.application.plural",
+            self::CATEGORY_SOURCES => "mb.terms.source.plural",
+            self::CATEGORY_PERMISSIONS => "fom.user.userbundle.classes.permissions",
+            self::CATEGORY_USERS => "fom.user.userbundle.classes.users",
+            self::CATEGORY_GROUPS => "fom.user.userbundle.classes.groups",
+            self::CATEGORY_API => "fom.user.userbundle.classes.api",
+        ];
+    }
+
+    protected function defaultPermissions(): array
+    {
+        return [
+            self::ACTION_CREATE_APPLICATIONS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_APPLICATION,
+            ],
+            self::ACTION_VIEW_ALL_APPLICATIONS => [
+                'cssClass' => self::CSS_CLASS_SUCCESS,
+                'category' => self::CATEGORY_APPLICATION,
+            ],
+            self::ACTION_EDIT_ALL_APPLICATIONS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_APPLICATION,
+            ],
+            self::ACTION_DELETE_ALL_APPLICATIONS => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_APPLICATION,
+            ],
+            self::ACTION_OWN_ALL_APPLICATIONS => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_APPLICATION,
+            ],
+            self::ACTION_VIEW_SOURCES => [
+                'cssClass' => self::CSS_CLASS_SUCCESS,
+                'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_CREATE_SOURCES => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_REFRESH_SOURCES => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_EDIT_FREE_INSTANCES => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_DELETE_SOURCES => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_MANAGE_PERMISSION => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_PERMISSIONS,
+            ],
+            self::ACTION_VIEW_USERS => [
+                'cssClass' => self::CSS_CLASS_SUCCESS,
+                'category' => self::CATEGORY_USERS,
+            ],
+            self::ACTION_CREATE_USERS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_USERS,
+            ],
+            self::ACTION_EDIT_USERS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_USERS,
+            ],
+            self::ACTION_DELETE_USERS => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_USERS,
+            ],
+            self::ACTION_VIEW_GROUPS => [
+                'cssClass' => self::CSS_CLASS_SUCCESS,
+                'category' => self::CATEGORY_GROUPS,
+            ],
+            self::ACTION_CREATE_GROUPS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_GROUPS,
+            ],
+            self::ACTION_EDIT_GROUPS => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_GROUPS,
+            ],
+            self::ACTION_DELETE_GROUPS => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_GROUPS,
+            ],
+            self::ACTION_ACCESS_API => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_API,
+            ],
+            self::ACTION_UPLOAD_FILES => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_API,
+            ],
+        ];
     }
 }
