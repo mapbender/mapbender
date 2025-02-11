@@ -93,7 +93,7 @@ $this->permissionManager->savePermissions($myEntity, $form->get('security')->get
 ```
 
 ## Adding global permissions
-If you want to add an installation-wide permission that is not dependent on a single resource, create a class implementing the `FOM\UserBundle\Security\Permission\GlobalPermissionProvider` interface.
+If you want to add an installation-wide permission that is not dependent on a single resource, create a class implementing the `FOM\UserBundle\Security\Permission\GlobalPermissionProvider` interface and tag it with `fom.security.global_permission`.
 
 The interface has two methods that need to implemented:
 - `getCategories()`: Returns the permission categories you want to add to the list that appears when navigating to Security / Global Permissions.
@@ -109,6 +109,7 @@ For localisation, use the keys `fom.security.resource.installation.<alias>` resp
 Example:
 
 ```php
+#[AutoconfigureTag('fom.security.global_permission')
 class QueryBuilderPermissionProvider implements GlobalPermissionProvider
 {
     const CATEGORY_NAME = "query_builder";
@@ -134,6 +135,14 @@ class QueryBuilderPermissionProvider implements GlobalPermissionProvider
         ];
     }
 }
+```
+
+If you don't use Autowiring, you need to add the tag definition in XML, for example:
+
+```xml
+<service id="mb.querybuilder.permission_provider" class="Mapbender\QueryBuilderBundle\Permission\QueryBuilderPermissionProvider">
+    <tag name="fom.security.global_permission" />
+</service>
 ```
 
 ## Yaml Applications
