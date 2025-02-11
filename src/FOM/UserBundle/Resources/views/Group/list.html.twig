@@ -17,7 +17,9 @@
       {% for group in groups|sort((a,b) => a.title|lower <=> b.title|lower) %}
       <tr class="filterItem">
         <td>
-          <a href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
+          {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_GROUPS')) %}
+            <a href="{{ path('fom_user_group_edit', {'id': group.id}) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}">{{ group.title }}</a>
+          {% else %}{{ group.title }}{% endif %}
         </td>
         <td>{{ group.description }}</td>
         <td class="iconColumn">
