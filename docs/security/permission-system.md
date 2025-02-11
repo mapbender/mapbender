@@ -103,8 +103,8 @@ The interface has two methods that need to implemented:
   the values should be an array with the following keys:
   - `category`: The alias for the category this permission should be added to
   - `cssClass` (optional, default 'success'): The css class the permission should get when displayed in the backend (background color)
-  - `label`: The translation label that is displayed in the backend
-  - `help` (optional): The translation label for the popup with additional information that is shown after clicking the help icon in the backend.
+
+For localisation, use the keys `fom.security.resource.installation.<alias>` resp. `fom.security.resource.installation.<alias>_help` for the help text.
 
 Example:
 
@@ -126,12 +126,10 @@ class QueryBuilderPermissionProvider implements GlobalPermissionProvider
             self::PERMISSION_CREATE => [
                 'category' => self::CATEGORY_NAME,
                 'cssClass' => AbstractResourceDomain::CSS_CLASS_WARNING,
-                'help' => 'mb.querybuilder.permission.create',
             ],
             self::PERMISSION_EDIT => [
                 'category' => self::CATEGORY_NAME,
                 'cssClass' => AbstractResourceDomain::CSS_CLASS_WARNING,
-                'help' => 'mb.querybuilder.permission.edit',
             ],
         ];
     }

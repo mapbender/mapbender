@@ -112,111 +112,86 @@ class ResourceDomainInstallation extends AbstractResourceDomain
         return [
             self::ACTION_CREATE_APPLICATIONS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.create_applications',
                 'category' => self::CATEGORY_APPLICATION,
             ],
             self::ACTION_VIEW_ALL_APPLICATIONS => [
                 'cssClass' => self::CSS_CLASS_SUCCESS,
-                'label' => 'fom.security.resource.installation.view_all_applications',
-                'help' => 'fom.security.resource.installation.view_all_applications_help',
                 'category' => self::CATEGORY_APPLICATION,
             ],
             self::ACTION_EDIT_ALL_APPLICATIONS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.edit_all_applications',
-                'help' => 'fom.security.resource.installation.edit_all_applications_help',
                 'category' => self::CATEGORY_APPLICATION,
             ],
             self::ACTION_DELETE_ALL_APPLICATIONS => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.delete_all_applications',
-                'help' => 'fom.security.resource.installation.delete_all_applications_help',
                 'category' => self::CATEGORY_APPLICATION,
             ],
             self::ACTION_OWN_ALL_APPLICATIONS => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.own_all_applications',
-                'help' => 'fom.security.resource.installation.own_all_applications_help',
                 'category' => self::CATEGORY_APPLICATION,
             ],
             self::ACTION_VIEW_SOURCES => [
                 'cssClass' => self::CSS_CLASS_SUCCESS,
-                'label' => 'fom.security.resource.installation.view_sources',
                 'category' => self::CATEGORY_SOURCES,
             ],
             self::ACTION_CREATE_SOURCES => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.create_sources',
                 'category' => self::CATEGORY_SOURCES,
             ],
             self::ACTION_REFRESH_SOURCES => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.refresh_sources',
                 'category' => self::CATEGORY_SOURCES,
             ],
             self::ACTION_EDIT_FREE_INSTANCES => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.edit_free_instances',
                 'category' => self::CATEGORY_SOURCES,
             ],
             self::ACTION_DELETE_SOURCES => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.delete_sources',
                 'category' => self::CATEGORY_SOURCES,
             ],
             self::ACTION_MANAGE_PERMISSION => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.manage_permissions',
                 'category' => self::CATEGORY_PERMISSIONS,
             ],
             self::ACTION_VIEW_USERS => [
                 'cssClass' => self::CSS_CLASS_SUCCESS,
-                'label' => 'fom.security.resource.installation.view_users',
                 'category' => self::CATEGORY_USERS,
             ],
             self::ACTION_CREATE_USERS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.create_users',
                 'category' => self::CATEGORY_USERS,
             ],
             self::ACTION_EDIT_USERS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.edit_users',
                 'category' => self::CATEGORY_USERS,
             ],
             self::ACTION_DELETE_USERS => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.delete_users',
                 'category' => self::CATEGORY_USERS,
             ],
             self::ACTION_VIEW_GROUPS => [
                 'cssClass' => self::CSS_CLASS_SUCCESS,
-                'label' => 'fom.security.resource.installation.view_groups',
                 'category' => self::CATEGORY_GROUPS,
             ],
             self::ACTION_CREATE_GROUPS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.create_groups',
                 'category' => self::CATEGORY_GROUPS,
             ],
             self::ACTION_EDIT_GROUPS => [
                 'cssClass' => self::CSS_CLASS_WARNING,
-                'label' => 'fom.security.resource.installation.edit_groups',
                 'category' => self::CATEGORY_GROUPS,
             ],
             self::ACTION_DELETE_GROUPS => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.delete_groups',
                 'category' => self::CATEGORY_GROUPS,
             ],
             self::ACTION_ACCESS_API => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.access_api',
                 'category' => self::CATEGORY_API,
             ],
             self::ACTION_UPLOAD_FILES => [
                 'cssClass' => self::CSS_CLASS_DANGER,
-                'label' => 'fom.security.resource.installation.upload_files',
                 'category' => self::CATEGORY_API,
             ],
         ];
