@@ -44,11 +44,7 @@
             this._createEvents();
             this._trigger('ready');
 
-            const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
-            if (hasNonPersistentScrollbars && this.element.closest('.sideContent').length) {
-                this.element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
-                this.element.closest('.accordion-cell').css('padding-right', '15px');
-            }
+            Mapbender.ElementUtil.adjustScrollbarsIfNecessary(this.element);
         },
         _createTree: function () {
             var sources = this.model.getSources();

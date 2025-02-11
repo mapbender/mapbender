@@ -612,5 +612,18 @@ Mapbender.ElementUtil = {
         // Use (non-cascaded!) applied CSS visibility rule
         // Mapbender responsive controls use display: none
         return $element.css('display') !== 'none';
+    },
+
+    /**
+     * in some browsers, the right-hand side of an element is not accessible when placed within the sidepane.
+     * This method corrects that by moving the scrollbar 15px to the right.
+     * @param {jQuery} $element
+     */
+    adjustScrollbarsIfNecessary: function ($element) {
+        const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
+        if (hasNonPersistentScrollbars && $element.closest('.sideContent').length) {
+            $element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
+            $element.closest('.accordion-cell').css('padding-right', '15px');
+        }
     }
 };
