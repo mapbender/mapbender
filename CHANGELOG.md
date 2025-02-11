@@ -29,6 +29,7 @@ Bugfixes:
 Other:
 * Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639), [PR#1662](https://github.com/mapbender/mapbender/pull/1662))
 * [Manager] Provide detailed information in all "delete"-dialogs ([PR#1631](https://github.com/mapbender/mapbender/pull/1631)) 
+* [Security] Make global permission extendable ([PR#1693](https://github.com/mapbender/mapbender/pull/1693)) 
 * Translation improvements ([PR#1654](https://github.com/mapbender/mapbender/pull/1654))
 
 ## v4.0.3
