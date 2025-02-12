@@ -1,4 +1,4 @@
-## v4.1.0-RC1
+## v4.1.0
 Features:
 * [LayerTree] If a WMS has several styles, the user now has the option of selecting these in the context menu of the layertree ([PR#1636](https://github.com/mapbender/mapbender/pull/1636), [PR#1648](https://github.com/mapbender/mapbender/pull/1648), [PR#1674](https://github.com/mapbender/mapbender/pull/1674))
 * [Manager] Added sort functionality for users, user groups and global permissions ([PR#1633](https://github.com/mapbender/mapbender/pull/1633)) 
