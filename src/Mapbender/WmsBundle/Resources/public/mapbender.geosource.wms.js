@@ -125,10 +125,12 @@ window.Mapbender = Mapbender || {};
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
                 for (let index in (diff.activate || [])) {
-                    if (diff.activate[index].id === layer.getId()) layer.setSelected(true);
+                    const id = (!isNaN(diff.activate[index])) ? diff.activate[index] : diff.activate[index].id;
+                    if (id === layer.getId()) layer.setSelected(true);
                 }
                 for (let index in (diff.deactivate || [])) {
-                    if (diff.deactivate[index].id === layer.getId()) layer.setSelected(false);
+                    const id = (!isNaN(diff.deactivate[index])) ? diff.deactivate[index] : diff.deactivate[index].id;
+                    if (id === layer.getId()) layer.setSelected(false);
                 }
             }.bind(this));
         }
