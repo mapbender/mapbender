@@ -58,6 +58,7 @@ class OsrmDriver extends RoutingDriver
         $steps = ($config['steps']) ?: false;
         $queryParams = [
             'geometries' => 'geojson',
+            'overview' => 'full', 
             'steps' => $steps,
             # 'alternatives' => ($config['alternatives']) ?: false,
         ];
