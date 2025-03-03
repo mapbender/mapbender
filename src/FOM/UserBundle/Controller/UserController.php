@@ -44,15 +44,15 @@ class UserController extends UserControllerBase
         return $this->createOrEditUser($request, $user);
     }
 
-    /**
-     * @param Request $request
-     * @param string $id
-     * @return Response
-     */
     #[ManagerRoute('/user/{id}/edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_USERS);
+        if (!$this->isGranted(ResourceDomainInstallation::ACTION_EDIT_USERS)) {
+            $loggedInUser = $this->getUser();
+            if (!($loggedInUser instanceof User) || !($loggedInUser->getId() === intval($id))) {
+                throw $this->createAccessDeniedException();
+            }
+        }
 
         /** @var User|null $user */
         $user = $this->getUserRepository()->find($id);
