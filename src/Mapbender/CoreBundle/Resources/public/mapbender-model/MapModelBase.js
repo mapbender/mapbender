@@ -1159,10 +1159,10 @@ window.Mapbender.MapModelBase = (function() {
             for (i = 0; i < (diff && diff.sources || []).length; ++i) {
                 var sourceDiffEntry = diff.sources[i];
                 for (j = 0; j < (sourceDiffEntry.activate || []).length; ++j) {
-                    paramParts.slon.push([sourceDiffEntry.id, sourceDiffEntry.activate[j]].join(':'));
+                    paramParts.slon.push([sourceDiffEntry.id, sourceDiffEntry.activate[j].id].join(':'));
                 }
                 for (j = 0; j < (sourceDiffEntry.deactivate || []).length; ++j) {
-                    paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j]].join(':'));
+                    paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j].id].join(':'));
                 }
                 if (typeof (sourceDiffEntry.opacity) !== 'undefined') {
                     paramParts.sop.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
