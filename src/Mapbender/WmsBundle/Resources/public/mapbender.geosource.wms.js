@@ -12,7 +12,7 @@ window.Mapbender = Mapbender || {};
 
         getLegend() {
             if (this.options.style && this.options.style !== 'default' && this.options.availableStyles) {
-                for(const style of this.options.availableStyles) {
+                for (const style of this.options.availableStyles) {
                     if (style.name === this.options.style && style.legendUrl?.onlineResource?.href) {
                         return {
                             type: 'url',
@@ -125,11 +125,11 @@ window.Mapbender = Mapbender || {};
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
                 for (let index in (diff.activate || [])) {
-                    const id = (!isNaN(diff.activate[index])) ? diff.activate[index] : diff.activate[index].id;
+                    const id = ((typeof diff.activate[index]) === 'object') ? diff.activate[index].id : diff.activate[index];
                     if (id === layer.getId()) layer.setSelected(true);
                 }
                 for (let index in (diff.deactivate || [])) {
-                    const id = (!isNaN(diff.deactivate[index])) ? diff.deactivate[index] : diff.deactivate[index].id;
+                    const id = ((typeof diff.deactivate[index]) === 'object') ? diff.deactivate[index].id : diff.deactivate[index];
                     if (id === layer.getId()) layer.setSelected(false);
                 }
             }.bind(this));
