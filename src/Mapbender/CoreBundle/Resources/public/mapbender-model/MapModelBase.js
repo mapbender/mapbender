@@ -432,6 +432,7 @@ window.Mapbender.MapModelBase = (function() {
                 'sloff',
                 'lson',
                 'lsoff',
+                'slstyle',
                 'sop',
                 'wms_id',
                 'wms_url'
@@ -1153,7 +1154,8 @@ window.Mapbender.MapModelBase = (function() {
                 lsoff: ((diff && diff.layersets || {}).deactivate || []).slice(),   // =Layersets off
                 slon: [],
                 sloff: [],
-                sop: []
+                sop: [],
+                slstyle: [],
             };
             var i, j;
             for (i = 0; i < (diff && diff.sources || []).length; ++i) {
@@ -1163,6 +1165,9 @@ window.Mapbender.MapModelBase = (function() {
                 }
                 for (j = 0; j < (sourceDiffEntry.deactivate || []).length; ++j) {
                     paramParts.sloff.push([sourceDiffEntry.id, sourceDiffEntry.deactivate[j].id].join(':'));
+                }
+                for (j = 0; j < (sourceDiffEntry.changeStyle || []).length; ++j) {
+                    paramParts.slstyle.push([sourceDiffEntry.id, sourceDiffEntry.changeStyle[j].id, sourceDiffEntry.changeStyle[j].style].join(':'));
                 }
                 if (typeof (sourceDiffEntry.opacity) !== 'undefined') {
                     paramParts.sop.push([sourceDiffEntry.id, parseFloat(sourceDiffEntry.opacity).toFixed(2)].join(':'));
@@ -1189,7 +1194,7 @@ window.Mapbender.MapModelBase = (function() {
             var diff = {
                 layersets: {
                     activate: params.lson && params.lson.split(',') || [],
-                    deactivate: params.lsoff && params.lsoff.split(',') || []
+                    deactivate: params.lsoff && params.lsoff.split(',') || [],
                 },
                 sources: []
             };
@@ -1201,11 +1206,13 @@ window.Mapbender.MapModelBase = (function() {
             var sourceParamParts = {
                 slon: params.slon && params.slon.split(',') || [],
                 sloff: params.sloff && params.sloff.split(',') || [],
-                sop: params.sop && params.sop.split(',') || []
+                sop: params.sop && params.sop.split(',') || [],
+                slstyle: params.slstyle && params.slstyle.split(',') || [],
             };
+
             var _getSourceDiffRef = function(id) {
                 if (!sourceDiffs[id]) {
-                    sourceDiffs[id] = {id: id, activate: [], deactivate: []};
+                    sourceDiffs[id] = {id: id, activate: [], deactivate: [], changeStyle: []};
                     diff.sources.push(sourceDiffs[parts[0]]);
                 }
                 return sourceDiffs[id];
@@ -1218,6 +1225,10 @@ window.Mapbender.MapModelBase = (function() {
             for (i = 0; i < sourceParamParts.sloff.length; ++i) {
                 parts = sourceParamParts.sloff[i].split(':', 2);
                 _getSourceDiffRef(parts[0]).deactivate.push(parts[1]);
+            }
+            for (i = 0; i < sourceParamParts.slstyle.length; ++i) {
+                parts = sourceParamParts.slstyle[i].split(':', 3);
+                _getSourceDiffRef(parts[0]).changeStyle.push({id: parts[1], style: parts[2]});
             }
             for (i = 0; i < sourceParamParts.sop.length; ++i) {
                 parts = sourceParamParts.sop[i].split(':', 2);
