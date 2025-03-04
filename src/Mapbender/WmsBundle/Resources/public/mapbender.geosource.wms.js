@@ -104,14 +104,32 @@ window.Mapbender = Mapbender || {};
          */
         getSettings() {
             const selectedLayers = this.getRootLayer().getSelectedList().map(function (layer) {
-                return {
+                const object = {
                     id: layer.getId(),
                     name: layer.getName(),
                 };
+                if (layer.options.style && layer.options.style !== "default") {
+                    object.style = layer.options.style;
+                }
+                return object;
             });
             return Object.assign(super.getSettings(this), {
                 selectedLayers: selectedLayers
             });
+        }
+
+        applySettings(settings) {
+            super.applySettings(settings);
+            // apply styles
+
+            Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
+                for (let index in (settings.selectedLayers || [])) {
+                    if (settings.selectedLayers[index].id === layer.getId() && settings.selectedLayers[index].style) {
+                        layer.options.style = settings.selectedLayers[index].style;
+                    }
+                }
+            }.bind(this));
+
         }
 
         /**
@@ -120,7 +138,7 @@ window.Mapbender = Mapbender || {};
         applySettingsDiff(diff) {
             super.applySettingsDiff(diff);
 
-            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length);
+            const isDiffValid = diff && ((diff.activate || []).length || (diff.deactivate || []).length || (diff.changeStyle || []).length);
             if (!isDiffValid) return;
 
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (layer, index, parents) {
@@ -132,6 +150,12 @@ window.Mapbender = Mapbender || {};
                     const id = ((typeof diff.deactivate[index]) === 'object') ? diff.deactivate[index].id : diff.deactivate[index];
                     if (id === layer.getId()) layer.setSelected(false);
                 }
+                for (let index in (diff.changeStyle || [])) {
+                    if (diff.changeStyle[index].id === layer.getId()) {
+                        layer.options.style = diff.changeStyle[index].style;
+                    }
+                }
+
             }.bind(this));
         }
 

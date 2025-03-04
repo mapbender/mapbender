@@ -15,6 +15,7 @@
  * @property {Number} [opacity]
  * @property {Array<Object>} [activate]
  * @property {Array<Object>} [deactivate]
+ * @property {Array<Object>} [changeStyle]
  */
 
 window.Mapbender = Mapbender || {};
@@ -336,6 +337,7 @@ window.Mapbender = Mapbender || {};
                         ) === -1;
                     })
                 };
+            diff.changeStyle = (to.selectedLayers || []).filter((layer) => !!layer.style);
 
             if (to.opacity !== from.opacity) {
                 diff.opacity = to.opacity
@@ -345,6 +347,9 @@ window.Mapbender = Mapbender || {};
             }
             if (!diff.deactivate.length) {
                 delete (diff.deactivate);
+            }
+            if (!diff.changeStyle.length) {
+                delete (diff.changeStyle);
             }
             // null if completely empty
             return Object.keys(diff).length && diff || null;
@@ -364,6 +369,17 @@ window.Mapbender = Mapbender || {};
                 return -1 === ((diff || {}).deactivate || []).findIndex(diffLayer => (diffLayer.options?.id ?? diffLayer.id) === (layer.options?.id ?? layer.id));
             });
             settings.selectedLayers = settings.selectedLayers.concat((diff || {}).activate || []);
+
+            if (diff.changeStyle) {
+                for (const layer of settings.selectedLayers) {
+                    for (const styleLayer of diff.changeStyle) {
+                        if (layer.id === styleLayer.id) {
+                            layer.style = styleLayer.style;
+                        }
+                    }
+                }
+            }
+
             return settings;
         }
 
