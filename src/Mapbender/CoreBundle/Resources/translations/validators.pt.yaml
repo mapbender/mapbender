@@ -1,0 +1,4 @@
+mb.core.simplesearch.errors:
+  invalid_query_format: 'O formato de consulta fornecido não contém placeholders. Veja o texto de ajuda!'
+  invalid_epsg_code: 'O texto inserido não é um código EPSG válido. Insira o código no formato EPSG:1234'
+  no_configuration_added: 'Adicione pelo menos uma configuração'

@@ -129,10 +129,6 @@ mb:
         result_icon_url.help: 'URL a un archivo de imagen que se utilizará como marcador para geometrías de punto. Puede ser relativa o absoluta. Para el pin estándar, use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
         result_icon_offset: 'Desplazamiento del icono'
         result_icon_offset.help: 'Corrección de posición para el icono como desplazamiento de x e y separados por coma, por ejemplo, <code>-6,-32</code> para el pin estándar'
-      errors:
-        invalid_query_format: 'El formato de consulta especificado no contiene marcadores de posición. ¡Lea el texto de ayuda!'
-        invalid_epsg_code: 'El texto ingresado no es un código EPSG válido. Ingrese el código en el formato EPSG:1234'
-        no_configuration_added: 'Por favor, añade al menos una configuración'
     searchrouter:
       no_results: 'No hay resultados'
       result_counter: 'Resultados: %count%'
