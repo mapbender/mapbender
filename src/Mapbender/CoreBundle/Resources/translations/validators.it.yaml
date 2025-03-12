@@ -1,0 +1,4 @@
+mb.core.simplesearch.errors:
+  invalid_query_format: 'Il formato di query specificato non contiene segnaposto. Leggere il testo di aiuto!'
+  invalid_epsg_code: 'Il testo inserito non è un codice EPSG valido. Inserire il codice nel formato EPSG:1234'
+  no_configuration_added: 'Si prega di aggiungere almeno una configurazione'
