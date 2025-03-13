@@ -308,7 +308,7 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
         return $attribution;
     }
 
-    protected function parseLayerBoundingBox(\DOMElement $element = null)
+    protected function parseLayerBoundingBox(?\DOMElement $element = null)
     {
         if ($element) {
             $bbox = new BoundingBox();
@@ -354,7 +354,7 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
      * @param \DOMElement|null $listEl
      * @return string[]
      */
-    protected function parseKeywordList(\DOMElement $listEl = null)
+    protected function parseKeywordList(?\DOMElement $listEl = null)
     {
         $keywords = array();
         $children = $listEl ? $this->getChildNodesByTagName($listEl, 'Keyword') : array();

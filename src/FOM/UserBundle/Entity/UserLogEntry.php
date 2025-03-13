@@ -47,9 +47,9 @@ class UserLogEntry
     /**
      * Constructor
      *
-     * @param array $args
+     * @param array|null $args
      */
-    public function __construct(array $args = null)
+    public function __construct(?array $args = null)
     {
         if (is_array($args)) {
             $this->fill($args);

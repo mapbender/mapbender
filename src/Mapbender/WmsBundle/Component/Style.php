@@ -101,7 +101,7 @@ class Style implements MutableUrlTarget
      * @param LegendUrl|null $legendUrl
      * @return $this
      */
-    public function setLegendUrl(LegendUrl $legendUrl = null)
+    public function setLegendUrl(?LegendUrl $legendUrl = null)
     {
         $this->legendUrl = $legendUrl;
         return $this;

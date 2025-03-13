@@ -25,7 +25,7 @@ class SourceInstanceRepository extends EntityRepository
      * @param int|null $offset
      * @return SourceInstance[]
      */
-    public function findReusableInstances(array $criteria = null, array $orderBy = null, $limit = null, $offset = null)
+    public function findReusableInstances(?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         $criteria = array_replace($criteria ?: array(), array(
             'layerset' => null,
@@ -40,7 +40,7 @@ class SourceInstanceRepository extends EntityRepository
      * @param null $offset
      * @return SourceInstance[]
      */
-    public function findBoundInstances(array $criteria = null, array $orderBy = null, $limit = null, $offset = null)
+    public function findBoundInstances(?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         $instances = $this->findBy($criteria ?: array(), $orderBy, $limit, $offset);
         if (!is_array($criteria) || !array_key_exists('layerset', $criteria)) {

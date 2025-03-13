@@ -56,7 +56,7 @@ class SourceToSourceInstances
     /**
      * @param SourceInstance[]|null $instances
      */
-    public function setSourceInstances(array $instances = null)
+    public function setSourceInstances(?array $instances = null)
     {
         $instances = $instances ?: array();
         $this->instances = array(
