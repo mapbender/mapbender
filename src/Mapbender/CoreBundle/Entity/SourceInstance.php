@@ -93,7 +93,7 @@ abstract class SourceInstance extends SourceInstanceAssignment
      * @param Layerset|null $layerset
      * @return $this
      */
-    public function setLayerset(Layerset $layerset=null)
+    public function setLayerset(?Layerset $layerset = null)
     {
         $this->layerset = $layerset;
         return $this;

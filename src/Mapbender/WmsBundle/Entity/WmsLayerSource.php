@@ -357,10 +357,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     }
 
     /**
-     * @param BoundingBox $latlonBounds
+     * @param BoundingBox|null $latlonBounds
      * @return $this
      */
-    public function setLatlonBounds(BoundingBox $latlonBounds = null)
+    public function setLatlonBounds(?BoundingBox $latlonBounds = null)
     {
         $this->latlonBounds = $latlonBounds;
         return $this;
@@ -449,10 +449,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Add style
      *
-     * @param Style $style
+     * @param Style|null $style
      * @return $this
      */
-    public function addStyle(Style $style = null)
+    public function addStyle(?Style $style = null)
     {
         $this->styles[] = $style;
         return $this;
@@ -500,10 +500,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Set scale
      *
-     * @param MinMax $scale
+     * @param MinMax|null $scale
      * @return $this
      */
-    public function setScale(MinMax $scale = null)
+    public function setScale(?MinMax $scale = null)
     {
         $this->scale = $scale;
         return $this;
@@ -560,10 +560,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Set attribution
      *
-     * @param Attribution $attribution
+     * @param Attribution|null $attribution
      * @return $this
      */
-    public function setAttribution(Attribution $attribution = null)
+    public function setAttribution(?Attribution $attribution = null)
     {
         $this->attribution = $attribution;
         return $this;
@@ -713,10 +713,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Add dataUrl
      *
-     * @param OnlineResource $dataUrl
+     * @param OnlineResource|null $dataUrl
      * @return $this
      */
-    public function addDataUrl(OnlineResource $dataUrl = null)
+    public function addDataUrl(?OnlineResource $dataUrl = null)
     {
         $this->dataUrl[] = $dataUrl;
         return $this;

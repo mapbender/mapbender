@@ -43,7 +43,7 @@ class SourceInstanceController extends ApplicationControllerBase
     #[Route('/application/{slug}/instance/{instanceId}', name: 'mapbender_manager_repository_instance')]
     #[Route('/instance/{instanceId}', name: 'mapbender_manager_repository_unowned_instance', requirements: ['instanceId' => '\d+'])]
     #[Route('/instance/{instanceId}/layerset/{layerset}', name: 'mapbender_manager_repository_unowned_instance_scoped', requirements: ['instanceId' => '\d+'])]
-    public function edit(Request $request, $instanceId, $slug = null, Layerset $layerset = null)
+    public function edit(Request $request, $instanceId, $slug = null, ?Layerset $layerset = null)
     {
         /** @var SourceInstance|null $instance */
         $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);

@@ -47,7 +47,7 @@ class ApplicationYAMLMapper
     public function __construct($definitions,
                                 ElementEntityFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
                                 ApplicationEngineListener $onLoadListener,
-                                LoggerInterface $logger = null)
+                                ?LoggerInterface $logger = null)
     {
         $this->definitions = $definitions;
         $this->elementFactory = $elementFactory;

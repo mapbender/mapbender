@@ -560,10 +560,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set getCapabilities
      *
-     * @param RequestInformation $getCapabilities
+     * @param RequestInformation|null $getCapabilities
      * @return $this
      */
-    public function setGetCapabilities(RequestInformation $getCapabilities = NULL)
+    public function setGetCapabilities(?RequestInformation $getCapabilities = NULL)
     {
         $this->getCapabilities = $getCapabilities;
         return $this;
@@ -582,10 +582,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set getMap
      *
-     * @param RequestInformation $getMap
+     * @param RequestInformation|null $getMap
      * @return $this
      */
-    public function setGetMap(RequestInformation $getMap = NULL)
+    public function setGetMap(?RequestInformation $getMap = NULL)
     {
         $this->getMap = $getMap;
         return $this;
@@ -604,10 +604,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set getFeatureInfo
      *
-     * @param RequestInformation $getFeatureInfo
+     * @param RequestInformation|null $getFeatureInfo
      * @return $this
      */
-    public function setGetFeatureInfo(RequestInformation $getFeatureInfo = NULL)
+    public function setGetFeatureInfo(?RequestInformation $getFeatureInfo = NULL)
     {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
@@ -626,10 +626,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set describeLayer
      *
-     * @param RequestInformation $describeLayer
+     * @param RequestInformation|null $describeLayer
      * @return $this
      */
-    public function setDescribeLayer(RequestInformation $describeLayer = NULL)
+    public function setDescribeLayer(?RequestInformation $describeLayer = NULL)
     {
         $this->describeLayer = $describeLayer;
         return $this;
@@ -648,10 +648,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set getLegendGraphic
      *
-     * @param RequestInformation $getLegendGraphic
+     * @param RequestInformation|null $getLegendGraphic
      * @return $this
      */
-    public function setGetLegendGraphic(RequestInformation $getLegendGraphic = NULL)
+    public function setGetLegendGraphic(?RequestInformation $getLegendGraphic = NULL)
     {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
@@ -670,10 +670,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set getStyles
      *
-     * @param RequestInformation $getStyles
+     * @param RequestInformation|null $getStyles
      * @return $this
      */
-    public function setGetStyles(RequestInformation $getStyles = NULL)
+    public function setGetStyles(?RequestInformation $getStyles = NULL)
     {
         $this->getStyles = $getStyles;
         return $this;
@@ -692,10 +692,10 @@ class WmsSource extends HttpParsedSource
     /**
      * Set putStyles
      *
-     * @param RequestInformation $putStyles
+     * @param RequestInformation|null $putStyles
      * @return $this
      */
-    public function setPutStyles(RequestInformation $putStyles = NULL)
+    public function setPutStyles(?RequestInformation $putStyles = NULL)
     {
         $this->putStyles = $putStyles;
         return $this;

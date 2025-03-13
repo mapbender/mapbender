@@ -414,10 +414,10 @@ class Application
     /**
      * Set extra assets
      *
-     * @param array $extra_assets
+     * @param array|null $extra_assets
      * @return $this
      */
-    public function setExtraAssets(array $extra_assets = null)
+    public function setExtraAssets(?array $extra_assets = null)
     {
         $this->extra_assets = $extra_assets;
 

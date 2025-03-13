@@ -108,7 +108,7 @@ class PermissionManager extends Voter
      * returns the resource domain for a given resource
      * @see AbstractResourceDomain::supports()
      */
-    public function findResourceDomainFor(mixed $resource, string $action = null, bool $throwIfNotFound = false): ?AbstractResourceDomain
+    public function findResourceDomainFor(mixed $resource, ?string $action = null, bool $throwIfNotFound = false): ?AbstractResourceDomain
     {
         foreach ($this->resourceDomains as $resourceDomain) {
             if ($resourceDomain->supports($resource, $action)) return $resourceDomain;

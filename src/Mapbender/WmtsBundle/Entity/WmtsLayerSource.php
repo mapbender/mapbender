@@ -141,7 +141,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param BoundingBox|null $latlonBounds
      * @return $this
      */
-    public function setLatlonBounds(BoundingBox $latlonBounds = NULL)
+    public function setLatlonBounds(?BoundingBox $latlonBounds = NULL)
     {
         $this->latlonBounds = $latlonBounds;
         return $this;
