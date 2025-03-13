@@ -166,7 +166,7 @@ class Theme
      * @param Theme|null $parent
      * @return $this
      */
-    public function setParent(Theme $parent = NULL)
+    public function setParent(?Theme $parent = NULL)
     {
         $this->parent = $parent;
         return $this;

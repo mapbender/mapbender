@@ -57,10 +57,10 @@ abstract class SourceInstanceItem
     }
 
     /**
-     * @param SourceInstance $sourceInstance
+     * @param SourceInstance|null $sourceInstance
      * @return $this
      */
-    public function setSourceInstance(SourceInstance $sourceInstance = NULL)
+    public function setSourceInstance(?SourceInstance $sourceInstance = NULL)
     {
         $this->sourceInstance = $sourceInstance;
         return $this;

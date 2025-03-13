@@ -80,7 +80,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * WmsInstanceLayer constructor.
      */
-    public function __construct(SourceLoaderSettings $settings = null)
+    public function __construct(?SourceLoaderSettings $settings = null)
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";

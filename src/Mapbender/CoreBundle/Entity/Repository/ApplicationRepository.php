@@ -28,7 +28,7 @@ class ApplicationRepository extends EntityRepository
      * @param int|null $offset
      * @return Application[]
      */
-    public function findWithInstancesOf(Source $source, array $criteria=null, array $orderBy = null, $limit = null, $offset = null)
+    public function findWithInstancesOf(Source $source, ?array $criteria=null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         /** @var LayersetRepository $layersetRepository */
         $layersetRepository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
@@ -62,7 +62,7 @@ class ApplicationRepository extends EntityRepository
      * @param int|null $offset
      * @return Application[]
      */
-    public function findWithSourceInstance(SourceInstance $instance, array $criteria = null, array $orderBy = null, $limit = null, $offset = null)
+    public function findWithSourceInstance(SourceInstance $instance, ?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         /** @var LayersetRepository $layersetRepository */
         $layersetRepository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');

@@ -29,7 +29,7 @@ class LayersetRepository extends EntityRepository
      * @param null $offset
      * @return Layerset[]
      */
-    public function findWithInstancesOf(Source $source, array $criteria=null, array $orderBy = null, $limit = null, $offset = null)
+    public function findWithInstancesOf(Source $source, ?array $criteria=null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         $layersets = array();
         foreach ($this->findBy($criteria ?: array(), $orderBy) as $layerset) {
@@ -62,7 +62,7 @@ class LayersetRepository extends EntityRepository
      * @param int|null $offset
      * @return Layerset[]
      */
-    public function findWithInstance(SourceInstance $instance, array $criteria = null, array $orderBy = null, $limit = null, $offset = null)
+    public function findWithInstance(SourceInstance $instance, ?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         $matches = array();
         foreach ($this->findBy($criteria ?: array(), $orderBy) as $layerset) {

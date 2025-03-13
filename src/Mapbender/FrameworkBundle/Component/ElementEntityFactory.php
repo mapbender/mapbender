@@ -32,7 +32,7 @@ class ElementEntityFactory
      * @param Application|null $application
      * @return Element
      */
-    public function newEntity($className, $region, Application $application = null)
+    public function newEntity($className, $region, ?Application $application = null)
     {
         $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($className);
         $entity = new Element();

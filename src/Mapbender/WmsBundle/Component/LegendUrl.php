@@ -15,14 +15,14 @@ class LegendUrl
 
     /** @var int|null */
     public $height;
-    
+
     /**
-     * 
-     * @param OnlineResource $onlineResource
+     *
+     * @param OnlineResource|null $onlineResource
      * @param int $width
      * @param int $height
      */
-    public function __construct(OnlineResource $onlineResource = null, $width = null, $height = null)
+    public function __construct(?OnlineResource $onlineResource = null, $width = null, $height = null)
     {
         $this->onlineResource = $onlineResource;
         $this->width = $width;
