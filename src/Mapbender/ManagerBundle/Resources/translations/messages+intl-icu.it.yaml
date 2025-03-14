@@ -206,6 +206,9 @@ mb:
       export_application: Esportazione
     components:
       popup:
+        duplicate_element:
+          title: 'Duplicare un elemento'
+          confirm: 'Si vuole davvero duplicare l''elemento "{element_name}"'
         add_element:
           title: 'Aggiungi elemento'
         edit_element:
