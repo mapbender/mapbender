@@ -113,6 +113,7 @@
                       data-slug="{{ application.slug }}"
                       data-token="{{ csrf_token('element_delete') }}"
                       data-url="{{ path('mapbender_manager_element_delete', {'slug': application.slug, 'id': element.id}) }}"
+                      data-test="mb-element-delete-{{ element.title }}"
                       ><i class="far fa-trash-can"></i></span>
               </td>
               </tr>
