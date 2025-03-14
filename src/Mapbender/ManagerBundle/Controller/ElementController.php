@@ -428,6 +428,43 @@ class ElementController extends ApplicationControllerBase
     }
 
     /**
+     * Duplicate element
+     *
+     * @param Request $request
+     * @param string $slug
+     * @param string $id
+     * @return Response
+     */
+    #[ManagerRoute('/application/{slug}/element/{id}/duplicate', name: 'mapbender_manager_element_duplicate', methods: ['POST'])]
+    public function duplicateAction(Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $element = $this->getRepository()->find($id);
+        $application = $element->getApplication();
+
+        if ($this->isCsrfTokenValid('element_duplicate', $request->request->get('token')) === false) {
+            throw new InvalidCsrfTokenException('Invalid CSRF token.');
+        }
+
+        try {
+            $clonedElement = clone $element;
+
+            $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
+            $regionSiblings = $application->getElements()->matching($sameRegionCriteria);
+            $newWeight = $regionSiblings->count();
+            $clonedElement->setWeight($newWeight);
+
+            $this->em->persist($clonedElement);
+            $this->em->flush();
+
+            return new Response('', 200);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
+    /**
      * @return EntityRepository
      */
     protected function getRepository()
