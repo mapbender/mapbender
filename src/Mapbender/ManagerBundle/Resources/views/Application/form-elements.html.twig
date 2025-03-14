@@ -106,7 +106,6 @@
                       data-slug="{{ application.slug }}"
                       data-token="{{ csrf_token('element_duplicate') }}"
                       data-url="{{ path('mapbender_manager_element_duplicate', {'slug': application.slug, 'id': element.id}) }}"
-                      data-test="mb-element-duplicate-{{ element.title }}"
                       ><i class="fas fa-copy"></i></span>
                 <span class="-fn-delete hover-highlight-effect"
                       title="{{ 'mb.manager.admin.element.delete.title'|trans}}"
