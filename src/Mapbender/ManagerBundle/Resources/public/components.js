@@ -441,8 +441,9 @@ $(function() {
                             success: function() {
                                 window.location.reload();
                             },
-                            error: function(xhr) {
-                                Mapbender.error(xhr.responseText || 'Ein Fehler ist aufgetreten.');
+                            error: function() {
+                                Mapbender.error(Mapbender.trans('mb.application.save.failure.general'));
+                                $modal.modal('hide');
                             }
                         });
                     }

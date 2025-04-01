@@ -427,28 +427,33 @@ class ElementController extends ApplicationControllerBase
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * Duplicate element
-     *
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @return Response
-     */
     #[ManagerRoute('/application/{slug}/element/{id}/duplicate', name: 'mapbender_manager_element_duplicate', methods: ['POST'])]
-    public function duplicateAction(Request $request, $id)
+    public function duplicateAction(Request $request, $slug, $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         $element = $this->getRepository()->find($id);
+
+        if (!$element) {
+            throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
+        }
+
         $application = $element->getApplication();
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
         if ($this->isCsrfTokenValid('element_duplicate', $request->request->get('token')) === false) {
-            throw new InvalidCsrfTokenException('Invalid CSRF token.');
+            $this->addFlash('error', $this->translator->trans('mb.manager.admin.csrf_token_invalid'));
+
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+                '_fragment' => 'tabLayout',
+            ));
         }
 
         try {
             $clonedElement = clone $element;
+
+            $title = empty($element->getTitle()) ? $this->elementFilter->getDefaultTitle($element) : $element->getTitle();
+
+            $clonedElement->setTitle($this->translator->trans($title).' (copy)');
 
             $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
             $regionSiblings = $application->getElements()->matching($sameRegionCriteria);
@@ -458,7 +463,9 @@ class ElementController extends ApplicationControllerBase
             $this->em->persist($clonedElement);
             $this->em->flush();
 
-            return new Response('', 200);
+            $this->permissionManager->copyPermissions($element, $clonedElement);
+
+            return new Response(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500);
         }
