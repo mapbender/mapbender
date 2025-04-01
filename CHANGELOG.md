@@ -1,4 +1,5 @@
 ## next bugfix release
+* [Manager] Fix only root user could duplicate applications ([PR#1709](https://github.com/mapbender/mapbender/pull/1709)) 
 * Fix users could not modify their own profile ([#1695](https://github.com/mapbender/mapbender/issues/1695), [PR#1696](https://github.com/mapbender/mapbender/pull/1696)) 
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 
 
