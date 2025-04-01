@@ -422,6 +422,42 @@ $(function() {
         });
     });
 
+    $('.elementsTable').on('click', '.duplicateElement[data-url]', function() {
+        var $el = $(this);
+        var content = $el.data('title');
+        var $modal = Mapbender.bootstrapModal(content, {
+            title: Mapbender.trans('mb.manager.components.popup.duplicate_element.title'),
+            buttons: [
+                {
+                    label: Mapbender.trans('mb.actions.duplicate'),
+                    cssClass: 'btn btn-primary btn-sm',
+                    callback: function() {
+                        $.ajax({
+                            url: $el.data('url'),
+                            type: 'POST',
+                            data: {
+                                token: $el.data('token')
+                            },
+                            success: function() {
+                                window.location.reload();
+                            },
+                            error: function() {
+                                Mapbender.error(Mapbender.trans('mb.application.save.failure.general'));
+                                $modal.modal('hide');
+                            }
+                        });
+                    }
+                },
+                {
+                    label: Mapbender.trans('mb.actions.cancel'),
+                    cssClass: 'btn btn-light btn-sm popupClose'
+                }
+            ]
+        });
+        $modal.modal('show');
+        return false;
+    });
+
     $(document).on('click', '.-fn-toggle-flag[data-url]', function() {
         if (this.type === 'checkbox') {
             return true;

@@ -99,7 +99,14 @@
                       data-url="{{ path('mapbender_manager_element_security', {'slug': application.slug, 'id': element.id })}}">
                     <i class="fas fa-key"></i>
                 </span>
-                  {% set element_name = element_title(element) | trans %}
+                {% set element_name = element_title(element) | trans %}
+                <span class="duplicateElement hover-highlight-effect"
+                      title="{{ 'mb.manager.components.popup.duplicate_element.title'|trans}}"
+                      data-title="{{ 'mb.manager.components.popup.duplicate_element.confirm'|trans({'element_name': element_name})}}"
+                      data-slug="{{ application.slug }}"
+                      data-token="{{ csrf_token('element_duplicate') }}"
+                      data-url="{{ path('mapbender_manager_element_duplicate', {'slug': application.slug, 'id': element.id}) }}"
+                      ><i class="far fa-copy"></i></span>
                 <span class="-fn-delete hover-highlight-effect"
                       title="{{ 'mb.manager.admin.element.delete.title'|trans}}"
                       data-title="{{ 'mb.manager.admin.element.delete.confirm'|trans({'element_name': element_name})}}"

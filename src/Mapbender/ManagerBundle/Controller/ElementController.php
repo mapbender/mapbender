@@ -427,6 +427,50 @@ class ElementController extends ApplicationControllerBase
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
+    #[ManagerRoute('/application/{slug}/element/{id}/duplicate', name: 'mapbender_manager_element_duplicate', methods: ['POST'])]
+    public function duplicateAction(Request $request, $slug, $id): Response
+    {
+        $element = $this->getRepository()->find($id);
+
+        if (!$element) {
+            throw $this->createNotFoundException("The element with the id \"$id\" does not exist.");
+        }
+
+        $application = $element->getApplication();
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+
+        if ($this->isCsrfTokenValid('element_duplicate', $request->request->get('token')) === false) {
+            $this->addFlash('error', $this->translator->trans('mb.manager.admin.csrf_token_invalid'));
+
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $slug,
+                '_fragment' => 'tabLayout',
+            ));
+        }
+
+        try {
+            $clonedElement = clone $element;
+
+            $title = empty($element->getTitle()) ? $this->elementFilter->getDefaultTitle($element) : $element->getTitle();
+
+            $clonedElement->setTitle($this->translator->trans($title).' (copy)');
+
+            $sameRegionCriteria = Criteria::create()->where(Criteria::expr()->eq('region', $element->getRegion()));
+            $regionSiblings = $application->getElements()->matching($sameRegionCriteria);
+            $newWeight = $regionSiblings->count();
+            $clonedElement->setWeight($newWeight);
+
+            $this->em->persist($clonedElement);
+            $this->em->flush();
+
+            $this->permissionManager->copyPermissions($element, $clonedElement);
+
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 500);
+        }
+    }
+
     /**
      * @return EntityRepository
      */
