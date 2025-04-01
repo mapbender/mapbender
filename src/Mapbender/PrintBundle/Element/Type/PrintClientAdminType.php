@@ -4,20 +4,17 @@ namespace Mapbender\PrintBundle\Element\Type;
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
+use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class PrintClientAdminType extends AbstractType
 {
-    /** @var bool */
-    protected $queueable;
-
-    /**
-     * @param bool $queuable
-     */
-    public function __construct($queuable)
+    public function __construct(protected bool $queueable)
     {
-        $this->queueable = $queuable;
     }
 
     /**
@@ -26,25 +23,25 @@ class PrintClientAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('scales', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('scales', TextType::class, array(
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.scales',
             ))
-            ->add('file_prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('file_prefix', TextType::class, array(
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.fileprefix',
             ))
         ;
         $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
         if ($this->queueable) {
-            $builder->add('renderMode', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            $builder->add('renderMode', ChoiceType::class, array(
                 'choices' => array(
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
                 ),
                 'label' => 'mb.print.admin.printclient.renderMode.label',
             ));
-            $builder->add('queueAccess', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            $builder->add('queueAccess', ChoiceType::class, array(
                 'choices' => array(
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
@@ -53,39 +50,41 @@ class PrintClientAdminType extends AbstractType
             ));
         }
         $builder
-            ->add('quality_levels', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            ->add('quality_levels', SortableCollectionType::class, array(
                 'label' => 'mb.core.admin.printclient.label.qualitylevels',
                 'auto_initialize' => false,
                 'required' => false,
-                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientQualityAdminType',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'entry_type' => PrintClientQualityAdminType::class,
             ))
-            ->add('rotatable', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('rotatable', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.rotatable',
             ))
-            ->add('legend', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('legend', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend',
             ))
-            ->add('legend_default_behaviour', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('legend_default_behaviour', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
             ))
-            ->add('optional_fields', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
+            ->add('optional_fields', YAMLConfigurationType::class, array(
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.optionalfields',
             ))
-            ->add('required_fields_first', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('required_fields_first', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.required_fields_first',
             ))
-            ->add('replace_pattern', 'Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType', array(
+            ->add('replace_pattern', YAMLConfigurationType::class, array(
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.replacepattern',
             ))
             ->add('templates', SortableCollectionType::class, array(
                 'label' => 'mb.core.admin.printclient.label.templates',
-                'entry_type' => 'Mapbender\PrintBundle\Element\Type\PrintClientTemplateAdminType',
+                'entry_type' => PrintClientTemplateAdminType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,

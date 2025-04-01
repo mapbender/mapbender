@@ -11,20 +11,7 @@
     {% if form.configuration.queueAccess is defined %}
         {{ form_row(form.configuration.queueAccess) }}
     {% endif %}
-    {# Section label needs to be full width; FOM's form_label does not merge extra CSS class passed in label_attr ... #}
-    <div class="section-label">
-        {{ form_label(form.configuration.quality_levels) }}
-    </div>
-    {% for level in form.configuration.quality_levels %}
-    <div class="mb-3 row">
-            <div class="col-sm-6">
-                {{ form_row(level.dpi) }}
-            </div>
-            <div class="col-sm-6">
-                {{ form_row(level.label) }}
-            </div>
-    </div>
-    {% endfor %}
+    {{ form_row(form.configuration.quality_levels) }}
     <hr>
     {{ form_row(form.configuration.templates) }}
     <hr>
