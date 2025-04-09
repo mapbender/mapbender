@@ -18,9 +18,9 @@
 {%- if 'rotation' in configuration.components -%}
     <div class="component">
       <div class="rotation toolBarColors">
-        <span class="rotate-cw toolbar-button-hover-effect clickable" data-degrees="45">{{ block('quarter_circle_arrow_svg') }}</span>
-        <span class="reset-rotation toolbar-button-hover-effect clickable" data-rotation-bias="-45"><i class="fas fa-location-arrow"></i></span>
-        <span class="rotate-ccw toolbar-button-hover-effect clickable" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
+        <span class="rotate-cw toolbar-button-hover-effect clickable" title="{{ "mb.core.zoombar.rotateclockwise" | trans }}" data-degrees="45">{{ block('quarter_circle_arrow_svg') }} </span>
+        <span class="reset-rotation toolbar-button-hover-effect clickable" title="{{ "mb.core.zoombar.resetrotation" | trans }}" data-rotation-bias="-45"><i class="fas fa-location-arrow"></i></span>
+        <span class="rotate-ccw toolbar-button-hover-effect clickable" title="{{ "mb.core.zoombar.rotatecounterclockwise" | trans }}" data-degrees="-45">{{ block('quarter_circle_arrow_svg') }}</span>
       </div>
     </div>
 {%- endif -%}

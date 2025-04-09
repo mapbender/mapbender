@@ -277,6 +277,9 @@ mb:
         metadata: Metadados
         dimension: Dimensão
     zoombar:
+      rotateclockwise: 'Rodar no sentido dos ponteiros do relógio'
+      rotatecounterclockwise: 'Rodar no sentido contrário ao dos ponteiros do relógio'
+      resetrotation: 'Repor a rotação'
       zoombybox: 'Zoom por caixa'
       zoombyworld: 'Zoom na extensão total'
       zoom_home: 'Voltar ao início'

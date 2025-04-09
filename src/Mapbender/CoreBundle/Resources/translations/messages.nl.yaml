@@ -172,6 +172,9 @@ mb:
       admin:
         Selecteer stijl
     zoombar:
+      rotateclockwise: Rechtsom draaien
+      rotatecounterclockwise: Linksom draaien
+      resetrotation: Reset rotatie
       zoombybox: zoom in via rechthoek
       zoombyworld: zoom uit
       zoomin: zoom in
