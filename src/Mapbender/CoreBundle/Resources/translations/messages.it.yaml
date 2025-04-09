@@ -277,6 +277,9 @@ mb:
         metadata: Metadata
         dimension: Dimensione
     zoombar:
+      rotateclockwise: 'Ruotare in senso orario'
+      rotatecounterclockwise: 'Ruotare in senso antiorario'
+      resetrotation: 'Azzeramento della rotazione'
       zoombybox: 'Fai zoom sul riquadro'
       zoombyworld: 'Fai zoom sul mondo'
       zoom_home: 'Torna all''inizio'
@@ -453,7 +456,7 @@ mb:
           title: 'Sistema di riferimento'
           tooltip: 'Sistema di riferimento'
         transformedCoordinates:
-          tooltip: 'coordinate trasformate'
+          placeholder: 'coordinate trasformate'
         copytoclipboard:
           tooltip: 'Copia negli appunti'
         originCoordinates:

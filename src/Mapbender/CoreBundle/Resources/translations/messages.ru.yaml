@@ -278,6 +278,9 @@ mb:
         metadata: 'Метаданные'
         dimension: 'Измерение'
     zoombar:
+      rotateclockwise: 'Поверните по часовой стрелке'
+      rotatecounterclockwise: 'Повернуть против часовой стрелки'
+      resetrotation: 'Сбросить вращение'
       zoombybox: Масштаб
       zoombyworld: Кругозор
       zoom_home: 'Обратно к началу'
@@ -454,7 +457,7 @@ mb:
           title: 'Система координат'
           tooltip: 'Система координат'
         transformedCoordinates:
-          tooltip: 'Трансформированные координаты'
+          placeholder: 'Трансформированные координаты'
         copytoclipboard:
           tooltip: 'Копировать в буфер обмена'
         originCoordinates:

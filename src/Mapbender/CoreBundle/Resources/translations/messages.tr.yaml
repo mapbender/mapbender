@@ -172,6 +172,9 @@ mb:
       admin:
         select_style: Stil seçin
     zoombar:
+      rotateclockwise: Saat yönünde çevirin
+      rotatecounterclockwise: Saat yönünün tersine çevirin
+      resetrotation: Rotasyonu sıfırla
       zoombybox: Çizilen alana yakınlaştır
       zoombyworld: Tüm dünyayı göster
       zoomin: Yakınlaştır

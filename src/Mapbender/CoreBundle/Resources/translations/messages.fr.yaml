@@ -172,6 +172,9 @@ mb:
       admin:
         select_style: Choisir un style
     zoombar:
+      rotateclockwise: Tourner dans le sens des aiguilles d'une montre
+      rotatecounterclockwise: Tourner dans le sens inverse des aiguilles d'une montre
+      resetrotation: Réinitialiser la rotation
       zoombybox: Zoomer sur la boite
       zoombyworld: Zoomer sur l'étendue globale
       zoomin: null

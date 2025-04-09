@@ -191,6 +191,9 @@ mb:
       admin:
         select_style: Виберіть стиль
     zoombar:
+      rotateclockwise: Поверніть за годинниковою стрілкою
+      rotatecounterclockwise: Обертання проти годинникової стрілки
+      resetrotation: Скинути обертання
       zoombybox: Збільшити за вікном
       zoombyworld: Збільшити за світом
       zoom_home: Повернутися до початку

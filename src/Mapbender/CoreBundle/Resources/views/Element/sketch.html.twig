@@ -39,7 +39,7 @@
     <div class="row mb-3">
         <div class="px-3 {{- dialogMode ? ' col-7 col-xs-7' : ' col-12 col-xs-12' -}}">
             <label for="label-text" class="form-label">{{ "mb.core.sketch.inputs.label"|trans}}</label>
-            <input name="label-text" type="text" class="form-control" disabled="disabled">
+            <input name="label-text" type="text" class="form-control" disabled="disabled" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}...">
         </div>
         {%- if dialogMode -%}
         <div class="col-5 col-xs-5">
