@@ -456,7 +456,7 @@ mb:
           title: 'Sistema di riferimento'
           tooltip: 'Sistema di riferimento'
         transformedCoordinates:
-          tooltip: 'coordinate trasformate'
+          placeholder: 'coordinate trasformate'
         copytoclipboard:
           tooltip: 'Copia negli appunti'
         originCoordinates:

@@ -457,7 +457,7 @@ mb:
           title: 'Система координат'
           tooltip: 'Система координат'
         transformedCoordinates:
-          tooltip: 'Трансформированные координаты'
+          placeholder: 'Трансформированные координаты'
         copytoclipboard:
           tooltip: 'Копировать в буфер обмена'
         originCoordinates:

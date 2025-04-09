@@ -456,7 +456,7 @@ mb:
           title: Sistema de coordenadas
           tooltip: Sistema de coordenadas
         transformedCoordinates:
-          tooltip: 'Coordenadas transformadas'
+          placeholder: 'Coordenadas transformadas'
         copytoclipboard:
           tooltip: 'Copiar coordenadas para a área de transferência'
         originCoordinates:

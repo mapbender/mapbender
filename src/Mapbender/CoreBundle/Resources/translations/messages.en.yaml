@@ -461,7 +461,7 @@ mb:
           title: 'Coordinate system'
           tooltip: 'Coordinate system'
         transformedCoordinates:
-          tooltip: 'Transformed coordinates'
+          placeholder: 'Transformed coordinates'
         copytoclipboard:
           tooltip: 'Copy to clipboard'
         originCoordinates:
