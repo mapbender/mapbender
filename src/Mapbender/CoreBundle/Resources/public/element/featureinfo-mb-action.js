@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var pmOrigin = '*';
     if (document.readyState === 'interactive' || document.readyState === 'complete' ) {
-        var mbActionLinks = document.querySelectorAll("[mb-action]");
+        var mbActionLinks = document.querySelectorAll("[mb-action], [data-mb-action]");
         mbActionLinks.forEach(function(actionLink) {
             actionLink.addEventListener('click',  function(e) {
                 e.preventDefault();
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 window.parent.postMessage({
                     command: 'mb-action',
-                    action: element.getAttribute('mb-action'),
+                    action: element.getAttribute('data-mb-action') || element.getAttribute('mb-action'),
                     attributes: attributesMap
                 }, pmOrigin);
                 return false;
