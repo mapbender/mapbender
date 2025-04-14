@@ -139,7 +139,8 @@
         mergeDeclarative: function($link, sourceUrl, layerNamesToActivate) {
             // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
             //       was 'mb-layer-merge'. Just support both equivalently.
-            var mergeLayersAttribValue = $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
+            var mergeLayersAttribValue = $link.attr('data-mb-wms-layer-merge') || $link.attr('data-mb-layer-merge')
+                || $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
             var keepCurrentActive = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
             var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
             if (mergeCandidate) {
