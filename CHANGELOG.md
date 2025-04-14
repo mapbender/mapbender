@@ -5,6 +5,8 @@
 Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 
+Other:
+* Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
 
 ## v4.1.0
 Features:
