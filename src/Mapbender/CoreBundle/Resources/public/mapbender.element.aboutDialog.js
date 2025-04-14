@@ -15,14 +15,13 @@
         },
         open: function () {
             if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: this.element.attr('title'),
                     modal: true,
                     draggable: false,
                     closeOnOutsideClick: true,
                     content: this.content_,
                     width: 350,
-                    height: 170,
                     buttons: [
                         {
                             label: Mapbender.trans('mb.actions.close'),

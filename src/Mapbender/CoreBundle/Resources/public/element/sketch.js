@@ -169,7 +169,7 @@
                 var options = Object.assign(this.getPopupOptions(), {
                     content: this.element
                 });
-                this.popup = new Mapbender.Popup2(options);
+                this.popup = new Mapbender.Popup(options);
                 this.popup.$element.on('close', function() {
                     self.deactivate();
                 });

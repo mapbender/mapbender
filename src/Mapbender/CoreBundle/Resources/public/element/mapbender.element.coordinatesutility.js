@@ -213,16 +213,13 @@
         popup: function () {
             var widget = this;
 
-            if (!widget.popupWindow || !widget.popupWindow.$element) {
-                widget.popupWindow = new Mapbender.Popup2({
+                widget.popupWindow = new Mapbender.Popup({
                     title: this.element.attr('data-title'),
                     draggable:              true,
                     resizable:              true,
                     modal:                  false,
-                    closeButton:            false,
                     closeOnESC:             false,
-                    destroyOnClose:         false,
-                    detachOnClose:          false,
+                    destroyOnClose:         true,
                     content: this.element,
                     width:                  450,
                     height:                 400,
@@ -232,9 +229,6 @@
                 widget.popupWindow.$element.on('close', function () {
                     widget.close();
                 });
-            }
-
-            widget.popupWindow.$element.removeClass('hidden');
         },
 
         /**
@@ -252,7 +246,7 @@
          */
         close: function () {
             if (this.popupWindow && this.popupWindow.$element) {
-                this.popupWindow.$element.addClass('hidden');
+                this.popupWindow.destroy();
             }
             if (this.callback) {
                 this.callback.call();

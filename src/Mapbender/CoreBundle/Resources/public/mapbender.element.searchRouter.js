@@ -101,7 +101,7 @@
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
+                    this.popup = new Mapbender.Popup({
                         title: this.element.attr('data-title'),
                         draggable: true,
                         modal: false,
@@ -111,6 +111,7 @@
                         resizable: true,
                         height: this.options.height ? this.options.height : 500,
                         detachOnClose: false,
+                        destroyOnClose: true,
                         buttons: [
                             {
                                 label: Mapbender.trans("mb.actions.search"),
@@ -142,7 +143,7 @@
          */
         close: function () {
             if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('hidden');
+                this.popup.destroy();
             }
             if (this.callback) {
                 (this.callback)();
