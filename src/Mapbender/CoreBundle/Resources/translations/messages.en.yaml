@@ -640,6 +640,7 @@ mb:
         legend: Legend
       fa:
         about: Group
+        accessibility: Accessibility
         info: 'Information (inverted)'
         pin: Marker
         home: Home

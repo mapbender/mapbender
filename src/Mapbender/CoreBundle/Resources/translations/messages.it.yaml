@@ -635,6 +635,7 @@ mb:
         legend: Legenda
       fa:
         about: Gruppo
+        accessibility: Accessibilità
         info: 'Informazione (invertita)'
         pin: Marker
         home: 'Home'

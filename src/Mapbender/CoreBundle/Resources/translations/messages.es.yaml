@@ -615,6 +615,7 @@ mb:
         legend: Leyenda
       fa:
         about: Grupo
+        accessibility: Accesibilidad
         info: 'Información (invertida)'
         pin: Marcador
         home: Inicio
