@@ -87,7 +87,7 @@ class ApplicationExchangeController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $sourceApplication);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $sourceApplication);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
 
         $this->em->beginTransaction();

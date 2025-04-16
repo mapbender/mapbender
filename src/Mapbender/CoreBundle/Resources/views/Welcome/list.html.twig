@@ -49,8 +49,8 @@
               <a class="btn btn-light" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">
                 <i class="fas fa-display"></i>
               </a>
-              {# for custom 'CLONE' grant see CoreBundle\Component\Security\Voter\BaseApplicationVoter and child classes #}
-              {%- if is_granted('CLONE', application) -%}
+              {%- if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS')) and
+                  is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_VIEW'), application)  -%}
                 <a class="btn btn-light" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }}">
                   <i class="far fa-copy"></i>
                 </a>
