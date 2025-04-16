@@ -1,2 +1,6 @@
 html.invalid: 'HTML contains an error!'
 twig.invalid: 'TWIG contains an error!'
+mb.core.simplesearch.errors:
+  invalid_query_format: 'The specified query format does not contain placeholders. Read the help text!'
+  invalid_epsg_code: 'The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234'
+  no_configuration_added: 'Please add at least one configuration'

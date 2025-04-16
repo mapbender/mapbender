@@ -176,7 +176,7 @@ class AssetFactoryBase
                 // try again using the absolute path
                 $realpath = realpath($input);
                 if ($realpath === false) {
-                    $this->logger->warning('Asset $input not found, skipping.');
+                    $this->logger->warning("Asset $input not found, skipping.");
                     return null;
                 }
                 return $this->fileLocator->locate($realpath);
