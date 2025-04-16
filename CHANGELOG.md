@@ -2,6 +2,7 @@
 Features:
 * [Print] Allow adding more options for quality levels ([PR#1708](https://github.com/mapbender/mapbender/pull/1708))
 * [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
+* Support HTML5-compliant data-mb-action attributes alongside mb-action ([#PR1712](https://github.com/mapbender/mapbender/pull/1712))
 
 Bugfixes:
 * Fix users could not modify their own profile ([#1695](https://github.com/mapbender/mapbender/issues/1695), [PR#1696](https://github.com/mapbender/mapbender/pull/1696))
