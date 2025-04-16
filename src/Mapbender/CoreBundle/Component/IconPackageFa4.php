@@ -29,6 +29,7 @@ class IconPackageFa4 implements IconPackageInterface
         $choices = [];
         if ($this->showDefaultIcons || $showAll) $choices = [
             'mb.core.icon.fa.about' => 'iconAbout',
+            'mb.core.icon.fa.accessibility' => 'iconAccessibility',
             'mb.core.icon.fa.info' => 'iconInfoActive',
             'mb.core.icon.fa.pin' => 'iconGps',
             'mb.core.icon.fa.home' => 'iconHome',
@@ -77,6 +78,8 @@ class IconPackageFa4 implements IconPackageInterface
                 throw new \LogicException("Unhandled icon code " . \var_export($iconCode, true));
             case 'iconAbout':
                 $class = 'fas fa-users'; break;
+            case 'iconAccessibility':
+                $class = 'fas fa-universal-access'; break;
             case 'iconInfoActive':
                 $class = 'fas fa-circle-info'; break;
             case 'iconGps':
