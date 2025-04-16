@@ -3,10 +3,10 @@
 
 window.addEventListener("message", function(event) {
     var data = event.data;
-    if (data && data.command === 'mb-action' && data.attributes && data.attributes['mb-action']) {
+    if (data && data.command === 'mb-action' && data.attributes && (data.attributes['data-mb-action'] || data.attributes['mb-action'])) {
         // Can't pass / receive Element in postMessage. Reconstruct from attributes.
         var element = $(document.createElement('a')).attr(data.attributes);
-        var action = data.attributes['mb-action'];
+        var action = data.attributes['data-mb-action'] || data.attributes['mb-action'];
         if (Mapbender.declarative && typeof Mapbender.declarative[action] === 'function') {
             Mapbender.declarative[action](element);
         }
@@ -14,7 +14,7 @@ window.addEventListener("message", function(event) {
 });
 
 !(function($) {
-    $(document).on('click', '[mb-action]', function(event) {
+    $(document).on('click', '[mb-action], [data-mb-action]', function(event) {
         event.preventDefault();
         // Extract / freeze attributes (NamedNodeMap cannot be sent in a postMessage)
         var attributesMap = {};

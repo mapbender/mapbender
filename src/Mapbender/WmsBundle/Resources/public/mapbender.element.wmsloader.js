@@ -106,10 +106,12 @@
             this.notifyWidgetDeactivated();
         },
         loadDeclarativeWms: function(elm){
-            var layerNamesToActivate = (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers').split(',')) || [];
-            var mergeSource = !elm.attr('mb-wms-merge') || elm.attr('mb-wms-merge') === '1';
-            var sourceUrl = elm.attr('mb-url') || elm.attr('href');
-            var infoFormat = elm.attr('mb-infoformat') || 'text/html';
+            const layers = elm.attr('data-mb-wms-layers') || elm.attr('mb-wms-layers');
+            const merge = elm.attr('data-mb-wms-merge') || elm.attr('mb-wms-merge');
+            var layerNamesToActivate = (layers && layers.split(',')) || [];
+            var mergeSource = !merge || merge === '1';
+            var sourceUrl = elm.attr('data-mb-url') || elm.attr('mb-url') || elm.attr('href');
+            var infoFormat = elm.attr('data-mb-infoformat') || elm.attr('mb-infoformat') || 'text/html';
             var customParams = this.parseCustomParams(elm);
 
             var source = mergeSource && this.mergeDeclarative(elm, sourceUrl, layerNamesToActivate);
@@ -137,7 +139,8 @@
         mergeDeclarative: function($link, sourceUrl, layerNamesToActivate) {
             // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
             //       was 'mb-layer-merge'. Just support both equivalently.
-            var mergeLayersAttribValue = $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
+            var mergeLayersAttribValue = $link.attr('data-mb-wms-layer-merge') || $link.attr('data-mb-layer-merge')
+                || $link.attr('mb-wms-layer-merge') || $link.attr('mb-layer-merge');
             var keepCurrentActive = !mergeLayersAttribValue || (mergeLayersAttribValue === '1');
             var mergeCandidate = this._findMergeCandidateByUrl(sourceUrl);
             if (mergeCandidate) {
@@ -292,7 +295,7 @@
          */
         parseCustomParams: function($element) {
             var customParams = {};
-            ($element.attr('mb-add-vendor-specific') || '').split(/[&?]/).forEach(function(assignment) {
+            ($element.attr('data-mb-add-vendor-specific') || $element.attr('mb-add-vendor-specific') || '').split(/[&?]/).forEach(function(assignment) {
                 var match = assignment && assignment.match(/^(.*?)(?:=(.*))?$/);
                 if (match && match[1]) {
                     var key = decodeURIComponent(match[1]);
