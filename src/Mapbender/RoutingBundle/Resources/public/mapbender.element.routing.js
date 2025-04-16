@@ -45,18 +45,21 @@
             this.isActive = true;
 
             if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: Mapbender.trans('mb.routing.backend.title'),
                     draggable: true,
                     resizable: true,
                     header: true,
                     modal: false,
-                    closeButton: false,
                     closeOnESC: false,
                     content: this.element,
                     width: 350,
-                    height: 490,
-                    buttons: {}
+                    buttons: [
+                        {
+                            label: Mapbender.trans('mb.actions.close'),
+                            cssClass: 'btn btn-sm btn-light popupClose'
+                        }
+                    ]
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
                 $(this.element).show();

@@ -48,7 +48,7 @@
         openPopup: function () {
             var self = this;
             if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup({
                     title: this.element.attr('data-title'),
                     draggable: true,
                     modal: false,

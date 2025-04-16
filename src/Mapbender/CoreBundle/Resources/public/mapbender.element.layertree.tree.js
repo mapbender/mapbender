@@ -657,7 +657,7 @@
             var useModal = !!this._mobilePane;
             $.ajax(url)
                 .then(function (response) {
-                    var metadataPopup = new Mapbender.Popup2({
+                    var metadataPopup = new Mapbender.Popup({
                         title: Mapbender.trans("mb.core.metadata.popup.title"),
                         cssClass: 'metadataDialog',
                         modal: useModal,
@@ -696,7 +696,7 @@
                     var popupOptions = Object.assign(this.getPopupOptions(), {
                         content: [this.element.show()]
                     });
-                    this.popup = new Mapbender.Popup2(popupOptions);
+                    this.popup = new Mapbender.Popup(popupOptions);
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popup.$element.show();

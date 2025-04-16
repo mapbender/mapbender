@@ -169,7 +169,7 @@
                 var options = Object.assign(this.getPopupOptions(), {
                     content: this.element
                 });
-                this.popup = new Mapbender.Popup2(options);
+                this.popup = new Mapbender.Popup(options);
                 this.popup.$element.on('close', function() {
                     self.deactivate();
                 });
@@ -186,7 +186,6 @@
                 header: true,
                 modal: false,
                 closeOnESC: false,
-                detachOnClose: false,
                 width: 500,
                 height: 500,
                 resizable: true,
@@ -200,7 +199,7 @@
         },
         _close: function(){
             if (this.popup) {
-                this.popup.$element.addClass('hidden');
+                this.popup.destroy();
             }
         },
         _onToolButtonClick: function($button) {
