@@ -106,6 +106,7 @@
             this.notifyWidgetDeactivated();
         },
         loadDeclarativeWms: function(elm){
+            const self = this;
             const layers = elm.attr('data-mb-wms-layers') || elm.attr('mb-wms-layers');
             const merge = elm.attr('data-mb-wms-merge') || elm.attr('mb-wms-merge');
             var layerNamesToActivate = (layers && layers.split(',')) || [];
@@ -127,6 +128,10 @@
                     if (typeof (source.addParams) === 'function') {
                         source.addParams(customParams);
                     }
+                    // hack to refresh wms layer, since source.refresh() does not work here:
+                    const view = self.mbMap.map.olMap.getView();
+                    const zoom = view.getZoom();
+                    view.setZoom(zoom - 0.001);
                 });
             }
         },
