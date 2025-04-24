@@ -125,6 +125,10 @@
                     if (typeof (source.addParams) === 'function') {
                         source.addParams(customParams);
                     }
+                    // hack to refresh wms layer, since source.refresh() does not work here:
+                    const view = self.mbMap.map.olMap.getView();
+                    const zoom = view.getZoom();
+                    view.setZoom(zoom - 0.001);
                 });
             }
         },
