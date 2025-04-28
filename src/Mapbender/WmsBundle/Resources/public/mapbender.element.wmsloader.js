@@ -125,10 +125,6 @@
                     if (typeof (source.addParams) === 'function') {
                         source.addParams(customParams);
                     }
-                    // hack to refresh wms layer, since source.refresh() does not work here:
-                    const view = self.mbMap.map.olMap.getView();
-                    const zoom = view.getZoom();
-                    view.setZoom(zoom - 0.001);
                 });
             }
         },
@@ -211,8 +207,12 @@
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.isDynamicSource = true;
 
+                sourceDef.configuration.children[0].children.forEach(layer => {
+                    var allActive = options.layers.indexOf('_all') !== -1;
+                    layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
+                });
+
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
-                this.activateLayersByName(source, options.layers || [], keepStates);
             }
             return source || null;
         },
@@ -258,7 +258,7 @@
             rootLayer.options.treeOptions.selected = rootLayer.options.treeOptions.allow.selected;
             Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
                 var doActivate = activateAll;
-                if (names.indexOf(layer.options.name) !== -1) {
+                if (names.indexOf(layer.options.name) !== -1 || activateAll) {
                     matchedNames.push(layer.options.name);
                     doActivate = true;
                 }
@@ -270,10 +270,12 @@
                         parents[p].options.treeOptions.selected = layer.options.treeOptions.allow.selected;
                     }
                 }
+
             });
             if (!activateAll && matchedNames.length !== names.length) {
                 console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
             }
+            Mapbender.Model.updateSource(source);
         },
         _fixWmsUrl: function(baseUrl, defaultParams) {
             var extraParams = {};
