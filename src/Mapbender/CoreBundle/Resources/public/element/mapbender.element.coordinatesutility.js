@@ -213,13 +213,14 @@
         popup: function () {
             var widget = this;
 
+            if (!widget.popupWindow || !widget.popupWindow.$element) {
                 widget.popupWindow = new Mapbender.Popup({
                     title: this.element.attr('data-title'),
                     draggable:              true,
                     resizable:              true,
                     modal:                  false,
                     closeOnESC:             false,
-                    destroyOnClose:         true,
+                    detachOnClose:          false,
                     content: this.element,
                     width:                  450,
                     height:                 400,
@@ -229,6 +230,8 @@
                 widget.popupWindow.$element.on('close', function () {
                     widget.close();
                 });
+            }
+            widget.popupWindow.$element.show();
         },
 
         /**
@@ -246,7 +249,7 @@
          */
         close: function () {
             if (this.popupWindow && this.popupWindow.$element) {
-                this.popupWindow.destroy();
+                this.popupWindow.$element.hide();
             }
             if (this.callback) {
                 this.callback.call();

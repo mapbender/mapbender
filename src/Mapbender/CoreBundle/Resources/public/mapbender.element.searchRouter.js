@@ -111,7 +111,6 @@
                         resizable: true,
                         height: this.options.height ? this.options.height : 500,
                         detachOnClose: false,
-                        destroyOnClose: true,
                         buttons: [
                             {
                                 label: Mapbender.trans("mb.actions.search"),
@@ -131,7 +130,7 @@
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
-                    this.popup.$element.removeClass('hidden');
+                    this.popup.$element.show();
                     this.popup.focus();
                 }
             }
@@ -143,7 +142,7 @@
          */
         close: function () {
             if (this.popup && this.popup.$element) {
-                this.popup.destroy();
+                this.popup.$element.hide();
             }
             if (this.callback) {
                 (this.callback)();

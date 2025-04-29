@@ -30,14 +30,14 @@
                     ]
                 });
             } else {
-                this.popup.$element.removeClass('hidden')
+                this.popup.$element.show();
                 this.popup.open();
             }
         },
 
         close: function () {
             if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('hidden')
+                this.popup.$element.hide();
             }
         }
     });

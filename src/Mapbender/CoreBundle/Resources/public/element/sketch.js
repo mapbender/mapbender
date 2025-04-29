@@ -174,7 +174,7 @@
                     self.deactivate();
                 });
             } else {
-                this.popup.$element.removeClass('hidden');
+                this.popup.$element.show();
                 this.popup.focus();
             }
         },
@@ -186,6 +186,7 @@
                 header: true,
                 modal: false,
                 closeOnESC: false,
+                detachOnClose: false,
                 width: 500,
                 height: 500,
                 resizable: true,
@@ -199,7 +200,7 @@
         },
         _close: function(){
             if (this.popup) {
-                this.popup.destroy();
+                this.popup.$element.hide();
             }
         },
         _onToolButtonClick: function($button) {
