@@ -206,12 +206,14 @@
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.isDynamicSource = true;
-
+                // deactivate root layer, when no layer is selected
+                if (options.layers.length === 0) {
+                    sourceDef.configuration.children[0].options.treeOptions.selected = false;
+                }
                 sourceDef.configuration.children[0].children.forEach(layer => {
                     var allActive = options.layers.indexOf('_all') !== -1;
                     layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
                 });
-
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
             return source || null;
