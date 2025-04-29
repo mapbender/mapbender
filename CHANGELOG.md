@@ -35,6 +35,7 @@ Bugfixes:
 * [WMSLoader] For protected WMS, the user data was not added to legend requests ([#PR1667](https://github.com/mapbender/mapbender/pull/1667))
 * Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
 * [SimpleSearch] Fix initially selected configuration was not selected in the dropdown menu ([#1684](https://github.com/mapbender/mapbender/issues/1684), [#PR1686](https://github.com/mapbender/mapbender/pull/1686))
+* [ViewManager] Fix deletion of public views by any user ([#1719](https://github.com/mapbender/mapbender/pull/1719))
 
 Other:
 * Sources now use native ES6 classes instead of prototype pseudo-classes. Easier API for custom layer tree menu items and legends. ([PR#1635](https://github.com/mapbender/mapbender/pull/1635), [PR#1639](https://github.com/mapbender/mapbender/pull/1639), [PR#1662](https://github.com/mapbender/mapbender/pull/1662))
