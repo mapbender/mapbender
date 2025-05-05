@@ -209,9 +209,15 @@
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.isDynamicSource = true;
-
+                // deactivate root layer, when no layer is selected
+                if (options.layers.length === 0) {
+                    sourceDef.configuration.children[0].options.treeOptions.selected = false;
+                }
+                sourceDef.configuration.children[0].children.forEach(layer => {
+                    var allActive = options.layers.indexOf('_all') !== -1;
+                    layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
+                });
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
-                this.activateLayersByName(source, options.layers || [], keepStates);
             }
             return source || null;
         },
@@ -257,7 +263,7 @@
             rootLayer.options.treeOptions.selected = rootLayer.options.treeOptions.allow.selected;
             Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
                 var doActivate = activateAll;
-                if (names.indexOf(layer.options.name) !== -1) {
+                if (names.indexOf(layer.options.name) !== -1 || activateAll) {
                     matchedNames.push(layer.options.name);
                     doActivate = true;
                 }
@@ -269,10 +275,12 @@
                         parents[p].options.treeOptions.selected = layer.options.treeOptions.allow.selected;
                     }
                 }
+
             });
             if (!activateAll && matchedNames.length !== names.length) {
                 console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
             }
+            Mapbender.Model.updateSource(source);
         },
         _fixWmsUrl: function(baseUrl, defaultParams) {
             var extraParams = {};
