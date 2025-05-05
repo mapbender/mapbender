@@ -6,6 +6,8 @@
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 
 * [ViewManager] [ShareUrl] Save selected WMS styles ([PR#1700](https://github.com/mapbender/mapbender/pull/1700)) 
 * [LayerTree] Fix opacity slider did not work together with dimension slider ([PR#1707](https://github.com/mapbender/mapbender/pull/1707), [PR#1710](https://github.com/mapbender/mapbender/pull/1710))
+* [WMSLoader] Fix layer in map not loaded correctly ([#PR1718](https://github.com/mapbender/mapbender/pull/1718))
+
 
 ## v4.1.0
 Features:
@@ -32,7 +34,6 @@ Bugfixes:
 * [BaseSourceSwitcher] Submenu is closed as soon as the mouse pointer moves out of the menu ([#PR1644](https://github.com/mapbender/mapbender/pull/1644))
 * [WMSLoader] Submit button was missing when used in sidepane ([#PR1687](https://github.com/mapbender/mapbender/pull/1687))
 * [WMSLoader] For protected WMS, the user data was not added to legend requests ([#PR1667](https://github.com/mapbender/mapbender/pull/1667))
-* [WMSLoader] Fix layer in map not loaded correctly ([#PR1718](https://github.com/mapbender/mapbender/pull/1718))
 * Global permission "delete users" was not evaluated (only root users could delete users) ([PR#1646](https://github.com/mapbender/mapbender/pull/1646))
 * [SimpleSearch] Fix initially selected configuration was not selected in the dropdown menu ([#1684](https://github.com/mapbender/mapbender/issues/1684), [#PR1686](https://github.com/mapbender/mapbender/pull/1686))
 
