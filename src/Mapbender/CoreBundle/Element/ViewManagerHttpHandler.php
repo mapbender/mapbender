@@ -178,9 +178,6 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
                 if (!$record->getUserId() && !$this->checkGrant($element, 'deletePublic')) {
                     throw new AccessDeniedHttpException();
                 }
-                if ($record->getUserId() !== $this->getUserId()) {
-                    throw new AccessDeniedHttpException();
-                }
             }
 
             $this->em->remove($record);
