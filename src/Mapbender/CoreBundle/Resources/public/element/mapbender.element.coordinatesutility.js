@@ -214,14 +214,12 @@
             var widget = this;
 
             if (!widget.popupWindow || !widget.popupWindow.$element) {
-                widget.popupWindow = new Mapbender.Popup2({
+                widget.popupWindow = new Mapbender.Popup({
                     title: this.element.attr('data-title'),
                     draggable:              true,
                     resizable:              true,
                     modal:                  false,
-                    closeButton:            false,
                     closeOnESC:             false,
-                    destroyOnClose:         false,
                     detachOnClose:          false,
                     content: this.element,
                     width:                  450,
@@ -233,8 +231,7 @@
                     widget.close();
                 });
             }
-
-            widget.popupWindow.$element.removeClass('hidden');
+            widget.popupWindow.$element.show();
         },
 
         /**
@@ -252,7 +249,7 @@
          */
         close: function () {
             if (this.popupWindow && this.popupWindow.$element) {
-                this.popupWindow.$element.addClass('hidden');
+                this.popupWindow.$element.hide();
             }
             if (this.callback) {
                 this.callback.call();

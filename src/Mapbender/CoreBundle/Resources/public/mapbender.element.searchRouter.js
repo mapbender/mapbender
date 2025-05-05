@@ -101,7 +101,7 @@
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup2({
+                    this.popup = new Mapbender.Popup({
                         title: this.element.attr('data-title'),
                         draggable: true,
                         modal: false,
@@ -130,7 +130,7 @@
                     });
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
-                    this.popup.$element.removeClass('hidden');
+                    this.popup.$element.show();
                     this.popup.focus();
                 }
             }
@@ -142,7 +142,7 @@
          */
         close: function () {
             if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('hidden');
+                this.popup.$element.hide();
             }
             if (this.callback) {
                 (this.callback)();

@@ -244,7 +244,7 @@
 
             if (this.useDialog_) {
                 if (!this.popupWindow) {
-                    this.popupWindow = new Mapbender.Popup2(this.getPopupOptions());
+                    this.popupWindow = new Mapbender.Popup(this.getPopupOptions());
                     this.popupWindow.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popupWindow.open();

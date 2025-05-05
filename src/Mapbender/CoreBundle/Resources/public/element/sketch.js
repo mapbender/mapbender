@@ -169,12 +169,12 @@
                 var options = Object.assign(this.getPopupOptions(), {
                     content: this.element
                 });
-                this.popup = new Mapbender.Popup2(options);
+                this.popup = new Mapbender.Popup(options);
                 this.popup.$element.on('close', function() {
                     self.deactivate();
                 });
             } else {
-                this.popup.$element.removeClass('hidden');
+                this.popup.$element.show();
                 this.popup.focus();
             }
         },
@@ -200,7 +200,7 @@
         },
         _close: function(){
             if (this.popup) {
-                this.popup.$element.addClass('hidden');
+                this.popup.$element.hide();
             }
         },
         _onToolButtonClick: function($button) {
