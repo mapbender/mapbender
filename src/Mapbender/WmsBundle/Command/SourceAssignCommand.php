@@ -13,6 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -39,6 +40,11 @@ class SourceAssignCommand extends AbstractSourceCommand
             ->addArgument(self::ARGUMENT_APPLICATION, InputArgument::REQUIRED, "id or slug of the application")
             ->addArgument(self::ARGUMENT_SOURCE, InputArgument::REQUIRED, "id of the wms source")
             ->addArgument(self::ARGUMENT_LAYERSET, InputArgument::OPTIONAL, "id or name of the layerset. Defaults to 'main' or the first layerset in the application.")
+            ->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Sets the format for the GetMap-request, such as image/png', null)
+            ->addOption('infoformat', 'i', InputOption::VALUE_OPTIONAL, 'Sets the format for the FeatureInfo, such as text/html', null)
+            ->addOption('proxy', 'p', InputOption::VALUE_OPTIONAL, 'Decides if a proxy is used or not (one of true|false)', null)
+            ->addOption('tiled', 't', InputOption::VALUE_OPTIONAL, 'Decides if the GetMap-requests are returned tiled or not (one of true|false)', null)
+            ->addOption('layerorder', 'l', InputOption::VALUE_OPTIONAL, 'Sets the layerorder to either standard or reverse (one of standard|reverse)', null)
         ;
     }
 
@@ -54,7 +60,7 @@ class SourceAssignCommand extends AbstractSourceCommand
 
         $sourceId = $input->getArgument(self::ARGUMENT_SOURCE);
 
-        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager());
+        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager(), $input->getOptions());
         $io->success("New source instance added.");
         return Command::SUCCESS;
     }
