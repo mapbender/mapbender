@@ -418,7 +418,7 @@ class SourceInstanceController extends ApplicationControllerBase
         return $repository;
     }
 
-    public function createNewSourceInstance(Application $application, int $sourceId, int $layersetId, ObjectManager $entityManager): SourceInstance
+    public function createNewSourceInstance(Application $application, int $sourceId, int $layersetId, ObjectManager $entityManager, $options = []): SourceInstance
     {
         $layerset = $this->requireLayerset($layersetId, $application);
         /** @var Source|null $source */
@@ -432,6 +432,21 @@ class SourceInstanceController extends ApplicationControllerBase
 
         $newInstance->setWeight(0);
         $newInstance->setLayerset($layerset);
+        if (!empty($options['format']) && in_array($options['format'], $source->getGetMap()->getFormats())) {
+            $newInstance->setFormat($options['format']);
+        }
+        if (!empty($options['infoformat']) && in_array($options['infoformat'], $source->getGetFeatureInfo()->getFormats())) {
+            $newInstance->setInfoFormat($options['infoformat']);
+        }
+        if (!empty($options['proxy']) && $options['proxy'] === 'true') {
+            $newInstance->setProxy(true);
+        }
+        if (!empty($options['tiled']) && $options['tiled'] === 'true') {
+            $newInstance->setTiled(true);
+        }
+        if (!empty($options['layerorder']) && in_array($options['layerorder'], ['standard', 'reverse'])) {
+            $newInstance->setLayerOrder($options['layerorder']);
+        }
         $layerset->getInstances()->add($newInstance);
 
         $entityManager->persist($application);
