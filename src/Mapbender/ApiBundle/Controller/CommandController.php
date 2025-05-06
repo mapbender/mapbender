@@ -293,7 +293,7 @@ class CommandController extends AbstractController
             ),
             new OA\Parameter(
                 name: 'infoformat',
-                description: 'Sets the format for the FeatureInfo, such as text/html',
+                description: 'Sets the format for the FeatureInfo-request, such as text/html',
                 in: 'query',
                 required: false,
                 schema: new OA\Schema(type: 'string', example: 'text/html')
