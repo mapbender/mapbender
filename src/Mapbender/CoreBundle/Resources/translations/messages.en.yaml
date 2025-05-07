@@ -131,10 +131,6 @@ mb:
         result_icon_url.help: 'URL to an image file that will be used as marker for Point geometries. Can be relative or absolute. For the standard pin use <code>/bundles/mapbendercore/image/pin_red.png</code>.'
         result_icon_offset: 'Icon Offset'
         result_icon_offset.help: 'Position correction for the icon as comma-separated x and y offset, e.g. <code>-6,-32</code> for the standard pin'
-      errors:
-        invalid_query_format: 'The specified query format does not contain placeholders. Read the help text!'
-        invalid_epsg_code: 'The text entered is not a valid EPSG code. Enter the code in the format EPSG:1234'
-        no_configuration_added: 'Please add at least one configuration'
     searchrouter:
       no_results: 'No results found.'
       result_counter: 'Results: %count%'

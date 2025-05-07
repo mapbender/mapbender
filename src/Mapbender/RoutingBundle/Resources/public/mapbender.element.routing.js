@@ -76,8 +76,6 @@
             }
             this._clearRoute();
             this.isActive = false;
-            this.olMap.removeLayer(this.markerLayer);
-            this.olMap.removeLayer(this.routingLayer);
             this.callback ? this.callback.call() : this.callback;
         },
 

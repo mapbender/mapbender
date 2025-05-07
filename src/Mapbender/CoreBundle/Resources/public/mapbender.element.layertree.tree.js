@@ -490,7 +490,7 @@
                 case 'opacity':
                     return this._initOpacitySlider($actionElement, layer);
                 case 'dimension':
-                    return this._initDimensionsMenu($layerNode, $menu, layer.source);
+                    return this._initDimensionsMenu($layerNode, $actionElement, layer.source);
                 case 'select_style':
                     return this._initLayerStyleSelector($actionElement, layer);
                 case 'zoomtolayer':
@@ -499,24 +499,24 @@
         },
         _initOpacitySlider: function ($opacityControl, layer) {
             const source = layer.source;
-            if ($opacityControl.length) {
-                var $handle = $('.layer-opacity-handle', $opacityControl);
-                $handle.attr('unselectable', 'on');
-                new Dragdealer($('.layer-opacity-bar', $opacityControl).get(0), {
-                    x: source.configuration.options.opacity,
-                    horizontal: true,
-                    vertical: false,
-                    speed: 1,
-                    steps: 100,
-                    handleClass: "layer-opacity-handle",
-                    animationCallback: (x, y) => {
-                        var opacity = Math.max(0.0, Math.min(1.0, x));
-                        var percentage = Math.round(opacity * 100);
-                        $handle.text(percentage);
-                        this.model.setSourceOpacity(source, opacity);
-                    }
-                });
-            }
+            if (!$opacityControl.length) return;
+
+            const $wrapper = $opacityControl.find('.layer-opacity-bar');
+            const $handle = $opacityControl.find('.layer-opacity-handle');
+            new Dragdealer($wrapper[0], {
+                x: source.configuration.options.opacity,
+                horizontal: true,
+                vertical: false,
+                speed: 1,
+                steps: 100,
+                handleClass: "layer-opacity-handle",
+                animationCallback: (x, y) => {
+                    var opacity = Math.max(0.0, Math.min(1.0, x));
+                    var percentage = Math.round(opacity * 100);
+                    $handle.text(percentage);
+                    this.model.setSourceOpacity(source, opacity);
+                }
+            });
         },
         _initLayerStyleEvents: function () {
             const self = this;

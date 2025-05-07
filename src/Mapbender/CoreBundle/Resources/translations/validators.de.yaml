@@ -1,2 +1,6 @@
 html.invalid: 'HTML enthält einen Fehler!'
 twig.invalid: 'TWIG enthält einen Fehler!'
+mb.core.simplesearch.errors:
+  invalid_query_format: 'Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!'
+  invalid_epsg_code: 'Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein'
+  no_configuration_added: 'Bitte fügen Sie mindestens eine Konfiguration hinzu'
