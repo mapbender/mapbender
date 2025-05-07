@@ -3,6 +3,7 @@ Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 * Support HTML5-compliant data-mb-action attributes alongside mb-action ([#PR1712](https://github.com/mapbender/mapbender/pull/1712))
 ## next bugfix release
+* [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
 * Fix users could not modify their own profile ([#1695](https://github.com/mapbender/mapbender/issues/1695), [PR#1696](https://github.com/mapbender/mapbender/pull/1696)) 
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 
 
@@ -20,7 +21,6 @@ Features:
 * [FeatureInfo] Support labels in FeatureInfo-Highlighting ([PR#1670](https://github.com/mapbender/mapbender/pull/1670))
 * [ApplicationSwitcher] Allow reordering applications by drag and drop in manager ([PR#1666](https://github.com/mapbender/mapbender/pull/1666))
 * [POI] Add option to minimize and completely remove POI popup ([#1273](https://github.com/mapbender/mapbender/issues/1273), [PR#1673](https://github.com/mapbender/mapbender/pull/1673))
-* [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
 
 Bugfixes:
 * Fix order of elements within an application could get lost ([#PR1682](https://github.com/mapbender/mapbender/pull/1682))
