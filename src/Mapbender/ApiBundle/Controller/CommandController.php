@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -268,7 +268,7 @@ class CommandController extends AbstractController
                 description: 'id or slug of the application',
                 in: 'query',
                 required: true,
-                schema: new OA\Schema(type: 'mixed', example: "mapbender_user")
+                schema: new OA\Schema(example: "mapbender_user", oneOf: [new OA\Schema(type: 'string'), new OA\Schema(type: 'integer')])
             ),
             new OA\Parameter(
                 name: 'source',
