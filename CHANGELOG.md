@@ -3,6 +3,7 @@ Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 * Support HTML5-compliant data-mb-action attributes alongside mb-action ([#PR1712](https://github.com/mapbender/mapbender/pull/1712))
 ## next bugfix release
+* [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
 * Fix users could not modify their own profile ([#1695](https://github.com/mapbender/mapbender/issues/1695), [PR#1696](https://github.com/mapbender/mapbender/pull/1696)) 
 * [ViewManager] Fix deletion of public views by any user ([#1719](https://github.com/mapbender/mapbender/pull/1719))
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 

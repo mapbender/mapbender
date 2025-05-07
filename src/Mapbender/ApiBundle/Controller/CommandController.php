@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -268,7 +268,7 @@ class CommandController extends AbstractController
                 description: 'id or slug of the application',
                 in: 'query',
                 required: true,
-                schema: new OA\Schema(type: 'mixed', example: "mapbender_user")
+                schema: new OA\Schema(example: "mapbender_user", oneOf: [new OA\Schema(type: 'string'), new OA\Schema(type: 'integer')])
             ),
             new OA\Parameter(
                 name: 'source',
@@ -283,6 +283,41 @@ class CommandController extends AbstractController
                 in: 'query',
                 required: false,
                 schema: new OA\Schema(type: 'mixed', example: "main")
+            ),
+            new OA\Parameter(
+                name: 'format',
+                description: 'Sets the format for the GetMap-request, such as image/png',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'image/png')
+            ),
+            new OA\Parameter(
+                name: 'infoformat',
+                description: 'Sets the format for the FeatureInfo-request, such as text/html',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'text/html')
+            ),
+            new OA\Parameter(
+                name: 'proxy',
+                description: 'Decides if a proxy is used or not (one of true|false). Defaults to "false"',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            ),
+            new OA\Parameter(
+                name: 'tiled',
+                description: 'Decides if the GetMap-requests are returned tiled or not (one of true|false). Defaults to "false"',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true)
+            ),
+            new OA\Parameter(
+                name: 'layerorder',
+                description: 'Sets the layerorder to either standard or reverse (one of standard|reverse). Defaults to "standard"',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'standard')
             )
         ],
         responses: [
@@ -327,6 +362,11 @@ class CommandController extends AbstractController
             'application' => $application,
             'source' => $source,
             'layerset' => $layerset,
+            '--format' => $request->get('format'),
+            '--infoformat' => $request->get('infoformat'),
+            '--proxy' => $request->get('proxy'),
+            '--tiled' => $request->get('tiled'),
+            '--layerorder' => $request->get('layerorder'),
             '-v' => true, // Ignore PHP deprecated messages to reduce the output
         ];
 
