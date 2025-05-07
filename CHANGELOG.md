@@ -3,6 +3,7 @@
 * [Print] Allow adding more options for quality levels ([PR#1708](https://github.com/mapbender/mapbender/pull/1708)) 
 * [Manager] Fix only root user could duplicate applications ([PR#1709](https://github.com/mapbender/mapbender/pull/1709)) 
 * [ViewManager] Fix deletion of public views by any user ([#1719](https://github.com/mapbender/mapbender/pull/1719))
+* [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 
 * [ViewManager] [ShareUrl] Save selected WMS styles ([PR#1700](https://github.com/mapbender/mapbender/pull/1700)) 
 * [LayerTree] Fix opacity slider did not work together with dimension slider ([PR#1707](https://github.com/mapbender/mapbender/pull/1707), [PR#1710](https://github.com/mapbender/mapbender/pull/1710))
@@ -21,7 +22,6 @@ Features:
 * [FeatureInfo] Support labels in FeatureInfo-Highlighting ([PR#1670](https://github.com/mapbender/mapbender/pull/1670))
 * [ApplicationSwitcher] Allow reordering applications by drag and drop in manager ([PR#1666](https://github.com/mapbender/mapbender/pull/1666))
 * [POI] Add option to minimize and completely remove POI popup ([#1273](https://github.com/mapbender/mapbender/issues/1273), [PR#1673](https://github.com/mapbender/mapbender/pull/1673))
-* [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
 
 Bugfixes:
 * Fix order of elements within an application could get lost ([#PR1682](https://github.com/mapbender/mapbender/pull/1682))
