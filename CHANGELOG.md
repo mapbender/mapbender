@@ -5,6 +5,7 @@ Features:
 
 Bugfixes:
 * Fix users could not modify their own profile ([#1695](https://github.com/mapbender/mapbender/issues/1695), [PR#1696](https://github.com/mapbender/mapbender/pull/1696))
+*  Fix nullable type declarations to avoid deprecation warnings in PHP 8.4 ([PR#1704](https://github.com/mapbender/mapbender/pull/1704))
 * [Manager] Fix only root user could duplicate applications ([PR#1709](https://github.com/mapbender/mapbender/pull/1709)) 
 * [ViewManager] Fix deletion of public views by any user ([#1719](https://github.com/mapbender/mapbender/pull/1719))
 * [ShareUrl] Fix selected layers not encoded correctly ([#1697](https://github.com/mapbender/mapbender/issues/1697), [PR#1698](https://github.com/mapbender/mapbender/pull/1698)) 
