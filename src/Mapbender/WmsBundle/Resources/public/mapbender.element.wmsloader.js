@@ -108,7 +108,7 @@
         loadDeclarativeWms: function(elm){
             const layers = elm.attr('data-mb-wms-layers') || elm.attr('mb-wms-layers');
             const merge = elm.attr('data-mb-wms-merge') || elm.attr('mb-wms-merge');
-            var layerNamesToActivate = (layers && layers.split(',')) || [];
+            var layerNamesToActivate = (layers && layers.split(',')) || ['_all'];
             var mergeSource = !merge || merge === '1';
             var sourceUrl = elm.attr('data-mb-url') || elm.attr('mb-url') || elm.attr('href');
             var infoFormat = elm.attr('data-mb-infoformat') || elm.attr('mb-infoformat') || 'text/html';
