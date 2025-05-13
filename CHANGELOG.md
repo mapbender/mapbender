@@ -1,4 +1,4 @@
-## v4.1.1 (upcoming)
+## v4.1.1
 Features:
 * [Print] Allow adding more options for quality levels ([PR#1708](https://github.com/mapbender/mapbender/pull/1708))
 * [API] Add new options to mapbender:wms:assign command and /api/wms/assign request ([#1720](https://github.com/mapbender/mapbender/pull/1720))
