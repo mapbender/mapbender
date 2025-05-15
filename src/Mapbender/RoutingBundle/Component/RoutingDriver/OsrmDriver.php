@@ -189,9 +189,12 @@ class OsrmDriver extends RoutingDriver
         if (!empty($response['waypoints'][0]['name'])) {
             return $response['waypoints'][0]['name'];
         }
-        $startAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
-        $startAddress = trim($startAddress[0]);
-        return $startAddress ?: 'Start';
+        $startAddress = 'Start';
+        if (!empty($response['routes'][0]['legs'][0]['summary'])) {
+            $startAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
+            $startAddress = trim($startAddress[0]);
+        }
+        return $startAddress;
     }
 
     protected function getDestinationAddress($response)
@@ -200,8 +203,11 @@ class OsrmDriver extends RoutingDriver
         if (!empty($response['waypoints'][$destinationIndex]['name'])) {
             return $response['waypoints'][$destinationIndex]['name'];
         }
-        $destinationAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
-        $destinationAddress = trim($destinationAddress[1]);
-        return $destinationAddress ?: 'Destination';
+        $destinationAddress = 'Destination';
+        if (!empty($response['routes'][0]['legs'][0]['summary'])) {
+            $destinationAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
+            $destinationAddress = (count($destinationAddress) > 1) ? trim($destinationAddress[1]) : $destinationAddress;
+        }
+        return $destinationAddress;
     }
 }
