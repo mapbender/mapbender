@@ -58,7 +58,7 @@ class OsrmDriver extends RoutingDriver
         $steps = ($config['steps']) ?: false;
         $queryParams = [
             'geometries' => 'geojson',
-            'overview' => 'full', 
+            'overview' => 'full',
             'steps' => $steps,
             # 'alternatives' => ($config['alternatives']) ?: false,
         ];
@@ -71,9 +71,8 @@ class OsrmDriver extends RoutingDriver
         $osrmConfig = $configuration['routingConfig']['osrm'];
         $coordinates = $response['routes'][0]['geometry']['coordinates'];
         $type = $response['routes'][0]['geometry']['type'];
-        $start = $response['waypoints'][0]['name'];
-        $destinationIndex = count($response['waypoints']) - 1;
-        $destination = $response['waypoints'][$destinationIndex]['name'];
+        $start = $this->getStartAddress($response);
+        $destination = $this->getDestinationAddress($response);
         $distance = $response['routes'][0]['distance'];
         $time = $response['routes'][0]['duration'];
         $infoText = $configuration['infoText'];
@@ -183,5 +182,32 @@ class OsrmDriver extends RoutingDriver
         } else {
             return false;
         }
+    }
+
+    protected function getStartAddress($response)
+    {
+        if (!empty($response['waypoints'][0]['name'])) {
+            return $response['waypoints'][0]['name'];
+        }
+        $startAddress = 'Start';
+        if (!empty($response['routes'][0]['legs'][0]['summary'])) {
+            $startAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
+            $startAddress = trim($startAddress[0]);
+        }
+        return $startAddress;
+    }
+
+    protected function getDestinationAddress($response)
+    {
+        $destinationIndex = count($response['waypoints']) - 1;
+        if (!empty($response['waypoints'][$destinationIndex]['name'])) {
+            return $response['waypoints'][$destinationIndex]['name'];
+        }
+        $destinationAddress = 'Destination';
+        if (!empty($response['routes'][0]['legs'][0]['summary'])) {
+            $destinationAddress = explode(',', $response['routes'][0]['legs'][0]['summary']);
+            $destinationAddress = (count($destinationAddress) > 1) ? trim($destinationAddress[1]) : $destinationAddress;
+        }
+        return $destinationAddress;
     }
 }
