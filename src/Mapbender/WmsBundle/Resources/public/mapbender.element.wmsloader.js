@@ -108,7 +108,7 @@
         loadDeclarativeWms: function(elm){
             const layers = elm.attr('data-mb-wms-layers') || elm.attr('mb-wms-layers');
             const merge = elm.attr('data-mb-wms-merge') || elm.attr('mb-wms-merge');
-            var layerNamesToActivate = (layers && layers.split(',')) || [];
+            var layerNamesToActivate = (layers && layers.split(',')) || ['_all'];
             var mergeSource = !merge || merge === '1';
             var sourceUrl = elm.attr('data-mb-url') || elm.attr('mb-url') || elm.attr('href');
             var infoFormat = elm.attr('data-mb-infoformat') || elm.attr('mb-infoformat') || 'text/html';
@@ -209,14 +209,16 @@
                 // Need to pre-generate layer ids now because layertree visual updates need layer ids
                 Mapbender.Util.SourceTree.generateLayerIds(sourceDef);
                 sourceDef.isDynamicSource = true;
-                // deactivate root layer, when no layer is selected
-                if (options.layers.length === 0) {
-                    sourceDef.configuration.children[0].options.treeOptions.selected = false;
+                if (options.hasOwnProperty('layers')) {
+                    // deactivate root layer, when no layer is selected
+                    if (options.layers.length === 0) {
+                        sourceDef.configuration.children[0].options.treeOptions.selected = false;
+                    }
+                    sourceDef.configuration.children[0].children.forEach(layer => {
+                        var allActive = options.layers.indexOf('_all') !== -1;
+                        layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
+                    });
                 }
-                sourceDef.configuration.children[0].children.forEach(layer => {
-                    var allActive = options.layers.indexOf('_all') !== -1;
-                    layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
-                });
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
             return source || null;
