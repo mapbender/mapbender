@@ -461,7 +461,8 @@ class CommandController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'error' => $commandOutput,
-                ], $exitCode);
+                ], array_key_exists($exitCode, JsonResponse::$statusTexts) ? $exitCode : JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         } catch (\Exception $e) {
             return new JsonResponse([
