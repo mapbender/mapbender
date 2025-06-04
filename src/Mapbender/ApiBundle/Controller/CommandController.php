@@ -461,7 +461,7 @@ class CommandController extends AbstractController
                 return new JsonResponse([
                     'success' => false,
                     'error' => $commandOutput,
-                ], $exitCode);
+                ], 500);
             }
         } catch (\Exception $e) {
             return new JsonResponse([
