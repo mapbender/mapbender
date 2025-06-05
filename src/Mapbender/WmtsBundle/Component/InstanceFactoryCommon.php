@@ -12,7 +12,7 @@ use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 abstract class InstanceFactoryCommon
-    implements \Mapbender\Component\SourceInstanceFactory
+    implements \Mapbender\CoreBundle\Component\Source\SourceInstanceFactory
 {
     public function createInstance(Source $source)
     {

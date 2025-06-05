@@ -199,13 +199,4 @@ abstract class Source implements MutableHttpOriginInterface
      */
     abstract public function getViewTemplate($frontend = false);
 
-    #[ORM\PostLoad]
-    public function postLoad()
-    {
-        if (!$this->type) {
-            // Ancient db (Mapbender 3.0.4); amend missing value
-            @trigger_error("WARNING: Missing type value on " . get_class($this) . "#{$this->id}, assuming WMS");
-            $this->setType(self::TYPE_WMS);
-        }
-    }
 }

@@ -5,13 +5,13 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\Component\SourceLoader;
-use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;

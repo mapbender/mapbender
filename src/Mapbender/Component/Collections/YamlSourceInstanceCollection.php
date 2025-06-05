@@ -6,7 +6,7 @@ namespace Mapbender\Component\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\Component\SourceInstanceFactory;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Layerset;
 
 class YamlSourceInstanceCollection extends AbstractLazyCollection

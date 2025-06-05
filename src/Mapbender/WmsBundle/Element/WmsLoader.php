@@ -7,7 +7,7 @@ use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
-use Mapbender\Component\SourceInstanceConfigGenerator;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SourceInstance;

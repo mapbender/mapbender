@@ -2,10 +2,6 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
-use Mapbender\Component\SourceInstanceConfigGenerator;
-use Mapbender\Component\SourceInstanceFactory;
-use Mapbender\Component\SourceLoader;
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;

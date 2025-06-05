@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\Component;
+namespace Mapbender\CoreBundle\Component\Source;
 
 interface SourceLoaderSettings
 {

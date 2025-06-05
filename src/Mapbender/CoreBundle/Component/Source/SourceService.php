@@ -1,9 +1,7 @@
 <?php
 
-namespace Mapbender\CoreBundle\Component\Presenter;
+namespace Mapbender\CoreBundle\Component\Source;
 
-use Mapbender\Component\SourceInstanceConfigGenerator;
-use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**

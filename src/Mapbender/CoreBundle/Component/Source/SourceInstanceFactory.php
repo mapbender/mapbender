@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\Component;
+namespace Mapbender\CoreBundle\Component\Source;
 
 
 use Mapbender\CoreBundle\Entity\Source;
