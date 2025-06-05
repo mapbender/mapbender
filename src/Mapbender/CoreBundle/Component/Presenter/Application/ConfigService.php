@@ -4,13 +4,13 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\Component\Event\ApplicationConfigEvent;
 use Mapbender\Component\Event\ApplicationEvent;
-use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;

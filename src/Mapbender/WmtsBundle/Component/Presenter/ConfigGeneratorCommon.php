@@ -4,14 +4,13 @@
 namespace Mapbender\WmtsBundle\Component\Presenter;
 
 
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Component\Source\SourceService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Component\TileMatrix;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
-use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 
 abstract class ConfigGeneratorCommon extends SourceService
 {

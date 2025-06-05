@@ -3,7 +3,7 @@
 
 namespace Mapbender\WmsBundle\Component\Presenter;
 
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
+use Mapbender\CoreBundle\Component\Source\SourceService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;

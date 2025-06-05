@@ -4,9 +4,9 @@
 namespace Mapbender\ManagerBundle\Form\Model;
 
 
-use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 
 class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSettings
 {

@@ -4,8 +4,6 @@ namespace Mapbender\WmsBundle\Component\Wms;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Mapbender\Component\SourceLoader;
-use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -13,6 +11,8 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;

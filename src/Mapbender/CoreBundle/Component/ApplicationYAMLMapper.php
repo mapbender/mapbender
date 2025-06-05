@@ -1,11 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
-use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\Component\Collections\YamlSourceInstanceCollection;
-use Mapbender\Component\SourceInstanceFactory;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
