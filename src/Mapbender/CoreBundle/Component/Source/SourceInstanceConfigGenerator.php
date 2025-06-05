@@ -1,10 +1,9 @@
 <?php
 
 
-namespace Mapbender\Component;
+namespace Mapbender\CoreBundle\Component\Source;
 
 
-use Mapbender\CoreBundle\Component\Source\SourceInstanceInformationInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;

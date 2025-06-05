@@ -1,14 +1,12 @@
 <?php
 
 
-namespace Mapbender\Component;
+namespace Mapbender\CoreBundle\Component\Source;
 
 
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
-use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\RefreshTypeMismatchException;
