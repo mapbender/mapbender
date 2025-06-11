@@ -189,7 +189,7 @@ class SourceInstanceController extends ApplicationControllerBase
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         // @todo: only act on post
-        $instance = $this->typeDirectory->createInstance($source);
+        $instance = $this->typeDirectory->getInstanceFactory($source)->createInstance($source);
         $instance->setLayerset(null);
         $this->em->persist($instance);
         $this->em->flush();
@@ -423,7 +423,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $layerset = $this->requireLayerset($layersetId, $application);
         /** @var Source|null $source */
         $source = $this->em->getRepository(Source::class)->find($sourceId);
-        $newInstance = $this->typeDirectory->createInstance($source);
+        $newInstance = $this->typeDirectory->getInstanceFactory($source)->createInstance($source);
         foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
             /** @var SourceInstanceAssignment $otherAssignment */
             $otherAssignment->setWeight($index + 1);

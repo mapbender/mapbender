@@ -72,13 +72,10 @@ class SourceInstanceItemType extends AbstractType
         });
     }
 
-    /**
-     * @param FormInterface $form
-     * @param SourceInstanceItem|null $data
-     */
-    protected function addActiveField(FormInterface $form, $data)
+    protected function addActiveField(FormInterface $form, ?SourceInstanceItem $data)
     {
-        $disabled = $data && !$this->typeDirectory->canDeactivateLayer($data);
+        $configGenerator = $this->typeDirectory->getConfigGenerator($data->getSourceInstance());
+        $disabled = $data && !$configGenerator->canDeactivateLayer($data);
         if ($form->has('active')) {
             $form->remove('active');
         }
