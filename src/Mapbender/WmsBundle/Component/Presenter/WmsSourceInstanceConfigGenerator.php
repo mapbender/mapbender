@@ -3,7 +3,7 @@
 
 namespace Mapbender\WmsBundle\Component\Presenter;
 
-use Mapbender\CoreBundle\Component\Source\SourceService;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * Instance registered in container at mapbender.source.wms.service
  * see services.xml
  */
-class WmsSourceService extends SourceService
+class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 {
 
     public function __construct(

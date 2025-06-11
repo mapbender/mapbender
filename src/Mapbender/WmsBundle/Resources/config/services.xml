@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceService</parameter>
+        <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator</parameter>
         <parameter key="mapbender.source.wms.class">Mapbender\WmsBundle\WmsDataSource</parameter>
         <parameter key="mapbender.source.wms.instance_factory.class">Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory</parameter>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>

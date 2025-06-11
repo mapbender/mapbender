@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @deprecated
  * @internal
  *
- * Used by InstanceTunnelService and WmsSourceService
+ * Used by InstanceTunnelService and WmsInstanceConfigGenerator
  */
 class VendorSpecificHandler
 {

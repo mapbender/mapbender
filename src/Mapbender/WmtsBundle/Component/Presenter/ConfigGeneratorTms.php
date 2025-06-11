@@ -59,11 +59,6 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         return $layerConfigs;
     }
 
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
-    {
-        return null;
-    }
-
     protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer)
     {
         return array();
