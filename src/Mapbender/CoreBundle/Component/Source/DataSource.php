@@ -18,4 +18,9 @@ abstract class DataSource
 
     public abstract function getLayerRenderer(): LayerRenderer;
 
+    public function allowAddSourceFromManager(): bool
+    {
+        return true;
+    }
+
 }
