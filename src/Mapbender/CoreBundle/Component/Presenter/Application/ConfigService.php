@@ -130,7 +130,7 @@ class ConfigService
     {
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
-            $sourceService = $this->getSourceService($assignment->getInstance());
+            $sourceService = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
             if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
@@ -170,18 +170,6 @@ class ConfigService
             }
         }
         return $elementConfig;
-    }
-
-    /**
-     * Get the concrete service that deals with the concrete SourceInstance type.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return SourceInstanceConfigGenerator
-     */
-    protected function getSourceService(SourceInstance $sourceInstance)
-    {
-        // delegate to directory
-        return $this->sourceTypeDirectory->getConfigGenerator($sourceInstance);
     }
 
     /**

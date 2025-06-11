@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Component\Source;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 
 /**
@@ -19,7 +18,7 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
  *
  * Custom sources should extend from Mapbender.DataSource and tag the class as `mapbender.datasource`
  **/
-class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInformationInterface
+class TypeDirectoryService
 {
 
     /**
@@ -85,28 +84,6 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
         return $this->getSource($type)->getLoader();
     }
 
-    /**
-     * @param Source $source
-     * @return SourceInstance
-     */
-    public function createInstance(Source $source)
-    {
-        return $this->getInstanceFactory($source)->createInstance($source);
-    }
-
-    public function fromConfig(array $data, $id)
-    {
-        if (empty($data['type'])) {
-            throw new \RuntimeException("Missing mandatory value 'type' in given data");
-        }
-        return $this->getInstanceFactoryByType($data['type'])->fromConfig($data, $id);
-    }
-
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
-    {
-        $implementation = $this->getInstanceFactoryByType($instance->getSource()->getType());
-        return $implementation->matchInstanceToPersistedSource($instance, $extraSources);
-    }
 
     /**
      * Returns list of assets of given type required for source instances to work on the client.
@@ -125,23 +102,4 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
         return $refs;
     }
 
-    public function getFormType(SourceInstance $instance)
-    {
-        return $this->getInstanceFactory($instance->getSource())->getFormType($instance);
-    }
-
-    public function getFormTemplate(SourceInstance $instance)
-    {
-        return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
-    }
-
-    public function isInstanceEnabled(SourceInstance $sourceInstance): bool
-    {
-        return $this->getConfigGenerator($sourceInstance)->isInstanceEnabled($sourceInstance);
-    }
-
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool
-    {
-        return $this->getConfigGenerator($layer->getSourceInstance())->canDeactivateLayer($layer);
-    }
 }
