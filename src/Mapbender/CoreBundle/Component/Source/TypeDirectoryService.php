@@ -40,10 +40,11 @@ class TypeDirectoryService
      * Return a mapping of type codes => displayable type labels
      * @return string[]
      */
-    public function getTypeLabels(): array
+    public function getTypeLabels(bool $filterAllowAddFromManager = true): array
     {
         $labelMap = array();
         foreach ($this->sources as $source) {
+            if ($filterAllowAddFromManager && !$source->allowAddSourceFromManager()) continue;
             $labelMap[strtolower($source->getName())] = $source->getLabel();
         }
         return $labelMap;
