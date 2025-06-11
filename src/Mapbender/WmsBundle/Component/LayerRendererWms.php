@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mapbender\PrintBundle\Component;
+namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -12,6 +12,7 @@ use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\Export\WmsGrid;
 use Mapbender\PrintBundle\Component\Export\WmsGridOptions;
 use Mapbender\PrintBundle\Component\Export\WmsTile;
+use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
 
