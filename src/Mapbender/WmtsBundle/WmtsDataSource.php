@@ -5,7 +5,7 @@ namespace Mapbender\WmtsBundle;
 use Mapbender\CoreBundle\Component\Source\DataSource;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\SourceLoader;
-use Mapbender\CoreBundle\Component\Source\SourceService;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\WmtsBundle\Component\Export\LayerRendererWmts;
 use Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorWmts;
@@ -28,7 +28,7 @@ class WmtsDataSource extends DataSource
         return "wmts";
     }
 
-    public function getConfigService(): SourceService
+    public function getConfigGenerator(): SourceInstanceConfigGenerator
     {
         return $this->configService;
     }

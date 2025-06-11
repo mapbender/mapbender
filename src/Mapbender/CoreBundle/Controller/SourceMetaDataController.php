@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * a) Metadata availability is predetermined per instance when generating config to skip yaml apps / non-wms instances
  * b) we do not know / do not care which layertree element initiates the request (no element id in url)
  *
- * @see \Mapbender\WmsBundle\Component\Presenter\WmsSourceService::getMetadataUrl()
+ * @see \Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator::getMetadataUrl()
  */
 class SourceMetaDataController
 {
