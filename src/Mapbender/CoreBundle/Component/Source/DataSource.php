@@ -8,6 +8,8 @@ abstract class DataSource
 {
     public abstract function getName(): string;
 
+    public abstract function getLabel(): string;
+
     public abstract function getConfigGenerator(): SourceInstanceConfigGenerator;
 
     public abstract function getInstanceFactory(): SourceInstanceFactory;

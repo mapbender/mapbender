@@ -8,7 +8,7 @@
 	</parameters>
 	<services>
         <service id="mapbender.source.wmts" class="Mapbender\WmtsBundle\WmtsDataSource">
-            <tag name="mapbender.datasource" />
+            <tag name="mapbender.datasource" priority="10" />
             <argument type="service" id="mapbender.source.wmts.config_generator" />
             <argument type="service" id="mapbender.source.wmts.instance_factory" />
             <argument type="service" id="mapbender.importer.source.wmts.service" />
@@ -16,7 +16,7 @@
         </service>
 
         <service id="mapbender.source.tms" class="Mapbender\WmtsBundle\TmsDataSource">
-            <tag name="mapbender.datasource" />
+            <tag name="mapbender.datasource" priority="20" />
             <argument type="service" id="mapbender.source.tms.config_generator" />
             <argument type="service" id="mapbender.source.tms.instance_factory" />
             <argument type="service" id="mapbender.importer.source.wmts.service" />

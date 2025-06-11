@@ -6,21 +6,9 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 interface MutableHttpOriginInterface extends HttpOriginInterface
 {
-    /**
-     * @param string $originUrl
-     * @return $this
-     */
-    public function setOriginUrl($originUrl);
+    public function setOriginUrl(string $originUrl): self;
 
-    /**
-     * @param string $password
-     * @return $this
-     */
-    public function setPassword($password);
+    public function setPassword(string $password): self;
 
-    /**
-     * @param string $username
-     * @return $this
-     */
-    public function setUsername($username);
+    public function setUsername(string $username): self;
 }

@@ -12,27 +12,19 @@ use Psr\Log\LoggerInterface;
 
 abstract class LayerRendererTiled extends LayerRenderer
 {
-    /** @var ImageTransport */
-    protected $imageTransport;
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /**
-     * @param ImageTransport $imageTransport
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger)
+    public function __construct(
+        protected ImageTransport $imageTransport,
+        protected LoggerInterface $logger
+    )
     {
-        $this->imageTransport = $imageTransport;
-        $this->logger = $logger;
     }
 
-    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
+    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution): false|array
     {
         return false;
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
+    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent): void
     {
         $layerImage = $this->buildLayerImage($canvas, $layerDef, $extent);
         imagecopyresampled($canvas->resource, $layerImage,

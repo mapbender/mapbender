@@ -33,43 +33,29 @@ abstract class HttpParsedSource extends Source
     #[ORM\Column(type: 'string', nullable: true)] // ;
     protected $password = null;
 
-    /**
-     * @return string|null
-     */
-    public function getOriginUrl()
+    public function getOriginUrl(): string
     {
         return $this->originUrl;
     }
 
-    /**
-     * @param string|null $originUrl
-     */
-    public function setOriginUrl($originUrl)
+    public function setOriginUrl(string $originUrl): self
     {
         $this->originUrl = $originUrl;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    /**
-     * @param string $username
-     */
-    public function setUsername($username)
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -77,8 +63,9 @@ abstract class HttpParsedSource extends Source
     /**
      * @param string|null $password
      */
-    public function setPassword($password)
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
+        return $this;
     }
 }

@@ -28,6 +28,13 @@ class WmtsDataSource extends DataSource
         return "wmts";
     }
 
+    public function getLabel(): string
+    {
+        // HACK: do not show separate Wmts + Tms type choices
+        //       when loading a new source
+        return "OGC WMTS / TMS";
+    }
+
     public function getConfigGenerator(): SourceInstanceConfigGenerator
     {
         return $this->configService;
