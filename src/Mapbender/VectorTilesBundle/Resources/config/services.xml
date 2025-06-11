@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="mapbender.source.vectortiles" class="Mapbender\VectorTilesBundle\VectorTilesDataSource">
+            <tag name="mapbender.datasource" />
+            <argument type="service" id="mapbender.source.vectortiles.config_generator" />
+            <argument type="service" id="mapbender.source.vectortiles.instance_factory" />
+            <argument type="service" id="mapbender.source.vectortiles.loader" />
+            <argument type="service" id="mapbender.source.vectortiles.renderer" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.config_generator"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesConfigGenerator">
+        </service>
+
+        <service id="mapbender.source.vectortiles.instance_factory"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesInstanceFactory"
+                 lazy="true" />
+
+        <service id="mapbender.source.vectortiles.loader"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesLoader" lazy="true">
+            <argument type="service" id="mapbender.http_transport.service" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.renderer"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
+                 lazy="true">
+        </service>
+    </services>
+</container>
+
