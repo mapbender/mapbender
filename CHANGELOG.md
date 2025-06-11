@@ -1,3 +1,8 @@
+## next bugfix release
+Security:
+* [DataTables] Added a patch to mitigate XSS and prototype pollution vulnerabilities in DataTables for jQuery, as we cannot upgrade via Composer beyond version 1.20.21. This patch will be replaced by a proper frontend package manager and an updated DataTables version in the next major release.
+
+
 ## v4.1.1
 Features:
 * [Print] Allow adding more options for quality levels ([PR#1708](https://github.com/mapbender/mapbender/pull/1708))
