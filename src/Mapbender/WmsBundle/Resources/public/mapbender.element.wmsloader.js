@@ -212,9 +212,9 @@
                 if (options.hasOwnProperty('layers')) {
                     // deactivate root layer, when no layer is selected
                     if (options.layers.length === 0) {
-                        sourceDef.configuration.children[0].options.treeOptions.selected = false;
+                        sourceDef.children[0].options.treeOptions.selected = false;
                     }
-                    sourceDef.configuration.children[0].children.forEach(layer => {
+                    sourceDef.children[0].children.forEach(layer => {
                         var allActive = options.layers.indexOf('_all') !== -1;
                         layer.options.treeOptions.selected = (options.layers.indexOf(layer.options.name) !== -1) || allActive;
                     });
@@ -239,11 +239,11 @@
             };
             var normUrl = normalizeUrl(url);
             var matches = this.mbMap.model.getSources().filter(function(source) {
-                if (!source.configuration.options.url) {
+                if (!source.options.url) {
                     // no static url (e.g. WMTS instance) => cannot process further
                     return false;
                 }
-                var sourceNormUrl = normalizeUrl(source.configuration.options.url);
+                var sourceNormUrl = normalizeUrl(source.options.url);
                 return sourceNormUrl.indexOf(normUrl) === 0 || normUrl.indexOf(sourceNormUrl) === 0;
             });
             return matches[0] || null;

@@ -76,7 +76,7 @@
             });
         },
         _getSourceDimensionConfig: function(source, name) {
-            var sourceDimensions = source && source.configuration.options.dimensions || [];
+            var sourceDimensions = source && source.options.dimensions || [];
             for (var j = 0; j < sourceDimensions.length; ++j) {
                 var sourceDimension = sourceDimensions[j];
                 if (sourceDimension.name === name) {
