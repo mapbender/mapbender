@@ -6,18 +6,9 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 interface HttpOriginInterface
 {
-    /**
-     * @return string
-     */
-    public function getOriginUrl();
+    public function getOriginUrl(): string;
 
-    /**
-     * @return string|null
-     */
-    public function getUsername();
+    public function getUsername(): ?string;
 
-    /**
-     * @return string|null
-     */
-    public function getPassword();
+    public function getPassword(): ?string;
 }

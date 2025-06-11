@@ -23,9 +23,16 @@ class WmsDataSource extends DataSource
     {
     }
 
+    public const TYPE = "WMS";
+
     public function getName(): string
     {
-        return "wms";
+        return self::TYPE;
+    }
+
+    public function getLabel(): string
+    {
+        return "OGC WMS";
     }
 
     public function getConfigGenerator(): SourceInstanceConfigGenerator
