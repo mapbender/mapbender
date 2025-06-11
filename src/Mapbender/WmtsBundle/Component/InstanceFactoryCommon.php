@@ -4,6 +4,7 @@
 namespace Mapbender\WmtsBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
@@ -11,10 +12,9 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsLayerSource;
 use Mapbender\WmtsBundle\Entity\WmtsSource;
 
-abstract class InstanceFactoryCommon
-    implements \Mapbender\CoreBundle\Component\Source\SourceInstanceFactory
+abstract class InstanceFactoryCommon implements SourceInstanceFactory
 {
-    public function createInstance(Source $source)
+    public function createInstance(Source $source): WmtsInstance
     {
         /** @var WmtsSource $source */
         $instance = new WmtsInstance();
@@ -44,12 +44,12 @@ abstract class InstanceFactoryCommon
         return $instanceLayer;
     }
 
-    public function fromConfig(array $data, $id)
+    public function fromConfig(array $data, string $id): SourceInstance
     {
         throw new \RuntimeException("Yaml-defined Wmts sources not implemented");
     }
 
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
+    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
     {
         throw new \RuntimeException("Yaml-defined Wmts sources not implemented");
     }

@@ -15,7 +15,7 @@ class WmsDataSource extends DataSource
 {
 
     public function __construct(
-        private WmsSourceInstanceConfigGenerator $configService,
+        private WmsSourceInstanceConfigGenerator $configGenerator,
         private SourceInstanceFactory            $instanceFactory,
         private Importer                         $loader,
         private LayerRendererWms                 $layerRenderer,
@@ -30,7 +30,7 @@ class WmsDataSource extends DataSource
 
     public function getConfigGenerator(): SourceInstanceConfigGenerator
     {
-        return $this->configService;
+        return $this->configGenerator;
     }
 
     public function getInstanceFactory(): SourceInstanceFactory
