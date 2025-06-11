@@ -445,17 +445,25 @@ class CommandController extends AbstractController
         $output = new BufferedOutput();
 
         try {
-            $application->run($input, $output);
+            $exitCode = $application->run($input, $output);
             $commandOutput = $output->fetch();
 
             if (isset($inputArgs['--json']) && $inputArgs['--json']) {
                 $commandOutput = json_decode($commandOutput, true);
             }
 
-            return new JsonResponse([
-                'success' => true,
-                'message' => $commandOutput,
-            ]);
+            if ($exitCode === 0) {
+                return new JsonResponse([
+                    'success' => true,
+                    'message' => $commandOutput,
+                ]);
+            } else {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => $commandOutput,
+                ], array_key_exists($exitCode, JsonResponse::$statusTexts) ? $exitCode : JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,

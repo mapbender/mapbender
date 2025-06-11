@@ -5,6 +5,19 @@ Features:
 Other:
 * Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
 
+
+## v4.1.2
+Security:
+* [DataTables] Added a patch to mitigate XSS and prototype pollution vulnerabilities in DataTables for jQuery, as we cannot upgrade via Composer beyond version 1.20.21. This patch will be replaced by a proper frontend package manager and an updated DataTables version in the next major release. ([PR#1738](https://github.com/mapbender/mapbender/pull/1738))
+
+Bugfix:
+- [API] Fix response status code in API Controller ([PR#1724](https://github.com/mapbender/mapbender/pull/1724))
+- [Routing] Fix missing start or destination spec in route info ([PR#1723](https://github.com/mapbender/mapbender/pull/1723))
+
+Other:
+- [API] Add upload_dir as return argument when uploading a zip file ([PR#1725](https://github.com/mapbender/mapbender/pull/1725))
+
+
 ## v4.1.1
 Features:
 * [Print] Allow adding more options for quality levels ([PR#1708](https://github.com/mapbender/mapbender/pull/1708))

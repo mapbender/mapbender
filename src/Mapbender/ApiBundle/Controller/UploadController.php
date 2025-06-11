@@ -47,6 +47,17 @@ class UploadController extends AbstractController
             new OA\Response(
                 response: 200,
                 description: 'ZIP file uploaded and extracted successfully',
+                content: new OA\MediaType(
+                    mediaType: 'application/json',
+                    schema: new OA\Schema(
+                        properties: [
+                            new OA\Property(property: 'success', type: 'boolean'),
+                            new OA\Property(property: 'message', type: 'string'),
+                            new OA\Property(property: 'upload_dir', description: 'The upload directory path as configured in the mapbender settings where the uploaded contents were extracted into', type: 'string'),
+                        ],
+                        type: 'object'
+                    )
+                )
             ),
             new OA\Response(
                 response: 400,
@@ -120,6 +131,7 @@ class UploadController extends AbstractController
             return new JsonResponse([
                 'success' => true,
                 'message' => 'ZIP file uploaded and extracted successfully',
+                'upload_dir' => $this->uploadDir,
             ], JsonResponse::HTTP_OK);
         } else {
             return new JsonResponse([
