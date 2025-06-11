@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\Presenter\WmsSourceService;
+use Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory;
 
@@ -521,9 +521,9 @@ class WmsInstance extends SourceInstance
      * Returns desired layer order, as a string enum ('standard' or 'reverse')
      * NOTE: this is a recently added column; there will be NULLs in the DB for updated applications.
      *       The default for these cases is provided at the config service level.
-     * @see WmsSourceService::getLayerConfiguration()
-     *
      * @return string|null
+     * @see WmsSourceInstanceConfigGenerator::getLayerConfiguration()
+     *
      */
     public function getLayerOrder()
     {

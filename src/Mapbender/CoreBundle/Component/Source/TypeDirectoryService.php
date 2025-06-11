@@ -61,7 +61,7 @@ class TypeDirectoryService
 
     public function getConfigGenerator(SourceInstance $sourceInstance): SourceInstanceConfigGenerator
     {
-        return $this->getSource($sourceInstance->getType())->getConfigService();
+        return $this->getSource($sourceInstance->getType())->getConfigGenerator();
     }
 
     public function getInstanceFactory(Source $source): SourceInstanceFactory
@@ -94,7 +94,7 @@ class TypeDirectoryService
     {
         $refs = array();
         foreach ($this->sources as $source) {
-            $typeRefs = $source->getConfigService()->getScriptAssets($application);
+            $typeRefs = $source->getConfigGenerator()->getScriptAssets($application);
             if ($typeRefs) {
                 $refs = array_merge($refs, $typeRefs);
             }

@@ -165,8 +165,8 @@ class Endpoint
             // instance layer is not connected to the source instance
             return null;
         }
-        $sourceService = $this->service->getSourceTypeDirectory()->getConfigGenerator($wmsInstance);
-        return $sourceService->getInternalLegendUrl($layer);
+        $configGenerator = $this->service->getSourceTypeDirectory()->getConfigGenerator($wmsInstance);
+        return $configGenerator->getInternalLegendUrl($layer);
     }
 
     /**

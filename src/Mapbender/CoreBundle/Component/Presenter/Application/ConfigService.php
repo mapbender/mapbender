@@ -123,18 +123,17 @@ class ConfigService
     }
 
     /**
-     * @param Layerset $layerset
      * @return array[]
      */
-    protected function getSourceInstanceConfigs(Layerset $layerset)
+    protected function getSourceInstanceConfigs(Layerset $layerset): array
     {
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
-            $sourceService = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
-            if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+            $configGenerator = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
+            if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configs[] = $sourceService->getConfiguration($assignment->getInstance());
+            $configs[] = $configGenerator->getConfiguration($assignment->getInstance());
         }
         return $configs;
     }

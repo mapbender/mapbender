@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * (credentials, "vendorSpecifics") that need to be hidden from the browser.
  *
  * @see ApplicationController::instanceTunnelAction()
- * @see WmsSourceService::postProcessUrls()
+ * @see WmsSourceInstanceConfigGenerator::postProcessUrls()
  *
  * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
  */

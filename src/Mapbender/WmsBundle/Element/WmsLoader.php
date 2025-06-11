@@ -159,8 +159,8 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source);
         $infoFormat = $request->get('infoFormat');
 
-        $sourceService = $this->getSourceService($instance);
-        $layerConfiguration = $sourceService->getConfiguration($instance);
+        $configGenerator = $this->getConfigGenerator($instance);
+        $layerConfiguration = $configGenerator->getConfiguration($instance);
         $config = array_replace($this->getDefaultConfiguration(), $element->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
@@ -216,7 +216,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
             if ($instance && $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
-                $instanceConfigs[] = $this->getSourceService($instance)->getConfiguration($instance);
+                $instanceConfigs[] = $this->getConfigGenerator($instance)->getConfiguration($instance);
             }
         }
         return $instanceConfigs;
@@ -227,11 +227,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return $this->sourceTypeDirectory;
     }
 
-    /**
-     * @param SourceInstance $instance
-     * @return SourceInstanceConfigGenerator
-     */
-    protected function getSourceService($instance)
+    protected function getConfigGenerator(SourceInstance $instance): SourceInstanceConfigGenerator
     {
         return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
     }

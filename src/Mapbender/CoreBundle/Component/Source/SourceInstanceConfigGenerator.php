@@ -1,22 +1,33 @@
 <?php
 
-
 namespace Mapbender\CoreBundle\Component\Source;
-
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**
- * Generates configuration for source instances.
+ * Generator for frontend-facing configuration for SourceInstance entities.
  */
-interface SourceInstanceConfigGenerator extends SourceInstanceInformationInterface
+abstract class SourceInstanceConfigGenerator implements SourceInstanceInformationInterface
 {
+    public function isInstanceEnabled(SourceInstance $sourceInstance): bool
+    {
+        return $sourceInstance->getEnabled();
+    }
+
     /**
      * Produces serializable frontend configuration.
      */
-    public function getConfiguration(SourceInstance $sourceInstance): array;
+    public function getConfiguration(SourceInstance $sourceInstance): array
+    {
+        return [
+            'id' => strval($sourceInstance->getId()),
+            'type' => strtolower($sourceInstance->getType()),
+            'title' => $sourceInstance->getTitle(),
+            'isBaseSource' => $sourceInstance->isBasesource(),
+        ];
+    }
 
     /**
      * Returns references to JavaScript assets required for source
@@ -24,12 +35,19 @@ interface SourceInstanceConfigGenerator extends SourceInstanceInformationInterfa
      *
      * @return string[]
      */
-    public function getScriptAssets(Application $application): array;
+    public abstract function getScriptAssets(Application $application): array;
 
     /**
      * Non-public legend url for tunneled instance
      */
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string;
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
+    {
+        return null;
+    }
 
-    public function useTunnel(SourceInstance $sourceInstance): bool;
+    public function useTunnel(SourceInstance $sourceInstance): bool
+    {
+        return false;
+    }
+
 }

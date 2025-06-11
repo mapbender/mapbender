@@ -4,7 +4,7 @@
 namespace Mapbender\WmtsBundle\Component\Presenter;
 
 
-use Mapbender\CoreBundle\Component\Source\SourceService;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
@@ -13,7 +13,7 @@ use Mapbender\WmtsBundle\Entity\TileMatrixSet;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 
-abstract class ConfigGeneratorCommon extends SourceService
+abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
 {
     public function __construct(
         protected UrlProcessor $urlProcessor,
@@ -25,11 +25,6 @@ abstract class ConfigGeneratorCommon extends SourceService
     public function canDeactivateLayer(SourceInstanceItem $layer): bool
     {
         return true;
-    }
-
-    public function useTunnel(SourceInstance $sourceInstance): bool
-    {
-        return false;
     }
 
     abstract protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer);
