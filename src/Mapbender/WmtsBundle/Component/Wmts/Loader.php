@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\HttpSourceLoader;
 use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
@@ -28,7 +28,7 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 use Symfony\Component\HttpFoundation\Response;
 
-class Loader extends SourceLoader
+class Loader extends HttpSourceLoader
 {
     /** @var EntityManagerInterface */
     protected $entityManager;
@@ -38,7 +38,7 @@ class Loader extends SourceLoader
 
     public function __construct(EntityManagerInterface $entityManager,
                                 HttpTransportInterface $httpTransport,
-                                XmlValidatorService $validator)
+                                XmlValidatorService    $validator)
     {
         parent::__construct($httpTransport);
         $this->entityManager = $entityManager;
@@ -91,7 +91,7 @@ class Loader extends SourceLoader
         if ($target->getContact()) {
             $this->entityManager->remove($target->getContact());
         }
-        $target->setContact(clone ($reloaded->getContact()));
+        $target->setContact(clone($reloaded->getContact()));
 
         $this->replaceSourceLayers($target, $reloaded);
 

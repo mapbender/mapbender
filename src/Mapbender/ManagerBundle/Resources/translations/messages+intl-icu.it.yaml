@@ -99,6 +99,7 @@ mb:
               one   {This source is used in one application}
               other {This source is used in # applications}
           }
+        added: 'È stata creata una nuova fonte di %type%'
       map:
         max_extent: 'Max. estensione'
         max_extent.help: 'Bounding Box (min/max x/y) in cui l''utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'

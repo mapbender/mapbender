@@ -42,6 +42,7 @@ mb:
           ok: Bron OK
           toupdate: Bron is niet meer actueel
           unreachable: Bron is onbereikbaar
+        added: 'Er is een nieuwe %type%-bron aangemaakt'
       map:
         max_extent: Max. omvang (extent)
         start_extent: Start omvang (extent)

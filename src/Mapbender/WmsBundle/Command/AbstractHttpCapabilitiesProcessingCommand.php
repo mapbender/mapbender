@@ -4,6 +4,7 @@
 namespace Mapbender\WmsBundle\Command;
 
 
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Console\Input\InputArgument;
@@ -56,13 +57,9 @@ abstract class AbstractHttpCapabilitiesProcessingCommand extends AbstractCapabil
         return $origin;
     }
 
-    /**
-     * @param HttpOriginModel $origin
-     * @return WmsSource
-     */
-    protected function loadSource(HttpOriginModel $origin)
+    protected function loadSource(HttpOriginModel $origin): WmsSource
     {
-        return $this->getImporter()->evaluateServer($origin);
+        return $this->getImporter()->loadSource($origin);
     }
 
     protected function processOrigin(HttpOriginModel $origin, InputInterface $input)

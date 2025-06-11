@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
-use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\HttpSourceLoader;
 use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
@@ -34,16 +34,14 @@ use Symfony\Component\HttpFoundation\Response;
  * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
- *
- * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
-class Importer extends SourceLoader
+class Importer extends HttpSourceLoader
 {
 
     public function __construct(
-        HttpTransportInterface $transport,
-        protected                         EntityManager $entityManager,
-                   protected             XmlValidatorService $validator)
+        HttpTransportInterface        $transport,
+        protected EntityManager       $entityManager,
+        protected XmlValidatorService $validator)
     {
         parent::__construct($transport);
     }
@@ -132,7 +130,7 @@ class Importer extends SourceLoader
             return $persistedUrl;
         } else {
             /** @var WmsSource $target */
-            return  UrlUtil::validateUrl($persistedUrl, array(
+            return UrlUtil::validateUrl($persistedUrl, array(
                 'VERSION' => $target->getVersion(),
             ));
         }

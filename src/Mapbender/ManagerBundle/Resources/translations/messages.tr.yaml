@@ -42,6 +42,7 @@ mb:
           ok: Geçerli Kaynak
           toupdate: Kaynak artık mevcut değil
           unreachable: Kaynağa erişilemiyor
+        added: 'Yeni bir %type% kaynağı oluşturuldu'
       map:
         max_extent: Maks. kapsam
         start_extent: Baslangıç kapsamı

@@ -99,6 +99,7 @@ mb:
               one   {This source is used in one application}
               other {This source is used in # applications}
           }
+        added: 'A new %type% source has been created'
       map:
         max_extent: 'Max. extent'
         max_extent.help: 'Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
