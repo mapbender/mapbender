@@ -16,55 +16,34 @@ class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSetting
     protected bool $activateNewLayers = true;
     protected bool $selectNewLayers = true;
 
-    /**
-     * @return string
-     */
-    public function getOriginUrl()
+    public function getOriginUrl(): string
     {
         return $this->originUrl;
     }
 
-    /**
-     * @param string $originUrl
-     * @return $this
-     */
-    public function setOriginUrl($originUrl)
+    public function setOriginUrl(string $originUrl): self
     {
         $this->originUrl = $originUrl;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    /**
-     * @param string|null $username
-     * @return $this
-     */
-    public function setUsername($username)
+    public function setUsername($username): self
     {
         $this->username = $username;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param string|null $password
-     * @return $this
-     */
-    public function setPassword($password)
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
         return $this;

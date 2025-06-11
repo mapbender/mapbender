@@ -21,25 +21,19 @@ use Psr\Log\LoggerInterface;
  */
 class LayerRendererWms extends LayerRenderer
 {
-    /** @var LoggerInterface */
-    protected $logger;
-    /** @var ImageTransport */
-    protected $imageTransport;
-    /** @var int */
-    protected $maxGetMapDimensions;
-    /** @var int */
-    protected $tileBuffer;
+    /** @var int[] */
+    protected array $maxGetMapDimensions;
+    /** @var int[] */
+    protected array $tileBuffer;
 
-    /**
-     * @param ImageTransport $imageTransport
-     * @param LoggerInterface $logger
-     * @param int[] $maxGetMapDimensions
-     * @param int[] $tileBuffer
-     */
-    public function __construct(ImageTransport $imageTransport, LoggerInterface $logger, $maxGetMapDimensions, $tileBuffer)
+
+    public function __construct(
+        protected ImageTransport $imageTransport,
+        protected LoggerInterface $logger,
+        $maxGetMapDimensions,
+        $tileBuffer
+    )
     {
-        $this->imageTransport = $imageTransport;
-        $this->logger = $logger;
         if (!is_array($maxGetMapDimensions) || count($maxGetMapDimensions) !== 2) {
             throw new \InvalidArgumentException("Invalid maxGetMapDimensions type; must be two-item array, got " . print_r($maxGetMapDimensions, true));
         }
@@ -49,6 +43,7 @@ class LayerRendererWms extends LayerRenderer
         // force numeric indexing
         $this->maxGetMapDimensions = array_values($maxGetMapDimensions);
         $this->tileBuffer = array_values($tileBuffer);
+
         foreach ($this->maxGetMapDimensions as $i => $maxGetMapAxis) {
             if ($maxGetMapAxis < 16) {
                 throw new \InvalidArgumentException("maxGetMapDimensions axis #{$i}: value {$maxGetMapAxis} is too small for stable grid splitting maths");
@@ -60,7 +55,7 @@ class LayerRendererWms extends LayerRenderer
         }
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
+    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
     {
         if (empty($layerDef['url'])) {
             $this->logger->warning("Missing url in WMS layer", $layerDef);
@@ -81,13 +76,7 @@ class LayerRendererWms extends LayerRenderer
         }
     }
 
-    /**
-     * @param $layerDef
-     * @param $nextLayerDef
-     * @param Resolution $resolution
-     * @return array|bool|false
-     */
-    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
+    public function squashLayerDefinitions(array $layerDef, array $nextLayerDef, Resolution $resolution): false|array
     {
         $criteriaA = $this->getSquashCompareCrtiteria($layerDef, $resolution);
         $criteriaB = $this->getSquashCompareCrtiteria($nextLayerDef, $resolution);
@@ -198,14 +187,7 @@ class LayerRendererWms extends LayerRenderer
         return UrlUtil::validateUrl($url, $symbolParams);
     }
 
-    /**
-     * @param Box $extent
-     * @param int $width
-     * @param int $height
-     * @param bool $flipXy
-     * @return array
-     */
-    protected function getBboxAndSizeParams(Box $extent, $width, $height, $flipXy)
+    protected function getBboxAndSizeParams(Box $extent, int $width, int $height, bool $flipXy): array
     {
         $params = array(
             'WIDTH' => intval($width),
@@ -220,13 +202,9 @@ class LayerRendererWms extends LayerRenderer
     }
 
     /**
-     * @param mixed[] $params
-     * @param mixed[] $layerDef
-     * @param ExportCanvas $canvas
-     * @param Box $extent
-     * @return mixed[] params array with potentially updated WIDTH and HEIGHT
+     * @return array params array with potentially updated WIDTH and HEIGHT
      */
-    protected function adjustParamsForResolution($params, $layerDef, $canvas, $extent)
+    protected function adjustParamsForResolution(array $params, array $layerDef, ExportCanvas $canvas, Box $extent): array
     {
         $resolution = $canvas->getResolution($extent);
         $minRes = ArrayUtil::getDefault($layerDef, 'minResolution', null);
@@ -241,11 +219,9 @@ class LayerRendererWms extends LayerRenderer
     /**
      * Produces WMS GetMap params for controlling label text and other symbol sizing.
      *
-     * @param ExportCanvas $canvas
-     * @param string $url
      * @return string[] array
      */
-    protected function getSymbolizationParams($canvas, $url)
+    protected function getSymbolizationParams(ExportCanvas $canvas, string $url): array
     {
         $existingParams = array();
         parse_str(parse_url($url, PHP_URL_QUERY), $existingParams);
@@ -265,12 +241,10 @@ class LayerRendererWms extends LayerRenderer
     /**
      * Calculates the dpi value that should be used by the WMS server for calculating text label and other symbol sizes.
      *
-     * @param ExportCanvas $canvas
      * @param int $width of the outgoing WMS request that would cover the whole canvas
      * @param int $height of the outgoing WMS request that would cover the whole canvas
-     * @return int
      */
-    protected function getSymbolResolution($canvas, $width, $height)
+    protected function getSymbolResolution(ExportCanvas $canvas, int $width, int $height): int
     {
         $targetResolution = $width / $canvas->getWidth() * $canvas->physicalDpi;
         // restrain to semi-sane minimum / maximum values
@@ -278,13 +252,7 @@ class LayerRendererWms extends LayerRenderer
         return intval($clamped);
     }
 
-    /**
-     * @param float $value
-     * @param float|null $minimum
-     * @param float|null $maximum
-     * @return float
-     */
-    protected function clipResolutionComponent($value, $minimum, $maximum)
+    protected function clipResolutionComponent(float $value, ?float $minimum, ?float $maximum): float
     {
         if ($minimum !== null && $value < $minimum) {
             // give a few percent extra to avoid rounding precision edge cases
@@ -308,22 +276,13 @@ class LayerRendererWms extends LayerRenderer
     /**
      * Returns the grid options to be used for the layer described by $layerDef.
      * Override this if you need variable, layer-dependent grid options.
-     *
-     * @param mixed[] $layerDef
-     * @return WmsGridOptions
      */
-    protected function getGridOptions($layerDef)
+    protected function getGridOptions(array $layerDef): WmsGridOptions
     {
         return new WmsGridOptions($this->maxGetMapDimensions, $this->tileBuffer);
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     * @param WmsGridOptions $gridOptions
-     * @return WmsGrid
-     */
-    protected function calculateGrid($width, $height, $gridOptions)
+    protected function calculateGrid(int $width, int $height, WmsGridOptions $gridOptions): WmsGrid
     {
         $rows = $this->calculateLinearBufferedSplit($height,
             $gridOptions->getUnbufferedHeight(), $gridOptions->getBufferVertical());
@@ -348,12 +307,8 @@ class LayerRendererWms extends LayerRenderer
 
     /**
      * Calculates a grid based on WIDTH and HEIGHT params extracted from a prepared WMS GetMap request url.
-     *
-     * @param string $url
-     * @param WmsGridOptions $gridOptions
-     * @return WmsGrid
      */
-    protected function calculateGridFromUrl($url, $gridOptions)
+    protected function calculateGridFromUrl(string $url, WmsGridOptions $gridOptions): WmsGrid
     {
         $urlParams = array();
         parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
@@ -364,12 +319,9 @@ class LayerRendererWms extends LayerRenderer
     }
 
     /**
-     * @param int $total
-     * @param int $unbufferedSegmentLength
-     * @param int $bufferLength
      * @return BufferedSection[]
      */
-    protected function calculateLinearBufferedSplit($total, $unbufferedSegmentLength, $bufferLength = 0)
+    protected function calculateLinearBufferedSplit(int $total, int $unbufferedSegmentLength, int $bufferLength = 0): array
     {
         // Step 1: calculate non-overlapping segments, allowing the first and the last segments
         //         to be longer than $unbufferedSegmentLength by $bufferLength
@@ -419,12 +371,7 @@ class LayerRendererWms extends LayerRenderer
         return $bufferedSegments;
     }
 
-    /**
-     * @param mixed[] $layerDef
-     * @param Resolution $resolution
-     * @return mixed[]
-     */
-    protected function getSquashCompareCrtiteria($layerDef, $resolution)
+    protected function getSquashCompareCrtiteria(array $layerDef, Resolution $resolution): array
     {
         $ignoredParams = array(
             'LAYERS',

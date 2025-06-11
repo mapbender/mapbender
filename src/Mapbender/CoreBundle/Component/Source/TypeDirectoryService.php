@@ -32,7 +32,7 @@ class TypeDirectoryService
     public function __construct(array $sources)
     {
         foreach ($sources as $source) {
-            $this->sources[$source->getName()] = $source;
+            $this->sources[strtolower($source->getName())] = $source;
         }
     }
 
@@ -44,8 +44,7 @@ class TypeDirectoryService
     {
         $labelMap = array();
         foreach ($this->sources as $source) {
-            $loader = $source->getLoader();
-            $labelMap[$loader->getTypeCode()] = $loader->getTypeLabel();
+            $labelMap[strtolower($source->getName())] = $source->getLabel();
         }
         return $labelMap;
     }

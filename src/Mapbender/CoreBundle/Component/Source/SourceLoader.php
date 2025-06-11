@@ -16,49 +16,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class SourceLoader
 {
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-
-    public function __construct(HttpTransportInterface $httpTransport)
+    public function __construct(
+        protected HttpTransportInterface $httpTransport)
     {
-        $this->httpTransport = $httpTransport;
     }
 
     /**
-     * @return string
-     */
-    abstract public function getTypeLabel();
-
-    /**
-     * @return string
-     */
-    abstract public function getTypeCode();
-
-    /**
-     * @param HttpOriginInterface $origin
-     * @return Response
      * @throws InvalidUrlException
      */
-    abstract protected function getResponse(HttpOriginInterface $origin);
+    abstract protected function getResponse(HttpOriginInterface $origin): Response;
+
+    abstract public function parseResponseContent($content): Source;
 
     /**
-     * @param string $content
-     * @return Source
-     */
-    abstract public function parseResponseContent($content);
-
-    /**
-     * @param string $content
      * @throws XmlParseException
      */
-    abstract public function validateResponseContent($content);
+    abstract public function validateResponseContent(string $content): void;
 
     /**
-     * @param HttpOriginInterface $origin
-     * @return Source
      * @throws InvalidUrlException
      */
-    public function evaluateServer(HttpOriginInterface $origin)
+    public function evaluateServer(HttpOriginInterface $origin): Source
     {
         $response = $this->getResponse($origin);
         if (!$response->isOk()) {
@@ -73,11 +51,10 @@ abstract class SourceLoader
     }
 
     /**
-     * @param HttpOriginInterface $origin
      * @throws XmlParseException
      * @throws InvalidUrlException
      */
-    public function validateServer(HttpOriginInterface $origin)
+    public function validateServer(HttpOriginInterface $origin): void
     {
         $response = $this->getResponse($origin);
         $this->validateResponseContent($response->getContent());
@@ -85,9 +62,6 @@ abstract class SourceLoader
 
     /**
      * Copies origin-related attributes (url, username, password) from $origin to $target
-     *
-     * @param MutableHttpOriginInterface $target
-     * @param HttpOriginInterface $origin
      */
     public static function updateOrigin(MutableHttpOriginInterface $target, HttpOriginInterface $origin)
     {
@@ -96,17 +70,15 @@ abstract class SourceLoader
         $target->setPassword($origin->getPassword());
     }
 
-    public function getRefreshUrl(Source $target)
+    public function getRefreshUrl(Source $target): string
     {
         return $target->getOriginUrl();
     }
 
     /**
-     * @param Source $target
-     * @param HttpOriginInterface $origin
      * @throws SourceLoaderException
      */
-    public function refresh(Source $target, HttpOriginInterface $origin)
+    public function refresh(Source $target, HttpOriginInterface $origin): void
     {
         $reloadedSource = $this->evaluateServer($origin);
         $this->beforeSourceUpdate($target, $reloadedSource);
@@ -116,11 +88,9 @@ abstract class SourceLoader
     }
 
     /**
-     * @param Source $target
-     * @param Source $reloaded
      * @throws RefreshTypeMismatchException
      */
-    protected function beforeSourceUpdate(Source $target, Source $reloaded)
+    protected function beforeSourceUpdate(Source $target, Source $reloaded): void
     {
         if ($target->getType() !== $reloaded->getType()) {
             $message = "Source type mismatch: {$target->getType()} (old) vs {$reloaded->getType()} (reloaded)";
@@ -131,10 +101,9 @@ abstract class SourceLoader
     abstract public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null);
 
     /**
-     * @param string $url
      * @throws InvalidUrlException
      */
-    public static function validateUrl($url)
+    public static function validateUrl(string $url): void
     {
         $parts = parse_url($url);
         if (empty($parts['scheme']) || empty($parts['host'])) {
@@ -143,11 +112,9 @@ abstract class SourceLoader
     }
 
     /**
-     * @param string $content
-     * @return \DOMDocument
      * @throws SourceLoaderException
      */
-    protected function xmlToDom($content)
+    protected function xmlToDom(string $content): \DOMDocument
     {
         $doc = new \DOMDocument();
         try {

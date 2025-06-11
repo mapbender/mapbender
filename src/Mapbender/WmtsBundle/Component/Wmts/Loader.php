@@ -7,6 +7,7 @@ namespace Mapbender\WmtsBundle\Component\Wmts;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
@@ -25,6 +26,7 @@ use Mapbender\WmtsBundle\Entity\HttpTileSource;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
+use Symfony\Component\HttpFoundation\Response;
 
 class Loader extends SourceLoader
 {
@@ -43,27 +45,12 @@ class Loader extends SourceLoader
         $this->validator = $validator;
     }
 
-    public function getTypeCode()
-    {
-        // HACK: do not show separate Wmts + Tms type choices
-        //       when loading a new source
-        return strtolower(Source::TYPE_WMTS);
-    }
-
-    public function getTypeLabel()
-    {
-        // HACK: do not show separate Wmts + Tms type choices
-        //       when loading a new source
-        return 'OGC WMTS / TMS';
-    }
-
     /**
-     * @throws \Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException
+     * @throws NotSupportedVersionException
      * @throws XmlParseException
      * @throws ServerResponseErrorException
-     * @return HttpTileSource
      */
-    public function parseResponseContent($content)
+    public function parseResponseContent($content): HttpTileSource
     {
         $doc = $this->xmlToDom($content);
         switch ($doc->documentElement->tagName) {
@@ -84,7 +71,7 @@ class Loader extends SourceLoader
      * @inheritdoc
      * @throws InvalidUrlException
      */
-    protected function getResponse(HttpOriginInterface $origin)
+    protected function getResponse(HttpOriginInterface $origin): Response
     {
         $url = $origin->getOriginUrl();
         static::validateUrl($url);
@@ -92,7 +79,7 @@ class Loader extends SourceLoader
         return $this->httpTransport->getUrl($url);
     }
 
-    public function validateResponseContent($content)
+    public function validateResponseContent($content): void
     {
         $this->validator->validateDocument($this->xmlToDom($content));
     }
