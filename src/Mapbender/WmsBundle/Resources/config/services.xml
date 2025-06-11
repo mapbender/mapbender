@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="mapbender.source.wms.service.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator</parameter>
+        <parameter key="mapbender.source.wms.config_generator.class">Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator</parameter>
         <parameter key="mapbender.source.wms.class">Mapbender\WmsBundle\WmsDataSource</parameter>
         <parameter key="mapbender.source.wms.instance_factory.class">Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory</parameter>
         <parameter key="mapbender.importer.source.wms.service.class">Mapbender\WmsBundle\Component\Wms\Importer</parameter>
@@ -23,7 +23,7 @@
     <services>
         <service id="mapbender.source.wms" class="%mapbender.source.wms.class%">
             <tag name="mapbender.datasource" />
-            <argument type="service" id="mapbender.source.wms.service" />
+            <argument type="service" id="mapbender.source.wms.config_generator" />
             <argument type="service" id="mapbender.source.wms.instance_factory" />
             <argument type="service" id="mapbender.importer.source.wms.service" />
             <argument type="service" id="mapbender.imageexport.renderer.wms" />
@@ -33,7 +33,7 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="mapbender.xmlvalidator.service" />
         </service>
-        <service id="mapbender.source.wms.service" class="%mapbender.source.wms.service.class%">
+        <service id="mapbender.source.wms.config_generator" class="%mapbender.source.wms.config_generator.class%">
             <argument type="service" id="mapbender.source.url_processor.service" />
             <argument type="service" id="security.token_storage" />
             <argument>%wms.default_layer_order%</argument>

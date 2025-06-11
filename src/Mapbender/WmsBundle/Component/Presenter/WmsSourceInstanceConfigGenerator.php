@@ -18,7 +18,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Instance registered in container at mapbender.source.wms.service
+ * Instance registered in container at mapbender.source.wms.config_generator
  * see services.xml
  */
 class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
