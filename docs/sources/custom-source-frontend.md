@@ -112,17 +112,14 @@ The sourceDef needs to be an JS object with the following properties:
 const sourceDef = {
     type: "my-identifier", // should match the Source identifier from section 'Registering your new source'
     id: "some-unique-source-id",
-    configuration: {
-        type: "search", // should match the SourceLayer identifier from section 'Registering your new source'
-        children: [{ // source should have exactly one child: the root layer
-            options: {
-                id: "some-unique-root-layer-id",
-                title: "Root Layer title for the layer tree",
-                opacity: 1.0, // only required for root layer
-            },
-            children: [subLayer1, subLayer2],
-        }]
-    }
+    children: [{ // source should have exactly one child: the root layer
+        options: {
+            id: "some-unique-root-layer-id",
+            title: "Root Layer title for the layer tree",
+            opacity: 1.0, // only required for root layer
+        },
+        children: [subLayer1, subLayer2],
+    }]
 }
 ```
 

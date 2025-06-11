@@ -60,7 +60,7 @@ window.Mapbender.Util.SourceTree = (function() {
     };
 
     function getRootLayer(sourceDef) {
-        return sourceDef.configuration.children[0];
+        return sourceDef.children[0];
     }
 
     function iterateSourceLeaves(sourceDef, reverse, callback, filter) {

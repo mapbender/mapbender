@@ -143,7 +143,7 @@ window.Mapbender = Mapbender || {};
     /**
      * A source represents a data source that is displayed on the map. WmsSource, WmtsSource, GeoJsonSource etc. extend
      * from this base class. A source can have one or more SourceLayers.
-     * They must be defined in the constructor using definition.configuration.children
+     * They must be defined in the constructor using definition.children
      * @see SourceLayer
      * @abstract
      */
@@ -186,11 +186,9 @@ window.Mapbender = Mapbender || {};
              * Configuration options for this source, keys depend on the source type
              * @type {object}
              */
-            this.configuration = definition.configuration || {};
-            this.configuration.options = this.configuration.options || {};
-            this.configuration.children = (this.configuration.children || []).map(childDef => Mapbender.SourceLayer.factory(childDef, this, null));
+            this.options = definition.options || {};
+            this.children = (definition.children || []).map(childDef => Mapbender.SourceLayer.factory(childDef, this, null));
 
-            this.children = this.configuration.children;
             this.configuredSettings_ = this.getSettings();
 
             /**
@@ -262,7 +260,7 @@ window.Mapbender = Mapbender || {};
 
         getSettings() {
             return {
-                opacity: this.configuration.options.opacity
+                opacity: this.options.opacity
             };
         }
 
@@ -428,7 +426,7 @@ window.Mapbender = Mapbender || {};
          * @returns {Mapbender.SourceLayer}
          */
         getRootLayer() {
-            return this.configuration.children[0];
+            return this.children[0];
         }
 
         /**
@@ -438,7 +436,7 @@ window.Mapbender = Mapbender || {};
          * @returns {number[]|boolean} false if bounds could not be calculated
          */
         getLayerBounds(layerId, projCode, inheritFromParent) {
-            const layer = layerId ? this.getLayerById(layerId) : this.configuration.children[0];
+            const layer = layerId ? this.getLayerById(layerId) : this.children[0];
 
             if (!layer) {
                 console.warn("No layer, unable to calculate bounds");
@@ -451,7 +449,7 @@ window.Mapbender = Mapbender || {};
          * @param {number} value between 0 and 1
          */
         setOpacity(value) {
-            this.configuration.options.opacity = value;
+            this.options.opacity = value;
             this.nativeLayers.map(function (layer) {
                 layer.setOpacity(value);
             });
@@ -472,9 +470,9 @@ window.Mapbender = Mapbender || {};
 
         _getPrintBaseOptions() {
             return {
-                type: this.configuration.type,
+                type: this.type,
                 sourceId: this.id,
-                opacity: this.configuration.options.opacity
+                opacity: this.options.opacity
             };
         }
 
@@ -492,14 +490,15 @@ window.Mapbender = Mapbender || {};
         /**
          * Custom toJSON for mbMap.getMapState()
          * Drops nativeLayers to avoid circular references
-         * @returns {{configuration: Object, id: (string|null), title, type: string}}
+         * @returns {{children: Array, options: Object, id: (string|null), title, type: string}}
          */
         toJSON() {
             return {
                 id: this.id,
                 title: this.title,
                 type: this.type,
-                configuration: this.configuration
+                children: this.children,
+                options: this.options,
             };
         }
     }
@@ -706,7 +705,7 @@ window.Mapbender = Mapbender || {};
             // opacity + dimension are only available on root layer
             if (!this.getParent()) {
                 supported.push('opacity');
-                if ((this.source.configuration.options.dimensions || []).length) {
+                if ((this.source.options.dimensions || []).length) {
                     supported.push('dimension');
                 }
             }
