@@ -45,7 +45,7 @@ mb:
           center: Centrada
       generate_button_menu: 'Generar un menú para botones'
       menu_label: 'Título del menú'
-    visibility: 'Visibilidad'
+    visibility: Visibilidad
     element:
       screentype:
         mobile: 'Visualización en pantallas de móviles'
@@ -97,6 +97,7 @@ mb:
             one   {Esta fuente de datos se utiliza en una aplicación}
             other {Esta fuente de datos se utiliza en # aplicaciones}
           }
+        added: 'Se ha creado una nueva fuente de %type%'
       map:
         max_extent: 'Extensión máxima'
         max_extent.help: 'Marco límite (min/max x/y) en la que el usuario puede navegar sobre el mapa. Al hacer clic en el icono del globo terráqueo de la barra de escala, el mapa se amplía hasta esta extensión.'
@@ -114,7 +115,7 @@ mb:
           title: 'Eliminar elemento'
           confirm: '¿Realmente desea eliminar el elemento "{element_name}"'
         anchor:
-          label: 'Posición'
+          label: Posición
           left-top: 'Arriba a la izquierda'
           left-bottom: 'Abajo a la izquierda'
           right-top: 'Arriba a la derecha'
@@ -152,7 +153,7 @@ mb:
           base_data: 'Información básica'
         screenshot: 'Captura de pantalla'
         layouts: Layout
-        layersets: 'Capas'
+        layersets: Capas
         custom_css: CSS
         security:
           title: Seguridad

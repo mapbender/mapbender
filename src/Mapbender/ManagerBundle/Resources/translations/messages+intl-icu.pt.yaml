@@ -99,6 +99,7 @@ mb:
               one   {Esta fonte está sendo usada em um aplicativo}
               other {Esta fonte está sendo usada em # aplicativos}
           }
+        added: 'Uma nova fonte de %type% foi criada'
       map:
         max_extent: 'Extensão máxima do mapa'
         max_extent.help: 'Bounding Box com mín/máx x/y, marcando o alcance permitido de navegação do usuário. Clicando no globo terrestre na barra de escala, será feito zoom para esta extensão.'
