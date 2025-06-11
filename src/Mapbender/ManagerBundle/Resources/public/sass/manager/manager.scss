@@ -1,6 +1,13 @@
 /* Backend styles include used by main backend and login */
 $textColor: #333 !default;
 
+:root {
+    --primary: #079ee0;
+    --text: #202020;
+    --btn-hover: #1A709E;
+    --content-background: #FFFFFF;
+}
+
 @import "modules/base";
 @import "modules/text";
 @import "modules/layout";
@@ -68,7 +75,7 @@ div.contentTitle {
 .underlined {
   display: inline-block;
   padding-bottom: 10px;
-  border-bottom: solid #079ee0 5px;
+  border-bottom: solid var(--primary) 5px;
 }
 
 .page{
@@ -129,7 +136,7 @@ textarea, input[type=text], input[type=number], input[type=password], .dropdownV
     a.active {
       // Trade bottom-padding for border to maintain height
       padding-bottom: 7px;
-      border-bottom: solid #079ee0 3px;
+      border-bottom: solid var(--primary) 3px;
     }
   }
 }
@@ -307,13 +314,25 @@ footer {
  --bs-btn-border-color: #dee2e6;
 }
 
-.btn-primary{
-  --bs-btn-bg: #279ddc;
-  --bs-btn-border-color: #279ddc;
-  --bs-btn-hover-bg: #1A709E;
-  --bs-btn-hover-border-color: #1A709E;
-  --bs-btn-active-bg: #1A709E;
-  --bs-btn-active-border-color: #1A709E;
+.btn-primary {
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-bg: var(--btn-hover);
+  --bs-btn-hover-border-color: var(--btn-hover);
+  --bs-btn-active-bg: var(--btn-hover);
+  --bs-btn-active-border-color: var(--btn-hover);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--text);
+    --bs-btn-border-color: #a0a0a0;
+    --bs-btn-bg: var(--content-background);
+    --bs-btn-hover-color: var(--content-background);
+    --bs-btn-hover-border-color: var(--btn-hover);
+    --bs-btn-hover-bg: var(--btn-hover);
+    --bs-btn-active-color: var(--content-background);
+    --bs-btn-active-border-color: var(--primary);
+    --bs-btn-active-bg: var(--primary);
 }
 
 .application-list__spacing-top {

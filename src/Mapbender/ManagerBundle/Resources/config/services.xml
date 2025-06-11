@@ -60,7 +60,6 @@
         </service>
         <service id="mapbender.form_type.source_selection" class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
             <tag name="form.type" />
-            <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
         <service id="mapbendeer.form_type.control_target" class="Mapbender\ManagerBundle\Form\Type\Element\ControlTargetType">
             <tag name="form.type" />

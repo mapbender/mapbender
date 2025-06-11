@@ -20,12 +20,17 @@
             <div class="row">
                 <div class="col-sm-5 col-xs-12 col-12">
                     {%- if grants.create -%}
-                    <div class="content-box content-box-md">
-                        <a href="{{ path('mapbender_manager_repository_new') }}" data-test="mb-source-add">
-                          <i class="fas fa-plus fa-lg"></i>
-                          <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
-                        </a>
-                    </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-plus fa-lg"></i>
+                                <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for source, label in datasources %}
+                                    <li><a class="dropdown-item" href="{{ path('mapbender_manager_repository_new', parameters = {sourceType: source}) }}">{{ label }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     {%- endif -%}
                 </div>
                 {%- if items -%}

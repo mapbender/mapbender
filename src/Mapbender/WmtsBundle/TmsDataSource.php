@@ -54,4 +54,9 @@ class TmsDataSource extends DataSource
     {
         return $this->layerRenderer;
     }
+
+    public function allowAddSourceFromManager(): bool
+    {
+        return false;
+    }
 }
