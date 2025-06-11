@@ -29,7 +29,6 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
 
     /**
      * @param DataSource[] $sources
-     * @return void
      */
     public function __construct(array $sources)
     {
@@ -136,12 +135,12 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
         return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
     }
 
-    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    public function isInstanceEnabled(SourceInstance $sourceInstance): bool
     {
         return $this->getConfigGenerator($sourceInstance)->isInstanceEnabled($sourceInstance);
     }
 
-    public function canDeactivateLayer(SourceInstanceItem $layer)
+    public function canDeactivateLayer(SourceInstanceItem $layer): bool
     {
         return $this->getConfigGenerator($layer->getSourceInstance())->canDeactivateLayer($layer);
     }

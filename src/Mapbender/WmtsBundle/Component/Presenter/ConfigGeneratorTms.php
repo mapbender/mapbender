@@ -12,7 +12,7 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 class ConfigGeneratorTms extends ConfigGeneratorCommon
 {
 
-    public function getScriptAssets(Application $application)
+    public function getScriptAssets(Application $application): array
     {
         return array(
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
@@ -59,7 +59,7 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         return $layerConfigs;
     }
 
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
     {
         return null;
     }

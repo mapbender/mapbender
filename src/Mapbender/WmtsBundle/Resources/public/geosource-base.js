@@ -45,8 +45,10 @@ window.Mapbender = Mapbender || {};
     Mapbender.WmtsTmsBaseSource = class WmtsTmsBaseSource extends Mapbender.Source {
         constructor(definition) {
             super(definition);
+            this.tilematrixsets = definition.tilematrixsets || [];
+
             var sourceArg = this;
-            this.configuration.layers = (this.getRootLayer().children || []).map((layerDef) => {
+            this.layers = (this.getRootLayer().children || []).map((layerDef) => {
                 return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.getRootLayer());
             });
         }
@@ -130,7 +132,7 @@ window.Mapbender = Mapbender || {};
         }
 
         selectCompatibleMatrixSets(srsName) {
-            return this.configuration.tilematrixsets.filter(function (matrixSet) {
+            return this.tilematrixsets.filter(function (matrixSet) {
                 return -1 !== matrixSet.supportedCrs.indexOf(srsName);
             });
         }
@@ -177,8 +179,8 @@ window.Mapbender = Mapbender || {};
         getLayerById(id) {
             var foundLayer = super.getLayerById(id);
             if (!foundLayer) {
-                for (var i = 0; i < this.configuration.layers.length; ++i) {
-                    var candidate = this.configuration.layers[i];
+                for (var i = 0; i < this.layers.length; ++i) {
+                    var candidate = this.layers[i];
                     if (candidate.options.id === id) {
                         foundLayer = candidate;
                         break;

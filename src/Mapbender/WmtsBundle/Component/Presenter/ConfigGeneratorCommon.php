@@ -5,6 +5,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 
 
 use Mapbender\CoreBundle\Component\Source\SourceService;
+use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Component\TileMatrix;
@@ -14,12 +15,19 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 
 abstract class ConfigGeneratorCommon extends SourceService
 {
-    public function canDeactivateLayer(SourceInstanceItem $layer)
+    public function __construct(
+        protected UrlProcessor $urlProcessor,
+    )
+    {
+    }
+
+
+    public function canDeactivateLayer(SourceInstanceItem $layer): bool
     {
         return true;
     }
 
-    public function useTunnel(SourceInstance $sourceInstance)
+    public function useTunnel(SourceInstance $sourceInstance): bool
     {
         return false;
     }
@@ -28,19 +36,16 @@ abstract class ConfigGeneratorCommon extends SourceService
 
     abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer);
 
-    /**
-     * @param SourceInstance $sourceInstance
-     * @return array|mixed[]|null
-     */
-    public function getInnerConfiguration(SourceInstance $sourceInstance)
+
+    public function getConfiguration(SourceInstance $sourceInstance): array
     {
         /** @var WmtsInstance $sourceInstance */
-        return array_replace(parent::getInnerConfiguration($sourceInstance), array(
+        return array_merge(parent::getConfiguration($sourceInstance), [
             'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => $this->getRootLayerConfig($sourceInstance),
             'tilematrixsets' => $this->getTileMatrixSetsConfiguration($sourceInstance),
-        ));
+        ]);
     }
 
     /**

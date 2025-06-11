@@ -18,53 +18,55 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Instance registered in container at mapbender.source.wms.service and aliased as
- * mapbender.source.default.service (because it's the default and the only one we start with),
+ * Instance registered in container at mapbender.source.wms.service
  * see services.xml
  */
 class WmsSourceService extends SourceService
 {
-    /** @var string|null */
-    protected $defaultLayerOrder;
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
 
-    /**
-     * @param UrlProcessor $urlProcessor
-     * @param TokenStorageInterface $tokenStorage
-     * @param string|null $defaultLayerOrder
-     */
-    public function __construct(UrlProcessor $urlProcessor, TokenStorageInterface $tokenStorage, $defaultLayerOrder)
+    public function __construct(
+        protected UrlProcessor          $urlProcessor,
+        protected TokenStorageInterface $tokenStorage,
+        protected ?string               $defaultLayerOrder)
     {
-        parent::__construct($urlProcessor);
-        $this->tokenStorage = $tokenStorage;
-        $this->defaultLayerOrder = $defaultLayerOrder;
     }
 
-    public function isInstanceEnabled(SourceInstance $sourceInstance)
+    public function isInstanceEnabled(SourceInstance $sourceInstance): bool
     {
         /** @var WmsInstance $sourceInstance */
         $rootLayer = $sourceInstance->getRootlayer();
         return parent::isInstanceEnabled($sourceInstance) && $rootLayer;
     }
 
-    public function canDeactivateLayer(SourceInstanceItem $layer)
+    public function canDeactivateLayer(SourceInstanceItem $layer): bool
     {
         /** @var WmsInstanceLayer $layer */
         // dissallow breaking entire instance by removing root layer
         return $layer->getSourceInstance()->getRootlayer() !== $layer;
     }
 
-    public function getInnerConfiguration(SourceInstance $sourceInstance)
+    /**
+     * @param WmsInstance $sourceInstance
+     * @return array
+     */
+    public function getConfiguration(SourceInstance $sourceInstance): array
     {
-        /** @var WmsInstance $sourceInstance */
-        $configuration = parent::getInnerConfiguration($sourceInstance) + array(
-                'options' => $this->getOptionsConfiguration($sourceInstance),
-                'children' => array(
-                    $this->getLayerConfiguration($sourceInstance->getRootlayer()),
-                ),
-            );
-        return $this->postProcessUrls($sourceInstance, $configuration);
+        $config = parent::getConfiguration($sourceInstance);
+
+        $root = $sourceInstance->getRootlayer();
+        if (!$root) {
+            throw new \RuntimeException("Cannot process Wms instance #{$sourceInstance->getId()} with no root layer");
+        }
+
+        $config = array_merge($config, [
+            'title' => $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle(),
+            'options' => $this->getOptionsConfiguration($sourceInstance),
+            'children' => array(
+                $this->getLayerConfiguration($sourceInstance->getRootlayer()),
+            ),
+        ]);
+
+        return $this->postProcessUrls($sourceInstance, $config);
     }
 
     public function getOptionsConfiguration(WmsInstance $sourceInstance)
@@ -120,22 +122,6 @@ class WmsSourceService extends SourceService
             $configuration['children'] = $children;
         }
         return $configuration;
-    }
-
-    /**
-     * @param WmsInstance $sourceInstance
-     * @return array
-     */
-    public function getConfiguration(SourceInstance $sourceInstance)
-    {
-        $config = parent::getConfiguration($sourceInstance);
-
-        $root = $sourceInstance->getRootlayer();
-        if (!$root) {
-            throw new \RuntimeException("Cannot process Wms instance #{$sourceInstance->getId()} with no root layer");
-        }
-        $config['title'] = $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle();
-        return $config;
     }
 
     /**
@@ -351,11 +337,7 @@ class WmsSourceService extends SourceService
         return array();
     }
 
-    /**
-     * @param SourceInstanceItem $instanceLayer
-     * @return string|null
-     */
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
     {
         /** @var WmsInstanceLayer $instanceLayer */
         // scan styles for legend url entries backwards
@@ -375,11 +357,8 @@ class WmsSourceService extends SourceService
 
     /**
      * Checks if service has auth information that needs to be hidden from client.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return bool
      */
-    public function useTunnel(SourceInstance $sourceInstance)
+    public function useTunnel(SourceInstance $sourceInstance): bool
     {
         if ($sourceInstance->getId()) {
             /** @var WmsInstance $sourceInstance */
@@ -456,7 +435,7 @@ class WmsSourceService extends SourceService
         return $layerConfig;
     }
 
-    public function getScriptAssets(Application $application)
+    public function getScriptAssets(Application $application): array
     {
         return array(
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',

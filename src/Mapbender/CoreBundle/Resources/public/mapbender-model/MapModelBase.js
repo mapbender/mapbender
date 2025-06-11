@@ -351,8 +351,8 @@ window.Mapbender.MapModelBase = (function() {
             var params = $.extend({}, source.customParams || {}, {
                 QUERY_LAYERS: layerNames.join(','),
                 STYLES: (Array(layerNames.length)).join(','),
-                INFO_FORMAT: source.configuration.options.info_format || 'text/html',
-                EXCEPTIONS: source.configuration.options.exception_format,
+                INFO_FORMAT: source.options.info_format || 'text/html',
+                EXCEPTIONS: source.options.exception_format,
                 FEATURE_COUNT: maxCount || 100
             });
             params.LAYERS = params.QUERY_LAYERS;

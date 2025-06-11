@@ -15,32 +15,21 @@ interface SourceInstanceConfigGenerator extends SourceInstanceInformationInterfa
 {
     /**
      * Produces serializable frontend configuration.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return mixed[]
      */
-    public function getConfiguration(SourceInstance $sourceInstance);
+    public function getConfiguration(SourceInstance $sourceInstance): array;
 
     /**
      * Returns references to JavaScript assets required for source
      * instances to work client-side.
      *
-     * @param Application $application
      * @return string[]
      */
-    public function getScriptAssets(Application $application);
+    public function getScriptAssets(Application $application): array;
 
     /**
      * Non-public legend url for tunneled instance
-     *
-     * @param SourceInstanceItem $instanceLayer
-     * @return string|null
      */
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer);
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string;
 
-    /**
-     * @param SourceInstance $sourceInstance
-     * @return bool
-     */
-    public function useTunnel(SourceInstance $sourceInstance);
+    public function useTunnel(SourceInstance $sourceInstance): bool;
 }

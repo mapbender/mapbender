@@ -193,10 +193,10 @@
             var ajaxOptions = {
                 url: url
             };
-            var useProxy = source.configuration.options.proxy;
+            var useProxy = source.options.proxy;
             // also use proxy on different host / scheme to avoid CORB
             useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
-            if (useProxy && !source.configuration.options.tunnel) {
+            if (useProxy && !source.options.tunnel) {
                 ajaxOptions.data = {
                     url: ajaxOptions.url
                 };
