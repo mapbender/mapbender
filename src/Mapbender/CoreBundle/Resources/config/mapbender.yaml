@@ -1,5 +1,6 @@
 parameters:
-    applications: {}
+    applications: []
+    sources: []
 
     mapbender.branding.name: Mapbender
     mapbender.version: 4.1.3

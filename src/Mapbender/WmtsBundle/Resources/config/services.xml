@@ -7,6 +7,22 @@
 		<parameter key="mapbender.imageexport.renderer.tms.class">Mapbender\WmtsBundle\Component\Export\LayerRendererTms</parameter>
 	</parameters>
 	<services>
+        <service id="mapbender.source.wmts" class="Mapbender\WmtsBundle\WmtsDataSource">
+            <tag name="mapbender.datasource" />
+            <argument type="service" id="mapbender.source.wmts.config_generator" />
+            <argument type="service" id="mapbender.source.wmts.instance_factory" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+            <argument type="service" id="mapbender.imageexport.renderer.wmts" />
+        </service>
+
+        <service id="mapbender.source.tms" class="Mapbender\WmtsBundle\TmsDataSource">
+            <tag name="mapbender.datasource" />
+            <argument type="service" id="mapbender.source.tms.config_generator" />
+            <argument type="service" id="mapbender.source.tms.instance_factory" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+            <argument type="service" id="mapbender.imageexport.renderer.tms" />
+        </service>
+
 		<service id="mapbender.source.wmts.config_generator" class="Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorWmts">
 			<argument type="service" id="mapbender.source.url_processor.service" />
 		</service>

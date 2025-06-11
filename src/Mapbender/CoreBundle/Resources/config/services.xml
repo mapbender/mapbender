@@ -201,6 +201,7 @@
             <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
+            <argument>%sources%</argument>
         </service>
         <service id="mapbender.source.url_processor.service" class="%mapbender.source.url_processor.service.class%">
             <argument type="service" id="router" />
