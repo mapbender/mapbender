@@ -99,6 +99,7 @@ mb:
               one   {Diese Datenquelle wird von einer Anwendung genutzt}
               other {Diese Datenquelle wird von # Anwendungen genutzt}
           }
+        added: 'Eine neue %type%-Quelle wurde erstellt'
       map:
         max_extent: 'Max. Karten­ausdehnung'
         max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'

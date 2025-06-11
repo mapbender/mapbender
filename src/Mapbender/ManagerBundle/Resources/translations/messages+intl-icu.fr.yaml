@@ -42,6 +42,7 @@ mb:
           ok: Source OK
           toupdate: La source n'est plus à jour
           unreachable: Source inateignable
+        added: 'Une nouvelle source de %type% a été créée'
       map:
         max_extent: Étendue maximum
         start_extent: Étendue de départ

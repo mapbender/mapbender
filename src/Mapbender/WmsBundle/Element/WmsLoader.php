@@ -176,17 +176,13 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return new JsonResponse($layerConfigurations);
     }
 
-    /**
-     * @param Request $request
-     * @return WmsSource
-     */
-    protected function getSource($request)
+    protected function getSource(Request $request): WmsSource
     {
         $origin = new HttpOriginModel();
         $origin->setOriginUrl($request->get("url"));
         $origin->setUsername($request->get("username"));
         $origin->setPassword($request->get("password"));
-        return $this->sourceImporter->evaluateServer($origin);
+        return $this->sourceImporter->loadSource($origin);
     }
 
     protected function splitLayers($layerConfiguration)

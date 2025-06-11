@@ -22,13 +22,15 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ManagerRoute("/repository")]
 class RepositoryController extends ApplicationControllerBase
 {
     public function __construct(
         protected TypeDirectoryService $typeDirectory,
-        EntityManagerInterface         $em
+        EntityManagerInterface         $em,
+        private TranslatorInterface    $translator,
     )
     {
         parent::__construct($em);
@@ -73,16 +75,15 @@ class RepositoryController extends ApplicationControllerBase
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES);
 
-        $source = $this->typeDirectory->getSource($sourceType);
+        $dataSource = $this->typeDirectory->getSource($sourceType);
 
-        // TODO: make this configurable
-        $form = $this->createForm(HttpSourceSelectionType::class, new HttpOriginModel());
+        $form = $this->createForm($dataSource->getLoader()->getFormType());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $loader = $this->typeDirectory->getSourceLoaderByType($sourceType);
-                $source = $loader->evaluateServer($form->getData());
+                $source = $loader->loadSource($form->getData());
 
                 $this->setAliasForDuplicate($source);
                 $this->em->beginTransaction();
@@ -91,8 +92,11 @@ class RepositoryController extends ApplicationControllerBase
 
                 $this->em->flush();
                 $this->em->commit();
-                // @todo: provide translations
-                $this->addFlash('success', "A new {$source->getType()} source has been created");
+
+                $message = $this->translator->trans("mb.manager.admin.source.added");
+                $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel()), $message);
+                $this->addFlash('success', $replacedMessage);
+
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
                     "sourceId" => $source->getId(),
                 ));
@@ -116,7 +120,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Source/add.html.twig', array(
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.source.load',
-            'source_label' => $source->getLabel(),
+            'source_label' => $dataSource->getLabel(),
             'return_path' => 'mapbender_manager_repository_index',
         ));
     }
