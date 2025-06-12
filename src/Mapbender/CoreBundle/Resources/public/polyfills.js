@@ -87,7 +87,9 @@ if (typeof String.prototype.trim !== 'function') {
 // ---
 const ensureDataTablesPatched = () => {
   const dt = $.fn.dataTable;
-  
+  // Datatables is not loaded on all pages
+  if (!dt) return;
+
   if (!dt.__pollutionFixApplied__) {
     const origSet = dt.util.set;
     dt.util.set = function safeSet(sourcePath) {
@@ -121,7 +123,6 @@ const ensureDataTablesPatched = () => {
 };
 
 $(document).ready(() => {
-  console.log("Execute DataTables patch");
   ensureDataTablesPatched();
 });
 
