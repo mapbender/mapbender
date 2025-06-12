@@ -255,7 +255,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
         $this->parent = $parent;
     }
 
-    public function setSublayer(self $sublayer): self
+    public function setSublayer(ArrayCollection | PersistentCollection | array $sublayer): self
     {
         $this->sublayer = $sublayer;
         return $this;
