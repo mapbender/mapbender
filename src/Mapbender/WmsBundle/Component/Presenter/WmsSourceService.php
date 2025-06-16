@@ -439,6 +439,9 @@ class WmsSourceService extends SourceService
         if (is_array($layerConfig['options']['availableStyles'])) {
             foreach ($layerConfig['options']['availableStyles'] as $style) {
                 /** @var $style Style */
+                if (!$style->getLegendUrl()) {
+                    continue;
+                }
                 $resource = $style->getLegendUrl()->getOnlineResource();
                 $url = $resource->getHref();
                 if ($sourceInstance->isProtectedDynamicWms() && !$sourceInstance->getSource()->getUsername()) {
