@@ -554,4 +554,9 @@ class WmsInstance extends SourceInstance
             self::LAYER_ORDER_BOTTOM_UP,
         );
     }
+
+    public function isProtectedDynamicWms(): bool
+    {
+        return !$this->getId() && ($this->getSource()->getUsername() || \preg_match('#//[^/]+@#', $this->getSource()->getOriginUrl()));
+    }
 }

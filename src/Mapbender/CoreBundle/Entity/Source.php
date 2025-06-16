@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Source\DataSource;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
 /**
@@ -13,15 +14,10 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 #[ORM\Entity]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 15)]
-#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource', 'wmtssource' => '\Mapbender\WmtsBundle\Entity\WmtsSource'])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_source')]
-abstract class Source implements MutableHttpOriginInterface
+abstract class Source
 {
-    const TYPE_WMS = "WMS";
-    const TYPE_WMTS = "WMTS";
-    const TYPE_TMS = "TMS";
-
     /**
      * @var integer $id
      */
@@ -55,15 +51,11 @@ abstract class Source implements MutableHttpOriginInterface
     {
     }
 
-    /**
-     * @return string
-     */
-    abstract public function getTypeLabel();
 
     /**
      * @return ArrayCollection|SourceInstance[]
      */
-    abstract public function getInstances();
+    abstract public function getInstances(): ArrayCollection|array;
 
     /**
      * @return ArrayCollection|SourceItem[]
@@ -170,27 +162,18 @@ abstract class Source implements MutableHttpOriginInterface
         return (string) $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
     /**
-     * Sets source type.
-     * Possible types available from Source::TYPE_*
-     *
-     * @param string $type Set type. Possible types available from Source::TYPE_*
-     * @return $this
+     * @param string $type Set type. Should be a return value of DataSource::getName()
+     * @see DataSource::getName()
      */
-    public function setType($type)
+    public function setType(string $type): self
     {
-        if ($type === self::TYPE_WMTS || $type === self::TYPE_WMS || $type === self::TYPE_TMS) {
-            $this->type = $type;
-        }
-
+        $this->type = $type;
         return $this;
     }
 

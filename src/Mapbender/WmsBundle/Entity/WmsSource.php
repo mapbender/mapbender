@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
+use Mapbender\WmsBundle\WmsDataSource;
 
 
 /**
@@ -187,7 +188,7 @@ class WmsSource extends HttpParsedSource
     public function __construct()
     {
         parent::__construct();
-        $this->setType(self::TYPE_WMS);
+        $this->setType(WmsDataSource::TYPE);
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
@@ -807,7 +808,7 @@ class WmsSource extends HttpParsedSource
     /**
      * @return ArrayCollection|WmsInstance[]
      */
-    public function getInstances()
+    public function getInstances(): ArrayCollection|array
     {
         return $this->instances;
     }
@@ -820,11 +821,6 @@ class WmsSource extends HttpParsedSource
     public function removeLayer(WmsLayerSource $layers)
     {
         $this->layers->removeElement($layers);
-    }
-
-    public function getTypeLabel()
-    {
-        return 'OGC WMS';
     }
 
     /**

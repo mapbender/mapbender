@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Doctrine\Common\Collections\Criteria;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -176,6 +177,10 @@ class Endpoint
     public function getUrl($url)
     {
         $source = $this->instance->getSource();
+        if (!$source instanceof HttpOriginInterface) {
+            throw new \RuntimeException("Source instance {$this->instance->getId()} is not a HttpSource");
+        }
+
         $urlWithCredentials = UrlUtil::addCredentials($url, $source->getUsername(), $source->getPassword());
         $response = $this->service->getHttpTransport()->getUrl($urlWithCredentials);
         foreach (array_keys($response->headers->getCookies()) as $cookieKey) {
