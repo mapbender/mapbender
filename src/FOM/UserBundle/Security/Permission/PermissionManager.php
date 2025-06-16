@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Permission;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Proxy;
 use FOM\UserBundle\Entity\Group;
@@ -297,7 +298,7 @@ class PermissionManager extends Voter
      */
     public function copyPermissions(mixed $sourceResource, mixed $targetResource): void
     {
-        if (\get_class($sourceResource) !== \get_class($targetResource)) {
+        if (ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
             throw new \InvalidArgumentException("source and target resource must be of the same type");
         }
         $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
