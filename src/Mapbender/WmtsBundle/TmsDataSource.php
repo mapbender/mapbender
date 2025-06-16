@@ -14,6 +14,8 @@ use Mapbender\WmtsBundle\Component\Wmts\Loader;
 class TmsDataSource extends DataSource
 {
 
+    const TYPE = "TMS";
+
     public function __construct(
         private ConfigGeneratorTms    $configService,
         private SourceInstanceFactory $instanceFactory,
@@ -25,7 +27,7 @@ class TmsDataSource extends DataSource
 
     public function getName(): string
     {
-        return "tms";
+        return self::TYPE;
     }
 
     public function getLabel(): string

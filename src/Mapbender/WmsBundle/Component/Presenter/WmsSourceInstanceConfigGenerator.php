@@ -370,11 +370,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         }
     }
 
-    /**
-     * @param SourceInstance $sourceInstance
-     * @return bool
-     */
-    public function useProxy(SourceInstance $sourceInstance)
+    public function useProxy(WmsInstance $sourceInstance): bool
     {
         if ($this->useTunnel($sourceInstance)) {
             return false;

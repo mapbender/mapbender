@@ -162,9 +162,4 @@ abstract class SourceInstance extends SourceInstanceAssignment
     {
         return (string)$this->getId();
     }
-
-    public function isProtectedDynamicWms(): bool
-    {
-        return !$this->getId() && ($this->getSource()->getUsername() || \preg_match('#//[^/]+@#', $this->getSource()->getOriginUrl()));
-    }
 }

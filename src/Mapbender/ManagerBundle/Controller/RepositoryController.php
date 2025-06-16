@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Transport\ConnectionErrorException;
+use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
@@ -232,7 +233,13 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        $loader = $this->typeDirectory->getSourceLoaderByType($source->getType());
+        if (!$source instanceof MutableHttpOriginInterface) {
+            throw new \LogicException("Source type {$source->getType()} does not support refresh");
+        }
+
+        $dataSource = $this->typeDirectory->getSource($source->getType());
+        $loader = $dataSource->getLoader();
+
         $formModel = HttpOriginModel::extract($source);
         $formModel->setOriginUrl($loader->getRefreshUrl($source));
         $form = $this->createForm(HttpSourceOriginType::class, $formModel, ['show_update_fields' => true]);
@@ -259,7 +266,7 @@ class RepositoryController extends ApplicationControllerBase
 
         return $this->render('@MapbenderManager/Source/reload.html.twig', array(
             'form' => $form->createView(),
-            'type_label' => $source->getTypeLabel(),
+            'type_label' => $dataSource->getLabel(),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));
