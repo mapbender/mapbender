@@ -102,4 +102,9 @@ class TypeDirectoryService
         return $refs;
     }
 
+    public function getSources()
+    {
+        return $this->sources;
+    }
+
 }

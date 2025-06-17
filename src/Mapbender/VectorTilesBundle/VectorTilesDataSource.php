@@ -7,6 +7,7 @@ use Mapbender\VectorTilesBundle\Component\VectorTilesConfigGenerator;
 use Mapbender\VectorTilesBundle\Component\VectorTilesInstanceFactory;
 use Mapbender\VectorTilesBundle\Component\VectorTilesLoader;
 use Mapbender\VectorTilesBundle\Component\VectorTilesRenderer;
+use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 
 class VectorTilesDataSource extends DataSource
 {
@@ -48,6 +49,11 @@ class VectorTilesDataSource extends DataSource
     public function getLayerRenderer(): VectorTilesRenderer
     {
         return $this->layerRenderer;
+    }
+
+    public function getSourceEntityClass(): string
+    {
+        return VectorTileSource::class;
     }
 
     public function getMetadataBackendTemplate(): ?string
