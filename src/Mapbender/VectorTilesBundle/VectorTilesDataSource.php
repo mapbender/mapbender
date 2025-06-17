@@ -12,6 +12,8 @@ use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 class VectorTilesDataSource extends DataSource
 {
 
+    const TYPE = "vector_tiles";
+
     public function __construct(
         private VectorTilesConfigGenerator   $configService,
         private VectorTilesInstanceFactory $instanceFactory,
@@ -23,7 +25,7 @@ class VectorTilesDataSource extends DataSource
 
     public function getName(): string
     {
-        return "vector_tiles";
+        return self::TYPE;
     }
 
     public function getLabel(): string
@@ -58,7 +60,11 @@ class VectorTilesDataSource extends DataSource
 
     public function getMetadataBackendTemplate(): ?string
     {
-        // TODO: change this
-        return '@MapbenderWmts/Repository/view.html.twig';
+        return '@MapbenderVectorTiles/view.html.twig';
+    }
+
+    public function getTypeDiscriminator(): string
+    {
+        return self::TYPE;
     }
 }

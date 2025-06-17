@@ -729,7 +729,7 @@ class WmsSource extends HttpParsedSource
      *
      * @return ArrayCollection|WmsLayerSource[]
      */
-    public function getLayers()
+    public function getLayers(): ArrayCollection|array
     {
         return $this->layers;
     }

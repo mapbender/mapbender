@@ -38,7 +38,7 @@ abstract class DataSource
 
     public function getMetadataBackendTemplate(): ?string
     {
-        return null;
+        return '@MapbenderManager/Repository/source/view.html.twig';
     }
 
 }

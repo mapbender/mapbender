@@ -22,34 +22,22 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 #[ORM\Table(name: 'mb_core_source')]
 abstract class Source
 {
-    /**
-     * @var integer $id
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    protected $id;
+    protected ?int $id;
 
-    /**
-     * @var string $title The source title
-     */
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $title;
+    protected ?string $title;
 
-    /**
-     * @var string $alias The source alias
-     */
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    protected $alias = "";
+    protected ?string $alias = "";
 
-    /**
-     * @var string $description The source description
-     */
     #[ORM\Column(type: 'text', nullable: true)]
-    protected $description;
+    protected ?string $description;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $type;
+    protected ?string $type;
 
     public function __construct()
     {
@@ -64,94 +52,48 @@ abstract class Source
     /**
      * @return ArrayCollection|SourceItem[]
      */
-    abstract public function getLayers();
+    abstract public function getLayers(): ArrayCollection|array;
 
-    /**
-     * Set id
-     * @param integer $id source id
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set title
-     *
-     * @param  string $title
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * Set description
-     *
-     * @param  string $description
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * Get description
-     *
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * Set alias
-     *
-     * @param  string $alias
-     * @return $this
-     */
-    public function setAlias($alias)
+    public function setAlias(?string $alias): self
     {
         $this->alias = $alias;
-
         return $this;
     }
 
-    /**
-     * Get alias
-     *
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
@@ -180,5 +122,6 @@ abstract class Source
         $this->type = $type;
         return $this;
     }
+
 
 }
