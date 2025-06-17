@@ -46,7 +46,7 @@
           {% endif %}
           <td class="iconColumn">
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_USERS')) %}
-              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fas fa-gear"></i></a>
+              <a class="hover-highlight-effect" href="{{ path('fom_user_user_edit',  {'id': user.id }) }}" title="{{ 'fom.user.user.index.edit_user' | trans }}"><i class="fas fa-pencil-alt fa-pencil"></i></a>
             {% endif %}
             {% if user.id != 1 and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_USERS')) %}
               <span class="-fn-delete hover-highlight-effect"

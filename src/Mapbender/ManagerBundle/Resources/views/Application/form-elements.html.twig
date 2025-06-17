@@ -11,7 +11,7 @@
       {%- set _popover_id = 'popover_' ~ form.vars.id -%}
       <div class="static-popover-wrap">
         <span data-toggle-target="#{{ _popover_id }}">
-          <i class="fas fa-gear"></i>
+          <i class="fas fa-pencil-alt fa-pencil"></i>
         </span>
         <div class="popover-inner-wrap">
           <div class="popover regionConfig bs-popover-auto fade" id="{{ _popover_id }}" data-popper-placement="left">
@@ -75,6 +75,11 @@
               <td>{{ element_title(element) | trans }}</td>
               <td>{{ element_class_title(element) | trans }}</td>
               <td class="iconColumn">
+                <span class="editElement hover-highlight-effect clickable"
+                      title="{{ 'mb.actions.edit' | trans }}"
+                      data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
+                  <i class="fas fa-pencil-alt fa-pencil"></i>
+                </span>
                 <span class="-fn-toggle-flag {{ element.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                     data-toggle-flag-icons="fa-eye-slash:fa-eye"
                     data-token="{{ csrf_token('element_edit') }}"
@@ -87,11 +92,6 @@
                   {%- set _element_screentype = element.getScreenType() -%}
                   <i data-screentype="mobile" class="screentype-icon fas fa-mobile-screen {{ _element_screentype == 'desktop' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.mobile' | trans }}"></i>
                   <i data-screentype="desktop" class="screentype-icon fas fa-display{{ _element_screentype == 'mobile' ? ' disabled' : '' }}" title="{{ 'mb.manager.element.screentype.desktop' | trans }}"></i>
-                </span>
-                <span class="editElement hover-highlight-effect clickable"
-                      title="{{ 'mb.actions.edit' | trans }}"
-                      data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}">
-                  <i class="fas fa-gear"></i>
                 </span>
                 {% set _has_permissions = mapbender_has_permissions(element) %}
                 <span class="secureElement {% if _has_permissions %}text-danger {% endif %}hover-highlight-effect"

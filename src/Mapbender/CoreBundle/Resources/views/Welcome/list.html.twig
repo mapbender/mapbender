@@ -46,6 +46,14 @@
 {%- endblock -%}
 
 {%- block item_interactions -%}
+              {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT'), application) %}
+                <a class="btn btn-light"
+                   href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}"
+                   title="{{ 'mb.actions.edit' | trans }}"
+                   data-test="{{ application.slug }}-{{'edit'}}">
+                  <i class="fas fa-pencil-alt fa-pencil"></i>
+                </a>
+              {% endif %}
               <a class="btn btn-light" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">
                 <i class="fas fa-display"></i>
               </a>
@@ -58,12 +66,6 @@
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT'), application) %}
                 <a class="btn btn-light" target="_blank" href="{{ path('mapbender_manager_application_exportdirect',  {'slug': application.slug}) }}" title="{{ 'mb.manager.managerbundle.export_application' | trans }}">
                   <i class="fas fa-download"></i>
-                </a>
-                <a class="btn btn-light"
-                   href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}"
-                   title="{{ 'mb.actions.edit' | trans }}"
-                   data-test="{{ application.slug }}-{{'edit'}}">
-                  <i class="fas fa-gear"></i>
                 </a>
               {% endif %}
               {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_MANAGE_PERMISSIONS'), application) %}
