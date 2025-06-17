@@ -54,4 +54,14 @@ class WmsDataSource extends DataSource
     {
         return $this->layerRenderer;
     }
+
+    public function getMetadataFrontendTemplate(): ?string
+    {
+        return '@MapbenderWms/frontend/instance.html.twig';
+    }
+
+    public function getMetadataBackendTemplate(): ?string
+    {
+        return '@MapbenderManager/Repository/source/view.html.twig';
+    }
 }

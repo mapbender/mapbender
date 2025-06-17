@@ -898,13 +898,4 @@ class WmsSource extends HttpParsedSource
 
         return $this;
     }
-
-    public function getViewTemplate($frontend = false)
-    {
-        if ($frontend) {
-            return '@MapbenderWms/frontend/instance.html.twig';
-        } else {
-            return '@MapbenderWms/Repository/view.html.twig';
-        }
-    }
 }
