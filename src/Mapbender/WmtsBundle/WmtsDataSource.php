@@ -10,6 +10,7 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\WmtsBundle\Component\Export\LayerRendererWmts;
 use Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorWmts;
 use Mapbender\WmtsBundle\Component\Wmts\Loader;
+use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 class WmtsDataSource extends DataSource
 {
@@ -56,4 +57,15 @@ class WmtsDataSource extends DataSource
     {
         return $this->layerRenderer;
     }
+
+    public function getSourceEntityClass(): string
+    {
+        return WmtsSource::class;
+    }
+
+    public function getMetadataBackendTemplate(): ?string
+    {
+        return '@MapbenderWmts/Repository/view.html.twig';
+    }
 }
+

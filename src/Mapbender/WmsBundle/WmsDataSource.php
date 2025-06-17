@@ -10,6 +10,7 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\WmsBundle\Component\LayerRendererWms;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator;
 use Mapbender\WmsBundle\Component\Wms\Importer;
+use Mapbender\WmsBundle\Entity\WmsSource;
 
 class WmsDataSource extends DataSource
 {
@@ -53,6 +54,11 @@ class WmsDataSource extends DataSource
     public function getLayerRenderer(): LayerRenderer
     {
         return $this->layerRenderer;
+    }
+
+    public function getSourceEntityClass(): string
+    {
+        return WmsSource::class;
     }
 
     public function getMetadataFrontendTemplate(): ?string

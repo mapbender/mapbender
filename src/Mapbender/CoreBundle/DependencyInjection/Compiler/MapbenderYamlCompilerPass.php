@@ -289,7 +289,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         if (!empty($definition['class'])) {
             trigger_deprecation('mapbender/mapbender', '4.2.0', "Yaml application $instanceId defined using 'class' key, should define 'type' instead. Fallback will be removed in Mapbender 5.0");
             // only WmsInstance was using 'class' key
-            if (empty($definition['type'] && $definition['class'] === 'Mapbender\WmsBundle\Entity\WmsInstance')) {
+            if (empty($definition['type']) && $definition['class'] === 'Mapbender\WmsBundle\Entity\WmsInstance') {
                 $definition['type'] = "WMS";
             }
             unset($definition['class']);

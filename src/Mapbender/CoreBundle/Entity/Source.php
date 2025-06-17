@@ -13,6 +13,10 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  */
 #[ORM\Entity]
 #[ORM\InheritanceType('JOINED')]
+// Discriminator map is filled dynamically by @see SourceMetadataListener::loadClassMetadata. However, it can't be
+// empty initially, because otherwise Doctrine will try to identify all classes inheriting from Source including
+// MappedSuperclasses, which does not work.
+#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource'])]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 15)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_source')]

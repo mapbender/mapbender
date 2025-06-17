@@ -6,9 +6,12 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
 
 abstract class DataSource
 {
+
     public abstract function getName(): string;
 
     public abstract function getLabel(): string;
+
+    public abstract function getSourceEntityClass(): string;
 
     public abstract function getConfigGenerator(): SourceInstanceConfigGenerator;
 
@@ -23,6 +26,10 @@ abstract class DataSource
         return true;
     }
 
+    public function getTypeDiscriminator(): string
+    {
+        return strtolower($this->getName())."source";
+    }
 
     public function getMetadataFrontendTemplate(): ?string
     {
@@ -33,4 +40,5 @@ abstract class DataSource
     {
         return null;
     }
+
 }
