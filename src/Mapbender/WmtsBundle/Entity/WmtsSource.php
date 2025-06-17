@@ -37,13 +37,4 @@ class WmtsSource extends HttpTileSource
             $this->setGetFeatureInfo(clone $requestInfo);
         }
     }
-
-    public function getViewTemplate($frontend = false)
-    {
-        if ($frontend) {
-            return null;
-        } else {
-            return '@MapbenderWmts/Repository/view.html.twig';
-        }
-    }
 }

@@ -177,9 +177,4 @@ abstract class Source
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    abstract public function getViewTemplate($frontend = false);
-
 }

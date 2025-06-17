@@ -23,4 +23,14 @@ abstract class DataSource
         return true;
     }
 
+
+    public function getMetadataFrontendTemplate(): ?string
+    {
+        return null;
+    }
+
+    public function getMetadataBackendTemplate(): ?string
+    {
+        return null;
+    }
 }

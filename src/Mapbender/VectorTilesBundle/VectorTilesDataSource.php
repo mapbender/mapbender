@@ -49,4 +49,10 @@ class VectorTilesDataSource extends DataSource
     {
         return $this->layerRenderer;
     }
+
+    public function getMetadataBackendTemplate(): ?string
+    {
+        // TODO: change this
+        return '@MapbenderWmts/Repository/view.html.twig';
+    }
 }

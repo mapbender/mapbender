@@ -148,7 +148,8 @@ class RepositoryController extends ApplicationControllerBase
             'refresh' => $this->isGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES),
             'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES),
         ));
-        return $this->render($source->getViewTemplate(), array(
+        $dataSource = $this->typeDirectory->getSource($source->getType());
+        return $this->render($dataSource->getMetadataBackendTemplate(), array(
             'source' => $source,
             'applications' => $related,
             'title' => $source->getType() . ' ' . $source->getTitle(),
