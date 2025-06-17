@@ -45,7 +45,7 @@ class TypeDirectoryService
         $labelMap = array();
         foreach ($this->sources as $source) {
             if ($filterAllowAddFromManager && !$source->allowAddSourceFromManager()) continue;
-            $labelMap[strtolower($source->getName())] = $source->getLabel();
+            $labelMap[strtolower($source->getName())] = $source->getLabel(false);
         }
         return $labelMap;
     }

@@ -95,7 +95,7 @@ class RepositoryController extends ApplicationControllerBase
                 $this->em->commit();
 
                 $message = $this->translator->trans("mb.manager.admin.source.added");
-                $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel()), $message);
+                $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel(false)), $message);
                 $this->addFlash('success', $replacedMessage);
 
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(
@@ -121,7 +121,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Source/add.html.twig', array(
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.source.load',
-            'source_label' => $dataSource->getLabel(),
+            'source_label' => $dataSource->getLabel(false),
             'return_path' => 'mapbender_manager_repository_index',
         ));
     }
@@ -267,7 +267,7 @@ class RepositoryController extends ApplicationControllerBase
 
         return $this->render('@MapbenderManager/Source/reload.html.twig', array(
             'form' => $form->createView(),
-            'type_label' => $dataSource->getLabel(),
+            'type_label' => $dataSource->getLabel(false),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
         ));

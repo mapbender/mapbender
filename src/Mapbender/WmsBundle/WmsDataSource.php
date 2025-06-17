@@ -31,9 +31,9 @@ class WmsDataSource extends DataSource
         return self::TYPE;
     }
 
-    public function getLabel(): string
+    public function getLabel(bool $compact = false): string
     {
-        return "OGC WMS";
+        return $compact ? "WMS" : "OGC WMS";
     }
 
     public function getConfigGenerator(): SourceInstanceConfigGenerator

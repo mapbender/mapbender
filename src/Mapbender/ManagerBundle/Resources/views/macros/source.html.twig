@@ -3,7 +3,7 @@
     <tbody>
       <tr>
           <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
-          <td>{{ source.type }}{% if source.version is defined %} {{ source.version }}{% endif %}</td>
+          <td>{{ source.type | source_label }}{% if source.version is defined %} {{ source.version }}{% endif %}</td>
       </tr>
       {% if source.getOriginUrl is defined %}
       <tr>

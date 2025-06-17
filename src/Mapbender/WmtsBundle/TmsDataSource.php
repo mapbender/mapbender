@@ -31,11 +31,11 @@ class TmsDataSource extends DataSource
         return self::TYPE;
     }
 
-    public function getLabel(): string
+    public function getLabel(bool $compact = false): string
     {
         // HACK: do not show separate Wmts + Tms type choices
         //       when loading a new source
-        return "OGC WMTS / TMS";
+        return $compact ? "TMS" : "OGC WMTS / TMS";
     }
 
     public function getConfigGenerator(): SourceInstanceConfigGenerator

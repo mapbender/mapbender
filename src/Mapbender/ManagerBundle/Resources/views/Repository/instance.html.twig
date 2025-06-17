@@ -1,6 +1,6 @@
 {% extends "@MapbenderManager/layouts/single_form.html.twig" %}
 {%- set _h1_text = instance.source.title -%}
-{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': instance.source.type})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
+{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': (instance.source.type | source_label)})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
 {%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
 {%- set return_text = 'mb.actions.back' -%}
 
