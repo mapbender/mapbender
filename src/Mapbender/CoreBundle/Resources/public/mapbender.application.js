@@ -319,6 +319,21 @@ $.extend(Mapbender, (function($) {
             Mapbender.elementRegistry.markCreated(id, instance);
             return;
         }
+        if (data.init === "mapbender.mbLegend") {
+            instance = new Mapbender.Element.MbLegend(data.configuration, $node);
+            Mapbender.elementRegistry.markCreated(id, instance);
+            return;
+        }
+        if (data.init === "mapbender.mbControlButton") {
+            instance = new Mapbender.Element.MbControlButton(data.configuration, $node);
+            Mapbender.elementRegistry.markCreated(id, instance);
+            return;
+        }
+        if (data.init === "mapbender.mbPOI") {
+            instance = new Mapbender.Element.MbPoi(data.configuration, $node);
+            Mapbender.elementRegistry.markCreated(id, instance);
+            return;
+        }
         if (data.init) {
             var initInfo = _getElementInitInfo(data.init);
             if (!initInfo.initMethod) {

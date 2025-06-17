@@ -38,7 +38,8 @@ class ControlButton extends ButtonLike
         $requirements = parent::getRequiredAssets($element) + array(
             'js' => array(),
         );
-        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js';
+        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/element-new/MapbenderElement.js';
+        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/element-new/MbButton.js';
         return $requirements;
     }
 

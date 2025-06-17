@@ -4,6 +4,7 @@ class MapbenderElement {
         this.options = configuration || {};
         this.$element = $element;
         this.popup = null;
+        this.autoOpen = false;
     }
 
     /**
@@ -56,6 +57,62 @@ class MapbenderElement {
      * Notification that function is deprecated
      */
     functionIsDeprecated() {
-        console.warn(new Error("Function marked as deprecated"));
+        console.warn(new Error('Function marked as deprecated'));
+    }
+
+    /**
+     * Checks if element should open a popup immediately on application
+     * initialization.
+     *
+     * Returns true only if all of the following:
+     * 1) Widget configuration option "autoOpen" is set to true
+     * 2) Containing region is appropriate (see checkDialogMode)
+     * 3) Responsive element controls allow the element to be shown
+     *
+     * @param {jQuery|HTMLElement} [element]
+     * @param {Object} [options]
+     * @returns boolean
+     */
+    checkAutoOpen(element, options) {
+        const options_ = options || this.options;
+        return options_.autoOpen && this.checkDialogMode(element) && this.checkResponsiveVisibility(element);
+    }
+
+    /**
+     * Checks the markup region containing the element for reasonable
+     * dialog mode behaviour.
+     * I.e. returns true if element is placed in "content" region
+     * in a fullscreen template; returns false if element is placed
+     * in a sidepane or mobile pane.
+     *
+     * @param {jQuery|HTMLElement} [element]
+     * @returns boolean
+     */
+    checkDialogMode(element) {
+        return Mapbender.ElementUtil.checkDialogMode(element || this.$element);
+    }
+
+    /**
+     * @param {jQuery|HTMLElement} [element]
+     * @returns boolean
+     */
+    checkResponsiveVisibility(element) {
+        return Mapbender.ElementUtil.checkResponsiveVisibility(element || this.$element);
+    }
+
+    notifyWidgetDeactivated(){
+        this.$element.trigger('mapbender.elementdeactivated', {
+            widget: this,
+            sender: this,
+            active: false
+        });
+    }
+
+    notifyWidgetActivated(){
+        this.$element.trigger('mapbender.elementactivated', {
+            widget: this,
+            sender: this,
+            active: true
+        });
     }
 }
