@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
@@ -727,9 +728,9 @@ class WmsSource extends HttpParsedSource
     /**
      * Get layers
      *
-     * @return ArrayCollection|WmsLayerSource[]
+     * @return Collection|WmsLayerSource[]
      */
-    public function getLayers(): ArrayCollection|array
+    public function getLayers(): Collection|array
     {
         return $this->layers;
     }
@@ -764,17 +765,17 @@ class WmsSource extends HttpParsedSource
     /**
      * Set keywords
      *
-     * @param ArrayCollection $keywords
+     * @param Collection $keywords
      * @return Source
      */
-    public function setKeywords(ArrayCollection $keywords)
+    public function setKeywords(Collection $keywords)
     {
         $this->keywords = $keywords;
         return $this;
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
     public function getKeywords()
     {
@@ -806,9 +807,9 @@ class WmsSource extends HttpParsedSource
     }
 
     /**
-     * @return ArrayCollection|WmsInstance[]
+     * @return Collection|WmsInstance[]
      */
-    public function getInstances(): ArrayCollection|array
+    public function getInstances(): Collection|array
     {
         return $this->instances;
     }

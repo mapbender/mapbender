@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\DataSource;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
@@ -25,19 +25,19 @@ abstract class Source
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    protected ?int $id;
+    protected null|int|string $id = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected ?string $title;
+    protected ?string $title = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
     protected ?string $alias = "";
 
     #[ORM\Column(type: 'text', nullable: true)]
-    protected ?string $description;
+    protected ?string $description = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected ?string $type;
+    protected ?string $type = null;
 
     public function __construct()
     {
@@ -45,22 +45,22 @@ abstract class Source
 
 
     /**
-     * @return ArrayCollection|SourceInstance[]
+     * @return Collection|SourceInstance[]
      */
-    abstract public function getInstances(): ArrayCollection|array;
+    abstract public function getInstances(): Collection|array;
 
     /**
-     * @return ArrayCollection|SourceItem[]
+     * @return Collection|SourceItem[]
      */
-    abstract public function getLayers(): ArrayCollection|array;
+    abstract public function getLayers(): Collection|array;
 
-    public function setId(int $id): self
+    public function setId(int|string $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): int|string
     {
         return $this->id;
     }

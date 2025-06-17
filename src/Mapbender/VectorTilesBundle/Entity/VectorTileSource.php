@@ -2,7 +2,7 @@
 
 namespace Mapbender\VectorTilesBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\VectorTilesBundle\VectorTilesDataSource;
@@ -35,12 +35,12 @@ class VectorTileSource extends Source
     }
 
 
-    public function getInstances(): array|ArrayCollection
+    public function getInstances(): array|Collection
     {
         return [];
     }
 
-    public function getLayers(): array|ArrayCollection
+    public function getLayers(): array|Collection
     {
         return [];
     }

@@ -9,7 +9,7 @@ abstract class DataSource
 
     public abstract function getName(): string;
 
-    public abstract function getLabel(): string;
+    public abstract function getLabel(bool $compact = false): string;
 
     public abstract function getSourceEntityClass(): string;
 

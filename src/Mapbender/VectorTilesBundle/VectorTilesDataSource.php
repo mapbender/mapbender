@@ -28,7 +28,7 @@ class VectorTilesDataSource extends DataSource
         return self::TYPE;
     }
 
-    public function getLabel(): string
+    public function getLabel(bool $compact = false): string
     {
         return "Vector Tiles";
     }

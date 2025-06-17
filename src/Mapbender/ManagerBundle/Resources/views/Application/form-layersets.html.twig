@@ -99,7 +99,7 @@
                   {%- else -%}
                      title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fas fa-anchor"></i>
                   {%- endif -%}
-                  &nbsp;{{ instance.source.type }}</td>
+                  &nbsp;{{ instance.source.type | source_label }}</td>
                 <td class="iconColumn">
                   {%- apply spaceless -%}
                   <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
