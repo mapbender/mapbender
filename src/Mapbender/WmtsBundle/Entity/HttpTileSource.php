@@ -109,7 +109,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @return WmtsLayerSource[]|ArrayCollection
      */
-    public function getLayers()
+    public function getLayers(): array|ArrayCollection
     {
         return $this->layers;
     }
