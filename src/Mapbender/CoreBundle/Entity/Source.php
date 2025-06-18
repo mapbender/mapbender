@@ -123,7 +123,7 @@ abstract class Source
         return $this;
     }
 
-    public abstract function getDisplayUrl(): ?string;
+    abstract public function getDisplayUrl(): ?string;
 
 
 }

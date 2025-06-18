@@ -14,12 +14,12 @@ use Mapbender\ManagerBundle\Form\Type\SourceInstanceType;
  */
 abstract class SourceInstanceFactory
 {
-    public abstract function createInstance(Source $source): SourceInstance;
+    abstract public function createInstance(Source $source): SourceInstance;
 
     /**
      * @param string $id used for instance and as instance layer id prefix
      */
-    public abstract function fromConfig(array $data, string $id): SourceInstance;
+    abstract public function fromConfig(array $data, string $id): SourceInstance;
 
     /**
      * Swaps an ephemeral Source (plus layers) on a SourceInstance for an already db-persisted Source.
@@ -28,7 +28,7 @@ abstract class SourceInstanceFactory
      *
      * @param Source[] $extraSources
      */
-    public abstract function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source;
+    abstract public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source;
 
     public function getFormType(SourceInstance $instance): string
     {
