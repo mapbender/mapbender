@@ -35,7 +35,7 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
      *
      * @return string[]
      */
-    public abstract function getScriptAssets(Application $application): array;
+    abstract public function getScriptAssets(Application $application): array;
 
     /**
      * Non-public legend url for tunneled instance

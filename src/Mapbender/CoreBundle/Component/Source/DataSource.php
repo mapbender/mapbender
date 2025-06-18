@@ -7,19 +7,19 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
 abstract class DataSource
 {
 
-    public abstract function getName(): string;
+    abstract public function getName(): string;
 
-    public abstract function getLabel(bool $compact = false): string;
+    abstract public function getLabel(bool $compact = false): string;
 
-    public abstract function getSourceEntityClass(): string;
+    abstract public function getSourceEntityClass(): string;
 
-    public abstract function getConfigGenerator(): SourceInstanceConfigGenerator;
+    abstract public function getConfigGenerator(): SourceInstanceConfigGenerator;
 
-    public abstract function getInstanceFactory(): SourceInstanceFactory;
+    abstract public function getInstanceFactory(): SourceInstanceFactory;
 
-    public abstract function getLoader(): SourceLoader;
+    abstract public function getLoader(): SourceLoader;
 
-    public abstract function getLayerRenderer(): LayerRenderer;
+    abstract public function getLayerRenderer(): LayerRenderer;
 
     public function allowAddSourceFromManager(): bool
     {

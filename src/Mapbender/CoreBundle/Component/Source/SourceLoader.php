@@ -10,7 +10,7 @@ use Mapbender\CoreBundle\Entity\Source;
 
 abstract class SourceLoader
 {
-    public abstract function loadSource(mixed $formData): Source;
+    abstract public function loadSource(mixed $formData): Source;
 
-    public abstract function getFormType(): string;
+    abstract public function getFormType(): string;
 }
