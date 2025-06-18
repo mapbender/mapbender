@@ -8,6 +8,9 @@ use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\Resolution;
 
+/**
+ * The service responsible for rendering this data source to a canvas, mainly for print and image export
+ */
 abstract class LayerRenderer
 {
     /**

@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\DataSource;
-use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 
 /**
  * Source entity

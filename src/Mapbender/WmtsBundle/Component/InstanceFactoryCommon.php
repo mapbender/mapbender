@@ -14,7 +14,7 @@ use Mapbender\WmtsBundle\Entity\WmtsSource;
 
 abstract class InstanceFactoryCommon extends SourceInstanceFactory
 {
-    public function createInstance(Source $source): WmtsInstance
+    public function createInstance(Source $source, ?array $options = null): WmtsInstance
     {
         /** @var WmtsSource $source */
         $instance = new WmtsInstance();

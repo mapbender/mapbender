@@ -12,7 +12,7 @@ use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 class VectorTilesInstanceFactory extends SourceInstanceFactory
 {
 
-    public function createInstance(Source $source): SourceInstance
+    public function createInstance(Source $source, ?array $options = null): SourceInstance
     {
         /** @var VectorTileSource $source $instance */
         $instance = new VectorTileInstance();
