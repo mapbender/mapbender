@@ -45,6 +45,9 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
         return null;
     }
 
+    /**
+     * returns if this SourceInstance should be loaded using a proxy tunnel.
+     */
     public function useTunnel(SourceInstance $sourceInstance): bool
     {
         return false;

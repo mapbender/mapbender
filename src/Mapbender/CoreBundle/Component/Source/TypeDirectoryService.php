@@ -9,8 +9,7 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
 
 /**
  * Directory for map data source types
- * Each source type is
- * expected to supply its own service that performs source-type-specific tasks such as
+ * Each source type is expected to supply its own service that performs source-type-specific tasks such as
  * * generating frontend configuration
  * * locating the correct form type for administration
  *

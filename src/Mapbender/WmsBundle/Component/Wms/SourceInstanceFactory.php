@@ -24,11 +24,11 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected ?string $defaultLayerOrder)
+        protected ?string                $defaultLayerOrder)
     {
     }
 
-    public function createInstance(Source $source): WmsInstance
+    public function createInstance(Source $source, ?array $options = null): WmsInstance
     {
         /** @var WmsSource $source $instance */
         $instance = new WmsInstance();
@@ -40,6 +40,24 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
         }
         // avoid persistence errors (non-nullable column)
         $instance->setWeight(0);
+
+        if ($options) {
+            if (!empty($options['format']) && in_array($options['format'], $source->getGetMap()->getFormats())) {
+                $instance->setFormat($options['format']);
+            }
+            if (!empty($options['infoformat']) && in_array($options['infoformat'], $source->getGetFeatureInfo()->getFormats())) {
+                $instance->setInfoFormat($options['infoformat']);
+            }
+            if (!empty($options['proxy']) && $options['proxy'] === 'true') {
+                $instance->setProxy(true);
+            }
+            if (!empty($options['tiled']) && $options['tiled'] === 'true') {
+                $instance->setTiled(true);
+            }
+            if (!empty($options['layerorder']) && in_array($options['layerorder'], ['standard', 'reverse'])) {
+                $instance->setLayerOrder($options['layerorder']);
+            }
+        }
         return $instance;
     }
 
@@ -51,7 +69,7 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
     public function fromConfig(array $data, string $id): WmsInstance
     {
         $source = $this->sourceFromConfig($data, $id);
-        $instance = $this->createInstance($source);
+        $instance = $this->createInstance($source, null);
         $instance->setId($id);
         $instance
             ->setTitle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))

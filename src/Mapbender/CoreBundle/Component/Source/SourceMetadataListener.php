@@ -20,7 +20,7 @@ class SourceMetadataListener
              foreach ($this->typeDirectoryService->getSources() as $source) {
                  $entityClass = $source->getSourceEntityClass();
                  if (!$entityClass) continue;
-                 $class->discriminatorMap[$source->getTypeDiscriminator()] = $entityClass;
+                 $class->discriminatorMap[$source->getEntityTypeDiscriminator()] = $entityClass;
                  if (!in_array($entityClass, $class->subClasses)) {
                      $class->subClasses[] = $entityClass;
                  }

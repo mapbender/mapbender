@@ -63,7 +63,7 @@ class VectorTilesDataSource extends DataSource
         return '@MapbenderVectorTiles/view.html.twig';
     }
 
-    public function getTypeDiscriminator(): string
+    public function getEntityTypeDiscriminator(): string
     {
         return self::TYPE;
     }

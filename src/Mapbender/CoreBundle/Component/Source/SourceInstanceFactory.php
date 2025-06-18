@@ -14,9 +14,14 @@ use Mapbender\ManagerBundle\Form\Type\SourceInstanceType;
  */
 abstract class SourceInstanceFactory
 {
-    abstract public function createInstance(Source $source): SourceInstance;
+    /**
+     * Create a new SourceInstance entity of the given source (for db applications)
+     * @param array|null $options
+     */
+    abstract public function createInstance(Source $source, ?array $options = null): SourceInstance;
 
     /**
+     * Create a (non-persisted) SourceInstance from a YAML configuration.
      * @param string $id used for instance and as instance layer id prefix
      */
     abstract public function fromConfig(array $data, string $id): SourceInstance;
@@ -30,11 +35,19 @@ abstract class SourceInstanceFactory
      */
     abstract public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source;
 
+    /**
+     * Returns the fully qualified class name of the form type used to edit this SourceInstance.
+     * Should inherit from @see \Mapbender\ManagerBundle\Form\Type\SourceInstanceType.
+     */
     public function getFormType(SourceInstance $instance): string
     {
         return SourceInstanceType::class;
     }
 
+    /**
+     * Returns the twig templazed for editing this SourceInstance in the manager.
+     * Should extend @MapbenderManager/Repository/instance.html.twig
+     */
     public function getFormTemplate(SourceInstance $instance): string
     {
         return '@MapbenderManager/Repository/instance.html.twig';
