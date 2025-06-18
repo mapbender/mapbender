@@ -85,6 +85,7 @@ abstract class HttpSourceLoader extends SourceLoader
 
     public function getRefreshUrl(Source $target): string
     {
+        /** @var HttpParsedSource $target */
         return $target->getOriginUrl();
     }
 
