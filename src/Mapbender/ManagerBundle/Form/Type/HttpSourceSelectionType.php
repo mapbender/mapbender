@@ -4,11 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 
-use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HttpSourceSelectionType extends HttpSourceOriginType

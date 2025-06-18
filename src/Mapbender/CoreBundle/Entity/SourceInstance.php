@@ -4,12 +4,12 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 
 /**
- * @author Karim Malhas
- * @author Andriy Oblivantsev <andriy.oblivantsev@wheregroup.com>
+ * @see SupportsProxy
  */
-#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository::class)]
+#[ORM\Entity(repositoryClass: SourceInstanceRepository::class)]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\Table(name: 'mb_core_sourceinstance')]
@@ -23,14 +23,11 @@ abstract class SourceInstance extends SourceInstanceAssignment
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
-    /**
-     * @var string $title
-     */
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $title;
+    protected ?string $title = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected $basesource = false;
+    protected bool $basesource = false;
 
     /**
      * @var ReusableSourceInstanceAssignment[]|Collection
@@ -154,6 +151,8 @@ abstract class SourceInstance extends SourceInstanceAssignment
      * @return string
      */
     abstract public function getDisplayTitle();
+
+
 
     /**
      * @return string

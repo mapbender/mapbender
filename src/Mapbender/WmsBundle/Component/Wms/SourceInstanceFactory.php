@@ -20,7 +20,7 @@ use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
-class SourceInstanceFactory implements \Mapbender\CoreBundle\Component\Source\SourceInstanceFactory
+class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\SourceInstanceFactory
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,

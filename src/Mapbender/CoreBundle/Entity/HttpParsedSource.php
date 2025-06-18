@@ -68,4 +68,9 @@ abstract class HttpParsedSource extends Source
         $this->password = $password;
         return $this;
     }
+
+    public function getDisplayUrl(): ?string
+    {
+        return $this->getOriginUrl();
+    }
 }

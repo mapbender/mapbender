@@ -123,5 +123,7 @@ abstract class Source
         return $this;
     }
 
+    public abstract function getDisplayUrl(): ?string;
+
 
 }

@@ -5,10 +5,10 @@
           <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
           <td>{{ source.type | source_label }}{% if source.version is defined %} {{ source.version }}{% endif %}</td>
       </tr>
-      {% if source.getOriginUrl is defined %}
+      {% if source.displayUrl %}
       <tr>
           <th>URL:</th>
-          <td>{{ source.getOriginUrl() }}</td>
+          <td>{{ source.displayUrl }}</td>
       </tr>
       {% endif %}
       {%- if source.description -%}

@@ -2,6 +2,7 @@
 
 namespace Mapbender\VectorTilesBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,7 @@ class VectorTileSource extends Source
     {
         parent::__construct();
         $this->setType(VectorTilesDataSource::TYPE);
+        $this->instances = new ArrayCollection();
     }
 
     #[ORM\Column(name: 'json_url', type: 'string', nullable: true)]
@@ -23,6 +25,9 @@ class VectorTileSource extends Source
 
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $version = "";
+
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: VectorTileInstance::class, cascade: ['remove'])]
+    protected $instances;
 
     public function getJsonUrl(): ?string
     {
@@ -32,12 +37,6 @@ class VectorTileSource extends Source
     public function setJsonUrl(?string $jsonUrl): void
     {
         $this->jsonUrl = $jsonUrl;
-    }
-
-
-    public function getInstances(): array|Collection
-    {
-        return [];
     }
 
     public function getLayers(): array|Collection
@@ -54,6 +53,19 @@ class VectorTileSource extends Source
     {
         $this->version = $version;
         return $this;
+    }
+
+    /**
+     * @return Collection|VectorTileInstance[]
+     */
+    public function getInstances(): Collection|array
+    {
+        return $this->instances;
+    }
+
+    public function getDisplayUrl(): ?string
+    {
+        return $this->getJsonUrl();
     }
 
 

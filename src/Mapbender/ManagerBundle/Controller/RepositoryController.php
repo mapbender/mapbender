@@ -234,10 +234,6 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        if (!$source instanceof MutableHttpOriginInterface) {
-            throw new \LogicException("Source type {$source->getType()} does not support refresh");
-        }
-
         $dataSource = $this->typeDirectory->getSource($source->getType());
         $loader = $dataSource->getLoader();
 

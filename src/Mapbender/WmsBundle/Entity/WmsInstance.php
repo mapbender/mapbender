@@ -5,6 +5,8 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SupportsOpacity;
+use Mapbender\CoreBundle\Entity\SupportsProxy;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator;
 use Mapbender\WmsBundle\Component\VendorSpecific;
@@ -15,7 +17,7 @@ use Mapbender\WmsBundle\Component\Wms\SourceInstanceFactory;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wms_wmsinstance')]
-class WmsInstance extends SourceInstance
+class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsProxy
 {
     #[ORM\ManyToOne(targetEntity: WmsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
     #[ORM\JoinColumn(name: 'wmssource', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -295,13 +297,7 @@ class WmsInstance extends SourceInstance
         return $this->transparency;
     }
 
-    /**
-     * Set opacity
-     *
-     * @param integer $opacity
-     * @return $this
-     */
-    public function setOpacity($opacity)
+    public function setOpacity(int $opacity): self
     {
         if (is_numeric($opacity)) {
             $this->opacity = $opacity;
@@ -309,34 +305,18 @@ class WmsInstance extends SourceInstance
         return $this;
     }
 
-    /**
-     * Get opacity
-     *
-     * @return integer
-     */
-    public function getOpacity()
+    public function getOpacity(): int
     {
         return $this->opacity;
     }
 
-    /**
-     * Set proxy
-     *
-     * @param boolean $proxy
-     * @return $this
-     */
-    public function setProxy($proxy)
+    public function setProxy(bool $proxy): self
     {
         $this->proxy = (bool) $proxy;
         return $this;
     }
 
-    /**
-     * Get proxy
-     *
-     * @return boolean
-     */
-    public function getProxy()
+    public function getProxy(): bool
     {
         return $this->proxy;
     }
@@ -510,8 +490,6 @@ class WmsInstance extends SourceInstance
         }
 
         $this->setDimensions($source->dimensionInstancesFactory());
-        // @todo: ??? why? is that safe?
-        $this->setWeight(-1);
 
         $newRootLayer = new WmsInstanceLayer();
         $newRootLayer->populateFromSource($this, $source->getRootlayer());

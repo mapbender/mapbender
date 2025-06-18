@@ -5,11 +5,9 @@
     {% if source.version is defined %}
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.version" | trans }}:</th><td>{{ source.version }}</td></tr>
     {% endif %}
-    {% if source.originUrl is defined %}
+    {% if source.displayUrl %}
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.originurl" | trans }}:</th><td>
-        {%- if source.originUrl -%}
-        <a href="{{ source.originUrl }}" target="_blank">{{ source.originUrl }}</a>
-        {%- endif -%}
+        <a href="{{ source.displayUrl }}" target="_blank">{{ source.displayUrl }}</a>
     </td></tr>
     {% endif %}
     <tr><th>{{ "mb.wms.wmsloader.repo.view.label.abstract" | trans }}:</th><td>{{ source.description }}</td></tr>

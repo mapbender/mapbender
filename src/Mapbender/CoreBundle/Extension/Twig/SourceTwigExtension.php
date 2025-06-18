@@ -1,8 +1,9 @@
 <?php
 
-namespace Mapbender\CoreBundle\Component\Source;
+namespace Mapbender\CoreBundle\Extension\Twig;
 
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
