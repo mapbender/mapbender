@@ -74,8 +74,11 @@ class SourceInstanceItemType extends AbstractType
 
     protected function addActiveField(FormInterface $form, ?SourceInstanceItem $data)
     {
-        $configGenerator = $this->typeDirectory->getConfigGenerator($data->getSourceInstance());
-        $disabled = $data && !$configGenerator->canDeactivateLayer($data);
+        $disabled = false;
+        if ($data) {
+            $configGenerator = $this->typeDirectory->getConfigGenerator($data->getSourceInstance());
+            $disabled = !$configGenerator->canDeactivateLayer($data);
+        }
         if ($form->has('active')) {
             $form->remove('active');
         }

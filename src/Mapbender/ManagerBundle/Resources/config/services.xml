@@ -62,7 +62,7 @@
             <tag name="form.type" />
         </service>
         <service id="mapbender.twig.source"
-                 class="Mapbender\CoreBundle\Component\Source\SourceTwigExtension">
+                 class="Mapbender\CoreBundle\Extension\Twig\SourceTwigExtension">
             <tag name="twig.extension" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>

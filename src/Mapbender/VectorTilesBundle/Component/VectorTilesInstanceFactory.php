@@ -6,13 +6,20 @@ namespace Mapbender\VectorTilesBundle\Component;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
+use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 
-class VectorTilesInstanceFactory implements SourceInstanceFactory
+class VectorTilesInstanceFactory extends SourceInstanceFactory
 {
 
     public function createInstance(Source $source): SourceInstance
     {
-        throw new \Exception("Not yet implemented");
+        /** @var VectorTileSource $source $instance */
+        $instance = new VectorTileInstance();
+        $instance->setSource($source);
+        $instance->setTitle($source->getTitle());
+        $instance->setWeight(0);
+        return $instance;
 
     }
 
@@ -23,18 +30,6 @@ class VectorTilesInstanceFactory implements SourceInstanceFactory
     }
 
     public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
-    {
-        throw new \Exception("Not yet implemented");
-
-    }
-
-    public function getFormType(SourceInstance $instance): string
-    {
-        throw new \Exception("Not yet implemented");
-
-    }
-
-    public function getFormTemplate(SourceInstance $instance): string
     {
         throw new \Exception("Not yet implemented");
 

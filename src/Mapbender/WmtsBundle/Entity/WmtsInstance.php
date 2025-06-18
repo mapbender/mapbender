@@ -5,13 +5,15 @@ namespace Mapbender\WmtsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SupportsOpacity;
+use Mapbender\CoreBundle\Entity\SupportsProxy;
 
 /**
  * @author Paul Schmidt
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wmts_wmtsinstance')]
-class WmtsInstance extends SourceInstance
+class WmtsInstance extends SourceInstance implements SupportsProxy, SupportsOpacity
 {
 
     #[ORM\ManyToOne(targetEntity: WmtsSource::class, cascade: ['refresh'], inversedBy: 'instances')]
@@ -72,11 +74,7 @@ class WmtsInstance extends SourceInstance
         return $this->layers;
     }
 
-    /**
-     * @param integer $opacity
-     * @return $this
-     */
-    public function setOpacity($opacity)
+    public function setOpacity(int $opacity): self
     {
         if (is_numeric($opacity)) {
             $this->opacity = intval($opacity);
@@ -84,28 +82,18 @@ class WmtsInstance extends SourceInstance
         return $this;
     }
 
-    /**
-     * @return integer
-     */
-    public function getOpacity()
+    public function getOpacity(): int
     {
         return $this->opacity;
     }
 
-    /**
-     * @param boolean $proxy
-     * @return $this
-     */
-    public function setProxy($proxy)
+    public function setProxy(bool $proxy): self
     {
         $this->proxy = (bool) $proxy;
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getProxy()
+    public function getProxy(): bool
     {
         return $this->proxy;
     }
