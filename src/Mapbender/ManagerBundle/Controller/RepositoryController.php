@@ -237,15 +237,13 @@ class RepositoryController extends ApplicationControllerBase
         $dataSource = $this->typeDirectory->getSource($source->getType());
         $loader = $dataSource->getLoader();
 
-        $formModel = HttpOriginModel::extract($source);
-        $formModel->setOriginUrl($loader->getRefreshUrl($source));
-        $form = $this->createForm(HttpSourceOriginType::class, $formModel, ['show_update_fields' => true]);
+        $form = $this->createForm($loader->getFormType(), $loader->getRefreshModel($source), ['is_refresh' => true]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->beginTransaction();
             try {
-                $loader->refresh($source, $formModel);
+                $loader->refreshSource($source, $form->getData());
                 $this->em->persist($source);
 
                 $this->em->flush();

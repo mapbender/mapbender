@@ -11,16 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class HttpSourceOriginType extends AbstractType
+class HttpSourceOriginType extends SourceType
 {
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults(array(
-            'show_update_fields' => false,
-        ));
-    }
-
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -47,7 +39,7 @@ class HttpSourceOriginType extends AbstractType
                 ),
             ))
         ;
-        if ($options['show_update_fields']) {
+        if ($options['is_refresh']) {
             $builder
                 ->add('activate_new_layers', CheckboxType::class, array(
                     'required' => false,

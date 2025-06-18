@@ -5,11 +5,13 @@ namespace Mapbender\CoreBundle\Component\Source;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\RefreshTypeMismatchException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Exception\Loader\SourceLoaderException;
+use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,6 +52,7 @@ abstract class HttpSourceLoader extends SourceLoader
             throw new ServerResponseErrorException($statusLine, $response->getStatusCode());
         }
 
+        /** @var HttpParsedSource $source */
         $source = $this->parseResponseContent($response->getContent());
         $this->updateOrigin($source, $formData);
         return $source;
@@ -85,16 +88,25 @@ abstract class HttpSourceLoader extends SourceLoader
         return $target->getOriginUrl();
     }
 
+    public function getRefreshModel(Source $source): mixed
+    {
+        /** @var HttpParsedSource $source */
+        $formModel = HttpOriginModel::extract($source);
+        $formModel->setOriginUrl($this->getRefreshUrl($source));
+        return $formModel;
+    }
+
     /**
      * @throws SourceLoaderException
      */
-    public function refresh(Source $target, HttpOriginInterface $origin): void
+    public function refreshSource(Source $source, mixed $formData): void
     {
-        $reloadedSource = $this->loadSource($origin);
-        $this->beforeSourceUpdate($target, $reloadedSource);
-        $settings = $origin instanceof SourceLoaderSettings ? $origin : null;
-        $this->updateSource($target, $reloadedSource, $settings);
-        $this->updateOrigin($target, $origin);
+        /** @var HttpParsedSource $source */
+        $reloadedSource = $this->loadSource($formData);
+        $this->beforeSourceUpdate($source, $reloadedSource);
+        $settings = $formData instanceof SourceLoaderSettings ? $formData : null;
+        $this->updateSource($source, $reloadedSource, $settings);
+        $this->updateOrigin($source, $formData);
     }
 
     /**
