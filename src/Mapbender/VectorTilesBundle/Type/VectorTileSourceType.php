@@ -2,11 +2,11 @@
 
 namespace Mapbender\VectorTilesBundle\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Mapbender\ManagerBundle\Form\Type\SourceType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class VectorTileSourceType extends AbstractType
+class VectorTileSourceType extends SourceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

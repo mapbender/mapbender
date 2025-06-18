@@ -13,4 +13,13 @@ abstract class SourceLoader
     abstract public function loadSource(mixed $formData): Source;
 
     abstract public function getFormType(): string;
+
+    public function refreshSource(Source $source, mixed $formData): void
+    {
+
+    }
+
+    public function getRefreshModel(Source $source): mixed {
+        return $source;
+    }
 }
