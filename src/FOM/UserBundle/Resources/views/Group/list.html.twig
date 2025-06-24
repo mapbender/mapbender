@@ -24,7 +24,7 @@
         <td>{{ group.description }}</td>
         <td class="iconColumn">
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_GROUPS')) %}
-              <a class="hover-highlight-effect"  href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"><i class="fas fa-pencil-alt fa-pencil"></i></a>
+              <a class="hover-highlight-effect"  href="{{ path('fom_user_group_edit',  {'id': group.id }) }}" title="{{ 'fom.user.group.index.edit_group' | trans }} {{ group.title }}"><i class="fas fa-pencil"></i></a>
             {% endif %}
             {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_DELETE_GROUPS')) %}
             <span class="-fn-delete hover-highlight-effect"

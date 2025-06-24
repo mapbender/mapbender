@@ -51,7 +51,7 @@
                    href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}"
                    title="{{ 'mb.actions.edit' | trans }}"
                    data-test="{{ application.slug }}-{{'edit'}}">
-                  <i class="fas fa-pencil-alt fa-pencil"></i>
+                  <i class="fas fa-pencil"></i>
                 </a>
               {% endif %}
               <a class="btn btn-light" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}">

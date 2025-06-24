@@ -32,7 +32,7 @@
                 <a href="#" class="-fn-edit-layerset hover-highlight-effect"
                    title="{{ "mb.manager.admin.layerset.edit" | trans }} {{layerset.title}}"
                    data-url="{{ path("mapbender_manager_layerset_edit",{'slug': application.slug, 'layersetId': layerset.id}) }}">
-                    <i class="fas fa-pencil-alt fa-pencil"></i>
+                    <i class="fas fa-pencil"></i>
                 </a>
                 <span>
                   <input id="toggle-layerset-selected-{{ layerset.id }}" type="checkbox"
@@ -110,7 +110,7 @@
                     <i class="fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </a>
                   {%- if _edit_url -%}
-                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil-alt fa-pencil"></i></a>
+                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
                   {%- endif -%}
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
