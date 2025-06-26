@@ -23,9 +23,20 @@
 
         _create: function () {
             this.$toolBarItem = $(this.element).closest('.toolBarItem');
+            if (!this.$toolBarItem.is('img') && !this.$toolBarItem.attr('tabindex')) {
+                this.$toolBarItem.attr('tabindex', '0');
+            }
+
             $(this.element)
                 .on('click', $.proxy(this._onClick, this))
-                .on('mbButtonDeactivate', $.proxy(this.deactivate, this));
+                .on('mbButtonDeactivate', $.proxy(this.deactivate, this))
+                .on('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this._onClick();
+                    }
+                });
             // child widget may have initialized highlight state to a non-default
             this._setActive(this.isActive());
         },

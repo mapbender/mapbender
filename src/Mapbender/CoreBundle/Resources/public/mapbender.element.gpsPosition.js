@@ -35,6 +35,12 @@
                 throw new Error("No geolocation support");
             }
 
+            // Ensure the toolbar item is tabbable
+            var $toolBarItem = $(this.element).closest('.toolBarItem');
+            if (!$toolBarItem.attr('tabindex')) {
+                $toolBarItem.attr('tabindex', '0');
+            }
+
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self.map = mbMap;
                 self._setup();
@@ -42,7 +48,14 @@
                 Mapbender.checkTarget("mbGpsPosition");
             });
             this.options.average = Math.max(1, parseInt(this.options.average) || 1);
-            this.element.on('click', $.proxy(this.toggleTracking, this));
+            this.element
+                .on('click', $.proxy(this.toggleTracking, this))
+                .on('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        this.toggleTracking();
+                    }
+                });
         },
         _setup: function () {
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);

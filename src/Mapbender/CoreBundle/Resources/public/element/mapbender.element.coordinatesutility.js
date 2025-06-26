@@ -232,6 +232,7 @@
                 });
             }
             widget.popupWindow.$element.show();
+            widget.popupWindow.focus();
         },
 
         /**
