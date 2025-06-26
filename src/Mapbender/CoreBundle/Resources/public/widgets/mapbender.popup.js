@@ -127,7 +127,6 @@
             // Store the currently focused toolbar item before focusing the popup
             if (!this.previouslyFocusedElement_) {
                 this.previouslyFocusedElement_ = document.activeElement;
-                console.log(this.previouslyFocusedElement_);
             }
 
             if (this.$element) {
