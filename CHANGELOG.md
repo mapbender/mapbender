@@ -2,6 +2,7 @@
 Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 * Support HTML5-compliant data-mb-action attributes alongside mb-action ([#PR1712](https://github.com/mapbender/mapbender/pull/1712))
+* Accessibility: Buttons, control elements and elements in the sidepane can be accessed by clicking the tab key and triggered with the enter key ([PR#1742](https://github.com/mapbender/mapbender/pull/1742))
 
 Other:
 * Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
