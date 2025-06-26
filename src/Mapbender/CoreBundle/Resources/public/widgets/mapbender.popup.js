@@ -97,7 +97,7 @@
                 '    <div class="popupHead">',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right"><i class="fas fa-xmark fa-lg"></i></span>',
+                '      <span class="popupClose right" tabindex="0"><i class="fas fa-xmark fa-lg"></i></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
                 '   <div class="popup-body">',
@@ -122,11 +122,30 @@
             'closeOnOutsideClick', 'closeOnESC',
             'scrollable', 'resizable', 'draggable'
         ],
+        previouslyFocusedElement_: null,
         focus: function () {
+            // Store the currently focused toolbar item before focusing the popup
+            if (!this.previouslyFocusedElement_) {
+                this.previouslyFocusedElement_ = document.activeElement;
+                console.log(this.previouslyFocusedElement_);
+            }
+
             if (this.$element) {
                 var $others = $('.popup').not(this.$element);
                 $others.css('z-index', 100); // Same as .ui-front
                 this.$element.css("z-index", 101);  // One more than .ui-front
+
+                // Focus the first visible and interactive element in the dialog window
+                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible').not('.popupClose');
+                const $firstFocusable = $visibleElements.first();
+                if ($firstFocusable.length) {
+                    const $activeRadioButton = this.$element.find('input[type="radio"]:checked:visible');
+                    if ($activeRadioButton.length) {
+                        $activeRadioButton.focus();
+                    } else {
+                    $firstFocusable.focus();
+                    }
+                }
             }
         },
         close: function() {
@@ -152,6 +171,13 @@
             if (this.options.modal && this === currentModal_) {
                 currentModal_ = null;
             }
+
+            // Restore focus to the button that opened the popup
+            if (this.previouslyFocusedElement_ && typeof this.previouslyFocusedElement_.focus === 'function') {
+                this.previouslyFocusedElement_.focus();
+            }
+            this.previouslyFocusedElement_ = null;
+
             return true;
         },
         destroy: function() {
@@ -209,11 +235,6 @@
         },
         registerEvents_: function($target) {
             var self = this;
-            $target.on('click', function() {
-                if ((self.$element || []).length) {
-                    self.focus();
-                }
-            });
             $target.on('click', '.popupClose', function(evt) {
                 evt.stopPropagation();
                 self.close();

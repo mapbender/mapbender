@@ -69,6 +69,7 @@
                 }
             }
 
+            $('.clickable', $rootList).not('.disabled, .disabled-placeholder').attr('tabindex', '0');
             this.reIndent_($rootList, false);
             this._reset();
         },
@@ -234,6 +235,8 @@
                 .attr('title', layer.options.title)
                 .text(layer.options.title)
             ;
+
+            $('.layer-menu-btn', $li).attr('tabindex', '0');
 
             return $li;
         },
@@ -503,7 +506,7 @@
 
             const $wrapper = $opacityControl.find('.layer-opacity-bar');
             const $handle = $opacityControl.find('.layer-opacity-handle');
-            new Dragdealer($wrapper[0], {
+            const dragDealer = new Dragdealer($wrapper[0], {
                 x: source.configuration.options.opacity,
                 horizontal: true,
                 vertical: false,
@@ -513,6 +516,31 @@
                 animationCallback: (x, y) => {
                     var opacity = Math.max(0.0, Math.min(1.0, x));
                     var percentage = Math.round(opacity * 100);
+                    $handle.text(percentage);
+                    this.model.setSourceOpacity(source, opacity);
+                }
+            });
+
+            const $slider = $opacityControl.find('.layer-slider-handle');
+            $slider.attr('tabindex', '0'); // Make the handle focusable
+
+            // Add keyboard event listener for left and right arrow keys
+            $slider.on('keydown', (event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const currentX = dragDealer.getValue()[0];
+                    const step = 1 / 100; // Step size for opacity adjustment
+                    let newX = currentX;
+
+                    if (event.key === 'ArrowLeft') {
+                        newX = Math.max(0, currentX - step);
+                    } else if (event.key === 'ArrowRight') {
+                        newX = Math.min(1, currentX + step);
+                    }
+
+                    dragDealer.setValue(newX, 0);
+                    const opacity = Math.max(0.0, Math.min(1.0, newX));
+                    const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
@@ -545,7 +573,16 @@
             if (!$('>.layer-menu', $layerNode).length) {
                 $('.layer-menu', this.element).remove();
                 this._initMenu($layerNode);
+
+                const $menu = $layerNode.find('>.layer-menu');
+
+                $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
+                const $firstFocusable = $menu.find('[tabindex="0"]').first();
+                if ($firstFocusable.length) {
+                    $firstFocusable.focus();
+                }
             }
+
             return false;
         },
         _filterMenu: function (layer) {
@@ -700,6 +737,7 @@
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popup.$element.show();
+                    this.popup.focus();
                 }
             }
             this._reset();
@@ -780,3 +818,13 @@
     });
 
 })(jQuery);
+
+// Ensure all mouse click events can also be triggered by pressing the Enter key
+$(document).on('keydown', function(event) {
+    if (event.key === 'Enter') {
+        var target = $(event.target);
+        if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
+            target.trigger("click");
+        }
+    }
+});
