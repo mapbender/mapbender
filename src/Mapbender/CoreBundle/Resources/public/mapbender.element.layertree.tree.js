@@ -15,6 +15,7 @@
         popup: null,
         _mobilePane: null,
         useDialog_: false,
+        treeCreated: false,
 
         _create: function () {
             // see https://stackoverflow.com/a/4819886
@@ -47,6 +48,7 @@
             Mapbender.ElementUtil.adjustScrollbarsIfNecessary(this.element);
         },
         _createTree: function () {
+            this.treeCreated = false;
             var sources = this.model.getSources();
             var $rootList = $('ul.layers:first', this.element);
             $rootList.empty();
@@ -70,6 +72,7 @@
             }
 
             this.reIndent_($rootList, false);
+            this.treeCreated = true;
             this._reset();
         },
         _reset: function () {
@@ -214,8 +217,10 @@
             if (!layer.getParent()) {
                 $li.addClass("serviceContainer");
             }
-            $li.toggleClass('-js-leafnode', !layer.children || !layer.children.length || !treeOptions.toggle);
-            $li.toggleClass('showLeaves', treeOptions.toggle);
+            const li = $li[0];
+            const isLeafNode = !layer.children || !layer.children.length || !treeOptions.toggle;
+            li.classList.toggle('-js-leafnode', isLeafNode);
+            li.classList.toggle('showLeaves', treeOptions.toggle);
 
             if (layer.children && layer.children.length && treeOptions.allow.toggle) {
                 this._updateFolderState($li);
@@ -280,35 +285,33 @@
             $title.attr('title', tooltipParts.join("\n"));
         },
         _resetSourceAtTree: function (source) {
-            var self = this;
+            this._resetLayer(source.getRootLayer(), null);
+            // for performance reasons, only re-initialise sortable if tree has already been created
+            if (this.treeCreated) this._reset();
+        },
+        _resetLayer: function(layer, $parent) {
+            const $li = this.element.find('li[data-id="' + layer.options.id + '"]');
+            const treeOptions = layer.options.treeOptions;
+            const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
+            const $toggleChildrenButton = $li.find('>.leaveContainer>.-fn-toggle-children');
+            $toggleChildrenButton.toggleClass('disabled-placeholder', !symbolState);
 
-            function resetLayer(layer, $parent) {
-                var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
-                const treeOptions = layer.options.treeOptions;
-                const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
-                const $toggleChildrenButton = $li.find('>.leaveContainer>.-fn-toggle-children');
-                $toggleChildrenButton.toggleClass('disabled-placeholder', !symbolState);
-
-                if (!$li.length && $parent) {
-                    let $layers = $parent.find('>ul.layers');
-                    if (!$layers.length) {
-                        $layers = $(document.createElement('ul')).addClass('layers');
-                        $parent.append($layers);
-                        $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
-                    }
-
-                    $layers.append(self._createLayerNode(layer));
+            if (!$li.length && $parent) {
+                let $layers = $parent.find('>ul.layers');
+                if (!$layers.length) {
+                    $layers = $(document.createElement('ul')).addClass('layers');
+                    $parent.append($layers);
+                    $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
                 }
-                self._updateLayerDisplay($li, layer);
-                if (layer.children) {
-                    for (var i = 0; i < layer.children.length; i++) {
-                        resetLayer(layer.children[i], $li);
-                    }
+
+                $layers.append(this._createLayerNode(layer));
+            }
+            this._updateLayerDisplay($li, layer);
+            if (layer.children) {
+                for (var i = 0; i < layer.children.length; i++) {
+                    this._resetLayer(layer.children[i], $li);
                 }
             }
-
-            resetLayer(source.getRootLayer(), null);
-            this._reset();
         },
         _updateLayerDisplay: function ($li, layer) {
             if (layer && layer.state && Object.keys(layer.state).length) {
