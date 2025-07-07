@@ -178,6 +178,46 @@ mb:
         create_reusable: Створити спільний екземпляр
         created_reusable: Створено новий спільний екземпляр
         created: Новий екземпляр було створено, але його потрібно відредагувати.
+      instancelayer:
+        title: Назва шару
+        name: Ім'я шару
+        active: Активний
+        minscale: Мінімальна шкала
+        maxscale: Максимальна Шкала
+        allowselecttoc: Дозволити обирати в TOC
+        selectedtoc: Обраний на TOC
+        allowinfotoc: Allow FeatureInfo at TOC
+        infotoc: FeatureInfo at TOC
+        allowtoggletoc: Allow Toggle at TOC
+        toggletoc: Toggle at TOC
+        allowreordertoc: Дозволити Впорядкувати по ТОС
+        moreinfo: Більше інформації
+        style: Стиль
+      option:
+        basesource: Джерело
+        proxy: Проксі
+      metadata:
+        metadata: Метадані
+        contact: Контакт
+        details: Подробиці
+        layers: Шари
+        title: Назва
+        version: Версія
+        originurl: '>Оригінал URL'
+        abstract: Абстрактний
+    contact:
+      person: Людина
+      organization: Організація
+      position: Позиція
+      telephone: Телефон
+      facsimile: Телефакс
+      email: E-mail
+      address: Адреса
+      addresstype: Тип Адреси
+      city: Місто
+      state: Область
+      postcode: Поштовий індекс
+      country: Країна
     managerbundle:
       new_application: Новий застосунок
       add_user_group: Додати користувачів та групи

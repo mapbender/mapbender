@@ -38,24 +38,24 @@ class SourceInstanceItemType extends AbstractType
         $builder
             ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
+                'label' => 'mb.manager.source.instancelayer.title',
             ))
             ->add('allowselected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc",
+                'label' => "mb.manager.source.instancelayer.allowselecttoc",
             ))
             ->add('selected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
+                'label' => 'mb.manager.source.instancelayer.selectedtoc',
             ))
             ->add('displayId', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'mapped' => false,
                 'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
-                    'title' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.description',
+                    'title' => 'mb.manager.source.instancelayer.id.help',
                 ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.title',
+                'label' => 'mb.manager.source.instancelayer.id',
             ))
             ->add('displayName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'mapped' => false,
@@ -63,7 +63,7 @@ class SourceInstanceItemType extends AbstractType
                 'attr' => array(
                     'readonly' => 'readonly',
                 ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layersname',
+                'label' => 'mb.manager.source.instancelayer.name',
             ))
         ;
         $type = $this;
@@ -85,7 +85,7 @@ class SourceInstanceItemType extends AbstractType
         $form->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
             'required' => false,
             'disabled' => $disabled,
-            'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
+            'label' => 'mb.manager.source.instancelayer.active',
         ));
     }
 

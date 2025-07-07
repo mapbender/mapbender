@@ -27,28 +27,28 @@ class WmsInstanceLayerType extends AbstractType
         $builder
             ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
+                'label' => 'mb.manager.source.instancelayer.infotoc',
             ))
             ->add('toggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.toggletoc',
+                'label' => 'mb.manager.source.instancelayer.toggletoc',
             ))
             ->add('allowinfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
+                'label' => 'mb.manager.source.instancelayer.allowinfotoc',
             ))
             ->add('allowtoggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc',
+                'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
             ))
             ->add('minScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.minscale',
+                'label' => 'mb.manager.source.instancelayer.minscale',
                 'attr' => ['class' => 'minScale'],
             ))
             ->add('maxScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.maxsclase',   // sic!
+                'label' => 'mb.manager.source.instancelayer.maxscale',   // sic!
                 'attr' => ['class' => 'maxScale'],
             ))
             ->add('priority', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(

@@ -30,20 +30,20 @@ class SourceInstanceType extends AbstractType
             ])
             ->add('basesource', CheckboxType::class, [
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.basesource',
+                'label' => 'mb.manager.source.option.basesource',
             ])
         ;
 
         if (is_subclass_of($class, SupportsProxy::class)) {
             $builder->add('proxy', CheckboxType::class, [
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.proxy',
+                'label' => 'mb.manager.source.option.proxy',
             ]);
         }
 
         if (is_subclass_of($class, SupportsOpacity::class)) {
             $builder->add('opacity', IntegerType::class, [
-                'label' => 'mb.wms.wmsloader.repo.instance.label.opacity',
+                'label' => 'mb.manager.source.option.opacity',
                 'attr' => [
                     'min' => 0,
                     'max' => 100,

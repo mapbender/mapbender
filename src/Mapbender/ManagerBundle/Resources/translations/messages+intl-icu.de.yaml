@@ -193,9 +193,52 @@ mb:
         create_reusable: 'Freie Instanz erzeugen'
         created_reusable: 'Neue freie Instanz erzeugt'
         created: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
+      instancelayer:
+        id: ID
+        id.help: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: Layer-Titel
+        name: Name
+        active: aktiv
+        minscale: 'Minimaler Maßstab'
+        maxscale: 'Maximaler Maßstab'
+        allowselecttoc: 'Erlaubt Auswahl im Layerbaum'
+        selectedtoc: 'Layerset beim Start der Anwendung auswählen. Achtung: Checkbox aktiv lassen, falls keine thematischen Ebenen verwendet werden'
+        selectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum aktiv. Einstellung sollte nur geändert werden, wenn thematische Ebenen verwendet werden'
+        unselectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum inaktiv. Achtung: Falls thematische Ebenen nicht verwendet werden, ist das Layerset dann nicht aufrufbar'
+        allowinfotoc: 'Erlaubt FeatureInfo im Layerbaum'
+        infotoc: 'FeatureInfo im Layerbaum'
+        allowtoggletoc: 'Erlaubt umschalten im Layerbaum'
+        toggletoc: 'Umschalten im Layerbaum'
+        allowreordertoc: 'Erlaubt sortieren im Layerbaum'
+        moreinfo: 'Weitere Informationen'
+        style: Stil
       option:
         title: Titel
         opacity: Deckkraft
+        basesource: Basesource
+        proxy: Proxy
+      metadata:
+        metadata: Metadaten
+        contact: Kontakt
+        details: Details
+        layers: Layer
+        title: Titel
+        version: Version
+        originurl: Ursprungs-URL
+        abstract: Beschreibung
+    contact:
+      person: Person
+      organization: Organisation
+      position: Position
+      telephone: Telefon
+      facsimile: Fax
+      email: E-Mail
+      address: Adresse
+      addresstype: Adresstyp
+      city: Stadt
+      state: Bundesland
+      postcode: Postleitzahl
+      country: Staat
     managerbundle:
       new_application: 'Neue Anwendung'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'

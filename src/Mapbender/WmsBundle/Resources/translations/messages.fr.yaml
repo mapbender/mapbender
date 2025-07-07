@@ -15,31 +15,10 @@ mb:
             formats: Formats
         view:
           label:
-            metadata: Metadonnées
-            contact: Contact
-            details: Détails
-            layers: Couches
-            title: Titre
-            name: Nom
-            version: Version
-            originurl: URL d'origine
-            abstract: Résumé
             onlineresource: Ressource en ligne
             exceptionformats: Formats d'exception
             fees: Frais
             accessconstraints: Contraintes d'accès
-            person: Personne
-            organization: Organisation
-            position: Position
-            telephone: Téléphone
-            facsimile: Fax
-            email: Courriel
-            address: Adresse
-            addresstype: Type d'adresse
-            city: Ville
-            state: État/Province
-            postcode: Code Postal
-            country: Pays
           message:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Sauvegarder
             cancel: Annuler
           label:
-            originurl: URL d'origine
-            visible: Visible
-            basesource: Fond de carte
-            proxy: Proxy
             transparency: Transparence
             tiled: Tuilé
             title: Titre
@@ -104,25 +79,6 @@ mb:
             extent: Étendue
             dataurl: URL des données
             featurelisturl: URL du featurelist
-        instancelayerform:
-          label:
-            layerstitle: Titre de la couche
-            minscale: Minscale
-            maxsclase: Maxsclase
-            active: active
-            allowselecttoc: Permettre la sélection en cliquant
-            selectedtoc: Sélectionné en cliquant
-            allowinfotoc: Permettre le FeatureInfo en cliquant
-            infotoc: FeatureInfo en cliquant
-            allowtoggletoc: Permettre le basculement
-            toggletoc: Basculer en cliquant
-            allowreordertoc: Permettre la réorganisation en cliquant
-            moreinfo: Plus d'informations
-            id:
-              title: ID
-              description: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Nom de la couche
-            style: Style
       class:
         title: Chargeur de WMS
         description: Charge un service WMS via une requête 'getCapabilities'

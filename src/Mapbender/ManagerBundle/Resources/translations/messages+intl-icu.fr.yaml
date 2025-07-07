@@ -122,6 +122,48 @@ mb:
       added: 'Une nouvelle source de %type% a été créée'
       instance:
         created: Une nouvelle instance a été créée. Modifiez-la
+      instancelayer:
+        id: ID
+        id.help: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: Titre de la couche
+        name: Nom de la couche
+        active: active
+        minscale: Minscale
+        maxscale: maxscale
+        allowselecttoc: Permettre la sélection en cliquant
+        selectedtoc: Sélectionné en cliquant
+        allowinfotoc: Permettre le FeatureInfo en cliquant
+        infotoc: FeatureInfo en cliquant
+        allowtoggletoc: Permettre le basculement
+        toggletoc: Basculer en cliquant
+        allowreordertoc: Permettre la réorganisation en cliquant
+        moreinfo: Plus d'informations
+        style: Style
+      option:
+        basesource: Fond de carte
+        proxy: Proxy
+      metadata:
+        metadata: Metadonnées
+        contact: Contact
+        details: Détails
+        layers: Couches
+        title: Titre
+        version: Version
+        originurl: URL d'origine
+        abstract: Résumé
+    contact:
+      person: Personne
+      organization: Organisation
+      position: Position
+      telephone: Téléphone
+      facsimile: Fax
+      email: Courriel
+      address: Adresse
+      addresstype: Type d'adresse
+      city: Ville
+      state: État/Province
+      postcode: Code Postal
+      country: Pays
     managerbundle:
       new_application: Nouvelle application
       add_user_group: Ajouter des utilisateurs ou des groupes

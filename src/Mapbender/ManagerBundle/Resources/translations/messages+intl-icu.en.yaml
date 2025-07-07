@@ -195,9 +195,52 @@ mb:
         create_reusable: 'Create shared instance'
         created_reusable: 'A new shared instance has been created'
         created: 'A new instance has been created. Please edit it.'
+      instancelayer:
+        id: ID
+        id.help: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Layer''s Title'
+        name: 'Layer''s Name'
+        active: active
+        minscale: Minscale
+        maxscale: Maxscale
+        allowselecttoc: 'Allow Select at TOC'
+        selectedtoc: 'Select layer on startup. Caution: Leave this checkbox checked if you are not using thematic layers'
+        selectedtoc.help: 'The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
+        unselectedtoc.help: 'The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
+        allowreordertoc: 'Allow Reorder at TOC'
+        allowinfotoc: 'Allow FeatureInfo at TOC'
+        infotoc: 'FeatureInfo at TOC'
+        allowtoggletoc: 'Allow Toggle at TOC'
+        toggletoc: 'Toggle at TOC'
+        moreinfo: 'More information'
+        style: Style
       option:
         title: Title
         opacity: Opacity
+        basesource: BaseSource
+        proxy: Proxy
+      metadata:
+        metadata: Metadata
+        contact: Contact
+        details: Details
+        layers: Layers
+        title: Title
+        version: Version
+        originurl: 'Origin URL'
+        abstract: Abstract
+    contact:
+      person: Person
+      organization: Organization
+      position: Position
+      telephone: Telephone
+      facsimile: Facsimile
+      email: Email
+      address: Address
+      addresstype: Addresstype
+      city: City
+      state: State
+      postcode: Postcode
+      country: Country
     managerbundle:
       new_application: 'New application'
       add_user_group: 'Add users and groups'

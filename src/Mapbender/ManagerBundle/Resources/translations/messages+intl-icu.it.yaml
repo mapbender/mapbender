@@ -193,9 +193,52 @@ mb:
         create_reusable: 'Crea un''istanza condivisa'
         created_reusable: 'È stata creata una nuova istanza condivisa'
         created: 'È stata creata una nuova istanza. Si prega di modificarla.'
+      instancelayer:
+        id: ID
+        id.help: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Titolo del Layer'
+        name: 'Nome del Layer'
+        active: attivo
+        minscale: 'Scala minima'
+        maxscale: 'Scala massima'
+        allowselecttoc: 'Permetti la Selezione nel TOC'
+        selectedtoc: 'Selezionato nel TOC'
+        selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'
+        unselectedtoc.help: 'Il layerset è inattivo all''avvio. Attenzione: Se non si utilizzano layer tematici, questo layerset non sarà accessibile.'
+        allowinfotoc: 'Permetti FeatureInfo nel TOC'
+        infotoc: 'FeatureInfo nel TOC'
+        allowtoggletoc: 'Permetti Alterna nel TOC'
+        toggletoc: 'Alterna nel TOC'
+        allowreordertoc: 'Permetti Riordina nel TOC'
+        moreinfo: 'Più Informazioni'
+        style: Stile
       option:
         title: Titolo
         opacity: Opacità
+        basesource: BaseSource
+        proxy: Proxy
+      metadata:
+        metadata: Metadati
+        contact: Contatto
+        details: Dettagli
+        layers: Layers
+        title: Titolo
+        version: Versione
+        originurl: 'Origine URL'
+        abstract: Abstract
+    contact:
+      person: Persona
+      organization: Organizzazione
+      position: Posizione
+      telephone: Telefono
+      facsimile: Facsimile
+      email: Email
+      address: Indirizzo
+      addresstype: 'Tipo di indirizzo'
+      city: Città
+      state: Stato
+      postcode: 'Codice postale'
+      country: Nazione
     managerbundle:
       new_application: 'Nuova applicazione'
       add_user_group: 'Aggiungi utenti e gruppi'

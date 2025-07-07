@@ -15,31 +15,10 @@ mb:
             formats: Formatos
         view:
           label:
-            metadata: Metadados
-            contact: Contato
-            details: Detalhes
-            layers: Layers
-            title: Título
-            name: Nome
-            version: Versão
-            originurl: 'URL'
-            abstract: Descrição
             onlineresource: 'Recurso online'
             exceptionformats: 'Formatos de exceção'
             fees: Taxas
             accessconstraints: 'Restrições de acesso'
-            person: Pessoa
-            organization: Organização
-            position: Cargo
-            telephone: Telefone
-            facsimile: Fax
-            email: E-mail
-            address: Endereço
-            addresstype: 'Tipo de endereço'
-            city: Cidade
-            state: Estado
-            postcode: CEP
-            country: País
           message:
             cautionscalehint: 'Atenção: Os cálculos de escala estão sujeitos à resolução limitada do ScaleHint no WMS 1.1.1'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Salvar
             cancel: Cancelar
           label:
-            originurl: 'URL de origem'
-            visible: Visibilidade
-            basesource: Fonte Base
-            proxy: Proxy
             transparency: Transparência
             tiled: 'Tiled'
             title: Título
@@ -113,27 +88,6 @@ mb:
             extent: Extensão
             dataurl: 'URL de dados'
             featurelisturl: 'URL de Lista de Recursos'
-        instancelayerform:
-          label:
-            layerstitle: 'Título da layer'
-            minscale: 'Escala mínima'
-            maxsclase: 'Escala máxima'
-            active: ativo
-            allowselecttoc: 'Permitir seleção na árvore de camadas'
-            selectedtoc: 'Deixar layer ativa na inicialização do aplicativo. Atenção: Deixe esta caixa marcada se não estiver usando camadas temáticas'
-            selectedtoc.help: 'A layer está ativa na inicialização do aplicativo. A configuração só deve ser alterada se camadas temáticas forem usadas.'
-            unselectedtoc.help: 'A layer está está inativa na inicialização do aplicativo. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
-            allowinfotoc: 'Permitir FeatureInfo na árvore de camadas'
-            infotoc: 'FeatureInfo na árvore de camadas'
-            allowtoggletoc: 'Permitir alternar na árvore de camadas'
-            toggletoc: 'Alternar na árvore de camadas'
-            allowreordertoc: 'Permitir reordenar na árvore de camadas'
-            moreinfo: 'Mais informações'
-            id:
-              title: ID
-              description: 'ID da Camada da Instância: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Nome
-            style: Estilo
       class:
         title: 'Carregar WMS'
         description: 'Carrega um WMS sobre o pedido de getCapabilities'
