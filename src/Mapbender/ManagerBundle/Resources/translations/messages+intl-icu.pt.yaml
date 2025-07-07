@@ -19,10 +19,6 @@ mb:
     remove:
       success: Seu Layerset foi deletado.
       failure: Seu Layerset não pode ser deletado.
-  source:
-    instance:
-      create:
-        success: Uma nova instância foi criada. Por favor, ajuste-a conforme necessário.
   manager:
     automatic: 'Automático'
     autoActivate: 'Ativar automaticamente'
@@ -60,46 +56,11 @@ mb:
         choice:
           left: 'Esquerda'
           right: 'Direita'
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Esta instância não está sendo usada em nenhum aplicativo}
-            one   {Esta instância está sendo usada em um aplicativo}
-            other {Esta instância está sendo usada em # aplicativos}
-        }
-      convert_to_reusable: 'Converter para instância compartilhada'
-      convert_to_bound: 'Converter para instância vinculada'
-      converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada ao aplicativo'
-      reusable_assigned_to_application: 'A instância compartilhada foi adicionada ao aplicativo'
-      create_reusable: 'Criar instância compartilhada'
-      created_reusable: 'Uma nova instância compartilhada foi criada'
     application:
       persistentView: 'Lembrar estado do mapa'
       splashscreen: 'Mostrar tela de apresentação'
     admin:
-      sources: 'Fontes de dados'
       csrf_token_invalid: 'Token CSRF inválido.'
-      source:
-        add: 'Adicionar fonte de dados'
-        show_metadata: 'Mostrar metadados'
-        delete: 'Excluir fonte de dados'
-        new:
-          add: 'Adicionar fonte de dados'
-        valid: 'Fonte de dados válida'
-        notvalid: 'Fonte de dados inválida'
-        no_source: 'Fonte de dados não existe'
-        update: 'Atualizar fonte de dados'
-        status:
-          ok: 'Esta fonte de dados está válida'
-          toupdate: 'Esta fonte de dados não está mais atualizada'
-          unreachable: 'Esta fonte de dados está inacessível'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {Esta fonte não está sendo usada em nenhum aplicativo}
-              one   {Esta fonte está sendo usada em um aplicativo}
-              other {Esta fonte está sendo usada em # aplicativos}
-          }
-        added: 'Uma nova fonte de %type% foi criada'
       map:
         max_extent: 'Extensão máxima do mapa'
         max_extent.help: 'Bounding Box com mín/máx x/y, marcando o alcance permitido de navegação do usuário. Clicando no globo terrestre na barra de escala, será feito zoom para esta extensão.'
@@ -193,15 +154,50 @@ mb:
         description: Descrição
         template: Modelo
     source:
+      sources: 'Fontes de dados'
       serviceurl: 'URL do serviço de mapa'
       username: 'Nome de usuário'
       password: Senha
       activate_new_layers: 'Ativar novas layers adicionadas'
       select_new_layers: 'Selecionar novas layers adicionadas'
       load: Carregar
+      add: 'Adicionar fonte de dados'
+      show_metadata: 'Mostrar metadados'
+      delete: 'Excluir fonte de dados'
+      valid: 'Fonte de dados válida'
+      notvalid: 'Fonte de dados inválida'
+      no_source: 'Fonte de dados não existe'
+      update: 'Atualizar fonte de dados'
+      status:
+        ok: 'Esta fonte de dados está válida'
+        toupdate: 'Esta fonte de dados não está mais atualizada'
+        unreachable: 'Esta fonte de dados está inacessível'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Esta fonte não está sendo usada em nenhum aplicativo}
+            one   {Esta fonte está sendo usada em um aplicativo}
+            other {Esta fonte está sendo usada em # aplicativos}
+        }
+      added: 'Uma nova fonte de %type% foi criada'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Esta instância não está sendo usada em nenhum aplicativo}
+              one   {Esta instância está sendo usada em um aplicativo}
+              other {Esta instância está sendo usada em # aplicativos}
+          }
+        convert_to_reusable: 'Converter para instância compartilhada'
+        convert_to_bound: 'Converter para instância vinculada'
+        converted_to_bound: 'Uma cópia vinculada da instância compartilhada foi adicionada ao aplicativo'
+        reusable_assigned_to_application: 'A instância compartilhada foi adicionada ao aplicativo'
+        create_reusable: 'Criar instância compartilhada'
+        created_reusable: 'Uma nova instância compartilhada foi criada'
+        created: 'Uma nova instância foi criada. Por favor, ajuste-a conforme necessário.'
+      option:
+        title: 'Rótulo'
+        opacity: 'Opacidade'
     managerbundle:
       new_application: 'Criar aplicativo'
-      add_source: 'Adicionar fonte de dados'
       add_user_group: 'Adicionar usuários e grupos'
       import_application: Importar
       export_application: Exportar
@@ -254,10 +250,3 @@ mb:
         importfile: 'Importar arquivo'
   actions:
     secureelement: 'Elemento seguro'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: 'Rótulo'
-            opacity: 'Opacidade'

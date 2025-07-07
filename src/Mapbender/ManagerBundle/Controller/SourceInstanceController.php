@@ -172,7 +172,7 @@ class SourceInstanceController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         $newInstance = $this->createNewSourceInstance($application, $sourceId, $layersetId, $this->em);
-        $this->addFlash('success', 'mb.source.instance.create.success');
+        $this->addFlash('success', 'mb.manager.source.instance.created');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $slug,
             "instanceId" => $newInstance->getId(),
@@ -193,7 +193,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $instance->setLayerset(null);
         $this->em->persist($instance);
         $this->em->flush();
-        $this->addFlash('success', 'mb.manager.sourceinstance.created_reusable');
+        $this->addFlash('success', 'mb.manager.source.instance.created_reusable');
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
         ));

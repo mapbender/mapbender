@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Ihr Layerset wurde gelöscht.'
       failure: 'Ihr Layerset kann nicht gelöscht werden.'
-  source:
-    instance:
-      create:
-        success: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
   manager:
     automatic: Automatisch
     autoActivate: 'Automatisch aktivieren'
@@ -60,46 +56,11 @@ mb:
         choice:
           left: Links
           right: Rechts
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Diese Instanz wird von keiner Anwendung genutzt}
-            one   {Diese Instanz wird von einer Anwendung genutzt}
-            other {Diese Instanz wird von # Anwendungen genutzt}
-        }
-      convert_to_reusable: 'In freie Instanz umwandeln'
-      convert_to_bound: 'In private Instanz umwandeln'
-      converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
-      reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
-      create_reusable: 'Freie Instanz erzeugen'
-      created_reusable: 'Neue freie Instanz erzeugt'
     application:
       persistentView: 'Kartenzustand merken'
       splashscreen: 'Ladescreen anzeigen'
     admin:
-      sources: Datenquellen
       csrf_token_invalid: 'CSRF-Token ungültig.'
-      source:
-        add: 'Datenquelle hinzufügen'
-        show_metadata: 'Metadaten anzeigen'
-        delete: 'Datenquelle entfernen'
-        new:
-          add: 'Datenquelle hinzufügen'
-        valid: 'Quelle valide'
-        notvalid: 'Die Datenquelle ist nicht valide'
-        no_source: 'Keine Datenquelle'
-        update: 'Datenquelle aktualisieren'
-        status:
-          ok: 'Datenquelle OK'
-          toupdate: 'Datenquelle inaktuell'
-          unreachable: 'Die Datenquelle ist nicht erreichbar'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
-              one   {Diese Datenquelle wird von einer Anwendung genutzt}
-              other {Diese Datenquelle wird von # Anwendungen genutzt}
-          }
-        added: 'Eine neue %type%-Quelle wurde erstellt'
       map:
         max_extent: 'Max. Karten­ausdehnung'
         max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
@@ -193,15 +154,50 @@ mb:
         description: Beschreibung
         template: Vorlage
     source:
+      sources: Datenquellen
       serviceurl: Dienst-URL
       username: Benutzername
       password: Passwort
       activate_new_layers: 'Neu hinzugefügte Layer aktivieren'
       select_new_layers: 'Neu hinzugefügte Layer auswählen'
       load: Laden
+      add: 'Datenquelle hinzufügen'
+      show_metadata: 'Metadaten anzeigen'
+      delete: 'Datenquelle entfernen'
+      valid: 'Quelle valide'
+      notvalid: 'Die Datenquelle ist nicht valide'
+      no_source: 'Keine Datenquelle'
+      update: 'Datenquelle aktualisieren'
+      status:
+        ok: 'Datenquelle OK'
+        toupdate: 'Datenquelle inaktuell'
+        unreachable: 'Die Datenquelle ist nicht erreichbar'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
+            one   {Diese Datenquelle wird von einer Anwendung genutzt}
+            other {Diese Datenquelle wird von # Anwendungen genutzt}
+        }
+      added: 'Eine neue %type%-Quelle wurde erstellt'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Diese Instanz wird von keiner Anwendung genutzt}
+              one   {Diese Instanz wird von einer Anwendung genutzt}
+              other {Diese Instanz wird von # Anwendungen genutzt}
+          }
+        convert_to_reusable: 'In freie Instanz umwandeln'
+        convert_to_bound: 'In private Instanz umwandeln'
+        converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
+        reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
+        create_reusable: 'Freie Instanz erzeugen'
+        created_reusable: 'Neue freie Instanz erzeugt'
+        created: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
+      option:
+        title: Titel
+        opacity: Deckkraft
     managerbundle:
       new_application: 'Neue Anwendung'
-      add_source: 'Neue Datenquelle'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'
       import_application: Importieren
       export_application: Exportieren
@@ -254,10 +250,3 @@ mb:
         importfile: 'Datei importieren'
   actions:
     secureelement: 'Zugriff auf das Element einschränken'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Titel
-            opacity: Deckkraft

@@ -26,7 +26,7 @@ class SourceInstanceType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'required' => true,
-                'label' => 'mb.wms.wmsloader.repo.instance.label.title',
+                'label' => 'mb.manager.source.option.title',
             ])
             ->add('basesource', CheckboxType::class, [
                 'required' => false,

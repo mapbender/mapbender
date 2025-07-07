@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Your layerset has been deleted.'
       failure: 'Your layerset can''t be deleted.'
-  source:
-    instance:
-      create:
-        success: 'A new instance has been created. Please edit it.'
   manager:
     automatic: Automatic
     autoActivate: 'Activate automatically'
@@ -60,46 +56,11 @@ mb:
         choice:
           left: Left
           right: Right
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {This instance is not used in any application}
-            one   {This instance is used in one application}
-            other {This instance is used in # applications}
-        }
-      convert_to_reusable: 'Convert to shared instance'
-      convert_to_bound: 'Convert to bound instance'
-      converted_to_bound: 'A bound copy of the shared instance has been added to the application'
-      reusable_assigned_to_application: 'The shared instance has been added to the application'
-      create_reusable: 'Create shared instance'
-      created_reusable: 'A new shared instance has been created'
     application:
       persistentView: 'Persistent map state'
       splashscreen: 'Show Splashscreen'
     admin:
-      sources: Sources
       csrf_token_invalid: 'Invalid CSRF token.'
-      source:
-        add: 'Add source'
-        show_metadata: 'Show metadata'
-        delete: 'Delete source'
-        new:
-          add: 'Add source'
-        valid: 'Source valid'
-        notvalid: 'Source not valid.'
-        no_source: 'No source available'
-        update: 'Update source'
-        status:
-          ok: 'Source OK'
-          toupdate: 'Source not current anymore'
-          unreachable: 'Source unreachable'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
-          }
-        added: 'A new %type% source has been created'
       map:
         max_extent: 'Max. extent'
         max_extent.help: 'Bounding Box (min/max x/y) where the user is allowed to navigate. When clicking on the globe icon, the map zooms to this extent.'
@@ -195,15 +156,50 @@ mb:
         description: Description
         template: Template
     source:
+      sources: Sources
       serviceurl: 'Service URL'
       username: Username
       password: Password
       activate_new_layers: 'Activate newly added layers'
       select_new_layers: 'Select newly added layers'
       load: Load
+      add: 'Add source'
+      show_metadata: 'Show metadata'
+      delete: 'Delete source'
+      valid: 'Source valid'
+      notvalid: 'Source not valid.'
+      no_source: 'No source available'
+      update: 'Update source'
+      status:
+        ok: 'Source OK'
+        toupdate: 'Source not current anymore'
+        unreachable: 'Source unreachable'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {This source is not used in any application}
+            one   {This source is used in one application}
+            other {This source is used in # applications}
+        }
+      added: 'A new %type% source has been created'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {This instance is not used in any application}
+              one   {This instance is used in one application}
+              other {This instance is used in # applications}
+          }
+        convert_to_reusable: 'Convert to shared instance'
+        convert_to_bound: 'Convert to bound instance'
+        converted_to_bound: 'A bound copy of the shared instance has been added to the application'
+        reusable_assigned_to_application: 'The shared instance has been added to the application'
+        create_reusable: 'Create shared instance'
+        created_reusable: 'A new shared instance has been created'
+        created: 'A new instance has been created. Please edit it.'
+      option:
+        title: Title
+        opacity: Opacity
     managerbundle:
       new_application: 'New application'
-      add_source: 'Add source'
       add_user_group: 'Add users and groups'
       import_application: Import
       export_application: Export
@@ -256,10 +252,3 @@ mb:
         importfile: 'Import file'
   actions:
     secureelement: 'Restrict element access'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Title
-            opacity: Opacity

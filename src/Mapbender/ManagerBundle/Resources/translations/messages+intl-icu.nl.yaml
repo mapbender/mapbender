@@ -19,30 +19,10 @@ mb:
     remove:
       success: Uw lagenset is verwijderd.
       failure: Uw lagenset kon niet verwijderd worden.
-  source:
-    instance:
-      create:
-        success: Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.
   manager:
     autoActivate: Automatisch geactiveerd
     autoOpen: Automatisch openen
     admin:
-      sources: Bronnen
-      source:
-        add: Voeg bron toe
-        show_metadata: Toon metadata
-        delete: verwijder bron
-        new:
-          add: Voeg bron toe
-        valid: geldig
-        notvalid: ongeldig
-        no_source: Geen bron beschikbaar
-        update: bijwerken
-        status:
-          ok: Bron OK
-          toupdate: Bron is niet meer actueel
-          unreachable: Bron is onbereikbaar
-        added: 'Er is een nieuwe %type%-bron aangemaakt'
       map:
         max_extent: Max. omvang (extent)
         start_extent: Start omvang (extent)
@@ -123,13 +103,27 @@ mb:
         description: Beschrijving
         template: Sjabloon
     source:
+      sources: Bronnen
       serviceurl: Service URL
       username: Gebruikers naam
       password: Wachtwoord
       load: Laad
+      add: Voeg bron toe
+      show_metadata: Toon metadata
+      delete: verwijder bron
+      valid: geldig
+      notvalid: ongeldig
+      no_source: Geen bron beschikbaar
+      update: bijwerken
+      status:
+        ok: Bron OK
+        toupdate: Bron is niet meer actueel
+        unreachable: Bron is onbereikbaar
+      added: 'Er is een nieuwe %type%-bron aangemaakt'
+      instance:
+        created: Een nieuwe instantie is aangemaakt. Deze gaarne bewerken.
     managerbundle:
       new_application: Nieuwe applicatie
-      add_source: Voeg bron toe
       add_user_group: Voeg gebruikers en groepen toe
       import_application: Importeer
       export_application: Exporteer

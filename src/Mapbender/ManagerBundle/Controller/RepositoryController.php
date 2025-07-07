@@ -94,7 +94,7 @@ class RepositoryController extends ApplicationControllerBase
                 $this->em->flush();
                 $this->em->commit();
 
-                $message = $this->translator->trans("mb.manager.admin.source.added");
+                $message = $this->translator->trans("mb.manager.source.added");
                 $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel(false)), $message);
                 $this->addFlash('success', $replacedMessage);
 

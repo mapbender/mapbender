@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Tu conjunto de capas ha sido eliminado.'
       failure: 'Tu conjunto de capas no puede ser eliminado.'
-  source:
-    instance:
-      create:
-        success: 'Se ha creado una nueva instancia. Por favor, edítala.'
   manager:
     automatic: Automático
     autoActivate: 'Activar automáticamente'
@@ -58,46 +54,11 @@ mb:
         choice:
           left: Izquierda
           right: Derecha
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Esta instancia no se utiliza en ninguna aplicación}
-            one   {Esta instancia se utiliza en una aplicación}
-            other {Esta instancia se utiliza en # aplicaciones}
-        }
-      convert_to_reusable: 'Convertir a instancia libre'
-      convert_to_bound: 'Convertir a instancia privada'
-      converted_to_bound: 'Se ha añadido una copia privada de la instancia libre a la aplicación'
-      reusable_assigned_to_application: 'Se ha añadido una instancia libre a la aplicación'
-      create_reusable: 'Crear una instancia libre'
-      created_reusable: 'Se ha creado una nueva instancia libre'
     application:
       persistentView: 'Recordar la configuración del mapa'
       splashscreen: 'Mostrar la pantalla de inicio'
     admin:
-      sources: Fuentes
       csrf_token_invalid: 'CSRF no válido.'
-      source:
-        add: 'Añadir fuente de datos'
-        show_metadata: 'Mostrar metadatos'
-        delete: 'Borrar la fuente de datos'
-        new:
-          add: 'Añadir fuente de datos'
-        valid: 'La fuente de datos es válida'
-        notvalid: 'La fuente de datos no es válida'
-        no_source: 'Fuente de datos no disponible'
-        update: 'Actualizar fuente de datos'
-        status:
-          ok: 'Fuente de datos OK'
-          toupdate: 'La fuente de datos ya no es actual'
-          unreachable: 'La fuente de datos es inaccesible'
-        embedded_in_applications: |
-          {count, plural,
-            =0    {Esta fuente de datos no se utiliza en ninguna aplicación}
-            one   {Esta fuente de datos se utiliza en una aplicación}
-            other {Esta fuente de datos se utiliza en # aplicaciones}
-          }
-        added: 'Se ha creado una nueva fuente de %type%'
       map:
         max_extent: 'Extensión máxima'
         max_extent.help: 'Marco límite (min/max x/y) en la que el usuario puede navegar sobre el mapa. Al hacer clic en el icono del globo terráqueo de la barra de escala, el mapa se amplía hasta esta extensión.'
@@ -191,15 +152,50 @@ mb:
         description: Descripción
         template: Plantilla
     source:
+      sources: Fuentes
       serviceurl: 'URL del servicio '
       username: Usuario
       password: Contraseña
       activate_new_layers: 'Activar las capas recién añadidas'
       select_new_layers: 'Seleccionar las capas recién añadidas'
       load: Cargar
+      add: 'Añadir fuente de datos'
+      show_metadata: 'Mostrar metadatos'
+      delete: 'Borrar la fuente de datos'
+      valid: 'La fuente de datos es válida'
+      notvalid: 'La fuente de datos no es válida'
+      no_source: 'Fuente de datos no disponible'
+      update: 'Actualizar fuente de datos'
+      status:
+        ok: 'Fuente de datos OK'
+        toupdate: 'La fuente de datos ya no es actual'
+        unreachable: 'La fuente de datos es inaccesible'
+      embedded_in_applications: |
+        {count, plural,
+          =0    {Esta fuente de datos no se utiliza en ninguna aplicación}
+          one   {Esta fuente de datos se utiliza en una aplicación}
+          other {Esta fuente de datos se utiliza en # aplicaciones}
+        }
+      added: 'Se ha creado una nueva fuente de %type%'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Esta instancia no se utiliza en ninguna aplicación}
+              one   {Esta instancia se utiliza en una aplicación}
+              other {Esta instancia se utiliza en # aplicaciones}
+          }
+        convert_to_reusable: 'Convertir a instancia libre'
+        convert_to_bound: 'Convertir a instancia privada'
+        converted_to_bound: 'Se ha añadido una copia privada de la instancia libre a la aplicación'
+        reusable_assigned_to_application: 'Se ha añadido una instancia libre a la aplicación'
+        create_reusable: 'Crear una instancia libre'
+        created_reusable: 'Se ha creado una nueva instancia libre'
+        created: 'Se ha creado una nueva instancia. Por favor, edítala.'
+      option:
+        title: Título
+        opacity: Opacidad
     managerbundle:
       new_application: 'Nueva aplicación'
-      add_source: 'Añadir fuentes'
       add_user_group: 'Añadir usuarios y grupos'
       import_application: Importar
       export_application: Exportar
@@ -252,10 +248,3 @@ mb:
         importfile: 'Importar archivo'
   actions:
     secureelement: 'Restringir el acceso al elemento'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Título
-            opacity: Opacidad
