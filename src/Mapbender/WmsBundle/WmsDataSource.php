@@ -68,6 +68,6 @@ class WmsDataSource extends DataSource
 
     public function getMetadataBackendTemplate(): ?string
     {
-        return '@MapbenderManager/Repository/source/view.html.twig';
+        return '@MapbenderWms/Repository/view.html.twig';
     }
 }

@@ -82,7 +82,7 @@
       <div class="col-md-6 col-xs-12">
         {% block form_main1 %}
             {{ form_row(form.title) }}
-            {% if 'opacity' in form %}
+            {% if form.opacity is defined %}
                 {{ form_row(form.opacity) }}
             {% endif %}
         {% endblock form_main1 %}
@@ -90,7 +90,7 @@
       <div class="col-md-6 col-xs-12">
         {% block form_main2 %}
             {{ form_row(form.basesource) }}
-            {% if 'proxy' in form %}
+            {% if form.proxy is defined %}
                 {{ form_row(form.proxy) }}
             {% endif %}
         {% endblock form_main2 %}
