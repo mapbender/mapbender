@@ -8,10 +8,10 @@ use Mapbender\VectorTilesBundle\Component\VectorTilesInstanceFactory;
 use Mapbender\VectorTilesBundle\Component\VectorTilesLoader;
 use Mapbender\VectorTilesBundle\Component\VectorTilesRenderer;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 class VectorTilesDataSource extends DataSource
 {
-
     const TYPE = "vector_tiles";
 
     public function __construct(

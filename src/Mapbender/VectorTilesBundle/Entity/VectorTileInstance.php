@@ -33,7 +33,7 @@ class VectorTileInstance extends SourceInstance
         return [];
     }
 
-    public function getDisplayTitle()
+    public function getDisplayTitle(): string
     {
         return $this->getTitle() ?: $this->getSource()->getTitle();
     }

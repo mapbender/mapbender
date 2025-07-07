@@ -434,7 +434,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
         return $this->layers->removeElement($layers);
     }
 
-    public function getDisplayTitle()
+    public function getDisplayTitle(): string
     {
         $root = $this->getRootlayer();
         return $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $this->getTitle() ?: $this->getSource()->getTitle();

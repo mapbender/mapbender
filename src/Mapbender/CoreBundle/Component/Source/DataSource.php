@@ -19,9 +19,10 @@ abstract class DataSource
     abstract public function getLabel(bool $compact = false): string;
 
     /**
-     * The service responsible for collecting information for frontend rendering.
+     * The service that is responsible for creating Source objects, primarily used when adding or
+     * refreshing sources in the backend.
      */
-    abstract public function getConfigGenerator(): SourceInstanceConfigGenerator;
+    abstract public function getLoader(): SourceLoader;
 
     /**
      * The factory responsible for creating SourceInstance objects, primarily used to add instances
@@ -30,15 +31,20 @@ abstract class DataSource
     abstract public function getInstanceFactory(): SourceInstanceFactory;
 
     /**
-     * The service that is responsible for creating Source objects, primarily used when adding or
-     * refreshing sources in the backend.
+     * The service responsible for collecting information for frontend rendering.
      */
-    abstract public function getLoader(): SourceLoader;
+    abstract public function getConfigGenerator(): SourceInstanceConfigGenerator;
 
     /**
      * The service responsible for rendering this data source to a canvas, mainly for print and image export
      */
     abstract public function getLayerRenderer(): LayerRenderer;
+
+    /**
+     * The fully qualified class name of the source entity for this data source. Should be a subclass of
+     * @see \Mapbender\CoreBundle\Entity\Source
+     */
+    abstract public function getSourceEntityClass(): string;
 
     /**
      * Determines whether this source appears in the "Add source" dropdown in the manager.
@@ -47,12 +53,6 @@ abstract class DataSource
     {
         return true;
     }
-
-    /**
-     * The fully qualified class name of the source entity for this data source. Should be a subclass of
-     * @see \Mapbender\CoreBundle\Entity\Source
-     */
-    abstract public function getSourceEntityClass(): string;
 
     /**
      * The globally unique discriminator for this source type, used to identify the source type in the database.

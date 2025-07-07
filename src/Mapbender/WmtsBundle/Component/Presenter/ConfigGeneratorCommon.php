@@ -21,12 +21,6 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
     {
     }
 
-
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool
-    {
-        return true;
-    }
-
     abstract protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer);
 
     abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer);

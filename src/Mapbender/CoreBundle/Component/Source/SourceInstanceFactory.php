@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\ManagerBundle\Form\Type\SourceInstanceType;
 
 /**
@@ -45,11 +46,19 @@ abstract class SourceInstanceFactory
     }
 
     /**
-     * Returns the twig templazed for editing this SourceInstance in the manager.
+     * Returns the twig template for editing this SourceInstance in the manager.
      * Should extend @MapbenderManager/Repository/instance.html.twig
      */
     public function getFormTemplate(SourceInstance $instance): string
     {
         return '@MapbenderManager/Repository/instance.html.twig';
+    }
+
+    /**
+     * Returns whether an instance layer can be disabled in the wms edit screen. Only relevant for sources that offer sublayers.
+     */
+    public function canDeactivateLayer(SourceInstanceItem $instanceItem): bool
+    {
+        return true;
     }
 }

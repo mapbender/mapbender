@@ -150,7 +150,7 @@ abstract class SourceInstance extends SourceInstanceAssignment
     /**
      * @return string
      */
-    abstract public function getDisplayTitle();
+    abstract public function getDisplayTitle(): string;
 
 
 

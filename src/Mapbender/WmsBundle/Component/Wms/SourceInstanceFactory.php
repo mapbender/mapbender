@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -257,6 +258,13 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
             }
         }
         return $layer;
+    }
+
+    public function canDeactivateLayer(SourceInstanceItem $instanceItem): bool
+    {
+        /** @var WmsInstanceLayer $instanceItem */
+        // disallow breaking entire instance by removing root layer
+        return $instanceItem->getSourceInstance()->getRootlayer() !== $instanceItem;
     }
 
     public function getFormType(SourceInstance $instance): string

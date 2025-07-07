@@ -10,6 +10,4 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 interface SourceInstanceInformationInterface
 {
     public function isInstanceEnabled(SourceInstance $sourceInstance): bool;
-
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool;
 }

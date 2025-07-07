@@ -11,6 +11,10 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
  */
 abstract class SourceInstanceConfigGenerator implements SourceInstanceInformationInterface
 {
+    /**
+     * Determines whether the source instance is enabled in the frontend. Defaults to the `enabled` property
+     * of the source instance, but can be overridden to provide additional logic.
+     */
     public function isInstanceEnabled(SourceInstance $sourceInstance): bool
     {
         return $sourceInstance->getEnabled();
@@ -52,5 +56,4 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
     {
         return false;
     }
-
 }

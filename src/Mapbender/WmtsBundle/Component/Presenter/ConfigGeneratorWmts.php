@@ -12,12 +12,6 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 
 class ConfigGeneratorWmts extends ConfigGeneratorCommon
 {
-
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool
-    {
-        return true;
-    }
-
     /**
      * @param WmtsInstanceLayer $instanceLayer
      * @return array

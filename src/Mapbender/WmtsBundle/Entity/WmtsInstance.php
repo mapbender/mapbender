@@ -133,7 +133,7 @@ class WmtsInstance extends SourceInstance implements SupportsProxy, SupportsOpac
         $this->layers->removeElement($layer);
     }
 
-    public function getDisplayTitle()
+    public function getDisplayTitle(): string
     {
         return $this->getTitle() ?: $this->getSource()->getTitle();
     }

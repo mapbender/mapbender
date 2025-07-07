@@ -13,9 +13,4 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
     {
         return [];
     }
-
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool
-    {
-        return true;
-    }
 }

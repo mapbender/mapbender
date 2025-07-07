@@ -38,13 +38,6 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return parent::isInstanceEnabled($sourceInstance) && $rootLayer;
     }
 
-    public function canDeactivateLayer(SourceInstanceItem $layer): bool
-    {
-        /** @var WmsInstanceLayer $layer */
-        // dissallow breaking entire instance by removing root layer
-        return $layer->getSourceInstance()->getRootlayer() !== $layer;
-    }
-
     /**
      * @param WmsInstance $sourceInstance
      * @return array
