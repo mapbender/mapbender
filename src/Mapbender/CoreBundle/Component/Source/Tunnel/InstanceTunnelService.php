@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -181,10 +182,11 @@ class InstanceTunnelService
                 }
                 if ($includeCredentials) {
                     $source = $endPoint->getSourceInstance()->getSource();
-                    return UrlUtil::addCredentials($urlNoCredentials, $source->getUsername(), $source->getPassword());
-                } else {
-                    return $urlNoCredentials;
+                    if ($source instanceof HttpOriginInterface) {
+                        return UrlUtil::addCredentials($urlNoCredentials, $source->getUsername(), $source->getPassword());
+                    }
                 }
+                return $urlNoCredentials;
             }
         }
         return null;

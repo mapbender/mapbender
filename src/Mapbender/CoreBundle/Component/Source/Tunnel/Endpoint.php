@@ -106,8 +106,10 @@ class Endpoint
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         switch (strtolower($requestType)) {
             case 'getmap':
+                // TODO: this is WMS specific
                 return $this->source->getGetMap()->getHttpGet();
             case 'getfeatureinfo':
+                // TODO: this is WMS specific
                 return $this->source->getGetFeatureInfo()->getHttpGet();
             default:
                 return null;

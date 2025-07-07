@@ -396,6 +396,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function proxifyLayerUrls($layerConfig, ?SourceInstance $sourceInstance = null)
     {
+        /** @var ?WmsInstance $sourceInstance */
         if (isset($layerConfig['children'])) {
             foreach ($layerConfig['children'] as $ix => $childConfig) {
                 $layerConfig['children'][$ix] = $this->proxifyLayerUrls($childConfig, $sourceInstance);
