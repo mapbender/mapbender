@@ -20,7 +20,7 @@
         _setup: function(mbMap) {
             var self = this;
             this.map = mbMap.map.olMap;
-            this.dropArea = document.getElementById('dropFileArea');
+            this.dropArea = this.element.find('.dropFileArea')[0];
             this.setupProjSelection();
             this.setupDropArea();
             this.setupFileUploadForm();
@@ -74,8 +74,8 @@
 
         setupProjSelection: function () {
             var projections = Mapbender.Model.mbMap.getAllSrs();
-            projections.forEach(function (proj) {
-                $('#projSelection').append($('<option/>', {
+            projections.forEach((proj) => {
+                this.element.find('.projSelection').append($('<option/>', {
                     value: proj.name,
                     text: proj.title
                 }));
@@ -105,15 +105,16 @@
         },
 
         setupFileUploadForm: function () {
-            var self = this;
             $('.mb-element-dataupload form').on('submit', function (e) {
                 e.preventDefault();
             });
-            $('#fileUploadLink').on('click', function (e) {
+            this.element.find('.fileUploadLink').on('click', (e)=> {
                 e.preventDefault();
-                $('#fileUploadField').trigger('click');
+                this.element.find('.fileUploadField').trigger('click');
             });
-            $('#fileUploadField').on('change', function () {
+
+            const self = this;
+            this.element.find('.fileUploadField').on('change', function () {
                 self.handleFileUpload(this.files);
             });
         },
@@ -224,7 +225,7 @@
         },
 
         findProjection: function () {
-            var proj = $('#projSelection').val();
+            var proj = this.element.find('.projSelection').val();
             if (proj !== '') {
                 return proj;
             }
@@ -233,7 +234,7 @@
 
         findGeoJsonProjection: function (geoJson) {
             // proj from selectbox overrides proj specification in geoJson
-            var proj = $('#projSelection').val();
+            var proj = this.element.find('.projSelection').val();
             if (proj !== '') {
                 return proj;
             }
@@ -283,7 +284,7 @@
 
         renderTable: function (file, uploadId) {
             var self = this;
-            var table = $('#filesTable');
+            var table = this.element.find('.filesTable');
             var tr = $('<tr>', {
                 id: uploadId
             });
@@ -364,8 +365,8 @@
             var layer = this.getLayerById(id);
             if (layer) {
                 this.map.removeLayer(layer);
-                $('#filesTable').find(tr).remove();
-                if ($('#filesTable tr').length < 2) {
+                this.element.find('.filesTable').find(tr).remove();
+                if (this.element.find('.filesTable').find('tr').length < 2) {
                     this.removeTable();
                 }
             }
@@ -398,7 +399,7 @@
         },
 
         removeTable: function () {
-            $('#filesTable tbody').find('tr').remove();
+            this.element.find('.filesTable').find('tbody').find('tr').remove();
             $('.table-responsive').addClass('d-none');
         },
 

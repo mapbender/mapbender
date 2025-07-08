@@ -1,6 +1,6 @@
 <p>{{ helpText | trans }}</p>
 <form enctype="multipart/form-data">
-    <div id="dropFileArea" class="dropFileArea text-center mb-3 pt-3">
+    <div class="dropFileArea text-center mb-3 pt-3">
         <p class="mb-2">
             <i class="fa-regular fa-lg fa-file"></i>
         </p>
@@ -8,15 +8,15 @@
             {{ 'mb.core.dataupload.text.filearea' | trans }}
         </p>
         <p class="mb-2">
-            <a id="fileUploadLink" class="link-primary" href="#">
+            <a class="fileUploadLink link-primary" href="#">
                 {{ 'mb.core.dataupload.text.fileupload' | trans }}
             </a>
         </p>
     </div>
-    <input id="fileUploadField" class="d-none" name="files[]" type="file" multiple>
+    <input class="fileUploadField d-none" name="files[]" type="file" multiple>
     <div class="row mb-3 px-1">
         <div class="col">
-            <select id="projSelection" class="form-select form-select-sm">
+            <select class="projSelection form-select form-select-sm">
                 <option value="" selected>
                     {{ 'mb.core.dataupload.text.projection' | trans }}
                 </option>
@@ -25,7 +25,7 @@
     </div>
 </form>
 <div class="table-responsive d-none">
-    <table id="filesTable" class="table table-striped mt-3 my-1">
+    <table class="filesTable table table-striped mt-3 my-1">
         <thead>
             <tr>
                 <th>{{ 'mb.core.dataupload.text.tablehead.name' | trans }}</th>
