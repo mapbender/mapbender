@@ -12,9 +12,9 @@
              pixels will be thrown away on up to four edges. This avoids using portions of the image where label or
              other symbol placement may be influenced by what the WMS thinks is the total image dimensions
              (c.f. Mapserver's "partial" label rendering settings) -->
-        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer">512</parameter>
-        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer.x">%mapbender.imaageexport.renderer.wms.tile_buffer%</parameter>
-        <parameter key="mapbender.imaageexport.renderer.wms.tile_buffer.y">%mapbender.imaageexport.renderer.wms.tile_buffer%</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.tile_buffer">512</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.tile_buffer.x">%mapbender.imageexport.renderer.wms.tile_buffer%</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.tile_buffer.y">%mapbender.imageexport.renderer.wms.tile_buffer%</parameter>
         <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
         <parameter key="mapbender.imageexport.renderer.markers.class">Mapbender\PrintBundle\Component\LayerRendererMarkers</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>

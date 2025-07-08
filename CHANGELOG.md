@@ -5,6 +5,7 @@ Features:
 Other:
 * Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
 * Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
+* Fixed typo for imageexport-related services and parameters (imaage -> image) ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
 
 ## v4.1.3
 Bugfixes:

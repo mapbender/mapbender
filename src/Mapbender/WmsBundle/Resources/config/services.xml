@@ -16,9 +16,9 @@
         <parameter key="mapbender.imageexport.renderer.wms.class">Mapbender\WmsBundle\Component\LayerRendererWms</parameter>
         <!-- Maximum for both WIDTH or HEIGHT params on any GetMap request started by image export + print (pixel units).
              If the output requires more pixels, WMS will be requested in tiles to stay below this maximum. -->
-        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size">8192</parameter>
-        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.x">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
-        <parameter key="mapbender.imaageexport.renderer.wms.max_getmap_size.y">%mapbender.imaageexport.renderer.wms.max_getmap_size%</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.max_getmap_size">8192</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.max_getmap_size.x">%mapbender.imageexport.renderer.wms.max_getmap_size%</parameter>
+        <parameter key="mapbender.imageexport.renderer.wms.max_getmap_size.y">%mapbender.imageexport.renderer.wms.max_getmap_size%</parameter>
     </parameters>
     <services>
         <service id="mapbender.source.wms" class="%mapbender.source.wms.class%">
@@ -55,12 +55,12 @@
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument type="service" id="logger" />
             <argument type="collection">
-                <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size.x%</argument>
-                <argument>%mapbender.imaageexport.renderer.wms.max_getmap_size.y%</argument>
+                <argument>%mapbender.imageexport.renderer.wms.max_getmap_size.x%</argument>
+                <argument>%mapbender.imageexport.renderer.wms.max_getmap_size.y%</argument>
             </argument>
             <argument type="collection">
-                <argument>%mapbender.imaageexport.renderer.wms.tile_buffer.x%</argument>
-                <argument>%mapbender.imaageexport.renderer.wms.tile_buffer.y%</argument>
+                <argument>%mapbender.imageexport.renderer.wms.tile_buffer.x%</argument>
+                <argument>%mapbender.imageexport.renderer.wms.tile_buffer.y%</argument>
             </argument>
         </service>
     </services>
