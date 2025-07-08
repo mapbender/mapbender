@@ -30,7 +30,7 @@ class ControlButton extends ButtonLike
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbControlButton';
+        return 'MbControlButton';
     }
 
     public function getRequiredAssets(Element $element)

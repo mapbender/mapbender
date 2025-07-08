@@ -72,7 +72,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbLegend';
+        return 'MbLegend';
     }
 
     public function getView(Element $element)

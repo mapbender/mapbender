@@ -84,7 +84,7 @@ class POI extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbPOI';
+        return 'MbPoi';
     }
 
     /**

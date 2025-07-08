@@ -288,6 +288,10 @@ $.extend(Mapbender, (function($) {
         var methodNamespace, innerName;
 
         if (initParts.length > 0) {
+            // handle new JS-Native-Classes
+            if (initParts.length === 1) {
+                return initName;
+            }
             methodNamespace = $[initParts[0]] || null;
             innerName = initParts[1];
         } else {
@@ -314,28 +318,14 @@ $.extend(Mapbender, (function($) {
         if (!$node.length) {
             throw new Error('Element #' + id + ' not found in DOM');
         }
-        if (data.init === "mapbender.mbAboutDialog") {
-            instance = new Mapbender.Element.MbAboutDialog(data.configuration, $node);
-            Mapbender.elementRegistry.markCreated(id, instance);
-            return;
-        }
-        if (data.init === "mapbender.mbLegend") {
-            instance = new Mapbender.Element.MbLegend(data.configuration, $node);
-            Mapbender.elementRegistry.markCreated(id, instance);
-            return;
-        }
-        if (data.init === "mapbender.mbControlButton") {
-            instance = new Mapbender.Element.MbControlButton(data.configuration, $node);
-            Mapbender.elementRegistry.markCreated(id, instance);
-            return;
-        }
-        if (data.init === "mapbender.mbPOI") {
-            instance = new Mapbender.Element.MbPoi(data.configuration, $node);
-            Mapbender.elementRegistry.markCreated(id, instance);
-            return;
-        }
         if (data.init) {
             var initInfo = _getElementInitInfo(data.init);
+            // handle new JS-Native-Classes
+            if (typeof initInfo === 'string') {
+                instance = new Mapbender.Element[initInfo](data.configuration, $node);
+                Mapbender.elementRegistry.markCreated(id, instance);
+                return;
+            }
             if (!initInfo.initMethod) {
                 Mapbender.elementRegistry.markFailed(id);
                 throw new Error("No such widget " + data.init);

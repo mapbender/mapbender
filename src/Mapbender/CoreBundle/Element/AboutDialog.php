@@ -71,7 +71,7 @@ class AboutDialog extends ButtonLike
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbAboutDialog';
+        return 'MbAboutDialog';
     }
 
     public function getView(Element $element)
