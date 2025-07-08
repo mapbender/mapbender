@@ -1,9 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\DataSource;
 
 /**
  * Source entity
@@ -12,150 +12,87 @@ use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
  */
 #[ORM\Entity]
 #[ORM\InheritanceType('JOINED')]
+// Discriminator map is filled dynamically by @see SourceMetadataListener::loadClassMetadata. However, it can't be
+// empty initially, because otherwise Doctrine will try to identify all classes inheriting from Source including
+// MappedSuperclasses, which does not work.
+#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource'])]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 15)]
-#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource', 'wmtssource' => '\Mapbender\WmtsBundle\Entity\WmtsSource'])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_source')]
-abstract class Source implements MutableHttpOriginInterface
+abstract class Source
 {
-    const TYPE_WMS = "WMS";
-    const TYPE_WMTS = "WMTS";
-    const TYPE_TMS = "TMS";
-
-    /**
-     * @var integer $id
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    protected $id;
+    protected null|int|string $id = null;
 
-    /**
-     * @var string $title The source title
-     */
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $title;
+    protected ?string $title = null;
 
-    /**
-     * @var string $alias The source alias
-     */
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    protected $alias = "";
+    protected ?string $alias = "";
 
-    /**
-     * @var string $description The source description
-     */
     #[ORM\Column(type: 'text', nullable: true)]
-    protected $description;
+    protected ?string $description = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $type;
+    protected ?string $type = null;
 
     public function __construct()
     {
     }
 
-    /**
-     * @return string
-     */
-    abstract public function getTypeLabel();
 
     /**
-     * @return ArrayCollection|SourceInstance[]
+     * @return Collection|SourceInstance[]
      */
-    abstract public function getInstances();
+    abstract public function getInstances(): Collection|array;
 
     /**
-     * @return ArrayCollection|SourceItem[]
+     * @return Collection|SourceItem[]
      */
-    abstract public function getLayers();
+    abstract public function getLayers(): Collection|array;
 
-    /**
-     * Set id
-     * @param integer $id source id
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int|string $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): int|string
     {
         return $this->id;
     }
 
-    /**
-     * Set title
-     *
-     * @param  string $title
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * Set description
-     *
-     * @param  string $description
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * Get description
-     *
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * Set alias
-     *
-     * @param  string $alias
-     * @return $this
-     */
-    public function setAlias($alias)
+    public function setAlias(?string $alias): self
     {
         $this->alias = $alias;
-
         return $this;
     }
 
-    /**
-     * Get alias
-     *
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
@@ -170,42 +107,22 @@ abstract class Source implements MutableHttpOriginInterface
         return (string) $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
     /**
-     * Sets source type.
-     * Possible types available from Source::TYPE_*
-     *
-     * @param string $type Set type. Possible types available from Source::TYPE_*
-     * @return $this
+     * @param string $type Set type. Should be a return value of DataSource::getName()
+     * @see DataSource::getName()
      */
-    public function setType($type)
+    public function setType(string $type): self
     {
-        if ($type === self::TYPE_WMTS || $type === self::TYPE_WMS || $type === self::TYPE_TMS) {
-            $this->type = $type;
-        }
-
+        $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    abstract public function getViewTemplate($frontend = false);
+    abstract public function getDisplayUrl(): ?string;
 
-    #[ORM\PostLoad]
-    public function postLoad()
-    {
-        if (!$this->type) {
-            // Ancient db (Mapbender 3.0.4); amend missing value
-            @trigger_error("WARNING: Missing type value on " . get_class($this) . "#{$this->id}, assuming WMS");
-            $this->setType(self::TYPE_WMS);
-        }
-    }
+
 }

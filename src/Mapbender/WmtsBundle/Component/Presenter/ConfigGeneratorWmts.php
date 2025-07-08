@@ -12,12 +12,6 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 
 class ConfigGeneratorWmts extends ConfigGeneratorCommon
 {
-
-    public function canDeactivateLayer(SourceInstanceItem $layer)
-    {
-        return true;
-    }
-
     /**
      * @param WmtsInstanceLayer $instanceLayer
      * @return array
@@ -69,7 +63,7 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
         return array();
     }
 
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
+    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
     {
         /** @var WmtsInstanceLayer $instanceLayer */
         foreach ($instanceLayer->getSourceItem()->getStyles() as $style) {
@@ -83,7 +77,7 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
         return null;
     }
 
-    public function getScriptAssets(Application $application)
+    public function getScriptAssets(Application $application): array
     {
         return array(
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',

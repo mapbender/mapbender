@@ -1,20 +1,20 @@
 <table>
   <tbody>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.person" | trans }}:</th><td>{{ contact.person }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.organization" | trans }}:</th><td>{{ contact.organization }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.position" | trans }}:</th><td>{{ contact.position }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.telephone" | trans }}:</th><td>{{ contact.voiceTelephone }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.facsimile" | trans }}:</th><td>{{ contact.facsimileTelephone }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.email" | trans }}:</th><td>
+    <tr><th>{{ "mb.manager.contact.person" | trans }}:</th><td>{{ contact.person }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.organization" | trans }}:</th><td>{{ contact.organization }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.position" | trans }}:</th><td>{{ contact.position }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.telephone" | trans }}:</th><td>{{ contact.voiceTelephone }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.facsimile" | trans }}:</th><td>{{ contact.facsimileTelephone }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.email" | trans }}:</th><td>
         {%- if contact.electronicMailAddress -%}
           <a href="mailto:{{ contact.electronicMailAddress}}">{{ contact.electronicMailAddress }}</a>
         {%- endif -%}
     </td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.address" | trans }}:</th><td>{{ contact.address }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.addresstype" | trans }}:</th><td>{{ contact.addressType }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.city" | trans }}:</th><td>{{ contact.addressCity }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.state" | trans }}:</th><td>{{ contact.addressStateOrProvince }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.postcode" | trans }}:</th><td>{{ contact.addressPostcode }}</td></tr>
-    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.country" | trans }}:</th><td>{{ contact.addressCountry }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.address" | trans }}:</th><td>{{ contact.address }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.addresstype" | trans }}:</th><td>{{ contact.addressType }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.city" | trans }}:</th><td>{{ contact.addressCity }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.state" | trans }}:</th><td>{{ contact.addressStateOrProvince }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.postcode" | trans }}:</th><td>{{ contact.addressPostcode }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.country" | trans }}:</th><td>{{ contact.addressCountry }}</td></tr>
   </tbody>
 </table>

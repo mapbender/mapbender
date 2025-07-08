@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Ihr Layerset wurde gelöscht.'
       failure: 'Ihr Layerset kann nicht gelöscht werden.'
-  source:
-    instance:
-      create:
-        success: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
   manager:
     automatic: Automatisch
     autoActivate: 'Automatisch aktivieren'
@@ -60,45 +56,11 @@ mb:
         choice:
           left: Links
           right: Rechts
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Diese Instanz wird von keiner Anwendung genutzt}
-            one   {Diese Instanz wird von einer Anwendung genutzt}
-            other {Diese Instanz wird von # Anwendungen genutzt}
-        }
-      convert_to_reusable: 'In freie Instanz umwandeln'
-      convert_to_bound: 'In private Instanz umwandeln'
-      converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
-      reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
-      create_reusable: 'Freie Instanz erzeugen'
-      created_reusable: 'Neue freie Instanz erzeugt'
     application:
       persistentView: 'Kartenzustand merken'
       splashscreen: 'Ladescreen anzeigen'
     admin:
-      sources: Datenquellen
       csrf_token_invalid: 'CSRF-Token ungültig.'
-      source:
-        add: 'Datenquelle hinzufügen'
-        show_metadata: 'Metadaten anzeigen'
-        delete: 'Datenquelle entfernen'
-        new:
-          add: 'Datenquelle hinzufügen'
-        valid: 'Quelle valide'
-        notvalid: 'Die Datenquelle ist nicht valide'
-        no_source: 'Keine Datenquelle'
-        update: 'Datenquelle aktualisieren'
-        status:
-          ok: 'Datenquelle OK'
-          toupdate: 'Datenquelle inaktuell'
-          unreachable: 'Die Datenquelle ist nicht erreichbar'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
-              one   {Diese Datenquelle wird von einer Anwendung genutzt}
-              other {Diese Datenquelle wird von # Anwendungen genutzt}
-          }
       map:
         max_extent: 'Max. Karten­ausdehnung'
         max_extent.help: 'Bounding Box mit min/max x/y, die den zulässigen Kartenausschnitt markiert, in dem sich ein Nutzer bewegen darf. Bei Klick auf die Weltkugel in der Maßstabsleiste wird auf diese Ausdehnung gezoomt.'
@@ -192,15 +154,93 @@ mb:
         description: Beschreibung
         template: Vorlage
     source:
+      sources: Datenquellen
       serviceurl: Dienst-URL
       username: Benutzername
       password: Passwort
       activate_new_layers: 'Neu hinzugefügte Layer aktivieren'
       select_new_layers: 'Neu hinzugefügte Layer auswählen'
       load: Laden
+      add: 'Datenquelle hinzufügen'
+      show_metadata: 'Metadaten anzeigen'
+      delete: 'Datenquelle entfernen'
+      valid: 'Quelle valide'
+      notvalid: 'Die Datenquelle ist nicht valide'
+      no_source: 'Keine Datenquelle'
+      update: 'Datenquelle aktualisieren'
+      status:
+        ok: 'Datenquelle OK'
+        toupdate: 'Datenquelle inaktuell'
+        unreachable: 'Die Datenquelle ist nicht erreichbar'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Diese Datenquelle wird von keiner Anwendung genutzt}
+            one   {Diese Datenquelle wird von einer Anwendung genutzt}
+            other {Diese Datenquelle wird von # Anwendungen genutzt}
+        }
+      added: 'Eine neue %type%-Quelle wurde erstellt'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Diese Instanz wird von keiner Anwendung genutzt}
+              one   {Diese Instanz wird von einer Anwendung genutzt}
+              other {Diese Instanz wird von # Anwendungen genutzt}
+          }
+        convert_to_reusable: 'In freie Instanz umwandeln'
+        convert_to_bound: 'In private Instanz umwandeln'
+        converted_to_bound: 'Eine private Kopie der freien Instanz wurde der Anwendung hinzugefügt'
+        reusable_assigned_to_application: 'Die freie Instanz wurde der Anwendung hinzugefügt'
+        create_reusable: 'Freie Instanz erzeugen'
+        created_reusable: 'Neue freie Instanz erzeugt'
+        created: 'Eine neue Instanz wurde erstellt. Bitte passen Sie diese an.'
+      instancelayer:
+        id: ID
+        id.help: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: Layer-Titel
+        name: Name
+        active: aktiv
+        minscale: 'Minimaler Maßstab'
+        maxscale: 'Maximaler Maßstab'
+        allowselecttoc: 'Erlaubt Auswahl im Layerbaum'
+        selectedtoc: 'Layerset beim Start der Anwendung auswählen. Achtung: Checkbox aktiv lassen, falls keine thematischen Ebenen verwendet werden'
+        selectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum aktiv. Einstellung sollte nur geändert werden, wenn thematische Ebenen verwendet werden'
+        unselectedtoc.help: 'Das Layerset ist beim Start der Anwendung im Ebenenbaum inaktiv. Achtung: Falls thematische Ebenen nicht verwendet werden, ist das Layerset dann nicht aufrufbar'
+        allowinfotoc: 'Erlaubt FeatureInfo im Layerbaum'
+        infotoc: 'FeatureInfo im Layerbaum'
+        allowtoggletoc: 'Erlaubt umschalten im Layerbaum'
+        toggletoc: 'Umschalten im Layerbaum'
+        allowreordertoc: 'Erlaubt sortieren im Layerbaum'
+        moreinfo: 'Weitere Informationen'
+        style: Stil
+      option:
+        title: Titel
+        opacity: Deckkraft
+        basesource: Basesource
+        proxy: Proxy
+      metadata:
+        metadata: Metadaten
+        contact: Kontakt
+        details: Details
+        layers: Layer
+        title: Titel
+        version: Version
+        originurl: Ursprungs-URL
+        abstract: Beschreibung
+    contact:
+      person: Person
+      organization: Organisation
+      position: Position
+      telephone: Telefon
+      facsimile: Fax
+      email: E-Mail
+      address: Adresse
+      addresstype: Adresstyp
+      city: Stadt
+      state: Bundesland
+      postcode: Postleitzahl
+      country: Staat
     managerbundle:
       new_application: 'Neue Anwendung'
-      add_source: 'Neue Datenquelle'
       add_user_group: 'Füge Benutzer und Gruppen hinzu'
       import_application: Importieren
       export_application: Exportieren
@@ -253,10 +293,3 @@ mb:
         importfile: 'Datei importieren'
   actions:
     secureelement: 'Zugriff auf das Element einschränken'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Titel
-            opacity: Deckkraft

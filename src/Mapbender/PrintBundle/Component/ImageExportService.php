@@ -1,12 +1,13 @@
 <?php
+
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Export\Resolution;
-use Mapbender\PrintBundle\Element\ImageExport;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -16,37 +17,16 @@ use Psr\Log\LoggerInterface;
  */
 class ImageExportService
 {
-    /** @var LoggerInterface */
-    protected $logger;
-    /** @var LayerRenderer[] */
-    protected $layerRenderers;
 
     /**
      * @param LayerRenderer[] $layerRenderers
-     * @param LoggerInterface $logger
      */
-    public function __construct($layerRenderers,
-                                LoggerInterface $logger)
+    public function __construct(
+        protected array           $layerRenderers,
+        protected LoggerInterface $logger,
+        protected TypeDirectoryService $typeDirectoryService,
+    )
     {
-        $this->layerRenderers = $layerRenderers;
-        $this->logger = $logger;
-    }
-
-    /**
-     * (Re-)register a renderer for a specific layer type.
-     * This should not be called anywhere in a request scope, but in a DI compiler pass.
-     * See WmsBundle registration into config service for a working example on how to do this:
-     * https://bit.ly/2SbvRSn
-     *
-     * NOTE that you should register layer renderers to both imageexport and print. These are separate
-     * objects, and they have separate mappings of layer renderers.
-     *
-     * @param $layerType
-     * @param LayerRenderer $layerRenderer
-     */
-    public function addLayerRenderer($layerType, LayerRenderer $layerRenderer)
-    {
-        $this->layerRenderers[$layerType] = $layerRenderer;
     }
 
     /**
@@ -203,17 +183,18 @@ class ImageExportService
     }
 
     /**
-     * @param mixed[] $layerDef
-     * @return LayerRenderer
+     * for some types like GeoJSON, the layerRenderer is set directly via the services.xml, for "regular" sources
+     * like WMS or WMTS, the layerRenderer is read from the DataSource
+     * @param array $layerDef
      */
-    protected function getLayerRenderer($layerDef)
+    protected function getLayerRenderer(array $layerDef): LayerRenderer
     {
         $layerType = $layerDef['type'];
-        if (empty($this->layerRenderers[$layerType])) {
-            throw new \RuntimeException("Unhandled layer type {$layerType}");
-        } else {
+        if (!empty($this->layerRenderers[$layerType])) {
             return $this->layerRenderers[$layerType];
         }
+
+        return $this->typeDirectoryService->getLayerRenderer($layerType);
     }
 
     /**

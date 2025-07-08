@@ -184,6 +184,11 @@
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
 
+        <service id="mapbender.source.metadata_listener" class="Mapbender\CoreBundle\Component\Source\SourceMetadataListener">
+            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <tag name="doctrine.event_listener" event="loadClassMetadata" />
+        </service>
+
         <service id="mapbender.http_transport.service" class="%mapbender.http_transport.service.class%">
             <argument type="service" id="owsproxy.http_foundation_client" />
         </service>
@@ -201,6 +206,7 @@
             <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">
+            <argument>%sources%</argument>
         </service>
         <service id="mapbender.source.url_processor.service" class="%mapbender.source.url_processor.service.class%">
             <argument type="service" id="router" />

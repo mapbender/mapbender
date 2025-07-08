@@ -5,6 +5,7 @@ namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
+use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\Geometry\LineLoopIterator;
 use Mapbender\PrintBundle\Component\Geometry\LineStringIterator;
 use Mapbender\PrintBundle\Util\CoordUtil;
@@ -18,28 +19,16 @@ use Mapbender\Utils\InfiniteCyclicArrayIterator;
  */
 class LayerRendererGeoJson extends LayerRenderer
 {
-    /** @var string */
-    protected $fontPath;
-    /** @var LayerRendererMarkers */
-    protected $markerRenderer;
+    protected string $fontPath;
 
-    /**
-     * @param string $fontPath
-     * @param LayerRendererMarkers $markerRenderer
-     */
-    public function __construct($fontPath, LayerRendererMarkers $markerRenderer)
+    public function __construct(
+        string                         $fontPath,
+        protected LayerRendererMarkers $markerRenderer)
     {
         $this->fontPath = rtrim($fontPath, '/');
-        $this->markerRenderer = $markerRenderer;
     }
 
-    /**
-     * @param $layerDef
-     * @param $nextLayerDef
-     * @param Export\Resolution $resolution
-     * @return array|bool|false
-     */
-    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
+    public function squashLayerDefinitions(array $layerDef, array $nextLayerDef, Resolution $resolution): false|array
     {
         // Fold everything, maintaining feature order
         $featuresKeys = array(
@@ -62,7 +51,7 @@ class LayerRendererGeoJson extends LayerRenderer
         return $layerDef;
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
+    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
     {
         imagesavealpha($canvas->resource, true);
         imagealphablending($canvas->resource, true);
@@ -147,7 +136,7 @@ class LayerRendererGeoJson extends LayerRenderer
         // Special snowflake Digitizer can and will supply NULL for required
         // style attributes, nuking our defaults. Filter those NULLs, if we have
         // a default value for them.
-        $filteredStyle = array_filter($geometry['style'], function($value) {
+        $filteredStyle = array_filter($geometry['style'], function ($value) {
             return $value !== null;
         });
         $mergedStyle = array_replace($defaults, $filteredStyle) + $geometry['style'];
@@ -458,7 +447,7 @@ class LayerRendererGeoJson extends LayerRenderer
         }
         switch (substr($style['labelAlign'], 1, 1)) {
             case 'b':
-                $y = $centroid[1]  + $offsetScale * $style['labelYOffset'];
+                $y = $centroid[1] + $offsetScale * $style['labelYOffset'];
                 break;
             default:
             case 'm':
@@ -496,10 +485,10 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param array $style
      * @param float[][][] $coordSets in pixel space
-     * @param boolean $close; use true for polygons, false for line strings
+     * @param boolean $close ; use true for polygons, false for line strings
      * @param FeatureBounds|null $bounds of all $rings; will be calculated if omitted, but can be passed in as an optimization
      */
-    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, FeatureBounds $bounds=null)
+    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, FeatureBounds $bounds = null)
     {
         if (!$bounds) {
             $bounds = new FeatureBounds();
@@ -513,7 +502,7 @@ class LayerRendererGeoJson extends LayerRenderer
         }
 
         $lineScale = $canvas->featureTransform->lineScale;
-        $bufferWidth = intval($style['strokeWidth'] *  $lineScale + 5);
+        $bufferWidth = intval($style['strokeWidth'] * $lineScale + 5);
         $subRegion = $this->getSubRegionFromBounds($canvas, $bounds, $bufferWidth);
 
         $pixelThickness = $style['strokeWidth'] * $lineScale;
@@ -802,12 +791,12 @@ class LayerRendererGeoJson extends LayerRenderer
 
     /**
      * Render individual dot and line primitives.
-     * @see generatePatternFragments
-     *
      * @param GdCanvas $canvas
      * @param array $fragments
      * @param int $color GDish
      * @param int $thickness used for both line thickness and dot diameter
+     * @see generatePatternFragments
+     *
      */
     protected function renderPatternFragments(GdCanvas $canvas, $fragments, $color, $thickness)
     {

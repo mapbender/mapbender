@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Il tuo Layerset è stato cancellato.'
       failure: 'Il tuo Layerset non può essere cancellato.'
-  source:
-    instance:
-      create:
-        success: 'È stata creata una nuova istanza. Si prega di modificarla.'
   manager:
     automatic: Automatico
     autoActivate: Auto-attivazione
@@ -60,45 +56,11 @@ mb:
         choice:
           left: Sinistra
           right: Destra
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Questa istanza non è utilizzata in nessuna applicazione}
-            one   {Questa istanza è utilizzata in un''applicazione}
-            other {Questa istanza non è utilizzata in # applicazioni}
-        }
-      convert_to_reusable: 'Converti in istanza condivisa'
-      convert_to_bound: 'Convertire in istanza vincolata'
-      converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
-      reusable_assigned_to_application: 'L''istanza condivisa è stata aggiunta all''applicazione'
-      create_reusable: 'Crea un''istanza condivisa'
-      created_reusable: 'È stata creata una nuova istanza condivisa'
     application:
       persistentView: 'Stato della mappa persistente'
       splashscreen: 'Mostra Splashscreen'
     admin:
-      sources: Risorse
       csrf_token_invalid: 'Token CSRF non valido.'
-      source:
-        add: 'Aggiungi risorsa'
-        show_metadata: 'Mostra metadati'
-        delete: 'Elimina risorsa'
-        new:
-          add: 'Aggiungi risorsa'
-        valid: 'La risorsa è valida'
-        notvalid: 'La risorsa non è valida'
-        no_source: 'Nessuna risorsa disponibile'
-        update: 'Aggiorna la risorsa'
-        status:
-          ok: 'Risorsa OK'
-          toupdate: 'Risorsa non più attuale'
-          unreachable: 'Risorsa irraggiungibile'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {This source is not used in any application}
-              one   {This source is used in one application}
-              other {This source is used in # applications}
-          }
       map:
         max_extent: 'Max. estensione'
         max_extent.help: 'Bounding Box (min/max x/y) in cui l''utente può navigare. Facendo clic sul simbolo del mappamondo, la mappa viene ingrandita in questa estensione.'
@@ -192,15 +154,93 @@ mb:
         description: Descrizione
         template: Template
     source:
+      sources: Risorse
       serviceurl: 'URL del Servizio'
       username: 'Nome utente'
       password: Password
       activate_new_layers: 'Attiva i layer appena aggiunti'
       select_new_layers: 'Seleziona i livelli appena aggiunti'
       load: Carica
+      add: 'Aggiungi risorsa'
+      show_metadata: 'Mostra metadati'
+      delete: 'Elimina risorsa'
+      valid: 'La risorsa è valida'
+      notvalid: 'La risorsa non è valida'
+      no_source: 'Nessuna risorsa disponibile'
+      update: 'Aggiorna la risorsa'
+      status:
+        ok: 'Risorsa OK'
+        toupdate: 'Risorsa non più attuale'
+        unreachable: 'Risorsa irraggiungibile'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {This source is not used in any application}
+            one   {This source is used in one application}
+            other {This source is used in # applications}
+        }
+      added: 'È stata creata una nuova fonte di %type%'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Questa istanza non è utilizzata in nessuna applicazione}
+              one   {Questa istanza è utilizzata in un''applicazione}
+              other {Questa istanza non è utilizzata in # applicazioni}
+          }
+        convert_to_reusable: 'Converti in istanza condivisa'
+        convert_to_bound: 'Convertire in istanza vincolata'
+        converted_to_bound: 'Una copia vincolata dell''istanza condivisa è stata aggiunta all''applicazione.'
+        reusable_assigned_to_application: 'L''istanza condivisa è stata aggiunta all''applicazione'
+        create_reusable: 'Crea un''istanza condivisa'
+        created_reusable: 'È stata creata una nuova istanza condivisa'
+        created: 'È stata creata una nuova istanza. Si prega di modificarla.'
+      instancelayer:
+        id: ID
+        id.help: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Titolo del Layer'
+        name: 'Nome del Layer'
+        active: attivo
+        minscale: 'Scala minima'
+        maxscale: 'Scala massima'
+        allowselecttoc: 'Permetti la Selezione nel TOC'
+        selectedtoc: 'Selezionato nel TOC'
+        selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'
+        unselectedtoc.help: 'Il layerset è inattivo all''avvio. Attenzione: Se non si utilizzano layer tematici, questo layerset non sarà accessibile.'
+        allowinfotoc: 'Permetti FeatureInfo nel TOC'
+        infotoc: 'FeatureInfo nel TOC'
+        allowtoggletoc: 'Permetti Alterna nel TOC'
+        toggletoc: 'Alterna nel TOC'
+        allowreordertoc: 'Permetti Riordina nel TOC'
+        moreinfo: 'Più Informazioni'
+        style: Stile
+      option:
+        title: Titolo
+        opacity: Opacità
+        basesource: BaseSource
+        proxy: Proxy
+      metadata:
+        metadata: Metadati
+        contact: Contatto
+        details: Dettagli
+        layers: Layers
+        title: Titolo
+        version: Versione
+        originurl: 'Origine URL'
+        abstract: Abstract
+    contact:
+      person: Persona
+      organization: Organizzazione
+      position: Posizione
+      telephone: Telefono
+      facsimile: Facsimile
+      email: Email
+      address: Indirizzo
+      addresstype: 'Tipo di indirizzo'
+      city: Città
+      state: Stato
+      postcode: 'Codice postale'
+      country: Nazione
     managerbundle:
       new_application: 'Nuova applicazione'
-      add_source: 'Aggiungi fonte'
       add_user_group: 'Aggiungi utenti e gruppi'
       import_application: Importazione
       export_application: Esportazione
@@ -253,10 +293,3 @@ mb:
         importfile: 'Importazione del file'
   actions:
     secureelement: 'Limitare l''accesso all''elemento'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Titolo
-            opacity: Opacità

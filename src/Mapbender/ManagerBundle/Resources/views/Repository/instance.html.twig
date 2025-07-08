@@ -1,6 +1,6 @@
 {% extends "@MapbenderManager/layouts/single_form.html.twig" %}
 {%- set _h1_text = instance.source.title -%}
-{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': instance.source.type})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
+{%- set _h1_subtext = ('mb.terms.sourceinstance.typed.singular' | trans({'%type%': (instance.source.type | source_label)})) ~ ' ' ~ instance.source.id ~ '/'~ instance.id -%}
 {%- set title = _h1_subtext ~ ' - ' ~ _h1_text -%}
 {%- set return_text = 'mb.actions.back' -%}
 
@@ -55,10 +55,10 @@
           </p>
           <p>
             {%- if _is_reusable_instance and layerset is defined and layerset -%}
-            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fas fa-anchor"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_bound' | trans }}</a>
+            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_application_sharedinstancecopy', {'instance': instance, 'layerset': layerset}) }}"><i class="fas fa-anchor"></i>&nbsp;{{ 'mb.manager.source.instance.convert_to_bound' | trans }}</a>
             {%- endif -%}
             {%- if not _is_reusable_instance and edit_shared_instances -%}
-            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fas fa-wifi"></i>&nbsp;{{ 'mb.manager.sourceinstance.convert_to_reusable' | trans }}</a>
+            <a class="btn btn-sm btn-info" href="{{ path('mapbender_manager_repository_promotetosharedinstance', {'instance': instance}) }}"><i class="fas fa-wifi"></i>&nbsp;{{ 'mb.manager.source.instance.convert_to_reusable' | trans }}</a>
             {%- endif -%}
           <p>
         </div>
@@ -70,8 +70,8 @@
 <div class="instanceContainer">
     <div class="row mb-3">
       <div class="col-xs-9 col-9 text-nowrap clip-text">
-        <label class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}:</label>
-        <a href="{{ instance.source.originUrl }}" target="_blank">{{ instance.source.originUrl }}</a>
+        <label class="labelInput">{{ 'mb.manager.source.metadata.originurl' | trans }}:</label>
+        <a href="{{ instance.source.displayUrl }}" target="_blank">{{ instance.source.displayUrl }}</a>
       </div>
       <div class="col-xs-3 col-3 text-end">
           {{- block('form_buttons') -}}
@@ -82,13 +82,17 @@
       <div class="col-md-6 col-xs-12">
         {% block form_main1 %}
             {{ form_row(form.title) }}
-            {{ form_row(form.opacity) }}
+            {% if form.opacity is defined %}
+                {{ form_row(form.opacity) }}
+            {% endif %}
         {% endblock form_main1 %}
       </div>
       <div class="col-md-6 col-xs-12">
         {% block form_main2 %}
             {{ form_row(form.basesource) }}
-            {{ form_row(form.proxy) }}
+            {% if form.proxy is defined %}
+                {{ form_row(form.proxy) }}
+            {% endif %}
         {% endblock form_main2 %}
       </div>
       {% endblock form_main %}

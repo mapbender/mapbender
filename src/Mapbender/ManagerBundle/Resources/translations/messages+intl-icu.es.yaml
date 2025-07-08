@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Tu conjunto de capas ha sido eliminado.'
       failure: 'Tu conjunto de capas no puede ser eliminado.'
-  source:
-    instance:
-      create:
-        success: 'Se ha creado una nueva instancia. Por favor, edítala.'
   manager:
     automatic: Automático
     autoActivate: 'Activar automáticamente'
@@ -45,7 +41,7 @@ mb:
           center: Centrada
       generate_button_menu: 'Generar un menú para botones'
       menu_label: 'Título del menú'
-    visibility: 'Visibilidad'
+    visibility: Visibilidad
     element:
       screentype:
         mobile: 'Visualización en pantallas de móviles'
@@ -58,45 +54,11 @@ mb:
         choice:
           left: Izquierda
           right: Derecha
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Esta instancia no se utiliza en ninguna aplicación}
-            one   {Esta instancia se utiliza en una aplicación}
-            other {Esta instancia se utiliza en # aplicaciones}
-        }
-      convert_to_reusable: 'Convertir a instancia libre'
-      convert_to_bound: 'Convertir a instancia privada'
-      converted_to_bound: 'Se ha añadido una copia privada de la instancia libre a la aplicación'
-      reusable_assigned_to_application: 'Se ha añadido una instancia libre a la aplicación'
-      create_reusable: 'Crear una instancia libre'
-      created_reusable: 'Se ha creado una nueva instancia libre'
     application:
       persistentView: 'Recordar la configuración del mapa'
       splashscreen: 'Mostrar la pantalla de inicio'
     admin:
-      sources: Fuentes
       csrf_token_invalid: 'CSRF no válido.'
-      source:
-        add: 'Añadir fuente de datos'
-        show_metadata: 'Mostrar metadatos'
-        delete: 'Borrar la fuente de datos'
-        new:
-          add: 'Añadir fuente de datos'
-        valid: 'La fuente de datos es válida'
-        notvalid: 'La fuente de datos no es válida'
-        no_source: 'Fuente de datos no disponible'
-        update: 'Actualizar fuente de datos'
-        status:
-          ok: 'Fuente de datos OK'
-          toupdate: 'La fuente de datos ya no es actual'
-          unreachable: 'La fuente de datos es inaccesible'
-        embedded_in_applications: |
-          {count, plural,
-            =0    {Esta fuente de datos no se utiliza en ninguna aplicación}
-            one   {Esta fuente de datos se utiliza en una aplicación}
-            other {Esta fuente de datos se utiliza en # aplicaciones}
-          }
       map:
         max_extent: 'Extensión máxima'
         max_extent.help: 'Marco límite (min/max x/y) en la que el usuario puede navegar sobre el mapa. Al hacer clic en el icono del globo terráqueo de la barra de escala, el mapa se amplía hasta esta extensión.'
@@ -114,7 +76,7 @@ mb:
           title: 'Eliminar elemento'
           confirm: '¿Realmente desea eliminar el elemento "{element_name}"'
         anchor:
-          label: 'Posición'
+          label: Posición
           left-top: 'Arriba a la izquierda'
           left-bottom: 'Abajo a la izquierda'
           right-top: 'Arriba a la derecha'
@@ -152,7 +114,7 @@ mb:
           base_data: 'Información básica'
         screenshot: 'Captura de pantalla'
         layouts: Layout
-        layersets: 'Capas'
+        layersets: Capas
         custom_css: CSS
         security:
           title: Seguridad
@@ -190,15 +152,93 @@ mb:
         description: Descripción
         template: Plantilla
     source:
+      sources: Fuentes
       serviceurl: 'URL del servicio '
       username: Usuario
       password: Contraseña
       activate_new_layers: 'Activar las capas recién añadidas'
       select_new_layers: 'Seleccionar las capas recién añadidas'
       load: Cargar
+      add: 'Añadir fuente de datos'
+      show_metadata: 'Mostrar metadatos'
+      delete: 'Borrar la fuente de datos'
+      valid: 'La fuente de datos es válida'
+      notvalid: 'La fuente de datos no es válida'
+      no_source: 'Fuente de datos no disponible'
+      update: 'Actualizar fuente de datos'
+      status:
+        ok: 'Fuente de datos OK'
+        toupdate: 'La fuente de datos ya no es actual'
+        unreachable: 'La fuente de datos es inaccesible'
+      embedded_in_applications: |
+        {count, plural,
+          =0    {Esta fuente de datos no se utiliza en ninguna aplicación}
+          one   {Esta fuente de datos se utiliza en una aplicación}
+          other {Esta fuente de datos se utiliza en # aplicaciones}
+        }
+      added: 'Se ha creado una nueva fuente de %type%'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Esta instancia no se utiliza en ninguna aplicación}
+              one   {Esta instancia se utiliza en una aplicación}
+              other {Esta instancia se utiliza en # aplicaciones}
+          }
+        convert_to_reusable: 'Convertir a instancia libre'
+        convert_to_bound: 'Convertir a instancia privada'
+        converted_to_bound: 'Se ha añadido una copia privada de la instancia libre a la aplicación'
+        reusable_assigned_to_application: 'Se ha añadido una instancia libre a la aplicación'
+        create_reusable: 'Crear una instancia libre'
+        created_reusable: 'Se ha creado una nueva instancia libre'
+        created: 'Se ha creado una nueva instancia. Por favor, edítala.'
+      instancelayer:
+        id: ID
+        id.help: 'Id de instancia de capa en la forma: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Título de las capas'
+        name: 'Nombre de las capas'
+        active: activo
+        minscale: 'Escala mínima'
+        maxscale: 'Escala máxima'
+        allowselecttoc: 'Permitir seleccionar en el árbol de capas'
+        selectedtoc: 'Seleccione el conjunto de capas al iniciar la aplicación. Atención: Deje la casilla activa si no se utilizan capas temáticas.'
+        selectedtoc.help: 'El conjunto de capas se activa al iniciarse la apliación. Sólo debe modificarse si se utilizan capas temáticas.'
+        unselectedtoc.help: 'El conjunto de capas no se activa al iniciarse la apliación. Atención: Si no se utilizan capas temáticas, no se podrá acceder a este conjunto de capas.'
+        allowreordertoc: 'Permitir reordenar en el árbol de capas'
+        allowinfotoc: 'Permitir FeatureInfo en el árbol de capas'
+        infotoc: 'FeatureInfo en el árbol de capas'
+        allowtoggletoc: 'Permitir Toggle en el árbol de capas'
+        toggletoc: 'Toggle en el árbol de capas'
+        moreinfo: 'Más información'
+        style: Estilo
+      option:
+        title: Título
+        opacity: Opacidad
+        basesource: 'Fuente WMS'
+        proxy: Proxy
+      metadata:
+        metadata: Metadata
+        contact: Contacto
+        details: Detalles
+        layers: Capas
+        title: Título
+        version: Versión
+        originurl: 'Origen de la URL'
+        abstract: Abstracto
+    contact:
+      person: Persona
+      organization: Organización
+      position: Posición
+      telephone: Teléfono
+      facsimile: Fax
+      email: Email
+      address: Dirección
+      addresstype: 'Tipo de dirección'
+      city: Ciudad
+      state: Estado
+      postcode: 'Código postal'
+      country: País
     managerbundle:
       new_application: 'Nueva aplicación'
-      add_source: 'Añadir fuentes'
       add_user_group: 'Añadir usuarios y grupos'
       import_application: Importar
       export_application: Exportar
@@ -251,10 +291,3 @@ mb:
         importfile: 'Importar archivo'
   actions:
     secureelement: 'Restringir el acceso al elemento'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: Título
-            opacity: Opacidad

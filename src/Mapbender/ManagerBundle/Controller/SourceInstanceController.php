@@ -172,7 +172,7 @@ class SourceInstanceController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
         $newInstance = $this->createNewSourceInstance($application, $sourceId, $layersetId, $this->em);
-        $this->addFlash('success', 'mb.source.instance.create.success');
+        $this->addFlash('success', 'mb.manager.source.instance.created');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $slug,
             "instanceId" => $newInstance->getId(),
@@ -189,11 +189,11 @@ class SourceInstanceController extends ApplicationControllerBase
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         // @todo: only act on post
-        $instance = $this->typeDirectory->createInstance($source);
+        $instance = $this->typeDirectory->getInstanceFactory($source)->createInstance($source, null);
         $instance->setLayerset(null);
         $this->em->persist($instance);
         $this->em->flush();
-        $this->addFlash('success', 'mb.manager.sourceinstance.created_reusable');
+        $this->addFlash('success', 'mb.manager.source.instance.created_reusable');
         return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
             'instanceId' => $instance->getId(),
         ));
@@ -423,7 +423,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $layerset = $this->requireLayerset($layersetId, $application);
         /** @var Source|null $source */
         $source = $this->em->getRepository(Source::class)->find($sourceId);
-        $newInstance = $this->typeDirectory->createInstance($source);
+        $newInstance = $this->typeDirectory->getInstanceFactory($source)->createInstance($source, $options);
         foreach ($layerset->getCombinedInstanceAssignments()->getValues() as $index => $otherAssignment) {
             /** @var SourceInstanceAssignment $otherAssignment */
             $otherAssignment->setWeight($index + 1);
@@ -432,21 +432,6 @@ class SourceInstanceController extends ApplicationControllerBase
 
         $newInstance->setWeight(0);
         $newInstance->setLayerset($layerset);
-        if (!empty($options['format']) && in_array($options['format'], $source->getGetMap()->getFormats())) {
-            $newInstance->setFormat($options['format']);
-        }
-        if (!empty($options['infoformat']) && in_array($options['infoformat'], $source->getGetFeatureInfo()->getFormats())) {
-            $newInstance->setInfoFormat($options['infoformat']);
-        }
-        if (!empty($options['proxy']) && $options['proxy'] === 'true') {
-            $newInstance->setProxy(true);
-        }
-        if (!empty($options['tiled']) && $options['tiled'] === 'true') {
-            $newInstance->setTiled(true);
-        }
-        if (!empty($options['layerorder']) && in_array($options['layerorder'], ['standard', 'reverse'])) {
-            $newInstance->setLayerOrder($options['layerorder']);
-        }
         $layerset->getInstances()->add($newInstance);
 
         $entityManager->persist($application);

@@ -53,7 +53,7 @@
             var $rootList = $('ul.layers:first', this.element);
             $rootList.empty();
             for (var i = (sources.length - 1); i > -1; i--) {
-                if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
+                if (this.options.showBaseSource || !sources[i].isBaseSource) {
                     var source = sources[i];
                     var $sourceNode = this._createSourceTree(sources[i]);
                     var themeOptions = this.options.useTheme && this._getThemeOptions(source.layerset);
@@ -247,7 +247,7 @@
         },
         _onSourceAdded: function (event, data) {
             var source = data.source;
-            if (source.configuration.baseSource && !this.options.showBaseSource) {
+            if (source.isBaseSource && !this.options.showBaseSource) {
                 return;
             }
             var $sourceTree = this._createSourceTree(source);
@@ -507,7 +507,7 @@
             const $wrapper = $opacityControl.find('.layer-opacity-bar');
             const $handle = $opacityControl.find('.layer-opacity-handle');
             const dragDealer = new Dragdealer($wrapper[0], {
-                x: source.configuration.options.opacity,
+                x: source.options.opacity,
                 horizontal: true,
                 vertical: false,
                 speed: 1,
@@ -602,7 +602,7 @@
             return layer.getSupportedMenuOptions();
         },
         _initDimensionsMenu: function ($element, $actionElement, source) {
-            var dims = source.configuration.options.dimensions || [];
+            var dims = source.options.dimensions || [];
             var self = this;
             var dimData = $element.data('dimensions') || {};
             var $controls = [];

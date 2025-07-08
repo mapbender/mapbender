@@ -34,19 +34,19 @@ class WmtsInstanceLayerType extends AbstractType
         $builder
             ->add('info', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.infotoc',
+                'label' => 'mb.manager.source.instancelayer.infotoc',
             ))
             ->add('toggle', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.toggletoc',
+                'label' => 'mb.manager.source.instancelayer.toggletoc',
             ))
             ->add('allowinfo', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc',
+                'label' => 'mb.manager.source.instancelayer.allowinfotoc',
             ))
             ->add('allowtoggle', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc',
+                'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
             ))
         ;
     }

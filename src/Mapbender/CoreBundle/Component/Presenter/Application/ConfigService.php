@@ -4,13 +4,13 @@ namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Mapbender\Component\Event\ApplicationConfigEvent;
 use Mapbender\Component\Event\ApplicationEvent;
-use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
-use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -123,18 +123,17 @@ class ConfigService
     }
 
     /**
-     * @param Layerset $layerset
      * @return array[]
      */
-    protected function getSourceInstanceConfigs(Layerset $layerset)
+    protected function getSourceInstanceConfigs(Layerset $layerset): array
     {
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
-            $sourceService = $this->getSourceService($assignment->getInstance());
-            if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+            $configGenerator = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
+            if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configs[] = $sourceService->getConfiguration($assignment->getInstance());
+            $configs[] = $configGenerator->getConfiguration($assignment->getInstance());
         }
         return $configs;
     }
@@ -170,18 +169,6 @@ class ConfigService
             }
         }
         return $elementConfig;
-    }
-
-    /**
-     * Get the concrete service that deals with the concrete SourceInstance type.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return SourceInstanceConfigGenerator
-     */
-    protected function getSourceService(SourceInstance $sourceInstance)
-    {
-        // delegate to directory
-        return $this->sourceTypeDirectory->getConfigGenerator($sourceInstance);
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Doctrine\Common\Collections\Criteria;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
@@ -10,49 +12,35 @@ use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Tunnel base endpoint pre-bound to a particular SourceInstance
  */
 class Endpoint
 {
-    /** @var InstanceTunnelService */
-    protected $service;
-
-    /** @var SourceInstance */
-    protected $instance;
-
-    /** @var Source */
-    protected $source;
-
+    /** @var HttpParsedSource */
+    protected Source $source;
 
     /**
-     * InstanceTunnel constructor.
-     * @param InstanceTunnelService
-     * @param SourceInstance $instance
      * @todo: needs application binding for reusable source instances
      */
-    public function __construct($service, SourceInstance $instance)
+    public function __construct(
+        protected InstanceTunnelService $service,
+        protected SourceInstance $instance)
     {
-        $this->service = $service;
-        $this->instance = $instance;
         $this->source = $instance->getSource();
     }
 
-    /**
-     * @return InstanceTunnelService
-     */
-    public function getService()
+    public function getService(): InstanceTunnelService
     {
         return $this->service;
     }
 
     /**
      * Returns the URL base the Browser / JS client should use to access the tunnel.
-     *
-     * @return string
      */
-    public function getPublicBaseUrl()
+    public function getPublicBaseUrl(): string
     {
         return $this->service->getPublicBaseUrl($this);
     }
@@ -62,27 +50,22 @@ class Endpoint
      * the tunnel.
      *
      * @param string $url NOTE: scheme/host/path completely ignored, only query string is relevant
-     * @return string
      * @throws \RuntimeException if no REQUEST=... in given $url
      */
-    public function generatePublicUrl($url)
+    public function generatePublicUrl(string $url): string
     {
         return $this->service->generatePublicUrl($this, $url);
     }
 
     /**
-     * @return Application
      * @todo: application should already be bound to Endpoint instance for reusable source instances
      */
-    public function getApplicationEntity()
+    public function getApplicationEntity(): Application
     {
         return $this->instance->getLayerset()->getApplication();
     }
 
-    /**
-     * @return SourceInstance
-     */
-    public function getSourceInstance()
+    public function getSourceInstance(): SourceInstance
     {
         return $this->instance;
     }
@@ -91,11 +74,8 @@ class Endpoint
      * Gets the url on the wms service that satisfies the given $request (=Symfony Http Request object).
      * Get params from hidden vendor specifics and the given request are appended.
      * Params from the request override params from hidden vendorspecs with the same name.
-     *
-     * @param Request $request
-     * @return string|null
      */
-    public function getInternalUrl(Request $request)
+    public function getInternalUrl(Request $request): ?string
     {
         $baseUrl = $this->getInternalBaseUrl($request);
         if ($baseUrl) {
@@ -108,12 +88,7 @@ class Endpoint
         }
     }
 
-    /**
-     * @param Request $request
-     * @param $instanceLayerId
-     * @return string|null
-     */
-    public function getInternalLegendUrl(Request $request, $instanceLayerId)
+    public function getInternalLegendUrl(Request $request, $instanceLayerId): ?string
     {
         $layerLegendUrl = $this->getInternalLegendBaseUrl($instanceLayerId);
         if ($layerLegendUrl) {
@@ -126,28 +101,22 @@ class Endpoint
         }
     }
 
-    /**
-     * @param Request $request
-     * @return string|null
-     */
-    protected function getInternalBaseUrl(Request $request)
+    protected function getInternalBaseUrl(Request $request): ?string
     {
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
         switch (strtolower($requestType)) {
             case 'getmap':
+                // TODO: this is WMS specific
                 return $this->source->getGetMap()->getHttpGet();
             case 'getfeatureinfo':
+                // TODO: this is WMS specific
                 return $this->source->getGetFeatureInfo()->getHttpGet();
             default:
                 return null;
         }
     }
 
-    /**
-     * @param string $instanceLayerId
-     * @return string|null
-     */
-    protected function getInternalLegendBaseUrl($instanceLayerId)
+    protected function getInternalLegendBaseUrl(string $instanceLayerId): ?string
     {
         // @todo: integrate WMTS and WMTS legends properly; atm only WmsInstance has a defined 'getLayers' method
         if (!method_exists($this->instance, 'getLayers')) {
@@ -165,17 +134,17 @@ class Endpoint
             // instance layer is not connected to the source instance
             return null;
         }
-        $sourceService = $this->service->getSourceTypeDirectory()->getConfigGenerator($wmsInstance);
-        return $sourceService->getInternalLegendUrl($layer);
+        $configGenerator = $this->service->getSourceTypeDirectory()->getConfigGenerator($wmsInstance);
+        return $configGenerator->getInternalLegendUrl($layer);
     }
 
-    /**
-     * @param $url
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function getUrl($url)
+    public function getUrl(string $url): Response
     {
         $source = $this->instance->getSource();
+        if (!$source instanceof HttpOriginInterface) {
+            throw new \RuntimeException("Source instance {$this->instance->getId()} is not a HttpSource");
+        }
+
         $urlWithCredentials = UrlUtil::addCredentials($url, $source->getUsername(), $source->getPassword());
         $response = $this->service->getHttpTransport()->getUrl($urlWithCredentials);
         foreach (array_keys($response->headers->getCookies()) as $cookieKey) {

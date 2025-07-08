@@ -15,31 +15,10 @@ mb:
             formats: Формат
         view:
           label:
-            metadata: Метадані
-            contact: Контакт
-            details: Подробиці
-            layers: Шари
-            title: Назва
-            name: Ім'я
-            version: Версія
-            originurl: '>Оригінал URL'
-            abstract: Абстрактний
             onlineresource: Інтернет ресурс
             exceptionformats: Формат Виключення
             fees: Збори
             accessconstraints: Обмеження доступу
-            person: Людина
-            organization: Організація
-            position: Позиція
-            telephone: Телефон
-            facsimile: Телефакс
-            email: E-mail
-            address: Адреса
-            addresstype: Тип Адреси
-            city: Місто
-            state: Область
-            postcode: Поштовий індекс
-            country: Країна
           message:
             cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Зберегти
             cancel: Відмінити
           label:
-            originurl: Оригінал URL
-            visible: Видимий
-            basesource: Джерело
-            proxy: Проксі
             transparency: Прозорість
             tiled: Плитковий
             title: Назва
@@ -107,22 +82,6 @@ mb:
             extent: Екстент
             dataurl: Data URL
             featurelisturl: Featurelist URL
-        instancelayerform:
-          label:
-            layerstitle: Назва шару
-            minscale: Мінімальна шкала
-            maxsclase: Максимальна Шкала
-            active: Активний
-            allowselecttoc: Дозволити обирати в TOC
-            selectedtoc: Обраний на TOC
-            allowinfotoc: Allow FeatureInfo at TOC
-            infotoc: FeatureInfo at TOC
-            allowtoggletoc: Allow Toggle at TOC
-            toggletoc: Toggle at TOC
-            allowreordertoc: Дозволити Впорядкувати по ТОС
-            moreinfo: Більше інформації
-            layersname: Ім'я шару
-            style: Стиль
       class:
         title: WMS loader
         description: Завантажує WMS через GetCapabilities-Request

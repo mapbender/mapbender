@@ -7,7 +7,7 @@ use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
-use Mapbender\Component\SourceInstanceConfigGenerator;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -156,11 +156,11 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     protected function loadWms(Element $element, Request $request)
     {
         $source = $this->getSource($request);
-        $instance = $this->getSourceTypeDirectory()->createInstance($source);
+        $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source, null);
         $infoFormat = $request->get('infoFormat');
 
-        $sourceService = $this->getSourceService($instance);
-        $layerConfiguration = $sourceService->getConfiguration($instance);
+        $configGenerator = $this->getConfigGenerator($instance);
+        $layerConfiguration = $configGenerator->getConfiguration($instance);
         $config = array_replace($this->getDefaultConfiguration(), $element->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
@@ -176,17 +176,13 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return new JsonResponse($layerConfigurations);
     }
 
-    /**
-     * @param Request $request
-     * @return WmsSource
-     */
-    protected function getSource($request)
+    protected function getSource(Request $request): WmsSource
     {
         $origin = new HttpOriginModel();
         $origin->setOriginUrl($request->get("url"));
         $origin->setUsername($request->get("username"));
         $origin->setPassword($request->get("password"));
-        return $this->sourceImporter->evaluateServer($origin);
+        return $this->sourceImporter->loadSource($origin);
     }
 
     protected function splitLayers($layerConfiguration)
@@ -216,7 +212,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
             if ($instance && $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
-                $instanceConfigs[] = $this->getSourceService($instance)->getConfiguration($instance);
+                $instanceConfigs[] = $this->getConfigGenerator($instance)->getConfiguration($instance);
             }
         }
         return $instanceConfigs;
@@ -227,11 +223,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return $this->sourceTypeDirectory;
     }
 
-    /**
-     * @param SourceInstance $instance
-     * @return SourceInstanceConfigGenerator
-     */
-    protected function getSourceService($instance)
+    protected function getConfigGenerator(SourceInstance $instance): SourceInstanceConfigGenerator
     {
         return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
     }

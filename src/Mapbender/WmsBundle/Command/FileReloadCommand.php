@@ -3,7 +3,7 @@
 
 namespace Mapbender\WmsBundle\Command;
 
-use Mapbender\Component\BaseSourceLoaderSettings;
+use Mapbender\CoreBundle\Component\Source\BaseSourceLoaderSettings;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;

@@ -1,5 +1,5 @@
 {% set _count = layerset_groups | length %}
-<p>{{ 'mb.manager.sourceinstance.embedded_in_applications' | trans({count: _count}) }}{{ _count ? ':' : '.' }}</p>
+<p>{{ 'mb.manager.source.instance.embedded_in_applications' | trans({count: _count}) }}{{ _count ? ':' : '.' }}</p>
 <ul class="list-default">
 {% for lsg in layerset_groups %}
     {%- set application = lsg.application -%}

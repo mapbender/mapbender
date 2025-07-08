@@ -282,25 +282,23 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     }
 
     /**
-     * @param array $definition
-     * @param string $instanceId
-     * @param mixed $lsIndex
-     * @return array
+     * @TODO: remove this in version 5.
      */
     protected function processSourceInstanceDefinition($definition, $instanceId, $lsIndex)
     {
-        if (empty($definition['type']) && !empty($definition['class'])) {
-            if (is_a($definition['class'], 'Mapbender\WmsBundle\Entity\WmsInstance', true)) {
-                $definition['type'] = Source::TYPE_WMS;
-            } else {
-                // NOTE: WmtsInstance is actually already two types, WMTS and TMS
-                throw new \RuntimeException("Can't infer type from instance class name {$definition['class']})");
+        if (!empty($definition['class'])) {
+            trigger_deprecation('mapbender/mapbender', '4.2.0', "Yaml application $instanceId defined using 'class' key, should define 'type' instead. Fallback will be removed in Mapbender 5.0");
+            // only WmsInstance was using 'class' key
+            if (empty($definition['type']) && $definition['class'] === 'Mapbender\WmsBundle\Entity\WmsInstance') {
+                $definition['type'] = "WMS";
             }
+            unset($definition['class']);
         }
         if (empty($definition['type'])) {
             throw new \RuntimeException("Missing instance type in yaml application layerset {$lsIndex}, instance id {$instanceId}");
         }
         unset($definition['class']);
+
         return $definition;
     }
 

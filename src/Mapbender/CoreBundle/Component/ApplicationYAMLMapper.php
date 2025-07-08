@@ -1,11 +1,11 @@
 <?php
+
 namespace Mapbender\CoreBundle\Component;
 
-use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\Component\Collections\YamlSourceInstanceCollection;
-use Mapbender\Component\SourceInstanceFactory;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -26,33 +26,14 @@ use Psr\Log\NullLogger;
  */
 class ApplicationYAMLMapper
 {
-    /** @var LoggerInterface  */
-    protected $logger;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var ElementEntityFactory */
-    protected $elementFactory;
-    /** @var ApplicationEngineListener */
-    protected $onLoadListener;
-    /** @var array[] */
-    protected $definitions;
+    protected LoggerInterface $logger;
 
-    /**
-     * @param array[] $definitions
-     * @param ElementEntityFactory $elementFactory
-     * @param SourceInstanceFactory $sourceInstanceFactory
-     * @param ApplicationEngineListener $onLoadListener
-     * @param LoggerInterface|null $logger
-     */
-    public function __construct($definitions,
-                                ElementEntityFactory $elementFactory, SourceInstanceFactory $sourceInstanceFactory,
-                                ApplicationEngineListener $onLoadListener,
-                                ?LoggerInterface $logger = null)
+    public function __construct(protected array                     $definitions,
+                                protected ElementEntityFactory      $elementFactory,
+                                protected TypeDirectoryService      $sourceTypeDirectory,
+                                protected ApplicationEngineListener $onLoadListener,
+                                ?LoggerInterface                    $logger = null)
     {
-        $this->definitions = $definitions;
-        $this->elementFactory = $elementFactory;
-        $this->sourceTypeDirectory = $sourceInstanceFactory;
-        $this->onLoadListener = $onLoadListener;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -110,9 +91,9 @@ class ApplicationYAMLMapper
         $application->setSlug($slug);
         $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
-                ->setTitle(isset($definition['title'])?$definition['title']:'')
-                ->setDescription(isset($definition['description'])?$definition['description']:'')
-                ->setTemplate($definition['template'])
+            ->setTitle(isset($definition['title']) ? $definition['title'] : '')
+            ->setDescription(isset($definition['description']) ? $definition['description'] : '')
+            ->setTemplate($definition['template'])
         ;
         if (!empty($definition['screenshot'])) {
             $application->setScreenshot($definition['screenshot']);

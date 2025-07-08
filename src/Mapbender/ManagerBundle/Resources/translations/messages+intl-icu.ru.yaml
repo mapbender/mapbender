@@ -19,10 +19,6 @@ mb:
     remove:
       success: 'Набор слоев удален.'
       failure: 'Произошла ошибка при удалении набора слоев.'
-  source:
-    instance:
-      create:
-        success: 'Новый элемент был создан, но его нужно отредактировать.'
   manager:
     automatic: 'Автоматически'
     autoActivate: Автоактивирование
@@ -58,44 +54,10 @@ mb:
         choice:
           left: 'Слева'
           right: 'Справа'
-    sourceinstance:
-      embedded_in_applications: |
-        {count, plural,
-            =0    {Этот экземпляр не используется ни одним приложением}
-            one   {Этот экземпляр используется одним приложением}
-            other {Этот экземпляр используется # приложениями}
-        }
-      convert_to_reusable: 'Преобразовать в общедоступный экземпляр'
-      convert_to_bound: 'Преобразовать в приватный экземпляр'
-      converted_to_bound: 'Приватная копия общедоступного экземпляра была добавлена в приложение'
-      reusable_assigned_to_application: 'Общедоступный экземпляр был добавлен в приложение'
-      create_reusable: 'Создать общедоступный экземпляр'
-      created_reusable: 'Создать новый общедоступный экземпляр'
     application:
       persistentView: 'Запоминать состояние карты'
     admin:
-      sources: Источники
       csrf_token_invalid: 'CSRF-токен недействителен.'
-      source:
-        add: 'Добавить источник'
-        show_metadata: 'Показать метаданные'
-        delete: 'Удалить источник'
-        new:
-          add: 'Добавить источник'
-        valid: 'Источник действительный'
-        notvalid: 'Источник не действительный'
-        no_source: 'Нет доступного источника'
-        update: 'Обновить источник'
-        status:
-          ok: 'Источник OK'
-          toupdate: 'Источник больше не является текущим'
-          unreachable: 'Источник недоступен'
-        embedded_in_applications: |
-          {count, plural,
-              =0    {Ни одно приложение не использует этот источник данных}
-              one   {Одно приложение использует этот источник данных}
-              other {Этот источник данных используется в # приложениях}
-          }
       map:
         max_extent: 'Макс. область'
         max_extent.help: 'Ограничительная рамка с min/max значением x/y, обозначающая разрешенный участок карты, по которому пользователь может перемещаться. При нажатии на глобус на шкале масштаб увеличивается до этого размера.'
@@ -189,15 +151,93 @@ mb:
         description: Описание
         template: Шаблон
     source:
+      sources: Источники
       serviceurl: 'Сервис URL'
       username: 'Имя пользователя'
       password: Пароль
       activate_new_layers: 'Активировать новый добавленный слой'
       select_new_layers: 'Выбрать новый добавленный слой'
       load: Загрузить
+      add: 'Добавить источник'
+      show_metadata: 'Показать метаданные'
+      delete: 'Удалить источник'
+      valid: 'Источник действительный'
+      notvalid: 'Источник не действительный'
+      no_source: 'Нет доступного источника'
+      update: 'Обновить источник'
+      status:
+        ok: 'Источник OK'
+        toupdate: 'Источник больше не является текущим'
+        unreachable: 'Источник недоступен'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Ни одно приложение не использует этот источник данных}
+            one   {Одно приложение использует этот источник данных}
+            other {Этот источник данных используется в # приложениях}
+        }
+      added: 'Создан новый источник %type%'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Этот экземпляр не используется ни одним приложением}
+              one   {Этот экземпляр используется одним приложением}
+              other {Этот экземпляр используется # приложениями}
+          }
+        convert_to_reusable: 'Преобразовать в общедоступный экземпляр'
+        convert_to_bound: 'Преобразовать в приватный экземпляр'
+        converted_to_bound: 'Приватная копия общедоступного экземпляра была добавлена в приложение'
+        reusable_assigned_to_application: 'Общедоступный экземпляр был добавлен в приложение'
+        create_reusable: 'Создать общедоступный экземпляр'
+        created_reusable: 'Создать новый общедоступный экземпляр'
+        created: 'Новый элемент был создан, но его нужно отредактировать.'
+      instancelayer:
+        id: Id
+        id.help: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Название слоя'
+        name: 'Имя слоя'
+        active: Активный
+        minscale: 'Минимальная шкала'
+        maxscale: 'Максимальная шкала'
+        allowselecttoc: 'Разрешить выбор в TOC'
+        selectedtoc: 'Выбранный в TOC'
+        selectedtoc.help: 'Набор слоев активен при запуске. Настройки следует изменять только в том случае, если используются тематические слои.'
+        unselectedtoc.help: 'Набор слоев неактивен при запуске. Внимание: если тематические слои не используются, этот набор слоев будет недоступен.'
+        allowinfotoc: 'Разрешить инфосвойства в TOC'
+        infotoc: 'Инфосвойства в TOC'
+        allowtoggletoc: 'Разрешить переключать в TOC'
+        toggletoc: 'Переключить в TOC'
+        allowreordertoc: 'Разрешить упорядочить по ТОС'
+        moreinfo: 'Больше информации'
+        style: Style
+      option:
+        title: 'Заголовок'
+        opacity: 'Непрозрачность'
+        basesource: 'Базовый источник'
+        proxy: Прокси
+      metadata:
+        metadata: Метаданные
+        contact: Контакт
+        details: Подробности
+        layers: Слои
+        title: Название
+        version: Версия
+        originurl: 'Оригинальный URL'
+        abstract: Описание
+    contact:
+      person: Человек
+      organization: Организация
+      position: Позиция
+      telephone: Телефон
+      facsimile: Телефакс
+      email: E-mail
+      address: Адрес
+      addresstype: 'Тип Адреса'
+      city: Город
+      state: Государство
+      postcode: 'Почтовые индекс'
+      country: Страна
     managerbundle:
       new_application: 'Новое приложение'
-      add_source: 'Добавить источник'
       add_user_group: 'Добавить пользователей и группы'
       import_application: Импорт
       export_application: Экспорт
@@ -250,10 +290,3 @@ mb:
         importfile: 'Импортировать файл'
   actions:
     secureelement: 'Ограничить доступ к этому элементу'
-  wms:
-    wmsloader:
-      repo:
-        instance:
-          label:
-            title: 'Заголовок'
-            opacity: 'Непрозрачность'

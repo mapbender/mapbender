@@ -25,16 +25,6 @@ class WmtsSource extends HttpTileSource
         $this->themes = new ArrayCollection();
     }
 
-    public function getTypeLabel()
-    {
-        // no distinct classes for WMTS and TMS
-        if ($this->type === self::TYPE_TMS) {
-            return 'TMS';
-        } else {
-            return 'OGC WMTS';
-        }
-    }
-
     public function mutateUrls(OneWayTransformer $transformer)
     {
         parent::mutateUrls($transformer);
@@ -45,15 +35,6 @@ class WmtsSource extends HttpTileSource
         if ($requestInfo = $this->getGetFeatureInfo()) {
             $requestInfo->mutateUrls($transformer);
             $this->setGetFeatureInfo(clone $requestInfo);
-        }
-    }
-
-    public function getViewTemplate($frontend = false)
-    {
-        if ($frontend) {
-            return null;
-        } else {
-            return '@MapbenderWmts/Repository/view.html.twig';
         }
     }
 }

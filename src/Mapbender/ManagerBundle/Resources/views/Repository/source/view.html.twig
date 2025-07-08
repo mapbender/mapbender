@@ -14,12 +14,12 @@
                 {%- if grants.refresh | default(false) -%}
                 <li>
                     <a class="dropdown-item" href="{{ path("mapbender_manager_repository_updateform", {"sourceId": source.id}) }}">
-                        <i class="fas fa-fw fa-rotate"></i> {{ 'mb.manager.admin.source.update' | trans }}
+                        <i class="fas fa-fw fa-rotate"></i> {{ 'mb.manager.source.update' | trans }}
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="{{ path('mapbender_manager_sourceinstance_createshared', {'source': source}) }}">
-                        <i class="fas fa-fw fa-wifi"></i> {{ 'mb.manager.sourceinstance.create_reusable' | trans }}
+                        <i class="fas fa-fw fa-wifi"></i> {{ 'mb.manager.source.instance.create_reusable' | trans }}
                     </a>
                 </li>
                 {%- endif -%}
@@ -49,15 +49,14 @@
     </div>
 {% endblock tab_container_contact %}
 
-  {# @todo: commonly used labels should NOT be in WmsBundle and shoult NOT associate with 'wmsloader' #}
   {% block tab_headers %}
-      {{- tab_macros.tab_header('MetaData', 'mb.wms.wmsloader.repo.view.label.metadata', 'active') -}}{#- #tabMetaData -#}
+      {{- tab_macros.tab_header('MetaData', 'mb.manager.source.metadata.metadata', 'active') -}}{#- #tabMetaData -#}
       {{- tab_macros.tab_header('Applications', 'mb.terms.application.plural') -}}{#- #tabApplications -#}
       {%- if source.contact is defined and source.contact -%}
-      {{- tab_macros.tab_header('Contact', 'mb.wms.wmsloader.repo.view.label.contact') -}}{#- #tabContact -#}
+      {{- tab_macros.tab_header('Contact', 'mb.manager.source.metadata.contact') -}}{#- #tabContact -#}
       {%- endif -%}
-      {{- tab_macros.tab_header('Service', 'mb.wms.wmsloader.repo.view.label.details') -}}{#- #tabService -#}
-      {{- tab_macros.tab_header('Layers', 'mb.wms.wmsloader.repo.view.label.layers') -}}{#- #tabLayers -#}
+      {{- tab_macros.tab_header('Service', 'mb.manager.source.metadata.details') -}}{#- #tabService -#}
+      {{- tab_macros.tab_header('Layers', 'mb.manager.source.metadata.layers') -}}{#- #tabLayers -#}
   {% endblock tab_headers %}
 
     {% block tab_containers %}

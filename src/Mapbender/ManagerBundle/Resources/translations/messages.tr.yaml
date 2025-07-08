@@ -19,29 +19,10 @@ mb:
     remove:
       success: Katman silindi.
       failure: Katman silinemiyor.
-  source:
-    instance:
-      create:
-        success: Yeni bir örnek oluşturuldu, lütfen düzenleyin.
   manager:
     autoActivate: Otomatik etkinleştir
     autoOpen: Otomatik aç
     admin:
-      sources: Kaynaklar
-      source:
-        add: Kaynak ekle
-        show_metadata: Üstverileri göster (Metadata)
-        delete: Kaynaği sil
-        new:
-          add: Kaynak ekle
-        valid: Geçerli kaynak
-        notvalid: Kaynak geçerli değil
-        no_source: Kaynak yok
-        update: Kaynağı güncelle
-        status:
-          ok: Geçerli Kaynak
-          toupdate: Kaynak artık mevcut değil
-          unreachable: Kaynağa erişilemiyor
       map:
         max_extent: Maks. kapsam
         start_extent: Baslangıç kapsamı
@@ -116,9 +97,24 @@ mb:
           title: URL Başlık
         description: Açıklama
         template: Şablon(Kalıp)
+    source:
+      sources: Kaynaklar
+      add: Kaynak ekle
+      show_metadata: Üstverileri göster (Metadata)
+      delete: Kaynaği sil
+      valid: Geçerli kaynak
+      notvalid: Kaynak geçerli değil
+      no_source: Kaynak yok
+      update: Kaynağı güncelle
+      status:
+        ok: Geçerli Kaynak
+        toupdate: Kaynak artık mevcut değil
+        unreachable: Kaynağa erişilemiyor
+      added: 'Yeni bir %type% kaynağı oluşturuldu'
+      instance:
+        created: Yeni bir örnek oluşturuldu, lütfen düzenleyin.
     managerbundle:
       new_application: Uygulama oluştur
-      add_source: Kaynak ekle
       add_user_group: Kullanıcı ve Kullanıcıgrubu ekle
       import_application: İçe aktarım (Import)
       export_application: Dışa aktarım (Export)

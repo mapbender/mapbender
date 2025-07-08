@@ -12,6 +12,8 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmtsBundle\TmsDataSource;
+use Mapbender\WmtsBundle\WmtsDataSource;
 
 
 /** Contains only fields and methods common to both Wmts and TMS **/
@@ -74,7 +76,7 @@ abstract class HttpTileSource extends HttpParsedSource
     public static function tmsFactory()
     {
         $source = new WmtsSource();
-        $source->setType($source::TYPE_TMS);
+        $source->setType(TmsDataSource::TYPE);
         return $source;
     }
 
@@ -84,7 +86,7 @@ abstract class HttpTileSource extends HttpParsedSource
     public static function wmtsFactory()
     {
         $source = new WmtsSource();
-        $source->setType($source::TYPE_WMTS);
+        $source->setType(WmtsDataSource::TYPE);
         return $source;
     }
 
@@ -107,7 +109,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @return WmtsLayerSource[]|ArrayCollection
      */
-    public function getLayers()
+    public function getLayers(): array|ArrayCollection
     {
         return $this->layers;
     }
@@ -132,7 +134,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @return ArrayCollection|WmtsInstance[]
      */
-    public function getInstances()
+    public function getInstances(): ArrayCollection|array
     {
         return $this->instances;
     }

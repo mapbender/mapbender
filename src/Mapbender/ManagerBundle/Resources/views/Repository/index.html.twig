@@ -1,5 +1,5 @@
 {% extends '@MapbenderManager/layouts/tabbed.html.twig' %}
-{%- set title = 'mb.manager.admin.sources' | trans -%}
+{%- set title = 'mb.manager.source.sources' | trans -%}
 {%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
 
 {% block js %}
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block tab_headers %}
-  {{- tab_macros.tab_header('Sources', 'mb.manager.admin.sources', 'active') -}}
+  {{- tab_macros.tab_header('Sources', 'mb.manager.source.sources', 'active') -}}
   {{- tab_macros.tab_header('SharedInstances', 'mb.terms.sourceinstance.reusable.plural') -}}
 {% endblock tab_headers %}
 
@@ -20,12 +20,17 @@
             <div class="row">
                 <div class="col-sm-5 col-xs-12 col-12">
                     {%- if grants.create -%}
-                    <div class="content-box content-box-md">
-                        <a href="{{ path('mapbender_manager_repository_new') }}" data-test="mb-source-add">
-                          <i class="fas fa-plus fa-lg"></i>
-                          <span>{{ 'mb.manager.admin.source.add' | trans }}</span>
-                        </a>
-                    </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-plus fa-lg"></i>
+                                <span>{{ 'mb.manager.source.add' | trans }}</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for source, label in datasources %}
+                                    <li><a class="dropdown-item" href="{{ path('mapbender_manager_repository_new', parameters = {sourceType: source}) }}">{{ label }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     {%- endif -%}
                 </div>
                 {%- if items -%}
@@ -48,15 +53,15 @@
             {%- endblock -%}
 
             {%- block item_interactions -%}
-                            <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"><i class="fas fa-display"></i></a>
+                            <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.id}) }}" title="{{ 'mb.manager.source.show_metadata' | trans }}"><i class="fas fa-display"></i></a>
                             {%- if grants.refresh -%}
                               <a class="btn btn-light" href="{{ path("mapbender_manager_repository_updateform",{"sourceId":item.id}) }}"
-                                 title="{{ 'mb.manager.admin.source.update' | trans }} {{ item.title }}"
+                                 title="{{ 'mb.manager.source.update' | trans }} {{ item.title }}"
                                  data-test="mb-update-source-{{item.title}}"><i class="fas fa-rotate"></i></a>
                             {% endif %}
                             {%- if grants.delete -%}
                               <a href="#" class="btn btn-light -fn-delete"
-                                          title="{{"mb.manager.admin.source.delete"|trans}} {{ item.title }}"
+                                          title="{{"mb.manager.source.delete"|trans}} {{ item.title }}"
                                           data-url="{{ path("mapbender_manager_repository_delete",{"sourceId":item.id}) }}"
                                           data-test="mb-delete-source-{{item.title}}"
                                           data-id="{{ item.id }}"><i class="far fa-trash-can"></i></a>
@@ -68,7 +73,7 @@
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}
-            {{- 'mb.manager.admin.source.no_source' | trans -}}
+            {{- 'mb.manager.source.no_source' | trans -}}
             {%- endblock -%}
         {% endembed %}
 
@@ -97,7 +102,7 @@
                     ><i class="fas fa-pencil"></i>
                   </a>
                 {%- endif -%}
-                <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"
+                <a class="btn btn-light" href="{{ path("mapbender_manager_repository_view",{"sourceId":item.source.id}) }}" title="{{ 'mb.manager.source.show_metadata' | trans }}"
                   ><i class="fas fa-display"></i></a>
                 {%- if grants.delete -%}
                           <a class="btn btn-light -fn-delete" href="#"
@@ -122,7 +127,7 @@
             {%- endblock -%}
 
             {%- block boxlist_placeholder_content -%}
-            {{- 'mb.manager.admin.source.no_source' | trans -}}
+            {{- 'mb.manager.source.no_source' | trans -}}
             {%- endblock -%}
         {% endembed %}
     </div>

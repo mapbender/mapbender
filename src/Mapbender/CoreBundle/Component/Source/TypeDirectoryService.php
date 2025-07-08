@@ -2,179 +2,99 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
-use Mapbender\Component\SourceInstanceConfigGenerator;
-use Mapbender\Component\SourceInstanceFactory;
-use Mapbender\Component\SourceLoader;
-use Mapbender\CoreBundle\Component\Presenter\SourceService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\SourceInstanceItem;
-use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
+use Mapbender\PrintBundle\Component\LayerRenderer;
 
 /**
- * Directory for available polymorphic source types (shipping by default only with WMS). Each source type is
- * expected to supply its own service that performs source-type-specific tasks such as
+ * Directory for map data source types
+ * Each source type is expected to supply its own service that performs source-type-specific tasks such as
  * * generating frontend configuration
- * * locating the correct form type for administration (WIP)
+ * * locating the correct form type for administration
  *
- * The directory itself is registered in container at mapbender.source.typedirectory.service
+ * The directory itself is registered in the container at mapbender.source.typedirectory.service
  *
- * Handlers for polymorphic source instance types pluggable and extensible by injecting method calls to
- * * @see TypeDirectoryService::registerSubtypeService
- *
- * This should be done in a DI compiler pass (extending service definition via XML / YAML does not work across bundles)
- * @see RegisterWmsSourceServicePass for a working example
- */
-class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInformationInterface
+ * Custom sources should extend from Mapbender.DataSource and tag the class as `mapbender.datasource`
+ * @see DataSource
+ **/
+class TypeDirectoryService
 {
-    /** @var SourceInstanceConfigGenerator[] */
-    protected $configServices = array();
-    /** @var SourceInstanceFactory[] */
-    protected $instanceFactories = array();
-    /** @var SourceLoader[] */
-    protected $loaders = array();
+
+    /**
+     * @var DataSource[]
+     */
+    protected array $sources = [];
+
+    /**
+     * @param DataSource[] $sources
+     */
+    public function __construct(array $sources)
+    {
+        foreach ($sources as $source) {
+            $this->sources[strtolower($source->getName())] = $source;
+        }
+    }
 
     /**
      * Return a mapping of type codes => displayable type labels
      * @return string[]
      */
-    public function getTypeLabels()
+    public function getTypeLabels(bool $filterAllowAddFromManager = true): array
     {
         $labelMap = array();
-        foreach ($this->loaders as $loader) {
-            $labelMap[$loader->getTypeCode()] = $loader->getTypeLabel();
+        foreach ($this->sources as $source) {
+            if ($filterAllowAddFromManager && !$source->allowAddSourceFromManager()) continue;
+            $labelMap[strtolower($source->getName())] = $source->getLabel(false);
         }
         return $labelMap;
     }
 
-    /**
-     * Get the appropriate service to handle configuration generation
-     * for the given source instance.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return SourceInstanceConfigGenerator
-     */
-    public function getConfigGenerator(SourceInstance $sourceInstance)
+    public function getSource(string $type): DataSource
     {
-        $key = strtolower($sourceInstance->getType());
-        if (!array_key_exists($key, $this->configServices)) {
-            $message = 'No config generator available for source instance type ' . print_r($key, true);
-            throw new \RuntimeException($message);
+        $key = strtolower($type);
+        if (!array_key_exists($key, $this->sources)) {
+            throw new \RuntimeException('No data source available for key ' . $key);
         }
-        return $this->configServices[$key];
+        return $this->sources[$key];
     }
 
-    /**
-     * @param Source $source
-     * @return SourceInstanceFactory
-     */
-    public function getInstanceFactory(Source $source)
+    public function getConfigGenerator(SourceInstance $sourceInstance): SourceInstanceConfigGenerator
+    {
+        return $this->getSource($sourceInstance->getType())->getConfigGenerator();
+    }
+
+    public function getInstanceFactory(Source $source): SourceInstanceFactory
     {
         return $this->getInstanceFactoryByType($source->getType());
     }
 
-    /**
-     * @param string $type
-     * @return SourceInstanceFactory
-     */
-    public function getInstanceFactoryByType($type)
+    public function getInstanceFactoryByType(string $type): SourceInstanceFactory
     {
-        $key = strtolower($type);
-        if (!array_key_exists($key, $this->instanceFactories)) {
-            $message = 'No instance factory available for source instance type ' . print_r($type, true);
-            throw new \RuntimeException($message);
-        }
-        return $this->instanceFactories[$key];
+        return $this->getSource($type)->getInstanceFactory();
     }
 
-    /**
-     * @param string $type
-     * @return SourceLoader
-     */
-    public function getSourceLoaderByType($type)
+    public function getLayerRenderer(string $type): ?LayerRenderer
     {
-        $key = strtolower($type);
-        if (!array_key_exists($key, $this->loaders)) {
-            $message = 'No loader available for source instance type ' . print_r($type, true);
-            throw new \RuntimeException($message);
-        }
-        return $this->loaders[$key];
+        return $this->getSource($type)->getLayerRenderer();
     }
 
-    /**
-     * @param Source $source
-     * @return SourceInstance
-     */
-    public function createInstance(Source $source)
+    public function getSourceLoaderByType($type): SourceLoader
     {
-        return $this->getInstanceFactory($source)->createInstance($source);
+        return $this->getSource($type)->getLoader();
     }
 
-    public function fromConfig(array $data, $id)
-    {
-        if (empty($data['type'])) {
-            throw new \RuntimeException("Missing mandatory value 'type' in given data");
-        }
-        return $this->getInstanceFactoryByType($data['type'])->fromConfig($data, $id);
-    }
-
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
-    {
-        $implementation = $this->getInstanceFactoryByType($instance->getSource()->getType());
-        return $implementation->matchInstanceToPersistedSource($instance, $extraSources);
-    }
-
-    /**
-     * Adds (or replaces) the sub-services for a concrete sub-type of source instances. Each service type expects
-     * two handling services
-     * 1) service that generates frontend configuration
-     * 2) factory service for new instances
-     *
-     * Provided as a post-constructor customization hook. Should call from a DI compiler pass to plug in
-     * support for new source types.
-     *
-     * @see RegisterWmsSourceServicePass for a working example
-     *
-     * @param string $instanceType
-     * @param SourceService $configService
-     * @param SourceInstanceFactory $instanceFactory
-     * @param SourceLoader $loader
-     */
-    public function registerSubtypeService($instanceType, $configService, $instanceFactory, $loader)
-    {
-        if (!$instanceType || !is_string($instanceType)) {
-            throw new \InvalidArgumentException('Empty / non-string instanceType ' . print_r($instanceType));
-        }
-        $key = strtolower($instanceType);
-        if (!($configService instanceof SourceInstanceConfigGenerator)) {
-            $type = is_object($configService) ? get_class($configService) : gettype($configService);
-            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceService");
-        }
-        $this->configServices[$key] = $configService;
-        if (!($instanceFactory instanceof SourceInstanceFactory)) {
-            $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
-            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceInstanceFactory");
-        }
-        $this->instanceFactories[$key] = $instanceFactory;
-        if (!($loader instanceof SourceLoader)) {
-            $type = is_object($instanceFactory) ? get_class($instanceFactory) : gettype($instanceFactory);
-            throw new \InvalidArgumentException("Unsupported type {$type}, must be SourceLoader");
-        }
-        $this->loaders[$key] = $loader;
-    }
 
     /**
      * Returns list of assets of given type required for source instances to work on the client.
      *
-     * @param Application $application
      * @return string[]
      */
-    public function getScriptAssets(Application $application)
+    public function getScriptAssets(Application $application): array
     {
         $refs = array();
-        foreach ($this->configServices as $subTypeService) {
-            $typeRefs = $subTypeService->getScriptAssets($application);
+        foreach ($this->sources as $source) {
+            $typeRefs = $source->getConfigGenerator()->getScriptAssets($application);
             if ($typeRefs) {
                 $refs = array_merge($refs, $typeRefs);
             }
@@ -182,23 +102,9 @@ class TypeDirectoryService implements SourceInstanceFactory, SourceInstanceInfor
         return $refs;
     }
 
-    public function getFormType(SourceInstance $instance)
+    public function getSources()
     {
-        return $this->getInstanceFactory($instance->getSource())->getFormType($instance);
+        return $this->sources;
     }
 
-    public function getFormTemplate(SourceInstance $instance)
-    {
-        return $this->getInstanceFactory($instance->getSource())->getFormTemplate($instance);
-    }
-
-    public function isInstanceEnabled(SourceInstance $sourceInstance)
-    {
-        return $this->getConfigGenerator($sourceInstance)->isInstanceEnabled($sourceInstance);
-    }
-
-    public function canDeactivateLayer(SourceInstanceItem $layer)
-    {
-        return $this->getConfigGenerator($layer->getSourceInstance())->canDeactivateLayer($layer);
-    }
 }

@@ -39,12 +39,12 @@ class InstanceFactoryWmts extends InstanceFactoryCommon
         return $instanceLayer;
     }
 
-    public function getFormTemplate(SourceInstance $instance)
+    public function getFormTemplate(SourceInstance $instance): string
     {
         return '@MapbenderWmts/Repository/instance-wmts.html.twig';
     }
 
-    public function getFormType(SourceInstance $instance)
+    public function getFormType(SourceInstance $instance): string
     {
         return WmtsInstanceType::class;
     }

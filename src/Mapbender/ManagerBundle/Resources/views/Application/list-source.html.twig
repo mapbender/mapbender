@@ -6,7 +6,7 @@
     <a class="checkContainer" href="{{ path('mapbender_manager_application_attachreusableinstance', {'layerset': layerset, 'instance': instance}) }}">
       <h3>
         <span class="badge badge--datasource bg-info pull-right bg-sm"><i class="fas fa-wifi"></i>&nbsp;{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}</span>
-        {{ instance.source.type }}#{{ instance.source.id }}: {{ instance.title | default(instance.source.title) }}<sup>{{ instance.source.alias }}</sup>
+        {{ instance.source.type | source_label }}#{{ instance.source.id }}: {{ instance.title | default(instance.source.title) }}<sup>{{ instance.source.alias }}</sup>
         <div class="clear"></div>
       </h3>
       <div>{{ instance.source.description }}</div>
@@ -15,11 +15,11 @@
 {% for source in sources %}
   <li class="filterItem">
     <a class="checkContainer" href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">
-      <h3>{{ source.type }}#{{ source.id }}: {{ source.title }}<sup>{{ source.alias }}</sup></h3>
+      <h3>{{ source.type | source_label }}#{{ source.id }}: {{ source.title }}<sup>{{ source.alias }}</sup></h3>
       <div>{{ source.description }}</div>
     </a>
   </li>
 {% else %}
-  <li>{{ 'mb.manager.admin.source.no_source' | trans }}</li>
+  <li>{{ 'mb.manager.source.no_source' | trans }}</li>
 {% endfor %}
 </ul>

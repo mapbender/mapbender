@@ -93,14 +93,14 @@ window.Mapbender.MapEngineOl4 = (function() {
          */
         createWmsLayer: function(source, mapOptions) {
             var sourceOpts = {
-                url: source.configuration.options.url,
+                url: source.options.url,
                 transition: 0,
                 params: source.getGetMapRequestBaseParams()
             };
 
             var olSource;
             var olLayerClass;
-            if (source.configuration.options.tiled) {
+            if (source.options.tiled) {
                 olSource = this.createWmsTileSource_(sourceOpts, mapOptions || {});
                 olLayerClass = ol.layer.Tile;
             } else {
@@ -109,7 +109,7 @@ window.Mapbender.MapEngineOl4 = (function() {
             }
 
             var layerOptions = {
-                opacity: source.configuration.options.opacity,
+                opacity: source.options.opacity,
                 source: olSource
             };
             // todo: transparent

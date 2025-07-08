@@ -253,14 +253,19 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
     protected function getCurrentUserId()
     {
         $token = $this->tokenStorage->getToken();
+        if (!$token || $token instanceof NullToken) {
+            return null;
+        }
+
         $user = $token->getUser();
-        if (!$token || $token instanceof NullToken || !$user) {
+        if (!$user) {
             return null;
         }
         if ($user instanceof UserInterface) {
             try {
                 // only FOM user and Drupal user have this method,
                 // it's not part of the basic UserInterface!
+                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $user->getId();
             } catch (\Exception $e) {
                 return $user->getUserIdentifier();

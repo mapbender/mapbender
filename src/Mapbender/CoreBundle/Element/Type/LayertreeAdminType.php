@@ -26,7 +26,7 @@ class LayertreeAdminType extends AbstractType
             ))
             ->add('allowReorder', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc',
+                'label' => 'mb.manager.source.instancelayer.allowreordertoc',
             ))
             ->add('showBaseSource', CheckboxType::class, array(
                 'required' => false,

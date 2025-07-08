@@ -14,7 +14,7 @@
             };
 
             const sourceOpts = {
-                version: this.configuration.version,
+                version: this.version,
                 requestEncoding: 'REST',
                 urls: layer.options.tileUrls.map(function (tileUrlTemplate) {
                     return tileUrlTemplate.replace('{TileMatrixSet}', matrixSet.identifier);
@@ -23,7 +23,7 @@
                 tileGrid: new ol.tilegrid.WMTS(gridOpts)
             };
             const layerOpts = {
-                opacity: this.configuration.options.opacity,
+                opacity: this.options.opacity,
                 source: new ol.source.WMTS(sourceOpts)
             };
             return new ol.layer.Tile(layerOpts);

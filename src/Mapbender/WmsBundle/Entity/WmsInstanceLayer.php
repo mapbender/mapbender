@@ -4,7 +4,7 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\Component\SourceLoaderSettings;
+use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 /**

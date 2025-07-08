@@ -11,25 +11,23 @@ use Mapbender\PrintBundle\Util\GdUtil;
 
 class LayerRendererMarkers extends LayerRenderer
 {
-    /** @var string */
-    protected $imageRoot;
-
     /**
      * @param string $imageRoot should be the web root
      */
-    public function __construct($imageRoot)
+    public function __construct(
+        protected string $imageRoot
+    )
     {
-        $this->imageRoot = $imageRoot;
     }
 
-    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution)
+    public function squashLayerDefinitions($layerDef, $nextLayerDef, $resolution): false|array
     {
         // squash everything
         $layerDef['markers'] = array_merge($layerDef['markers'], $nextLayerDef['markers']);
         return $layerDef;
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent)
+    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent): void
     {
         foreach ($layerDef['markers'] as $markerDef) {
             $this->addMarker($canvas, $markerDef, $layerDef['opacity']);

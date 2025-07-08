@@ -15,31 +15,10 @@ mb:
             formats: Formati
         view:
           label:
-            metadata: Metadati
-            contact: Contatto
-            details: Dettagli
-            layers: Layers
-            title: Titolo
-            name: Nome
-            version: Versione
-            originurl: 'Origine URL'
-            abstract: Abstract
             onlineresource: 'Risorsa Online'
             exceptionformats: 'Eccezione nel formato'
             fees: Fees
             accessconstraints: 'Limiti all''accesso'
-            person: Persona
-            organization: Organizzazione
-            position: Posizione
-            telephone: Telefono
-            facsimile: Facsimile
-            email: Email
-            address: Indirizzo
-            addresstype: 'Tipo di indirizzo'
-            city: Città
-            state: Stato
-            postcode: 'Codice postale'
-            country: Nazione
           message:
             cautionscalehint: 'Attenzione: i calcoli per la scala sono soggetti a una limitata risoluzione in WMS 1.1.1!'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Salva
             cancel: Cancella
           label:
-            originurl: 'Origine URL'
-            visible: Visibile
-            basesource: BaseSource
-            proxy: Proxy
             transparency: Trasparenza
             tiled: Tiled
             title: Titolo
@@ -113,27 +88,6 @@ mb:
             extent: Estendi
             dataurl: 'URL del Dato'
             featurelisturl: 'URL della Featurelist'
-        instancelayerform:
-          label:
-            layerstitle: 'Titolo del Layer'
-            minscale: 'Scala minima'
-            maxsclase: 'Scala massima'
-            active: attivo
-            allowselecttoc: 'Permetti la Selezione nel TOC'
-            selectedtoc: 'Selezionato nel TOC'
-            selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'
-            unselectedtoc.help: 'Il layerset è inattivo all''avvio. Attenzione: Se non si utilizzano layer tematici, questo layerset non sarà accessibile.'
-            allowinfotoc: 'Permetti FeatureInfo nel TOC'
-            infotoc: 'FeatureInfo nel TOC'
-            allowtoggletoc: 'Permetti Alterna nel TOC'
-            toggletoc: 'Alterna nel TOC'
-            allowreordertoc: 'Permetti Riordina nel TOC'
-            moreinfo: 'Più Informazioni'
-            id:
-              title: ID
-              description: 'Istanza Layer Id da: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nome del Layer'
-            style: Stile
       class:
         title: 'loader WMS'
         description: 'Carica un WMS attraverso la getCapabilities-Request'

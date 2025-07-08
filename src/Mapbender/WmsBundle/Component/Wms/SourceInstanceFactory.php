@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -20,28 +21,15 @@ use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
-class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactory
+class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\SourceInstanceFactory
 {
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-    /** @var string|null */
-    protected $defaultLayerOrder;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param string $defaultLayerOrder
-     */
-    public function __construct(EntityManagerInterface $entityManager, $defaultLayerOrder)
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected ?string                $defaultLayerOrder)
     {
-        $this->entityManager = $entityManager;
-        $this->defaultLayerOrder = $defaultLayerOrder;
     }
 
-    /**
-     * @param Source $source
-     * @return WmsInstance
-     */
-    public function createInstance(Source $source)
+    public function createInstance(Source $source, ?array $options = null): WmsInstance
     {
         /** @var WmsSource $source $instance */
         $instance = new WmsInstance();
@@ -53,6 +41,24 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
         // avoid persistence errors (non-nullable column)
         $instance->setWeight(0);
+
+        if ($options) {
+            if (!empty($options['format']) && in_array($options['format'], $source->getGetMap()->getFormats())) {
+                $instance->setFormat($options['format']);
+            }
+            if (!empty($options['infoformat']) && in_array($options['infoformat'], $source->getGetFeatureInfo()->getFormats())) {
+                $instance->setInfoFormat($options['infoformat']);
+            }
+            if (!empty($options['proxy']) && $options['proxy'] === 'true') {
+                $instance->setProxy(true);
+            }
+            if (!empty($options['tiled']) && $options['tiled'] === 'true') {
+                $instance->setTiled(true);
+            }
+            if (!empty($options['layerorder']) && in_array($options['layerorder'], ['standard', 'reverse'])) {
+                $instance->setLayerOrder($options['layerorder']);
+            }
+        }
         return $instance;
     }
 
@@ -61,10 +67,10 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
      * @param string $id used for instance and as instance layer id prefix
      * @return WmsInstance
      */
-    public function fromConfig(array $data, $id)
+    public function fromConfig(array $data, string $id): WmsInstance
     {
         $source = $this->sourceFromConfig($data, $id);
-        $instance = $this->createInstance($source);
+        $instance = $this->createInstance($source, null);
         $instance->setId($id);
         $instance
             ->setTitle(ArrayUtil::getDefault($data, 'title', $source->getTitle()))
@@ -83,12 +89,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         return $instance;
     }
 
-    /**
-     * @param SourceInstance $instance
-     * @param Source[] $extraSources
-     * @return Source|null
-     */
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources)
+    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
     {
         /** @var WmsInstance $instance */
         $repository = $this->entityManager->getRepository(WmsSource::class);
@@ -152,11 +153,8 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
 
     /**
      * Bake layer name and nesting depth for named layers
-     *
-     * @param WmsLayerSource $layer
-     * @return string|null
      */
-    protected static function getReusableLayerIdent(WmsLayerSource $layer)
+    protected static function getReusableLayerIdent(WmsLayerSource $layer): ?string
     {
         if ($name = $layer->getName()) {
             $depth = 0;
@@ -171,10 +169,6 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
     }
 
-    /**
-     * @param WmsInstanceLayer $instanceLayer
-     * @param array $data
-     */
     protected function configureInstanceLayer(WmsInstanceLayer $instanceLayer, array $data)
     {
         $instanceLayer
@@ -194,12 +188,7 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         }
     }
 
-    /**
-     * @param array $data
-     * @param string $id
-     * @return WmsSource
-     */
-    protected function sourceFromConfig(array $data, $id)
+    protected function sourceFromConfig(array $data, string $id): WmsSource
     {
         $source = new WmsSource();
         $source
@@ -224,24 +213,12 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         return $source;
     }
 
-    /**
-     * @param WmsSource $source
-     * @param array $data
-     * @return WmsLayerSource
-     */
-    protected function rootLayerFromConfig(WmsSource $source, array $data)
+    protected function rootLayerFromConfig(WmsSource $source, array $data): WmsLayerSource
     {
         return $this->layerFromConfig($source, $data, null);
     }
 
-    /**
-     * @param WmsSource $source
-     * @param array $data
-     * @param WmsLayerSource|null $parent
-     * @param int $order
-     * @return WmsLayerSource
-     */
-    protected function layerFromConfig(WmsSource $source, array $data, ?WmsLayerSource $parent = null, $order = 0)
+    protected function layerFromConfig(WmsSource $source, array $data, ?WmsLayerSource $parent = null, int $order = 0): WmsLayerSource
     {
         $layer = new WmsLayerSource();
         $minScale = !isset($data["minScale"]) ? null : $data["minScale"];
@@ -283,12 +260,19 @@ class SourceInstanceFactory implements \Mapbender\Component\SourceInstanceFactor
         return $layer;
     }
 
-    public function getFormType(SourceInstance $instance)
+    public function canDeactivateLayer(SourceInstanceItem $instanceItem): bool
+    {
+        /** @var WmsInstanceLayer $instanceItem */
+        // disallow breaking entire instance by removing root layer
+        return $instanceItem->getSourceInstance()->getRootlayer() !== $instanceItem;
+    }
+
+    public function getFormType(SourceInstance $instance): string
     {
         return 'Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType';
     }
 
-    public function getFormTemplate(SourceInstance $instance)
+    public function getFormTemplate(SourceInstance $instance): string
     {
         return '@MapbenderWms/Repository/instance.html.twig';
     }
