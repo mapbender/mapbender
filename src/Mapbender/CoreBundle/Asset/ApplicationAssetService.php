@@ -202,6 +202,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/elements/MapbenderElement.js',
                 ];
             case 'css':
                 return [

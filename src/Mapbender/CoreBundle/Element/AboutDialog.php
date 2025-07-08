@@ -41,9 +41,7 @@ class AboutDialog extends ButtonLike
             'js' => array(),
         );
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/element-new/MapbenderElement.js',
-            '@MapbenderCoreBundle/Resources/public/element-new/MbAboutDialog.js',
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbAboutDialog.js',
         ));
         return $required;
     }
