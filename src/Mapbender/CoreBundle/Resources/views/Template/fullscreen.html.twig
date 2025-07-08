@@ -9,7 +9,7 @@
     <div class="map-overlay">
       <div class="map-overlay-column">
         {{ region_markup(application, 'toolbar', false) | raw }}
-        <div class="overlay-fill">
+        <div class="overlay-fill" tabindex="-1">
           <div class="anchored-element-wrap anchored-element-wrap-lt">{{ anchored_content_elements(application, 'left-top') | raw }}</div>
           <div class="anchored-element-wrap anchored-element-wrap-rt">{{ anchored_content_elements(application, 'right-top') | raw }}</div>
           <div class="anchored-element-wrap anchored-element-wrap-lb">{{ anchored_content_elements(application, 'left-bottom') | raw }}</div>
@@ -22,3 +22,4 @@
     </div>
   </div>
 {% endblock %}
+

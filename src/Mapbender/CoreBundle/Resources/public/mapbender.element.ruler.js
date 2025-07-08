@@ -169,6 +169,7 @@
             this._reset();
             if (this.isDialog) {
                 this.showPopup();
+                this.popup.$element.find('button').focus();
             } else {
                 this.element.append(this.container);
             }

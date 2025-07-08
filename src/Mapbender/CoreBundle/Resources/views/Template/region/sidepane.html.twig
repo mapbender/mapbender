@@ -36,7 +36,7 @@
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
           <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}"><div>{{ element.title | trans }}</div></div>
-          <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
+          <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
               <div class="accordion-cell">
                   {{ element_info.content | raw }}
               </div>
