@@ -23,6 +23,15 @@ class VectorTileSource extends Source
     #[ORM\Column(name: 'json_url', type: 'string', nullable: true)]
     private ?string $jsonUrl = null;
 
+    #[ORM\Column(name: 'referer', type: 'string', nullable: true)]
+    private ?string $referer = null;
+
+    #[ORM\Column(name: 'min_zoom', type: 'integer', nullable: true)]
+    private ?int $minZoom = null;
+
+    #[ORM\Column(name: 'max_zoom', type: 'integer', nullable: true)]
+    private ?int $maxZoom = null;
+
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $version = "";
 
@@ -38,6 +47,37 @@ class VectorTileSource extends Source
     {
         $this->jsonUrl = $jsonUrl;
     }
+
+    public function getReferer(): ?string
+    {
+        return $this->referer;
+    }
+
+    public function setReferer(?string $referer): void
+    {
+        $this->referer = $referer;
+    }
+
+    public function getMinZoom(): ?int
+    {
+        return $this->minZoom;
+    }
+
+    public function setMinZoom(?int $minZoom): void
+    {
+        $this->minZoom = $minZoom;
+    }
+
+    public function getMaxZoom(): ?int
+    {
+        return $this->maxZoom;
+    }
+
+    public function setMaxZoom(?int $maxZoom): void
+    {
+        $this->maxZoom = $maxZoom;
+    }
+
 
     public function getLayers(): array|Collection
     {

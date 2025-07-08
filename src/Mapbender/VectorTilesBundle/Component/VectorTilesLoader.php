@@ -9,19 +9,30 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 use Mapbender\VectorTilesBundle\Type\VectorTileSourceType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class VectorTilesLoader extends SourceLoader
 {
 
     public function __construct(
         protected HttpTransportInterface $httpTransport,
+        protected TranslatorInterface $translator,
     )
     {
     }
 
     public function loadSource(mixed $formData): Source
     {
-        $response = $this->httpTransport->getUrl($formData['jsonUrl']);
+        $source = new VectorTileSource();
+        $this->refreshSource($source, $formData);
+        return $source;
+    }
+
+    public function refreshSource(Source $source, mixed $formData): void
+    {
+        /** @var VectorTileSource|array $url */
+        $url = is_array($formData) ? $formData['jsonUrl'] : $formData->getJsonUrl();
+        $response = $this->httpTransport->getUrl($url);
 
         if (!$response->isOk()) {
             // __toString is the only way to access the statusText property :(
@@ -30,12 +41,13 @@ class VectorTilesLoader extends SourceLoader
         }
 
         $json = json_decode($response->getContent(), true);
-        $source = new VectorTileSource();
-        $source->setJsonUrl($formData['jsonUrl']);
+        if ($json === null) {
+            throw new ServerResponseErrorException($this->translator->trans("mb.vectortiles.admin.error.no_json"), 401);
+        }
+        $source->setJsonUrl($url);
         $source->setTitle($json['name'] ?? $json['id'] ?? 'Vector Tile Source');
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($json['version'] ?? '');
-        return $source;
     }
 
     public function getFormType(): string

@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
+use Mapbender\VectorTilesBundle\Type\VectorTileInstanceType;
 
 class VectorTilesInstanceFactory extends SourceInstanceFactory
 {
@@ -20,7 +21,16 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         $instance->setTitle($source->getTitle());
         $instance->setWeight(0);
         return $instance;
+    }
 
+    public function getFormType(SourceInstance $instance): string
+    {
+        return VectorTileInstanceType::class;
+    }
+
+    public function getFormTemplate(SourceInstance $instance): string
+    {
+        return '@MapbenderVectorTiles/edit-instance.html.twig';
     }
 
     public function fromConfig(array $data, string $id): SourceInstance

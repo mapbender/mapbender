@@ -1,0 +1,8 @@
+{% extends "@MapbenderManager/Repository/instance.html.twig" %}
+
+
+{% block form_main1 %}
+    {{ parent() }}
+    {{ form_row(form.minZoom) }}
+    {{ form_row(form.maxZoom) }}
+{% endblock %}

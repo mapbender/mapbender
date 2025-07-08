@@ -17,6 +17,12 @@ class VectorTileInstance extends SourceInstance
     #[ORM\JoinColumn(name: 'source', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
 
+    #[ORM\Column(name: 'min_zoom', type: 'integer', nullable: true)]
+    private ?int $minZoom = null;
+
+    #[ORM\Column(name: 'max_zoom', type: 'integer', nullable: true)]
+    private ?int $maxZoom = null;
+
 
     public function setSource($source)
     {
@@ -27,6 +33,27 @@ class VectorTileInstance extends SourceInstance
     {
         return $this->source;
     }
+
+    public function getMinZoom(): ?int
+    {
+        return $this->minZoom;
+    }
+
+    public function setMinZoom(?int $minZoom): void
+    {
+        $this->minZoom = $minZoom;
+    }
+
+    public function getMaxZoom(): ?int
+    {
+        return $this->maxZoom;
+    }
+
+    public function setMaxZoom(?int $maxZoom): void
+    {
+        $this->maxZoom = $maxZoom;
+    }
+
 
     public function getLayers()
     {
