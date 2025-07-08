@@ -7,7 +7,21 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 .dropdownList {
   color: $inputForegroundColor;
   background-color: #fff;
-  border:solid 1px #EEE9E9;;
+  border: solid 1px #EEE9E9;
+}
+
+.input:focus, .input:active,
+.dropdown:not(.bs-dropdown):has(select:focus) .dropdownValue,
+.dropdown:not(.bs-dropdown):has(select:active) .dropdownValue {
+    border:solid 1px $inputFocusBorderColor;
+    box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+}
+
+.focus-highlight:active, .focus-highlight:focus, .focus-highlight:has(:active), .focus-highlight:has(:focus) {
+    border-radius: 6px;
+    padding: 8px;
+    margin: -10px;
+    border: 2px solid $ciColor;
 }
 
 .input, .inputWrapper select {

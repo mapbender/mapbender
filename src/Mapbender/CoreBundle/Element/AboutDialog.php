@@ -79,6 +79,7 @@ class AboutDialog extends ButtonLike
         $view = new TemplateView('@MapbenderCore/Element/about_dialog.html.twig');
         $this->initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-aboutButton';
+        $view->attributes['tabindex'] = '0';
         $templateName = $this->getContentTemplateName($element);
         $template = $this->templateEngine->getLoader()->getSourceContext($templateName);
         $templateContent = $template->getCode();

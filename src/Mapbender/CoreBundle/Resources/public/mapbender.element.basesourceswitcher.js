@@ -27,10 +27,13 @@
             this.element.on('mouseover click', '.basesourcegroup', (evt) => {
                 const $group = $(evt.target).closest('.basesourcegroup');
                 if (evt.type === 'click') {
-                    $group.addClass('active');
-                    $(document).one('click', () => {
-                        $group.removeClass('active')
-                    });
+                    evt.stopPropagation();
+                    $group.toggleClass('active');
+                    if ($group.hasClass('active')) {
+                        $(document).one('click', () => {
+                            $group.removeClass('active')
+                        });
+                    }
                 }
                 $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
             });
