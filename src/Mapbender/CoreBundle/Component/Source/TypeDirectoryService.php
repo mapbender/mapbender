@@ -13,9 +13,10 @@ use Mapbender\PrintBundle\Component\LayerRenderer;
  * * generating frontend configuration
  * * locating the correct form type for administration
  *
- * The directory itself is registered in container at mapbender.source.typedirectory.service
+ * The directory itself is registered in the container at mapbender.source.typedirectory.service
  *
  * Custom sources should extend from Mapbender.DataSource and tag the class as `mapbender.datasource`
+ * @see DataSource
  **/
 class TypeDirectoryService
 {

@@ -3,6 +3,7 @@ Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 
 Other:
+* Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
 * Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
 
 ## v4.1.3

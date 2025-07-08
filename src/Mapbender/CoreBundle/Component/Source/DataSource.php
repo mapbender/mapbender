@@ -4,6 +4,9 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 use Mapbender\PrintBundle\Component\LayerRenderer;
 
+/**
+ * Base class for mapbender data sources. Should be tagged as `mapbender.datasource`
+ */
 abstract class DataSource
 {
 
