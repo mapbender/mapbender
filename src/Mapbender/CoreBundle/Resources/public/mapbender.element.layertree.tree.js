@@ -71,7 +71,6 @@
                 }
             }
 
-            $('.clickable', $rootList).not('.disabled, .disabled-placeholder').attr('tabindex', '0');
             this.reIndent_($rootList, false);
             this.treeCreated = true;
             this._reset();
@@ -240,8 +239,6 @@
                 .attr('title', layer.options.title)
                 .text(layer.options.title)
             ;
-
-            $('.layer-menu-btn', $li).attr('tabindex', '0');
 
             return $li;
         },
@@ -712,6 +709,7 @@
                             cssClass: 'btn btn-sm btn-light popupClose critical'
                         }]
                     });
+                    metadataPopup.$element.find('button').focus();
                     if (initTabContainer) {
                         initTabContainer(metadataPopup.$element);
                     }

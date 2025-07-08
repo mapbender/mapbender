@@ -12,14 +12,14 @@
         <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}" data-diff="{{ record.encode() | json_encode }}">
             <i class="fas fa-magnifying-glass-plus"></i>
         </a>
-        <span class="static-popover-wrap -js-update-content-anchor" tabindex="0">
+        <span class="static-popover-wrap -js-update-content-anchor">
             {%- if (grants.savePrivate and _is_private) or (grants.savePublic and not _is_private) -%}
-                <i class="-fn-open-update fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}"></i>
+                <i class="-fn-open-update fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{ 'mb.actions.edit' | trans }}" tabindex="0"></i>
             {%- endif -%}
         </span>
         {%- if _is_private or grants.deletePublic -%}
-            <span class="static-popover-wrap -js-confirmation-anchor-delete" tabindex="0">
-                <i class="-fn-delete fa far fa-trash-can clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}"></i>
+            <span class="static-popover-wrap -js-confirmation-anchor-delete">
+                <i class="-fn-delete fa far fa-trash-can clickable hover-highlight-effect" title="{{ 'mb.actions.delete' | trans }}" tabindex="0"></i>
             </span>
         {%- endif -%}
     </td>

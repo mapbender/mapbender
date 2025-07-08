@@ -61,6 +61,7 @@ class ResetView extends ButtonLike
     public function getView(Element $element)
     {
         $view = new TemplateView('@MapbenderCore/Element/ResetView.html.twig');
+        $view->attributes['tabindex'] = '0';
         $this->initializeView($view, $element);
         return $view;
     }

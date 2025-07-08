@@ -69,6 +69,7 @@
                 this.popup.$element.on('close', function () {
                     self.close();
                 });
+                this.popup.$element.find('.fileUploadLink').focus();
             }
         },
 
@@ -302,18 +303,21 @@
             });
             var iconActivate = $('<i>', {
                 'class': 'fas fa-eye ms-2',
+                'tabindex': 0,
                 click: function (e) {
                     self.toggleActivation(e);
                 }
             });
             var iconZoom = $('<i>', {
                 'class': 'fas fa-magnifying-glass-plus ms-2',
+                'tabindex': 0,
                 click: function (e) {
                     self.zoom(e);
                 }
             });
             var iconDelete = $('<i>', {
                 'class': 'fa far fa-trash-can ms-2',
+                'tabindex': 0,
                 click: function (e) {
                     self.delete(e);
                 }
