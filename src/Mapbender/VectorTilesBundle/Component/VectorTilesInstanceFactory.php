@@ -35,13 +35,31 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
 
     public function fromConfig(array $data, string $id): SourceInstance
     {
-        throw new \Exception("Not yet implemented");
+        $source = $this->getSourceFromConfig($data, $id);
 
+        $instance = new VectorTileInstance();
+        $instance->setSource($source);
+        $instance->setTitle($source->getTitle());
+        $instance->setId($id);
+        $instance->setSelected($data['selected'] ?? $data['visible'] ?? true);
+        $instance->setAllowSelected($data['allowSelected'] ?? $data['allowSelect'] ?? true);
+        $instance->setBasesource($data['basesource'] ?? $data['isBaseSource'] ?? false);
+        // TODO: Opacity
+        return $instance;
     }
 
     public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
     {
         throw new \Exception("Not yet implemented");
 
+    }
+
+    protected function getSourceFromConfig(array $data, string $id): VectorTileSource
+    {
+        $source = new VectorTileSource();
+        $source->setJsonUrl($data['jsonUrl'] ?? throw new \InvalidArgumentException("Missing 'jsonUrl' in vector tile source config"));
+        $source->setTitle($data['title'] ?? $id);
+        $source->setId($id);
+        return $source;
     }
 }
