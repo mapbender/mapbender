@@ -28,7 +28,9 @@
 		</service>
 		<service id="mapbender.source.wmts.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryWmts"
-		         lazy="true" />
+		         lazy="true">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+        </service>
 		<service id="mapbender.imageexport.renderer.wmts" class="%mapbender.imageexport.renderer.wmts.class%">
 		  <argument type="service" id="mapbender.imageexport.image_transport.service" />
 		  <argument type="service" id="logger" />
@@ -49,7 +51,9 @@
 		</service>
 		<service id="mapbender.source.tms.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryTms"
-				 lazy="true" />
+				 lazy="true">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+        </service>
 	</services>
 </container>
 

@@ -4,9 +4,12 @@
 namespace Mapbender\CoreBundle\Component\Source;
 
 
+use Doctrine\ORM\Mapping\Entity;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
+use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Form\Type\SourceInstanceType;
 
 /**
@@ -28,13 +31,12 @@ abstract class SourceInstanceFactory
     abstract public function fromConfig(array $data, string $id): SourceInstance;
 
     /**
-     * Swaps an ephemeral Source (plus layers) on a SourceInstance for an already db-persisted Source.
-     * This is used when importing YAML-defined applications to db, to avoid persisting duplicate equivalent
-     * Source entities.
-     *
-     * @param Source[] $extraSources
+     * Checks if there already is a db-persisted Source equivalent for an ephemeral source plus layers.
+     * This is used when importing applications or duplicating YAML-defined applications to db, to avoid persisting
+     * duplicate equivalent Source entities.
+     * If there is a persisted source, return true and add the source as well as potential SourceLayers to the EntityPool.
      */
-    abstract public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source;
+    abstract public function matchInstanceToPersistedSource(ImportState $importState, array $data, EntityPool $entityPool): bool;
 
     /**
      * Returns the fully qualified class name of the form type used to edit this SourceInstance.

@@ -19,7 +19,7 @@ abstract class ExchangeHandler
         'Mapbender\CoreBundle\Entity\Keyword',
     );
 
-    protected $legacyClassMapping = array(
+    protected static $legacyClassMapping = array(
         'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
         'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
         'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',

@@ -7,6 +7,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ImportState;
+use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 use Mapbender\VectorTilesBundle\Type\VectorTileInstanceType;
@@ -55,17 +58,6 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         return $instance;
     }
 
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
-    {
-        /** @var VectorTileInstance $instance */
-        $repository = $this->entityManager->getRepository(VectorTileSource::class);
-        /** @var VectorTileSource $yamlSource */
-        $yamlSource = $instance->getSource();
-
-        $candidates = $repository->findBy(['jsonUrl' => $yamlSource->getJsonUrl()]);
-        return count($candidates) > 0 ? $candidates[0] : null;
-    }
-
     protected function getSourceFromConfig(array $data, string $id): VectorTileSource
     {
         $source = new VectorTileSource();
@@ -73,5 +65,16 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         $source->setTitle($data['title'] ?? $id);
         $source->setId($id);
         return $source;
+    }
+
+    public function matchInstanceToPersistedSource(ImportState $importState, array $data, EntityPool $entityPool): bool
+    {
+        $repository = $this->entityManager->getRepository(VectorTileSource::class);
+        $candidates = $repository->findBy(['jsonUrl' => $data['jsonUrl']]);
+        if (count($candidates) === 0) return false;
+
+        $classMeta = $this->entityManager->getClassMetadata(VectorTileSource::class);
+        $entityPool->add($candidates[0], ImportHandler::extractArrayFields($data, $classMeta->getIdentifier()));
+        return true;
     }
 }
