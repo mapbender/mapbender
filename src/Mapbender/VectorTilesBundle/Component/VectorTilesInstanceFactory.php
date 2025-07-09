@@ -3,6 +3,7 @@
 namespace Mapbender\VectorTilesBundle\Component;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -12,6 +13,12 @@ use Mapbender\VectorTilesBundle\Type\VectorTileInstanceType;
 
 class VectorTilesInstanceFactory extends SourceInstanceFactory
 {
+
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+    )
+    {
+    }
 
     public function createInstance(Source $source, ?array $options = null): SourceInstance
     {
@@ -50,8 +57,13 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
 
     public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
     {
-        throw new \Exception("Not yet implemented");
+        /** @var VectorTileInstance $instance */
+        $repository = $this->entityManager->getRepository(VectorTileSource::class);
+        /** @var VectorTileSource $yamlSource */
+        $yamlSource = $instance->getSource();
 
+        $candidates = $repository->findBy(['jsonUrl' => $yamlSource->getJsonUrl()]);
+        return count($candidates) > 0 ? $candidates[0] : null;
     }
 
     protected function getSourceFromConfig(array $data, string $id): VectorTileSource
