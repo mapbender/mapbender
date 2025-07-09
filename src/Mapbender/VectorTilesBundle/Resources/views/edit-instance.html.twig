@@ -6,3 +6,10 @@
     {{ form_row(form.minZoom) }}
     {{ form_row(form.maxZoom) }}
 {% endblock %}
+
+
+{% block form_main2 %}
+    {{ parent() }}
+    {{ form_row(form.selected) }}
+    {{ form_row(form.allowSelected) }}
+{% endblock %}

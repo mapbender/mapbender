@@ -4,5 +4,6 @@ mb.vectortiles.admin:
   referer.help: "Manche VectorTile-Server benötigen einen fixen HTTP-Referer zur Zugriffskontrolle."
   min_zoom: "Minimale Zoomstufe"
   max_zoom: "Maximale Zoomstufe"
+  selected: "Bei Anwendungsstart aktivieren"
   error:
     no_json: "Die angegebene URL konnte nicht als JSON geparst werden."

@@ -2,11 +2,8 @@
 
 namespace Mapbender\VectorTilesBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\VectorTilesBundle\VectorTilesDataSource;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_vectortiles_instance')]
@@ -22,6 +19,12 @@ class VectorTileInstance extends SourceInstance
 
     #[ORM\Column(name: 'max_zoom', type: 'integer', nullable: true)]
     private ?int $maxZoom = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected ?bool $selected = true;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected ?bool $allowSelected = true;
 
 
     public function setSource($source)
@@ -54,6 +57,25 @@ class VectorTileInstance extends SourceInstance
         $this->maxZoom = $maxZoom;
     }
 
+    public function getSelected(): ?bool
+    {
+        return $this->selected;
+    }
+
+    public function setSelected(?bool $selected): void
+    {
+        $this->selected = $selected;
+    }
+
+    public function getAllowSelected(): ?bool
+    {
+        return $this->allowSelected;
+    }
+
+    public function setAllowSelected(?bool $allowSelected): void
+    {
+        $this->allowSelected = $allowSelected;
+    }
 
     public function getLayers()
     {

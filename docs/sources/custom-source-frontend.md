@@ -91,6 +91,8 @@ Mapbender.SourceLayer.typeMap['my-identifier'] = MySourceLayer;
 Mapbender.Source.typeMap['my-identifier'] = MySource;
 ```
 
+If your data source is configurable in the backoffice, make sure to use the same identifier as returned by `DataSource::getName()`.
+
 ## Instantiating a new source
 If you want your custom source to be configurable in the backoffice, you can skip this section, since the source definition
 will be created and added to the LayerTree automatically by the ConfigController.

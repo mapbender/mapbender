@@ -509,7 +509,7 @@ window.Mapbender = Mapbender || {};
      */
     Mapbender.SourceLayer = class SourceLayer extends Mapbender.LayerGroup {
         constructor(definition, source, parent) {
-            super(((definition || {}).options || {}).title || '', parent)
+            super(((definition || {}).options || {}).title || '', parent);
             this.options = definition.options || {};
             this.options.treeOptions = this.options.treeOptions || {
                 selected: true,
