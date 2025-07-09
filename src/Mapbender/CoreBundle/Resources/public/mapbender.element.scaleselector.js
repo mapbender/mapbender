@@ -62,8 +62,8 @@
          */
         _updateScale: function () {
             var scale = this.mbMap.getModel().getCurrentScale(false);
-            const roundedScale = Number.parseInt(scale)
-            if (this.$select.find('option:contains[' + roundedScale + ']').length > 0) {
+            const roundedScale = Number.parseInt(scale);
+            if (this.options.options.includes(roundedScale)) {
                 this.$select.val(roundedScale);
             }
             const $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
