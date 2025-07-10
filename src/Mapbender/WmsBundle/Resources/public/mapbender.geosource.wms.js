@@ -62,7 +62,7 @@ window.Mapbender = Mapbender || {};
     }
 
     // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
-    Mapbender.WmsSource = class WmsSource extends Mapbender.Source {
+    Mapbender.WmsSource = class WmsSource extends Mapbender.GetFeatureInfoSource {
         constructor(definition) {
             super(definition);
             var customParams = {};

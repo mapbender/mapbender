@@ -141,96 +141,53 @@
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
             var sources = model.getSources();
-            var sourceUrlPairs = [];
-            var validSources = [];
+            const validSources = [];
+            var promises = [];
+
             // Iterate in reverse to match layertree display order
             for (var s = sources.length - 1; s >= 0; --s) {
-                var url = model.getPointFeatureInfoUrl(sources[s], x, y, this.options.maxCount);
-                if (url) {
-                    validSources.push(sources[s]);
-                    sourceUrlPairs.push({
-                        source: sources[s],
-                        url: url
-                    });
-                    this.addDisplayStub_(sources[s], url);
-                }
+                if (!sources[s].featureInfoEnabled()) continue;
+                validSources.push(sources[s]);
+
+                const [url, fiPromise] = sources[s].loadFeatureInfo(this.mbMap.getModel(), x, y, this.options);
+
+                fiPromise.then((result) => {
+                    if (result.content) {
+                        this.showingSources.push(source);
+                        this.showResponseContent_(source, result.content);
+                        this._open();
+                    } else {
+                        this._removeContent(source);
+                    }
+                }).catch((err) => {
+                    this._removeContent(source);
+                });
+
+                promises.push(fiPromise);
+
+                this.addDisplayStub_(sources[s], url);
             }
+
+            // remove popup tabs where feature info is no longer available
             for (i = 0; i < showingPreviously.length; ++i) {
                 if (-1 === validSources.indexOf(showingPreviously[i])) {
                     this._removeContent(showingPreviously[i]);
                 }
             }
-            var requestsPending = sourceUrlPairs.length;
-            if (!requestsPending) {
+
+            if (!validSources.length) {
                 self._handleZeroResponses();
             }
+
             this.startedNewRequest = true;
-            sourceUrlPairs.forEach(function (entry) {
-                var source = entry.source;
-                var url = entry.url;
-                self._setInfo(source, url).then(function (content) {
-                    if (content) {
-                        self.showingSources.push(source);
-                        self.showResponseContent_(source, content);
-                        self._open();
-                    } else {
-                        self._removeContent(source);
-                    }
-                }, function () {
-                    self._removeContent(source);
-                }).always(function () {
-                    --requestsPending;
-                    if (!requestsPending && !self.showingSources.length) {
-                        // No response content to display, no more requests pending
-                        // Remain active, but hide popup
-                        self._handleZeroResponses();
-                    }
-                });
-            });
-        },
-        _setInfo: function (source, url) {
-            var self = this;
-            var ajaxOptions = {
-                url: url
-            };
-            var useProxy = source.options.proxy;
-            // also use proxy on different host / scheme to avoid CORB
-            useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
-            if (useProxy && !source.options.tunnel) {
-                ajaxOptions.data = {
-                    url: ajaxOptions.url
-                };
-                ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
-            }
-            return $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
-                var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                const data_ = $.trim(data);
-                if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
-                    return self.formatResponse_(source, data_, mimetype);
+
+            Promise.allSettled(promises).then(() => {
+                if (!this.showingSources.length) {
+                    // No response content to display, no more requests pending
+                    // Remain active, but hide popup
+                    self._handleZeroResponses();
                 }
-            }, function (jqXHR, textStatus, errorThrown) {
-                Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
             });
-        },
-        _isDataValid: function (data, mimetype) {
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    return !!("" + data).match(/<[/][a-z]+>/gi);
-                case 'text/plain':
-                    return !!("" + data).match(/[^\s]/g);
-                default:
-                    return true;
-            }
-        },
-        formatResponse_: function (source, data, mimetype) {
-            if (mimetype.toLowerCase() === 'text/html') {
-                const script = this._getInjectionScript(source.id);
-                const $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" class="iframe--responsive">');
-                $iframe.attr("srcdoc", [script, data].join(''));
-                return $iframe.get();
-            } else {
-                return $(document.createElement('pre')).text(data).get();
-            }
         },
         _open: function () {
             if (this.highlightLayer && this.startedNewRequest) {
@@ -347,11 +304,7 @@
             }
             $header.text(source.getTitle());
             $('a', $header).remove();
-            $header.append($(document.createElement('a'))
-                .attr('href', url)
-                .attr('target', '_blank')
-                .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
-            );
+
             var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
@@ -361,8 +314,16 @@
                 $content.addClass('hidden');
                 $('.js-content-parent', this.element).append($content);
             }
-            // For print interaction
-            $content.attr('data-url', url);
+
+            if (url) {
+                $header.append($(document.createElement('a'))
+                    .attr('href', url)
+                    .attr('target', '_blank')
+                    .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
+                );
+                // For print interaction
+                $content.attr('data-url', url);
+            }
         },
         showResponseContent_: function (source, content) {
             this.element.find('.-js-no-content').addClass("hidden");
@@ -393,14 +354,13 @@
             w.print();
         },
         _setupMapClickHandler: function () {
-            var self = this;
-            $(document).on('mbmapclick', function (event, data) {
-                self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
+            $(document).on('mbmapclick', (event, data) => {
+                this._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
 
-            $(document).on('mbmapsourcechanged', function (event, data) {
+            $(document).on('mbmapsourcechanged', (event, data) => {
                 this._removeFeaturesBySourceId(data.source.id);
-            }.bind(this));
+            });
         },
         _createLayerStyle: function () {
             var settingsDefault = {

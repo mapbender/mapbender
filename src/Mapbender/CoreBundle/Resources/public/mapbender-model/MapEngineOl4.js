@@ -217,18 +217,6 @@ window.Mapbender.MapEngineOl4 = (function() {
             olLayer.setMap(null);
             olLayer.dispose();
         },
-        getPointFeatureInfoUrl: function(olMap, source, x, y, params) {
-            var firstOlLayer = source.getNativeLayer(0);
-            /** @var {ol.source.ImageWMS|ol.source.TileWMS} nativeSource */
-            var nativeSource = firstOlLayer.getSource();
-            if (!nativeSource.getFeatureInfoUrl) {
-                return null;
-            }
-            var res = olMap.getView().getResolution();
-            var proj = olMap.getView().getProjection().getCode();
-            var coord = olMap.getCoordinateFromPixel([x, y]);
-            return Mapbender.Util.removeProxy(nativeSource.getFeatureInfoUrl(coord, res, proj, params));
-        },
         /**
          * @param {(ol.layer.Tile|ol.layer.Image)} olLayer
          * @param {String} srsName

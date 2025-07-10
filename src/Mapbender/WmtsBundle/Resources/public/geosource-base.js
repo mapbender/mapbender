@@ -42,7 +42,7 @@
 
 window.Mapbender = Mapbender || {};
 (function () {
-    Mapbender.WmtsTmsBaseSource = class WmtsTmsBaseSource extends Mapbender.Source {
+    Mapbender.WmtsTmsBaseSource = class WmtsTmsBaseSource extends Mapbender.GetFeatureInfoSource {
         constructor(definition) {
             super(definition);
             this.tilematrixsets = definition.tilematrixsets || [];
