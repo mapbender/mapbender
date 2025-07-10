@@ -61,7 +61,7 @@
                 $('button', $viewport).click();
             });
             $viewport.attr('id', viewportId);
-            // @see https://github.com/openlayers/openlayers/blob/v4.6.5/src/ol/control/overviewmap.js
+            // @see https://github.com/openlayers/openlayers/blob/main/src/ol/control/OverviewMap.js
 
             var mainMapModel = this.mbMap.model;
             var center = mainMapModel.olMap.getView().getCenter();
@@ -101,35 +101,7 @@
                 self.overview.render();
             });
         },
-        _createOverviewControl: function(layers) {
-            var projection = this.mbMap.getModel().getCurrentProjectionCode();
-            var maxExtent = this.mbMap.map.olMap.maxExtent;
-            if (layers.length) {
-                layers[0].setIsBaseLayer(true);
-            }
 
-            var options = {
-                layers: layers,
-                div: $('.overviewContainer', this.element).get(0),
-                size: new OpenLayers.Size(this.options.width, this.options.height),
-                // OL concatenates the given class with prefix "olControlOverviewMap"
-                // When using icon class alone, must lead with a space
-                minRectDisplayClass: 'RectReplacement fa fas fa-crosshairs',
-                mapOptions: {
-                    maxExtent: (maxExtent && maxExtent.clone()) || null,
-                    projection: projection,
-                    theme: null
-                }
-            };
-            if (this.options.fixed){
-                $.extend(options, {
-                    minRatio: 1,
-                    maxRatio: 1000000000
-                    // ,autoPan: false
-                });
-            }
-            return new OpenLayers.Control.OverviewMap(options);
-        },
         _createLayers: function() {
             var layers = [];
             var srsName = this.mbMap.getModel().getCurrentProjectionCode();
