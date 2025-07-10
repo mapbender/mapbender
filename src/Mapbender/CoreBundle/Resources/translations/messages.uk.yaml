@@ -167,6 +167,7 @@ mb:
       const:
         outofscale: Шар поза масштабом
         outofbounds: Шар за межами
+        unsupportedprojection: 'Поточна проекція не підтримується цим шаром'
         parentinvisible: Батьківський шар невидимий
       tooltip:
         sublayers_openclose: Підшари відкрити/закрити

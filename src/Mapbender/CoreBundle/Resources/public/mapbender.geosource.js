@@ -31,19 +31,21 @@ Mapbender.Geo.SourceHandler = {
 
         var order = 0;
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
-            var layerId = layer.options.id;
-            var outOfScale = !layer.isInScale(scale);
-            var outOfBounds = !layer.intersectsExtent(extent_, srsName_);
-            var enabled = layer.getActive();
-            var visibility = enabled && !(outOfScale || outOfBounds);
+            const layerId = layer.options.id;
+            const outOfScale = !layer.isInScale(scale);
+            const outOfBounds = !layer.intersectsExtent(extent_, srsName_);
+            const unsupportedProjection = !layer.supportsProjection(srsName_);
+            const enabled = layer.getActive();
+            const visibility = enabled && !(outOfScale || outOfBounds || unsupportedProjection);
             // no feature info if layer turned off or out of scale
-            var featureInfo = visibility && layer.options.treeOptions.info;
+            const featureInfo = visibility && layer.options.treeOptions.info;
             infoMap[layerId] = {
                 layer: layer,
                 state: {
                     outOfScale: outOfScale,
                     outOfBounds: outOfBounds,
                     visibility: visibility,
+                    unsupportedProjection: unsupportedProjection,
                     info: featureInfo
                 },
                 order: order,
@@ -69,8 +71,8 @@ Mapbender.Geo.SourceHandler = {
             stateMap[key] = item.state;
         }
 
-        var stateNames = ['outOfScale', 'outOfBounds', 'visibility', 'info'];
-        var stateChanged = false;
+        const stateNames = ['outOfScale', 'outOfBounds', 'unsupportedProjection', 'visibility', 'info'];
+        let stateChanged = false;
 
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {
             if (layer.children && layer.children.length) {
@@ -78,21 +80,22 @@ Mapbender.Geo.SourceHandler = {
                 // start with false (recursion order is root first)
                 layer.state.visibility = false;
             }
-            var entry = stateMap[layer.options.id] || Object.assign({}, layer.state, {
+            const entry = stateMap[layer.options.id] || Object.assign({}, layer.state, {
                 outOfScale: !layer.isInScale(scale),
-                outOfBounds: !layer.intersectsExtent(extent, srsName)
+                outOfBounds: !layer.intersectsExtent(extent, srsName),
+                unsupportedProjection: !layer.supportsProjection(srsName),
             });
 
-            for (var sni = 0; sni < stateNames.length; ++ sni) {
-                var stateName = stateNames[sni];
+            for (let sni = 0; sni < stateNames.length; ++ sni) {
+                const stateName = stateNames[sni];
                 if (layer.state[stateName] !== entry[stateName]) {
                     layer.state = $.extend(layer.state || {}, entry);
                     stateChanged = true;
                     break;
                 }
             }
-            for (var p = 0; p < parents.length; ++p) {
-                var parentLayer = parents[p];
+            for (let p = 0; p < parents.length; ++p) {
+                const parentLayer = parents[p];
                 parentLayer.state.visibility = parentLayer.state.visibility || layer.state.visibility;
             }
         });

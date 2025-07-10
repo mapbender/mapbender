@@ -16,7 +16,8 @@ class VectorTilesSource extends Mapbender.Source {
     }
 
     updateEngine() {
-        Mapbender.mapEngine.setLayerVisibility(this.getNativeLayer(), this.getSelected());
+        const isPseudoMercator = Mapbender.Model?.getCurrentProjectionCode() === 'EPSG:3857';
+        Mapbender.mapEngine.setLayerVisibility(this.getNativeLayer(), isPseudoMercator && this.getSelected());
     }
 
     setLayerOrder(newLayerIdOrder) {

@@ -66,10 +66,11 @@ The following methods are also available to be used which you probably don't nee
 
 For a SourceLayer no methods are required to be overridden. The following overrides might be useful:
 
-- `hasBounds()`: is this layer restricted to spatial bbox?
-- `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS
-- `isInScale(scale)`: Should the layer be displayed at this scale level?
-- `intersectsExtent(extent, srsName)`: Does the layer have features in this extent?
+- `hasBounds()`: is this layer restricted to spatial bbox? (default: true if options.bbox exists, false otherwise)
+- `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS (default: options.bbox transformed to the given projection)
+- `isInScale(scale)`: Should the layer be displayed at this scale level? (default true)
+- `supportsProjection(srsName)`: Can the layer be displayed in the given projection? (default true)
+- `intersectsExtent(extent, srsName)`: Does the layer have features in this extent? (default true)
 - `getSupportedMenuOptions()`: Returns a list of menu options supported by this layer. See [below](#custom-layer-tree-menu-item) for details
 - `getLegend()`: Returns the legend for this layer. The legend can be either an external url to an image (e.g. for WMS services) 
    or a style definition that is rendered on a canvas. See [below](#legend-entries-for-custom-sources) for details

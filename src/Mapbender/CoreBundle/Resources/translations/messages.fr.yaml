@@ -146,8 +146,9 @@ mb:
         button: button
     layertree:
       const:
-        outofscale: null
-        outofbounds: null
+        outofscale: 'Couche hors échelle'
+        outofbounds: 'Couche hors limites'
+        unsupportedprojection: 'La projection actuelle n''est pas prise en charge par cette couche'
         parentinvisible: La couche parent est invisible
       tooltip:
         sublayers_openclose: Ouvrir/Fermer la sous-couche

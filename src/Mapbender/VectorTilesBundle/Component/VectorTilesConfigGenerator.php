@@ -39,6 +39,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
                     "selected" => $sourceInstance->getAllowSelected()
                 ],
             ],
+            'id' => $source->getId(),
         ];
         return $config;
     }

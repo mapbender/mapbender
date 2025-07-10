@@ -734,7 +734,7 @@ window.Mapbender.MapModelBase = (function() {
             }
             var self = this;
             self.sourceTree.map(function(source) {
-                self._checkSource(source, false);
+                self._checkSource(source, true);
             });
         },
         /**

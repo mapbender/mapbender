@@ -523,6 +523,7 @@ window.Mapbender = Mapbender || {};
                 outOfBounds: false,
                 outOfScale: false,
                 visibility: true,
+                unsupportedProjection: false,
             };
 
             this.source = source;
@@ -685,6 +686,15 @@ window.Mapbender = Mapbender || {};
                 layer = layer.parent;
             } while (layer);
             return false;
+        }
+
+        /**
+         * Can the layer be displayed in the given projection?
+         * @param {string} srsName in the format 'EPSG:xxxx'
+         * @returns {boolean}
+         */
+        supportsProjection(srsName) {
+            return true;
         }
 
         /**

@@ -148,6 +148,7 @@ mb:
       const:
         outofscale: Laag buiten geldige schaal
         outofbounds: Laag buiten geldig gebied
+        unsupportedprojection: 'De huidige projectie wordt niet ondersteund door deze laag'
         parentinvisible: Onderliggende laag niet zichtbaar
       tooltip:
         sublayers_openclose: Sub-lagen openen/sluiten

@@ -7,6 +7,10 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
     hasBounds() {
         return false;
     }
+
+    supportsProjection(srsName) {
+        return srsName === 'EPSG:3857';
+    }
 }
 
 

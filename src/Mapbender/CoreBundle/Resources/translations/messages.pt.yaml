@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Camada fora da escala'
         outofbounds: 'Camada fora da BoundingBox'
+        unsupportedprojection: 'A projeção atual não é suportada por esta camada'
         parentinvisible: 'Camada superior não visível'
       tooltip:
         sublayers_openclose: abrir/fechar

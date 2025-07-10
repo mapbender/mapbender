@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Capa fuera de la escala'
         outofbounds: 'Capa fuera de límites'
+        unsupportedprojection: 'La proyección actual no es compatible con esta capa'
         parentinvisible: 'Capa de origen invisible'
       tooltip:
         sublayers_openclose: 'Abrir/Cerrar subcapas'

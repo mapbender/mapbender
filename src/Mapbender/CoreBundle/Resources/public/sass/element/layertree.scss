@@ -27,7 +27,7 @@ $textColor: $darkFontColor !default;
   .leave.state-loading .layer-title {
     opacity: 0.75;
   }
-  .leave.state-outofscale, .leave.state-outofbounds {
+  .leave.state-outofscale, .leave.state-outofbounds, .leave.state-unsupportedprojection {
     .layer-title {
       opacity: 0.5;
     }
