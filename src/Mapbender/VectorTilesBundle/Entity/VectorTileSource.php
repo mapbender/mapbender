@@ -23,6 +23,9 @@ class VectorTileSource extends Source
     #[ORM\Column(name: 'json_url', type: 'string', nullable: true)]
     private ?string $jsonUrl = null;
 
+    #[ORM\Column(name: 'bounds', type: 'string', nullable: true)]
+    private ?string $bbox = null;
+
     #[ORM\Column(name: 'referer', type: 'string', nullable: true)]
     private ?string $referer = null;
 
@@ -93,6 +96,27 @@ class VectorTileSource extends Source
     {
         $this->version = $version;
         return $this;
+    }
+
+    public function getBbox(): ?string
+    {
+        return $this->bbox;
+    }
+
+    public function getBoundsArray(): ?array
+    {
+        if (!$this->bbox) {
+            return null;
+        }
+        return json_decode($this->bbox, true);
+    }
+
+    public function setBbox(string|array|null $bbox): void
+    {
+        if (is_array($bbox)) {
+            $bbox = json_encode($bbox);
+        }
+        $this->bbox = $bbox;
     }
 
     /**

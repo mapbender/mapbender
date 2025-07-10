@@ -41,6 +41,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
                 ],
             ],
             'id' => $source->getId(),
+            'bbox' => $source->getBoundsArray(),
         ];
         return $config;
     }

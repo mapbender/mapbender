@@ -57,6 +57,9 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         $instance->setOpacity($data['opacity'] ?? 100);
         $instance->setMinScale($data['minScale'] ?? null);
         $instance->setMaxScale($data['maxScale'] ?? null);
+        if (isset($data['bbox']) && is_array($data['bbox'])) {
+            $source->setBbox($data['bbox']);
+        }
         return $instance;
     }
 

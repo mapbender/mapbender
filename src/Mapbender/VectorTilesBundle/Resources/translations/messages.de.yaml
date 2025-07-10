@@ -7,3 +7,4 @@ mb.vectortiles.admin:
   selected: "Bei Anwendungsstart aktivieren"
   error:
     no_json: "Die angegebene URL konnte nicht als JSON geparst werden."
+    no_tile_json: "Die in source.openmaptiles angegebene URL konnte nicht als JSON geparst werden."
