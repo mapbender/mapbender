@@ -176,6 +176,8 @@ window.Mapbender = Mapbender || {};
             this.isDynamicSource = false;
             if ("isDynamicSource" in definition) this.isDynamicSource = definition.isDynamicSource;
 
+            this.isBaseSource = definition.isBaseSource;
+
             /**
              * a unique identifier for the type of source, e.g. 'wms' or 'geojson'
              * @type {string}
