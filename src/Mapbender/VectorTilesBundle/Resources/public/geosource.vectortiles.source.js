@@ -5,11 +5,10 @@ class VectorTilesSource extends Mapbender.Source {
     }
 
     createNativeLayers(srsName, mapOptions) {
-        const mapboxVector = new ol.layer.MapboxVector({
+        this.nativeLayers = [new ol.layer.MapboxVector({
             styleUrl: this.options.jsonUrl,
-        });
-        mapboxVector.setOpacity(this.options.opacity);
-        this.nativeLayers = [mapboxVector];
+            opacity: this.options.opacity,
+        })];
         return this.nativeLayers;
     }
 
@@ -18,8 +17,7 @@ class VectorTilesSource extends Mapbender.Source {
     }
 
     updateEngine() {
-        const isPseudoMercator = Mapbender.Model?.getCurrentProjectionCode() === 'EPSG:3857';
-        Mapbender.mapEngine.setLayerVisibility(this.getNativeLayer(), isPseudoMercator && this.getSelected());
+        Mapbender.mapEngine.setLayerVisibility(this.getNativeLayer(), this.getRootLayer().state.visibility);
     }
 
     setLayerOrder(newLayerIdOrder) {

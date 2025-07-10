@@ -30,8 +30,8 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         $config = parent::getConfiguration($sourceInstance);
         $config['options'] = [
             'jsonUrl' => $source->getJsonUrl(),
-            'minZoom' => $sourceInstance->getMinZoom(),
-            'maxZoom' => $sourceInstance->getMaxZoom(),
+            'minScale' => $sourceInstance->getMinScale(),
+            'maxScale' => $sourceInstance->getMaxScale(),
             'title' => $sourceInstance->getTitle() ?: $source->getTitle(),
             'opacity' => ($sourceInstance->getOpacity() ?? 100) / 100.0,
             'treeOptions' => [

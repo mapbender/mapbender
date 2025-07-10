@@ -55,6 +55,8 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         $instance->setAllowSelected($data['allowSelected'] ?? $data['allowSelect'] ?? true);
         $instance->setBasesource($data['basesource'] ?? $data['isBaseSource'] ?? false);
         $instance->setOpacity($data['opacity'] ?? 100);
+        $instance->setMinScale($data['minScale'] ?? null);
+        $instance->setMaxScale($data['maxScale'] ?? null);
         return $instance;
     }
 

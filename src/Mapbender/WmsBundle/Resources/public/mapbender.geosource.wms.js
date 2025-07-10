@@ -45,18 +45,6 @@ window.Mapbender = Mapbender || {};
             return selectedLayers;
         }
 
-        isInScale(scale) {
-            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
-            //       equivalently
-            var min = this.options.minScale;
-            var max = this.options.maxScale;
-            if (min && min > scale) {
-                return false;
-            } else {
-                return !(max && max < scale);
-            }
-        }
-
         intersectsExtent(extent, srsName) {
             var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {

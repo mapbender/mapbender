@@ -68,7 +68,7 @@ For a SourceLayer no methods are required to be overridden. The following overri
 
 - `hasBounds()`: is this layer restricted to spatial bbox? (default: true if options.bbox exists, false otherwise)
 - `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS (default: options.bbox transformed to the given projection)
-- `isInScale(scale)`: Should the layer be displayed at this scale level? (default true)
+- `isInScale(scale)`: Should the layer be displayed at this scale level? (default: calculation based on options.minScale and options.maxScale, true if the options are not set)
 - `supportsProjection(srsName)`: Can the layer be displayed in the given projection? (default true)
 - `intersectsExtent(extent, srsName)`: Does the layer have features in this extent? (default true)
 - `getSupportedMenuOptions()`: Returns a list of menu options supported by this layer. See [below](#custom-layer-tree-menu-item) for details

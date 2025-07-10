@@ -573,7 +573,15 @@ window.Mapbender = Mapbender || {};
          * @returns {boolean}
          */
         isInScale(scale) {
-            return true;
+            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
+            //       equivalently
+            const min = this.options.minScale;
+            const max = this.options.maxScale;
+            if (min && min > scale) {
+                return false;
+            } else {
+                return !(max && max < scale);
+            }
         }
 
         /**
@@ -632,7 +640,7 @@ window.Mapbender = Mapbender || {};
          * @param {Mapbender.SourceLayer[]} children
          */
         addChildren(children) {
-            for(const child of children) {
+            for (const child of children) {
                 this.children.push(child);
                 this.children.forEach((child) => child.siblings = this.children);
             }

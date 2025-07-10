@@ -15,11 +15,11 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\JoinColumn(name: 'source', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected $source;
 
-    #[ORM\Column(name: 'min_zoom', type: 'integer', nullable: true)]
-    private ?int $minZoom = null;
+    #[ORM\Column(name: 'min_scale', type: 'integer', nullable: true)]
+    private ?int $minScale = null;
 
-    #[ORM\Column(name: 'max_zoom', type: 'integer', nullable: true)]
-    private ?int $maxZoom = null;
+    #[ORM\Column(name: 'max_scale', type: 'integer', nullable: true)]
+    private ?int $maxScale = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $selected = true;
@@ -41,24 +41,24 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
         return $this->source;
     }
 
-    public function getMinZoom(): ?int
+    public function getMinScale(): ?int
     {
-        return $this->minZoom;
+        return $this->minScale;
     }
 
-    public function setMinZoom(?int $minZoom): void
+    public function setMinScale(?int $minScale): void
     {
-        $this->minZoom = $minZoom;
+        $this->minScale = $minScale;
     }
 
-    public function getMaxZoom(): ?int
+    public function getMaxScale(): ?int
     {
-        return $this->maxZoom;
+        return $this->maxScale;
     }
 
-    public function setMaxZoom(?int $maxZoom): void
+    public function setMaxScale(?int $maxScale): void
     {
-        $this->maxZoom = $maxZoom;
+        $this->maxScale = $maxScale;
     }
 
     public function getSelected(): ?bool

@@ -18,13 +18,13 @@ class VectorTileInstanceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('minZoom', IntegerType::class, [
+            ->add('minScale', IntegerType::class, [
                 'required' => false,
-                'label' => 'mb.vectortiles.admin.min_zoom',
+                'label' => 'mb.vectortiles.admin.min_scale',
             ])
-            ->add('maxZoom', IntegerType::class, [
+            ->add('maxScale', IntegerType::class, [
                 'required' => false,
-                'label' => 'mb.vectortiles.admin.max_zoom',
+                'label' => 'mb.vectortiles.admin.max_scale',
             ])
             ->add('selected', CheckboxType::class, array(
                 'required' => false,
