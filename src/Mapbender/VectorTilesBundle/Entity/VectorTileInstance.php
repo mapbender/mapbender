@@ -4,10 +4,11 @@ namespace Mapbender\VectorTilesBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\SupportsOpacity;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_vectortiles_instance')]
-class VectorTileInstance extends SourceInstance
+class VectorTileInstance extends SourceInstance implements SupportsOpacity
 {
 
     #[ORM\ManyToOne(targetEntity: VectorTileSource::class, cascade: ['refresh'], inversedBy: 'instances')]
@@ -25,6 +26,9 @@ class VectorTileInstance extends SourceInstance
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $allowSelected = true;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    protected ?int $opacity = 100;
 
 
     public function setSource($source)
@@ -75,6 +79,17 @@ class VectorTileInstance extends SourceInstance
     public function setAllowSelected(?bool $allowSelected): void
     {
         $this->allowSelected = $allowSelected;
+    }
+
+    public function setOpacity(int $opacity): self
+    {
+        $this->opacity = $opacity;
+        return $this;
+    }
+
+    public function getOpacity(): int
+    {
+        return $this->opacity ?? 100;
     }
 
     public function getLayers()

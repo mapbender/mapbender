@@ -33,6 +33,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
             'minZoom' => $sourceInstance->getMinZoom(),
             'maxZoom' => $sourceInstance->getMaxZoom(),
             'title' => $sourceInstance->getTitle() ?: $source->getTitle(),
+            'opacity' => ($sourceInstance->getOpacity() ?? 100) / 100.0,
             'treeOptions' => [
                 "selected" => $sourceInstance->getSelected(),
                 "allow" => [

@@ -5,9 +5,11 @@ class VectorTilesSource extends Mapbender.Source {
     }
 
     createNativeLayers(srsName, mapOptions) {
-        this.nativeLayers = [new ol.layer.MapboxVector({
+        const mapboxVector = new ol.layer.MapboxVector({
             styleUrl: this.options.jsonUrl,
-        })];
+        });
+        mapboxVector.setOpacity(this.options.opacity);
+        this.nativeLayers = [mapboxVector];
         return this.nativeLayers;
     }
 
