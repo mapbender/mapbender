@@ -386,9 +386,12 @@
          * @param x {number}
          * @param y {number}
          * @param options {maxCount: number, onlyValid: boolean, injectionScript: string} the featureInfo element's options
-         * @returns {[?string, Promise<?string>]} An array with two elements: The url for the "open in new window" feature and a promise that loads the featureinfo data in the background.
+         * @param elementId {string|number}
+         * @returns {[null|string, Promise<null|string|HTMLElement|jQuery>]} An array with two elements:
+         * The (optional) url for the "open in new window" feature and a promise that loads the featureinfo data in the background
+         * as a string, jquery object or HTMLElement.
          */
-        loadFeatureInfo(mapModel, x, y, options) {
+        loadFeatureInfo(mapModel, x, y, options, elementId) {
             return [null, Promise.reject()];
         }
     }

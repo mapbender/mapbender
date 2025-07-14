@@ -30,6 +30,10 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.selected',
             ))
+            ->add('featureInfo', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.core.layertree.label.featureinfo_onoff',
+            ))
             ->add('allowSelected', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowselecttoc',

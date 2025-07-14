@@ -151,7 +151,8 @@
                 validSources.push(source);
 
                 const options = {...this.options, injectionScript: this._getInjectionScript(source.id)};
-                const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options);
+                const elementId = JSON.stringify(this.element.attr('id'));
+                const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options, elementId);
                 fiPromise.then((result) => {
                     if (result) {
                         this.showingSources.push(source);

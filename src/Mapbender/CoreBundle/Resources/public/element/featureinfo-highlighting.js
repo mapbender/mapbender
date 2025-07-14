@@ -1,18 +1,26 @@
-document.addEventListener('DOMContentLoaded', function() {
+window.Mapbender = window.Mapbender || {};
+window.Mapbender.FeatureInfo = window.Mapbender.FeatureInfo || {};
+
+window.Mapbender.FeatureInfo.setupHighlight = function(wrapper, _sourceId, _elementId) {
     // Only parse document features once.
     // Unguarded, this listener would run again when the iframe is removed from the DOM, readding
     // features we want to remove when deactivating the FeatureInfo element.
     var parsed = false;
-    return function() {
+    if (!_sourceId) _sourceId = window.sourceId;
+    if (!_elementId) _elementId = window.elementId;
+
+    return function(wrapper) {
+        console.log(wrapper, parsed, document.readyState);
         if (parsed || (document.readyState !== 'interactive' && document.readyState !== 'complete')) {
             return;
         }
         var featureIdFromElement = function(element) {
-            return [sourceId, element.getAttribute('id')].join('-');
+            return [_sourceId, element.getAttribute('id')].join('-');
         }
 
         var pmOrigin = '*';
-        var nodes = document.querySelectorAll('[data-geometry]') || [];
+        var nodes = (wrapper ?? document).querySelectorAll('[data-geometry]') || [];
+
         var features = Array.from(nodes).map(function (node) {
             return {
                 srid: node.getAttribute('data-srid'),
@@ -28,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 command: 'hover',
                 state: state,
                 id: id,
-                elementId: elementId
+                elementId: _elementId
             };
             window.parent.postMessage(messageData, pmOrigin);
         };
@@ -40,6 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendHoverCommand(node, false);
             });
         });
-        window.parent.postMessage({command: 'features', features: features, elementId: elementId, sourceId: sourceId}, pmOrigin);
-    }
-}());
+        window.parent.postMessage({command: 'features', features: features, elementId: _elementId, sourceId: _sourceId}, pmOrigin);
+    }(wrapper);
+};
+
+document.addEventListener('DOMContentLoaded', () => Mapbender.FeatureInfo.setupHighlight());

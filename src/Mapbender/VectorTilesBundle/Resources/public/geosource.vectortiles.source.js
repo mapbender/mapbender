@@ -2,12 +2,14 @@ class VectorTilesSource extends Mapbender.Source {
     constructor(definition) {
         definition.children = [{...definition}];
         super(definition);
+        this.wkt = new ol.format.WKT();
     }
 
     createNativeLayers(srsName, mapOptions) {
         this.nativeLayers = [new ol.layer.MapboxVector({
             styleUrl: this.options.jsonUrl,
             opacity: this.options.opacity,
+
         })];
         return this.nativeLayers;
     }
@@ -16,12 +18,82 @@ class VectorTilesSource extends Mapbender.Source {
         return this.getRootLayer().getSelected();
     }
 
+    featureInfoEnabled() {
+        return this.getRootLayer().state.info;
+    }
+
+    loadFeatureInfo(mapModel, x, y, options, elementId) {
+        return [null, this.createFeatureInfoPromise(mapModel, x, y, options, this.id, elementId)];
+    }
+
+    async createFeatureInfoPromise(mapModel, x, y, options, sourceId, elementId) {
+        const layer = this.getNativeLayer();
+        const olMap = mapModel.olMap;
+        const features = olMap.getFeaturesAtPixel([x, y], {
+            layerFilter: (l) => l === layer,
+            hitTolerance: options.hitTolerance || 5,
+        });
+        if (!features.length) {
+            return null;
+        }
+        const content = document.createElement("div");
+        let hasFeatures = false;
+        for (const feature of features) {
+            const featureContent = this.createFeatureInfoForFeature(feature);
+            if (featureContent) {
+                hasFeatures = true;
+                content.appendChild(featureContent)
+                    .appendChild(document.createElement("br"))
+                    .appendChild(document.createElement("br"));
+            }
+        }
+        if (!hasFeatures) return null;
+
+        Mapbender?.FeatureInfo?.setupHighlight(content, sourceId, elementId);
+        return content;
+    }
+
+    createFeatureInfoForFeature(feature) {
+        const properties = feature.getProperties();
+        const label = properties.label || properties.name || properties.title;
+        if (!label) return null;
+
+        const geometryDiv = document.createElement('div');
+        geometryDiv.className = 'geometryElement';
+        geometryDiv.id = this.options.id + "/" + feature.ol_uid;
+        geometryDiv.setAttribute('data-geometry', this.wkt.writeFeature(ol.render.toFeature(feature)));
+        geometryDiv.setAttribute('data-srid', 'EPSG:3857');
+        geometryDiv.setAttribute('data-label', label);
+
+        const table = document.createElement('table');
+        table.className = 'table table-striped table-bordered table-condensed';
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+
+        Object.entries(properties).forEach(([key, value]) => {
+            const row = document.createElement('tr');
+
+            const headerCell = document.createElement('th');
+            headerCell.textContent = key;
+
+            const dataCell = document.createElement('td');
+            dataCell.textContent = value;
+
+            row.appendChild(headerCell);
+            row.appendChild(dataCell);
+            tbody.appendChild(row);
+        });
+
+        geometryDiv.appendChild(table);
+        return geometryDiv;
+    }
+
     updateEngine() {
         Mapbender.mapEngine.setLayerVisibility(this.getNativeLayer(), this.getRootLayer().state.visibility);
     }
 
     setLayerOrder(newLayerIdOrder) {
-        // do nothing, there are no sublayers for vector tile sources
+        // do nothing, there are no sublayers for vector tile sourcs
     }
 }
 

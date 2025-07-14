@@ -27,6 +27,9 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $allowSelected = true;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected ?bool $featureInfo = true;
+
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $opacity = 100;
 
@@ -90,6 +93,16 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     public function getOpacity(): int
     {
         return $this->opacity ?? 100;
+    }
+
+    public function getFeatureInfo(): ?bool
+    {
+        return $this->featureInfo;
+    }
+
+    public function setFeatureInfo(?bool $featureInfo): void
+    {
+        $this->featureInfo = $featureInfo;
     }
 
     public function getLayers()

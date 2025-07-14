@@ -16,6 +16,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
     {
         return [
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+            '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js',
             '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.source.js',
             '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.sourcelayer.js',
         ];
@@ -36,8 +37,10 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
             'opacity' => ($sourceInstance->getOpacity() ?? 100) / 100.0,
             'treeOptions' => [
                 "selected" => $sourceInstance->getSelected(),
+                "info" => $sourceInstance->getFeatureInfo(),
                 "allow" => [
-                    "selected" => $sourceInstance->getAllowSelected()
+                    "selected" => $sourceInstance->getAllowSelected(),
+                    "info" => true,
                 ],
             ],
             'id' => $source->getId(),
