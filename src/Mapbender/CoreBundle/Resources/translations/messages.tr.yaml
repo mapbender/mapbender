@@ -271,6 +271,7 @@ mb:
           printResult: '"Yazdır" düğmesini göster'
           onlyvalid: Sadece geçerli olan
           highlighting: null
+          point_radius_px: 'Yarıçap (nokta geometrileri için)'
       printclient:
         label:
           rotatable: Döndürülebilir

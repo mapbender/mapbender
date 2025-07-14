@@ -493,6 +493,7 @@ mb:
           stroke_width_px: 'Толщина линии (Pixel)'
           fontColor: 'Цвет шрифта'
           fontSize: 'Размер шрифта'
+          point_radius_px: 'Радиус (для точечных геометрий)'
       printclient:
         label:
           rotatable: Поворачиваемые

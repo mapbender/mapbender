@@ -280,6 +280,7 @@ mb:
           stroke_width_px: 'Largeur du contour (pixels)'
           fontColor: 'Couleur de la police'
           fontSize: 'Taille de la police'
+          point_radius_px: 'Rayon (pour géométries de points)'
       printclient:
         label:
           rotatable: Pivotable

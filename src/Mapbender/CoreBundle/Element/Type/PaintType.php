@@ -39,12 +39,14 @@ class PaintType extends AbstractType
                 'hasStroke' => true,
                 'hasFill' => true,
                 'hasFont' => false,
+                'hasPointRadius' => false,
 
                 'fieldNameFillColor' => 'fillColor',
                 'fieldNameStrokeColor' => 'strokeColor',
                 'fieldNameStrokeWidth' => 'strokeWidth',
                 'fieldNameFontColor' => 'fontColor',
                 'fieldNameFontSize' => 'fontSize',
+                'fieldNamePointRadius' => 'pointRadius',
                 'fillColorHelp' => null,
                 'strokeColorHelp' => null,
                 'strokeWidthHelp' => null,
@@ -96,6 +98,15 @@ class PaintType extends AbstractType
                 'attr' => ['min' => 1],
                 'help' => $options['fontSizeHelp'],
                 'constraints' => [new Constraints\Range(['min' => 1])],
+            ], $this->trans));
+        }
+
+        if ($options['hasPointRadius']) {
+            $builder->add($options['fieldNamePointRadius'], NumberType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.core.admin.featureinfo.label.point_radius_px',
+                'attr' => ['min' => 0, 'inputmode' => 'numeric'],
+                'constraints' => [new Constraints\Range(['min' => 0])],
             ], $this->trans));
         }
 

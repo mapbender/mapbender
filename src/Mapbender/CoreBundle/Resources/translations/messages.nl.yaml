@@ -280,6 +280,7 @@ mb:
           stroke_width_px: 'Randbreedte (pixels)'
           fontColor: 'Tekstkleur'
           fontSize: 'Tekstgrootte'
+          point_radius_px: 'Straal (voor puntgeometrieën)'
       printclient:
         label:
           rotatable: Roteerbaar

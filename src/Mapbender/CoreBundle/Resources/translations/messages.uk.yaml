@@ -343,6 +343,7 @@ mb:
           strokeColor: Колір штрихування
           opacity_pct: Непрозорість (%)
           stroke_width_px: Ширина штриха(пікселі)
+          point_radius_px: 'Радіус (для точкових геометрій)'
       printclient:
         label:
           autoopen: Автовідкриття
