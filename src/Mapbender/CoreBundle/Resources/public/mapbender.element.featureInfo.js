@@ -146,26 +146,28 @@
 
             // Iterate in reverse to match layertree display order
             for (var s = sources.length - 1; s >= 0; --s) {
-                if (!sources[s].featureInfoEnabled()) continue;
-                validSources.push(sources[s]);
+                const source = sources[s];
+                if (!source.featureInfoEnabled()) continue;
+                validSources.push(source);
 
-                const [url, fiPromise] = sources[s].loadFeatureInfo(this.mbMap.getModel(), x, y, this.options);
-
+                const options = {...this.options, injectionScript: this._getInjectionScript(source.id)};
+                const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options);
                 fiPromise.then((result) => {
-                    if (result.content) {
+                    if (result) {
                         this.showingSources.push(source);
-                        this.showResponseContent_(source, result.content);
+                        this.showResponseContent_(source, result);
                         this._open();
                     } else {
                         this._removeContent(source);
                     }
                 }).catch((err) => {
+                    console.log(err);
                     this._removeContent(source);
                 });
 
                 promises.push(fiPromise);
 
-                this.addDisplayStub_(sources[s], url);
+                this.addDisplayStub_(source, url);
             }
 
             // remove popup tabs where feature info is no longer available

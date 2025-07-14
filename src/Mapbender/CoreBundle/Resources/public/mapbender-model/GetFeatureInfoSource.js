@@ -18,49 +18,45 @@
 
         /**
          * Loads the feature info for the given coordinates.
-         * in the GetFeatureInfo implementation the URL as returned
-         * by Mapbender.Model.getPointFeatureInfoUrl is requested and the response is returned.
-         * @param mapModel Mapbender.Model
-         * @param x
-         * @param y
-         * @param options {maxCount: number}
-         * @returns [string, {Promise<{iframe: boolean, content: string}>}]
+         * The URL as returned by @see getPointFeatureInfoUrl is requested and the response is returned.
+         * @param mapModel {Mapbender.Model}
+         * @param x {number}
+         * @param y {number}
+         * @param options {maxCount: number, onlyValid: boolean, injectionScript: string}
+         * @returns {[?string, Promise<?string>]}
          */
         loadFeatureInfo(mapModel, x, y, options) {
-            const url = this.getPointFeatureInfoUrl(this, x, y, options.maxCount);
+            const url = this.getPointFeatureInfoUrl(mapModel, x, y, options.maxCount);
             if (!url) return [false, Promise.reject()];
 
             let fetchOptions = {};
             let fetchUrl = url;
 
             // also use proxy on different host / scheme to avoid CORB
-            const useProxy = this.options.proxy || !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
+            const useProxy = this.useProxyForFeatureInfo(url);
 
             if (useProxy && !this.options.tunnel) {
-                fetchUrl = Mapbender.configuration.application.urls.proxy;
-                fetchOptions = {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-                    body: new URLSearchParams({ url: url })
-                };
+                fetchUrl = Mapbender.configuration.application.urls.proxy + "?" + new URLSearchParams({ url: url });
             }
 
-            return fetch(fetchUrl, fetchOptions)
-                .then(response => {
-                    const mimetype = (response.headers.get('Content-Type') || '').toLowerCase().split(';')[0];
-                    return response.text().then(data => ({ data: data.trim(), mimetype }));
-                })
+            return [url, fetch(fetchUrl, fetchOptions)
                 .then(response => {
                     const mimetype = (response.headers.get('Content-Type') || '').toLowerCase().split(';')[0];
                     return response.text().then(data => {
                         data = data.trim();
                         if (data.length && (!options.onlyValid || this._isFeatureInfoResponseDataValid(data, mimetype))) {
-                            return this._formatFeatureInfoResponse(source, data, mimetype);
+                            return this._formatFeatureInfoResponse(data, mimetype, options);
                         }
                     });
                 })
                 .catch(error => {
-                    Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + error);
-                });
+                    Mapbender.error(this.getTitle() + ' GetFeatureInfo: ' + error);
+                    throw error;
+                })];
+        }
+
+        useProxyForFeatureInfo(url) {
+            return this.options.proxy || !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
         }
 
         getPointFeatureInfoUrl (mapModel, x, y, maxCount) {
@@ -103,11 +99,10 @@
                     return true;
             }
         }
-        _formatFeatureInfoResponse(source, data, mimetype) {
+        _formatFeatureInfoResponse(data, mimetype, options) {
             if (mimetype.toLowerCase() === 'text/html') {
-                const script = this._getInjectionScript(source.id);
                 const $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" class="iframe--responsive">');
-                $iframe.attr("srcdoc", [script, data].join(''));
+                $iframe.attr("srcdoc", [options.injectionScript, data].join(''));
                 return $iframe.get();
             } else {
                 return $(document.createElement('pre')).text(data).get();

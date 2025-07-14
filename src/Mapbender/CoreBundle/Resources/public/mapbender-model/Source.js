@@ -150,14 +150,6 @@
         }
 
         /**
-         * Returns all layers that support feature info
-         * @return {Array<Mapbender.SourceLayer>}
-         */
-        getFeatureInfoLayers() {
-            return [];
-        }
-
-        /**
          * @param {SourceSettings} settings
          * @return {boolean} true if at least one setting has been changed
          */
@@ -391,13 +383,13 @@
          * Loads the feature info for the given coordinates.
          * Per default, a rejected promise is returned (causing the source to not be displayed in the featureInfo popup)
          * @param mapModel Mapbender.Model
-         * @param x
-         * @param y
-         * @param options the featureInfo element's options, e.g. {maxCount: number, onlyValid: boolean}
-         * @returns [string, {Promise<{iframe: boolean, content: string}>}]
+         * @param x {number}
+         * @param y {number}
+         * @param options {maxCount: number, onlyValid: boolean, injectionScript: string} the featureInfo element's options
+         * @returns {[?string, Promise<?string>]} An array with two elements: The url for the "open in new window" feature and a promise that loads the featureinfo data in the background.
          */
         loadFeatureInfo(mapModel, x, y, options) {
-            return Promise.reject();
+            return [null, Promise.reject()];
         }
     }
 
