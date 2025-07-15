@@ -53,8 +53,14 @@ class VectorTilesSource extends Mapbender.Source {
 
     createFeatureInfoForFeature(feature) {
         const properties = feature.getProperties();
-        const label = properties.label || properties.name || properties.title;
-        if (!label) return null;
+        let label;
+        if (this.options.featureInfo.title) {
+            label = this._labelReplaceRegex(this.options.featureInfo.title, feature);
+        } else {
+            label = properties.label || properties.name || properties.title;
+        }
+
+        if (!label && this.options.featureInfo.hideIfNoTitle) return null;
 
         const geometryDiv = document.createElement('div');
         geometryDiv.className = 'geometryElement';
@@ -63,10 +69,12 @@ class VectorTilesSource extends Mapbender.Source {
         geometryDiv.setAttribute('data-srid', 'EPSG:3857');
         geometryDiv.setAttribute('data-label', label);
 
-        const h3 = document.createElement("h3");
-        h3.className = "featureinfo__title";
-        h3.textContent = label;
-        geometryDiv.appendChild(h3);
+        if (label) {
+            const h3 = document.createElement("h3");
+            h3.className = "featureinfo__title";
+            h3.textContent = label;
+            geometryDiv.appendChild(h3);
+        }
 
         const table = document.createElement('table');
         table.className = 'table table-striped table-bordered table-condensed featureinfo__table';
@@ -89,6 +97,22 @@ class VectorTilesSource extends Mapbender.Source {
 
         geometryDiv.appendChild(table);
         return geometryDiv;
+    }
+
+    _labelReplaceRegex(labelWithRegex, feature) {
+        let regex = /\${([^}]+)}/g;
+        let match = [];
+        let hasMatch = false;
+        let label = labelWithRegex;
+
+        while ((match = regex.exec(labelWithRegex)) !== null) {
+            let featureValue = (feature.get(match[1])) ? feature.get(match[1]).toString() : '';
+            if (featureValue !== '') {
+                hasMatch = true;
+            }
+            label = label.replace(match[0], featureValue);
+        }
+        return hasMatch ? label : null;
     }
 
     updateEngine() {

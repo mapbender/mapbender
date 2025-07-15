@@ -45,6 +45,11 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
             ],
             'id' => $source->getId(),
             'bbox' => $source->getBoundsArray(),
+            'featureInfo' => [
+                'title' => $sourceInstance->getFeatureInfoTitle(),
+                'propertyMapping' => $sourceInstance->getPropertyMap(),
+                'hideIfNoTitle' => $sourceInstance->getHideIfNoTitle() ?? true,
+            ]
         ];
         return $config;
     }

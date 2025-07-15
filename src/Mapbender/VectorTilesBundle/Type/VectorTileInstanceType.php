@@ -54,6 +54,9 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.title',
                 'help' => 'mb.vectortiles.admin.featureinfo.title_help',
+                'attr' => [
+                    'placeholder' => '${name}'
+                ]
             ], $this->translator))
             ->add('hideIfNoTitle', CheckboxType::class, [
                 'required' => false,
