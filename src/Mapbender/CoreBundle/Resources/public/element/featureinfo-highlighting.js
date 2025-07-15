@@ -10,7 +10,6 @@ window.Mapbender.FeatureInfo.setupHighlight = function(wrapper, _sourceId, _elem
     if (!_elementId) _elementId = window.elementId;
 
     return function(wrapper) {
-        console.log(wrapper, parsed, document.readyState);
         if (parsed || (document.readyState !== 'interactive' && document.readyState !== 'complete')) {
             return;
         }
