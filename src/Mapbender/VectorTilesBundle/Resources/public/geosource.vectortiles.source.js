@@ -42,9 +42,7 @@ class VectorTilesSource extends Mapbender.Source {
             const featureContent = this.createFeatureInfoForFeature(feature);
             if (featureContent) {
                 hasFeatures = true;
-                content.appendChild(featureContent)
-                    .appendChild(document.createElement("br"))
-                    .appendChild(document.createElement("br"));
+                content.appendChild(featureContent);
             }
         }
         if (!hasFeatures) return null;
@@ -65,8 +63,13 @@ class VectorTilesSource extends Mapbender.Source {
         geometryDiv.setAttribute('data-srid', 'EPSG:3857');
         geometryDiv.setAttribute('data-label', label);
 
+        const h3 = document.createElement("h3");
+        h3.className = "featureinfo__title";
+        h3.textContent = label;
+        geometryDiv.appendChild(h3);
+
         const table = document.createElement('table');
-        table.className = 'table table-striped table-bordered table-condensed';
+        table.className = 'table table-striped table-bordered table-condensed featureinfo__table';
         const tbody = document.createElement('tbody');
         table.appendChild(tbody);
 

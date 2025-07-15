@@ -1,3 +1,4 @@
+{# @var form \Mapbender\VectorTilesBundle\Entity\VectorTileInstance #}
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
 
@@ -12,5 +13,27 @@
     {{ parent() }}
     {{ form_row(form.selected) }}
     {{ form_row(form.allowSelected) }}
+
+    <h4>{{ 'mb.vectortiles.admin.featureinfo.heading' | trans }}</h4>
     {{ form_row(form.featureInfo) }}
+    {{ form_row(form.featureInfoAllowToggle) }}
+    <div tabindex="0" class="showmore clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">
+        {{ 'mb.vectortiles.admin.featureinfo.advanced' | trans }}
+    </div>
+    <div class="advanced hidden">
+        {{ form_row(form.featureInfoTitle) }}
+        {{ form_row(form.hideIfNoTitle) }}
+        {{ form_row(form.propertyMap) }}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+                html: true,
+                placement: 'left',
+                trigger: 'click focus'
+            }));
+        });
+    </script>
 {% endblock %}

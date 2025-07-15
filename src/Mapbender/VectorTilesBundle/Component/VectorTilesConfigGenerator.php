@@ -40,7 +40,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
                 "info" => $sourceInstance->getFeatureInfo(),
                 "allow" => [
                     "selected" => $sourceInstance->getAllowSelected(),
-                    "info" => true,
+                    "info" => $sourceInstance->getFeatureInfoAllowToggle(),
                 ],
             ],
             'id' => $source->getId(),

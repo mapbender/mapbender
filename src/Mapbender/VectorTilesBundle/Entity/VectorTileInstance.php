@@ -30,6 +30,18 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $featureInfo = true;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected ?bool $featureInfoAllowToggle = true;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    protected ?string $featureInfoTitle = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    protected ?bool $hideIfNoTitle = true;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    protected ?string $propertyMap = "";
+
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $opacity = 100;
 
@@ -104,6 +116,47 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     {
         $this->featureInfo = $featureInfo;
     }
+
+    public function getFeatureInfoAllowToggle(): ?bool
+    {
+        return $this->featureInfoAllowToggle;
+    }
+
+    public function setFeatureInfoAllowToggle(?bool $featureInfoAllowToggle): void
+    {
+        $this->featureInfoAllowToggle = $featureInfoAllowToggle;
+    }
+
+    public function getFeatureInfoTitle(): ?string
+    {
+        return $this->featureInfoTitle;
+    }
+
+    public function setFeatureInfoTitle(?string $featureInfoTitle): void
+    {
+        $this->featureInfoTitle = $featureInfoTitle;
+    }
+
+    public function getHideIfNoTitle(): ?bool
+    {
+        return $this->hideIfNoTitle;
+    }
+
+    public function setHideIfNoTitle(?bool $hideIfNoTitle): void
+    {
+        $this->hideIfNoTitle = $hideIfNoTitle;
+    }
+
+    public function getPropertyMap(): ?string
+    {
+        return $this->propertyMap;
+    }
+
+    public function setPropertyMap(?string $propertyMap): void
+    {
+        $this->propertyMap = $propertyMap;
+    }
+
 
     public function getLayers()
     {

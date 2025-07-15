@@ -35,6 +35,12 @@
                  class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
                  lazy="true">
         </service>
+
+        <service id="mapbender.source.vectortiles.instance_type"
+                 class="Mapbender\VectorTilesBundle\Type\VectorTileInstanceType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
     </services>
 </container>
 
