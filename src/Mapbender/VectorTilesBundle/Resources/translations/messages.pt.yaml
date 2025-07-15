@@ -1,0 +1,20 @@
+mb.vectortiles.admin:
+  json_url: "URL para definição de estilo JSON"
+  referer: "Referrer HTTP"
+  referer.help: "Alguns servidores VectorTile requerem um referrer HTTP fixo para controle de acesso."
+  min_scale: "Escala mínima (denominador)"
+  max_scale: "Escala máxima (denominador)"
+  selected: "Ativar na inicialização da aplicação"
+  featureinfo:
+    heading: "Informações das características"
+    active: "Informações ativas na inicialização da aplicação"
+    allowtoggle: "Informações alternáveis pelo usuário"
+    advanced: "Configurações avançadas"
+    title: "Campo de título"
+    title_help: "Propriedade da característica que é exibida como título acima da tabela. <code>${property}</code> será substituído pelo valor da propriedade."
+    hide_if_no_title: "Ocultar características com título vazio"
+    property_map: "Filtro e tradução de campos"
+    property_map_help: "Se não estiver vazio, apenas as propriedades especificadas serão exibidas. Especificar como array YAML, a chave é o nome do campo, o valor opcional é a tradução. Exemplo:<br><code>- class<br>- name<br>- layer: Nome da camada</code>"
+  error:
+    no_json: "A URL especificada não pôde ser analisada como JSON."
+    no_tile_json: "A URL especificada em source.openmaptiles não pôde ser analisada como JSON."
