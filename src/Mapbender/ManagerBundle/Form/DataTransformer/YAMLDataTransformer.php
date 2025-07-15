@@ -8,16 +8,14 @@ use Symfony\Component\Yaml\Parser;
 
 /**
  * YAML data transformer
- *
- * @author Christian Wygoda
  */
 class YAMLDataTransformer implements DataTransformerInterface
 {
-    protected $levelsBeforeInline;
-
-    public function __construct($levelsBeforeInline = 10)
+    public function __construct(
+        protected int $levelsBeforeInline = 10,
+        protected bool $jsonEncode = false,
+    )
     {
-        $this->levelsBeforeInline = $levelsBeforeInline;
     }
 
     /**
@@ -28,6 +26,9 @@ class YAMLDataTransformer implements DataTransformerInterface
      */
     public function transform($value): string
     {
+        if ($this->jsonEncode && is_string($value) && json_validate($value)) {
+            $value = json_decode($value, true);
+        }
         $dumper = new Dumper(2);
         $result = $dumper->dump($value, $this->levelsBeforeInline, 0, true);
         return $result === 'null' ? '' : $result;
@@ -41,7 +42,8 @@ class YAMLDataTransformer implements DataTransformerInterface
     public function reverseTransform($value): mixed
     {
         $parser = new Parser();
-        return $parser->parse($value, true);
+        $parsed = $parser->parse($value, true);
+        return $this->jsonEncode ? json_encode($parsed) : $parsed;
     }
 }
 

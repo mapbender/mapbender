@@ -59,7 +59,7 @@ class VectorTilesInstanceFactory extends SourceInstanceFactory
         $instance->setMaxScale($data['maxScale'] ?? null);
         $instance->setFeatureInfo($data['featureInfo'] ?? true);
         $instance->setFeatureInfoAllowToggle($data['featureInfoAllowToggle'] ?? true);
-        $instance->setPropertyMap($data['propertyMap'] ?? null);
+        $instance->setPropertyMap(($data['propertyMap'] ?? null) ? json_encode($data['propertyMap']) : null);
         $instance->setHideIfNoTitle($data['hideIfNoTitle'] ?? true);
         $instance->setFeatureInfoTitle($data['featureInfoTitle'] ?? null);
         if (isset($data['bbox']) && is_array($data['bbox'])) {

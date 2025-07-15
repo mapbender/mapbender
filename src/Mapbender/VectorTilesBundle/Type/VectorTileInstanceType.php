@@ -66,6 +66,7 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.property_map',
                 'help' => 'mb.vectortiles.admin.featureinfo.property_map_help',
+                'json_encode' => true,
             ], $this->translator))
         ;
     }

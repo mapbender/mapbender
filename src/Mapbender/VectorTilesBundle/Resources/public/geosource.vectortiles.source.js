@@ -81,11 +81,14 @@ class VectorTilesSource extends Mapbender.Source {
         const tbody = document.createElement('tbody');
         table.appendChild(tbody);
 
+        const propertyMap = this._getFeatureInfoPropertyMap();
         Object.entries(properties).forEach(([key, value]) => {
+            if (propertyMap && !propertyMap[key]) return;
+
             const row = document.createElement('tr');
 
             const headerCell = document.createElement('th');
-            headerCell.textContent = key;
+            headerCell.textContent = propertyMap?.[key] || key;
 
             const dataCell = document.createElement('td');
             dataCell.textContent = value;
@@ -97,6 +100,22 @@ class VectorTilesSource extends Mapbender.Source {
 
         geometryDiv.appendChild(table);
         return geometryDiv;
+    }
+
+    _getFeatureInfoPropertyMap() {
+        if (!this.options.featureInfo.propertyMap) return null;
+        if (!this.propertyMap) {
+            this.propertyMap = {};
+            for (const entry of this.options.featureInfo.propertyMap) {
+                if (typeof entry === 'string') {
+                    this.propertyMap[entry] = entry;
+                } else {
+                    const [key, value] = Object.entries(entry)[0];
+                    this.propertyMap[key] = value;
+                }
+            }
+        }
+        return this.propertyMap;
     }
 
     _labelReplaceRegex(labelWithRegex, feature) {

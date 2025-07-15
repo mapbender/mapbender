@@ -29,6 +29,8 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         $source = $sourceInstance->getSource();
 
         $config = parent::getConfiguration($sourceInstance);
+        $hasPropertyMap = $sourceInstance->getPropertyMap() && json_validate($sourceInstance->getPropertyMap());
+
         $config['options'] = [
             'jsonUrl' => $source->getJsonUrl(),
             'minScale' => $sourceInstance->getMinScale(),
@@ -47,7 +49,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
             'bbox' => $source->getBoundsArray(),
             'featureInfo' => [
                 'title' => $sourceInstance->getFeatureInfoTitle(),
-                'propertyMapping' => $sourceInstance->getPropertyMap(),
+                'propertyMap' => $hasPropertyMap ? json_decode($sourceInstance->getPropertyMap(), true) : null,
                 'hideIfNoTitle' => $sourceInstance->getHideIfNoTitle() ?? true,
             ]
         ];
