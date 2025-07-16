@@ -409,6 +409,7 @@
                 strokeWidth: this.options.strokeWidthDefault,
                 fontColor: this.options.fontColorDefault || this.options.strokeColorDefault,
                 fontSize: this.options.fontSizeDefault,
+                pointRadius: this.options.pointRadiusDefault || (this.options.strokeWidthDefault * 3),
             };
             var settingsHover = {
                 fill: this.options.fillColorHover || settingsDefault.fill,
@@ -416,37 +417,53 @@
                 strokeWidth: this.options.strokeWidthHover,
                 fontColor: this.options.fontColorHover || this.options.strokeColorHover || settingsDefault.fontColor,
                 fontSize: this.options.fontSizeHover || settingsDefault.fontSize,
+                pointRadius: this.options.pointRadiusHover || (this.options.strokeWidthHover * 3),
             };
 
             const self = this;
             return function (feature) {
-                return [feature.get('hover')
-                    ? self.processStyle_(settingsHover, true, feature)
-                    : self.processStyle_(settingsDefault, false, feature)
-                ];
+                const hover = feature.get('hover');
+                const point = feature.getGeometry().getType() === 'Point';
+                return [self.processStyle_(hover ? settingsHover : settingsDefault, hover, point, feature)];
             }
         },
-        processStyle_: function (settings, hover, feature) {
+        processStyle_: function (settings, hover, point, feature) {
             var fillRgba = Mapbender.StyleUtil.parseCssColor(settings.fill);
             var strokeRgba = Mapbender.StyleUtil.parseCssColor(settings.stroke);
             var strokeWidth = parseInt(settings.strokeWidth);
 
             strokeWidth = isNaN(strokeWidth) && (hover && 3 || 1) || strokeWidth;
-            return new ol.style.Style({
+            const fill = new ol.style.Fill({
+                color: fillRgba,
+            });
+            const stroke = strokeWidth && new ol.style.Stroke({
+                color: strokeRgba,
+                width: strokeWidth
+            });
+            const text = strokeWidth && new ol.style.Text({
+                font: parseInt(settings.fontSize) + 'px sans-serif',
                 fill: new ol.style.Fill({
-                    color: fillRgba,
+                    color: settings.fontColor,
                 }),
-                stroke: strokeWidth && new ol.style.Stroke({
-                    color: strokeRgba,
-                    width: strokeWidth
-                }),
-                text: strokeWidth && new ol.style.Text({
-                    font: parseInt(settings.fontSize) + 'px sans-serif',
-                    fill: new ol.style.Fill({
-                        color: settings.fontColor,
+                text: feature.get("label"),
+            });
+
+            if (point) {
+                return new ol.style.Style({
+                    image: new ol.style.Circle({
+                        fill: fill,
+                        stroke: stroke,
+                        radius: settings.pointRadius ? parseInt(settings.pointRadius) : (strokeWidth * 3),
                     }),
-                    text: feature.get("label"),
-                }),
+                    text: text,
+                    zIndex: hover ? 1 : undefined,
+                });
+            }
+
+            return new ol.style.Style({
+                fill: fill,
+                stroke: stroke,
+                text: text,
                 zIndex: hover ? 1 : undefined,
             });
         },

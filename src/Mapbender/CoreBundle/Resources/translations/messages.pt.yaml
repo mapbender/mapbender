@@ -492,6 +492,7 @@ mb:
           stroke_width_px: 'Largura do traçado (pixels)'
           fontColor: Cor da fonte
           fontSize: Tamanho da fonte
+          point_radius_px: 'Raio (para geometrias de pontos)'
       printclient:
         label:
           rotatable: Girável

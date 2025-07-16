@@ -492,6 +492,7 @@ mb:
           stroke_width_px: 'Larghezza del tratto (pixel)'
           fontColor: 'Colore del carattere'
           fontSize: 'Dimensiona del carattere'
+          point_radius_px: 'Raggio (per geometrie di punti)'
       printclient:
         label:
           rotatable: Ruotabile

@@ -492,6 +492,7 @@ mb:
           stroke_width_px: 'Ancho del contorno (píxeles)'
           fontColor: 'Color de fuente'
           fontSize: 'Tamaño de fuente'
+          point_radius_px: 'Radio (para geometrías de puntos)'
       printclient:
         label:
           rotatable: Giratorio

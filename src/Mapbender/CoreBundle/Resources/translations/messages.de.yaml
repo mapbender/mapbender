@@ -497,6 +497,7 @@ mb:
           stroke_width_px: 'Linienstärke (Pixel)'
           fontColor: Schriftfarbe
           fontSize: Schriftgröße
+          point_radius_px: 'Radius (für Punktgeometrien)'
       printclient:
         label:
           rotatable: Drehbar

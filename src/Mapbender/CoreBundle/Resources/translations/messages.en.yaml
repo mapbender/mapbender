@@ -497,6 +497,7 @@ mb:
           stroke_width_px: 'Stroke width (pixels)'
           fontColor: 'Font color'
           fontSize: 'Font size'
+          point_radius_px: 'Radius (for point geometries)'
       printclient:
         label:
           rotatable: Rotatable
