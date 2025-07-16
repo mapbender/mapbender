@@ -276,6 +276,9 @@ mb:
         select_style: 'Select style'
         metadata: Metadata
         dimension: Dimension
+      filter:
+        placeholder: 'Filter layers...'
+        reset: 'Reset filter'
     zoombar:
       rotateclockwise: 'Rotate clockwise'
       rotatecounterclockwise: 'Rotate counterclockwise'
@@ -519,6 +522,7 @@ mb:
           hidenottoggleable: 'Hide not toggleable'
           hideinfo: 'Hide info'
           menu: Menu
+          filter: 'Show layer filter'
       template:
         sidepane:
           type:

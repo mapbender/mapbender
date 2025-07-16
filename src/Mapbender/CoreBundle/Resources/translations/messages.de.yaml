@@ -276,6 +276,9 @@ mb:
         select_style: 'Stil auswählen'
         metadata: Metadaten
         dimension: Dimension
+      filter:
+        placeholder: 'Ebenen filtern...'
+        reset: 'Filter zurücksetzen'
     zoombar:
       rotateclockwise: 'Im Uhrzeigersinn drehen'
       rotatecounterclockwise: 'Gegen den Uhrzeigersinn drehen'
@@ -519,6 +522,7 @@ mb:
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideinfo: 'Info ausblenden'
           menu: Menü
+          filter: 'Layer-Filter anzeigen'
       template:
         sidepane:
           type:

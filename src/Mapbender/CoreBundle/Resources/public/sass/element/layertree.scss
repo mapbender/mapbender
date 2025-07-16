@@ -60,6 +60,11 @@ $textColor: $darkFontColor !default;
     opacity: 0;
     cursor: default;
   }
+
+  .btn-outline-secondary:not(:hover) {
+    border-color: #dee2e6;
+    background-color: white;
+  }
 }
 
 $layer-slider-bar-height: 5px;

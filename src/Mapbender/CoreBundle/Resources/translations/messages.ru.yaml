@@ -274,6 +274,9 @@ mb:
         select_style: 'Выберите стиль'
         metadata: 'Метаданные'
         dimension: 'Измерение'
+      filter:
+        placeholder: 'Слои фильтра...'
+        reset: 'Сбросить фильтр'
     zoombar:
       rotateclockwise: 'Поверните по часовой стрелке'
       rotatecounterclockwise: 'Повернуть против часовой стрелки'
@@ -515,6 +518,7 @@ mb:
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideinfo: 'Скрыть информацию'
           menu: 'Меню'
+          filter: 'Показать фильтр слоев'
       template:
         sidepane:
           type:

@@ -98,6 +98,10 @@
             this.element.on('click', '.layer-metadata', function (evt) {
                 self._showMetadata(evt);
             });
+            this.element.on('input', '#layerFilter', this._filterLayer.bind(this));
+            this.element.on('click', '#resetLayerFilter', function (evt) {
+                self._resetLayerFilter(true);
+            });
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -462,6 +466,49 @@
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
+
+        _resetLayerFilter: function (clearInput) {
+            if (clearInput) $('#layerFilter').val('');
+            $('span.filtered').removeClass('filtered');
+            $('span.layer-title').parent().show();
+            $('.themeContainer, .serviceContainer').removeClass('showLeaves');
+            $('i.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder');
+        },
+        _filterLayer: function () {
+            const value = $('#layerFilter').val().toLowerCase();
+
+            if (typeof this._lastFilterLength === 'undefined') {
+                this._lastFilterLength = 0;
+            }
+
+            if (value.length > 2) {
+                const $layerTitles = $('span.layer-title');
+                $layerTitles.each(function () {
+                    const title = $(this).attr('title')?.toString().toLowerCase();
+                    if (title) {
+                        $(this).toggleClass('filtered', title.includes(value));
+                    }
+                });
+
+                $layerTitles.parent().hide();
+                $('span.filtered').each(function () {
+                    $(this).parent().show();
+                    $(this).siblings('span.-fn-toggle-children').find('i').addClass('fa-folder-open');
+                    ['li.serviceContainer', 'li.themeContainer'].forEach(selector => {
+                        const $container = $(this).parents(selector);
+                        $container.find('.leaveContainer:first').show();
+                        $container.addClass('showLeaves');
+                        $container.find('i:first').addClass('fa-folder-open');
+                    });
+                });
+
+            } else if (value.length < 3 && this._lastFilterLength > 2) {
+                this._resetLayerFilter(false);
+            }
+
+            this._lastFilterLength = value.length;
+        },
+
         /**
          * initalise a layer menu, called when the burger menu is clicked
          * @param $layerNode jQuery

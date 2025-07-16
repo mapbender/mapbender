@@ -273,6 +273,9 @@ mb:
         select_style: 'Seleccione el estilo'
         metadata: Metadatos
         dimension: Dimensión
+      filter:
+        placeholder: 'Filtrar capas...'
+        reset: 'Restablecer filtro'
     zoombar:
       rotateclockwise: 'Girar en sentido horario'
       rotatecounterclockwise: 'Girar en sentido antihorario'
@@ -514,6 +517,7 @@ mb:
           hidenottoggleable: 'Ocultar carpetas que no se pueden expandir'
           hideinfo: 'Ocultar información'
           menu: Menú
+          filter: 'Mostrar filtro de capas'
       template:
         sidepane:
           type:

@@ -1,3 +1,11 @@
+{% if configuration.showFilter %}
+    <div class="input-group mb-3">
+        <input type="text" id ="layerFilter" class="form-control" placeholder="{{ 'mb.core.layertree.filter.placeholder'|trans }}" tabindex="0">
+        <button id="resetLayerFilter" class="btn btn-outline-secondary" type="button" title="{{ 'mb.core.layertree.filter.reset'|trans }}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+{% endif %}
   <ul class="layers" >
       <li class="-fn-theme-template themeContainer hidden">
         <div class="leaveContainer">

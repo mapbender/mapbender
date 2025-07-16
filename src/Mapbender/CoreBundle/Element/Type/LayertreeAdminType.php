@@ -44,6 +44,10 @@ class LayertreeAdminType extends AbstractType
                 'label' => 'mb.core.admin.layertree.label.themes',
                 'required' => false,
             ))
+            ->add('showFilter', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.core.admin.layertree.label.filter',
+            ))
         ;
     }
 

@@ -39,6 +39,9 @@
     <div class="mb-3">
         {{ form_widget(form.configuration.allowReorder, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
+    <div class="mb-3">
+        {{ form_widget(form.configuration.showFilter, {'label_attr': {'class': 'checkbox-inline'}}) }}
+    </div>
 </div>
 {% if form.configuration.themes is defined %}
     <script type="text/javascript">
