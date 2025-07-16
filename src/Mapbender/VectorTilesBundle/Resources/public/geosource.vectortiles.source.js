@@ -139,7 +139,7 @@ class VectorTilesSource extends Mapbender.Source {
     }
 
     setLayerOrder(newLayerIdOrder) {
-        // do nothing, there are no sublayers for vector tile sourcs
+        // do nothing, there are no sublayers for vector tile sources
     }
 }
 

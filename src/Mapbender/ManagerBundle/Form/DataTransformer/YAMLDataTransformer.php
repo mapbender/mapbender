@@ -26,8 +26,9 @@ class YAMLDataTransformer implements DataTransformerInterface
      */
     public function transform($value): string
     {
-        if ($this->jsonEncode && is_string($value) && json_validate($value)) {
-            $value = json_decode($value, true);
+        if ($this->jsonEncode && is_string($value)) {
+            $json_value = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) $value = $json_value;
         }
         $dumper = new Dumper(2);
         $result = $dumper->dump($value, $this->levelsBeforeInline, 0, true);

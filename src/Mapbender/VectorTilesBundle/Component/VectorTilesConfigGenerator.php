@@ -29,7 +29,8 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         $source = $sourceInstance->getSource();
 
         $config = parent::getConfiguration($sourceInstance);
-        $hasPropertyMap = $sourceInstance->getPropertyMap() && json_validate($sourceInstance->getPropertyMap());
+        json_decode($sourceInstance->getPropertyMap(), true);
+        $hasPropertyMap = $sourceInstance->getPropertyMap() && json_last_error() === JSON_ERROR_NONE;
 
         $config['options'] = [
             'jsonUrl' => $source->getJsonUrl(),
