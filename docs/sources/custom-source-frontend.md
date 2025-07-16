@@ -50,7 +50,7 @@ Also, you can override the following methods:
 
 - `featureInfoEnabled()`: Indicates whether this source supports feature info requests. Default: false. Note that for
    sources that support a `GetFeatureInfo` request, there is an intermediate abstract class `GetFeatureInfoSource` that
-   handles genertaing the url and downloading the result
+   handles generating the url and downloading the result
 - `loadFeatureInfo(mapModel, x, y, options): [?string, Promise<string>]`: Called when a feature info request is triggered for this source.
    The `mapModel` is the current map model, `x` and `y` are the pixel coordinates of the click event, and `options` contains
    the maxCount or the iframe injection script for feature info highlighting. You need to return an array with the (optional)

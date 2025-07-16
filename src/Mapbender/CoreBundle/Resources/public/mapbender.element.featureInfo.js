@@ -84,6 +84,10 @@
 
             $(document).bind('mbmapsourcechanged', this._reorderTabs.bind(this));
             $(document).bind('mbmapsourcesreordered', this._reorderTabs.bind(this));
+            if (this.options.printResult) {
+                this.element.on('mb.shown.tab', '.tab', () => this._checkPrintVisibility());
+                this.element.on('selected', '.accordion', () => this._checkPrintVisibility());
+            }
 
             this._trigger('ready');
         },
@@ -223,6 +227,7 @@
                 this.popup.$element.on('close', () => this._close());
             }
             this.popup.$element.show();
+            this.popup.$element.find('.popupClose').focus();
         },
         _hide: function () {
             if (this.popup && this.popup.$element) {
@@ -258,7 +263,7 @@
                 buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
-                    cssClass: 'btn btn-sm btn-primary',
+                    cssClass: 'btn btn-sm btn-primary js-btn-print',
                     callback: () => this._printContent(),
                 });
             }
@@ -269,9 +274,9 @@
             $('.js-content-content[data-source-id="' + source.id + '"]', this.element).remove();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
-            var $container = $('.tabContainer,.accordionContainer', this.element);
-            if (!$('.active', $container).not('.hidden').length) {
-                $('>.tabs .tab, >.accordion', $container).not('hidden').first().click();
+            var $container = this.element.find('.tabContainer,.accordionContainer');
+            if (!$container.find('.active').not('.hidden').length) {
+                $container.find('>.tabs .tab, >.accordion').not('hidden').first().click();
             }
         },
         clearAll: function () {
@@ -333,6 +338,11 @@
             var $header = $('#' + headerId, this.element);
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
                 $header.addClass('active');
+                if (this.options.printResult) {
+                    setTimeout(() => {
+                        this._checkPrintVisibility();
+                    });
+                }
             }
             var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
@@ -344,9 +354,16 @@
             $content.removeClass('hidden');
             this._reorderTabs();
         },
+        _checkPrintVisibility: function() {
+            const activeTab = this.element.find('.tab.active, .accordion.active');
+            const activeTabHasLink = activeTab.children('a').length > 0;
+            const printButton = this.popup?.$element?.find('.js-btn-print') ?? this.element.find('.js-btn-print');
+            activeTabHasLink ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
+        },
         _printContent: function () {
             var $documentNode = $('.js-content.active', this.element);
             var url = $documentNode.attr('data-url');
+            if (!url) return;
             // Always use proxy. Calling window.print on a cross-origin window is not allowed.
             var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({url: url});
             var w = window.open(proxifiedUrl);
