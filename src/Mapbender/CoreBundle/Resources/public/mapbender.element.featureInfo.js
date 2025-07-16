@@ -255,14 +255,11 @@
                 cssClass: 'btn btn-sm btn-light popupClose'
             }];
             if (this.options.printResult) {
-                var self = this;
                 buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
                     cssClass: 'btn btn-sm btn-primary',
-                    callback: function () {
-                        self._printContent();
-                    }
+                    callback: () => this._printContent(),
                 });
             }
             return buttons;
@@ -351,7 +348,7 @@
             var $documentNode = $('.js-content.active', this.element);
             var url = $documentNode.attr('data-url');
             // Always use proxy. Calling window.print on a cross-origin window is not allowed.
-            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
+            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({url: url});
             var w = window.open(proxifiedUrl);
             w.print();
         },
