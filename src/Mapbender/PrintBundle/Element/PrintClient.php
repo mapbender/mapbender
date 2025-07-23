@@ -414,7 +414,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     {
         if (!empty($overviewDef['layers'])) {
             foreach ($overviewDef['layers'] as $index => $layer) {
-                $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($layer['url']);
+                if (isset($layer['url'])) {
+                    $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($layer['url']);
+                }
             }
         }
         return $overviewDef;

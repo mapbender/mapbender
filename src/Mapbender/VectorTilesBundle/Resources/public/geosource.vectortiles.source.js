@@ -14,6 +14,17 @@ class VectorTilesSource extends Mapbender.Source {
         return this.nativeLayers;
     }
 
+    getPrintConfigs(bounds, scale, srsName) {
+        const boundsArray = [bounds.left, bounds.bottom, bounds.right, bounds.top];
+        const bbox = Mapbender.mapEngine.transformBounds(boundsArray, srsName, "EPSG:3857");
+        console.log(bbox);
+        return [{
+            ...this._getPrintBaseOptions(),
+            styleUrl: this.options.jsonUrl,
+            bbox: bbox,
+        }];
+    }
+
     getSelected() {
         return this.getRootLayer().getSelected();
     }

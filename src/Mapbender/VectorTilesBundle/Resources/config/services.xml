@@ -34,6 +34,7 @@
         <service id="mapbender.source.vectortiles.renderer"
                  class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
                  lazy="true">
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="mapbender.source.vectortiles.instance_type"
