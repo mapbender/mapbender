@@ -41,6 +41,10 @@
             <tag name="form.type" />
             <argument type="service" id="translator" />
         </service>
+
+        <service id="mapbender.source.vectortiles.config_check" class="Mapbender\VectorTilesBundle\PrintConfigCheckCommand">
+            <tag name="mapbender.config_check" />
+        </service>
     </services>
 </container>
 
