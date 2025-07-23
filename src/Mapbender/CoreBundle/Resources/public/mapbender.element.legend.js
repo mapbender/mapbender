@@ -206,10 +206,13 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-                if (options.showLayerTitle) {
-                    $li.append(widget.createTitle(layer));
-                }
-                $li.append(widget.createLegendForLayer(layer));
+                Promise.resolve(layer.legend).then((value) => {
+                    layer.legend = value;
+                    if (options.showLayerTitle) {
+                        $li.append(widget.createTitle(layer));
+                    }
+                    $li.append(widget.createLegendForLayer(layer));
+                });
             }
             return $li;
         },
