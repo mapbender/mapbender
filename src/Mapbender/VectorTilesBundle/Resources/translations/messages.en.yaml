@@ -1,7 +1,7 @@
 mb.vectortiles.admin:
   json_url: "URL to JSON style definition"
   referer: "HTTP Referer"
-  referer.help: "Some VectorTile servers require a fixed HTTP referer for access control."
+  referer.help: "Some Vector Tiles servers require a fixed HTTP referer for access control."
   min_scale: "Minimum scale (denominator)"
   max_scale: "Maximum scale (denominator)"
   selected: "Activate on application startup"
@@ -10,7 +10,7 @@ mb.vectortiles.admin:
     active: "Information active on application startup"
     allowtoggle: "Information toggleable by user"
     advanced: "Advanced settings"
-    title: "Title field"
+    title: "Title"
     title_help: "Property of the feature that is displayed as title above the table. <code>${property}</code> will be replaced by the property's value."
     hide_if_no_title: "Hide features with empty title"
     property_map: "Field filter & translation"

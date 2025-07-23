@@ -1,7 +1,7 @@
 mb.vectortiles.admin:
   json_url: "JSON stil tanımına URL"
   referer: "HTTP Referer"
-  referer.help: "Bazı VectorTile sunucuları erişim kontrolü için sabit bir HTTP referer gerektirir."
+  referer.help: "Bazı Vector Tiles sunucuları erişim kontrolü için sabit bir HTTP referer gerektirir."
   min_scale: "Minimum ölçek (payda)"
   max_scale: "Maksimum ölçek (payda)"
   selected: "Uygulama başlangıcında etkinleştir"

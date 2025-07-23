@@ -1,7 +1,7 @@
 mb.vectortiles.admin:
   json_url: "URL до визначення стилю JSON"
   referer: "HTTP Referer"
-  referer.help: "Деякі сервери VectorTile потребують фіксованого HTTP referer для контролю доступу."
+  referer.help: "Деякі сервери Vector Tiles потребують фіксованого HTTP referer для контролю доступу."
   min_scale: "Мінімальний масштаб (знаменник)"
   max_scale: "Максимальний масштаб (знаменник)"
   selected: "Активувати при запуску додатку"

@@ -1,7 +1,7 @@
 mb.vectortiles.admin:
   json_url: "URL naar JSON stijldefinitie"
   referer: "HTTP Referer"
-  referer.help: "Sommige VectorTile servers vereisen een vaste HTTP referer voor toegangscontrole."
+  referer.help: "Sommige Vector Tiles servers vereisen een vaste HTTP referer voor toegangscontrole."
   min_scale: "Minimale schaal (noemer)"
   max_scale: "Maximale schaal (noemer)"
   selected: "Activeren bij opstarten van applicatie"
@@ -10,7 +10,7 @@ mb.vectortiles.admin:
     active: "Informatie actief bij opstarten van applicatie"
     allowtoggle: "Informatie schakelbaar door gebruiker"
     advanced: "Geavanceerde instellingen"
-    title: "Titelveld"
+    title: "Titel"
     title_help: "Eigenschap van het kenmerk dat wordt weergegeven als titel boven de tabel. <code>${property}</code> wordt vervangen door de waarde van de eigenschap."
     hide_if_no_title: "Kenmerken met lege titel verbergen"
     property_map: "Veldfilter & vertaling"

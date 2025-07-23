@@ -1,7 +1,7 @@
 mb.vectortiles.admin:
   json_url: "URL vers la définition de style JSON"
   referer: "Référent HTTP"
-  referer.help: "Certains serveurs VectorTile nécessitent un référent HTTP fixe pour le contrôle d'accès."
+  referer.help: "Certains serveurs Vector Tiles nécessitent un référent HTTP fixe pour le contrôle d'accès."
   min_scale: "Échelle minimale (dénominateur)"
   max_scale: "Échelle maximale (dénominateur)"
   selected: "Activer au démarrage de l'application"
@@ -10,7 +10,7 @@ mb.vectortiles.admin:
     active: "Informations actives au démarrage de l'application"
     allowtoggle: "Informations basculables par l'utilisateur"
     advanced: "Paramètres avancés"
-    title: "Champ de titre"
+    title: "Titre"
     title_help: "Propriété de l'entité qui est affichée comme titre au-dessus du tableau. <code>${property}</code> sera remplacé par la valeur de la propriété."
     hide_if_no_title: "Masquer les entités avec un titre vide"
     property_map: "Filtre et traduction des champs"
