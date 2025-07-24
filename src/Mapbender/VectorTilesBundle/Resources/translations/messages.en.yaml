@@ -1,20 +1,24 @@
 mb.vectortiles.admin:
-  json_url: "URL to JSON style definition"
-  referer: "HTTP Referer"
-  referer.help: "Some Vector Tiles servers require a fixed HTTP referer for access control."
-  min_scale: "Minimum scale (denominator)"
-  max_scale: "Maximum scale (denominator)"
-  selected: "Activate on application startup"
+  json_url: 'URL to JSON style definition'
+  referer: 'HTTP Referer'
+  referer.help: 'Some Vector Tiles servers require a fixed HTTP referer for access control.'
+  min_scale: 'Minimum scale (denominator)'
+  max_scale: 'Maximum scale (denominator)'
+  selected: 'Activate on application startup'
   featureinfo:
-    heading: "Feature Information"
-    active: "Information active on application startup"
-    allowtoggle: "Information toggleable by user"
-    advanced: "Advanced settings"
-    title: "Title"
-    title_help: "Property of the feature that is displayed as title above the table. <code>${property}</code> will be replaced by the property's value."
-    hide_if_no_title: "Hide features with empty title"
-    property_map: "Field filter & translation"
-    property_map_help: "If not empty, only the specified properties will be displayed. Specify as YAML array, the key is the name of the field, the optional value is the translation. Example:<br><code>- class<br>- name<br>- layer: Layer name</code>"
+    heading: 'Feature Information'
+    active: 'Information active on application startup'
+    allowtoggle: 'Information toggleable by user'
+    advanced: 'Advanced settings'
+    title: Title
+    title_help: 'Property of the feature that is displayed as title above the table. <code>${property}</code> will be replaced by the property''s value.'
+    hide_if_no_title: 'Hide features with empty title'
+    property_map: 'Field filter & translation'
+    property_map_help: 'If not empty, only the specified properties will be displayed. Specify as YAML array, the key is the name of the field, the optional value is the translation. Example:<br><code>- class<br>- name<br>- layer: Layer name</code>'
   error:
-    no_json: "The specified URL could not be parsed as JSON."
-    no_tile_json: "The URL specified in source.openmaptiles could not be parsed as JSON."
+    no_json: 'The specified URL could not be parsed as JSON.'
+    no_tile_json: 'The URL specified in source.openmaptiles could not be parsed as JSON.'
+mb:
+  vectortiles:
+    admin:
+      layer_hint: 'Layers are not analysed separately for vector tiles.'

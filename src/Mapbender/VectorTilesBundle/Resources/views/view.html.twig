@@ -1,2 +1,19 @@
+{# @var source \Mapbender\VectorTilesBundle\Entity\VectorTileSource #}
 {% extends "@MapbenderManager/Repository/source/view.html.twig" %}
 {%- import '@MapbenderManager/macros/tabs.html.twig' as tab_macros -%}
+
+{% block layers_content %}
+    <p>{{ 'mb.vectortiles.admin.layer_hint' | trans }}</p>
+{% endblock %}
+
+
+{% block details_content %}
+    <table>
+        {% for key, value in source.metadataArray %}
+            <tr>
+                <th>{{ key }}:</th>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

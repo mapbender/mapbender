@@ -4,8 +4,8 @@ namespace Mapbender\VectorTilesBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Mapbender\CoreBundle\Entity\Source;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\VectorTilesBundle\VectorTilesDataSource;
 
 #[ORM\Entity]
@@ -40,6 +40,9 @@ class VectorTileSource extends Source
 
     #[ORM\OneToMany(mappedBy: 'source', targetEntity: VectorTileInstance::class, cascade: ['remove'])]
     protected $instances;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    protected ?string $metadata = null;
 
     public function getJsonUrl(): ?string
     {
@@ -117,6 +120,31 @@ class VectorTileSource extends Source
             $bbox = json_encode($bbox);
         }
         $this->bbox = $bbox;
+    }
+
+    public function getMetadata(): ?string
+    {
+        return $this->metadata;
+    }
+
+    public function getMetadataArray(): ?array
+    {
+        if (!$this->metadata) {
+            return [];
+        }
+
+        $metadataArray = json_decode($this->metadata, true) ?? [];
+        foreach ($metadataArray as $key => $value) {
+            if (is_bool($value)) {
+                $metadataArray[$key] = $value ? 'true' : 'false';
+            }
+        }
+        return $metadataArray;
+    }
+
+    public function setMetadata(?string $metadata): void
+    {
+        $this->metadata = $metadata;
     }
 
     /**

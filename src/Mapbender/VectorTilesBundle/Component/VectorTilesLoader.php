@@ -49,7 +49,10 @@ class VectorTilesLoader extends SourceLoader
         $source->setTitle($json['name'] ?? $json['id'] ?? 'Vector Tile Source');
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($json['version'] ?? '');
-        $source->setBbox($this->loadBbox($json));
+        $source->setMetadata(json_encode(array_filter($json['metadata'] ?? [],
+            fn($key, $value) => !is_array($value) && !is_object($value), ARRAY_FILTER_USE_BOTH)
+        ));
+        $this->loadBbox($json, $source);
     }
 
     public function getFormType(): string
@@ -57,9 +60,9 @@ class VectorTilesLoader extends SourceLoader
         return VectorTileSourceType::class;
     }
 
-    private function loadBbox(array $styleJson): ?array
+    private function loadBbox(array $styleJson, VectorTileSource $vtSource): void
     {
-        if (!isset($styleJson['sources'])) return null;
+        if (!isset($styleJson['sources'])) return;
 
         $bbox = null;
 
@@ -89,9 +92,12 @@ class VectorTilesLoader extends SourceLoader
                     $bbox[2] = max($bbox[2], $tileJson['bounds'][2]);
                     $bbox[3] = max($bbox[3], $tileJson['bounds'][3]);
                 }
+                $vtSource->setBbox($bbox);
+            }
+
+            if (!$vtSource->getDescription() && isset($tileJson['description'])) {
+                $vtSource->setDescription($tileJson['description']);
             }
         }
-
-        return $bbox;
     }
 }

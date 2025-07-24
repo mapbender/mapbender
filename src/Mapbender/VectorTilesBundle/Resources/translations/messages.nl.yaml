@@ -1,20 +1,24 @@
 mb.vectortiles.admin:
-  json_url: "URL naar JSON stijldefinitie"
-  referer: "HTTP Referer"
-  referer.help: "Sommige Vector Tiles servers vereisen een vaste HTTP referer voor toegangscontrole."
-  min_scale: "Minimale schaal (noemer)"
-  max_scale: "Maximale schaal (noemer)"
-  selected: "Activeren bij opstarten van applicatie"
+  json_url: 'URL naar JSON stijldefinitie'
+  referer: 'HTTP Referer'
+  referer.help: 'Sommige Vector Tiles servers vereisen een vaste HTTP referer voor toegangscontrole.'
+  min_scale: 'Minimale schaal (noemer)'
+  max_scale: 'Maximale schaal (noemer)'
+  selected: 'Activeren bij opstarten van applicatie'
   featureinfo:
-    heading: "Kenmerk informatie"
-    active: "Informatie actief bij opstarten van applicatie"
-    allowtoggle: "Informatie schakelbaar door gebruiker"
-    advanced: "Geavanceerde instellingen"
-    title: "Titel"
-    title_help: "Eigenschap van het kenmerk dat wordt weergegeven als titel boven de tabel. <code>${property}</code> wordt vervangen door de waarde van de eigenschap."
-    hide_if_no_title: "Kenmerken met lege titel verbergen"
-    property_map: "Veldfilter & vertaling"
-    property_map_help: "Indien niet leeg, worden alleen de opgegeven eigenschappen weergegeven. Opgeven als YAML array, de sleutel is de naam van het veld, de optionele waarde is de vertaling. Voorbeeld:<br><code>- class<br>- name<br>- layer: Laagnaam</code>"
+    heading: 'Kenmerk informatie'
+    active: 'Informatie actief bij opstarten van applicatie'
+    allowtoggle: 'Informatie schakelbaar door gebruiker'
+    advanced: 'Geavanceerde instellingen'
+    title: Titel
+    title_help: 'Eigenschap van het kenmerk dat wordt weergegeven als titel boven de tabel. <code>${property}</code> wordt vervangen door de waarde van de eigenschap.'
+    hide_if_no_title: 'Kenmerken met lege titel verbergen'
+    property_map: 'Veldfilter & vertaling'
+    property_map_help: 'Indien niet leeg, worden alleen de opgegeven eigenschappen weergegeven. Opgeven als YAML array, de sleutel is de naam van het veld, de optionele waarde is de vertaling. Voorbeeld:<br><code>- class<br>- name<br>- layer: Laagnaam</code>'
   error:
-    no_json: "De opgegeven URL kon niet worden geparseerd als JSON."
-    no_tile_json: "De URL opgegeven in source.openmaptiles kon niet worden geparseerd als JSON."
+    no_json: 'De opgegeven URL kon niet worden geparseerd als JSON.'
+    no_tile_json: 'De URL opgegeven in source.openmaptiles kon niet worden geparseerd als JSON.'
+mb:
+  vectortiles:
+    admin:
+      layer_hint: 'Lagen worden voor vector tiles niet afzonderlijk uitgelezen.'
