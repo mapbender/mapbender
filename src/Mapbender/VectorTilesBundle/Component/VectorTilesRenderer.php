@@ -9,6 +9,7 @@ use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
 class VectorTilesRenderer extends LayerRenderer
@@ -16,6 +17,7 @@ class VectorTilesRenderer extends LayerRenderer
     public function __construct(
         protected string $projectDir,
         protected EntityManagerInterface $entityManager,
+        protected LoggerInterface $logger,
     )
     {
     }
@@ -48,17 +50,15 @@ class VectorTilesRenderer extends LayerRenderer
         );
         $process->run();
 
-        $processIsSuccessful = $process->isSuccessful();
-        $processError = $process->getErrorOutput();
-        $processOutput = $process->getOutput();
-
-        if ($processIsSuccessful) {
-            $layerImage = imagecreatefromstring(base64_decode(trim($processOutput)));
+        if ($process->isSuccessful()) {
+            $layerImage = imagecreatefromstring(base64_decode(trim($process->getOutput())));
             imagecopyresampled($canvas->resource, $layerImage,
                 0, 0, 0, 0,
                 $canvas->getWidth(), $canvas->getHeight(),
                 imagesx($layerImage), imagesy($layerImage));
             imagedestroy($layerImage);
+        } else {
+            $this->logger->warning("[VectorTilesRenderer] Error rendering vector tile layer: {$process->getErrorOutput()}");
         }
     }
 

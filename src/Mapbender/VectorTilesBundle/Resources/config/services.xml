@@ -36,6 +36,7 @@
                  lazy="true">
             <argument>%kernel.project_dir%</argument>
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="logger" />
         </service>
 
         <service id="mapbender.source.vectortiles.instance_type"

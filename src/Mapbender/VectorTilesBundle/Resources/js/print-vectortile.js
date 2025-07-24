@@ -101,6 +101,10 @@ const html = `
             }
         });
 
+        // Fallback: fail quickly if no tiles start loading
+        setTimeout(() => {
+            if (window.tilesLoading === 0) window.tilesLoaded = true;
+        }, 5000);
 
         // Fallback: set status after a delay
         setTimeout(() => {
