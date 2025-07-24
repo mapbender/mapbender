@@ -45,6 +45,9 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $opacity = 100;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    protected ?float $printScaleCorrection = 1.0;
+
 
     public function setSource($source)
     {
@@ -155,6 +158,16 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     public function setPropertyMap(?string $propertyMap): void
     {
         $this->propertyMap = $propertyMap;
+    }
+
+    public function getPrintScaleCorrection(): ?float
+    {
+        return $this->printScaleCorrection;
+    }
+
+    public function setPrintScaleCorrection(?float $printScaleCorrection): void
+    {
+        $this->printScaleCorrection = $printScaleCorrection;
     }
 
 

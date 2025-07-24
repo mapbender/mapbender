@@ -12,6 +12,8 @@ const headless = true; // change to false for debugging
  * @property {number} width - viewport width in pixels.
  * @property {number} height - viewport height in pixels.
  * @property {string} [referer] - Optional referer string for HTTP headers.
+ * @property {string} dpi - Resolution in DPI (dots per inch).
+ * @property {string} [scaleCorrection] - Optional multiplier for the scale, e.g. '1.5' for 150% scale.
  * @property {string} styleUrl - URL to the Mapbox style JSON.
  * @property {number} [timeout] - Optional timeout value in milliseconds.
  */
@@ -19,6 +21,7 @@ const headless = true; // change to false for debugging
 /** @type {PrintConfig} */
 const printConfig = JSON.parse(process.env.MB_VT_PRINT_CONFIG || '{}');
 const timeout = (printConfig.timeout || 120) * 1000;
+const scale = printConfig.dpi / 100 * printConfig.scaleCorrection; // Convert DPI to scale factor, having 100 DPI as the base scale
 
 const html = `
 <!DOCTYPE html>
@@ -30,8 +33,8 @@ const html = `
     html, body, #map {
       margin: 0;
       padding: 0;
-      width: ${printConfig.width}px;
-      height: ${printConfig.height}px;
+      width: ${Math.round(printConfig.width / scale)}px;
+      height: ${Math.round(printConfig.height / scale)}px;
       overflow: hidden;
     }
   </style>
@@ -47,7 +50,7 @@ const html = `
     const olJs = fs.readFileSync('vendor/mapbender/openlayers6-es5/dist/ol.js', 'utf8');
 
     const browser = await puppeteer.launch({
-        defaultViewport: {width: printConfig.width, height: printConfig.height},
+        defaultViewport: {width: Math.round(printConfig.width / scale), height: Math.round(printConfig.height / scale), deviceScaleFactor: scale},
         headless: headless,
     });
     const page = await browser.newPage();

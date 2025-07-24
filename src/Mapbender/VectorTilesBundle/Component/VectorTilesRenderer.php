@@ -2,16 +2,20 @@
 
 namespace Mapbender\VectorTilesBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\LayerRenderer;
+use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
+use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 use Symfony\Component\Process\Process;
 
 class VectorTilesRenderer extends LayerRenderer
 {
     public function __construct(
         protected string $projectDir,
+        protected EntityManagerInterface $entityManager,
     )
     {
     }
@@ -20,10 +24,18 @@ class VectorTilesRenderer extends LayerRenderer
 
     public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
     {
+        /** @var VectorTileInstance $instance */
+        $instance = $this->entityManager->getRepository(VectorTileInstance::class)->find($layerDef['sourceId']);
+        $multiplier = $instance?->getPrintScaleCorrection() ?? 1.0;
+        $referer = $instance?->getSource()?->getReferer();
+
         $config = [
             ...$layerDef,
             "width" => $canvas->getWidth(),
             "height" => $canvas->getHeight(),
+            "dpi" => $canvas->physicalDpi,
+            "scaleCorrection" => $multiplier,
+            "referer" => $referer,
         ];
 
         $process = new Process(

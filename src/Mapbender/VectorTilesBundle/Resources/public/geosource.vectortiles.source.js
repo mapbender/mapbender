@@ -9,7 +9,6 @@ class VectorTilesSource extends Mapbender.Source {
         this.nativeLayers = [new ol.layer.MapboxVector({
             styleUrl: this.options.jsonUrl,
             opacity: this.options.opacity,
-
         })];
         return this.nativeLayers;
     }
