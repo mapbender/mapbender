@@ -46,7 +46,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
                     "info" => $sourceInstance->getFeatureInfoAllowToggle(),
                 ],
             ],
-            'id' => $source->getId(),
+            'id' => $sourceInstance->getId(),
             'bbox' => $source->getBoundsArray(),
             'featureInfo' => [
                 'title' => $sourceInstance->getFeatureInfoTitle(),
