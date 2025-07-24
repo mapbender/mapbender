@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Lagen worden voor vector tiles niet afzonderlijk uitgelezen.'
+      print_scale_correction: 'Resolutiecorrectie voor printen'
+      print_scale_correction_help: 'Standaardwaarde is 1.0. Hogere waarden zorgen voor meer details en kleinere labels; lagere waarden voor minder details en grotere labels.'

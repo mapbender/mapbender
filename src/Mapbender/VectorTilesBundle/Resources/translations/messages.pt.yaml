@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'As camadas não são lidas separadamente para os azulejos vetoriais.'
+      print_scale_correction: 'Correção de resolução para impressão'
+      print_scale_correction_help: 'O valor padrão é 1.0. Valores maiores resultam em mais detalhes e rótulos menores; valores menores em menos detalhes e rótulos maiores.'

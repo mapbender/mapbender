@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Layer werden für Vector Tiles nicht separat ausgelesen.'
+      print_scale_correction: 'Auflösungskorrektur für den Druck'
+      print_scale_correction_help: 'Standardwert ist 1,0. Größere Werte resultieren in mehr Details und kleineren Beschriftungen; kleinere Werte in weniger Details und größeren Beschriftungen.'

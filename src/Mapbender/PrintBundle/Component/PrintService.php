@@ -506,7 +506,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             'height' => $ovImageHeight,
             'extent' => $ovExtent->getAbsWidthAndHeight(),
             'center' => $ovExtent->getCenterXy(),
-            //'quality' => $quality,
+            'quality' => $quality,
         ));
 
         $ovTransform = FeatureTransform::boxToBox($ovExtent, $ovPixelBox, 1.0);

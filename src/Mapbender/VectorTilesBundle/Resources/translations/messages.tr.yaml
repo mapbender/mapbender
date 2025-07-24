@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Katmanlar, vektör karo için ayrı ayrı okunmaz.'
+      print_scale_correction: 'Baskı için çözünürlük düzeltmesi'
+      print_scale_correction_help: 'Varsayılan değer 1.0''dır. Daha yüksek değerler daha fazla detay ve daha küçük etiketler; daha düşük değerler ise daha az detay ve daha büyük etiketler ile sonuçlanır.'

@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Layers are not analysed separately for vector tiles.'
+      print_scale_correction: 'Resolution correction for printing'
+      print_scale_correction_help: 'Default value is 1.0. Higher values result in more details and smaller labels; lower values in less details and larger labels.'

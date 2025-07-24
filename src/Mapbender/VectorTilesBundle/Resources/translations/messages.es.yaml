@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Las capas no se leen por separado para los mosaicos vectoriales.'
+      print_scale_correction: 'Corrección de resolución para impresión'
+      print_scale_correction_help: 'El valor predeterminado es 1.0. Valores mayores producen más detalles y etiquetas más pequeñas; valores menores, menos detalles y etiquetas más grandes.'

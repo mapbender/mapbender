@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'I layer non vengono letti separatamente per le tile vettoriali.'
+      print_scale_correction: 'Correzione della risoluzione per la stampa'
+      print_scale_correction_help: 'Il valore predefinito è 1.0. Valori più alti producono più dettagli ed etichette più piccole; valori più bassi meno dettagli ed etichette più grandi.'

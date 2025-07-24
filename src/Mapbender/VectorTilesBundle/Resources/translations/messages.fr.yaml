@@ -22,3 +22,5 @@ mb:
   vectortiles:
     admin:
       layer_hint: 'Les couches ne sont pas extraites séparément pour les tuiles vectorielles.'
+      print_scale_correction: 'Correction de résolution pour l''impression'
+      print_scale_correction_help: 'La valeur par défaut est 1.0. Des valeurs plus élevées donnent plus de détails et des étiquettes plus petites ; des valeurs plus faibles donnent moins de détails et des étiquettes plus grandes.'
