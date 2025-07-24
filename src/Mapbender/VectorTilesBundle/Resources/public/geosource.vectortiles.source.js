@@ -108,10 +108,10 @@ class VectorTilesSource extends Mapbender.Source {
             this.propertyMap = {};
             for (const entry of this.options.featureInfo.propertyMap) {
                 if (typeof entry === 'string') {
-                    this.propertyMap[entry] = entry;
+                    this.propertyMap[entry] = Mapbender.trans(entry);
                 } else {
                     const [key, value] = Object.entries(entry)[0];
-                    this.propertyMap[key] = value;
+                    this.propertyMap[key] = Mapbender.trans(value);
                 }
             }
         }
