@@ -11,7 +11,7 @@ mb.vectortiles.admin:
     allowtoggle: 'Informatie schakelbaar door gebruiker'
     advanced: 'Geavanceerde instellingen'
     title: Titel
-    title_help: 'Eigenschap van het kenmerk dat wordt weergegeven als titel boven de tabel. <code>${property}</code> wordt vervangen door de waarde van de eigenschap.'
+    title_help: 'Eigenschap van het kenmerk dat wordt weergegeven als titel boven de tabel. <code>${property}</code> wordt vervangen door de waarde van de eigenschap. Indien niet opgegeven, wordt de eerste niet-lege waarde uit "label", "name" en "title" gebruikt.'
     hide_if_no_title: 'Kenmerken met lege titel verbergen'
     property_map: 'Veldfilter & vertaling'
     property_map_help: 'Indien niet leeg, worden alleen de opgegeven eigenschappen weergegeven. Opgeven als YAML array, de sleutel is de naam van het veld, de optionele waarde is de vertaling. Voorbeeld:<br><code>- class<br>- name<br>- layer: Laagnaam</code>'

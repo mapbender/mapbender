@@ -98,8 +98,10 @@ div.contentTitle {
   }
 }
 
-.list-head {
+.list-head, .list-head .btn {
   font-size: 1.3rem;
+  font-weight: 300;
+
   .content-box {
     display: inline-block;
   }
@@ -325,7 +327,7 @@ footer {
 
 .btn-outline-primary {
     --bs-btn-color: var(--text);
-    --bs-btn-border-color: #a0a0a0;
+    --bs-btn-border-color: #cecece;
     --bs-btn-bg: var(--content-background);
     --bs-btn-hover-color: var(--content-background);
     --bs-btn-hover-border-color: var(--btn-hover);

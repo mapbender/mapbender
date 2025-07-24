@@ -70,10 +70,10 @@ class VectorTilesSource extends Mapbender.Source {
         geometryDiv.setAttribute('data-label', label);
 
         if (label) {
-            const h3 = document.createElement("h3");
-            h3.className = "featureinfo__title";
-            h3.textContent = label;
-            geometryDiv.appendChild(h3);
+            const h5 = document.createElement("h5");
+            h5.className = "featureinfo__title";
+            h5.textContent = label;
+            geometryDiv.appendChild(h5);
         }
 
         const table = document.createElement('table');

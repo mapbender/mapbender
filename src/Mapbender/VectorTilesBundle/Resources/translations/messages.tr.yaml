@@ -11,7 +11,7 @@ mb.vectortiles.admin:
     allowtoggle: 'Kullanıcı tarafından değiştirilebilir bilgi'
     advanced: 'Gelişmiş ayarlar'
     title: 'Başlık alanı'
-    title_help: 'Tablonun üstünde başlık olarak görüntülenen özelliğin niteliği. <code>${property}</code> niteliğin değeri ile değiştirilecektir.'
+    title_help: 'Tablonun üstünde başlık olarak görüntülenen özelliğin niteliği. <code>${property}</code> niteliğin değeri ile değiştirilecektir. Belirtilmezse, "label", "name" ve "title" arasındaki ilk boş olmayan değer kullanılır.'
     hide_if_no_title: 'Boş başlıklı özellikleri gizle'
     property_map: 'Alan filtresi ve çeviri'
     property_map_help: 'Boş değilse, yalnızca belirtilen özellikler görüntülenecektir. YAML dizisi olarak belirtin, anahtar alanın adıdır, isteğe bağlı değer çeviridir. Örnek:<br><code>- class<br>- name<br>- layer: Katman adı</code>'

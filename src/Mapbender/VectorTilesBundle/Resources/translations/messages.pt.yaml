@@ -11,7 +11,7 @@ mb.vectortiles.admin:
     allowtoggle: 'Informações alternáveis pelo usuário'
     advanced: 'Configurações avançadas'
     title: Título
-    title_help: 'Propriedade da característica que é exibida como título acima da tabela. <code>${property}</code> será substituído pelo valor da propriedade.'
+    title_help: 'Propriedade da característica que é exibida como título acima da tabela. <code>${property}</code> será substituído pelo valor da propriedade. Se não especificado, será usado o primeiro valor não vazio entre "label", "name" e "title".'
     hide_if_no_title: 'Ocultar características com título vazio'
     property_map: 'Filtro e tradução de campos'
     property_map_help: 'Se não estiver vazio, apenas as propriedades especificadas serão exibidas. Especificar como array YAML, a chave é o nome do campo, o valor opcional é a tradução. Exemplo:<br><code>- class<br>- name<br>- layer: Nome da camada</code>'
