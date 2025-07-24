@@ -21,7 +21,7 @@ const headless = true; // change to false for debugging
 /** @type {PrintConfig} */
 const printConfig = JSON.parse(process.env.MB_VT_PRINT_CONFIG || '{}');
 const timeout = (printConfig.timeout || 120) * 1000;
-const scale = printConfig.dpi / 100 * printConfig.scaleCorrection; // Convert DPI to scale factor, having 100 DPI as the base scale
+const scale = printConfig.dpi / 96 * printConfig.scaleCorrection; // Convert DPI to scale factor, having 96 DPI as the base scale
 
 const html = `
 <!DOCTYPE html>
