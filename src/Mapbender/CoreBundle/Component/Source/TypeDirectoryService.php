@@ -90,11 +90,11 @@ class TypeDirectoryService
      *
      * @return string[]
      */
-    public function getScriptAssets(Application $application): array
+    public function getScriptAssets(Application $application, string $type): array
     {
         $refs = array();
         foreach ($this->sources as $source) {
-            $typeRefs = $source->getConfigGenerator()->getScriptAssets($application);
+            $typeRefs = $source->getConfigGenerator()->getAssets($application, $type);
             if ($typeRefs) {
                 $refs = array_merge($refs, $typeRefs);
             }

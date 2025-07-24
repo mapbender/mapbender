@@ -5,21 +5,26 @@ namespace Mapbender\VectorTilesBundle\Component;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 
 class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
 {
 
-    public function getScriptAssets(Application $application): array
+    public function getAssets(Application $application, string $type): array
     {
-        return [
-            '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-            '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js',
-            '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.source.js',
-            '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.sourcelayer.js',
-        ];
+        return match ($type) {
+            "js" => [
+                '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js',
+                '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.source.js',
+                '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.sourcelayer.js',
+            ],
+            "css" => [
+                '@MapbenderVectorTilesBundle/Resources/public/vectortiles-featureinfo.scss',
+            ],
+            default => [],
+        };
     }
 
     public function getConfiguration(SourceInstance $sourceInstance): array

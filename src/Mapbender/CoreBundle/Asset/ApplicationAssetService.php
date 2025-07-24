@@ -274,11 +274,7 @@ class ApplicationAssetService
      */
     protected function getLayerAssetReferences(Application $application, string $type): array
     {
-        return match ($type) {
-            'js' => $this->sourceTypeDirectory->getScriptAssets($application),
-            'trans', 'css' => array(),
-            default => throw new \InvalidArgumentException("Unsupported type " . print_r($type, true)),
-        };
+        return $this->sourceTypeDirectory->getScriptAssets($application, $type);
     }
 
     /**

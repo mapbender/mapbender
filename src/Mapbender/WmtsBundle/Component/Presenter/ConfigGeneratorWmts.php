@@ -77,12 +77,15 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
         return null;
     }
 
-    public function getScriptAssets(Application $application): array
+    public function getAssets(Application $application, string $type): array
     {
-        return array(
+        if ($type !== 'js') {
+            return [];
+        }
+        return [
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
             '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
             '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.wmts.js',
-        );
+        ];
     }
 }

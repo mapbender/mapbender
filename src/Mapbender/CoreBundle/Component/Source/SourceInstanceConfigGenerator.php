@@ -34,12 +34,12 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
     }
 
     /**
-     * Returns references to JavaScript assets required for source
-     * instances to work client-side.
+     * Returns references to JavaScript (type="js"), style (type="css") or translation (type="trans")
+     * assets required for source instances to work client-side.
      *
      * @return string[]
      */
-    abstract public function getScriptAssets(Application $application): array;
+    abstract public function getAssets(Application $application, string $type): array;
 
     /**
      * Non-public legend url for tunneled instance
