@@ -114,6 +114,105 @@
             }
             this.trackLabelInput_(this.$labelInput_);
             this.trackRadiusInput_($('input[name="radius"]', this.element));
+            this._setupColorpickerAccessibility();
+        },
+        _setupColorpickerAccessibility: function() {
+            var self = this;
+            var $button = $('.-fn-color-customize', this.element);
+            var colorpicker = $button.data('colorpicker');
+
+            $button.on('keydown', function(e) {
+                if (e.keyCode === 13) {
+                    if (colorpicker.picker.is(':visible')) {
+                        colorpicker.hide();
+                    } else {
+                        colorpicker.show();
+                    }
+                    e.preventDefault();
+                }
+            });
+
+            $button.on('showPicker', function() {
+                var $picker = colorpicker.picker;
+                $picker.attr('tabindex', -1);
+
+                var $saturation = $picker.find('.colorpicker-saturation');
+                var $hue = $picker.find('.colorpicker-hue');
+                $saturation.attr('tabindex', 0);
+                $hue.attr('tabindex', 0);
+
+                setTimeout(function() {
+                    $saturation.focus();
+                }, 0);
+
+                $picker.on('keydown', function(e) {
+                    if (e.keyCode === 27) {
+                        colorpicker.hide();
+                        $button.focus();
+                        e.stopPropagation();
+                    }
+                });
+
+                $saturation.on('keydown', function(e) {
+                    if (e.keyCode === 9 && e.shiftKey) {
+                        colorpicker.hide();
+                        $button.focus();
+                        e.preventDefault();
+                        return;
+                    }
+                    if (e.keyCode >= 37 && e.keyCode <= 40) {
+                        e.preventDefault();
+                        var step = 5;
+                        var currentPos = colorpicker.picker.find('.colorpicker-saturation > i').position();
+
+                        switch (e.keyCode) {
+                            case 37:
+                                currentPos.left -= step;
+                                break;
+                            case 39:
+                                currentPos.left += step;
+                                break;
+                            case 40:
+                                currentPos.top += step;
+                                break;
+                            case 38:
+                                currentPos.top -= step;
+                                break;
+                        }
+                        // Simulate mouse event to update color
+                        var satRect = $saturation[0].getBoundingClientRect();
+                        var mousedownEvent = $.Event('mousedown', {
+                            pageX: satRect.left + currentPos.left,
+                            pageY: satRect.top + currentPos.top
+                        });
+                        $saturation.trigger(mousedownEvent);
+                        $saturation.trigger($.Event('mouseup'));
+                    }
+                });
+                 $hue.on('keydown', function(e) {
+            
+                    if (e.keyCode === 38 || e.keyCode === 40) {
+                        e.preventDefault();
+                        var step = 2;
+                        var currentPos = colorpicker.picker.find('.colorpicker-hue > i').position();
+                        switch (e.keyCode) {
+                            case 40:
+                                currentPos.top += step;
+                                break;
+                            case 38:
+                                currentPos.top -= step;
+                                break;
+                        }
+                        // Simulate mouse event to update color
+                        var hueRect = $hue[0].getBoundingClientRect();
+                        var mousedownEvent = $.Event('mousedown', {
+                            pageY: hueRect.top + currentPos.top
+                        });
+                        $hue.trigger(mousedownEvent);
+                        $hue.trigger($.Event('mouseup'));
+                    }
+                });
+            });
         },
         setupMapEventListeners: function() {
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
