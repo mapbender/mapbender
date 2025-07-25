@@ -4,12 +4,16 @@
         {{ 'mb.print.imageexport.chooseformat'| trans }}
     </h6>
     <div class="form-check mb-3">
-        <input id="png" class="form-check-input" type="radio" name="imageformat" value="png" checked />
-        <label class="form-check-label" for="png">PNG</label>
+        <label>
+            <input class="form-check-input" type="radio" name="imageformat" value="png" checked />
+            <i class="form-check-label"></i>PNG
+        </label>
     </div>
     <div class="form-check mb-3">
-        <input id="jpg" class="form-check-input" type="radio" name="imageformat" value="jpg" checked />
-        <label class="form-check-label" for="jpg">JPG</label>
+        <label>
+            <input class="form-check-input" type="radio" name="imageformat" value="jpg" checked />
+            <i class="form-check-label"></i>JPG
+        </label>
     </div>
     {% endblock form_fields %}
     <div class="hidden -fn-hidden-fields"></div>
