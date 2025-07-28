@@ -425,12 +425,15 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return $layerConfig;
     }
 
-    public function getScriptAssets(Application $application): array
+    public function getAssets(Application $application, string $type): array
     {
-        return array(
+        if ($type !== 'js') {
+            return [];
+        }
+        return [
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
             '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js',
-        );
+        ];
     }
 
     protected function injectBasicAuthData(?string $sourceUrl, ?SourceInstance $sourceInstance): string

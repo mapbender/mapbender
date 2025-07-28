@@ -245,6 +245,7 @@ mb:
       const:
         outofscale: 'Слой вне масштаба'
         outofbounds: 'Слой за пределами поля'
+        unsupportedprojection: 'Текущая проекция не поддерживается этим слоем'
         parentinvisible: 'Родительский слой невидим'
       tooltip:
         sublayers_openclose: 'Подслои открыть/закрыть'

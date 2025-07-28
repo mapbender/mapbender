@@ -247,6 +247,7 @@ mb:
       const:
         outofscale: 'Ebene außerhalb des Maßstabs'
         outofbounds: 'Ebene außerhalb der BoundingBox'
+        unsupportedprojection: 'Ebene unterstützt aktuelle Projektion nicht'
         parentinvisible: 'Eltern Ebene nicht sichtbar'
       tooltip:
         sublayers_openclose: öffnen/schließen

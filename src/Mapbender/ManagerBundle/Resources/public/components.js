@@ -495,4 +495,10 @@ $(function() {
             }
         })
     });
+
+    $(document).on('keydown', '.clickable', function (event) {
+        if (event.key === 'Enter') {
+            $(this).click();
+        }
+    });
 });

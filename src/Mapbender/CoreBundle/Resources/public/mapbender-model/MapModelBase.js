@@ -339,25 +339,6 @@ window.Mapbender.MapModelBase = (function() {
             var x = this.getMaxExtent(srsName);
             return [x.left, x.bottom, x.right, x.top];
         },
-        getPointFeatureInfoUrl: function(source, x, y, maxCount) {
-            var layerNames = source.getFeatureInfoLayers().map(function(layer) {
-                return layer.options.name;
-            });
-            var engine = Mapbender.mapEngine;
-            var olLayer = source.getNativeLayer(0);
-            if (!(layerNames.length && olLayer && engine.getLayerVisibility(olLayer))) {
-                return false;
-            }
-            var params = $.extend({}, source.customParams || {}, {
-                QUERY_LAYERS: layerNames.join(','),
-                STYLES: (Array(layerNames.length)).join(','),
-                INFO_FORMAT: source.options.info_format || 'text/html',
-                EXCEPTIONS: source.options.exception_format,
-                FEATURE_COUNT: maxCount || 100
-            });
-            params.LAYERS = params.QUERY_LAYERS;
-            return engine.getPointFeatureInfoUrl(this.olMap, source, x, y, params);
-        },
         /**
          *
          * @param scales
@@ -734,7 +715,7 @@ window.Mapbender.MapModelBase = (function() {
             }
             var self = this;
             self.sourceTree.map(function(source) {
-                self._checkSource(source, false);
+                self._checkSource(source, true);
             });
         },
         /**

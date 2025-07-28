@@ -48,10 +48,16 @@ createNativeLayers(srsName, mapOptions) {
 
 Also, you can override the following methods:
 
+- `featureInfoEnabled()`: Indicates whether this source supports feature info requests. Default: false. Note that for
+   sources that support a `GetFeatureInfo` request, there is an intermediate abstract class `GetFeatureInfoSource` that
+   handles generating the url and downloading the result
+- `loadFeatureInfo(mapModel, x, y, options): [?string, Promise<string>]`: Called when a feature info request is triggered for this source.
+   The `mapModel` is the current map model, `x` and `y` are the pixel coordinates of the click event, and `options` contains
+   the maxCount or the iframe injection script for feature info highlighting. You need to return an array with the (optional)
+   url for the "open in new window" feature and a Promise that resolves with the HTML content to be displayed in the popup or sidepane.
 - `getSettings()`, `applySettings(settings)`, `applySettingsDiff(settings)`, `diffSettings(from, to)`: 
   modifies runtime settings you might need for your source. By default, this is only opacity.
 - `getConfiguredSettings()`: returns the initial settings set during initialisation
-- `getFeatureInfoLayers()`: returns all layers that support feature info
 - `checkRecreateOnSrsSwitch(oldProj, newProj)`: indicates whether this source should be recreated when a srs change occurs
 - `getPrintConfigs(bounds, scale, srsName)`: Returns information that is passed to the printing service when printing or exporting a map
 
@@ -66,10 +72,11 @@ The following methods are also available to be used which you probably don't nee
 
 For a SourceLayer no methods are required to be overridden. The following overrides might be useful:
 
-- `hasBounds()`: is this layer restricted to spatial bbox?
-- `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS
-- `isInScale(scale)`: Should the layer be displayed at this scale level?
-- `intersectsExtent(extent, srsName)`: Does the layer have features in this extent?
+- `hasBounds()`: is this layer restricted to spatial bbox? (default: true if options.bbox exists, false otherwise)
+- `getBounds(projCode, inheritFromParent)`: if `hasBounds()` returns true, calculate and return the bbox in the given SRS (default: options.bbox transformed to the given projection)
+- `isInScale(scale)`: Should the layer be displayed at this scale level? (default: calculation based on options.minScale and options.maxScale, true if the options are not set)
+- `supportsProjection(srsName)`: Can the layer be displayed in the given projection? (default true)
+- `intersectsExtent(extent, srsName)`: Does the layer have features in this extent? (default true)
 - `getSupportedMenuOptions()`: Returns a list of menu options supported by this layer. See [below](#custom-layer-tree-menu-item) for details
 - `getLegend()`: Returns the legend for this layer. The legend can be either an external url to an image (e.g. for WMS services) 
    or a style definition that is rendered on a canvas. See [below](#legend-entries-for-custom-sources) for details
@@ -90,6 +97,8 @@ In order for the source factory to find your new source and layer classes, you n
 Mapbender.SourceLayer.typeMap['my-identifier'] = MySourceLayer;
 Mapbender.Source.typeMap['my-identifier'] = MySource;
 ```
+
+If your data source is configurable in the backoffice, make sure to use the same identifier as returned by `DataSource::getName()`.
 
 ## Instantiating a new source
 If you want your custom source to be configurable in the backoffice, you can skip this section, since the source definition

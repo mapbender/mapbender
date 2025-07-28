@@ -1,0 +1,24 @@
+mb.vectortiles.admin:
+  json_url: 'URL vers la définition de style JSON'
+  referer: 'Référent HTTP'
+  referer.help: 'Certains serveurs Vector Tiles nécessitent un référent HTTP fixe pour le contrôle d''accès.'
+  min_scale: 'Échelle minimale (dénominateur)'
+  max_scale: 'Échelle maximale (dénominateur)'
+  selected: 'Activer au démarrage de l''application'
+  featureinfo:
+    heading: 'Informations sur les entités'
+    active: 'Informations actives au démarrage de l''application'
+    allowtoggle: 'Informations basculables par l''utilisateur'
+    advanced: 'Paramètres avancés'
+    title: Titre
+    title_help: 'Propriété de l''entité qui est affichée comme titre au-dessus du tableau. <code>${property}</code> sera remplacé par la valeur de la propriété. Si aucune valeur n''est indiquée, la première valeur non vide parmi « label », « name » et « title » sera utilisée.'
+    hide_if_no_title: 'Masquer les entités avec un titre vide'
+    property_map: 'Filtre et traduction des champs'
+    property_map_help: 'Si non vide, seules les propriétés spécifiées seront affichées. Spécifier comme tableau YAML, la clé est le nom du champ, la valeur optionnelle est la traduction. Exemple :<br><code>- class<br>- name<br>- layer: Nom de la couche</code>'
+  error:
+    no_json: 'L''URL spécifiée n''a pas pu être analysée comme JSON.'
+    no_tile_json: 'L''URL spécifiée dans source.openmaptiles n''a pas pu être analysée comme JSON.'
+mb:
+  vectortiles:
+    admin:
+      layer_hint: 'Les couches ne sont pas extraites séparément pour les tuiles vectorielles.'

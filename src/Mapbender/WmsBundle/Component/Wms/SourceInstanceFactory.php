@@ -4,13 +4,17 @@
 namespace Mapbender\WmsBundle\Component\Wms;
 
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
+use Mapbender\ManagerBundle\Component\Exception\ImportException;
+use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
+use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
+use Mapbender\ManagerBundle\Component\Exchange\ImportState;
+use Mapbender\ManagerBundle\Component\ImportHandler;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -25,7 +29,8 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected ?string                $defaultLayerOrder)
+        protected ?string                $defaultLayerOrder,
+    )
     {
     }
 
@@ -89,84 +94,51 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
         return $instance;
     }
 
-    public function matchInstanceToPersistedSource(SourceInstance $instance, array $extraSources): ?Source
+    public function matchInstanceToPersistedSource(ImportState $importState, array $data, EntityPool $entityPool): bool
     {
-        /** @var WmsInstance $instance */
-        $repository = $this->entityManager->getRepository(WmsSource::class);
-        $yamlSource = $instance->getSource();
-        $matchValues = array(
-            'originUrl' => $yamlSource->getOriginUrl(),
-            'version' => $yamlSource->getVersion(),
-            'type' => $yamlSource->getType(),
+        $identFields = array(
+            'title',
+            'type',
+            'name',
+            'onlineResource',
         );
-        /** @var WmsSource[] $candidates */
-        $candidates = $repository->findBy($matchValues);
-        $extraSourcesCollection = new ArrayCollection($extraSources);
-        $criteria = Criteria::create();
-        foreach ($matchValues as $matchProperty => $matchValue) {
-            $criteria->andWhere($criteria->expr()->eq($matchProperty, $matchValue));
-        }
-        $candidates = array_merge($candidates, $extraSourcesCollection->matching($criteria)->getValues());
-        $requiredLayerIdents = array();
-        foreach ($instance->getLayers() as $il) {
-            if ($layerIdent = $this->getReusableLayerIdent($il->getSourceItem())) {
-                $requiredLayerIdents[$layerIdent] = $il;
+        $criteria = ImportHandler::extractArrayFields($data, $identFields);
+        foreach ($this->entityManager->getRepository(WmsSource::class)->findBy($criteria) as $source) {
+            if ($this->compareSource($importState, $entityPool, $source, $data)) {
+                $classMeta = $this->entityManager->getClassMetadata(WmsSource::class);
+                $entityPool->add($source, ImportHandler::extractArrayFields($data, $classMeta->getIdentifier()));
+                return true;
             }
         }
-        if (!$requiredLayerIdents) {
-            throw new \LogicException("Can't match WMS source instance with zero named layers");
-        }
-        foreach ($candidates as $index => $dbSourceCandidate) {
-            $candidateLayerIdents = array();
-            foreach ($dbSourceCandidate->getLayers() as $candidateLayer) {
-                if ($layerIdent = $this->getReusableLayerIdent($candidateLayer)) {
-                    $candidateLayerIdents[$layerIdent] = $candidateLayer;
-                }
-            }
-            if (array_diff(array_keys($requiredLayerIdents), array_keys($candidateLayerIdents))) {
-                unset($candidates[$index]);
-            } else {
-                // Filter props and layer structure match
-                // Rewrite SourceItem references on instance layers
-                foreach ($requiredLayerIdents as $layerIdent => $targetInstanceLayer) {
-                    /** @var WmsInstanceLayer $targetInstanceLayer */
-                    /** @var WmsLayerSource $sourceItem */
-                    $sourceItem = $candidateLayerIdents[$layerIdent];
-                    $targetInstanceLayer->setSourceItem($sourceItem);
-                    $ilParent = $targetInstanceLayer->getParent();
-                    $siParent = $sourceItem->getParent();
-                    do {
-                        if ($ilParent && !$siParent) {
-                            throw new \LogicException("Parent layer depth mismatch for target layer {$targetInstanceLayer->getTitle()}");
-                        }
-                        $ilParent->setSourceItem($siParent);
-                        $ilParent = $ilParent->getParent();
-                        $siParent = $siParent->getParent();
-                    } while ($ilParent);
-                }
-                $instance->setSource($dbSourceCandidate);
-                return $dbSourceCandidate;
-            }
-        }
-        return null;
+        return false;
     }
 
-    /**
-     * Bake layer name and nesting depth for named layers
-     */
-    protected static function getReusableLayerIdent(WmsLayerSource $layer): ?string
+    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data)
     {
-        if ($name = $layer->getName()) {
-            $depth = 0;
-            $parent = $layer->getParent();
-            while ($parent) {
-                ++$depth;
-                $parent = $parent->getParent();
+        foreach ($data['layers'] as $layerData) {
+            $layerClass = ImportHandler::extractClassName($layerData);
+
+            if (!$layerClass) {
+                throw new ImportException("Missing source item class definition");
             }
-            return "{$name}:{$depth}";
-        } else {
-            return null;
+            if (is_a($layerClass, 'Mapbender\WmsBundle\Entity\WmsLayerSource', true)) {
+                $field = 'name';
+            } else {
+                throw new ImportException("Unsupported layer type {$layerClass}");
+            }
+            $layerMeta = EntityHelper::getInstance($this->entityManager, $layerClass)->getClassMeta();
+            $layerIdentData = ImportHandler::extractArrayFields($layerData, $layerMeta->getIdentifier());
+            $layerData = $state->getEntityData($layerClass, $layerIdentData) ?: $layerData;
+
+            $criteria = Criteria::create()->where(Criteria::expr()->eq($field, $layerData[$field]));
+            $match = $source->getLayers()->matching($criteria)->first();
+            if ($match) {
+                $entityPool->add($match, $layerIdentData);
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
     protected function configureInstanceLayer(WmsInstanceLayer $instanceLayer, array $data)

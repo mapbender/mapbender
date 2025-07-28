@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Layer al di fuori della scala'
         outofbounds: 'Layer al di fuori del riquadro'
+        unsupportedprojection: 'La proiezione corrente non è supportata da questo layer'
         parentinvisible: 'Parent layer non visibile'
       tooltip:
         sublayers_openclose: 'Sublayers aperto/chiuso'

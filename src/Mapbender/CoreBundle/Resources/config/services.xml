@@ -225,6 +225,7 @@
             <argument type="service" id="mapbender.application_exporter.service" />
             <argument type="service" id="mapbender.uploads_manager.service" />
             <argument type="service" id="fom.security.permission_manager" />
+            <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
         <service id="mapbender.application_exporter.service" class="%mapbender.application_exporter.service.class%">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />

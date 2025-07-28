@@ -152,7 +152,7 @@ class RepositoryController extends ApplicationControllerBase
         return $this->render($dataSource->getMetadataBackendTemplate(), array(
             'source' => $source,
             'applications' => $related,
-            'title' => $source->getType() . ' ' . $source->getTitle(),
+            'title' => $dataSource->getLabel(true) . ' ' . $source->getTitle(),
             'grants' => $grants,
         ));
     }

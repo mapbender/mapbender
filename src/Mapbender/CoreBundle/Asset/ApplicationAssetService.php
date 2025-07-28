@@ -188,14 +188,17 @@ class ApplicationAssetService
                     $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerGroup.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerSet.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/SourceLayer.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/Source.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/GetFeatureInfoSource.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngineOl4.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender-model/source.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/NotMapQueryMap.js',
                     "@MapbenderCoreBundle/Resources/public/mapbender.model.js",
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPool.js',
@@ -271,11 +274,7 @@ class ApplicationAssetService
      */
     protected function getLayerAssetReferences(Application $application, string $type): array
     {
-        return match ($type) {
-            'js' => $this->sourceTypeDirectory->getScriptAssets($application),
-            'trans', 'css' => array(),
-            default => throw new \InvalidArgumentException("Unsupported type " . print_r($type, true)),
-        };
+        return $this->sourceTypeDirectory->getScriptAssets($application, $type);
     }
 
     /**

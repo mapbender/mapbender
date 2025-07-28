@@ -18,128 +18,7 @@
  * @property {Array<Object>} [changeStyle]
  */
 
-window.Mapbender = Mapbender || {};
-
 (function () {
-    Mapbender.LayerGroup = class LayerGroup {
-        constructor(title, parent) {
-            /**
-             * @type string
-             * @private
-             */
-            this.title_ = title;
-            /**
-             * @type {null|Mapbender.LayerGroup}
-             */
-            this.parent = parent || null;
-            /**
-             *
-             * @type {Mapbender.LayerGroup[]}
-             */
-            this.children = [];
-            /**
-             * @type {Mapbender.LayerGroup[]}
-             */
-            this.siblings = [this];
-        }
-
-        getTitle() {
-            return this.title_;
-        }
-
-        /**
-         * returnes whether this layergroup and all its parents are selected
-         * @see getSelected
-         * @returns {Boolean}
-         */
-        getActive() {
-            let active = this.getSelected();
-            let parent = this.parent;
-            while (parent && active) {
-                active = active && parent.getSelected();
-                parent = parent.parent;
-            }
-            return active;
-        }
-
-        /**
-         * returns whether this layer is currently selected.
-         * @see getActive
-         * @return Boolean
-         * @abstract
-         */
-        getSelected() {
-            throw new Error("Invoked abstract LayerGroup.getSelected");
-        }
-
-        getParent() {
-            return this.parent;
-        }
-
-        /**
-         * removes the given child layer from this LayerGroup
-         * @param {Mapbender.LayerGroup} child
-         */
-        removeChild(child) {
-            [this.children, this.siblings].forEach(function (list) {
-                const index = list.indexOf(child);
-                if (-1 !== index) {
-                    list.splice(index, 1);
-                }
-            });
-        }
-    }
-
-    /**
-     * The most basic LayerGroup definition that is shown in the layer tree but does not display anything itself
-     */
-    Mapbender.Layerset = class Layerset extends Mapbender.LayerGroup {
-        constructor(title, id, selected) {
-            super(title, null);
-            /**
-             * @type {string|number}
-             */
-            this.id = id;
-            /**
-             * @type Boolean
-             */
-            this.selected = selected;
-        }
-
-        getId() {
-            return this.id;
-        }
-
-        getSelected() {
-            return this.selected;
-        }
-
-        setSelected(state) {
-            this.selected = !!state;
-        }
-
-        getSettings() {
-            return {
-                selected: this.getSelected()
-            };
-        }
-
-        /**
-         * Changes all given layer settings
-         * @see getSettings
-         * @param {{selected?: Boolean}} settings
-         * @returns {boolean} true if at least one attribute has been changed
-         */
-        applySettings(settings) {
-            let dirty = false;
-            if ("selected" in settings) {
-                dirty = settings.selected !== this.selected;
-                this.setSelected(settings.selected);
-            }
-            return dirty;
-        }
-    }
-
     /**
      * A source represents a data source that is displayed on the map. WmsSource, WmtsSource, GeoJsonSource etc. extend
      * from this base class. A source can have one or more SourceLayers.
@@ -175,6 +54,8 @@ window.Mapbender = Mapbender || {};
              */
             this.isDynamicSource = false;
             if ("isDynamicSource" in definition) this.isDynamicSource = definition.isDynamicSource;
+
+            this.isBaseSource = definition.isBaseSource;
 
             /**
              * a unique identifier for the type of source, e.g. 'wms' or 'geojson'
@@ -266,14 +147,6 @@ window.Mapbender = Mapbender || {};
 
         getConfiguredSettings() {
             return Object.assign({}, this.configuredSettings_);
-        }
-
-        /**
-         * Returns all layers that support feature info
-         * @return {Array<Mapbender.SourceLayer>}
-         */
-        getFeatureInfoLayers() {
-            return [];
         }
 
         /**
@@ -501,224 +374,27 @@ window.Mapbender = Mapbender || {};
                 options: this.options,
             };
         }
-    }
 
-
-    /**
-     * @abstract
-     */
-    Mapbender.SourceLayer = class SourceLayer extends Mapbender.LayerGroup {
-        constructor(definition, source, parent) {
-            super(((definition || {}).options || {}).title || '', parent)
-            this.options = definition.options || {};
-            this.options.treeOptions = this.options.treeOptions || {
-                selected: true,
-                info: false,
-                toggle: true,
-                allow: {selected: true, info: false, toggle: true,}
-            };
-
-            this.state = definition.state || {
-                info: null,
-                outOfBounds: false,
-                outOfScale: false,
-                visibility: true,
-            };
-
-            this.source = source;
-            var childDefs = definition.children || [];
-            var i, child, childDef;
-            for (i = 0; i < childDefs.length; ++i) {
-                childDef = childDefs[i];
-                child = Mapbender.SourceLayer.factory(childDef, source, this);
-                child.siblings = this.children;
-                this.children.push(child);
-            }
-            this.siblings = [this];
-        }
-
-        static factory(definition, source, parent) {
-            let typeClass = SourceLayer.typeMap[source.type];
-            if (!typeClass) {
-                typeClass = Mapbender.SourceLayer;
-            }
-            return new typeClass(definition, source, parent);
-        }
-
-        /**
-         * is this layer selected in the layertree
-         * Caution: This does not mean it's visible, parent layers might be unselected
-         * @returns {boolean}
-         */
-        getSelected() {
-            return this.options.treeOptions.selected;
-        }
-
-        setSelected(state) {
-            this.options.treeOptions.selected = !!state;
-        }
-
-        getId() {
-            return this.options.id;
-        }
-
-        getName() {
-            return this.options.name;
-        }
-
-        /**
-         * Should the layer be displayed at this scale level?
-         * @param {number} scale
-         * @returns {boolean}
-         */
-        isInScale(scale) {
-            return true;
-        }
-
-        /**
-         * Does the layer has contents in this extent?
-         * @param {number[]} extent
-         * @param {string} srsName
-         * @returns {boolean}
-         */
-        intersectsExtent(extent, srsName) {
-            return true;
-        }
-
-        /**
-         * need custom toJSON for getMapState call
-         */
-        toJSON() {
-            // Skip the circular-ref inducing properties 'siblings', 'parent' and 'source'
-            const r = {
-                options: this.options,
-                state: this.state
-            };
-            if (this.children && this.children.length) {
-                r.children = this.children;
-            }
-            return r;
-        }
-
-        /**
-         * removes this layer from the source tree
-         * @returns {string|null} the if of the removed layer or null of the layer had no parent
-         */
-        remove() {
-            const index = this.siblings.indexOf(this);
-            if (index === -1) {
-                return null;
-            }
-
-            this.siblings.splice(index, 1);
-            if (!this.siblings.length && this.parent && this.parent.remove) {
-                return this.parent.remove();
-            }
-
-            return this.options.id;
-        }
-
-        /**
-         * @param {Mapbender.SourceLayer} child
-         */
-        addChild(child) {
-            this.children.push(child);
-            this.children.forEach((child) => child.siblings = this.children);
-            Mapbender.Model.updateSource(this.source);
-        }
-
-        /**
-         * @param {Mapbender.SourceLayer[]} children
-         */
-        addChildren(children) {
-            for(const child of children) {
-                this.children.push(child);
-                this.children.forEach((child) => child.siblings = this.children);
-            }
-            Mapbender.Model.updateSource(this.source);
-        }
-
-        /**
-         * @param {string} projCode
-         * @param {boolean} inheritFromParent
-         * @returns {number[]|boolean} false if bounds could not be calculated
-         */
-        getBounds(projCode, inheritFromParent) {
-            var bboxMap = this.options.bbox;
-            var srsOrder = [projCode].concat(Object.keys(bboxMap));
-            for (var i = 0; i < srsOrder.length; ++i) {
-                var srsName = srsOrder[i];
-                var bboxArray = bboxMap[srsName];
-                if (bboxArray) {
-                    var bounds = this.source._bboxArrayToBounds(bboxArray, srsName);
-                    return Mapbender.mapEngine.transformBounds(bounds, srsName, projCode);
-                }
-            }
-            var inheritParent_ = inheritFromParent || (typeof inheritFromParent === 'undefined');
-            if (inheritParent_ && this.parent) {
-                return this.parent.getBounds(projCode, true);
-            }
-            return null;
-        }
-
-        /**
-         * Returns the legend for this layer. The legend can be either an external
-         * url (e.g. for WMS services) or a style definition that is rendered on a canvas
-         *
-         * @param {boolean} forPrint true if the legend is exported for print (false if its for display)
-         * @return {null|{type: 'url', url: string, topLevel: boolean}|LegendDefinition}
-         */
-        getLegend(forPrint) {
-            return null;
-        }
-
-        /**
-         * is this layer restricted to spatial bbox?
-         * @returns {boolean}
-         */
-        hasBounds() {
-            var layer = this;
-            do {
-                if (Object.keys(layer.options.bbox).length) {
-                    return true;
-                }
-                layer = layer.parent;
-            } while (layer);
+        featureInfoEnabled() {
             return false;
         }
 
         /**
-         * Returns a list of menu options supported by this layer.
-         * Core mapbender menu options:
-         * - layerremove: Deletes this layer
-         * - metadata: Opens metadata in a new window. options.medataUrl should be defined
-         * - opacity: Opacity slider between 0 and 1. See {Mapbender.Source.setOpacity}
-         * - dimension: selection slider for dimensions like e.g. time
-         * - zoomtolayer: Changes the map's view to fit the layer
-         * @returns {string[]}
+         * Loads the feature info for the given coordinates.
+         * Per default, a rejected promise is returned (causing the source to not be displayed in the featureInfo popup)
+         * @param mapModel Mapbender.Model
+         * @param x {number}
+         * @param y {number}
+         * @param options {maxCount: number, onlyValid: boolean, injectionScript: string} the featureInfo element's options
+         * @param elementId {string|number}
+         * @returns {[null|string, Promise<null|string|HTMLElement|jQuery>]} An array with two elements:
+         * The (optional) url for the "open in new window" feature and a promise that loads the featureinfo data in the background
+         * as a string, jquery object or HTMLElement.
          */
-        getSupportedMenuOptions() {
-            const supported = ['layerremove'];
-            if (this.options.metadataUrl) {
-                supported.push('metadata');
-            }
-            // opacity + dimension are only available on root layer
-            if (!this.getParent()) {
-                supported.push('opacity');
-                if ((this.source.options.dimensions || []).length) {
-                    supported.push('dimension');
-                }
-            }
-            if (this.hasBounds()) {
-                supported.push('zoomtolayer');
-            }
-            if (this.options.availableStyles && this.options.availableStyles.length > 1 && !this.children.length) {
-                supported.push('select_style');
-            }
-            return supported;
+        loadFeatureInfo(mapModel, x, y, options, elementId) {
+            return [null, Promise.reject()];
         }
     }
 
     Mapbender.Source.typeMap = {};
-    Mapbender.SourceLayer.typeMap = {};
 }());

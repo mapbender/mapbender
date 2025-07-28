@@ -148,6 +148,7 @@ mb:
       const:
         outofscale: Ölçeksiz bakış
         outofbounds: Sınırın dışından bakış
+        unsupportedprojection: 'Geçerli projeksiyon bu katman tarafından desteklenmiyor'
         parentinvisible: Üst katmanı gizle
       tooltip:
         sublayers_openclose: Alt katmanları aç/kapa

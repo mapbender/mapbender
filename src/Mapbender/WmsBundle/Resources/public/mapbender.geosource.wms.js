@@ -45,18 +45,6 @@ window.Mapbender = Mapbender || {};
             return selectedLayers;
         }
 
-        isInScale(scale) {
-            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
-            //       equivalently
-            var min = this.options.minScale;
-            var max = this.options.maxScale;
-            if (min && min > scale) {
-                return false;
-            } else {
-                return !(max && max < scale);
-            }
-        }
-
         intersectsExtent(extent, srsName) {
             var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
@@ -74,7 +62,7 @@ window.Mapbender = Mapbender || {};
     }
 
     // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
-    Mapbender.WmsSource = class WmsSource extends Mapbender.Source {
+    Mapbender.WmsSource = class WmsSource extends Mapbender.GetFeatureInfoSource {
         constructor(definition) {
             super(definition);
             var customParams = {};

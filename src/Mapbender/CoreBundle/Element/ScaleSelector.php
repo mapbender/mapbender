@@ -76,6 +76,13 @@ class ScaleSelector extends AbstractElementService
         return 'mapbender.mbScaleSelector';
     }
 
+    public function getClientConfiguration(Element $element)
+    {
+        $config = parent::getClientConfiguration($element);
+        $config['options'] = $this->getScales(ApplicationUtil::getMapElement($element->getApplication()));
+        return $config;
+    }
+
     public function getView(Element $element)
     {
         $config = $element->getConfiguration() ?: array();
@@ -85,17 +92,9 @@ class ScaleSelector extends AbstractElementService
         $view->attributes['class'] = 'mb-element-scaleselector';
         $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
         $map = ApplicationUtil::getMapElement($element->getApplication());
-        $scales = array();
-        if ($map) {
-            $mapConfig = $map->getConfiguration();
-            if (!empty($mapConfig['scales'])) {
-                $scales = $mapConfig['scales'];
-                asort($scales, SORT_NUMERIC | SORT_REGULAR);
-            }
-        }
         $view->variables = array(
             'show_label' => ArrayUtil::getDefault($config, 'label', $defaults['label']),
-            'scales' => $scales,
+            'scales' => $this->getScales($map),
             'title' => $title,
         );
         return $view;
@@ -107,6 +106,19 @@ class ScaleSelector extends AbstractElementService
     public static function getFormTemplate()
     {
         return '@MapbenderManager/Element/scaleselector.html.twig';
+    }
+
+    private function getScales(?Element $map): array
+    {
+        $scales = array();
+        if ($map) {
+            $mapConfig = $map->getConfiguration();
+            if (!empty($mapConfig['scales'])) {
+                $scales = $mapConfig['scales'];
+                asort($scales, SORT_NUMERIC | SORT_REGULAR);
+            }
+        }
+        return array_values($scales);
     }
 
 }

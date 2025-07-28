@@ -17,7 +17,7 @@ class YAMLConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer(new YAMLDataTransformer());
+        $builder->addViewTransformer(new YAMLDataTransformer(jsonEncode: $options['json_encode'] ?? false));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'preSubmit'));
     }
 
@@ -44,6 +44,7 @@ class YAMLConfigurationType extends AbstractType
             'attr' => array(
                 'class' => 'code-yaml',
             ),
+            'json_encode' => false,
         ));
     }
 }

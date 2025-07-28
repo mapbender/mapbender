@@ -1,2 +1,24 @@
 mb.vectortiles.admin:
-  json_url: "Url zur Json-Style-Definition"
+  json_url: 'URL zur JSON-Style-Definition'
+  referer: HTTP-Referer
+  referer.help: 'Manche Vector Tiles-Server benötigen einen fixen HTTP-Referer zur Zugriffskontrolle.'
+  min_scale: 'Minimaler Maßstab (Nenner)'
+  max_scale: 'Maximaler Maßstab (Nenner)'
+  selected: 'Bei Anwendungsstart aktivieren'
+  featureinfo:
+    heading: Feature-Information
+    active: 'Information bei Anwendungsstart aktiv'
+    allowtoggle: 'Information vom Nutzer umschaltbar'
+    advanced: 'Erweiterte Einstellungen'
+    title: Titel
+    title_help: 'Feld/Property des Features, das als Titel über der Tabelle angezeigt werden soll. <code>${property}</code> wird durch den Wert des Feldes ersetzt. Falls nicht angegeben, wird aus "label", "name" und "title" der erste nicht-leere Wert verwendet.'
+    hide_if_no_title: 'Features mit leerem Titel ausblenden'
+    property_map: 'Feld-Auswahl & Übersetzung'
+    property_map_help: 'Falls nicht leer, werden nur die angegebenen Felder/Properties angezeigt. Angabe als YAML-Array. Der Schlüssel ist der Name des Feldes, der optionale Wert die Übersetzung. Bsp:<br><code>- class<br>- name<br>- layer: Layername</code>'
+  error:
+    no_json: 'Die angegebene URL konnte nicht als JSON geparst werden.'
+    no_tile_json: 'Die in source.openmaptiles angegebene URL konnte nicht als JSON geparst werden.'
+mb:
+  vectortiles:
+    admin:
+      layer_hint: 'Layer werden für Vector Tiles nicht separat ausgelesen.'
