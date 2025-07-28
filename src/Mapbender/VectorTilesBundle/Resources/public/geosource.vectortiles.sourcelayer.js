@@ -31,6 +31,31 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
         // Per Tile JSON spec, vector tiles are always in Web Mercator
         return srsName === 'EPSG:3857';
     }
+
+    getLegend(forPrint) {
+        return {
+            topLevel: true,
+            type: 'style',
+            title: this.options.title,
+            layers: this._getLegend(),
+        }
+    }
+
+    async _getLegend() {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return [
+            {
+                title: 'Keks',
+                style: {
+                    fillColor: '#ff0000',
+                    fillOpacity: 0.5,
+                    strokeColor: '#000000',
+                    strokeWidth: 1,
+                    label: 'Keks',
+                }
+            }
+        ]
+    }
 }
 
 

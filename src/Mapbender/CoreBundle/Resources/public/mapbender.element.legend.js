@@ -142,7 +142,7 @@
                 .addClass('subTitle')
                 ;
         },
-        createLegendForLayer: function (layer) {
+        createLegendForLayer: async function (layer) {
             switch (layer.legend.type) {
                 case 'url':
                     return this.createImage(layer);
@@ -155,7 +155,8 @@
             return $('<img/>').attr('src', layer.legend.url);
         },
 
-        createLegendForStyle: function (layer) {
+        createLegendForStyle: async function (layer) {
+            layer.legend.layers = await Promise.resolve(layer.legend.layers);
             return (new LegendEntry(layer.legend)).getContainer();
         },
 
@@ -206,13 +207,10 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-                Promise.resolve(layer.legend).then((value) => {
-                    layer.legend = value;
-                    if (options.showLayerTitle) {
-                        $li.append(widget.createTitle(layer));
-                    }
-                    $li.append(widget.createLegendForLayer(layer));
-                });
+                if (options.showLayerTitle) {
+                    $li.append(widget.createTitle(layer));
+                }
+                widget.createLegendForLayer(layer).then((result) => $li.append(result));
             }
             return $li;
         },

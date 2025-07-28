@@ -91,7 +91,7 @@ class VectorTilesSource extends Mapbender.Source {
         const tbody = document.createElement('tbody');
         table.appendChild(tbody);
 
-        const propertyMap = this._getFeatureInfoPropertyMap();
+        const propertyMap = this._getPropertyMap('featureInfo');
         Object.entries(properties).forEach(([key, value]) => {
             if (propertyMap && !propertyMap[key]) return;
 
@@ -112,11 +112,14 @@ class VectorTilesSource extends Mapbender.Source {
         return geometryDiv;
     }
 
-    _getFeatureInfoPropertyMap() {
-        if (!this.options.featureInfo.propertyMap) return null;
+    /**
+     * @param subtype {"featureInfo"|"legend"}
+     */
+    _getPropertyMap(subtype) {
+        if (!this.options[subtype].propertyMap) return null;
         if (!this.propertyMap) {
             this.propertyMap = {};
-            for (const entry of this.options.featureInfo.propertyMap) {
+            for (const entry of this.options[subtype].propertyMap) {
                 if (typeof entry === 'string') {
                     this.propertyMap[entry] = Mapbender.trans(entry);
                 } else {
