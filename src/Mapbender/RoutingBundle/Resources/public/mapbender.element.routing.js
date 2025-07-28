@@ -94,7 +94,7 @@
             $(document).on('mbmapsrschanged', $.proxy(this._emptyPoints, this));
 
             // add point on click
-            $('#addPoint', this.element).click(() => {
+            $('.addPoint', this.element).click(() => {
                 this._addInputField();
             });
 
@@ -104,17 +104,17 @@
             });
 
             // reset route and input on click
-            $('#resetRoute', this.element).click(() => {
+            $('.resetRoute', this.element).click(() => {
                 this._clearRoute();
             });
 
             // swap points on click
-            $('#swapPoints', this.element).click(() => {
+            $('.swapPoints', this.element).click(() => {
                 this._flipPoints();
             });
 
             // calculate route button click
-            $('#calculateRoute', this.element).click(() => {
+            $('.calculateRoute', this.element).click(() => {
                 this._getRoute();
             });
 
@@ -213,7 +213,7 @@
         },
 
         _addInputField: function() {
-            const htmlIntermediatePoint = $($('#tplIntermediatePoint').html());
+            const htmlIntermediatePoint = $(this.element.find('.tplIntermediatePoint').html());
             const lastInputElement = $('.mb-routing-location-points div:last-child', this.element);
             htmlIntermediatePoint.insertBefore(lastInputElement);
             htmlIntermediatePoint.find('input').focus();
@@ -501,7 +501,7 @@
         },
 
         setSpinnerVisible: function(setVisible){
-            let calculateRouteBtn = $('#calculateRoute i', this.element);
+            let calculateRouteBtn = $('.calculateRoute i', this.element);
             if (setVisible) {
                 calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
             } else {
