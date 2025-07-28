@@ -64,9 +64,7 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
                 this.spriteJson = await responseSprint.json();
             }
         }
-
         const propertyMap = this.source._getPropertyMap("legend");
-        console.log(propertyMap);
 
         const map = this.styleJson.layers
             .map((layer) => {

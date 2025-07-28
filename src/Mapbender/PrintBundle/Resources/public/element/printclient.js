@@ -418,7 +418,7 @@
             for (let i = 0; i < sources.length; ++i) {
                 const source = sources[i];
                 const rootLayer = source.getRootLayer();
-                const sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
+                const sourceName = source.configuration?.title || source.options?.title || (rootLayer && rootLayer.options.title) || '';
                 const leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 const sourceLegendList = [];
                 const legendIds = [];
