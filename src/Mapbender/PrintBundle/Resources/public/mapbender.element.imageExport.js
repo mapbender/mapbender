@@ -92,7 +92,7 @@
             }
             return dataOut;
         },
-        _collectJobData: function() {
+        _collectJobData: async function() {
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
@@ -112,11 +112,11 @@
                 }
             };
         },
-        _onSubmit: function(evt) {
+        _onSubmit: async function(evt) {
             // add job data to hidden form fields
             var jobData;
             try {
-                jobData = this._collectJobData();
+                jobData = await this._collectJobData();
                 if (!jobData.layers.length) {
                     Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
                     return false;

@@ -411,7 +411,7 @@
          * @returns {Array<Object.<string, string>>} legend image urls mapped to layer title
          * @private
          */
-        _collectLegends: function() {
+        _collectLegends: async function() {
             const legends = [];
             const scale = this._getPrintScale();
             const sources = this._getRasterSources();
@@ -430,6 +430,11 @@
 
                             const legend = legendLayer.getLegend(true);
                             if (!legend) continue;
+
+                            if (legend.layers) {
+                                legend.layers = await Promise.resolve(legend.layers);
+                            }
+                            console.log(legend);
 
                             if (legendIds.includes(legendLayer.getId())) break;
                             legendIds.push(legendLayer.getId());
@@ -512,7 +517,7 @@
                 return null;
             }
         },
-        _collectJobData: function() {
+        _collectJobData: async function() {
             var jobData = this._super();
             // Remove upstream rotation value. We have this as a top-level input field. Backend may get confused
             // when we submit both
@@ -534,7 +539,7 @@
             });
             if ($('input[name="printLegend"]', this.$form).prop('checked')) {
                 Object.assign(jobData, {
-                    legends: this._collectLegends()
+                    legends: await this._collectLegends()
                 });
             }
             if (this.digitizerData) {
