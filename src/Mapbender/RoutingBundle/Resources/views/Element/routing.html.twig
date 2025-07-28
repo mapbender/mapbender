@@ -39,17 +39,17 @@
     </div>
 </form>
 <div class="right">
-    <button id="resetRoute" class="btn btn-light" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
+    <button class="btn btn-light resetRoute" type="button" title="{{ 'mb.routing.frontend.dialog.label.clearroute' | trans }}">
         <i class="far fa-trash-can"></i>
     </button>
-    <button id="swapPoints" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
+    <button class="btn btn-primary swapPoints" type="button" title="{{ 'mb.routing.frontend.dialog.label.flippoints' | trans }}">
         <i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i>
     </button>
-    <button id="calculateRoute" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.getroute' | trans }}">
+    <button class="btn btn-primary calculateRoute" type="button" title="{{ 'mb.routing.frontend.dialog.label.getroute' | trans }}">
         <i class="fa-solid fa-flag-checkered"></i>
     </button>
     {% if allowIntermediatePoints %}
-        <button id="addPoint" class="btn btn-primary" type="button" title="{{ 'mb.routing.frontend.dialog.label.addintermediate' | trans }}">
+        <button class="btn btn-primary addPoint" type="button" title="{{ 'mb.routing.frontend.dialog.label.addintermediate' | trans }}">
             <i class="fa-solid fa-plus"></i>
         </button>
     {% endif %}
@@ -65,7 +65,7 @@
     <div class="mb-routing-instructions"></div>
 </div>
 <!-- Templates -->
-<template id="tplIntermediatePoint">
+<template class="tplIntermediatePoint">
     <div class="input-group mb-3 intermediatePoints">
         <span class="input-group-text" title="{{ 'mb.routing.frontend.dialog.label.intermediate' | trans }}">
             <i class="fa-solid fa-location-dot text-primary"></i>
