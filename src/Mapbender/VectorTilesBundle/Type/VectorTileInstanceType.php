@@ -70,10 +70,20 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.hide_if_no_title',
             ])
-            ->add('propertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
+            ->add('featureInfoPropertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.property_map',
                 'help' => 'mb.vectortiles.admin.featureinfo.property_map_help',
+                'json_encode' => true,
+            ], $this->translator))
+            ->add('legendEnabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.vectortiles.admin.legend.active',
+            ])
+            ->add('legendPropertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.vectortiles.admin.legend.property_map',
+                'help' => 'mb.vectortiles.admin.legend.property_map_help',
                 'json_encode' => true,
             ], $this->translator))
         ;

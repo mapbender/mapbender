@@ -39,8 +39,8 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(name: 'hide_if_no_title', type: 'boolean', nullable: true)]
     protected ?bool $hideIfNoTitle = true;
 
-    #[ORM\Column(name: 'property_map', type: 'text', nullable: true)]
-    protected ?string $propertyMap = "";
+    #[ORM\Column(name: 'feature_info_property_map', type: 'text', nullable: true)]
+    protected ?string $featureInfoPropertyMap = "";
 
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $opacity = 100;
@@ -48,6 +48,11 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(name: 'print_scale_correction', type: 'float', nullable: true)]
     protected ?float $printScaleCorrection = 1.0;
 
+    #[ORM\Column(name: 'legend_enabled', type: 'boolean', nullable: true)]
+    protected ?bool $legendEnabled = false;
+
+    #[ORM\Column(name: 'legend_property_map', type: 'text', nullable: true)]
+    protected ?string $legendPropertyMap = "";
 
     public function setSource($source)
     {
@@ -150,14 +155,14 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
         $this->hideIfNoTitle = $hideIfNoTitle;
     }
 
-    public function getPropertyMap(): ?string
+    public function getFeatureInfoPropertyMap(): ?string
     {
-        return $this->propertyMap;
+        return $this->featureInfoPropertyMap;
     }
 
-    public function setPropertyMap(?string $propertyMap): void
+    public function setFeatureInfoPropertyMap(?string $featureInfoPropertyMap): void
     {
-        $this->propertyMap = $propertyMap;
+        $this->featureInfoPropertyMap = $featureInfoPropertyMap;
     }
 
     public function getPrintScaleCorrection(): ?float
@@ -168,6 +173,26 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     public function setPrintScaleCorrection(?float $printScaleCorrection): void
     {
         $this->printScaleCorrection = $printScaleCorrection;
+    }
+
+    public function getLegendEnabled(): ?bool
+    {
+        return $this->legendEnabled;
+    }
+
+    public function setLegendEnabled(?bool $legendEnabled): void
+    {
+        $this->legendEnabled = $legendEnabled;
+    }
+
+    public function getLegendPropertyMap(): ?string
+    {
+        return $this->legendPropertyMap;
+    }
+
+    public function setLegendPropertyMap(?string $legendPropertyMap): void
+    {
+        $this->legendPropertyMap = $legendPropertyMap;
     }
 
 
