@@ -24,28 +24,28 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $selected = true;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(name: 'allow_selected', type: 'boolean', nullable: true)]
     protected ?bool $allowSelected = true;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(name: 'feature_info', type: 'boolean', nullable: true)]
     protected ?bool $featureInfo = true;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(name: 'feature_info_allow_toggle', type: 'boolean', nullable: true)]
     protected ?bool $featureInfoAllowToggle = true;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(name: 'feature_info_title', type: 'string', nullable: true)]
     protected ?string $featureInfoTitle = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(name: 'hide_if_no_title', type: 'boolean', nullable: true)]
     protected ?bool $hideIfNoTitle = true;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'property_map', type: 'text', nullable: true)]
     protected ?string $propertyMap = "";
 
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $opacity = 100;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(name: 'print_scale_correction', type: 'float', nullable: true)]
     protected ?float $printScaleCorrection = 1.0;
 
 
