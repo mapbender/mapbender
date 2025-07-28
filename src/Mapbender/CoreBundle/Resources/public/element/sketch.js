@@ -117,12 +117,11 @@
             this._setupColorpickerAccessibility();
         },
         _setupColorpickerAccessibility: function() {
-            var self = this;
             var $button = $('.-fn-color-customize', this.element);
             var colorpicker = $button.data('colorpicker');
 
             $button.on('keydown', function(e) {
-                if (e.keyCode === 13) {
+                if (e.key === "Enter") {
                     if (colorpicker.picker.is(':visible')) {
                         colorpicker.hide();
                     } else {
@@ -146,7 +145,7 @@
                 }, 0);
 
                 $picker.on('keydown', function(e) {
-                    if (e.keyCode === 27) {
+                    if (e.key === "Escape") {
                         colorpicker.hide();
                         $button.focus();
                         e.stopPropagation();
@@ -154,28 +153,28 @@
                 });
 
                 $saturation.on('keydown', function(e) {
-                    if (e.keyCode === 9 && e.shiftKey) {
+                    if (e.key === 'Tab' && e.shiftKey) {
                         colorpicker.hide();
                         $button.focus();
                         e.preventDefault();
                         return;
                     }
-                    if (e.keyCode >= 37 && e.keyCode <= 40) {
+                    if (e.key.startsWith('Arrow')) {
                         e.preventDefault();
                         var step = 5;
                         var currentPos = colorpicker.picker.find('.colorpicker-saturation > i').position();
 
-                        switch (e.keyCode) {
-                            case 37:
+                        switch (e.key) {
+                            case "ArrowLeft":
                                 currentPos.left -= step;
                                 break;
-                            case 39:
+                            case "ArrowRight":
                                 currentPos.left += step;
                                 break;
-                            case 40:
+                            case "ArrowDown":
                                 currentPos.top += step;
                                 break;
-                            case 38:
+                            case "ArrowUp":
                                 currentPos.top -= step;
                                 break;
                         }
@@ -190,16 +189,15 @@
                     }
                 });
                  $hue.on('keydown', function(e) {
-            
-                    if (e.keyCode === 38 || e.keyCode === 40) {
+                    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                         e.preventDefault();
                         var step = 2;
                         var currentPos = colorpicker.picker.find('.colorpicker-hue > i').position();
-                        switch (e.keyCode) {
-                            case 40:
+                        switch (e.key) {
+                            case "ArrowDown":
                                 currentPos.top += step;
                                 break;
-                            case 38:
+                            case "ArrowUp":
                                 currentPos.top -= step;
                                 break;
                         }
