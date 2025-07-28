@@ -1,7 +1,7 @@
 ## next feature release
 Features:
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
-* Accessibility: Buttons, control elements and elements in the sidepane can be accessed by clicking the tab key and triggered with the enter key ([PR#1742](https://github.com/mapbender/mapbender/pull/1742))
+* Accessibility: Buttons, control elements and elements in the sidepane can be accessed by clicking the tab key and triggered with the enter key ([PR#1742](https://github.com/mapbender/mapbender/pull/1742), [PR#1751](https://github.com/mapbender/mapbender/pull/1751))
 * Accessibility: IDs are no longer used in HTML for Mapbender elements ([#PR1750](https://github.com/mapbender/mapbender/pull/1750))
 * [FeatureInfo] Support point geometries in feature info highlighting ([#PR1747](https://github.com/mapbender/mapbender/pull/1747))
 
