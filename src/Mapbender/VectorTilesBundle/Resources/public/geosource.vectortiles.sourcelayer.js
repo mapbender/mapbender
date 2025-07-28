@@ -33,6 +33,8 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
     }
 
     getLegend(forPrint) {
+        if (!this.options.legend.enabled) return null;
+
         return {
             topLevel: true,
             type: 'style',
@@ -41,20 +43,100 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
         }
     }
 
+    _getStopValue(value) {
+        let val = value;
+        if (typeof value === 'object' && value.stops) {
+            // always use the last stop value (which will be the biggest value)
+            return value.stops.at(-1)[1];
+        }
+        return val;
+    }
+
+    /**
+     * @return {Promise<LegendDefinitionLayer[]>}
+     */
     async _getLegend() {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return [
-            {
-                title: 'Keks',
-                style: {
-                    fillColor: '#ff0000',
-                    fillOpacity: 0.5,
-                    strokeColor: '#000000',
-                    strokeWidth: 1,
-                    label: 'Keks',
-                }
+        if (!this.styleJson) {
+            const response = await fetch(this.options.jsonUrl);
+            this.styleJson = await response.json();
+            if (this.styleJson.sprite) {
+                const responseSprint = await fetch(this.styleJson.sprite + '.json');
+                this.spriteJson = await responseSprint.json();
             }
-        ]
+        }
+
+        const propertyMap = this.source._getPropertyMap("legend");
+        console.log(propertyMap);
+
+        const map = this.styleJson.layers
+            .map((layer) => {
+                let title = layer.id;
+
+                if (propertyMap) {
+                    // if a propertyMap is defined, only use the layers that are defined there
+                    if (!propertyMap[layer.id]) return null;
+                    title = propertyMap[layer.id];
+                }
+                if (layer.type === 'symbol' && layer.layout?.['icon-image']) {
+                    return this._wrapLegendEntry(layer, title, this._createImageLegendEntry(layer));
+                }
+                if (layer.type === 'fill' || layer.type === 'line' || layer.type === 'circle') {
+                    return this._wrapLegendEntry(layer, title, this._createShapeLegendEntry(layer));
+                }
+                if (layer.type === 'circle') {
+                    return this._wrapLegendEntry(layer, title, this._createCircleLegendEntry(layer));
+                }
+                return null;
+            })
+            .filter((layer) => layer !== null);
+
+        if (propertyMap) {
+            const keys = Object.keys(propertyMap);
+            map.sort((a, b) => keys.indexOf(a.id) - keys.indexOf(b.id));
+        }
+        return map;
+    }
+
+    _wrapLegendEntry(layer, title, style) {
+        return {
+            title: title,
+            id: layer.id,
+            style: style
+        };
+    }
+
+    _createShapeLegendEntry(layer) {
+        return {
+            strokeColor: this._getStopValue(layer.paint?.['line-color']),
+            strokeOpacity: this._getStopValue(layer.paint?.['line-opacity']),
+            strokeWidth: this._getStopValue(layer.paint?.['line-width']),
+            fillColor: this._getStopValue(layer.paint?.['fill-color']),
+            fillOpacity: this._getStopValue(layer.paint?.['fill-opacity']),
+            radius: this._getStopValue(layer.paint?.['circle-radius']),
+        }
+    }
+
+    _createCircleLegendEntry(layer) {
+        return {
+            strokeColor: this._getStopValue(layer.paint?.['circle-stroke-color']),
+            strokeOpacity: this._getStopValue(layer.paint?.['circle-stroke-opacity']),
+            strokeWidth: this._getStopValue(layer.paint?.['circle-stroke-width']),
+            fillColor: this._getStopValue(layer.paint?.['circle-color']),
+            fillOpacity: this._getStopValue(layer.paint?.['circle.opacity']),
+            radius: this._getStopValue(layer.paint?.['circle-radius']),
+            circle: true,
+        }
+    }
+
+    _createImageLegendEntry(layer) {
+        const spriteJsonElement = this.spriteJson?.[layer.layout['icon-image']];
+        return {
+            image: this.styleJson.sprite + ".png",
+            imageX: spriteJsonElement?.x || 0,
+            imageY: spriteJsonElement?.y || 0,
+            imageWidth: spriteJsonElement?.width || undefined,
+            imageHeight: spriteJsonElement?.height || undefined,
+        }
     }
 }
 
