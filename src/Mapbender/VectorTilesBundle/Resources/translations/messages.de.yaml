@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'Die angegebene URL konnte nicht als JSON geparst werden.'
         no_tile_json: 'Die in source.openmaptiles angegebene URL konnte nicht als JSON geparst werden.'
+      legend:
+        heading: Legende
+        active: 'Legende aktivieren'
+        property_map: 'Ebenenauswahl & Übersetzung'
+        property_map_help: 'Falls nicht leer, werden nur die angegebenen Ebenen in der Legende angezeigt. Angabe als YAML-Array. Der Schlüssel ist die ID der Ebene aus dem Feld "layers" im Style-JSON, der optionale Wert die Übersetzung. Bsp:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

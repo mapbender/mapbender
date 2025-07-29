@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'Указанный URL не может быть проанализирован как JSON.'
         no_tile_json: 'URL, указанный в source.openmaptiles, не может быть проанализирован как JSON.'
+      legend:
+        heading: Легенда
+        active: 'Включить легенду'
+        property_map: 'Выбор слоя и перевод'
+        property_map_help: 'Если не пусто, в легенде будут отображаться только указанные слои. Укажите в виде YAML-массива. Ключ — это идентификатор слоя из поля "layers" в style JSON, необязательное значение — перевод. Пример:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

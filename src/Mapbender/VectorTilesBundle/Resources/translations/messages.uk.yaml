@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'Вказаний URL не може бути проаналізований як JSON.'
         no_tile_json: 'URL, вказаний в source.openmaptiles, не може бути проаналізований як JSON.'
+      legend:
+        heading: Легенда
+        active: 'Увімкнути легенду'
+        property_map: 'Вибір шару та переклад'
+        property_map_help: 'Якщо не порожньо, у легенді відображатимуться лише зазначені шари. Вказуйте як YAML-масив. Ключ — це ID шару з поля "layers" у style JSON, необов’язкове значення — переклад. Приклад:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

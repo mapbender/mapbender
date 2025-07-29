@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'De opgegeven URL kon niet worden geparseerd als JSON.'
         no_tile_json: 'De URL opgegeven in source.openmaptiles kon niet worden geparseerd als JSON.'
+      legend:
+        heading: Legenda
+        active: 'Legenda inschakelen'
+        property_map: 'Laagselectie en vertaling'
+        property_map_help: 'Indien niet leeg, worden alleen de opgegeven lagen in de legenda getoond. Opgeven als een YAML-array. De sleutel is het laag-ID uit het veld "layers" van de style-JSON; de optionele waarde is de vertaling. Voorbeeld:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'La URL especificada no pudo ser analizada como JSON.'
         no_tile_json: 'La URL especificada en source.openmaptiles no pudo ser analizada como JSON.'
+      legend:
+        heading: Leyenda
+        active: 'Activar leyenda'
+        property_map: 'Selección de capas y traducción'
+        property_map_help: 'Si no está vacío, solo se mostrarán en la leyenda las capas indicadas. Indique como un arreglo YAML. La clave es el ID de la capa del campo "layers" en el style JSON; el valor opcional es la traducción. Ejemplo:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'Belirtilen URL JSON olarak ayrıştırılamadı.'
         no_tile_json: 'source.openmaptiles içinde belirtilen URL JSON olarak ayrıştırılamadı.'
+      legend:
+        heading: Lejant
+        active: 'Lejantı etkinleştir'
+        property_map: 'Katman seçimi ve çeviri'
+        property_map_help: 'Boş değilse, yalnızca belirtilen katmanlar lejantta gösterilir. YAML dizisi olarak belirtin. Anahtar, style JSON’daki "layers" alanındaki katman kimliğidir; isteğe bağlı değer ise çevirisidir. Örnek:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

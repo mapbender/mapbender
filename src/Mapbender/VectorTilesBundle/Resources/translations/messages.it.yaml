@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'L''URL specificato non può essere analizzato come JSON.'
         no_tile_json: 'L''URL specificato in source.openmaptiles non può essere analizzato come JSON.'
+      legend:
+        heading: Legenda
+        active: 'Attivare la legenda'
+        property_map: 'Selezione dei livelli e traduzione'
+        property_map_help: 'Se non vuoto, verranno visualizzati nella legenda solo i livelli specificati. Specificare come array YAML. La chiave è l’ID del livello dal campo "layers" dello style JSON; il valore opzionale è la traduzione. Esempio:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

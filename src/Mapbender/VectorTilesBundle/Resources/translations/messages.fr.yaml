@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'L''URL spécifiée n''a pas pu être analysée comme JSON.'
         no_tile_json: 'L''URL spécifiée dans source.openmaptiles n''a pas pu être analysée comme JSON.'
+      legend:
+        heading: Légende
+        active: 'Activer la légende'
+        property_map: 'Sélection de couche et traduction'
+        property_map_help: 'S’il n’est pas vide, seules les couches indiquées seront affichées dans la légende. Indiquez-les sous forme de tableau YAML. La clé correspond à l’ID de la couche dans le champ "layers" du style JSON, la valeur optionnelle est la traduction. Exemple :<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

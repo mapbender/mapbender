@@ -23,3 +23,8 @@ mb:
       error:
         no_json: 'The specified URL could not be parsed as JSON.'
         no_tile_json: 'The URL specified in source.openmaptiles could not be parsed as JSON.'
+      legend:
+        heading: Legend
+        active: 'Enable legend'
+        property_map: 'Layer selection & translation'
+        property_map_help: 'If not empty, only the specified layers will be shown in the legend. Specify as a YAML array. The key is the layer ID from the "layers" field in the style JSON; the optional value is the translation. Example:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'
