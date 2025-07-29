@@ -3,6 +3,8 @@
 namespace Mapbender\VectorTilesBundle\Component;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\Resolution;
@@ -16,6 +18,7 @@ class VectorTilesRenderer extends LayerRenderer
 {
     public function __construct(
         protected string $projectDir,
+        protected ApplicationResolver $applicationResolver,
         protected EntityManagerInterface $entityManager,
         protected LoggerInterface $logger,
     )
@@ -24,10 +27,25 @@ class VectorTilesRenderer extends LayerRenderer
 
     private ?string $nodeRoot = null;
 
-    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
+    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData): void
     {
-        /** @var VectorTileInstance $instance */
-        $instance = $this->entityManager->getRepository(VectorTileInstance::class)->find($layerDef['sourceId']);
+        /** @var Application $application */
+        $application = $jobData['application'];
+        $instanceId = $layerDef['sourceId'];
+        /** @var ?VectorTileInstance $instance */
+        $instance = null;
+
+        if ($application->getSource() === Application::SOURCE_DB) {
+            $instance = $this->entityManager->getRepository(VectorTileInstance::class)->find((int) $instanceId);
+        } else {
+            foreach($application->getSourceInstances() as $sourceInstance) {
+                if ($sourceInstance->getId() === $instanceId) {
+                    $instance = $sourceInstance;
+                    break;
+                }
+            }
+        }
+
         $multiplier = $instance?->getPrintScaleCorrection() ?? 1.0;
         $referer = $instance?->getSource()?->getReferer();
 

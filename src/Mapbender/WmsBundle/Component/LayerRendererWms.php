@@ -55,7 +55,7 @@ class LayerRendererWms extends LayerRenderer
         }
     }
 
-    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
+    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData): void
     {
         if (empty($layerDef['url'])) {
             $this->logger->warning("Missing url in WMS layer", $layerDef);

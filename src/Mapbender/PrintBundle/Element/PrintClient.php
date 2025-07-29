@@ -317,6 +317,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             case 'print':
                 $rawData = $this->extractRequestData($request);
                 $jobData = $this->preparePrintData($rawData, $configuration);
+                $jobData['application'] = $element->getApplication();
 
                 $this->checkMemoryLimit();
                 $pdfBody = $this->printService->dumpPrint($jobData);

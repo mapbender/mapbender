@@ -27,7 +27,7 @@ class LayerRendererMarkers extends LayerRenderer
         return $layerDef;
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent): void
+    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent, array $jobData): void
     {
         foreach ($layerDef['markers'] as $markerDef) {
             $this->addMarker($canvas, $markerDef, $layerDef['opacity']);

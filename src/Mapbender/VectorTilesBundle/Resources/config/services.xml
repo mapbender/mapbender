@@ -35,6 +35,7 @@
                  class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
                  lazy="true">
             <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="logger" />
         </service>
