@@ -189,6 +189,13 @@ The style definition can contain the following all optional properties:
 - fontWeight
 - labelOutlineWidth (in pixels)
 - labelOutlineColor
+- circle (bool). If true, radius is required.
+- radius
+- image (url to an image or sprite). All options above will be ignored if this is set.
+- imageX (for image sprites: x offset)
+- imageY (for image sprites: y offset)
+- imageWidth (for image sprites: width of the image)
+- imageHeight (for image sprites: height of the image)
 
 
 The third option is to return a canvas in your source:
