@@ -274,8 +274,7 @@ mb:
         metadata: Metadados
         dimension: Dimensão
       filter:
-        placeholder: 'Camadas de filtro...'
-        reset: 'Redefinir filtro'
+        placeholder: 'Filtrar…'
     zoombar:
       rotateclockwise: 'Rodar no sentido dos ponteiros do relógio'
       rotatecounterclockwise: 'Rodar no sentido contrário ao dos ponteiros do relógio'
@@ -517,7 +516,7 @@ mb:
           hidenottoggleable: 'Ocultar pastas não expansíveis'
           hideinfo: 'Ocultar info'
           menu: Menu
-          filter: 'Mostrar filtro de camadas'
+          filter: 'Mostrar filtros'
       template:
         sidepane:
           type:

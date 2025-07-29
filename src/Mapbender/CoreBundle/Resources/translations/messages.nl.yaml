@@ -173,8 +173,7 @@ mb:
       admin:
         Selecteer stijl
       filter:
-        placeholder: 'Filter lagen...'
-        reset: 'Filter resetten'
+        placeholder: 'Filteren…'
     zoombar:
       rotateclockwise: Rechtsom draaien
       rotatecounterclockwise: Linksom draaien
@@ -303,7 +302,7 @@ mb:
             label: thema naam
           hidenottoggleable: Verberg niet-schakelbaar
           hideinfo: Verberg info
-          filter: 'Toon laag filter'
+          filter: 'Filters weergeven'
     htmlelement:
       class:
         title: null

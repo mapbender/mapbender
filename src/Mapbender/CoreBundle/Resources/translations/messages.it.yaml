@@ -274,8 +274,7 @@ mb:
         metadata: Metadata
         dimension: Dimensione
       filter:
-        placeholder: 'Strati filtranti...'
-        reset: 'Azzeramento del filtro'
+        placeholder: 'Filtra…'
     zoombar:
       rotateclockwise: 'Ruotare in senso orario'
       rotatecounterclockwise: 'Ruotare in senso antiorario'
@@ -517,7 +516,7 @@ mb:
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideinfo: 'Nascondi info'
           menu: Menu
-          filter: 'Mostra il filtro di livello'
+          filter: 'Mostra filtri'
       template:
         sidepane:
           type:

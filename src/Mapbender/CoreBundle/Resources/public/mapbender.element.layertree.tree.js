@@ -98,10 +98,7 @@
             this.element.on('click', '.layer-metadata', function (evt) {
                 self._showMetadata(evt);
             });
-            this.element.on('input', '#layerFilter', this._filterLayer.bind(this));
-            this.element.on('click', '#resetLayerFilter', function (evt) {
-                self._resetLayerFilter(true);
-            });
+            this.element.on('input', '.layer-filter-input', this._filterLayer.bind(this));
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -466,45 +463,66 @@
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
-
-        _resetLayerFilter: function (clearInput) {
-            if (clearInput) $('#layerFilter').val('');
-            $('span.filtered').removeClass('filtered');
-            $('span.layer-title').parent().show();
-            $('.themeContainer, .serviceContainer').removeClass('showLeaves');
-            $('i.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder');
+        _resetLayerFilter: function () {
+            $(this.element).find('span.layer-highlight').each((index, span) => {
+                $(span).replaceWith($(span).text());
+            });
+            $(this.element).find('span.filtered').removeClass('filtered');
+            $(this.element).find('span.layer-title').parent().show();
         },
         _filterLayer: function () {
-            const value = $('#layerFilter').val().toLowerCase();
+            const value = $(this.element).find('.layer-filter-input').val().toLowerCase();
 
             if (typeof this._lastFilterLength === 'undefined') {
                 this._lastFilterLength = 0;
             }
+            if (value.length < 2) {
+                if (this._lastFilterLength > 1) this._resetLayerFilter(false);
+                return;
+            }
 
-            if (value.length > 2) {
-                const $layerTitles = $('span.layer-title');
-                $layerTitles.each(function () {
-                    const title = $(this).attr('title')?.toString().toLowerCase();
-                    if (title) {
-                        $(this).toggleClass('filtered', title.includes(value));
+            // Mark all filter hits
+            const $layerTitles = $(this.element).find('span.layer-title');
+            $layerTitles.each((index, element) => {
+                const title = $(element).text()?.toString().toLowerCase();
+                if (title) {
+                    $(element).toggleClass('filtered', title.includes(value));
+                }
+            });
+
+            // Hide all parent containers
+            $layerTitles.parent().hide();
+
+            $('span.filtered', this.element).each((index, element) => {
+                // Highlight the matching text in the layer title
+                const text = $(element).text();
+                const regex = new RegExp('(' + value + ')', 'i');
+                $(element).html(text.replace(regex, '<span class="layer-highlight">$1</span>'));
+                // Remove highlighted strings that are shorter than value
+                $(this.element).find('span.layer-highlight').each((index, span) => {
+                    if ($(span).text().length < value.length) {
+                        $(span).replaceWith($(span).text());
                     }
                 });
 
-                $layerTitles.parent().hide();
-                $('span.filtered').each(function () {
-                    $(this).parent().show();
-                    $(this).siblings('span.-fn-toggle-children').find('i').addClass('fa-folder-open');
-                    ['li.serviceContainer', 'li.themeContainer'].forEach(selector => {
-                        const $container = $(this).parents(selector);
-                        $container.find('.leaveContainer:first').show();
+                // Show parent containers and decide whether to open the folders
+                $(element).parent().show();
+                ['.serviceContainer', '.themeContainer'].forEach(selector => {
+                    const $container = $(element).parents(selector);
+                    $container.find('.leaveContainer:first').show();
+
+                    const isInContainer = $(element).parent().parent().hasClass(selector.replace('.', ''));
+                    if (isInContainer) {
+                        $container.find('ul.layers .leaveContainer').show();
+                        $container.removeClass('showLeaves');
+                        $container.find('i:first').addClass('fa-folder').removeClass('fa-folder-open');
+                    } else {
                         $container.addClass('showLeaves');
-                        $container.find('i:first').addClass('fa-folder-open');
-                    });
+                        $container.find('i:first').addClass('fa-folder-open').removeClass('fa-folder');
+                    }
                 });
 
-            } else if (value.length < 3 && this._lastFilterLength > 2) {
-                this._resetLayerFilter(false);
-            }
+            });
 
             this._lastFilterLength = value.length;
         },

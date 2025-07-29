@@ -274,8 +274,7 @@ mb:
         metadata: Metadatos
         dimension: Dimensión
       filter:
-        placeholder: 'Filtrar capas...'
-        reset: 'Restablecer filtro'
+        placeholder: 'Filtrar capas…'
     zoombar:
       rotateclockwise: 'Girar en sentido horario'
       rotatecounterclockwise: 'Girar en sentido antihorario'
@@ -517,7 +516,7 @@ mb:
           hidenottoggleable: 'Ocultar carpetas que no se pueden expandir'
           hideinfo: 'Ocultar información'
           menu: Menú
-          filter: 'Mostrar filtro de capas'
+          filter: 'Mostrar filtros'
       template:
         sidepane:
           type:

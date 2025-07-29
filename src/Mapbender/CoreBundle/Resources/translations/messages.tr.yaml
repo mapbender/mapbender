@@ -173,8 +173,7 @@ mb:
       admin:
         select_style: Stil seçin
       filter:
-        placeholder: 'Filtre katmanları...'
-        reset: 'Filtreyi sıfırla'
+        placeholder: 'Filtreleme…'
     zoombar:
       rotateclockwise: Saat yönünde çevirin
       rotatecounterclockwise: Saat yönünün tersine çevirin
@@ -294,7 +293,7 @@ mb:
             label: Tema isimleri
           hidenottoggleable: Açılıp kapanamayan(lar)ı gizle
           hideinfo: Bilgileri gizle
-          filter: 'Katman filtresini göster'
+          filter: 'Filtreleri göster'
       template:
         sidepane:
           type:

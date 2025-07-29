@@ -61,9 +61,8 @@ $textColor: $darkFontColor !default;
     cursor: default;
   }
 
-  .btn-outline-secondary:not(:hover) {
-    border-color: #dee2e6;
-    background-color: white;
+  .layer-highlight {
+    color: $ciColor;
   }
 }
 

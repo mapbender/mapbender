@@ -192,8 +192,7 @@ mb:
       admin:
         select_style: Виберіть стиль
       filter:
-        placeholder: 'Шари фільтрації...'
-        reset: 'Скинути фільтр'
+        placeholder: 'Фільтрувати…'
     zoombar:
       rotateclockwise: Поверніть за годинниковою стрілкою
       rotatecounterclockwise: Обертання проти годинникової стрілки
@@ -372,7 +371,7 @@ mb:
             label: назва теми
           hidenottoggleable: Приховати папки, що не перемикаються
           hideinfo: Приховати інформацію
-          filter: 'Показати фільтр шару'
+          filter: 'Показати фільтри'
       template:
         sidepane:
           type:
