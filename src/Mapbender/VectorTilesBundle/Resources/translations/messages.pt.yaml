@@ -27,4 +27,4 @@ mb:
         heading: Legenda
         active: 'Ativar legenda'
         property_map: 'Seleção de camadas e tradução'
-        property_map_help: 'Se não estiver vazio, apenas as camadas especificadas serão exibidas na legenda. Especifique como um array YAML. A chave é o ID da camada do campo "layers" do style JSON; o valor opcional é a tradução. Exemplo:<br><code>- class<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'
+        property_map_help: 'Se não estiver vazio, apenas as camadas especificadas serão exibidas na legenda. Especifique como um array YAML. A chave é o ID da camada do campo "layers" do style JSON; o valor opcional é a tradução. Exemplo:<br><code>- class<br>- City<br>- Stations<br>- Transport: Public Transport</code>'

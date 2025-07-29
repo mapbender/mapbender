@@ -57,11 +57,16 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
      */
     async _getLegend() {
         if (!this.styleJson) {
-            const response = await fetch(this.options.jsonUrl);
-            this.styleJson = await response.json();
-            if (this.styleJson.sprite) {
-                const responseSprint = await fetch(this.styleJson.sprite + '.json');
-                this.spriteJson = await responseSprint.json();
+            try {
+                const response = await fetch(this.options.jsonUrl);
+                this.styleJson = await response.json();
+                if (this.styleJson.sprite) {
+                    const responseSprint = await fetch(this.styleJson.sprite + '.json');
+                    this.spriteJson = await responseSprint.json();
+                }
+            } catch (e) {
+                console.error("Failed to load style JSON for vector tiles source layer", this, e);
+                return [];
             }
         }
         const propertyMap = this.source._getPropertyMap("legend");
