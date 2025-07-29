@@ -434,7 +434,6 @@
                             if (legend.layers) {
                                 legend.layers = await Promise.resolve(legend.layers);
                             }
-                            console.log(legend);
 
                             if (legendIds.includes(legendLayer.getId())) break;
                             legendIds.push(legendLayer.getId());
@@ -518,7 +517,7 @@
             }
         },
         _collectJobData: async function() {
-            var jobData = this._super();
+            var jobData = await this._super();
             // Remove upstream rotation value. We have this as a top-level input field. Backend may get confused
             // when we submit both
             delete jobData['rotation'];

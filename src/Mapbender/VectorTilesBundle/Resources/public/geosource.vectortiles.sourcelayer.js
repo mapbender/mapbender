@@ -65,20 +65,18 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
             }
         }
         const propertyMap = this.source._getPropertyMap("legend");
-
         const map = this.styleJson.layers
             .map((layer) => {
                 let title = layer.id;
-
                 if (propertyMap) {
                     // if a propertyMap is defined, only use the layers that are defined there
                     if (!propertyMap[layer.id]) return null;
                     title = propertyMap[layer.id];
                 }
-                if (layer.type === 'symbol' && layer.layout?.['icon-image']) {
+                if (layer.type === 'symbol' && layer.layout?.['icon-image'] && !layer.layout['icon-image'].includes('{')) {
                     return this._wrapLegendEntry(layer, title, this._createImageLegendEntry(layer));
                 }
-                if (layer.type === 'fill' || layer.type === 'line' || layer.type === 'circle') {
+                if (layer.type === 'fill' || layer.type === 'line') {
                     return this._wrapLegendEntry(layer, title, this._createShapeLegendEntry(layer));
                 }
                 if (layer.type === 'circle') {
@@ -110,7 +108,6 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
             strokeWidth: this._getStopValue(layer.paint?.['line-width']),
             fillColor: this._getStopValue(layer.paint?.['fill-color']),
             fillOpacity: this._getStopValue(layer.paint?.['fill-opacity']),
-            radius: this._getStopValue(layer.paint?.['circle-radius']),
         }
     }
 
@@ -120,7 +117,7 @@ class VectorTilesSourceLayer extends Mapbender.SourceLayer {
             strokeOpacity: this._getStopValue(layer.paint?.['circle-stroke-opacity']),
             strokeWidth: this._getStopValue(layer.paint?.['circle-stroke-width']),
             fillColor: this._getStopValue(layer.paint?.['circle-color']),
-            fillOpacity: this._getStopValue(layer.paint?.['circle.opacity']),
+            fillOpacity: this._getStopValue(layer.paint?.['circle-opacity']),
             radius: this._getStopValue(layer.paint?.['circle-radius']),
             circle: true,
         }

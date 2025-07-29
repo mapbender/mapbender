@@ -1,4 +1,4 @@
-(function($){
+(function ($) {
     'use strict';
 
     /**
@@ -10,25 +10,25 @@
         map: null,
         $form: null,
 
-        _create: function(){
+        _create: function () {
             this.$form = $('form', this.element);
             var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self.mbMap = mbMap;
                 self.map = mbMap;   // legacy
                 self._setup();
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget(self.widgetName, self.options.target);
             });
         },
-        _setup: function() {
+        _setup: function () {
             this.$form.on('submit', this._onSubmit.bind(this));
             this._trigger('ready');
         },
-        defaultAction: function(callback){
+        defaultAction: function (callback) {
             this.open(callback);
         },
-        getPopupOptions: function() {
+        getPopupOptions: function () {
             return {
                 title: this.element.attr('data-title'),
                 draggable: true,
@@ -39,14 +39,14 @@
                 scrollable: false
             };
         },
-        open: function(callback){
+        open: function (callback) {
             this.callback = callback || null;
-            if(!this.popup || !this.popup.$element){
+            if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup(this.getPopupOptions());
                 this.popup.$element.one('close', $.proxy(this.close, this));
             }
         },
-        close: function(){
+        close: function () {
             if (this.popup) {
                 this.popup.close();
                 this.popup = null;
@@ -60,15 +60,15 @@
          * @returns {Array<Mapbender.Source>}
          * @private
          */
-        _getRasterSources: function() {
-            return this.map.getModel().getSources().filter(function(x) {
+        _getRasterSources: function () {
+            return this.map.getModel().getSources().filter(function (x) {
                 return x.getActive();
             });
         },
-        _getExportScale: function() {
+        _getExportScale: function () {
             return this.mbMap.getModel().getCurrentScale(false);
         },
-        _getExportExtent: function() {
+        _getExportExtent: function () {
             var lbrt = this.map.model.getCurrentExtentArray();
             return {
                 left: lbrt[0],
@@ -77,7 +77,7 @@
                 top: lbrt[3]
             };
         },
-        _collectRasterLayerData: function() {
+        _collectRasterLayerData: function () {
             var sources = this._getRasterSources();
             var scale = this._getExportScale();
             var extent = this._getExportExtent();
@@ -92,7 +92,7 @@
             }
             return dataOut;
         },
-        _collectJobData: async function() {
+        _collectJobData: async function () {
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
@@ -112,23 +112,26 @@
                 }
             };
         },
-        _onSubmit: async function(evt) {
+        _onSubmit: function (evt) {
+            // isTrusted is true when the event was triggered by a user action, jobData needs to injected first
+            // then, the form is submitted by triggering it in the code
+            if (evt.originalEvent?.isTrusted !== true) return true;
+
+            evt.preventDefault();
             // add job data to hidden form fields
-            var jobData;
-            try {
-                jobData = await this._collectJobData();
-                if (!jobData.layers.length) {
+            this._collectJobData().then((jobData) => {
+                if (jobData.layers.length) {
+                    this._injectJobData(jobData);
+                    this.$form.submit();
+                } else {
                     Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
-                    return false;
                 }
-                this._injectJobData(jobData);
-            } catch (e) {
-                evt.preventDefault();
-                throw e;
-            }
-            return true;    // let the browser do the rest
+            }).catch((error) => {
+                throw error;
+            });
+            return false;
         },
-        _injectJobData: function(jobData) {
+        _injectJobData: function (jobData) {
             var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
@@ -142,7 +145,7 @@
          * @private
          * @deprecated distinctly use _injectJobData and regular form submit events
          */
-        _submitJob: function(jobData) {
+        _submitJob: function (jobData) {
             this._injectJobData(jobData);
             $('input[type="submit"]', this.$form).click();
         },
@@ -153,7 +156,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterGeometryLayer: function(layer) {
+        _filterGeometryLayer: function (layer) {
             if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                 return false;
             }
@@ -169,7 +172,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterMarkerLayer: function(layer) {
+        _filterMarkerLayer: function (layer) {
             if ('OpenLayers.Layer.Markers' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                 return false;
             }
@@ -185,7 +188,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterFeature: function(feature) {
+        _filterFeature: function (feature) {
             // onScreen throws an error if geometry is not populated, see
             // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
             return feature.geometry && feature.onScreen(true);
@@ -199,7 +202,7 @@
          * @private
          * engine-agnostic
          */
-        _extractFeatureGeometry: function(layer, feature) {
+        _extractFeatureGeometry: function (layer, feature) {
             var geometry = this.map.model.featureToGeoJsonGeometry(feature);
             geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
@@ -214,7 +217,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterFeatureGeometry: function(geometry) {
+        _filterFeatureGeometry: function (geometry) {
             if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
                 return true;
             }
@@ -226,9 +229,9 @@
             }
             return false;
         },
-        _dumpFeatureGeometries: function(layer, features, resolution) {
+        _dumpFeatureGeometries: function (layer, features, resolution) {
             return this.map.model.dumpGeoJsonFeatures(features, layer, resolution, true)
-                .map(function(gjFeature) {
+                .map(function (gjFeature) {
                     // Legacy data format quirks (not actually GeoJson):
                     // 1) Strip "type: 'Feature'" outer container object
                     // 2) move style into geometry object
@@ -236,7 +239,7 @@
                         style: gjFeature.style
                     });
                 })
-            ;
+                ;
         },
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
@@ -246,7 +249,7 @@
          * @returns VectorLayerData~export
          * @private
          */
-        _extractGeometryLayerData: function(layer) {
+        _extractGeometryLayerData: function (layer) {
             var postFilter = this._filterFeatureGeometry.bind(this);
             var features = layer.features.filter(this._filterFeature.bind(this))
             var geometries = this._dumpFeatureGeometries(layer, features);
@@ -256,14 +259,14 @@
                 geometries: geometries.filter(postFilter)
             };
         },
-        _collectGeometryLayers: function() {
+        _collectGeometryLayers: function () {
             var vectorLayers = [];
             // For (nested) group layers, visibility must be checked at
             // each level.
             function processLayer(layer) {
                 if (layer.getVisible() && layer.getOpacity()) {
                     if (layer instanceof ol.layer.Group) {
-                        layer.getLayersArray().forEach(function(layer) {
+                        layer.getLayersArray().forEach(function (layer) {
                             processLayer(layer);
                         });
                     } else if (layer instanceof ol.layer.Vector) {
@@ -284,7 +287,7 @@
                 // @todo: implement filterFeature properly for dual-engine support
                 if (this.feature) {
                     var skipFeature = this.feature;
-                    features = features.filter(function(f) {
+                    features = features.filter(function (f) {
                         return f !== skipFeature;
                     });
                 }
@@ -305,7 +308,7 @@
          * @returns MarkerLayerData~export
          * @private
          */
-        _extractMarkerLayerData: function(layer) {
+        _extractMarkerLayerData: function (layer) {
             var markerData = [];
             for (var i = 0; i < layer.markers.length; ++i) {
                 var marker = layer.markers[i];
@@ -340,7 +343,7 @@
          * @returns {String|boolean}
          * @private
          */
-        _fixAssetPath: function(url) {
+        _fixAssetPath: function (url) {
             // @todo: fold copy&paste vs Mapbender.StyleUtil
             var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
             if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
