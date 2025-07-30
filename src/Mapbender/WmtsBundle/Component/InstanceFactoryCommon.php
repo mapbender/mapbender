@@ -66,6 +66,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         $formData->setOriginUrl($data['url'] ?? null);
         $formData->setPassword($data['password'] ?? null);
         $formData->setUsername($data['username'] ?? null);
+        /** @var WmtsSource $source */
         $source = $this->loader->loadSource($formData);
         $source->setId($id);
 
@@ -75,7 +76,6 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         $instance->setOpacity($data['opacity'] ?? 100);
         $instance->setProxy($data['proxy'] ?? false);
 
-        $layerIndex = 0;
         $hasLayerInfo = isset($data['layers']) && is_array($data['layers']);
 
         // Layer hierarchy is usually created by the database, do it manually for YAML applications
@@ -91,9 +91,15 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
             }
         }
         // set ids (also usually handled by the database)
+        $layerIndex = 0;
         foreach ($instance->getLayers() as $layer) {
             $this->setLayerId($layer, "{$id}_$layerIndex");
             $layerIndex++;
+        }
+        $tmsIndex = 0;
+        foreach($source->getTilematrixsets() as $set) {
+            $set->setId("{$id}_$tmsIndex");
+            $tmsIndex++;
         }
         return $instance;
     }
@@ -148,6 +154,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
     private function setLayerId(WmtsInstanceLayer $layer, string $id): void
     {
         $layer->setId($id);
+        $layer->getSourceItem()->setId($id);
         $subLayerIndex = 0;
         foreach ($layer->getSublayer() as $subLayer) {
             $this->setLayerId($subLayer, "{$id}_$subLayerIndex");
