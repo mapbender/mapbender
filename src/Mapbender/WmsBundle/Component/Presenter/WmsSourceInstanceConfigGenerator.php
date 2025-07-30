@@ -3,6 +3,7 @@
 
 namespace Mapbender\WmsBundle\Component\Presenter;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -25,16 +26,26 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 {
 
     public function __construct(
-        protected UrlProcessor          $urlProcessor,
-        protected TokenStorageInterface $tokenStorage,
-        protected ?string               $defaultLayerOrder)
+        protected UrlProcessor           $urlProcessor,
+        protected TokenStorageInterface  $tokenStorage,
+        protected EntityManagerInterface $em,
+        protected ?string                $defaultLayerOrder)
     {
     }
+
+    /**
+     * preload and cache instance layers. If using getSublayer(), doctrine will
+     * make a separate database query for each layer massively degrading performance
+     * when many layers are present.
+     * The key for the first level is the parent layer id, or null for root layers.
+     * @var WmsInstanceLayer[][]
+     */
+    protected array $preloadedLayers = [];
 
     public function isInstanceEnabled(SourceInstance $sourceInstance): bool
     {
         /** @var WmsInstance $sourceInstance */
-        $rootLayer = $sourceInstance->getRootlayer();
+        $rootLayer = $this->getRootLayerFromCache($sourceInstance);
         return parent::isInstanceEnabled($sourceInstance) && $rootLayer;
     }
 
@@ -46,7 +57,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     {
         $config = parent::getConfiguration($sourceInstance);
 
-        $root = $sourceInstance->getRootlayer();
+        $root = $this->getRootLayerFromCache($sourceInstance);
         if (!$root) {
             throw new \RuntimeException("Cannot process Wms instance #{$sourceInstance->getId()} with no root layer");
         }
@@ -55,7 +66,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'title' => $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array(
-                $this->getLayerConfiguration($sourceInstance->getRootlayer()),
+                $this->getLayerConfiguration($root),
             ),
         ]);
 
@@ -100,7 +111,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             ),
         );
         $children = array();
-        foreach ($instanceLayer->getSublayer() as $childLayer) {
+        foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
             if ($childLayer->getActive()) {
                 $children[] = $this->getLayerConfiguration($childLayer);
             }
@@ -171,7 +182,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getTreeOptionsLayerConfig(WmsInstanceLayer $instanceLayer)
     {
-        $hasChildren = !!count($instanceLayer->getSublayer());
+        $hasChildren = !!count($this->getSublayersFromCache($instanceLayer));
         return array(
             "info" => $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
@@ -458,5 +469,50 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 
         return preg_replace('/^(https?:\/\/)/', '${1}' . $authInfo . '@', $sourceUrl);
 
+    }
+
+    /**
+     * preload and cache instance layers. If using getSublayer(), doctrine will
+     * make a separate database query for each layer massively degrading performance
+     * when many layers are present.
+     */
+    public function preload(array $sourceInstances): void
+    {
+        $allLayers = $this->em->createQueryBuilder()
+            ->select('l')
+            ->from(WmsInstanceLayer::class, 'l')
+            ->where('l.sourceInstance IN (:instances)')
+            ->setParameter('instances', $sourceInstances)
+            ->getQuery()
+            ->getResult()
+        ;
+        /** @var WmsInstanceLayer $layer */
+        foreach($allLayers as $layer) {
+            $pid = $layer->getParent()?->getId();
+            if (!array_key_exists($pid, $this->preloadedLayers)) {
+                $this->preloadedLayers[$pid] = [];
+            }
+            $this->preloadedLayers[$pid][] = $layer;
+        }
+    }
+
+    /**
+     * using the cached/preloaded data, replacement function for
+     * @see WmsInstanceLayer::getSublayer()
+     * @return WmsInstanceLayer[]
+     */
+    protected function getSublayersFromCache(WmsInstanceLayer $parent): array
+    {
+        return $this->preloadedLayers[$parent->getId()] ?? [];
+    }
+
+    protected function getRootLayerFromCache(WmsInstance $parent): ?WmsInstanceLayer
+    {
+        foreach(($this->preloadedLayers[null] ?? []) as $layer) {
+            if ($layer->getSourceInstance()->getId() === $parent->getId()) {
+                return $layer;
+            }
+        }
+        return null;
     }
 }

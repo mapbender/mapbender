@@ -115,10 +115,6 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($this->maxScale == INF) {
             $this->maxScale = null;
         }
-        if (!$this->sublayer->count() && ($this->toggle !== null || $this->allowtoggle !== null)) {
-            $this->setToggle(null);
-            $this->setAllowtoggle(null);
-        }
     }
 
     /**
