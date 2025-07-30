@@ -162,12 +162,13 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         }
     }
 
-    private function applyLayerDataFromYaml(array $data, mixed $layer): void
+    private function applyLayerDataFromYaml(array $data, WmtsInstanceLayer $layer): void
     {
-        if (!isset($data['layers'][$layer->getSourceItem()->getIdentifier()])) {
+        $identifier = $layer->getSourceItem()->getIdentifier();
+        if (!isset($data['layers'][$identifier])) {
             return;
         }
-        $layerData = $data['layers'][$layer->getSourceItem()->getIdentifier()];
+        $layerData = $data['layers'][$identifier];
 
         if (isset($layerData['title'])) {
             $layer->setTitle($layerData['title']);
