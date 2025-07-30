@@ -25,11 +25,7 @@ class ExportHandler extends ExchangeHandler
     {
         gc_enable();
         parent::__construct($em);
-        $em
-            ->getConnection()
-            ->getConfiguration()
-            ->setSQLLogger(null)
-        ;
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
     /**

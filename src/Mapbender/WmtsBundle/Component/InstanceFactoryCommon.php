@@ -97,7 +97,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
             $layerIndex++;
         }
         $tmsIndex = 0;
-        foreach($source->getTilematrixsets() as $set) {
+        foreach ($source->getTilematrixsets() as $set) {
             $set->setId("{$id}_$tmsIndex");
             $tmsIndex++;
         }
