@@ -381,7 +381,7 @@ class WmsInstanceLayer extends SourceInstanceItem
             return $sourceItemScale;
         }
         $parent = $this->getParent();
-        return $parent ? $parent->getMinScale(true) : null;
+        return $parent?->getMinScale(true);
     }
 
     /**

@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -23,7 +24,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Instance registered in container at mapbender.source.wms.config_generator
  * see services.xml
- * @phpstan-type WmsInstanceLayerArray array{id: int|string, active: bool, selected: bool, allowinfo: bool, allowselected: bool, allowtoggle: bool, toggle: bool, title: ?string, info: bool, style: ?string, priority: int, parentId: null|int|string, sourceId: int|string, lsTitle: ?string, lsLatLonBounds: null|BoundingBox, lsStyles: (null|Style[])}
+ * @phpstan-type WmsInstanceLayerArray array{id: int|string, active: bool, selected: bool, allowinfo: bool, allowselected: bool, allowtoggle: bool, toggle: bool, title: ?string, info: bool, style: ?string, priority: int, parentId: null|int|string, sourceId: int|string, lsTitle: ?string, lsName: ?string, lsLatLonBounds: null|BoundingBox, lsStyles: (null|Style[]), minScale: ?int, maxScale: ?int, lsScale: ?MinMax}
  */
 class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 {
@@ -145,12 +146,12 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $configuration = array(
             "id" => strval($layer['id']),
             "priority" => $layer['priority'],
-            "name" => strval($layer['lsTitle']),
+            "name" => strval($layer['lsName']),
             "title" => $layer['title'] ?: $layer['lsTitle'],
             "queryable" => $layer['info'],
             "style" => $layer['style'],
-            "minScale" => null,// $instanceLayer->getMinScale(true),
-            "maxScale" => null,// $instanceLayer->getMaxScale(true),
+            "minScale" => $this->getInheritedScale('minScale', $layer),
+            "maxScale" => $this->getInheritedScale('maxScale', $layer),
             "bbox" => $this->getLayerBboxConfiguration($layer),
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
             "metadataUrl" => $this->getMetadataUrl($instance, $layer),
@@ -280,6 +281,29 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     }
 
     /**
+     * @param "minScale"|"maxScale" $key
+     * @param WmsInstanceLayerArray $layer
+     * Array reimplementation of @see WmsInstanceLayer::getInheritedMinScale()
+     * Get inherited effective min scale for layer instance
+     * 1) if source layer has a non-null value, use that
+     * 2) if admin replaced min scale for the parent layer instance, use that value.
+     * 3) if neither is set, recurse up, maintaining preference source layer first, then parent instance layer
+     */
+    protected function getInheritedScale(string $key, array $layer): ?int
+    {
+        while(true) {
+            if ($layer[$key]) return $layer[$key];
+            if ($layer['lsScale']) {
+                if ($key === 'minScale' && $layer['lsScale']->getMin()) return $layer['lsScale']->getMin();
+                if ($key === 'maxScale' && $layer['lsScale']->getMax()) return $layer['lsScale']->getMax();
+            }
+            if (!$layer['parentId']) return null;
+            $layer = $this->preloadedLayersById[$layer['parentId']] ?? null;
+            if (!$layer) return null;
+        }
+    }
+
+    /**
      * @param WmsInstanceLayerArray $layer
      * @return Style[]
      * partial reimplementation of WmsLayerSource::getStyles() since we don't have the object here for performance reasons
@@ -289,18 +313,16 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     {
         $styles = [];
         // store "hash" of style by using name and title
-        foreach($layer['lsStyles'] ?? [] as $style) {
-            $styles[$style->getName()."|".$style->getTitle()] = $style;
+        foreach ($layer['lsStyles'] ?? [] as $style) {
+            $styles[$style->getName() . "|" . $style->getTitle()] = $style;
         }
 
         while ($layer['parentId']) {
             $layer = $this->preloadedLayersById[$layer['parentId']] ?? null;
             if (!$layer) break;
-            foreach($layer['lsStyles'] ?? [] as $style) {
+            foreach ($layer['lsStyles'] ?? [] as $style) {
                 $hash = $style->getName() . "|" . $style->getTitle();
-                if (!isset($styles[$hash])) {
-                    $styles[$hash] = $style;
-                }
+                $styles[$hash] = $style;
             }
 
         }
@@ -514,7 +536,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     public function preload(array $sourceInstances): void
     {
         $allLayers = $this->em->createQueryBuilder()
-            ->select('l.id, l.active, l.selected, l.toggle, l.allowinfo, l.allowselected, l.allowtoggle, l.title, l.info, l.style, l.priority, p.id AS parentId, i.id AS sourceId, ls.title AS lsTitle, ls.latlonBounds AS lsLatLonBounds, ls.styles AS lsStyles')
+            ->select('l.id, l.active, l.selected, l.toggle, l.allowinfo, l.allowselected, l.allowtoggle, l.title, l.info, l.style, l.priority, l.minScale, l.maxScale, p.id AS parentId, i.id AS sourceId, ls.title AS lsTitle, ls.name AS lsName, ls.latlonBounds AS lsLatLonBounds, ls.styles AS lsStyles, ls.scale AS lsScale')
             ->from(WmsInstanceLayer::class, 'l')
             ->leftJoin(WmsInstanceLayer::class, 'p', 'WITH', 'l.parent = p.id')
             ->leftJoin(WmsInstance::class, 'i', 'WITH', 'l.sourceInstance = i.id')
@@ -525,7 +547,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             ->getResult(AbstractQuery::HYDRATE_ARRAY)
         ;
         /** @var WmsInstanceLayer $layer */
-        foreach($allLayers as $layer) {
+        foreach ($allLayers as $layer) {
             $pid = $layer['parentId'];
             if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
                 $this->preloadedLayersByParent[$pid] = [];
@@ -537,8 +559,8 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 
     /**
      * using the cached/preloaded data, replacement function for
-     * @see WmsInstanceLayer::getSublayer()
      * @return WmsInstanceLayerArray[]
+     * @see WmsInstanceLayer::getSublayer()
      */
     protected function getSublayersFromCache(array $parent): array
     {
@@ -550,7 +572,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getRootLayerFromCache(WmsInstance $parent): ?array
     {
-        foreach(($this->preloadedLayersByParent[null] ?? []) as $layer) {
+        foreach (($this->preloadedLayersByParent[null] ?? []) as $layer) {
             if ($layer['sourceId'] === $parent->getId()) {
                 return $layer;
             }
