@@ -56,4 +56,14 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
     {
         return false;
     }
+
+    /**
+     * Can be used to preload source instances, e.g. to avoid doctrine
+     * lazy loading producing many separate queries
+     * @param SourceInstance[] $sourceInstances
+     */
+    public function preload(array $sourceInstances): void
+    {
+        // No-op by default, can be overridden to preload data for the application.
+    }
 }

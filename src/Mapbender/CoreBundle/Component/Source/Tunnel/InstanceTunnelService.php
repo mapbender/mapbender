@@ -13,9 +13,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -55,9 +53,9 @@ class InstanceTunnelService
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(HttpTransportInterface $httpTransprot,
-                                RouterInterface $router,
-                                TypeDirectoryService $sourceTypeDirectory,
-                                TokenStorageInterface $tokenStorage,
+                                RouterInterface        $router,
+                                TypeDirectoryService   $sourceTypeDirectory,
+                                TokenStorageInterface  $tokenStorage,
                                 EntityManagerInterface $entityManager)
     {
         $this->httpTransport = $httpTransprot;
@@ -142,15 +140,17 @@ class InstanceTunnelService
     }
 
     /**
-     * @param WmsInstanceLayer|SourceInstanceItem $instanceLayer
+     * @param array|SourceInstanceItem $instanceLayer
      * @return string
      */
-    public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
+    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance)
     {
-        $sourceInstance = $instanceLayer->getSourceInstance();
+        if (!$sourceInstance && $instanceLayer instanceof SourceInstanceItem) {
+            $sourceInstance = $instanceLayer->getSourceInstance();
+        }
         return $this->router->generate($this->legendTunnelRouteName, array(
             'instanceId' => $sourceInstance->getId(),
-            'layerId' => $instanceLayer->getId(),
+            'layerId' => is_array($instanceLayer) ? $instanceLayer['id'] : $instanceLayer->getId(),
         ));
     }
 
