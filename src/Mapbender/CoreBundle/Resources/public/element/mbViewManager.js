@@ -56,6 +56,8 @@
             this.mbMap = mbMap;
             this._initEvents();
             this._toggleEnabled(true);
+            // save default layertree settings, so they can be reloaded by the ResetView-Element
+            this.saveDefaultSettings();
         },
         _toggleEnabled: function(enabled) {
             $('.-fn-save-new', this.element).prop('disabled', !enabled);
@@ -462,6 +464,11 @@
                     $el.css('transition', '');
                 }, 1000);
             });
+        },
+        saveDefaultSettings: function () {
+            window.localStorage.removeItem('viewManagerSettings');
+            let settings = JSON.stringify(this._getCommonSaveData());
+            window.localStorage.setItem('viewManagerSettings', settings);
         },
         __dummy__: null
     });
