@@ -252,7 +252,8 @@
                     'options': source.options,
                     'type': source.type,
                     'customParams': source.customParams,
-                    'isBaseSource': source.isBaseSource
+                    'isBaseSource': source.isBaseSource,
+                    'isDynamicSource': source.isDynamicSource
                 });
             });
             // remove recursion that prevents JSON.stringify()
@@ -430,7 +431,7 @@
 
             settings.sources.forEach(s => {
                 let source = Mapbender.Source.factory(s);
-                if (s.id.startsWith('wmsloader')) {
+                if (s.isDynamicSource) {
                     wmsloaderSources.push(source);
                     return; // continue
                 }
