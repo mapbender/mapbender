@@ -1,4 +1,4 @@
-;!(function($) {
+(function($) {
     "use strict";
     $.widget("mapbender.mbViewManager", {
         options: {
@@ -140,11 +140,20 @@
             $.when(listingPromise, this.mapPromise)
                 .then(function(response) {
                     var $content = $(response[0]);
+                    const params = Mapbender.Util.getUrlQueryParams(window.location.href);
+                    const viewid = params.hasOwnProperty('viewid') ? params.viewid : false;
+                    let loadViewButton = false;
                     $('a.-fn-apply', $content).each(function() {
                         self._updateLinkUrl(this);
+                        if (parseInt(viewid) === parseInt($(this).closest('tr').attr('data-id'))) {
+                            loadViewButton = $(this);
+                        }
                     });
                     $loadingPlaceholder.replaceWith($content);
                     self._updatePlaceholder();
+                    if (loadViewButton !== false) {
+                        loadViewButton.trigger('click');
+                    }
                 }, function() {
                     $loadingPlaceholder.hide()
                 })
@@ -235,10 +244,25 @@
         _getCommonSaveData: function() {
             var currentSettings = this.mbMap.getModel().getCurrentSettings();
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
+            let sources = [];
+            this.mbMap.getModel().getSources().forEach((source) => {
+                sources.push({
+                    'id': source.id,
+                    'children': source.children,
+                    'options': source.options,
+                    'type': source.type,
+                    'customParams': source.customParams,
+                    'isBaseSource': source.isBaseSource
+                });
+            });
+            // remove recursion that prevents JSON.stringify()
+            Mapbender.layersets.forEach(layerset => {
+                delete layerset.siblings;
+            });
             return {
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
-                layersetsDiff: diff.layersets,
-                sourcesDiff: diff.sources,
+                layersetStates: JSON.stringify(Mapbender.layersets),
+                sourcesStates: JSON.stringify(sources),
                 token: this.csrfToken,
             };
         },
@@ -394,11 +418,35 @@
             });
             return diff;
         },
-        _apply: function(diff) {
-            var settings = this.mbMap.getModel().mergeSettings(this.referenceSettings, diff);
+        _apply: function(settings) {
+            const layertreeElement = $('.mb-element-layertree');
+            layertreeElement.find('ul.layers:first').empty();
+            this.mbMap.getModel().sourceTree = [];
+            const self = this;
+            this.mbMap.map.olMap.getAllLayers().forEach(layer => {
+                self.mbMap.map.olMap.removeLayer(layer);
+            });
+            let wmsloaderSources = [];
 
-            this.mbMap.getModel().applyViewParams(diff.viewParams);
-            this.mbMap.getModel().applySettings(settings);
+            settings.sources.forEach(s => {
+                let source = Mapbender.Source.factory(s);
+                if (s.id.startsWith('wmsloader')) {
+                    wmsloaderSources.push(source);
+                    return; // continue
+                }
+                let layerset = settings.layersets.filter(l => {
+                    let layersetSource = l.children.filter(child => child.id === source.id)[0];
+                    return typeof(layersetSource) !== 'undefined' && source.id === layersetSource.id;
+                })[0];
+                source.layerset = new Mapbender.Layerset(layerset.title_, layerset.id, layerset.selected);
+                this.mbMap.getModel().addSource(source);
+            });
+
+            layertreeElement.data('mapbenderMbLayertree')._createTree();
+            wmsloaderSources.forEach(source => {
+                this.mbMap.getModel().addSourceFromConfig(source);
+            });
+            this.mbMap.getModel().applyViewParams(settings.viewParams);
         },
         _flash: function($el, color) {
             $el.css({
