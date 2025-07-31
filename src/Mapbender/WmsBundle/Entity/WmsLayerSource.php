@@ -472,29 +472,31 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
 
     /**
      * Get styles incl. from parent WmsLayerSource (OGC WMS
-     * Implemantation Specification)
+     * Implementation Specification)
      * @param bool $inherit to also return style objects from parent layer(s)
      *
      * @return Style[]
      */
     public function getStyles($inherit = false)
     {
-        if ($inherit && $this->getParent() !== null) {
-            $styles = array_values($this->getParent()->getStyles(true) ?? []);
-            // ignore title&name combinations that are present both in the parent and in the child
-            foreach ($this->styles as $childStyle) {
-                foreach ($styles as $parentStyle) {
-                    if ($parentStyle->getTitle() === $childStyle->getTitle()
-                        && $parentStyle->getName() === $childStyle->getTitle()) {
-                        continue 2;
-                    }
-                }
-                $styles[] = $childStyle;
-            }
-            return $styles;
-        } else {
+        if (!$inherit || $this->getParent() === null) {
             return $this->styles;
         }
+
+        /** @var Style[] $styles */
+        $styles = array_values($this->getParent()->getStyles(true) ?? []);
+        // ignore title&name combinations that are present both in the parent and in the child
+        foreach ($this->styles as $childStyle) {
+            /** @var Style $childStyle */
+            foreach ($styles as $parentStyle) {
+                if ($parentStyle->getTitle() === $childStyle->getTitle()
+                    && $parentStyle->getName() === $childStyle->getName()) {
+                    continue 2;
+                }
+            }
+            $styles[] = $childStyle;
+        }
+        return $styles;
     }
 
     /**

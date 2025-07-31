@@ -142,15 +142,17 @@ class InstanceTunnelService
     }
 
     /**
-     * @param WmsInstanceLayer|SourceInstanceItem $instanceLayer
+     * @param array|SourceInstanceItem $instanceLayer
      * @return string
      */
-    public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
+    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance)
     {
-        $sourceInstance = $instanceLayer->getSourceInstance();
+        if (!$sourceInstance && $instanceLayer instanceof  SourceInstanceItem) {
+            $sourceInstance = $instanceLayer->getSourceInstance();
+        }
         return $this->router->generate($this->legendTunnelRouteName, array(
             'instanceId' => $sourceInstance->getId(),
-            'layerId' => $instanceLayer->getId(),
+            'layerId' => is_array($instanceLayer) ? $instanceLayer['id'] : $instanceLayer->getId(),
         ));
     }
 

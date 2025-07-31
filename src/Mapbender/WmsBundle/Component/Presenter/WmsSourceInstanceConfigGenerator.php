@@ -3,7 +3,9 @@
 
 namespace Mapbender\WmsBundle\Component\Presenter;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
 use Mapbender\CoreBundle\Entity\Application;
@@ -21,6 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Instance registered in container at mapbender.source.wms.config_generator
  * see services.xml
+ * @phpstan-type WmsInstanceLayerArray array{id: int|string, active: bool, selected: bool, allowinfo: bool, allowselected: bool, allowtoggle: bool, toggle: bool, title: ?string, info: bool, style: ?string, priority: int, parentId: null|int|string, sourceId: int|string, lsTitle: ?string, lsLatLonBounds: null|BoundingBox, lsStyles: (null|Style[])}
  */
 class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 {
@@ -38,9 +41,11 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * make a separate database query for each layer massively degrading performance
      * when many layers are present.
      * The key for the first level is the parent layer id, or null for root layers.
-     * @var WmsInstanceLayer[][]
+     * @var WmsInstanceLayerArray[]
      */
-    protected array $preloadedLayers = [];
+    protected array $preloadedLayersByParent = [];
+    /** @var WmsInstanceLayerArray */
+    protected array $preloadedLayersById = [];
 
     public function isInstanceEnabled(SourceInstance $sourceInstance): bool
     {
@@ -63,17 +68,17 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         }
 
         $config = array_merge($config, [
-            'title' => $root->getTitle() ?: $root->getSourceItem()->getTitle() ?: $sourceInstance->getTitle(),
+            'title' => $root['title'] ?: $root['lsTitle'] ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array(
-                $this->getLayerConfiguration($root),
+                $this->getLayerConfiguration($sourceInstance, $root),
             ),
         ]);
 
         return $this->postProcessUrls($sourceInstance, $config);
     }
 
-    public function getOptionsConfiguration(WmsInstance $sourceInstance)
+    public function getOptionsConfiguration(WmsInstance $sourceInstance): array
     {
         $buffer = max(0, intval($sourceInstance->getBuffer()));
         $ratio = $sourceInstance->getRatio();
@@ -99,10 +104,13 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         );
     }
 
-    protected function getLayerConfiguration(WmsInstanceLayer $instanceLayer)
+    /**
+     * @param WmsInstanceLayerArray $instanceLayer
+     */
+    protected function getLayerConfiguration(WmsInstance $instance, array $instanceLayer): array
     {
         $configuration = array(
-            "options" => $this->getLayerOptionsConfiguration($instanceLayer),
+            "options" => $this->getLayerOptionsConfiguration($instance, $instanceLayer),
             "state" => array(
                 "visibility" => null,
                 "info" => null,
@@ -112,12 +120,12 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         );
         $children = array();
         foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
-            if ($childLayer->getActive()) {
-                $children[] = $this->getLayerConfiguration($childLayer);
+            if ($childLayer['active']) {
+                $children[] = $this->getLayerConfiguration($instance, $childLayer);
             }
         }
         if ($children) {
-            $layerOrder = $instanceLayer->getSourceInstance()->getLayerOrder()
+            $layerOrder = $instance->getLayerOrder()
                 ?: $this->defaultLayerOrder
                     ?: WmsInstance::LAYER_ORDER_TOP_DOWN;
             if ($layerOrder == WmsInstance::LAYER_ORDER_BOTTOM_UP) {
@@ -129,68 +137,65 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     }
 
     /**
-     * @param WmsInstanceLayer $instanceLayer
+     * @param WmsInstanceLayerArray $layer
      * @return array
      */
-    protected function getLayerOptionsConfiguration(WmsInstanceLayer $instanceLayer)
+    protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
     {
-        $sourceItem = $instanceLayer->getSourceItem();
         $configuration = array(
-            "id" => strval($instanceLayer->getId()),
-            "priority" => $instanceLayer->getPriority(),
-            "name" => strval($sourceItem->getName()),
-            "title" => $instanceLayer->getTitle() ?: $sourceItem->getTitle(),
-            "queryable" => $instanceLayer->getInfo(),
-            "style" => $instanceLayer->getStyle(),
-            "minScale" => $instanceLayer->getMinScale(true),
-            "maxScale" => $instanceLayer->getMaxScale(true),
-            "bbox" => $this->getLayerBboxConfiguration($sourceItem),
-            "treeOptions" => $this->getTreeOptionsLayerConfig($instanceLayer),
-            'metadataUrl' => $this->getMetadataUrl($instanceLayer),
-            'availableStyles' => $this->getAvailableStyles($sourceItem),
+            "id" => strval($layer['id']),
+            "priority" => $layer['priority'],
+            "name" => strval($layer['lsTitle']),
+            "title" => $layer['title'] ?: $layer['lsTitle'],
+            "queryable" => $layer['info'],
+            "style" => $layer['style'],
+            "minScale" => null,// $instanceLayer->getMinScale(true),
+            "maxScale" => null,// $instanceLayer->getMaxScale(true),
+            "bbox" => $this->getLayerBboxConfiguration($layer),
+            "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
+            "metadataUrl" => $this->getMetadataUrl($instance, $layer),
+            "availableStyles" => $this->getAvailableStyles($layer),
         );
         $configuration += array_filter(array(
-            'legend' => $this->getLegendConfig($instanceLayer),
+            'legend' => $this->getLegendConfig($instance, $layer),
         ));
         return $configuration;
     }
 
     /**
-     * @param WmsInstanceLayer $instanceLayer
-     * @return string|null
+     * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getMetadataUrl(WmsInstanceLayer $instanceLayer)
+    protected function getMetadataUrl(WmsInstance $instance, array $instanceLayer): ?string
     {
         // no metadata for unpersisted instances (WmsLoader)
-        if (!$instanceLayer->getId()) {
+        if (!$instanceLayer['id']) {
             return null;
         }
-        $layerset = $instanceLayer->getSourceInstance()->getLayerset();
+        $layerset = $instance->getLayerset();
         if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
             return null;
         }
         $router = $this->urlProcessor->getRouter();
         return $router->generate('mapbender_core_application_metadata', array(
-            'instance' => $instanceLayer->getSourceInstance(),
-            'layerId' => $instanceLayer->getId(),
+            'instance' => $instance,
+            'layerId' => $instanceLayer['id'],
         ));
     }
 
     /**
-     * @param WmsInstanceLayer $instanceLayer
-     * @return array
+     * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getTreeOptionsLayerConfig(WmsInstanceLayer $instanceLayer)
+    protected function getTreeOptionsLayerConfig(array $instanceLayer): array
     {
         $hasChildren = !!count($this->getSublayersFromCache($instanceLayer));
         return array(
-            "info" => $instanceLayer->getInfo(),
-            "selected" => $instanceLayer->getSelected(),
-            "toggle" => $hasChildren ? $instanceLayer->getToggle() : null,
+            "info" => $instanceLayer['info'],
+            "selected" => $instanceLayer['selected'],
+            "toggle" => $hasChildren ? $instanceLayer['toggle'] : null,
             "allow" => array(
-                "info" => $instanceLayer->getAllowinfo(),
-                "selected" => $instanceLayer->getAllowselected(),
-                "toggle" => $hasChildren ? $instanceLayer->getAllowtoggle() : null,
+                "info" => $instanceLayer['allowinfo'],
+                "selected" => $instanceLayer['allowselected'],
+                "toggle" => $hasChildren ? $instanceLayer['allowtoggle'] : null,
             ),
         );
     }
@@ -256,27 +261,50 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     public function getBboxConfiguration(WmsInstance $sourceInstance)
     {
-        $rootLayer = $sourceInstance->getRootlayer();
-        return $this->getLayerBboxConfiguration($rootLayer->getSourceItem());
+        $rootLayer = $this->getRootLayerFromCache($sourceInstance);
+        return $this->getLayerBboxConfiguration($rootLayer);
     }
 
     /**
-     * @param WmsLayerSource $layer
+     * @param WmsInstanceLayerArray $layer
      * @return float[][]
      */
-    protected function getLayerBboxConfiguration(WmsLayerSource $layer)
+    protected function getLayerBboxConfiguration(array $layer): array
     {
-        $configs = array();
-        $bbox = $layer->getLatlonBounds();
+        $configs = [];
+        $bbox = $layer["lsLatLonBounds"];
         if ($bbox) {
             $configs[$bbox->getSrs()] = $bbox->toCoordsArray();
         }
         return $configs;
     }
 
-    protected function getAvailableStyles(WmsLayerSource $layer)
+    /**
+     * @param WmsInstanceLayerArray $layer
+     * @return Style[]
+     * partial reimplementation of WmsLayerSource::getStyles() since we don't have the object here for performance reasons
+     * @see WmsLayerSource::getStyles()
+     */
+    protected function getAvailableStyles(array $layer): array
     {
-        return $layer->getStyles(true);
+        $styles = [];
+        // store "hash" of style by using name and title
+        foreach($layer['lsStyles'] ?? [] as $style) {
+            $styles[$style->getName()."|".$style->getTitle()] = $style;
+        }
+
+        while ($layer['parentId']) {
+            $layer = $this->preloadedLayersById[$layer['parentId']] ?? null;
+            if (!$layer) break;
+            foreach($layer['lsStyles'] ?? [] as $style) {
+                $hash = $style->getName() . "|" . $style->getTitle();
+                if (!isset($styles[$hash])) {
+                    $styles[$hash] = $style;
+                }
+            }
+
+        }
+        return array_values($styles);
     }
 
     /**
@@ -317,20 +345,19 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     }
 
     /**
-     * @param WmsInstanceLayer $instanceLayer
-     * @return array
+     * @param WmsInstanceLayerArray $instanceLayer
      */
-    public function getLegendConfig(WmsInstanceLayer $instanceLayer)
+    public function getLegendConfig(WmsInstance $instance, array $instanceLayer): array
     {
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
         // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
         // @todo: implement legend url generation for reusable instances
         if ($legendUrl) {
-            if ($this->useTunnel($instanceLayer->getSourceInstance())) {
+            if ($this->useTunnel($instance)) {
                 // request via tunnel, see ApplicationController::instanceTunnelLegendAction
                 $tunnelService = $this->urlProcessor->getTunnelService();
-                $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer);
+                $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer, $instance);
             } else {
                 $publicLegendUrl = $legendUrl;
             }
@@ -341,15 +368,24 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return array();
     }
 
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string
+    /**
+     * @param WmsInstanceLayer|WmsInstanceLayerArray $instanceLayer
+     * @return string|null
+     */
+    public function getInternalLegendUrl(SourceInstanceItem|array $instanceLayer): ?string
     {
-        /** @var WmsInstanceLayer $instanceLayer */
         // scan styles for legend url entries backwards
         // some WMS services may not populate every style with a legend, so just checking the last
         // style for a legend is not enough
         // @todo: style node selection should follow configured style
-        $layerSource = $instanceLayer->getSourceItem();
-        foreach (array_reverse($layerSource->getStyles(false)) as $style) {
+        if (is_array($instanceLayer)) {
+            $styles = $instanceLayer['lsStyles'] ?? [];
+        } else {
+            $layerSource = $instanceLayer->getSourceItem();
+            $styles = array_reverse($layerSource->getStyles(false));
+        }
+
+        foreach ($styles as $style) {
             /** @var Style $style */
             $legendUrl = $style->getLegendUrl();
             if ($legendUrl) {
@@ -396,7 +432,6 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param mixed[] $layerConfig
      * @return mixed[]
      * @todo: this should and can be part of the initial generation
-     *
      */
     protected function proxifyLayerUrls($layerConfig, ?SourceInstance $sourceInstance = null)
     {
@@ -479,37 +514,44 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     public function preload(array $sourceInstances): void
     {
         $allLayers = $this->em->createQueryBuilder()
-            ->select('l')
+            ->select('l.id, l.active, l.selected, l.toggle, l.allowinfo, l.allowselected, l.allowtoggle, l.title, l.info, l.style, l.priority, p.id AS parentId, i.id AS sourceId, ls.title AS lsTitle, ls.latlonBounds AS lsLatLonBounds, ls.styles AS lsStyles')
             ->from(WmsInstanceLayer::class, 'l')
+            ->leftJoin(WmsInstanceLayer::class, 'p', 'WITH', 'l.parent = p.id')
+            ->leftJoin(WmsInstance::class, 'i', 'WITH', 'l.sourceInstance = i.id')
+            ->leftJoin(WmsLayerSource::class, 'ls', 'WITH', 'l.sourceItem = ls.id')
             ->where('l.sourceInstance IN (:instances)')
             ->setParameter('instances', $sourceInstances)
             ->getQuery()
-            ->getResult()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY)
         ;
         /** @var WmsInstanceLayer $layer */
         foreach($allLayers as $layer) {
-            $pid = $layer->getParent()?->getId();
-            if (!array_key_exists($pid, $this->preloadedLayers)) {
-                $this->preloadedLayers[$pid] = [];
+            $pid = $layer['parentId'];
+            if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
+                $this->preloadedLayersByParent[$pid] = [];
             }
-            $this->preloadedLayers[$pid][] = $layer;
+            $this->preloadedLayersByParent[$pid][] = $layer;
+            $this->preloadedLayersById[$layer['id']] = $layer;
         }
     }
 
     /**
      * using the cached/preloaded data, replacement function for
      * @see WmsInstanceLayer::getSublayer()
-     * @return WmsInstanceLayer[]
+     * @return WmsInstanceLayerArray[]
      */
-    protected function getSublayersFromCache(WmsInstanceLayer $parent): array
+    protected function getSublayersFromCache(array $parent): array
     {
-        return $this->preloadedLayers[$parent->getId()] ?? [];
+        return $this->preloadedLayersByParent[$parent['id']] ?? [];
     }
 
-    protected function getRootLayerFromCache(WmsInstance $parent): ?WmsInstanceLayer
+    /**
+     * @return ?WmsInstanceLayerArray
+     */
+    protected function getRootLayerFromCache(WmsInstance $parent): ?array
     {
-        foreach(($this->preloadedLayers[null] ?? []) as $layer) {
-            if ($layer->getSourceInstance()->getId() === $parent->getId()) {
+        foreach(($this->preloadedLayersByParent[null] ?? []) as $layer) {
+            if ($layer['sourceId'] === $parent->getId()) {
                 return $layer;
             }
         }
