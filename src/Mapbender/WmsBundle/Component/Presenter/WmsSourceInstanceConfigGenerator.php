@@ -291,7 +291,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getInheritedScale(string $key, array $layer): ?int
     {
-        while(true) {
+        while ($layer) {
             if ($layer[$key]) return $layer[$key];
             if ($layer['lsScale']) {
                 if ($key === 'minScale' && $layer['lsScale']->getMin()) return $layer['lsScale']->getMin();
@@ -299,8 +299,8 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             }
             if (!$layer['parentId']) return null;
             $layer = $this->preloadedLayersById[$layer['parentId']] ?? null;
-            if (!$layer) return null;
         }
+        return null;
     }
 
     /**
@@ -546,8 +546,8 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             ->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY)
         ;
-        /** @var WmsInstanceLayer $layer */
         foreach ($allLayers as $layer) {
+            /** @var WmsInstanceLayerArray $layer */
             $pid = $layer['parentId'];
             if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
                 $this->preloadedLayersByParent[$pid] = [];
