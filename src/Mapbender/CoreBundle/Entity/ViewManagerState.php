@@ -61,19 +61,19 @@ class ViewManagerState
     /**
      * @var mixed[]
      */
-    #[ORM\Column(name: 'layerset_diffs', type: 'array')]
-    protected $layersetDiffs;
+    #[ORM\Column(name: 'layerset_states', type: 'array')]
+    protected $layersetStates;
 
     /**
      * @var mixed[]
      */
-    #[ORM\Column(name: 'source_diffs', type: 'array')]
-    protected $sourceDiffs;
+    #[ORM\Column(name: 'source_states', type: 'array')]
+    protected $sourceStates;
 
     public function __construct()
     {
-        $this->layersetDiffs = array();
-        $this->sourceDiffs = array();
+        $this->layersetStates = array();
+        $this->sourceStates = array();
         $this->mtime = new \DateTime();
     }
 
@@ -168,33 +168,33 @@ class ViewManagerState
     /**
      * @return mixed[]
      */
-    public function getSourceDiffs()
+    public function getSourceStates()
     {
-        return $this->sourceDiffs;
+        return $this->sourceStates;
     }
 
     /**
-     * @param mixed[] $sourceDiffs
+     * @param mixed[] $sourceStates
      */
-    public function setSourceDiffs(array $sourceDiffs)
+    public function setSourceStates(array $sourceStates)
     {
-        $this->sourceDiffs = $sourceDiffs;
+        $this->sourceStates = $sourceStates;
     }
 
     /**
      * @return mixed[]
      */
-    public function getLayersetDiffs()
+    public function getLayersetStates()
     {
-        return $this->layersetDiffs;
+        return $this->layersetStates;
     }
 
     /**
-     * @param mixed[] $layersetDiffs
+     * @param mixed[] $layersetStates
      */
-    public function setLayersetDiffs(array $layersetDiffs)
+    public function setLayersetStates(array $layersetStates)
     {
-        $this->layersetDiffs = $layersetDiffs;
+        $this->layersetStates = $layersetStates;
     }
 
     /**
@@ -204,8 +204,8 @@ class ViewManagerState
     {
         return array(
             'viewParams' => $this->getViewParams(),
-            'layersets' => $this->getLayersetDiffs(),
-            'sources' => $this->getSourceDiffs(),
+            'layersets' => $this->getLayersetStates(),
+            'sources' => $this->getSourceStates(),
         );
     }
 }
