@@ -76,6 +76,8 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         $instance->setOpacity($data['opacity'] ?? 100);
         $instance->setProxy($data['proxy'] ?? false);
 
+        $this->applyLayerInfo($data, $instance->getRootlayer());
+
         $hasLayerInfo = isset($data['layers']) && is_array($data['layers']);
 
         // Layer hierarchy is usually created by the database, do it manually for YAML applications
@@ -169,7 +171,11 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
             return;
         }
         $layerData = $data['layers'][$identifier];
+        $this->applyLayerInfo($layerData, $layer);
+    }
 
+    private function applyLayerInfo(array $layerData, WmtsInstanceLayer $layer): void
+    {
         if (isset($layerData['title'])) {
             $layer->setTitle($layerData['title']);
         }
@@ -178,7 +184,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         }
         $layer->setToggle($layerData['toggle'] ?? true);
         $layer->setAllowtoggle($layerData['allowToggle'] ?? true);
-        $layer->setSelected($layerData['selected'] ?? true);
+        $layer->setSelected($layerData['selected'] ?? $layerData['visible'] ?? true);
         $layer->setActive($layerData['active'] ?? true);
         $layer->setAllowselected($layerData['allowSelected'] ?? true);
         $layer->setAllowinfo($layerData['allowInfo'] ?? true);
