@@ -96,7 +96,7 @@ window.Mapbender = Mapbender || {};
         }
 
         createNativeLayers(srsName, mapOptions) {
-            const allLayers = this._getAllLayers();
+            const allLayers = this.getRootLayer().children;
             const rootLayer = this.getRootLayer();
             rootLayer.children = allLayers;
 
@@ -151,7 +151,8 @@ window.Mapbender = Mapbender || {};
         }
 
         _isCompatible(layer, projectionCode) {
-            return (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected) && layer.selectMatrixSet(projectionCode);
+            const compat = (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected) && layer.selectMatrixSet(projectionCode);
+            return !!compat;
         }
 
         /**

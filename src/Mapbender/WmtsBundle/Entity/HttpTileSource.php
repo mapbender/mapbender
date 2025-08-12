@@ -91,12 +91,10 @@ abstract class HttpTileSource extends HttpParsedSource
         return $source;
     }
 
-    /**
-     * @param string $version
-     */
-    public function setVersion($version)
+    public function setVersion(string $version): self
     {
         $this->version = $version;
+        return $this;
     }
 
     /**

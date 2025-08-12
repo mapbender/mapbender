@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Collection;
@@ -24,10 +25,7 @@ class ExportHandler extends ExchangeHandler
     {
         gc_enable();
         parent::__construct($em);
-        $em
-            ->getConnection()
-            ->getConfiguration()
-            ->setSQLLogger(null);
+        $em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
     /**
@@ -181,7 +179,11 @@ class ExportHandler extends ExchangeHandler
             } elseif ($subObject instanceof Collection) {
                 $data[$fieldName] = array();
                 foreach ($subObject as $item) {
-                    $data[$fieldName][] = $this->handleObject($exportPool, $item);
+                    try {
+                        $data[$fieldName][] = $this->handleObject($exportPool, $item);
+                    } catch (UnpersistedEntity $e) {
+                        // ignore
+                    }
                 }
             } else {
                 try {
@@ -196,7 +198,7 @@ class ExportHandler extends ExchangeHandler
         $exportPool->addEntry($classMeta->getName(), $identValues, $data, true);
         gc_collect_cycles();
         return $referenceData;
-   }
+    }
 
     /**
      * @param AbstractObjectHelper $classInfo

@@ -193,13 +193,13 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
     protected function layerFromConfig(WmsSource $source, array $data, ?WmsLayerSource $parent = null, int $order = 0): WmsLayerSource
     {
         $layer = new WmsLayerSource();
-        $minScale = !isset($data["minScale"]) ? null : $data["minScale"];
-        $maxScale = !isset($data["maxScale"]) ? null : $data["maxScale"];
+        $minScale = $data["minScale"] ?? null;
+        $maxScale = $data["maxScale"] ?? null;
         $layer
             ->setPriority($order)
             ->setSource($source)
             ->setScale(new MinMax($minScale, $maxScale))
-            ->setTitle(!isset($data['title']) ? '' : $data['title'])
+            ->setTitle($data['title'] ?? '')
         ;
         if (!empty($data['name'])) {
             $layer->setName($data['name']);
