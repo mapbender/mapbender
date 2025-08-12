@@ -218,6 +218,9 @@
             if (!layer.getParent()) {
                 $li.addClass("serviceContainer");
             }
+            if (layer.getParent() && layer.children.length) {
+                $li.addClass("subContainer");
+            }
             const li = $li[0];
             const isLeafNode = !layer.children || !layer.children.length || !treeOptions.toggle;
             li.classList.toggle('-js-leafnode', isLeafNode);
@@ -298,7 +301,7 @@
             // for performance reasons, only re-initialise sortable if tree has already been created
             if (this.treeCreated) this._reset();
         },
-        _resetLayer: function(layer, $parent) {
+        _resetLayer: function (layer, $parent) {
             const $li = this.element.find('li[data-id="' + layer.options.id + '"]');
             const treeOptions = layer.options.treeOptions;
             const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
@@ -448,7 +451,7 @@
             }
         },
         _updateChildrenState: function ($layer, newState) {
-            $layer.children('.layers').children('.leave').each((index, child)  => {
+            $layer.children('.layers').children('.leave').each((index, child) => {
                 const $child = $(child);
                 const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected');
                 this.updateIconVisual_($childToggle, newState, null);
@@ -464,14 +467,14 @@
             this.model.controlLayer(layer, null, newState);
         },
         _resetLayerFilter: function () {
-            $(this.element).find('span.layer-highlight').each((index, span) => {
+            this.element.find('.layer-highlight').each((index, span) => {
                 $(span).replaceWith($(span).text());
             });
-            $(this.element).find('span.filtered').removeClass('filtered');
-            $(this.element).find('span.layer-title').parent().show();
+            this.element.find('.filtered').removeClass('filtered');
+            this.element.find('.layer-title').parent().show();
         },
         _filterLayer: function () {
-            const value = $(this.element).find('.layer-filter-input').val().toLowerCase();
+            const value = this.element.find('.layer-filter-input').val().toLowerCase();
 
             if (typeof this._lastFilterLength === 'undefined') {
                 this._lastFilterLength = 0;
@@ -482,7 +485,7 @@
             }
 
             // Mark all filter hits
-            const $layerTitles = $(this.element).find('span.layer-title');
+            const $layerTitles = this.element.find('.layer-title');
             $layerTitles.each((index, element) => {
                 const title = $(element).text()?.toString().toLowerCase();
                 if (title) {
@@ -493,35 +496,37 @@
             // Hide all parent containers
             $layerTitles.parent().hide();
 
-            $('span.filtered', this.element).each((index, element) => {
+            this.element.find('.filtered').each((index, match) => {
+                const $match = $(match);
+
                 // Highlight the matching text in the layer title
-                const text = $(element).text();
                 const regex = new RegExp('(' + value + ')', 'i');
-                $(element).html(text.replace(regex, '<span class="layer-highlight">$1</span>'));
-                // Remove highlighted strings that are shorter than value
-                $(this.element).find('span.layer-highlight').each((index, span) => {
-                    if ($(span).text().length < value.length) {
-                        $(span).replaceWith($(span).text());
-                    }
-                });
+                $match.html($match.text().replace(regex, '<span class="layer-highlight">$1</span>'));
 
                 // Show parent containers and decide whether to open the folders
-                $(element).parent().show();
-                ['.serviceContainer', '.themeContainer'].forEach(selector => {
-                    const $container = $(element).parents(selector);
+                $match.parent().show();
+                ['subContainer', 'serviceContainer', 'themeContainer'].forEach(containerClass => {
+                    const $container = $match.parents('.' + containerClass);
                     $container.find('.leaveContainer:first').show();
 
-                    const isInContainer = $(element).parent().parent().hasClass(selector.replace('.', ''));
+                    const isInContainer = $match.parent().parent().hasClass(containerClass);
+
                     if (isInContainer) {
                         $container.find('ul.layers .leaveContainer').show();
-                        $container.removeClass('showLeaves');
-                        $container.find('i:first').addClass('fa-folder').removeClass('fa-folder-open');
-                    } else {
-                        $container.addClass('showLeaves');
-                        $container.find('i:first').addClass('fa-folder-open').removeClass('fa-folder');
                     }
-                });
+                    $container.toggleClass('showLeaves', !isInContainer);
+                    $container.find('.-fn-toggle-children:first > i')
+                        .toggleClass('fa-folder-open', !isInContainer)
+                        .toggleClass('fa-folder', isInContainer);
 
+                });
+            });
+
+            // Remove highlighted strings that are shorter than value
+            this.element.find('.layer-highlight').each((index, span) => {
+                if ($(span).text().length < value.length) {
+                    $(span).replaceWith($(span).text());
+                }
             });
 
             this._lastFilterLength = value.length;
@@ -894,7 +899,7 @@
 })(jQuery);
 
 // Ensure all mouse click events can also be triggered by pressing the Enter key
-$(document).on('keydown', function(event) {
+$(document).on('keydown', function (event) {
     if (event.key === 'Enter') {
         var target = $(event.target);
         if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
