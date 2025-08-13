@@ -81,6 +81,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
             "useTheme" => false,
             'allowReorder' => true,
             'themes' => array(),
+            'showFilter' => false,
         );
     }
 
@@ -91,6 +92,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['configuration'] = array(
             'menu' => $element->getConfiguration()['menu'],
+            'showFilter' => $element->getConfiguration()['showFilter'],
         );
         return $view;
     }

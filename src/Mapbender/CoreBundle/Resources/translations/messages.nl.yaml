@@ -172,6 +172,8 @@ mb:
         description: Mappen-structuur (LayerTree) van kaartlagen
       admin:
         Selecteer stijl
+      filter:
+        placeholder: 'Filteren…'
     zoombar:
       rotateclockwise: Rechtsom draaien
       rotatecounterclockwise: Linksom draaien
@@ -300,6 +302,7 @@ mb:
             label: thema naam
           hidenottoggleable: Verberg niet-schakelbaar
           hideinfo: Verberg info
+          filter: 'Filters weergeven'
     htmlelement:
       class:
         title: null

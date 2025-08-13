@@ -172,6 +172,8 @@ mb:
         description: Arborescence des couches de la carte
       admin:
         select_style: Choisir un style
+      filter:
+        placeholder: 'Filtrer…'
     zoombar:
       rotateclockwise: Tourner dans le sens des aiguilles d'une montre
       rotatecounterclockwise: Tourner dans le sens inverse des aiguilles d'une montre
@@ -300,6 +302,7 @@ mb:
             label: nom du thème
           hidenottoggleable: Ne pas afficher les couches non-basculables
           hideinfo: Ne pas afficher l'information
+          filter: 'Afficher les filtres'
       template:
         sidepane:
           type:
