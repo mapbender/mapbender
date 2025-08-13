@@ -155,8 +155,17 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
 
     protected function loadWms(Element $element, Request $request)
     {
+        $id = "wmsloader_" . uniqid();
         $source = $this->getSource($request);
+        $source->setId($id);
         $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source, null);
+        $instance->setId($id);
+        $layerIndex = 0;
+        foreach($instance->getLayers() as $layer) {
+            $layer->setId($id . '_' . $layerIndex);
+            $layer->getSourceItem()->setId($id . '_' . $layerIndex);
+            $layerIndex++;
+        }
         $infoFormat = $request->get('infoFormat');
 
         $configGenerator = $this->getConfigGenerator($instance);
