@@ -570,22 +570,26 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @return ?WmsInstanceLayerArray
      */
-    protected function getRootLayerFromCache(WmsInstance $parent): ?array
+    protected function getRootLayerFromCache(WmsInstance $parent, bool $preloadYamlIfNotFound = true): ?array
     {
         foreach (($this->preloadedLayersByParent[null] ?? []) as $layer) {
             if ($layer['sourceId'] === $parent->getId()) {
                 return $layer;
             }
         }
-        return $this->preloadLayersForYamlApplication($parent);
+
+        if ($preloadYamlIfNotFound) {
+            $this->preloadLayersForYamlApplication($parent);
+            return $this->getRootLayerFromCache($parent, false);
+        }
+        return null;
     }
 
     /**
      * for yaml applications or WMS Loader added layers, preload is not called
      * and we can't use doctrine to fetch layers in batch, so replicate the same array structure
-     * @return ?WmsInstanceLayerArray
      */
-    private function preloadLayersForYamlApplication(WmsInstance $parent): ?array
+    private function preloadLayersForYamlApplication(WmsInstance $parent): void
     {
         foreach ($parent->getLayers() as $layer) {
             $pid = $layer->getParent()?->getId();
@@ -617,12 +621,5 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             $this->preloadedLayersByParent[$pid][] = $array;
             $this->preloadedLayersById[$array['id']] = $array;
         }
-
-        foreach (($this->preloadedLayersByParent[null] ?? []) as $layer) {
-            if ($layer['sourceId'] === $parent->getId()) {
-                return $layer;
-            }
-        }
-        return null;
     }
 }

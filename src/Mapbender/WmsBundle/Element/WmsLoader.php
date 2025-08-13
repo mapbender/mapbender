@@ -40,11 +40,11 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     /** @var string */
     protected $exampleUrl;
 
-    public function __construct(ManagerRegistry $managerRegistry,
+    public function __construct(ManagerRegistry               $managerRegistry,
                                 AuthorizationCheckerInterface $authorizationChecker,
-                                TypeDirectoryService $sourceTypeDirectory,
-                                Importer $sourceImporter,
-                                $exampleUrl)
+                                TypeDirectoryService          $sourceTypeDirectory,
+                                Importer                      $sourceImporter,
+                                                              $exampleUrl)
     {
         $this->instanceRepository = $managerRegistry->getRepository(SourceInstance::class);
         $this->authorizationChecker = $authorizationChecker;
@@ -161,7 +161,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source, null);
         $instance->setId($id);
         $layerIndex = 0;
-        foreach($instance->getLayers() as $layer) {
+        foreach ($instance->getLayers() as $layer) {
             $layer->setId($id . '_' . $layerIndex);
             $layer->getSourceItem()->setId($id . '_' . $layerIndex);
             $layerIndex++;
@@ -203,8 +203,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             $layerConfiguration['configuration']['children'][0]['options']['title'] = $child['options']['title']
                 . ' ('
                 . $layerConfiguration['configuration']['title']
-                . ')'
-            ;
+                . ')';
             $layerConfigurations[] = $layerConfiguration;
         }
         return $layerConfigurations;
