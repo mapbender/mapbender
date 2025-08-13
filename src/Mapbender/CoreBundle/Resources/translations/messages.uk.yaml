@@ -191,6 +191,8 @@ mb:
         description: Дерево шарів мапи
       admin:
         select_style: Виберіть стиль
+      filter:
+        placeholder: 'Фільтрувати…'
     zoombar:
       rotateclockwise: Поверніть за годинниковою стрілкою
       rotatecounterclockwise: Обертання проти годинникової стрілки
@@ -369,6 +371,7 @@ mb:
             label: назва теми
           hidenottoggleable: Приховати папки, що не перемикаються
           hideinfo: Приховати інформацію
+          filter: 'Показати фільтри'
       template:
         sidepane:
           type:

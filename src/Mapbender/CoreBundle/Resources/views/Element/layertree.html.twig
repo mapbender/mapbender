@@ -1,3 +1,8 @@
+{% if configuration.showFilter %}
+    <div class="input-group mb-3">
+        <input type="search" class="form-control layer-filter-input" placeholder="{{ 'mb.core.layertree.filter.placeholder'| trans }}" tabindex="0">
+    </div>
+{% endif %}
   <ul class="layers" >
       <li class="-fn-theme-template themeContainer hidden">
         <div class="leaveContainer">

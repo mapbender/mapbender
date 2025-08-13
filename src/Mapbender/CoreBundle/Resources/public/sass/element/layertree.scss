@@ -60,6 +60,14 @@ $textColor: $darkFontColor !default;
     opacity: 0;
     cursor: default;
   }
+  
+  .layer-filter-input {
+       margin: 3px;
+  }  
+
+  .layer-highlight {
+    color: $ciColor;
+  }
 }
 
 $layer-slider-bar-height: 5px;

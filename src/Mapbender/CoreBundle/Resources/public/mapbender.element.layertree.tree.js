@@ -98,6 +98,7 @@
             this.element.on('click', '.layer-metadata', function (evt) {
                 self._showMetadata(evt);
             });
+            this.element.on('input', '.layer-filter-input', this._filterLayer.bind(this));
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -217,6 +218,9 @@
             if (!layer.getParent()) {
                 $li.addClass("serviceContainer");
             }
+            if (layer.getParent() && layer.children.length) {
+                $li.addClass("subContainer");
+            }
             const li = $li[0];
             const isLeafNode = !layer.children || !layer.children.length || !treeOptions.toggle;
             li.classList.toggle('-js-leafnode', isLeafNode);
@@ -297,7 +301,7 @@
             // for performance reasons, only re-initialise sortable if tree has already been created
             if (this.treeCreated) this._reset();
         },
-        _resetLayer: function(layer, $parent) {
+        _resetLayer: function (layer, $parent) {
             const $li = this.element.find('li[data-id="' + layer.options.id + '"]');
             const treeOptions = layer.options.treeOptions;
             const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
@@ -447,7 +451,7 @@
             }
         },
         _updateChildrenState: function ($layer, newState) {
-            $layer.children('.layers').children('.leave').each((index, child)  => {
+            $layer.children('.layers').children('.leave').each((index, child) => {
                 const $child = $(child);
                 const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected');
                 this.updateIconVisual_($childToggle, newState, null);
@@ -462,6 +466,72 @@
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
+        _resetLayerFilter: function () {
+            this.element.find('.layer-highlight').each((index, span) => {
+                $(span).replaceWith($(span).text());
+            });
+            this.element.find('.filtered').removeClass('filtered');
+            this.element.find('.layer-title').parent().show();
+        },
+        _filterLayer: function () {
+            const value = this.element.find('.layer-filter-input').val().toLowerCase();
+
+            if (typeof this._lastFilterLength === 'undefined') {
+                this._lastFilterLength = 0;
+            }
+            if (value.length < 2) {
+                if (this._lastFilterLength > 1) this._resetLayerFilter(false);
+                return;
+            }
+
+            // Mark all filter hits
+            const $layerTitles = this.element.find('.layer-title');
+            $layerTitles.each((index, element) => {
+                const title = $(element).text()?.toString().toLowerCase();
+                if (title) {
+                    $(element).toggleClass('filtered', title.includes(value));
+                }
+            });
+
+            // Hide all parent containers
+            $layerTitles.parent().hide();
+
+            this.element.find('.filtered').each((index, match) => {
+                const $match = $(match);
+
+                // Highlight the matching text in the layer title
+                const regex = new RegExp('(' + value + ')', 'i');
+                $match.html($match.text().replace(regex, '<span class="layer-highlight">$1</span>'));
+
+                // Show parent containers and decide whether to open the folders
+                $match.parent().show();
+                ['subContainer', 'serviceContainer', 'themeContainer'].forEach(containerClass => {
+                    const $container = $match.parents('.' + containerClass);
+                    $container.find('.leaveContainer:first').show();
+
+                    const isInContainer = $match.parent().parent().hasClass(containerClass);
+
+                    if (isInContainer) {
+                        $container.find('ul.layers .leaveContainer').show();
+                    }
+                    $container.toggleClass('showLeaves', !isInContainer);
+                    $container.find('.-fn-toggle-children:first > i')
+                        .toggleClass('fa-folder-open', !isInContainer)
+                        .toggleClass('fa-folder', isInContainer);
+
+                });
+            });
+
+            // Remove highlighted strings that are shorter than value
+            this.element.find('.layer-highlight').each((index, span) => {
+                if ($(span).text().length < value.length) {
+                    $(span).replaceWith($(span).text());
+                }
+            });
+
+            this._lastFilterLength = value.length;
+        },
+
         /**
          * initalise a layer menu, called when the burger menu is clicked
          * @param $layerNode jQuery
@@ -829,7 +899,7 @@
 })(jQuery);
 
 // Ensure all mouse click events can also be triggered by pressing the Enter key
-$(document).on('keydown', function(event) {
+$(document).on('keydown', function (event) {
     if (event.key === 'Enter') {
         var target = $(event.target);
         if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
