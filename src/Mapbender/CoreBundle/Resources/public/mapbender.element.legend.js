@@ -175,7 +175,7 @@
                 return null;
             }
 
-            if (this.options.showSourceTitle) {
+            if (this.options.showSourceTitle && sourceData.legend?.type !== "style") {
                 ul.append(this.createSourceTitle(sourceData));
             }
 
@@ -192,8 +192,7 @@
             return ul;
         },
         _createLayerHtml: function (layer) {
-            var widget = this;
-            var options = widget.options;
+            var options = this.options;
             var $li = $('<li/>').addClass('ebene' + layer.level);
 
             if (layer.children.length) {
@@ -207,10 +206,10 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-                if (options.showLayerTitle) {
-                    $li.append(widget.createTitle(layer));
+                if (options.showLayerTitle && layer.legend.type === "url") {
+                    $li.append(this.createTitle(layer));
                 }
-                widget.createLegendForLayer(layer).then((result) => $li.append(result));
+                this.createLegendForLayer(layer).then((result) => $li.append(result));
             }
             return $li;
         },
