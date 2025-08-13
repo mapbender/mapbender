@@ -2,7 +2,9 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
@@ -43,8 +45,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         protected PrintPluginHost $pluginHost,
         TypeDirectoryService      $typeDirectoryService,
         LoggerInterface           $logger,
+        private readonly ApplicationResolver $applicationResolver,
         protected string          $resourceDir,
-        ?string                   $tempDir
+        ?string                   $tempDir,
     )
     {
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
@@ -60,6 +63,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function doPrint($jobData)
     {
+        if (isset($jobData['application']) && !$jobData['application'] instanceof Application) {
+            $jobData['application'] = $this->applicationResolver->getApplicationEntityUnsecure($jobData['application']);
+        }
+
         $templateData = $this->getTemplateData($jobData);
         $this->setup($templateData, $jobData);
 
