@@ -144,6 +144,13 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
     {
+        $styles = $this->getAvailableStyles($layer);
+        if ($layer['legendEnabled'] === false) {
+            foreach($styles as $style) {
+                /** @var Style $style */
+                $style->setLegendUrl(null);
+            }
+        }
         $configuration = array(
             "id" => strval($layer['id']),
             "priority" => $layer['priority'],
@@ -156,7 +163,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "bbox" => $this->getLayerBboxConfiguration($layer),
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
             "metadataUrl" => $this->getMetadataUrl($instance, $layer),
-            "availableStyles" => $this->getAvailableStyles($layer),
+            "availableStyles" => $styles,
         );
         $configuration += array_filter(array(
             'legend' => $this->getLegendConfig($instance, $layer),
