@@ -76,7 +76,7 @@ class ImageExportService
             return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
         } else {
             $canvas = $this->canvasFactory($jobData);
-            $this->addLayers($canvas, $jobData['layers'], $extentBox);
+            $this->addLayers($canvas, $jobData['layers'], $extentBox, $jobData);
             return $canvas->resource;
         }
     }
@@ -171,15 +171,16 @@ class ImageExportService
      * @param ExportCanvas $canvas
      * @param array $layerDef
      * @param Box $extent projected
+     * @param array $jobData
      */
-    protected function addImageLayer($canvas, $layerDef, Box $extent)
+    protected function addImageLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData)
     {
         if (empty($layerDef['type'])) {
             $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
             return;
         }
         $renderer = $this->getLayerRenderer($layerDef);
-        $renderer->addLayer($canvas, $layerDef, $extent);
+        $renderer->addLayer($canvas, $layerDef, $extent, $jobData);
     }
 
     /**
@@ -245,19 +246,20 @@ class ImageExportService
     }
 
     /**
-     * Collect and merge WMS tiles and vector layers into a PNG file.
+     * Collect and merge layer data into a PNG file.
      *
      * @param ExportCanvas $canvas
      * @param mixed[][] $layers
      * @param Box $extent projected
+     * @param mixed[][] $jobData
      */
-    protected function addLayers($canvas, $layers, Box $extent)
+    protected function addLayers(ExportCanvas $canvas, array $layers, Box $extent, array $jobData)
     {
         $resolution = $canvas->getResolution($extent);
         $effectiveLayers = $this->squashLayers($layers, $resolution);
 
         foreach ($effectiveLayers as $k => $layerDef) {
-            $this->addImageLayer($canvas, $layerDef, $extent);
+            $this->addImageLayer($canvas, $layerDef, $extent, $jobData);
         }
     }
 

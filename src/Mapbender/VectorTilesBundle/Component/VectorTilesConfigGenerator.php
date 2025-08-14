@@ -34,8 +34,11 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         $source = $sourceInstance->getSource();
 
         $config = parent::getConfiguration($sourceInstance);
-        json_decode($sourceInstance->getPropertyMap(), true);
-        $hasPropertyMap = $sourceInstance->getPropertyMap() && json_last_error() === JSON_ERROR_NONE;
+        json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
+        $hasFIPropertyMap = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
+
+        json_decode($sourceInstance->getLegendPropertyMap(), true);
+        $hasLegendPropertyMap = $sourceInstance->getLegendPropertyMap() && json_last_error() === JSON_ERROR_NONE;
 
         $config['options'] = [
             'jsonUrl' => $source->getJsonUrl(),
@@ -55,9 +58,13 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
             'bbox' => $source->getBoundsArray(),
             'featureInfo' => [
                 'title' => $sourceInstance->getFeatureInfoTitle(),
-                'propertyMap' => $hasPropertyMap ? json_decode($sourceInstance->getPropertyMap(), true) : null,
+                'propertyMap' => $hasFIPropertyMap ? json_decode($sourceInstance->getFeatureInfoPropertyMap(), true) : null,
                 'hideIfNoTitle' => $sourceInstance->getHideIfNoTitle() ?? true,
-            ]
+            ],
+            'legend' => [
+                'enabled' => $sourceInstance->getLegendEnabled() ?? false,
+                'propertyMap' => $hasLegendPropertyMap ? json_decode($sourceInstance->getLegendPropertyMap(), true) : null,
+            ],
         ];
         return $config;
     }

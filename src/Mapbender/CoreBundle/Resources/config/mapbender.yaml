@@ -1,6 +1,7 @@
 parameters:
     applications: []
     sources: []
+    config_check_extensions: []
 
     mapbender.branding.name: Mapbender
     mapbender.version: 4.2.0-DEV

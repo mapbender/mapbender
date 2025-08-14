@@ -21,8 +21,14 @@ class DbAndYamlApplicationResolver implements ApplicationResolver
     {
     }
 
-
     public function getApplicationEntity(string $slug): Application
+    {
+        $application = $this->getApplicationEntityUnsecure($slug);
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
+        return $application;
+    }
+
+    public function getApplicationEntityUnsecure(string $slug): Application
     {
         /** @var Application|null $application */
         $application = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -33,7 +39,6 @@ class DbAndYamlApplicationResolver implements ApplicationResolver
         if (!$application) {
             throw new NotFoundHttpException();
         }
-        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_VIEW, $application);
         return $application;
     }
 

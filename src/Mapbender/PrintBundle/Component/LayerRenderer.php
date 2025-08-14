@@ -17,7 +17,7 @@ abstract class LayerRenderer
      * Should render the image modeled by the given $layerDef array onto the
      * given $canvas.
      */
-    abstract public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void;
+    abstract public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData): void;
 
     /**
      * Receives two array-formatted rendering layer definitions. If a more

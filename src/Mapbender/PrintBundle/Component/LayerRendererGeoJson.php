@@ -51,7 +51,7 @@ class LayerRendererGeoJson extends LayerRenderer
         return $layerDef;
     }
 
-    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent): void
+    public function addLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData): void
     {
         imagesavealpha($canvas->resource, true);
         imagealphablending($canvas->resource, true);

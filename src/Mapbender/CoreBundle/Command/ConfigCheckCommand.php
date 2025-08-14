@@ -49,14 +49,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ConfigCheckCommand extends Command
 {
 
-    protected ManagerRegistry $managerRegistry;
-    protected string $rootDir;
-
-    public function __construct(ManagerRegistry $managerRegistry,
-                                string          $rootDir)
+    public function __construct(
+        /** @var ConfigCheckExtension[] */
+        protected array           $extensions,
+        protected ManagerRegistry $managerRegistry,
+        protected string          $rootDir,
+    )
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->rootDir = $rootDir;
         parent::__construct();
     }
 
@@ -76,6 +75,10 @@ class ConfigCheckCommand extends Command
         $this->checkPhpIni($io);
         $this->getLoadedPhpExtensions($io);
         $this->checkPermissions($io);
+        foreach ($this->extensions as $extension) {
+            $io->title($extension->getName());
+            $extension->execute($io);
+        }
         return 0;
     }
 

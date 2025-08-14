@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ColorUtils;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -154,40 +155,15 @@ class FeatureInfo extends AbstractElementService
         unset($config['featureColorDefault']);
         unset($config['featureColorHover']);
         if (!empty($config['opacityDefault'])) {
-            $config['fillColorDefault'] = self::addOpacityToColor($config, 'fillColorDefault', 'opacityDefault');
-            $config['strokeColorDefault'] = self::addOpacityToColor($config, 'strokeColorDefault', 'opacityDefault');
+            $config['fillColorDefault'] = ColorUtils::addOpacityToColor($config, 'fillColorDefault', 'opacityDefault');
+            $config['strokeColorDefault'] = ColorUtils::addOpacityToColor($config, 'strokeColorDefault', 'opacityDefault');
         }
         if (!empty($config['opacityHover'])) {
-            $config['fillColorHover'] = self::addOpacityToColor($config, 'fillColorHover', 'opacityHover');
-            $config['strokeColorHover'] = self::addOpacityToColor($config, 'strokeColorHover', 'opacityHover');
+            $config['fillColorHover'] = ColorUtils::addOpacityToColor($config, 'fillColorHover', 'opacityHover');
+            $config['strokeColorHover'] = ColorUtils::addOpacityToColor($config, 'strokeColorHover', 'opacityHover');
         }
         $entity->setConfiguration($config);
     }
 
-    public static function addOpacityToColor(array $config, string $keyColor, string $keyOpacity, int $maxOpacity = 100): ?string
-    {
-        if (empty($config[$keyColor])) return null;
-        $color = trim($config[$keyColor]);
-        // 8-digit rgba hex string or rgba => just return the color, no need to include the opacity into it
-        if (preg_match("/^#[0-9A-Fa-f]{8}$/", $color)) return $color;
-        if (substr($color, 0, 4) === 'rgba') return $color;
 
-        $opacity = floatval($config[$keyOpacity] / $maxOpacity);
-        if ($opacity < 0) $opacity = 0;
-        if ($opacity > 1) $opacity = 1;
-
-        // rgb hex? convert to rgba
-        if (preg_match("/^#[0-9A-Fa-f]{6}$/", $color)) {
-            $r = hexdec(substr($color, 1, 2));
-            $g = hexdec(substr($color, 3, 2));
-            $b = hexdec(substr($color, 5, 2));
-            return "rgba($r, $g, $b, $opacity)";
-        }
-
-        if (substr($color, 0, 3) === 'rgb') {
-            return 'rgba' . substr($color, 3, -1) . ', ' . $opacity . ')';
-        }
-
-        return $config[$keyColor];
-    }
 }

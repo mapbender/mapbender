@@ -1,6 +1,6 @@
 ## next feature release
 Features:
-* Support Vector Tiles (using Mapbox Style JSONs) as new data source ([#PR1748](https://github.com/mapbender/mapbender/pull/1748))
+* Support Vector Tiles (using Mapbox Style JSONs) as new data source ([#PR1748](https://github.com/mapbender/mapbender/pull/1748), [#PR1753](https://github.com/mapbender/mapbender/pull/1753))
 * Support defining WMTS/TMS sources in YAML applications ([#PR1754](https://github.com/mapbender/mapbender/pull/1754))
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 * [LayerTree] Functionality to filter themes, groups and layers ([#PR1749](https://github.com/mapbender/mapbender/pull/1749))

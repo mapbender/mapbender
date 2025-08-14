@@ -102,6 +102,9 @@
                   &nbsp;{{ instance.source.type | source_label }}</td>
                 <td class="iconColumn">
                   {%- apply spaceless -%}
+                    {%- if _edit_url -%}
+                      <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
+                    {%- endif -%}
                   <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"
@@ -109,9 +112,6 @@
                        data-url="{{ _toggle_url }}">
                     <i class="fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </a>
-                  {%- if _edit_url -%}
-                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
-                  {%- endif -%}
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
                      title="{{"mb.manager.admin.instance.delete.title"|trans}}"
