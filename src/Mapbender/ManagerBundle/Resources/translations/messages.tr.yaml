@@ -1,155 +1,157 @@
 mb:
   application:
     create:
-      success: Uygulama oluşturuldu.
+      success: 'Uygulama oluşturuldu.'
       failure:
-        create.directory: Dizin oluşturulamıyor.
+        create.directory: 'Dizin oluşturulamıyor.'
     save:
-      success: Uygulama kaydedildi.
+      success: 'Uygulama kaydedildi.'
       failure:
-        general: Uygulamayı kaydederken bir hata oluştu.
-        create.directory: Uygulama güncellendi, ancak uygulamanın dizinleri oluşturulamadı.
+        general: 'Uygulamayı kaydederken bir hata oluştu.'
+        create.directory: 'Uygulama güncellendi, ancak uygulamanın dizinleri oluşturulamadı.'
     remove:
-      success: Uygulama silindi.
+      success: 'Uygulama silindi.'
       failure:
-        general: Uygulama silinemiyor.
+        general: 'Uygulama silinemiyor.'
   layerset:
     create:
-      success: Katman oluşturuldu.
+      success: 'Katman oluşturuldu.'
     remove:
-      success: Katman silindi.
-      failure: Katman silinemiyor.
+      success: 'Katman silindi.'
+      failure: 'Katman silinemiyor.'
   manager:
-    autoActivate: Otomatik etkinleştir
-    autoOpen: Otomatik aç
+    autoActivate: 'Otomatik etkinleştir'
+    autoOpen: 'Otomatik aç'
     admin:
       map:
-        max_extent: Maks. kapsam
-        start_extent: Baslangıç kapsamı
+        max_extent: 'Maks. kapsam'
+        start_extent: 'Baslangıç kapsamı'
       element:
         title: Başlık
-        type: Öğe tipi
-        add: Yeni bir öğe oluştur
-        show_hide: Geçiş gösterme/gizleme öğesi
-        no_element_added: Öğe eklenmedi
+        type: 'Öğe tipi'
+        add: 'Yeni bir öğe oluştur'
+        show_hide: 'Geçiş gösterme/gizleme öğesi'
+        no_element_added: 'Öğe eklenmedi'
       zoombar:
         draggable: Sürüklenebilir
       overview:
         fix: Sabit
       layerset:
-        add: Katman ekle
+        add: 'Katman ekle'
         title: Başlık
         type: Tip
-        edit: Katmanı düzenle
+        edit: 'Katmanı düzenle'
         delete:
-          title: Katmanı sil
-          confirm: <span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?
+          title: 'Katmanı sil'
+          confirm: '<span class = "italic">% layerset_title% </ span> başlıklı katmanı kaldırmak istediğinizden eminmisiniz?'
         id: Kimlik
       instance:
-        add: Örnek ekle
-        show_hide: Örneği göster/gizle
-        edit: Örneği düzenle
+        add: 'Örnek ekle'
+        show_hide: 'Örneği göster/gizle'
+        edit: 'Örneği düzenle'
         delete:
-          title: Örneği sil
+          title: 'Örneği sil'
           confirm: null
-        no_instance_added: Örnek oluşturlamadı
-        no_layer_added: Katman eklenmedi
-      template: Şablon(Kalıp)
+        no_instance_added: 'Örnek oluşturlamadı'
+        no_layer_added: 'Katman eklenmedi'
+      template: 'Şablon(Kalıp)'
       application:
         view: Görünüm
         edit:
-          title: Uygulamayı düzenle
-          base_data: Temel veriler
-        screenshot: Ekran görüntüsü
+          title: 'Uygulamayı düzenle'
+          base_data: 'Temel veriler'
+        screenshot: 'Ekran görüntüsü'
         layouts: Düzenler
         layersets: Katmanlar
         custom_css: CSS
         security:
           title: Güvenlik
-          public: Kamu erişim
+          public: 'Kamu erişim'
         save: Kaydet
         cancel: Vazgeç
-        view_this: Bu uygulamayı görüntüle
-        duplicate: Uygulamayı çoğaltın
+        view_this: 'Bu uygulamayı görüntüle'
+        duplicate: 'Uygulamayı çoğaltın'
         public:
-          on_off: Genel erişimi değiştirmek
-        delete: Uygulamayı sil
-        no_application: Uygulama bulunamadı
+          on_off: 'Genel erişimi değiştirmek'
+        delete: 'Uygulamayı sil'
+        no_application: 'Uygulama bulunamadı'
         new:
-          title: Uygulama oluştur
-        create_use: Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın.
+          title: 'Uygulama oluştur'
+        create_use: 'Temel bilgilerden yararlanarak yeni bir uygulama oluşturun ve öğeler ve katmanlar eklemek için düzenleme modunu kullanın.'
         btn:
           create: Oluştur
           cancel: Vazgeç
         upload:
-          button: Veri seç
-          label: Veri seçilmedi
+          button: 'Veri seç'
+          label: 'Veri seçilmedi'
         export:
           addSources: Kaynak
           btn:
-            export: Dışa aktar (Export)
+            export: 'Dışa aktar (Export)'
         import:
           addSources: Kaynaklar
           btn:
-            import: İçe aktar (Import)
+            import: 'İçe aktar (Import)'
         title: Başlık
         url:
-          title: URL Başlık
+          title: 'URL Başlık'
         description: Açıklama
-        template: Şablon(Kalıp)
+        template: 'Şablon(Kalıp)'
     source:
       sources: Kaynaklar
-      add: Kaynak ekle
-      show_metadata: Üstverileri göster (Metadata)
-      delete: Kaynaği sil
-      valid: Geçerli kaynak
-      notvalid: Kaynak geçerli değil
-      no_source: Kaynak yok
-      update: Kaynağı güncelle
+      add: 'Kaynak ekle'
+      show_metadata: 'Üstverileri göster (Metadata)'
+      delete: 'Kaynaği sil'
+      valid: 'Geçerli kaynak'
+      notvalid: 'Kaynak geçerli değil'
+      no_source: 'Kaynak yok'
+      update: 'Kaynağı güncelle'
       status:
-        ok: Geçerli Kaynak
-        toupdate: Kaynak artık mevcut değil
-        unreachable: Kaynağa erişilemiyor
+        ok: 'Geçerli Kaynak'
+        toupdate: 'Kaynak artık mevcut değil'
+        unreachable: 'Kaynağa erişilemiyor'
       added: 'Yeni bir %type% kaynağı oluşturuldu'
       instance:
-        created: Yeni bir örnek oluşturuldu, lütfen düzenleyin.
+        created: 'Yeni bir örnek oluşturuldu, lütfen düzenleyin.'
+      instancelayer:
+        legend_help: ' Bu katman için efsaneyi etkinleştir. Dikkat: Sadece efsane sunan katmanlarda etkili olur.'
     managerbundle:
-      new_application: Uygulama oluştur
-      add_user_group: Kullanıcı ve Kullanıcıgrubu ekle
-      import_application: İçe aktarım (Import)
-      export_application: Dışa aktarım (Export)
+      new_application: 'Uygulama oluştur'
+      add_user_group: 'Kullanıcı ve Kullanıcıgrubu ekle'
+      import_application: 'İçe aktarım (Import)'
+      export_application: 'Dışa aktarım (Export)'
     components:
       popup:
         add_element:
-          title: Öğe ekle
+          title: 'Öğe ekle'
         edit_element:
-          title: Öğeyi düzenle
+          title: 'Öğeyi düzenle'
         delete_element:
-          title: Silme işlemini onayla
+          title: 'Silme işlemini onayla'
         add_edit_layerset:
-          title_edit: Katman düzenle
-          title_add: Katman ekle
+          title_edit: 'Katman düzenle'
+          title_add: 'Katman ekle'
         delete_layerset:
-          title: Katmanı sil
+          title: 'Katmanı sil'
         add_instance:
-          title: Kaynak seç
+          title: 'Kaynak seç'
         delete_instance:
-          title: Silme işlemini onayla
+          title: 'Silme işlemini onayla'
     import:
       application:
-        failed: Uygulama içeri aktarıllamıyor (Import)
+        failed: 'Uygulama içeri aktarıllamıyor (Import)'
   core:
     admin:
       button:
-        show_label: Etiketi göster
+        show_label: 'Etiketi göster'
       element:
-        autostart: Otomatik Başlat
+        autostart: 'Otomatik Başlat'
     entity:
       app:
         screenshotfile:
-          error: Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.
-          format_error: Bu format desteklenmiyor!
+          error: 'Veri çok büyük (%uploadFileSize% bytes). Maksimum %maxFileSize% bayt olmalıdır.'
+          format_error: 'Bu format desteklenmiyor!'
           resolution:
-            error: Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.
+            error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
   actions:
     secureelement: 'Öğeye erişimi kısıtla'

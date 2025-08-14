@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -11,10 +12,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WmsInstanceLayerType extends AbstractType
 {
 
+    use MapbenderTypeTrait;
+
+    public function __construct(
+        protected TranslatorInterface $translator,
+    )
+    {
+    }
     public function getParent(): string
     {
         return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
@@ -57,10 +66,11 @@ class WmsInstanceLayerType extends AbstractType
             ->add('priority', HiddenType::class, array(
                 'required' => true,
             ))
-            ->add('legend', CheckboxType::class, array(
+            ->add('legend', CheckboxType::class, $this->createInlineHelpText(array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.legend',
-            ))
+                'help' => 'mb.manager.source.instancelayer.legend_help',
+            ), $this->translator))
         ;
     }
 

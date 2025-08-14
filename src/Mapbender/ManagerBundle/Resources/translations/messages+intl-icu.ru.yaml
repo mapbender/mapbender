@@ -20,7 +20,7 @@ mb:
       success: 'Набор слоев удален.'
       failure: 'Произошла ошибка при удалении набора слоев.'
   manager:
-    automatic: 'Автоматически'
+    automatic: Автоматически
     autoActivate: Автоактивирование
     autoOpen: 'Открывать автоматически'
     confirm_form_discard: 'Отклонить изменения?'
@@ -29,31 +29,31 @@ mb:
     screentype:
       label: 'Тип монитора'
       choice:
-        all: 'Все'
-        mobile: 'Мобильный'
-        desktop: 'Монитор'
+        all: Все
+        mobile: Мобильный
+        desktop: Монитор
     toolbar:
       alignment:
-        label: 'Ориентация'
+        label: Ориентация
         choice:
-          left: 'Слева'
-          right: 'Справа'
+          left: Слева
+          right: Справа
           center: 'По центру'
       generate_button_menu: 'Объединять кнопки в меню'
       menu_label: 'Заголовок меню'
-    visibility: 'Видимость'
+    visibility: Видимость
     element:
       screentype:
         mobile: 'Показывать на мобильных устройствах'
         desktop: 'Показывать на экранах'
     sidepane:
-      width: 'Ширина'
+      width: Ширина
       closed: 'Закрыт при старте'
       align:
-        label: 'Позиция'
+        label: Позиция
         choice:
-          left: 'Слева'
-          right: 'Справа'
+          left: Слева
+          right: Справа
     application:
       persistentView: 'Запоминать состояние карты'
     admin:
@@ -75,7 +75,7 @@ mb:
           title: 'Удалить элемент'
           confirm: 'Вы действительно хотите удалить элемент "{element_name}"'
         anchor:
-          label: 'Позиция'
+          label: Позиция
           left-top: 'Вверху слева'
           left-bottom: 'Внизу слева'
           right-top: 'Вверху справа'
@@ -94,11 +94,11 @@ mb:
           confirm: 'Вы действительно хотите удалить слои с названием "{layerset_title}"?'
         id: Id
       instance:
-        add: 'Добавить'
-        show_hide: 'Вкл/выкл'
-        edit: 'Редактировать'
+        add: Добавить
+        show_hide: Вкл/выкл
+        edit: Редактировать
         delete:
-          title: 'Удалить'
+          title: Удалить
           confirm: 'Вы действительно хотите удалить элемент с заголовком "{instance_title}"'
         no_instance_added: 'Элемент не добавлен'
         no_layer_added: 'Слой не добавлен'
@@ -147,7 +147,7 @@ mb:
             import: Импорт
         title: Название
         url:
-          title: 'URL'
+          title: URL
         description: Описание
         template: Шаблон
     source:
@@ -210,9 +210,10 @@ mb:
         allowreordertoc: 'Разрешить упорядочить по ТОС'
         moreinfo: 'Больше информации'
         style: Style
+        legend_help: 'Включить легенду для этого слоя. Внимание: Работает только для слоёв, которые предоставляют легенду.'
       option:
-        title: 'Заголовок'
-        opacity: 'Непрозрачность'
+        title: Заголовок
+        opacity: Непрозрачность
         basesource: 'Базовый источник'
         proxy: Прокси
       metadata:
@@ -278,7 +279,7 @@ mb:
         show_label: 'Показать отметку'
       element:
         autostart: Автозапуск
-      title: 'Заголовок'
+      title: Заголовок
     entity:
       app:
         screenshotfile:

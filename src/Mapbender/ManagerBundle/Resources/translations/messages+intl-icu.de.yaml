@@ -213,6 +213,7 @@ mb:
         allowreordertoc: 'Erlaubt sortieren im Layerbaum'
         moreinfo: 'Weitere Informationen'
         style: Stil
+        legend_help: 'Legende für diesen Layer aktivieren. Achtung: Hat nur auf Layer, die eine Legende bereitstellen, einen Effekt.'
       option:
         title: Titel
         opacity: Deckkraft

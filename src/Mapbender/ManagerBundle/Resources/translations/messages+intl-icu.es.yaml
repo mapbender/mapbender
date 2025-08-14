@@ -211,6 +211,7 @@ mb:
         toggletoc: 'Toggle en el árbol de capas'
         moreinfo: 'Más información'
         style: Estilo
+        legend_help: 'Activar la leyenda para esta capa. Atención: Solo tiene efecto en capas que proporcionan una leyenda.'
       option:
         title: Título
         opacity: Opacidad

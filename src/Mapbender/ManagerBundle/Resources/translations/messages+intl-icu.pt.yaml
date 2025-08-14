@@ -1,26 +1,26 @@
 mb:
   application:
     create:
-      success: Seu aplicativo foi criado.
+      success: 'Seu aplicativo foi criado.'
       failure:
-        create.directory: O diretório do aplicativo não pôde ser criado.
+        create.directory: 'O diretório do aplicativo não pôde ser criado.'
     save:
-      success: Seu aplicativo foi salvo.
+      success: 'Seu aplicativo foi salvo.'
       failure:
-        general: Ocorreu um erro ao salvar a seu aplicativo.
-        create.directory: Seu aplicativo foi atualizado, mas o diretório do aplicativo não pôde ser criado.
+        general: 'Ocorreu um erro ao salvar a seu aplicativo.'
+        create.directory: 'Seu aplicativo foi atualizado, mas o diretório do aplicativo não pôde ser criado.'
     remove:
-      success: Seu aplicativo foi deletado.
+      success: 'Seu aplicativo foi deletado.'
       failure:
-        general: Seu aplicativo não pôde ser deletado.
+        general: 'Seu aplicativo não pôde ser deletado.'
   layerset:
     create:
-      success: Seu Layerset foi criado.
+      success: 'Seu Layerset foi criado.'
     remove:
-      success: Seu Layerset foi deletado.
-      failure: Seu Layerset não pode ser deletado.
+      success: 'Seu Layerset foi deletado.'
+      failure: 'Seu Layerset não pode ser deletado.'
   manager:
-    automatic: 'Automático'
+    automatic: Automático
     autoActivate: 'Ativar automaticamente'
     autoOpen: 'Abrir automaticamente'
     confirm_form_discard: 'Descartar alterações?'
@@ -29,33 +29,33 @@ mb:
     screentype:
       label: 'Tipo de tela'
       choice:
-        all: 'Indiferente'
-        mobile: 'Móvel'
-        desktop: 'Desktop'
+        all: Indiferente
+        mobile: Móvel
+        desktop: Desktop
     toolbar:
       alignment:
-        label: 'Alinhamento'
+        label: Alinhamento
         choice:
-          left: 'Esquerda'
-          right: 'Direita'
-          center: 'Centralizado'
+          left: Esquerda
+          right: Direita
+          center: Centralizado
       generate_button_menu: 'Agrupar botões em um menu'
       menu_label: 'Rótulo do menu'
-    visibility: 'Visibilidade'
+    visibility: Visibilidade
     element:
       screentype:
         mobile: 'Mostrar em dispositivos móveis'
         desktop: 'Mostrar em telas de desktop'
     sidepane:
-      width: 'Largura'
-      resizable: 'Redimensionável'
+      width: Largura
+      resizable: Redimensionável
       resizable_help: 'Se marcado, o usuário pode redimensionar o painel lateral arrastando sua borda interna. Se desejar limitar a largura mínima/máxima, use CSS personalizado (min-width/max-width em .sidePane.resizable).'
       closed: 'Iniciar fechado'
       align:
-        label: 'Posição'
+        label: Posição
         choice:
-          left: 'Esquerda'
-          right: 'Direita'
+          left: Esquerda
+          right: Direita
     application:
       persistentView: 'Lembrar estado do mapa'
       splashscreen: 'Mostrar tela de apresentação'
@@ -72,13 +72,13 @@ mb:
         title: Rótulo
         type: Tipo
         add: 'Adicionar elemento'
-        show_hide: 'ativo/inativo'
+        show_hide: ativo/inativo
         no_element_added: 'Nenhum elemento adicionado'
         delete:
           title: 'Apagar elemento'
           confirm: 'Pretende mesmo apagar o elemento "{element_name}"'
         anchor:
-          label: 'Posição'
+          label: Posição
           left-top: 'Superior esquerdo'
           left-bottom: 'Inferior esquerdo'
           right-top: 'Superior direito'
@@ -116,7 +116,7 @@ mb:
           base_data: 'Dados básicos'
         screenshot: 'Imagem de pré-visualização'
         layouts: Elementos
-        layersets: 'Layerset'
+        layersets: Layerset
         custom_css: CSS
         security:
           title: Segurança
@@ -126,7 +126,7 @@ mb:
         view_this: 'Visualizar aplicativo'
         duplicate: 'Duplicar aplicativo'
         public:
-          on_off: 'Publicar/Ocultar'
+          on_off: Publicar/Ocultar
         delete:
           title: 'Excluir aplicativo'
           confirm: 'Você realmente deseja excluir o aplicativo "{application_title}"'
@@ -150,7 +150,7 @@ mb:
             import: Importar
         title: Título
         url:
-          title: 'URL'
+          title: URL
         description: Descrição
         template: Modelo
     source:
@@ -213,10 +213,11 @@ mb:
         allowreordertoc: 'Permitir reordenar na árvore de camadas'
         moreinfo: 'Mais informações'
         style: Estilo
+        legend_help: 'Ativar legenda para esta camada. Atenção: Só tem efeito em camadas que fornecem uma legenda.'
       option:
-        title: 'Rótulo'
-        opacity: 'Opacidade'
-        basesource: Fonte Base
+        title: Rótulo
+        opacity: Opacidade
+        basesource: 'Fonte Base'
         proxy: Proxy
       metadata:
         metadata: Metadados
@@ -225,7 +226,7 @@ mb:
         layers: Layers
         title: Título
         version: Versão
-        originurl: 'URL'
+        originurl: URL
         abstract: Descrição
     contact:
       person: Pessoa
@@ -280,8 +281,8 @@ mb:
       button:
         show_label: 'Mostrar rótulo'
       element:
-        autostart: Iniciar automaticamente
-      title: 'Título'
+        autostart: 'Iniciar automaticamente'
+      title: Título
     entity:
       app:
         screenshotfile:
