@@ -215,8 +215,10 @@ class SourceInstanceController extends ApplicationControllerBase
         $assignment = new ReusableSourceInstanceAssignment();
         $assignment->setInstance($instance);
 
-        $assignment->setWeight($instance->getWeight());
+        // shared instance must be enabled, the ReusableSourceInstanceAssignment determines enabled state for applications
         $assignment->setEnabled($instance->getEnabled());
+        $instance->setEnabled(true);
+        $assignment->setWeight($instance->getWeight());
         $layerset->getInstances(false)->removeElement($instance);
         $instance->setLayerset(null);
         $assignment->setLayerset($layerset);
