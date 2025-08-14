@@ -16,7 +16,7 @@ mb:
         view:
           label:
             onlineresource: 'Интернет ресурс'
-            exceptionformats: 'Форматы-исключения'
+            exceptionformats: Форматы-исключения
             fees: Сборы
             accessconstraints: 'Ограничения доступа'
           message:
@@ -46,11 +46,13 @@ mb:
             exceptionformat: 'Формат ошибки'
             infoformat: 'Формат запроса GetFeatureInfo'
             format: 'Формат запроса GetMap'
-            dimensions: 'Измерение'
+            dimensions: Измерение
             vendorspecifics: 'Пользовательские параметры'
-            layers: 'Слои'
+            layers: Слои
+            refresh_interval: 'Интервал обновления [с]'
+            refresh_interval_help: 'Если установлено и не равно 0, сервис будет автоматически обновляться с указанным интервалом (в секундах).'
           vendorspecific:
-            label: 'Vendor-определенный'
+            label: Vendor-определенный
           message:
             cautionscalehint: 'Внимание: расчеты Scale подлежат ограниченное разрешение шкалы в WMS 1.1.1!'
         preview:
@@ -107,17 +109,17 @@ mb:
           title: 'Общая информация'
           _title: общий
         contact:
-          title: 'Контакт'
+          title: Контакт
           _title: контакт
         items:
-          title: 'Слой'
+          title: Слой
           name: Имя
           _title: Слой
         useconditions:
           title: 'Условия использования'
           _title: 'условия использования'
       popup:
-        title: 'Метаданные'
+        title: Метаданные
     repo:
       instance:
         label:
@@ -131,9 +133,9 @@ mb:
   core:
     dimensionset:
       admin:
-        title: 'Заголовок'
-        group: 'Группа'
-        extent: 'Размер'
+        title: Заголовок
+        group: Группа
+        extent: Размер
     dimensionshandler:
       admin:
         tooltip: 'Всплывающая подсказка'
@@ -143,18 +145,18 @@ mb:
         defaultformat: 'Фотмат по умолчанию'
         defaultinfoformat: 'Информационный фотмат по умолчанию'
       onlineresource:
-        format: 'Фотмат'
-        href: 'href'
+        format: Фотмат
+        href: href
       legendurltype:
-        width: 'Ширина'
-        height: 'Высота'
-        onlineresource: 'Online-ресурс'
+        width: Ширина
+        height: Высота
+        onlineresource: Online-ресурс
       vendorspecifictype:
-        hidden: 'Cкрыть'
+        hidden: Cкрыть
         setdefaults: 'Установить по умолчанию'
     vendorspecifictype:
       admin:
         vstype: 'Тип параметра'
-        name: 'Имя'
+        name: Имя
         default: 'Значение по умолчанию'
-        hidden: 'Cкрыть'
+        hidden: Cкрыть

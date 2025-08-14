@@ -411,14 +411,14 @@
          * @returns {Array<Object.<string, string>>} legend image urls mapped to layer title
          * @private
          */
-        _collectLegends: function() {
+        _collectLegends: async function() {
             const legends = [];
             const scale = this._getPrintScale();
             const sources = this._getRasterSources();
             for (let i = 0; i < sources.length; ++i) {
                 const source = sources[i];
                 const rootLayer = source.getRootLayer();
-                const sourceName = source.configuration.title || (rootLayer && rootLayer.options.title) || '';
+                const sourceName = source.configuration?.title || source.options?.title || (rootLayer && rootLayer.options.title) || '';
                 const leafInfo = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(source, scale, this._getExportExtent());
                 const sourceLegendList = [];
                 const legendIds = [];
@@ -430,6 +430,10 @@
 
                             const legend = legendLayer.getLegend(true);
                             if (!legend) continue;
+
+                            if (legend.layers) {
+                                legend.layers = await Promise.resolve(legend.layers);
+                            }
 
                             if (legendIds.includes(legendLayer.getId())) break;
                             legendIds.push(legendLayer.getId());
@@ -512,8 +516,8 @@
                 return null;
             }
         },
-        _collectJobData: function() {
-            var jobData = this._super();
+        _collectJobData: async function() {
+            var jobData = await this._super();
             // Remove upstream rotation value. We have this as a top-level input field. Backend may get confused
             // when we submit both
             delete jobData['rotation'];
@@ -534,7 +538,7 @@
             });
             if ($('input[name="printLegend"]', this.$form).prop('checked')) {
                 Object.assign(jobData, {
-                    legends: this._collectLegends()
+                    legends: await this._collectLegends()
                 });
             }
             if (this.digitizerData) {

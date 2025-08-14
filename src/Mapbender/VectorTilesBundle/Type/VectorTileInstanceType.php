@@ -8,6 +8,7 @@ use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,7 +17,9 @@ class VectorTileInstanceType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    public function __construct(private TranslatorInterface $translator) {}
+    public function __construct(private TranslatorInterface $translator)
+    {
+    }
 
     public function getParent()
     {
@@ -42,6 +45,11 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowselecttoc',
             ])
+            ->add('printScaleCorrection', NumberType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.vectortiles.admin.print_scale_correction',
+                'help' => 'mb.vectortiles.admin.print_scale_correction_help',
+            ], $this->translator))
             ->add('featureInfo', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.active',
@@ -62,10 +70,20 @@ class VectorTileInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.hide_if_no_title',
             ])
-            ->add('propertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
+            ->add('featureInfoPropertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.vectortiles.admin.featureinfo.property_map',
                 'help' => 'mb.vectortiles.admin.featureinfo.property_map_help',
+                'json_encode' => true,
+            ], $this->translator))
+            ->add('legendEnabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.vectortiles.admin.legend.active',
+            ])
+            ->add('legendPropertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.vectortiles.admin.legend.property_map',
+                'help' => 'mb.vectortiles.admin.legend.property_map_help',
                 'json_encode' => true,
             ], $this->translator))
         ;

@@ -60,6 +60,7 @@
         <service id="Mapbender\CoreBundle\Command\ConfigCheckCommand"
                  class="Mapbender\CoreBundle\Command\ConfigCheckCommand">
             <tag name="console.command" command="mapbender:config:check" />
+            <argument>%config_check_extensions%</argument>
             <argument type="service" id="doctrine" />
             <argument>%kernel.project_dir%</argument>
         </service>

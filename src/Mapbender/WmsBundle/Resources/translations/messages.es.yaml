@@ -41,14 +41,16 @@ mb:
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
             layerorder: 'Orden de capas'
-            layerorder.standard: 'estándar'
+            layerorder.standard: estándar
             layerorder.reverse: QGIS
             exceptionformat: 'Formato de excepción'
             infoformat: 'Formato de la solicitud GetFeatureInfo'
             format: 'Formato de la solicitud GetMap'
-            dimensions: 'Dimensiones'
+            dimensions: Dimensiones
             vendorspecifics: 'Parámetros específicos de vendor'
-            layers: 'Capas'
+            layers: Capas
+            refresh_interval: 'Intervalo de actualización [s]'
+            refresh_interval_help: 'Si se establece y no es 0, el servicio se actualizará automáticamente en el intervalo especificado (en segundos).'
           vendorspecific:
             label: 'Vendor specífico'
         preview:
@@ -88,13 +90,13 @@ mb:
             extent: Extensión
             dataurl: 'URL de los datos'
             featurelisturl: 'URL de Featurelist'
-        instancelayerform:
+        instancelayerform: null
       class:
         title: 'Cargar WMS'
         description: 'Carga un WMS via getCapabilities-Request'
       admin:
         label:
-            splitlayers: 'Separar las capas'
+          splitlayers: 'Separar las capas'
     repository:
       parser:
         couldnotparse: 'No se puede analizar el documento XML.'
@@ -112,7 +114,7 @@ mb:
         useconditions:
           title: 'Condiciones de uso'
       popup:
-        title: 'Metadatos'
+        title: Metadatos
     repo:
       instance:
         label:
@@ -150,6 +152,6 @@ mb:
     vendorspecifictype:
       admin:
         vstype: 'Tipo de parámetro'
-        name: 'Nombre'
+        name: Nombre
         default: 'Valor predeterminado'
-        hidden: 'Oculto'
+        hidden: Oculto

@@ -40,11 +40,11 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     /** @var string */
     protected $exampleUrl;
 
-    public function __construct(ManagerRegistry $managerRegistry,
+    public function __construct(ManagerRegistry               $managerRegistry,
                                 AuthorizationCheckerInterface $authorizationChecker,
-                                TypeDirectoryService $sourceTypeDirectory,
-                                Importer $sourceImporter,
-                                $exampleUrl)
+                                TypeDirectoryService          $sourceTypeDirectory,
+                                Importer                      $sourceImporter,
+                                                              $exampleUrl)
     {
         $this->instanceRepository = $managerRegistry->getRepository(SourceInstance::class);
         $this->authorizationChecker = $authorizationChecker;
@@ -155,8 +155,17 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
 
     protected function loadWms(Element $element, Request $request)
     {
+        $id = "wmsloader_" . uniqid();
         $source = $this->getSource($request);
+        $source->setId($id);
         $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source, null);
+        $instance->setId($id);
+        $layerIndex = 0;
+        foreach ($instance->getLayers() as $layer) {
+            $layer->setId($id . '_' . $layerIndex);
+            $layer->getSourceItem()->setId($id . '_' . $layerIndex);
+            $layerIndex++;
+        }
         $infoFormat = $request->get('infoFormat');
 
         $configGenerator = $this->getConfigGenerator($instance);
@@ -194,8 +203,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             $layerConfiguration['configuration']['children'][0]['options']['title'] = $child['options']['title']
                 . ' ('
                 . $layerConfiguration['configuration']['title']
-                . ')'
-            ;
+                . ')';
             $layerConfigurations[] = $layerConfiguration;
         }
         return $layerConfigurations;

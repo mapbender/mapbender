@@ -4,9 +4,9 @@ mb:
       dialog:
         label:
           example: Exemple
-          wmsurl: URL du service
-          wmsuser: Nom d'utilisateur
-          wmspass: Mot de passe
+          wmsurl: 'URL du service'
+          wmsuser: 'Nom d''utilisateur'
+          wmspass: 'Mot de passe'
       error:
         load: 'WMSLoader: Impossible de chrager les WMS capabilities!'
       repo:
@@ -15,10 +15,10 @@ mb:
             formats: Formats
         view:
           label:
-            onlineresource: Ressource en ligne
-            exceptionformats: Formats d'exception
+            onlineresource: 'Ressource en ligne'
+            exceptionformats: 'Formats d''exception'
             fees: Frais
-            accessconstraints: Contraintes d'accès
+            accessconstraints: 'Contraintes d''accès'
           message:
             cautionscalehint: 'Attention: Le calcul de l''échelle est potentiellement limité par la résolution de ScaleHint dans le service WMS version 1.1.1'
         instance:
@@ -38,13 +38,15 @@ mb:
             reorder: Réorganiser
             allow: permettre
             'on': 'on'
-            ratio: BBOX factor
-            buffer: Tampon de la tuile
+            ratio: 'BBOX factor'
+            buffer: 'Tampon de la tuile'
+            refresh_interval: 'Intervalle de mise à jour [s]'
+            refresh_interval_help: 'Si défini et différent de 0, le service sera automatiquement mis à jour à l’intervalle spécifié (en secondes).'
           vendorspecific:
-            label: Vendor specific
+            label: 'Vendor specific'
         preview:
           title:
-            servicerepository: Répertoire du service
+            servicerepository: 'Répertoire du service'
           label:
             load: Charger
         layer:
@@ -62,40 +64,40 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Styles
-            legendurl: URL de la légende
+            legendurl: 'URL de la légende'
             scale: Échelle
             min: Min
             max: Max
             scalehint: Scalehint
             attribution: Attribution
-            onlineresource: Online Resource
-            logourl: URL du logo
+            onlineresource: 'Online Resource'
+            logourl: 'URL du logo'
             identifier: Identifier
             authority: Authorité
             url: URL
             value: Valeur
-            metadataurl: URL des métadonnées
+            metadataurl: 'URL des métadonnées'
             dimension: Dimension
             extent: Étendue
-            dataurl: URL des données
-            featurelisturl: URL du featurelist
+            dataurl: 'URL des données'
+            featurelisturl: 'URL du featurelist'
       class:
-        title: Chargeur de WMS
-        description: Charge un service WMS via une requête 'getCapabilities'
+        title: 'Chargeur de WMS'
+        description: 'Charge un service WMS via une requête ''getCapabilities'''
       admin:
         label:
-          splitlayers: Séparer les couches
+          splitlayers: 'Séparer les couches'
     repository:
       parser:
-        couldnotparse: Impossible d'analyser CapabilitiesDocument
-        not_supported_document: Le CapabilitiesDocument n'est pas supporté
-        not_supported_version: La version du service WMS n'est pas supportée
+        couldnotparse: 'Impossible d''analyser CapabilitiesDocument'
+        not_supported_document: 'Le CapabilitiesDocument n''est pas supporté'
+        not_supported_version: 'La version du service WMS n''est pas supportée'
     metadata:
       section:
         common:
           _title: Commun
         useconditions:
-          _title: Conditions d'utilisation
+          _title: 'Conditions d''utilisation'
         contact:
           _title: Contact
         items:
@@ -107,7 +109,7 @@ mb:
           dimensions: Dimensions
     dimhandler:
       class:
-        title: Prise en charge des dimensions
-        description: DimensionsHandler groupe and fait appel aux instances supportant les dimensions
+        title: 'Prise en charge des dimensions'
+        description: 'DimensionsHandler groupe and fait appel aux instances supportant les dimensions'
     dimensionsets:
-      no_dimension: Aucune dimension
+      no_dimension: 'Aucune dimension'

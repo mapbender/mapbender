@@ -101,6 +101,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'dimensions' => $this->getDimensionsConfiguration($sourceInstance),
             'buffer' => $buffer,
             'ratio' => $ratio,
+            'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
         );
     }
@@ -570,13 +571,56 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @return ?WmsInstanceLayerArray
      */
-    protected function getRootLayerFromCache(WmsInstance $parent): ?array
+    protected function getRootLayerFromCache(WmsInstance $parent, bool $preloadYamlIfNotFound = true): ?array
     {
         foreach (($this->preloadedLayersByParent[null] ?? []) as $layer) {
             if ($layer['sourceId'] === $parent->getId()) {
                 return $layer;
             }
         }
+
+        if ($preloadYamlIfNotFound) {
+            $this->preloadLayersForYamlApplication($parent);
+            return $this->getRootLayerFromCache($parent, false);
+        }
         return null;
+    }
+
+    /**
+     * for yaml applications or WMS Loader added layers, preload is not called
+     * and we can't use doctrine to fetch layers in batch, so replicate the same array structure
+     */
+    private function preloadLayersForYamlApplication(WmsInstance $parent): void
+    {
+        foreach ($parent->getLayers() as $layer) {
+            $pid = $layer->getParent()?->getId();
+            $array = [
+                "id" => $layer->getId(),
+                "active" => $layer->getActive(),
+                "selected" => $layer->getSelected(),
+                "allowinfo" => $layer->getAllowInfo(),
+                "allowselected" => $layer->getAllowSelected(),
+                "allowtoggle" => $layer->getAllowToggle(),
+                "toggle" => $layer->getToggle(),
+                "title" => $layer->getTitle(),
+                "info" => $layer->getInfo(),
+                "style" => $layer->getStyle(),
+                "priority" => $layer->getPriority(),
+                "parentId" => $pid,
+                "sourceId" => $parent->getSource()->getId(),
+                "lsTitle" => $layer->getSourceItem()->getTitle(),
+                "lsName" => $layer->getSourceItem()->getName(),
+                "lsLatLonBounds" => $layer->getSourceItem()->getLatLonBounds(),
+                "lsStyles" => $layer->getSourceItem()->getStyles(),
+                "minScale" => $layer->getMinScale(),
+                "maxScale" => $layer->getMaxScale(),
+                "lsScale" => $layer->getSourceItem()->getScale(),
+            ];
+            if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
+                $this->preloadedLayersByParent[$pid] = [];
+            }
+            $this->preloadedLayersByParent[$pid][] = $array;
+            $this->preloadedLayersById[$array['id']] = $array;
+        }
     }
 }

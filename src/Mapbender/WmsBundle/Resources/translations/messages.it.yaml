@@ -46,9 +46,11 @@ mb:
             exceptionformat: 'Formato di eccezione'
             infoformat: 'Formato della richiesta GetFeatureInfo'
             format: 'Formato della richiesta GetMap'
-            dimensions: 'Dimensioni'
+            dimensions: Dimensioni
             vendorspecifics: 'Parametri specifici del produttore'
-            layers: 'Layers'
+            layers: Layers
+            refresh_interval: 'Intervallo di aggiornamento [s]'
+            refresh_interval_help: 'Se impostato e diverso da 0, il servizio verrà aggiornato automaticamente all''intervallo specificato (in secondi).'
           vendorspecific:
             label: 'specifiche per il produttore'
         preview:

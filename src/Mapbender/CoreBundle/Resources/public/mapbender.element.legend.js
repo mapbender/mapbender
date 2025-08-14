@@ -142,7 +142,7 @@
                 .addClass('subTitle')
                 ;
         },
-        createLegendForLayer: function (layer) {
+        createLegendForLayer: async function (layer) {
             switch (layer.legend.type) {
                 case 'url':
                     return this.createImage(layer);
@@ -155,7 +155,8 @@
             return $('<img/>').attr('src', layer.legend.url);
         },
 
-        createLegendForStyle: function (layer) {
+        createLegendForStyle: async function (layer) {
+            layer.legend.layers = await Promise.resolve(layer.legend.layers);
             return (new LegendEntry(layer.legend)).getContainer();
         },
 
@@ -174,7 +175,7 @@
                 return null;
             }
 
-            if (this.options.showSourceTitle) {
+            if (this.options.showSourceTitle && sourceData.legend?.type !== "style") {
                 ul.append(this.createSourceTitle(sourceData));
             }
 
@@ -191,8 +192,7 @@
             return ul;
         },
         _createLayerHtml: function (layer) {
-            var widget = this;
-            var options = widget.options;
+            var options = this.options;
             var $li = $('<li/>').addClass('ebene' + layer.level);
 
             if (layer.children.length) {
@@ -206,10 +206,10 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-                if (options.showLayerTitle) {
-                    $li.append(widget.createTitle(layer));
+                if (options.showLayerTitle && layer.legend.type === "url") {
+                    $li.append(this.createTitle(layer));
                 }
-                $li.append(widget.createLegendForLayer(layer));
+                this.createLegendForLayer(layer).then((result) => $li.append(result));
             }
             return $li;
         },

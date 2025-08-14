@@ -34,12 +34,20 @@
         <service id="mapbender.source.vectortiles.renderer"
                  class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
                  lazy="true">
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="logger" />
         </service>
 
         <service id="mapbender.source.vectortiles.instance_type"
                  class="Mapbender\VectorTilesBundle\Type\VectorTileInstanceType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.config_check" class="Mapbender\VectorTilesBundle\PrintConfigCheckCommand">
+            <tag name="mapbender.config_check" />
         </service>
     </services>
 </container>

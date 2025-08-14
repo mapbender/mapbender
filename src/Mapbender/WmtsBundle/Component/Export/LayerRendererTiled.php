@@ -24,7 +24,7 @@ abstract class LayerRendererTiled extends LayerRenderer
         return false;
     }
 
-    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent): void
+    public function addLayer(ExportCanvas $canvas, $layerDef, Box $extent, array $jobData): void
     {
         $layerImage = $this->buildLayerImage($canvas, $layerDef, $extent);
         imagecopyresampled($canvas->resource, $layerImage,

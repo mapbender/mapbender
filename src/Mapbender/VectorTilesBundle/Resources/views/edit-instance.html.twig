@@ -6,6 +6,7 @@
     {{ parent() }}
     {{ form_row(form.minScale) }}
     {{ form_row(form.maxScale) }}
+    {{ form_row(form.printScaleCorrection) }}
 {% endblock %}
 
 
@@ -23,7 +24,16 @@
     <div class="advanced hidden">
         {{ form_row(form.featureInfoTitle) }}
         {{ form_row(form.hideIfNoTitle) }}
-        {{ form_row(form.propertyMap) }}
+        {{ form_row(form.featureInfoPropertyMap) }}
+    </div>
+
+    <h4>{{ 'mb.vectortiles.admin.legend.heading' | trans }}</h4>
+    {{ form_row(form.legendEnabled) }}
+    <div tabindex="0" class="showmore clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">
+        {{ 'mb.vectortiles.admin.featureinfo.advanced' | trans }}
+    </div>
+    <div class="advanced hidden">
+        {{ form_row(form.legendPropertyMap) }}
     </div>
 
     <script>
