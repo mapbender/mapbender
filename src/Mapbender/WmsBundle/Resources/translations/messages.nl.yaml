@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Voorbeeld
-          wmsurl: Service URL
+          wmsurl: 'Service URL'
           wmsuser: Gebruiker
           wmspass: Wachtwoord
       error:
@@ -15,10 +15,10 @@ mb:
             formats: Formaten
         view:
           label:
-            onlineresource: Online Resource
-            exceptionformats: Exceptie Formaten
+            onlineresource: 'Online Resource'
+            exceptionformats: 'Exceptie Formaten'
             fees: Fees
-            accessconstraints: Toegangs beperkingen
+            accessconstraints: 'Toegangs beperkingen'
           message:
             cautionscalehint: 'Pas op: Schaal berekeningen zijn onderworpen aan gelimiteerde Schaal-Hint resolutie in WMS 1.1.1!'
         instance:
@@ -27,24 +27,26 @@ mb:
             cancel: Annuleren
           label:
             transparency: Doorzichtigheid
-            tiled: Getegeld (Tiled)
+            tiled: 'Getegeld (Tiled)'
             title: Titel
-            minsc: Minimale schaal
-            maxsc: Maximale schaal
+            minsc: 'Minimale schaal'
+            maxsc: 'Maximale schaal'
             active: actief
             select: selecteer
             info: info
-            toggle: wissel (toggle)
+            toggle: 'wissel (toggle)'
             reorder: herorder
-            allow: sta toe
+            allow: 'sta toe'
             'on': aan
-            buffer: BBOX factor
-            ratio: Tile buffer
+            buffer: 'BBOX factor'
+            ratio: 'Tile buffer'
+            refresh_interval: 'Update-interval [s]'
+            refresh_interval_help: 'Indien ingesteld en niet 0, wordt de dienst automatisch bijgewerkt met het opgegeven interval (in seconden).'
           vendorspecific:
             label: Leverancier-specifiek
         preview:
           title:
-            servicerepository: Service Repository
+            servicerepository: 'Service Repository'
           label:
             load: Laad
         layer:
@@ -62,34 +64,34 @@ mb:
             boundingbox: BoundingBox
             srs: SRS
             styles: Stijlen
-            legendurl: Legenda URL
+            legendurl: 'Legenda URL'
             scale: Schaal
             min: Min
             max: Max
-            scalehint: Schaal hint
+            scalehint: 'Schaal hint'
             attribution: Attribution
-            onlineresource: Online bron
-            logourl: Logo URL
+            onlineresource: 'Online bron'
+            logourl: 'Logo URL'
             identifier: Identifier
             authority: Autoriteit
             url: URL
             value: Waarde
-            metadataurl: Metadata URL
+            metadataurl: 'Metadata URL'
             dimension: Dimensie
             extent: Extent
-            dataurl: Data URL
-            featurelisturl: Kenmerklijst URL
+            dataurl: 'Data URL'
+            featurelisturl: 'Kenmerklijst URL'
       class:
-        title: WMS lader
-        description: Laad een WMS via de getCapabilities-Request
+        title: 'WMS lader'
+        description: 'Laad een WMS via de getCapabilities-Request'
       admin:
         label:
-          splitlayers: Splits lagen
+          splitlayers: 'Splits lagen'
     repository:
       parser:
-        couldnotparse: Kon Capabilities Document niet parsen
-        not_supported_document: Niet-ondersteund Capabilities Document
-        not_supported_version: De WMS version wordt niet ondersteund
+        couldnotparse: 'Kon Capabilities Document niet parsen'
+        not_supported_document: 'Niet-ondersteund Capabilities Document'
+        not_supported_version: 'De WMS version wordt niet ondersteund'
     metadata:
       section:
         common:
@@ -107,7 +109,7 @@ mb:
           dimensions: Dimensies
     dimhandler:
       class:
-        title: Dimensie afhandelaar
-        description: Dimensie afhandelaar groepen en roept dimensie ondersteund op kaart aan
+        title: 'Dimensie afhandelaar'
+        description: 'Dimensie afhandelaar groepen en roept dimensie ondersteund op kaart aan'
     dimensionsets:
-      no_dimension: geen dimensie
+      no_dimension: 'geen dimensie'

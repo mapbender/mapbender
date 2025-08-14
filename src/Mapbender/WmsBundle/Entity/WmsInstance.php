@@ -67,6 +67,9 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     #[ORM\Column(type: 'decimal', scale: 2, options: ['default' => '1.25'])]
     protected $ratio = 1.25;
 
+    #[ORM\Column(name: 'refresh_interval', type: 'integer', nullable: true, options: ['default' => null])]
+    protected ?int $refreshInterval = null;
+
     const LAYER_ORDER_TOP_DOWN  = 'standard';
     const LAYER_ORDER_BOTTOM_UP = 'reverse';
 
@@ -410,6 +413,16 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     public function getSource()
     {
         return $this->source;
+    }
+
+    public function getRefreshInterval(): ?int
+    {
+        return $this->refreshInterval;
+    }
+
+    public function setRefreshInterval(?int $refreshInterval): void
+    {
+        $this->refreshInterval = $refreshInterval;
     }
 
     /**

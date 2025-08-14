@@ -41,14 +41,16 @@ mb:
             ratio: BBOX-Faktor
             buffer: Kachel-Puffer
             layerorder: Layer-Reihenfolge
-            layerorder.standard: 'Standard'
-            layerorder.reverse: 'QGIS'
+            layerorder.standard: Standard
+            layerorder.reverse: QGIS
             exceptionformat: Fehler-Format
             infoformat: 'Format der GetFeatureInfo-Anfrage'
             format: 'Format der GetMap-Anfrage'
             dimensions: Dimensions
             vendorspecifics: 'Benutzerdefinierte Parameter'
             layers: Ebenen
+            refresh_interval: 'Aktualisierungsintervall [s]'
+            refresh_interval_help: 'Falls gesetzt und nicht 0, wird der Dienst automatisch im angegebenen Intervall (in Sekunden) aktualisiert.'
           vendorspecific:
             label: 'Vendor specific'
         preview:

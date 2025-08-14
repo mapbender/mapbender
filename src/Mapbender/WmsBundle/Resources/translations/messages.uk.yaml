@@ -4,7 +4,7 @@ mb:
       dialog:
         label:
           example: Приклад
-          wmsurl: Сервіс URL
+          wmsurl: 'Сервіс URL'
           wmsuser: Користувач
           wmspass: Пароль
       error:
@@ -15,10 +15,10 @@ mb:
             formats: Формат
         view:
           label:
-            onlineresource: Інтернет ресурс
-            exceptionformats: Формат Виключення
+            onlineresource: 'Інтернет ресурс'
+            exceptionformats: 'Формат Виключення'
             fees: Збори
-            accessconstraints: Обмеження доступу
+            accessconstraints: 'Обмеження доступу'
           message:
             cautionscalehint: 'Увага: розрахунки Scale підлягають обмеженій роздільній здатності шкали в WMS 1.1.1!'
         instance:
@@ -35,83 +35,85 @@ mb:
             select: Обрати
             info: Інформація
             toggle: Перемикач
-            reorder: Зміна порядку
+            reorder: 'Зміна порядку'
             allow: Дозволити
             'on': Включити
-            ratio: BBOX фактор
+            ratio: 'BBOX фактор'
             buffer: Буфер
-            layerorder: Порядок шарів
+            layerorder: 'Порядок шарів'
             layerorder.standard: Стандартний
             layerorder.reverse: QGIS
+            refresh_interval: 'Інтервал оновлення [с]'
+            refresh_interval_help: 'Якщо встановлено і не дорівнює 0, служба буде автоматично оновлюватися з заданим інтервалом (у секундах).'
           vendorspecific:
-            label: певний Vendor
+            label: 'певний Vendor'
         preview:
           title:
-            servicerepository: Обслуговування репозиторію
+            servicerepository: 'Обслуговування репозиторію'
           label:
             load: Завантажити
         layer:
           label:
-            name: Ім'я
+            name: 'Ім''я'
             title: Назва
             abstract: Абстрактний
             queryable: Queryable
             cascaded: Каскадна
             opaque: Непрозорий
-            nosubset: Немає підгрупи
-            fixedwidth: Фіксована ширина
-            fixedheight: Фіксована висота
+            nosubset: 'Немає підгрупи'
+            fixedwidth: 'Фіксована ширина'
+            fixedheight: 'Фіксована висота'
             latlonbounds: LatLonBounds
             boundingbox: BoundingBox
             srs: SRS
             styles: Стилі
-            legendurl: Легенда URL
+            legendurl: 'Легенда URL'
             scale: Шкала
             min: Мінімальний
             max: Максимальний
-            scalehint: Примітка масштабу
+            scalehint: 'Примітка масштабу'
             attribution: Атрибуція
-            onlineresource: Інтернет ресурсів
-            logourl: Лого URL
+            onlineresource: 'Інтернет ресурсів'
+            logourl: 'Лого URL'
             identifier: Ідентифікатор
             authority: Повноваження
             url: URL
             value: Значення
-            metadataurl: Метадані URL
+            metadataurl: 'Метадані URL'
             dimension: Вимір
             extent: Екстент
-            dataurl: Data URL
-            featurelisturl: Featurelist URL
+            dataurl: 'Data URL'
+            featurelisturl: 'Featurelist URL'
       class:
-        title: WMS loader
-        description: Завантажує WMS через GetCapabilities-Request
+        title: 'WMS loader'
+        description: 'Завантажує WMS через GetCapabilities-Request'
       admin:
         label:
-          autoopen: Автоматично відкритий
-          splitlayers: Розділення шарів
+          autoopen: 'Автоматично відкритий'
+          splitlayers: 'Розділення шарів'
     repository:
       parser:
-        couldnotparse: Не вдалось проаналізувати CapabilitiesDocument
-        not_supported_document: Не підтримується CapabilitiesDocument
-        not_supported_version: Версія WMS не підтримується
+        couldnotparse: 'Не вдалось проаналізувати CapabilitiesDocument'
+        not_supported_document: 'Не підтримується CapabilitiesDocument'
+        not_supported_version: 'Версія WMS не підтримується'
     metadata:
       section:
         common:
           _title: загальний
         useconditions:
-          _title: умови використання
+          _title: 'умови використання'
         contact:
           _title: контакт
         items:
           _title: Шар
-          name: Ім'я
+          name: 'Ім''я'
     repo:
       instance:
         label:
           dimensions: Розмірність
     dimensionsets:
-      no_dimension: немає розмірності
+      no_dimension: 'немає розмірності'
     dimhandler:
       class:
-        title: Розміри провідника
-        description: DimensionsHandler групує та викликає на карті екземпляри, що підтримуються розмірністю
+        title: 'Розміри провідника'
+        description: 'DimensionsHandler групує та викликає на карті екземпляри, що підтримуються розмірністю'
