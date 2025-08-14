@@ -10,6 +10,9 @@ Features:
 * [WMS] Add auto-refresh functionality (e.g. for services visualising sensor data) ([#PR1759](https://github.com/mapbender/mapbender/pull/1759))
 * [WMS] Legend can be disabled per layer ([#PR1758](https://github.com/mapbender/mapbender/pull/1758))
 
+Bugfixes:
+* [LayerTree] Fix layer order in layer tree ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
+
 Other:
 * Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
 * Improved performance for applications with many layers ([#PR1744](https://github.com/mapbender/mapbender/pull/1744), [#PR1756](https://github.com/mapbender/mapbender/pull/1756))

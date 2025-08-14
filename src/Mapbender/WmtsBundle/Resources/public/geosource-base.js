@@ -162,7 +162,8 @@ window.Mapbender = Mapbender || {};
          * @return {Array<Object>}
          */
         getPrintConfigs(bounds, scale, srsName) {
-            var layerDef = this._selectCompatibleLayers(srsName)[0];
+            const layerDefs = this._selectCompatibleLayers(srsName);
+            const layerDef = layerDefs.length ? layerDefs[layerDefs.length - 1] : null;
             const rootLayer = this.getRootLayer();
             if (!rootLayer.state.visibility || !layerDef) {
                 return [];

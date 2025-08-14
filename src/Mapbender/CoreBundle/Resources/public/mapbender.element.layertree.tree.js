@@ -232,7 +232,7 @@
                 $('.-fn-toggle-children', $li).addClass('disabled-placeholder');
             }
             if (layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle)) {
-                for (var j = layer.children.length - 1; j >= 0; j--) {
+                for (var j = 0; j < layer.children.length - 1; j++) {
                     $childList.append(this._createLayerNode(layer.children[j]));
                 }
             } else {
