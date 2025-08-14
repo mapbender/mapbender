@@ -81,8 +81,9 @@ window.Mapbender = Mapbender || {};
             // ... but we will not remember the following ~standard WMS params the same way
             this._runtimeParams = ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'];
 
-            if (this.options.refreshInterval) {
-                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshInterval * 1000);
+            if (this.options.refreshInterval && this.options.refreshInterval > 0) {
+                this.options.refreshIntervalMs = this.options.refreshInterval * 1000;
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshIntervalMs);
             }
         }
 
@@ -156,14 +157,14 @@ window.Mapbender = Mapbender || {};
         }
 
         refresh() {
-            if (this.refreshIntervalCode) clearTimeout(this.refreshIntervalCode)
+            if (this.refreshIntervalCode) clearTimeout(this.refreshIntervalCode);
             var cacheBreakParams = {
                 _OLSALT: Math.random()
             };
             this.addParams(cacheBreakParams);
 
-            if (this.options.refreshInterval) {
-                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshInterval * 1000);
+            if (this.options.refreshIntervalMs) {
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshIntervalMs);
             }
         }
 
