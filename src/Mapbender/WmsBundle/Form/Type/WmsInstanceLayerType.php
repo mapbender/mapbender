@@ -4,6 +4,9 @@ namespace Mapbender\WmsBundle\Form\Type;
 
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 use Symfony\Component\Form\FormInterface;
@@ -25,34 +28,38 @@ class WmsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('info', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('info', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.infotoc',
             ))
-            ->add('toggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('toggle', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.toggletoc',
             ))
-            ->add('allowinfo', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('allowinfo', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowinfotoc',
             ))
-            ->add('allowtoggle', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('allowtoggle', CheckboxType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
             ))
-            ->add('minScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('minScale', TextType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.minscale',
                 'attr' => ['class' => 'minScale'],
             ))
-            ->add('maxScale', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('maxScale', TextType::class, array(
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.maxscale',   // sic!
                 'attr' => ['class' => 'maxScale'],
             ))
-            ->add('priority', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+            ->add('priority', HiddenType::class, array(
                 'required' => true,
+            ))
+            ->add('legend', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.manager.source.instancelayer.legend',
             ))
         ;
     }
@@ -95,5 +102,6 @@ class WmsInstanceLayerType extends AbstractType
         $view['allowtoggle']->vars['columnClass'] = 'group-start';
         $view['toggle']->vars['checkbox_group'] = 'checkToggleOn';
         $view['toggle']->vars['columnClass'] = 'group-end';
+        $view['legend']->vars['checkbox_group'] = 'legend';
     }
 }

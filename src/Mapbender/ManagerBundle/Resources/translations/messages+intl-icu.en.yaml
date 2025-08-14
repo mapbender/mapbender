@@ -203,6 +203,7 @@ mb:
         active: active
         minscale: Minscale
         maxscale: Maxscale
+        legend: Enable legend
         allowselecttoc: 'Selectable in layer tree'
         selectedtoc: 'Select layer on startup. Caution: Leave this checkbox checked if you are not using thematic layers'
         selectedtoc.help: 'The layerset is active upon startup. The setting should only be changed if thematic layers are used.'

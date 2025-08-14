@@ -70,6 +70,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
 
+    #[ORM\Column(type: 'boolean', nullable: true,  options: ['default' => true])]
+    protected ?bool $legend = true;
+
     /**
      * if set to true, info is not just disabled, but not available. If this is set to true, setting info to
      * true is prevented. This is required for the case when the info was previously activated but not available
@@ -84,6 +87,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+        $this->legend = true;
         if ($settings !== null) {
             $this->active = $settings->activateNewLayers();
             $this->selected = $settings->selectNewLayers();;
@@ -479,6 +483,17 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         return $this->priority;
     }
+
+    public function getLegend(): bool
+    {
+        return $this->legend;
+    }
+
+    public function setLegend(bool $legend): void
+    {
+        $this->legend = $legend;
+    }
+
 
     /**
      * @inheritdoc

@@ -146,11 +146,12 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
     {
         $instanceLayer
             ->setId($instanceLayer->getSourceItem()->getId())
-            ->setSelected(!isset($data["visible"]) ? true : $data["visible"])
-            ->setInfo(!isset($data["queryable"]) ? false : $data["queryable"], true)
-            ->setAllowinfo($instanceLayer->getInfo() !== null && $instanceLayer->getInfo())
+            ->setSelected($data["visible"] ?? true)
+            ->setInfo($data["queryable"]  ?? false, true)
+            ->setAllowinfo($instanceLayer->getInfo())
             ->setToggle(ArrayUtil::getDefault($data, 'toggle', $instanceLayer->getParent() ? null : false))
             ->setAllowtoggle(ArrayUtil::getDefault($data, 'allowtoggle', $instanceLayer->getSourceItem()->getSublayer()->count() ? true : null))
+            ->setLegend($data["legend"] ?? true)
         ;
 
         if (!empty($data['layers'])) {

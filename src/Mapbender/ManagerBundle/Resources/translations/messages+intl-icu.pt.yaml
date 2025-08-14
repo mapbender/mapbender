@@ -201,6 +201,7 @@ mb:
         active: ativo
         minscale: 'Escala mínima'
         maxscale: 'Escala máxima'
+        legend: 'Ativar legenda'
         allowselecttoc: 'Permitir seleção na árvore de camadas'
         selectedtoc: 'Deixar layer ativa na inicialização do aplicativo. Atenção: Deixe esta caixa marcada se não estiver usando camadas temáticas'
         selectedtoc.help: 'A layer está ativa na inicialização do aplicativo. A configuração só deve ser alterada se camadas temáticas forem usadas.'

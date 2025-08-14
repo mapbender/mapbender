@@ -201,6 +201,7 @@ mb:
         active: attivo
         minscale: 'Scala minima'
         maxscale: 'Scala massima'
+        legend: 'Attivare la legenda'
         allowselecttoc: 'Permetti la Selezione nel TOC'
         selectedtoc: 'Selezionato nel TOC'
         selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'

@@ -184,6 +184,7 @@ mb:
         active: Активний
         minscale: Мінімальна шкала
         maxscale: Максимальна Шкала
+        legend: Увімкнути легенду
         allowselecttoc: Дозволити обирати в TOC
         selectedtoc: Обраний на TOC
         allowinfotoc: Allow FeatureInfo at TOC

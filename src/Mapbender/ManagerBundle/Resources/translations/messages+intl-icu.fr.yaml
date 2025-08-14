@@ -130,6 +130,7 @@ mb:
         active: active
         minscale: Minscale
         maxscale: maxscale
+        legend: Activer la légende
         allowselecttoc: Permettre la sélection en cliquant
         selectedtoc: Sélectionné en cliquant
         allowinfotoc: Permettre le FeatureInfo en cliquant

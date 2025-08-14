@@ -130,6 +130,7 @@ mb:
         active: actief
         minscale: Minschaal
         maxscale: Maxschaal
+        legend: Legenda inschakelen
         allowselecttoc: Sta selecteren van TOC toe
         selectedtoc: Geselecteerd op TOC
         allowinfotoc: Sta kenmerkinfo toe op TOC
