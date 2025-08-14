@@ -480,6 +480,8 @@ mb:
           showsourcetitle: 'Mostrar o título da fonte de dados'
           showlayertitle: 'Mostrar o título da camada'
           showgroupedlayertitle: 'Mostrar o título da camada agrupada'
+          dynamiclegend: 'Legenda dinâmica'
+          dynamiclegend_help: 'Se ativado, a legenda mostrará apenas as camadas realmente visíveis nos serviços suportados. A legenda será recarregada ao ampliar, reduzir ou mover o mapa.'
       featureinfo:
         label:
           deactivateonclose: 'Desativar ao fechar'

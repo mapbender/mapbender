@@ -480,6 +480,8 @@ mb:
           showsourcetitle: 'Mostrar título de la fuente de los datos'
           showlayertitle: 'Mostrar título de capa'
           showgroupedlayertitle: 'Mostrar título del grupo de capas'
+          dynamiclegend: 'Leyenda dinámica'
+          dynamiclegend_help: 'Si se activa, la leyenda mostrará solo las capas realmente visibles en los servicios compatibles. La leyenda se recargará al acercar, alejar o mover el mapa.'
       featureinfo:
         label:
           deactivateonclose: 'Desactivar al cerrar'
