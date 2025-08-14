@@ -80,6 +80,10 @@ window.Mapbender = Mapbender || {};
 
             // ... but we will not remember the following ~standard WMS params the same way
             this._runtimeParams = ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'];
+
+            if (this.options.refreshInterval) {
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshInterval * 1000);
+            }
         }
 
         createNativeLayers(srsName, mapOptions) {
@@ -152,10 +156,15 @@ window.Mapbender = Mapbender || {};
         }
 
         refresh() {
+            if (this.refreshIntervalCode) clearTimeout(this.refreshIntervalCode)
             var cacheBreakParams = {
                 _OLSALT: Math.random()
             };
             this.addParams(cacheBreakParams);
+
+            if (this.options.refreshInterval) {
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshInterval * 1000);
+            }
         }
 
         addParams(params) {

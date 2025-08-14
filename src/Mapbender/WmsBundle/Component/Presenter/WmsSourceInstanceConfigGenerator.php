@@ -101,6 +101,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'dimensions' => $this->getDimensionsConfiguration($sourceInstance),
             'buffer' => $buffer,
             'ratio' => $ratio,
+            'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
         );
     }
