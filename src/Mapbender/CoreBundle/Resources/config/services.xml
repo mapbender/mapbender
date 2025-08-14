@@ -94,6 +94,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.element.legend" class="Mapbender\CoreBundle\Element\Type\LegendAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.map_admin" class="Mapbender\CoreBundle\Element\Type\MapAdminType">
             <tag name="form.type" />
             <argument type="service" id="translator" />

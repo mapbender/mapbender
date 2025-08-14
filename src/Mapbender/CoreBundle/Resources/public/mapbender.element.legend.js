@@ -4,11 +4,13 @@
         options: {
             showSourceTitle: true,
             showLayerTitle: true,
-            showGroupedLayerTitle: true
+            showGroupedLayerTitle: true,
+            dynamicLegend: false,
         },
 
         callback: null,
         mbMap: null,
+        initialised: false,
 
         /**
          * Widget constructor
@@ -32,8 +34,18 @@
          */
         _setup: function (mbMap) {
             this.mbMap = mbMap;
+            this.$loadingSpinnerTemplate = this.element.find('.loadingspinner');
             this.onMapLoaded();
             this._trigger('ready');
+        },
+
+        initialise: function() {
+            this.initialised = true;
+            this.element.find('img[data-src]').each((index, elem) => {
+                const $elem = $(elem);
+                $elem.attr('src', $elem.attr('data-src'));
+                $elem.removeAttr('data-src');
+            });
         },
 
         /**
@@ -55,7 +67,14 @@
                 'mbmapsourcelayerremoved'
             ];
 
-            $(document).bind(rerenderOn.join(' '), $.proxy(this.onMapLayerChanges, this));
+            $(document).on(rerenderOn.join(' '), () => this.onMapLayerChanges());
+
+            if (this.options.dynamicLegend) {
+                // Reevaluate on zoom / pan / rotate / srs change
+                this.mbMap.element.on('mbmapviewchanged',
+                    Mapbender.Util.debounce(() => this.onMapLayerChanges(), 200)
+                );
+            }
         },
 
         /**
@@ -152,7 +171,40 @@
             }
         },
         createImage: function (layer) {
-            return $('<img/>').attr('src', layer.legend.url);
+            const legendUrl = this.options.dynamicLegend
+                ? this._appendUrlParameters(layer.legend.url, this._prepareDynamicLegendParameter())
+                : layer.legend.url;
+
+            const $loadingSpinner = this.$loadingSpinnerTemplate.clone();
+
+            const $img = $('<img/>')
+                .attr(this.initialised ? 'src' : 'data-src', legendUrl)
+                .on('load', (e) => {
+                    const img = e.target;
+                    if (img.height <= 26 && img.width <= 14) {
+                        // remove empty images
+                        $img.closest('li').remove();
+                    }
+                    $loadingSpinner.remove();
+                });
+
+            return $('<div></div>').append($img).append($loadingSpinner);
+        },
+        _appendUrlParameters: function (originalUrl, params) {
+            const url = new URL(originalUrl);
+
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.append(key, value);
+            });
+
+            return url.href;
+        },
+        _prepareDynamicLegendParameter: function () {
+            const model = this.mbMap.getModel();
+            return {
+                CRS: model.getCurrentProjectionCode(),
+                BBOX: model.getCurrentExtentArray().join(','),
+            };
         },
 
         createLegendForStyle: async function (layer) {
@@ -235,12 +287,12 @@
             // strip top-level dummy <ul>
             return $(' > *', html);
         },
-
-        /**
-         * On open handler
-         */
+        reveal: function() {
+            this.initialise();
+        },
         open: function (callback) {
             this.callback = callback;
+            this.initialise();
 
             if (this.useDialog_) {
                 if (!this.popupWindow) {
@@ -250,9 +302,7 @@
                     this.popupWindow.open();
                 }
             }
-
             this.notifyWidgetActivated();
-
         },
 
         /**

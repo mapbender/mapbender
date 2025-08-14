@@ -3,13 +3,13 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\StaticView;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
+use Mapbender\CoreBundle\Element\Type\LegendAdminType;
 use Mapbender\CoreBundle\Entity\Element;
 
 /**
  * The Legend class shows legends of the map's layers.
- *
- * @author Paul Schmidt
  */
 class Legend extends AbstractElementService implements ConfigMigrationInterface
 {
@@ -64,7 +64,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\LegendAdminType';
+        return LegendAdminType::class;
     }
 
     /**
@@ -77,7 +77,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
 
     public function getView(Element $element)
     {
-        $view = new StaticView('');
+        $view = new TemplateView('@MapbenderCore/Element/legend.html.twig');
         $view->attributes['class'] = 'mb-element-legend';
         $view->attributes['data-title'] = $element->getTitle();
         return $view;
