@@ -198,6 +198,9 @@ class ConfigService
      */
     protected function preloadSources(Application $application): void
     {
+        // Preloading sources is only necessary for DB-based applications
+        if ($application->getSource() !== Application::SOURCE_DB) return;
+
         $layersets = $this->em->createQueryBuilder()
             ->select('l')
             ->from(Layerset::class, 'l')
