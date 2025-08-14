@@ -86,6 +86,7 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
             ->setOpacity(!isset($data['opacity']) ? 100 : $data['opacity'])
             ->setTiled(!isset($data['tiled']) ? false : $data['tiled'])
             ->setBasesource(!isset($data['isBaseSource']) ? true : $data['isBaseSource'])
+            ->setRefreshInterval($data['refreshInterval'] ?? null)
         ;
         if (!empty($data['layerorder'])) {
             $instance->setLayerOrder($data['layerorder']);

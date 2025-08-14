@@ -49,6 +49,8 @@ mb:
             dimensions: Dimensions
             vendorspecifics: 'Vendor specific parameters'
             layers: Layers
+            refresh_interval: 'Update interval [s]'
+            refresh_interval_help: 'If set and not 0, the service will automatically update at the specified interval (in seconds).'
           vendorspecific:
             label: 'Vendor specifics'
         preview:
