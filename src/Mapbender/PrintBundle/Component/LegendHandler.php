@@ -3,6 +3,8 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Legend\LegendBlock;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
@@ -88,7 +90,7 @@ class LegendHandler
         $group = new LegendBlockGroup();
         foreach ($groupData as $key => $data) {
             $block = match ($data['type']) {
-                'url' => $this->prepareUrlBlock($data['layerName'], $data['url']),
+                'url' => $this->prepareUrlBlock($data['layerName'], $data['url'], $printJobData),
                 'style', 'canvas' => $this->prepareStyleBlock($data),
                 default => null,
             };
@@ -212,9 +214,11 @@ class LegendHandler
         return $image ? new LegendBlock($image, $legendInfo['layerName']) : null;
     }
 
-    public function prepareUrlBlock(string $title, string $url): ?LegendBlock
+    public function prepareUrlBlock(string $title, string $url, array $jobData): ?LegendBlock
     {
-        $image = $this->imageTransport->downloadImage($url);
+        $additionalParams = $this->prepareDynamicUrlParams($jobData);
+        $dynamicUrl = UrlUtil::validateUrl($url, $additionalParams);
+        $image = $this->imageTransport->downloadImage($dynamicUrl);
         return $image ? new LegendBlock($image, $title) : null;
     }
 
@@ -243,7 +247,7 @@ class LegendHandler
         $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
         return $fontStyle->getSize();
     }
-    
+
     public function getLegendPageFont(): string
     {
         return $this->legendPageFontName;
@@ -299,5 +303,28 @@ class LegendHandler
             "lineHeight" => $lineHeightMm,
             "titleHeight" => $titleHeightMm,
         ];
+    }
+
+    private function prepareDynamicUrlParams(array $jobData)
+    {
+        if (empty($jobData['srs'])) return [];
+        $srs = $jobData['srs'];
+        $bbox = $this->getJobExtent($jobData);
+        return [
+            "CRS" => $srs,
+            "BBOX" => implode(',', array(
+                $bbox->left,
+                $bbox->bottom,
+                $bbox->right,
+                $bbox->top,
+            )),
+        ];
+    }
+
+    protected function getJobExtent($jobData)
+    {
+        $ext = $jobData['extent'];
+        $cnt = $jobData['center'];
+        return Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ext['width'], $ext['height']);
     }
 }
