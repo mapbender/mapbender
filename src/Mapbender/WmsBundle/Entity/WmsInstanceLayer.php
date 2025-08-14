@@ -70,6 +70,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
 
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => true])]
+    protected ?bool $legend = true;
+
     /**
      * if set to true, info is not just disabled, but not available. If this is set to true, setting info to
      * true is prevented. This is required for the case when the info was previously activated but not available
@@ -84,6 +87,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         $this->sublayer = new ArrayCollection();
         $this->style = "";
+        $this->legend = true;
         if ($settings !== null) {
             $this->active = $settings->activateNewLayers();
             $this->selected = $settings->selectNewLayers();;
@@ -180,7 +184,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setActive($active)
     {
-        $this->active = (bool) $active;
+        $this->active = (bool)$active;
         return $this;
     }
 
@@ -202,7 +206,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowselected($allowselected)
     {
-        $this->allowselected = (bool) $allowselected;
+        $this->allowselected = (bool)$allowselected;
         return $this;
     }
 
@@ -224,7 +228,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setSelected($selected)
     {
-        $this->selected = (bool) $selected;
+        $this->selected = (bool)$selected;
         return $this;
     }
 
@@ -249,7 +253,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($this->infoUnavailable === true && !$force) {
             $this->info = false;
         } else {
-            $this->info = (bool) $info;
+            $this->info = (bool)$info;
             if ($force && !$info) $this->infoUnavailable = true;
         }
         return $this;
@@ -283,7 +287,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setToggle($toggle)
     {
-        $this->toggle = (bool) $toggle;
+        $this->toggle = (bool)$toggle;
         return $this;
     }
 
@@ -298,7 +302,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         if ($this->infoUnavailable === true) {
             $this->allowinfo = false;
         } else {
-            $this->allowinfo = (bool) $allowinfo;
+            $this->allowinfo = (bool)$allowinfo;
         }
 
         return $this;
@@ -332,7 +336,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      */
     public function setAllowtoggle($allowtoggle)
     {
-        $this->allowtoggle = (bool) $allowtoggle;
+        $this->allowtoggle = (bool)$allowtoggle;
         return $this;
     }
 
@@ -480,6 +484,17 @@ class WmsInstanceLayer extends SourceInstanceItem
         return $this->priority;
     }
 
+    public function getLegend(): ?bool
+    {
+        return $this->legend;
+    }
+
+    public function setLegend(bool $legend): void
+    {
+        $this->legend = $legend;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -489,9 +504,9 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * @internal
      * @param WmsInstance $instance
      * @param WmsLayerSource $layerSource
+     * @internal
      */
     public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, ?SourceLoaderSettings $settings = null)
     {

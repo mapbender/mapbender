@@ -8,6 +8,7 @@ Features:
 * Accessibility: IDs are no longer used in HTML for Mapbender elements ([#PR1750](https://github.com/mapbender/mapbender/pull/1750))
 * [FeatureInfo] Support point geometries in feature info highlighting ([#PR1747](https://github.com/mapbender/mapbender/pull/1747))
 * [WMS] Add auto-refresh functionality (e.g. for services visualising sensor data) ([#PR1759](https://github.com/mapbender/mapbender/pull/1759))
+* [WMS] Legend can be disabled per layer ([#PR1758](https://github.com/mapbender/mapbender/pull/1758))
 
 Other:
 * Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))

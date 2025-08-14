@@ -110,11 +110,19 @@ $(function() {
     $(".instanceTable").on("click", ".-fn-toggle-layer-detail", function(e) {
         // toggle targeted popover
         var target = $(this).attr("data-toggle-target");
-        $(target).parent().toggleClass("display");
-        $(target).toggleClass("show");
+        const $target = $(target);
+        $target.parent().toggleClass("display");
+        $target.toggleClass("show");
         // deactivate all other popovers
         var otherPopovers = ".popover:not(" + target + ")";
         $(otherPopovers).parent().removeClass("display");
         $(otherPopovers).removeClass("show");
+
+        const popoverTriggerList = $target.find('[data-bs-toggle="popover"]');
+        [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+            html: true,
+            placement: 'right',
+            trigger: 'hover'
+        }));
     });
 });

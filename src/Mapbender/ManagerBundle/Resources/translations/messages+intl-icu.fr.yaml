@@ -1,94 +1,94 @@
 mb:
   application:
     create:
-      success: L'application a été créée.
+      success: 'L''application a été créée.'
       failure:
-        create.directory: Le dossier de l'application ne peut pas être créé.
+        create.directory: 'Le dossier de l''application ne peut pas être créé.'
     save:
-      success: L'application a été sauvegardée.
+      success: 'L''application a été sauvegardée.'
       failure:
-        general: une erreur est survenue lors de la sauvegarde de l'application.
-        create.directory: L'application a été mise à jour mais mais les dossiers de l'application ne peuvent pas être créés.
+        general: 'une erreur est survenue lors de la sauvegarde de l''application.'
+        create.directory: 'L''application a été mise à jour mais mais les dossiers de l''application ne peuvent pas être créés.'
     remove:
-      success: L'application a été supprimée.
+      success: 'L''application a été supprimée.'
       failure:
-        general: L'application ne peut pas être supprimée
+        general: 'L''application ne peut pas être supprimée'
   layerset:
     create:
-      success: L'ensemble de couches a été créée.
+      success: 'L''ensemble de couches a été créée.'
     remove:
-      success: L'ensemble de couches a été supprimé.
-      failure: L'ensemble de couches ne peut pas être supprimé.
+      success: 'L''ensemble de couches a été supprimé.'
+      failure: 'L''ensemble de couches ne peut pas être supprimé.'
   manager:
-    autoActivate: Activer automatiquement
-    autoOpen: Ouverture automatique
+    autoActivate: 'Activer automatiquement'
+    autoOpen: 'Ouverture automatique'
     admin:
       map:
-        max_extent: Étendue maximum
-        start_extent: Étendue de départ
+        max_extent: 'Étendue maximum'
+        start_extent: 'Étendue de départ'
       element:
         title: Titre
         type: Type
-        add: Ajouter un nouvel élément à
-        show_hide: Afficher/Ne pas afficher l'élément
+        add: 'Ajouter un nouvel élément à'
+        show_hide: 'Afficher/Ne pas afficher l''élément'
         delete:
-          title: Supprimer élément
-          confirm: Voulez-vous vraiment supprimer l'élément "{element_name}"
-        no_element_added: Aucun élément ajouté
+          title: 'Supprimer élément'
+          confirm: 'Voulez-vous vraiment supprimer l''élément "{element_name}"'
+        no_element_added: 'Aucun élément ajouté'
       zoombar:
         draggable: Déplaçable
       overview:
         fix: Fixer
       layerset:
-        add: Ajouter un ensemble de couches
+        add: 'Ajouter un ensemble de couches'
         title: Titre
         type: Type
-        edit: Modifier l'ensemble de couches
+        edit: 'Modifier l''ensemble de couches'
         delete:
-          title: Supprimer l'ensemble de couches
-          confirm: Voulez-vous vraiment supprimer l'ensemble de couches  "{layerset_title}"?
+          title: 'Supprimer l''ensemble de couches'
+          confirm: 'Voulez-vous vraiment supprimer l''ensemble de couches  "{layerset_title}"?'
         id: Id
       instance:
-        add: Ajouter une instance
-        show_hide: Afficher/Cacher l'instance
-        edit: Modifier l'instance
+        add: 'Ajouter une instance'
+        show_hide: 'Afficher/Cacher l''instance'
+        edit: 'Modifier l''instance'
         delete:
-          title: Supprimer une instance
-          confirm: Voulez-vous vraiment supprimer l'instance "{instance_title}"
-        no_instance_added: Aucune instance ajoutée
-        no_layer_added: Aucun ensemble de couches ajouté
+          title: 'Supprimer une instance'
+          confirm: 'Voulez-vous vraiment supprimer l''instance "{instance_title}"'
+        no_instance_added: 'Aucune instance ajoutée'
+        no_layer_added: 'Aucun ensemble de couches ajouté'
       template: Modèle
       application:
         view: Visualiser
         edit:
-          title: Modifier l'application
-          base_data: Données de base
-        screenshot: Capture d'écran
-        layouts: Éléments et disposition
-        layersets: Ensembles de couches
+          title: 'Modifier l''application'
+          base_data: 'Données de base'
+        screenshot: 'Capture d''écran'
+        layouts: 'Éléments et disposition'
+        layersets: 'Ensembles de couches'
         custom_css: CSS
         security:
           title: Securité
-          public: accès publique
+          public: 'accès publique'
         save: Sauvegarder
         cancel: Annuler
-        view_this: Afficher cette application
-        duplicate: Dupliquer l'application
+        view_this: 'Afficher cette application'
+        duplicate: 'Dupliquer l''application'
         public:
-          on_off:  Basculer l'accès public
+          on_off: 'Basculer l''accès public'
         delete:
-          title: Supprimer l'application
+          title: 'Supprimer l''application'
           confirm: 'Voulez-vous vraiment supprimer l''application "{application_title}"'
-        no_application: Aucune application n'est disponible
+        no_application: 'Aucune application n''est disponible'
         new:
-          title: Nouvelle application
-        create_use: Créez une nouvelle application en fournissant de l'information de base et ensuite entrez en mode édition pour ajouter des éléments et des couches
+          title: 'Nouvelle application'
+        create_use: 'Créez une nouvelle application en fournissant de l''information de base et ensuite entrez en mode édition pour ajouter des éléments et des couches'
         btn:
           create: Créer
           cancel: Annuler
         upload:
-          button: Choisir un fichier
-          label: Aucun fichier sélectionné
+          button: 'Choisir un fichier'
+          label: 'Aucun fichier sélectionné'
         export:
           addSources: Sources
           btn:
@@ -99,48 +99,50 @@ mb:
             import: Importer
         title: Titre
         url:
-          title: Titre de l'URL
+          title: 'Titre de l''URL'
         description: Description
         template: Modèle
     source:
       sources: Sources
-      serviceurl: URL du service
-      username: Nom d'utilisateur
-      password: Mot de passe
+      serviceurl: 'URL du service'
+      username: 'Nom d''utilisateur'
+      password: 'Mot de passe'
       load: Charger
-      add: Ajouter une source
-      show_metadata: Afficher les metadonnées
-      delete: Supprimer la source
-      valid: Source valid
-      notvalid: Source not valid.
-      no_source: Aucune source n'est disponible
-      update: Mettre à jour la source
+      add: 'Ajouter une source'
+      show_metadata: 'Afficher les metadonnées'
+      delete: 'Supprimer la source'
+      valid: 'Source valid'
+      notvalid: 'Source not valid.'
+      no_source: 'Aucune source n''est disponible'
+      update: 'Mettre à jour la source'
       status:
-        ok: Source OK
-        toupdate: La source n'est plus à jour
-        unreachable: Source inateignable
+        ok: 'Source OK'
+        toupdate: 'La source n''est plus à jour'
+        unreachable: 'Source inateignable'
       added: 'Une nouvelle source de %type% a été créée'
       instance:
-        created: Une nouvelle instance a été créée. Modifiez-la
+        created: 'Une nouvelle instance a été créée. Modifiez-la'
       instancelayer:
         id: ID
         id.help: 'Le Id de l''instance de la couche sous la forme de: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-        title: Titre de la couche
-        name: Nom de la couche
+        title: 'Titre de la couche'
+        name: 'Nom de la couche'
         active: active
         minscale: Minscale
         maxscale: maxscale
-        allowselecttoc: Permettre la sélection en cliquant
-        selectedtoc: Sélectionné en cliquant
-        allowinfotoc: Permettre le FeatureInfo en cliquant
-        infotoc: FeatureInfo en cliquant
-        allowtoggletoc: Permettre le basculement
-        toggletoc: Basculer en cliquant
-        allowreordertoc: Permettre la réorganisation en cliquant
-        moreinfo: Plus d'informations
+        legend: 'Activer la légende'
+        allowselecttoc: 'Permettre la sélection en cliquant'
+        selectedtoc: 'Sélectionné en cliquant'
+        allowinfotoc: 'Permettre le FeatureInfo en cliquant'
+        infotoc: 'FeatureInfo en cliquant'
+        allowtoggletoc: 'Permettre le basculement'
+        toggletoc: 'Basculer en cliquant'
+        allowreordertoc: 'Permettre la réorganisation en cliquant'
+        moreinfo: 'Plus d''informations'
         style: Style
+        legend_help: 'Activer la légende pour cette couche. Attention : N’a d’effet que sur les couches qui fournissent une légende.'
       option:
-        basesource: Fond de carte
+        basesource: 'Fond de carte'
         proxy: Proxy
       metadata:
         metadata: Metadonnées
@@ -149,7 +151,7 @@ mb:
         layers: Couches
         title: Titre
         version: Version
-        originurl: URL d'origine
+        originurl: 'URL d''origine'
         abstract: Résumé
     contact:
       person: Personne
@@ -159,56 +161,56 @@ mb:
       facsimile: Fax
       email: Courriel
       address: Adresse
-      addresstype: Type d'adresse
+      addresstype: 'Type d''adresse'
       city: Ville
       state: État/Province
-      postcode: Code Postal
+      postcode: 'Code Postal'
       country: Pays
     managerbundle:
-      new_application: Nouvelle application
-      add_user_group: Ajouter des utilisateurs ou des groupes
+      new_application: 'Nouvelle application'
+      add_user_group: 'Ajouter des utilisateurs ou des groupes'
       import_application: Importer
       export_application: Exporter
     components:
       popup:
         duplicate_element:
-          title: Dupliquer un élément
-          confirm: Voulez-vous vraiment dupliquer l'élément "{element_name}"
+          title: 'Dupliquer un élément'
+          confirm: 'Voulez-vous vraiment dupliquer l''élément "{element_name}"'
         add_element:
-          title: Ajouter un élément
+          title: 'Ajouter un élément'
         edit_element:
-          title: Modifier l'élément
+          title: 'Modifier l''élément'
         delete_element:
-          title: Confirmez la suppression
+          title: 'Confirmez la suppression'
         add_edit_layerset:
-          title_edit: Modifier un ensemble de couches
-          title_add: Ajouter un ensemble de couches
+          title_edit: 'Modifier un ensemble de couches'
+          title_add: 'Ajouter un ensemble de couches'
         delete_layerset:
-          title: Supprimer un ensemble de couches
+          title: 'Supprimer un ensemble de couches'
         add_instance:
-          title: Choisissez une source
+          title: 'Choisissez une source'
         delete_instance:
-          title: Confirmez la suppression
+          title: 'Confirmez la suppression'
         delete_user_group:
-          title: Confirmez la suppression
-          content: Voulez-vous vraiment supprimer "%subject%"?
+          title: 'Confirmez la suppression'
+          content: 'Voulez-vous vraiment supprimer "%subject%"?'
     import:
       application:
-        failed: Impossible d'importer l'application
-    xml_invalid: Le document est invalide
-    xml_malformed: Le document est invalide
+        failed: 'Impossible d''importer l''application'
+    xml_invalid: 'Le document est invalide'
+    xml_malformed: 'Le document est invalide'
   core:
     admin:
       button:
-        show_label: Afficher l'étiquette
+        show_label: 'Afficher l''étiquette'
       element:
         autostart: Autostart
     entity:
       app:
         screenshotfile:
           error: 'Le fichier est trop lourd (%uploadFileSize% bytes). La taille maximum permise est: %maxFileSize% octets.'
-          format_error: Ce format n'est pas supporté!
+          format_error: 'Ce format n''est pas supporté!'
           resolution:
-            error: Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.
+            error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
   actions:
     secureelement: 'Restreindre l''accès à l''élément'

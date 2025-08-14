@@ -49,6 +49,10 @@
             <argument type="service" id="translator" />
             <tag name="form.type" />
         </service>
+        <service id="mapbender.sourceinstance.wms.form_type" class="Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
         <service id="mapbender.init_db_handler.prune_invalid_wms_sources" class="Mapbender\WmsBundle\EventHandler\InitDb\PruneInvalidWmsSourcesHandler">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="kernel.event_subscriber" />

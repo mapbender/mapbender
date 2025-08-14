@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Instance registered in container at mapbender.source.wms.config_generator
  * see services.xml
- * @phpstan-type WmsInstanceLayerArray array{id: int|string, active: bool, selected: bool, allowinfo: bool, allowselected: bool, allowtoggle: bool, toggle: bool, title: ?string, info: bool, style: ?string, priority: int, parentId: null|int|string, sourceId: int|string, lsTitle: ?string, lsName: ?string, lsLatLonBounds: null|BoundingBox, lsStyles: (null|Style[]), minScale: ?int, maxScale: ?int, lsScale: ?MinMax}
+ * @phpstan-type WmsInstanceLayerArray array{id: int|string, active: bool, legendEnabled: bool, selected: bool, allowinfo: bool, allowselected: bool, allowtoggle: bool, toggle: bool, title: ?string, info: bool, style: ?string, priority: int, parentId: null|int|string, sourceId: int|string, lsTitle: ?string, lsName: ?string, lsLatLonBounds: null|BoundingBox, lsStyles: (null|Style[]), minScale: ?int, maxScale: ?int, lsScale: ?MinMax}
  */
 class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 {
@@ -144,6 +144,13 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
     {
+        $styles = $this->getAvailableStyles($layer);
+        if ($layer['legendEnabled'] === false) {
+            foreach($styles as $style) {
+                /** @var Style $style */
+                $style->setLegendUrl(null);
+            }
+        }
         $configuration = array(
             "id" => strval($layer['id']),
             "priority" => $layer['priority'],
@@ -156,7 +163,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "bbox" => $this->getLayerBboxConfiguration($layer),
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
             "metadataUrl" => $this->getMetadataUrl($instance, $layer),
-            "availableStyles" => $this->getAvailableStyles($layer),
+            "availableStyles" => $styles,
         );
         $configuration += array_filter(array(
             'legend' => $this->getLegendConfig($instance, $layer),
@@ -372,6 +379,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     public function getLegendConfig(WmsInstance $instance, array $instanceLayer): array
     {
+        if (!$instanceLayer['legendEnabled']) {
+            return array();
+        }
+
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
         // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
@@ -537,7 +548,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     public function preload(array $sourceInstances): void
     {
         $allLayers = $this->em->createQueryBuilder()
-            ->select('l.id, l.active, l.selected, l.toggle, l.allowinfo, l.allowselected, l.allowtoggle, l.title, l.info, l.style, l.priority, l.minScale, l.maxScale, p.id AS parentId, i.id AS sourceId, ls.title AS lsTitle, ls.name AS lsName, ls.latlonBounds AS lsLatLonBounds, ls.styles AS lsStyles, ls.scale AS lsScale')
+            ->select('l.id, l.active, l.selected, l.toggle, l.legend AS legendEnabled, l.allowinfo, l.allowselected, l.allowtoggle, l.title, l.info, l.style, l.priority, l.minScale, l.maxScale, p.id AS parentId, i.id AS sourceId, ls.title AS lsTitle, ls.name AS lsName, ls.latlonBounds AS lsLatLonBounds, ls.styles AS lsStyles, ls.scale AS lsScale')
             ->from(WmsInstanceLayer::class, 'l')
             ->leftJoin(WmsInstanceLayer::class, 'p', 'WITH', 'l.parent = p.id')
             ->leftJoin(WmsInstance::class, 'i', 'WITH', 'l.sourceInstance = i.id')
@@ -605,6 +616,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
                 "title" => $layer->getTitle(),
                 "info" => $layer->getInfo(),
                 "style" => $layer->getStyle(),
+                "legendEnabled" => $layer->getLegend(),
                 "priority" => $layer->getPriority(),
                 "parentId" => $pid,
                 "sourceId" => $parent->getSource()->getId(),

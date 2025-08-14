@@ -44,8 +44,8 @@ mb:
     visibility: Visibilità
     element:
       screentype:
-        mobile: Mostra su schermi mobili
-        desktop: Mostra su schermi desktop
+        mobile: 'Mostra su schermi mobili'
+        desktop: 'Mostra su schermi desktop'
     sidepane:
       width: Larghezza
       resizable: Ridimensionabile
@@ -78,7 +78,7 @@ mb:
           title: 'Cancellare elemento'
           confirm: 'Vuoi davvero cancellare l''elemento "{element_name}"'
         anchor:
-          label: 'Posizione'
+          label: Posizione
           left-top: 'In alto a sinistra'
           left-bottom: 'In basso a sinistra'
           right-top: 'In alto a destra'
@@ -201,6 +201,7 @@ mb:
         active: attivo
         minscale: 'Scala minima'
         maxscale: 'Scala massima'
+        legend: 'Attivare la legenda'
         allowselecttoc: 'Permetti la Selezione nel TOC'
         selectedtoc: 'Selezionato nel TOC'
         selectedtoc.help: 'Il layerset è attivo all''avvio. L''impostazione deve essere modificata solo se si utilizzano layer tematici.'
@@ -212,6 +213,7 @@ mb:
         allowreordertoc: 'Permetti Riordina nel TOC'
         moreinfo: 'Più Informazioni'
         style: Stile
+        legend_help: 'Attiva la legenda per questo layer. Attenzione: Ha effetto solo sui layer che forniscono una legenda.'
       option:
         title: Titolo
         opacity: Opacità

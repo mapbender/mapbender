@@ -199,6 +199,7 @@ mb:
         active: activo
         minscale: 'Escala mínima'
         maxscale: 'Escala máxima'
+        legend: 'Activar leyenda'
         allowselecttoc: 'Permitir seleccionar en el árbol de capas'
         selectedtoc: 'Seleccione el conjunto de capas al iniciar la aplicación. Atención: Deje la casilla activa si no se utilizan capas temáticas.'
         selectedtoc.help: 'El conjunto de capas se activa al iniciarse la apliación. Sólo debe modificarse si se utilizan capas temáticas.'
@@ -210,6 +211,7 @@ mb:
         toggletoc: 'Toggle en el árbol de capas'
         moreinfo: 'Más información'
         style: Estilo
+        legend_help: 'Activar la leyenda para esta capa. Atención: Solo tiene efecto en capas que proporcionan una leyenda.'
       option:
         title: Título
         opacity: Opacidad
