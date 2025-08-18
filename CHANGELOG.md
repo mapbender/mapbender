@@ -11,7 +11,7 @@ Features:
 * [WMS] Legend can be disabled per layer ([#PR1758](https://github.com/mapbender/mapbender/pull/1758))
 
 Bugfixes:
-* [LayerTree] Fix layer order in layer tree ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
+* [WMTS] Fix layer order during printing ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
 
 Other:
 * Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
