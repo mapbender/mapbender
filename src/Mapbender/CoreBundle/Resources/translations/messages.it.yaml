@@ -480,6 +480,8 @@ mb:
           showsourcetitle: 'Mostra il titolo della risorsa'
           showlayertitle: 'Mostra il titolo del layer'
           showgroupedlayertitle: 'Mostra il titolo dei layers raggruppati'
+          dynamiclegend: 'Legenda dinamica'
+          dynamiclegend_help: 'Se attivato, la legenda mostrerà solo i layer effettivamente visibili nei servizi supportati. La legenda verrà ricaricata quando si ingrandisce o si sposta la mappa. Supportato solo per la versione 1.3.0 di WMS.'
       featureinfo:
         label:
           deactivateonclose: 'Disattiva in chiusura'

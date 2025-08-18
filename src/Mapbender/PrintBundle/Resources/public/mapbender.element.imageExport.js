@@ -97,7 +97,7 @@
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
             var geometryLayers = this._collectGeometryLayers();
-            return {
+            const jobData = {
                 layers: rasterLayers.concat(geometryLayers),
                 width: imageSize.width,
                 height: imageSize.height,
@@ -111,6 +111,11 @@
                     height: Math.abs(mapExtent.top - mapExtent.bottom)
                 }
             };
+            const dynamicLegend = $(".mb-element-legend")?.data("mapbenderMbLegend")?.options?.dynamicLegend;
+            if (dynamicLegend === true) {
+                jobData.srs = this.map.model.getCurrentProjectionCode();
+            }
+            return jobData;
         },
         _onSubmit: function (evt) {
             // isTrusted is true when the event was triggered by a user action, jobData needs to injected first

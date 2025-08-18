@@ -485,6 +485,8 @@ mb:
           showsourcetitle: 'Titel der Datenquelle anzeigen'
           showlayertitle: 'Titel der Ebene anzeigen'
           showgroupedlayertitle: 'Titel der gruppierten Ebene anzeigen'
+          dynamiclegend: 'Dynamische Legende'
+          dynamiclegend_help: 'Falls aktiviert, zeigt die Legende bei unterstützten Diensten nur die tatsächlich sichtbaren Layer. Die Legende wird beim Zoomen oder Bewegen der Karte neu geladen. Nur für WMS-Version 1.3.0 unterstützt.'
       featureinfo:
         label:
           deactivateonclose: 'Beim Schließen deaktivieren'
