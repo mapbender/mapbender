@@ -319,6 +319,7 @@ class ApplicationController extends ApplicationControllerBase
         });
         foreach ($reusablePartitions[1] as $removableAssignment) {
             /** @var SourceInstanceAssignment $removableAssignment */
+            $instanceCopy->setEnabled($removableAssignment->getEnabled());
             $this->em->remove($removableAssignment);
             $assignmentWeight = $removableAssignment->getWeight();
             if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
