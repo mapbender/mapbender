@@ -90,7 +90,7 @@ class LegendHandler
         $group = new LegendBlockGroup();
         foreach ($groupData as $key => $data) {
             $block = match ($data['type']) {
-                'url' => $this->prepareUrlBlock($data['layerName'], $data['url'], $printJobData),
+                'url' => $this->prepareUrlBlock($data['layerName'], $data['url'], $printJobData, $data["isDynamic"] ?? false),
                 'style', 'canvas' => $this->prepareStyleBlock($data),
                 default => null,
             };
@@ -214,11 +214,13 @@ class LegendHandler
         return $image ? new LegendBlock($image, $legendInfo['layerName']) : null;
     }
 
-    public function prepareUrlBlock(string $title, string $url, array $jobData): ?LegendBlock
+    public function prepareUrlBlock(string $title, string $url, array $jobData, bool $addDynamicUrlParams = false): ?LegendBlock
     {
-        $additionalParams = $this->prepareDynamicUrlParams($jobData);
-        $dynamicUrl = UrlUtil::validateUrl($url, $additionalParams);
-        $image = $this->imageTransport->downloadImage($dynamicUrl);
+        if ($addDynamicUrlParams)  {
+            $additionalParams = $this->prepareDynamicUrlParams($jobData);
+            $dynamicUrl = UrlUtil::validateUrl($url, $additionalParams);
+        }
+        $image = $this->imageTransport->downloadImage($addDynamicUrlParams ? $dynamicUrl : $url);
         return $image ? new LegendBlock($image, $title) : null;
     }
 

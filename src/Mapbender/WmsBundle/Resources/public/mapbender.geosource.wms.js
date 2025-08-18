@@ -11,12 +11,14 @@ window.Mapbender = Mapbender || {};
         }
 
         getLegend() {
+            const isDynamic = this.source.options.version === '1.3.0';
             if (this.options.style && this.options.style !== 'default' && this.options.availableStyles) {
                 for (const style of this.options.availableStyles) {
                     if (style.name === this.options.style && style.legendUrl?.onlineResource?.href) {
                         return {
                             type: 'url',
-                            url: style.legendUrl.onlineResource.href
+                            url: style.legendUrl.onlineResource.href,
+                            isDynamic: isDynamic,
                         };
                     }
                 }
@@ -24,7 +26,8 @@ window.Mapbender = Mapbender || {};
             if (this.options.legend && this.options.legend.url) {
                 return {
                     type: 'url',
-                    url: this.options.legend.url
+                    url: this.options.legend.url,
+                    isDynamic: isDynamic,
                 };
             }
             return null;

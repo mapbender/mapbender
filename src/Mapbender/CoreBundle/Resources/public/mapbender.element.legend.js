@@ -171,7 +171,7 @@
             }
         },
         createImage: function (layer) {
-            const legendUrl = this.options.dynamicLegend
+            const legendUrl = this.options.dynamicLegend && layer.legend.isDynamic
                 ? this._appendUrlParameters(layer.legend.url, this._prepareDynamicLegendParameter())
                 : layer.legend.url;
 

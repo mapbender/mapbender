@@ -269,7 +269,7 @@ mb:
           showlayertitle: Toon laag-titel
           showgroupedlayertitle: Toon gegroepeerde laag-titel
           dynamiclegend: 'Dynamische legende'
-          dynamiclegend_help: 'Indien ingeschakeld, toont de legenda bij ondersteunde diensten alleen de daadwerkelijk zichtbare lagen. De legenda wordt opnieuw geladen bij het zoomen of bewegen van de kaart.'
+          dynamiclegend_help: 'Indien ingeschakeld, toont de legenda bij ondersteunde diensten alleen de daadwerkelijk zichtbare lagen. De legenda wordt opnieuw geladen bij het zoomen of bewegen van de kaart. Alleen ondersteund voor WMS-versie 1.3.0.'
       featureinfo:
         label:
           deactivateonclose: 'Deactiveren bij sluiten'

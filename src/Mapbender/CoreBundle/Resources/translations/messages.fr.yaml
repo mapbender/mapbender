@@ -269,7 +269,7 @@ mb:
           showlayertitle: Afficher le titre de la couche
           showgroupedlayertitle: Afficher le titre des groupes de couches
           dynamiclegend: 'Légende dynamique'
-          dynamiclegend_help: 'Si activé, la légende n’affichera que les couches réellement visibles pour les services pris en charge. La légende sera rechargée lors du zoom ou du déplacement de la carte.'
+          dynamiclegend_help: 'Si activé, la légende n’affichera que les couches réellement visibles pour les services pris en charge. La légende sera rechargée lors du zoom ou du déplacement de la carte. Seulement pris en charge pour la version 1.3.0 de WMS'
       featureinfo:
         label:
           deactivateonclose: 'Désactiver à la fermeture'

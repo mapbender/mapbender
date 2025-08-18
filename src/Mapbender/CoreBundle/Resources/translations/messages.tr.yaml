@@ -269,7 +269,7 @@ mb:
           showlayertitle: Katman başlığını göster
           showgroupedlayertitle: Gruplanmış katman başlığını göster
           dynamiclegend: 'Dinamik efsane'
-          dynamiclegend_help: 'Etkinleştirildiğinde, açıklama yalnızca desteklenen hizmetlerde gerçekten görünen katmanları gösterir. Harita yakınlaştırıldığında veya hareket ettirildiğinde açıklama yeniden yüklenir.'
+          dynamiclegend_help: 'Etkinleştirildiğinde, açıklama yalnızca desteklenen hizmetlerde gerçekten görünen katmanları gösterir. Harita yakınlaştırıldığında veya hareket ettirildiğinde açıklama yeniden yüklenir. Yalnızca WMS 1.3.0 sürümü için desteklenir.'
       featureinfo:
         label:
           deactivateonclose: Kapandığında devre dışı bırak

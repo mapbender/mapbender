@@ -217,8 +217,10 @@ The third option is to return a canvas in your source:
 }
 ```
 
-For all definitions, there is the additional property `topLevel`. Set this to true, if you manage
-your legend on the root layer level.
+For all definitions, there are the additional properties
+
+- `topLevel`. Set this to true, if you manage your legend on the root layer level.
+- `isDynamic`: If set to true, the additional params CRS, BBOX, WIDTH and HEIGHT will be added to the legend url. This allows services to only show the legend entries used in the current map view.
 
 ## Custom layer tree menu item
 The core mapbender supports the following menu options in the layer tree:

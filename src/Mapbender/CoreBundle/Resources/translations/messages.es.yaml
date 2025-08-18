@@ -481,7 +481,7 @@ mb:
           showlayertitle: 'Mostrar título de capa'
           showgroupedlayertitle: 'Mostrar título del grupo de capas'
           dynamiclegend: 'Leyenda dinámica'
-          dynamiclegend_help: 'Si se activa, la leyenda mostrará solo las capas realmente visibles en los servicios compatibles. La leyenda se recargará al acercar, alejar o mover el mapa.'
+          dynamiclegend_help: 'Si se activa, la leyenda mostrará solo las capas realmente visibles en los servicios compatibles. La leyenda se recargará al acercar, alejar o mover el mapa. Solo compatible con la versión 1.3.0 de WMS.'
       featureinfo:
         label:
           deactivateonclose: 'Desactivar al cerrar'

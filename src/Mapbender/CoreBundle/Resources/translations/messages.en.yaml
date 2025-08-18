@@ -486,7 +486,7 @@ mb:
           showlayertitle: 'Show layer title'
           showgroupedlayertitle: 'Show grouped layer title'
           dynamiclegend: 'Dynamic legend'
-          dynamiclegend_help: 'If enabled, the legend will only show the layers that are currently visible for supported services. The legend will reload when zooming or moving the map.'
+          dynamiclegend_help: 'If enabled, the legend will only show the layers that are currently visible for supported services. The legend will reload when zooming or moving the map. Only supported for WMS version 1.3.0.'
       featureinfo:
         label:
           deactivateonclose: 'Deactivate on close'
