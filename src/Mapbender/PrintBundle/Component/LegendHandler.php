@@ -320,6 +320,8 @@ class LegendHandler
                 $bbox->right,
                 $bbox->top,
             )),
+            "WIDTH" => $jobData['width'],
+            "HEIGHT" => $jobData['height'],
         ];
     }
 

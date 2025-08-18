@@ -201,9 +201,12 @@
         },
         _prepareDynamicLegendParameter: function () {
             const model = this.mbMap.getModel();
+            const imageSize = this.mbMap.getModel().getCurrentViewportSize()
             return {
                 CRS: model.getCurrentProjectionCode(),
                 BBOX: model.getCurrentExtentArray().join(','),
+                WIDTH: imageSize.width,
+                HEIGHT: imageSize.height,
             };
         },
 
