@@ -12,6 +12,7 @@ Features:
 
 Bugfixes:
 * [WMTS] Fix layer order during printing ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
+* [SharedInstances] Fix shared instances are unusable when the instance was disabled during creation ([#PR1760](https://github.com/mapbender/mapbender/pull/1760))
 
 Other:
 * Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
