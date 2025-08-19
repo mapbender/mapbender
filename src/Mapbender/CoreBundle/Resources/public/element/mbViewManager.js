@@ -50,7 +50,6 @@
                 this._saveNew();
             }.bind(this));
             this.csrfToken = $form.attr('data-token');
-            this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
@@ -58,6 +57,9 @@
             this._toggleEnabled(true);
             // save default layertree settings, so they can be reloaded by the ResetView-Element
             this.saveDefaultSettings();
+            this.mbMap.map.olMap.on('rendercomplete', () => {
+                this._load();
+            });
         },
         _toggleEnabled: function(enabled) {
             $('.-fn-save-new', this.element).prop('disabled', !enabled);
