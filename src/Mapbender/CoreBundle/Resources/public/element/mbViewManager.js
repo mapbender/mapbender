@@ -103,6 +103,9 @@
         },
         _initEvents: function() {
             var self = this;
+            this.element.on('mousedown', '.-fn-apply', function() {
+                $(this).closest('tr').find('#loadingspinner').removeClass('d-none');
+            });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
                 var settings = self._extractLinkSettings(this);
@@ -110,9 +113,7 @@
                 var $marker = $('.recall-marker', $(this).closest('tr'));
                 $('.recall-marker', self.element).not($marker).css({opacity: ''});
                 $marker.css({opacity: '1'});
-                self.mbMap.element.one('mbmapviewchanged mb.sourcenodeselectionchanged mbmapsourcechanged', function() {
-                    $marker.animate({opacity: '0'});
-                });
+                $(this).closest('tr').find('#loadingspinner').addClass('d-none');
             });
             this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
