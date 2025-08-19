@@ -439,6 +439,7 @@
                 self.mbMap.map.olMap.removeLayer(layer);
             });
             let wmsloaderSources = [];
+            let sources = [];
 
             settings.sources.forEach(s => {
                 let source = Mapbender.Source.factory(s);
@@ -451,8 +452,11 @@
                     return typeof(layersetSource) !== 'undefined' && source.id === layersetSource.id;
                 })[0];
                 source.layerset = new Mapbender.Layerset(layerset.title_, layerset.id, layerset.selected);
-                this.mbMap.getModel().addSource(source);
+                this.mbMap.getModel().sourceTree.push(source);
+                sources.push(source);
             });
+
+            this.mbMap.getModel().initializeSourceLayers(sources);
 
             layertreeElement.data('mapbenderMbLayertree')._createTree();
             wmsloaderSources.forEach(source => {
