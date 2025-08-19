@@ -261,13 +261,19 @@
                     'isDynamicSource': source.isDynamicSource
                 });
             });
-            // remove recursion that prevents JSON.stringify()
+            let layersets = [];
             Mapbender.layersets.forEach(layerset => {
-                delete layerset.siblings;
+                layersets.push({
+                    'children': layerset.children,
+                    'id': layerset.id,
+                    'parent': layerset.parent,
+                    'selected': layerset.selected,
+                    'title_': layerset.title_,
+                });
             });
             return {
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
-                layersetStates: JSON.stringify(Mapbender.layersets),
+                layersetStates: JSON.stringify(layersets),
                 sourcesStates: JSON.stringify(sources),
                 token: this.csrfToken,
             };
