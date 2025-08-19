@@ -434,9 +434,8 @@
             const layertreeElement = $('.mb-element-layertree');
             layertreeElement.find('ul.layers:first').empty();
             this.mbMap.getModel().sourceTree = [];
-            const self = this;
             this.mbMap.map.olMap.getAllLayers().forEach(layer => {
-                self.mbMap.map.olMap.removeLayer(layer);
+                this.mbMap.map.olMap.removeLayer(layer);
             });
             let wmsloaderSources = [];
             let sources = [];
