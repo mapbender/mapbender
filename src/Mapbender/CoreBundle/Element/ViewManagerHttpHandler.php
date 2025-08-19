@@ -110,8 +110,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         }
 
         $criteria->orderBy(array(
-            'applicationSlug' => Criteria::ASC,
-            'userId' => Criteria::ASC,
+            'title' => Criteria::ASC,
         ));
         return $this->getRepository()->matching($criteria);
     }
