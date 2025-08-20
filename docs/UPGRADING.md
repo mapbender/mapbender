@@ -14,6 +14,21 @@ To simplify integrating new data sources into Mapbender (starting with Mapbox Ve
 DataSource handling in the backend has been refactored.   
 Refer to [#PR1745](https://github.com/mapbender/mapbender/pull/1745) for details.
 
+### New DataSource Mapbox Vector Tiles
+To use the print feature along with the new Mapbox Vector Tiles source, you need to have NodeJS
+and puppeteer globally installed on your system. This emulates a browser to render the vector tiles
+on the server side.
+
+```bash
+# for node js installation see https://nodejs.org/en/download
+# Important: installation must be done as the web server user, e.g.: sudo su - www-data -s /bin/bash
+npm install -g puppeteer
+puppeteer browsers install
+
+# check correct installation (also as web server user)
+bin/console mapbender:config:check
+```
+
 ### ViewManager
 The ViewManager was refactored. It now stores the entire layer tree instead of just diffs, which
 allows to save reordering of layers and sources added via the WMS loader. A migration of existing
