@@ -5,8 +5,8 @@
     data-mtime="{{ record.mtime | date(dateFormat) }}">
     <td class="-js-forward-to-apply"><i class="recall-marker fa fas fa-fw fa-angle-double-right"></i></td>
     <td class="name-cell -js-forward-to-apply" title="#{{ record.id }}">{{ record.title }}</td>
-    <td>
-        <i id="loadingspinner" class="fas fa-spinner fa-spin d-none"></i>
+    <td class="-js-loadingspinner">
+        <i class="fas fa-spinner fa-spin d-none"></i>
     </td>
     {%- if showDate -%}
     <td class="text-nowrap">{{ record.mtime | date(dateFormat) }}</td>
