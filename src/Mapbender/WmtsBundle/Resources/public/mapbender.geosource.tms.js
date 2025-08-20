@@ -26,7 +26,7 @@ window.Mapbender = Mapbender || {};
                 tileGrid: new ol.tilegrid.WMTS(gridOpts)
             };
             var layerOpts = {
-                opacity: this.configuration.options.opacity,
+                opacity: this.options.opacity,
                 source: new ol.source.XYZ(sourceOpts)
             };
             return new ol.layer.Tile(layerOpts);
@@ -51,7 +51,7 @@ window.Mapbender = Mapbender || {};
         * @return {string}
         */
         getPrintBaseUrl(srsName) {
-            return [this.options.tileUrls[0], this.source.configuration.version, '/', this.options.identifier].join('');
+            return [this.options.tileUrls[0], this.source.version, '/', this.options.identifier].join('');
         }
     }
     Mapbender.SourceLayer.typeMap['tms'] = Mapbender.TmsLayer;

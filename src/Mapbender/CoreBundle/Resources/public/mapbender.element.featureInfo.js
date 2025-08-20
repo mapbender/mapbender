@@ -84,6 +84,10 @@
 
             $(document).bind('mbmapsourcechanged', this._reorderTabs.bind(this));
             $(document).bind('mbmapsourcesreordered', this._reorderTabs.bind(this));
+            if (this.options.printResult) {
+                this.element.on('mb.shown.tab', '.tab', () => this._checkPrintVisibility());
+                this.element.on('selected', '.accordion', () => this._checkPrintVisibility());
+            }
 
             this._trigger('ready');
         },
@@ -141,96 +145,55 @@
             var showingPreviously = this.showingSources.slice();
             this.showingSources.splice(0);  // clear
             var sources = model.getSources();
-            var sourceUrlPairs = [];
-            var validSources = [];
+            const validSources = [];
+            var promises = [];
+
             // Iterate in reverse to match layertree display order
             for (var s = sources.length - 1; s >= 0; --s) {
-                var url = model.getPointFeatureInfoUrl(sources[s], x, y, this.options.maxCount);
-                if (url) {
-                    validSources.push(sources[s]);
-                    sourceUrlPairs.push({
-                        source: sources[s],
-                        url: url
-                    });
-                    this.addDisplayStub_(sources[s], url);
-                }
+                const source = sources[s];
+                if (!source.featureInfoEnabled()) continue;
+                validSources.push(source);
+
+                const options = {...this.options, injectionScript: this._getInjectionScript(source.id)};
+                const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options, this.element.attr('id'));
+                fiPromise.then((result) => {
+                    if (result) {
+                        this.showingSources.push(source);
+                        this.showResponseContent_(source, result);
+                        this._open();
+                    } else {
+                        this._removeContent(source);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    this._removeContent(source);
+                });
+
+                promises.push(fiPromise);
+
+                this.addDisplayStub_(source, url);
             }
+
+            // remove popup tabs where feature info is no longer available
             for (i = 0; i < showingPreviously.length; ++i) {
                 if (-1 === validSources.indexOf(showingPreviously[i])) {
                     this._removeContent(showingPreviously[i]);
                 }
             }
-            var requestsPending = sourceUrlPairs.length;
-            if (!requestsPending) {
+
+            if (!validSources.length) {
                 self._handleZeroResponses();
             }
+
             this.startedNewRequest = true;
-            sourceUrlPairs.forEach(function (entry) {
-                var source = entry.source;
-                var url = entry.url;
-                self._setInfo(source, url).then(function (content) {
-                    if (content) {
-                        self.showingSources.push(source);
-                        self.showResponseContent_(source, content);
-                        self._open();
-                    } else {
-                        self._removeContent(source);
-                    }
-                }, function () {
-                    self._removeContent(source);
-                }).always(function () {
-                    --requestsPending;
-                    if (!requestsPending && !self.showingSources.length) {
-                        // No response content to display, no more requests pending
-                        // Remain active, but hide popup
-                        self._handleZeroResponses();
-                    }
-                });
-            });
-        },
-        _setInfo: function (source, url) {
-            var self = this;
-            var ajaxOptions = {
-                url: url
-            };
-            var useProxy = source.configuration.options.proxy;
-            // also use proxy on different host / scheme to avoid CORB
-            useProxy |= !Mapbender.Util.isSameSchemeAndHost(url, window.location.href);
-            if (useProxy && !source.configuration.options.tunnel) {
-                ajaxOptions.data = {
-                    url: ajaxOptions.url
-                };
-                ajaxOptions.url = Mapbender.configuration.application.urls.proxy;
-            }
-            return $.ajax(ajaxOptions).then(function (data, textStatus, jqXHR) {
-                var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-                const data_ = $.trim(data);
-                if (data_.length && (!self.options.onlyValid || self._isDataValid(data_, mimetype))) {
-                    return self.formatResponse_(source, data_, mimetype);
+
+            Promise.allSettled(promises).then(() => {
+                if (!this.showingSources.length) {
+                    // No response content to display, no more requests pending
+                    // Remain active, but hide popup
+                    self._handleZeroResponses();
                 }
-            }, function (jqXHR, textStatus, errorThrown) {
-                Mapbender.error(source.getTitle() + ' GetFeatureInfo: ' + errorThrown);
             });
-        },
-        _isDataValid: function (data, mimetype) {
-            switch (mimetype.toLowerCase()) {
-                case 'text/html':
-                    return !!("" + data).match(/<[/][a-z]+>/gi);
-                case 'text/plain':
-                    return !!("" + data).match(/[^\s]/g);
-                default:
-                    return true;
-            }
-        },
-        formatResponse_: function (source, data, mimetype) {
-            if (mimetype.toLowerCase() === 'text/html') {
-                const script = this._getInjectionScript(source.id);
-                const $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" class="iframe--responsive">');
-                $iframe.attr("srcdoc", [script, data].join(''));
-                return $iframe.get();
-            } else {
-                return $(document.createElement('pre')).text(data).get();
-            }
         },
         _open: function () {
             if (this.highlightLayer && this.startedNewRequest) {
@@ -264,6 +227,7 @@
                 this.popup.$element.on('close', () => this._close());
             }
             this.popup.$element.show();
+            this.popup.$element.find('.popupClose').focus();
         },
         _hide: function () {
             if (this.popup && this.popup.$element) {
@@ -296,14 +260,11 @@
                 cssClass: 'btn btn-sm btn-light popupClose'
             }];
             if (this.options.printResult) {
-                var self = this;
                 buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),
                     // both buttons float right => will visually appear in reverse dom order, Print first
-                    cssClass: 'btn btn-sm btn-primary',
-                    callback: function () {
-                        self._printContent();
-                    }
+                    cssClass: 'btn btn-sm btn-primary js-btn-print',
+                    callback: () => this._printContent(),
                 });
             }
             return buttons;
@@ -313,9 +274,9 @@
             $('.js-content-content[data-source-id="' + source.id + '"]', this.element).remove();
             this._removeFeaturesBySourceId(source.id);
             // If there are tabs / accordions remaining, ensure at least one of them is active
-            var $container = $('.tabContainer,.accordionContainer', this.element);
-            if (!$('.active', $container).not('.hidden').length) {
-                $('>.tabs .tab, >.accordion', $container).not('hidden').first().click();
+            var $container = this.element.find('.tabContainer,.accordionContainer');
+            if (!$container.find('.active').not('.hidden').length) {
+                $container.find('>.tabs .tab, >.accordion').not('hidden').first().click();
             }
         },
         clearAll: function () {
@@ -347,11 +308,7 @@
             }
             $header.text(source.getTitle());
             $('a', $header).remove();
-            $header.append($(document.createElement('a'))
-                .attr('href', url)
-                .attr('target', '_blank')
-                .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
-            );
+
             var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
             if ($content.length === 0) {
@@ -361,8 +318,16 @@
                 $content.addClass('hidden');
                 $('.js-content-parent', this.element).append($content);
             }
-            // For print interaction
-            $content.attr('data-url', url);
+
+            if (url) {
+                $header.append($(document.createElement('a'))
+                    .attr('href', url)
+                    .attr('target', '_blank')
+                    .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
+                );
+                // For print interaction
+                $content.attr('data-url', url);
+            }
         },
         showResponseContent_: function (source, content) {
             this.element.find('.-js-no-content').addClass("hidden");
@@ -373,6 +338,11 @@
             var $header = $('#' + headerId, this.element);
             if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
                 $header.addClass('active');
+                if (this.options.printResult) {
+                    setTimeout(() => {
+                        this._checkPrintVisibility();
+                    });
+                }
             }
             var contentId = this._getContentId(source);
             var $content = $('#' + contentId, this.element);
@@ -384,23 +354,29 @@
             $content.removeClass('hidden');
             this._reorderTabs();
         },
+        _checkPrintVisibility: function() {
+            const activeTab = this.element.find('.tab.active, .accordion.active');
+            const activeTabHasLink = activeTab.children('a').length > 0;
+            const printButton = this.popup?.$element?.find('.js-btn-print') ?? this.element.find('.js-btn-print');
+            activeTabHasLink ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
+        },
         _printContent: function () {
             var $documentNode = $('.js-content.active', this.element);
             var url = $documentNode.attr('data-url');
+            if (!url) return;
             // Always use proxy. Calling window.print on a cross-origin window is not allowed.
-            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + $.param({url: url});
+            var proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({url: url});
             var w = window.open(proxifiedUrl);
             w.print();
         },
         _setupMapClickHandler: function () {
-            var self = this;
-            $(document).on('mbmapclick', function (event, data) {
-                self._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
+            $(document).on('mbmapclick', (event, data) => {
+                this._triggerFeatureInfo(data.pixel[0], data.pixel[1]);
             });
 
-            $(document).on('mbmapsourcechanged', function (event, data) {
+            $(document).on('mbmapsourcechanged', (event, data) => {
                 this._removeFeaturesBySourceId(data.source.id);
-            }.bind(this));
+            });
         },
         _createLayerStyle: function () {
             var settingsDefault = {
@@ -409,6 +385,7 @@
                 strokeWidth: this.options.strokeWidthDefault,
                 fontColor: this.options.fontColorDefault || this.options.strokeColorDefault,
                 fontSize: this.options.fontSizeDefault,
+                pointRadius: this.options.pointRadiusDefault || (this.options.strokeWidthDefault * 3),
             };
             var settingsHover = {
                 fill: this.options.fillColorHover || settingsDefault.fill,
@@ -416,37 +393,53 @@
                 strokeWidth: this.options.strokeWidthHover,
                 fontColor: this.options.fontColorHover || this.options.strokeColorHover || settingsDefault.fontColor,
                 fontSize: this.options.fontSizeHover || settingsDefault.fontSize,
+                pointRadius: this.options.pointRadiusHover || (this.options.strokeWidthHover * 3),
             };
 
             const self = this;
             return function (feature) {
-                return [feature.get('hover')
-                    ? self.processStyle_(settingsHover, true, feature)
-                    : self.processStyle_(settingsDefault, false, feature)
-                ];
+                const hover = feature.get('hover');
+                const point = feature.getGeometry().getType() === 'Point';
+                return [self.processStyle_(hover ? settingsHover : settingsDefault, hover, point, feature)];
             }
         },
-        processStyle_: function (settings, hover, feature) {
+        processStyle_: function (settings, hover, point, feature) {
             var fillRgba = Mapbender.StyleUtil.parseCssColor(settings.fill);
             var strokeRgba = Mapbender.StyleUtil.parseCssColor(settings.stroke);
             var strokeWidth = parseInt(settings.strokeWidth);
 
             strokeWidth = isNaN(strokeWidth) && (hover && 3 || 1) || strokeWidth;
-            return new ol.style.Style({
+            const fill = new ol.style.Fill({
+                color: fillRgba,
+            });
+            const stroke = strokeWidth && new ol.style.Stroke({
+                color: strokeRgba,
+                width: strokeWidth
+            });
+            const text = strokeWidth && new ol.style.Text({
+                font: parseInt(settings.fontSize) + 'px sans-serif',
                 fill: new ol.style.Fill({
-                    color: fillRgba,
+                    color: settings.fontColor,
                 }),
-                stroke: strokeWidth && new ol.style.Stroke({
-                    color: strokeRgba,
-                    width: strokeWidth
-                }),
-                text: strokeWidth && new ol.style.Text({
-                    font: parseInt(settings.fontSize) + 'px sans-serif',
-                    fill: new ol.style.Fill({
-                        color: settings.fontColor,
+                text: feature.get("label"),
+            });
+
+            if (point) {
+                return new ol.style.Style({
+                    image: new ol.style.Circle({
+                        fill: fill,
+                        stroke: stroke,
+                        radius: settings.pointRadius ? parseInt(settings.pointRadius) : (strokeWidth * 3),
                     }),
-                    text: feature.get("label"),
-                }),
+                    text: text,
+                    zIndex: hover ? 1 : undefined,
+                });
+            }
+
+            return new ol.style.Style({
+                fill: fill,
+                stroke: stroke,
+                text: text,
                 zIndex: hover ? 1 : undefined,
             });
         },

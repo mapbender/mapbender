@@ -247,6 +247,7 @@ mb:
       const:
         outofscale: 'Ebene außerhalb des Maßstabs'
         outofbounds: 'Ebene außerhalb der BoundingBox'
+        unsupportedprojection: 'Ebene unterstützt aktuelle Projektion nicht'
         parentinvisible: 'Eltern Ebene nicht sichtbar'
       tooltip:
         sublayers_openclose: öffnen/schließen
@@ -275,6 +276,8 @@ mb:
         select_style: 'Stil auswählen'
         metadata: Metadaten
         dimension: Dimension
+      filter:
+        placeholder: 'Filtern…'
     zoombar:
       rotateclockwise: 'Im Uhrzeigersinn drehen'
       rotatecounterclockwise: 'Gegen den Uhrzeigersinn drehen'
@@ -497,6 +500,7 @@ mb:
           stroke_width_px: 'Linienstärke (Pixel)'
           fontColor: Schriftfarbe
           fontSize: Schriftgröße
+          point_radius_px: 'Radius (für Punktgeometrien)'
       printclient:
         label:
           rotatable: Drehbar
@@ -517,6 +521,7 @@ mb:
           hidenottoggleable: 'Nicht aufklappbare Ordner ausblenden'
           hideinfo: 'Info ausblenden'
           menu: Menü
+          filter: 'Filter anzeigen'
       template:
         sidepane:
           type:

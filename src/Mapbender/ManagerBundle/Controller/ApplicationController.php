@@ -319,6 +319,7 @@ class ApplicationController extends ApplicationControllerBase
         });
         foreach ($reusablePartitions[1] as $removableAssignment) {
             /** @var SourceInstanceAssignment $removableAssignment */
+            $instanceCopy->setEnabled($removableAssignment->getEnabled());
             $this->em->remove($removableAssignment);
             $assignmentWeight = $removableAssignment->getWeight();
             if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
@@ -331,7 +332,7 @@ class ApplicationController extends ApplicationControllerBase
         $this->em->persist($application);
         $application->setUpdated(new \DateTime('now'));
         $this->em->flush();
-        $this->addFlash('success', 'mb.manager.sourceinstance.converted_to_bound');
+        $this->addFlash('success', 'mb.manager.source.instance.converted_to_bound');
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
@@ -370,7 +371,7 @@ class ApplicationController extends ApplicationControllerBase
         // sanity
         $instance->setLayerset(null);
         $this->em->flush();
-        $this->addFlash('success', 'mb.manager.sourceinstance.reusable_assigned_to_application');
+        $this->addFlash('success', 'mb.manager.source.instance.reusable_assigned_to_application');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
             "slug" => $application->getSlug(),
             "instanceId" => $instance->getId(),

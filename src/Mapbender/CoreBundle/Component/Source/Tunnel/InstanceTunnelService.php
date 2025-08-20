@@ -6,15 +6,14 @@ namespace Mapbender\CoreBundle\Component\Source\Tunnel;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
+use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\VendorSpecificHandler;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -23,7 +22,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * (credentials, "vendorSpecifics") that need to be hidden from the browser.
  *
  * @see ApplicationController::instanceTunnelAction()
- * @see WmsSourceService::postProcessUrls()
+ * @see WmsSourceInstanceConfigGenerator::postProcessUrls()
  *
  * By default registered in container as mapbender.source.instancetunnel.service, see services.xml
  */
@@ -54,9 +53,9 @@ class InstanceTunnelService
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(HttpTransportInterface $httpTransprot,
-                                RouterInterface $router,
-                                TypeDirectoryService $sourceTypeDirectory,
-                                TokenStorageInterface $tokenStorage,
+                                RouterInterface        $router,
+                                TypeDirectoryService   $sourceTypeDirectory,
+                                TokenStorageInterface  $tokenStorage,
                                 EntityManagerInterface $entityManager)
     {
         $this->httpTransport = $httpTransprot;
@@ -141,15 +140,17 @@ class InstanceTunnelService
     }
 
     /**
-     * @param WmsInstanceLayer|SourceInstanceItem $instanceLayer
+     * @param array|SourceInstanceItem $instanceLayer
      * @return string
      */
-    public function generatePublicLegendUrl(SourceInstanceItem $instanceLayer)
+    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance)
     {
-        $sourceInstance = $instanceLayer->getSourceInstance();
+        if (!$sourceInstance && $instanceLayer instanceof SourceInstanceItem) {
+            $sourceInstance = $instanceLayer->getSourceInstance();
+        }
         return $this->router->generate($this->legendTunnelRouteName, array(
             'instanceId' => $sourceInstance->getId(),
-            'layerId' => $instanceLayer->getId(),
+            'layerId' => is_array($instanceLayer) ? $instanceLayer['id'] : $instanceLayer->getId(),
         ));
     }
 
@@ -181,10 +182,11 @@ class InstanceTunnelService
                 }
                 if ($includeCredentials) {
                     $source = $endPoint->getSourceInstance()->getSource();
-                    return UrlUtil::addCredentials($urlNoCredentials, $source->getUsername(), $source->getPassword());
-                } else {
-                    return $urlNoCredentials;
+                    if ($source instanceof HttpOriginInterface) {
+                        return UrlUtil::addCredentials($urlNoCredentials, $source->getUsername(), $source->getPassword());
+                    }
                 }
+                return $urlNoCredentials;
             }
         }
         return null;

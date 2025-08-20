@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmsBundle;
 
-use Mapbender\WmsBundle\DependencyInjection\Compiler\RegisterWmsSourceServicePass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -19,7 +18,5 @@ class MapbenderWmsBundle extends Bundle
         $loader->load('services.xml');
         $loader->load('commands.xml');
         $loader->load('elements.xml');
-
-        $container->addCompilerPass(new RegisterWmsSourceServicePass());
     }
 }

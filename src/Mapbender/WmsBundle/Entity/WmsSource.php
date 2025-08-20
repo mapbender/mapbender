@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
@@ -13,6 +14,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
+use Mapbender\WmsBundle\WmsDataSource;
 
 
 /**
@@ -187,7 +189,7 @@ class WmsSource extends HttpParsedSource
     public function __construct()
     {
         parent::__construct();
-        $this->setType(self::TYPE_WMS);
+        $this->setType(WmsDataSource::TYPE);
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
@@ -726,9 +728,9 @@ class WmsSource extends HttpParsedSource
     /**
      * Get layers
      *
-     * @return ArrayCollection|WmsLayerSource[]
+     * @return Collection|WmsLayerSource[]
      */
-    public function getLayers()
+    public function getLayers(): Collection|array
     {
         return $this->layers;
     }
@@ -763,17 +765,17 @@ class WmsSource extends HttpParsedSource
     /**
      * Set keywords
      *
-     * @param ArrayCollection $keywords
+     * @param Collection $keywords
      * @return Source
      */
-    public function setKeywords(ArrayCollection $keywords)
+    public function setKeywords(Collection $keywords)
     {
         $this->keywords = $keywords;
         return $this;
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
     public function getKeywords()
     {
@@ -805,9 +807,9 @@ class WmsSource extends HttpParsedSource
     }
 
     /**
-     * @return ArrayCollection|WmsInstance[]
+     * @return Collection|WmsInstance[]
      */
-    public function getInstances()
+    public function getInstances(): Collection|array
     {
         return $this->instances;
     }
@@ -820,11 +822,6 @@ class WmsSource extends HttpParsedSource
     public function removeLayer(WmsLayerSource $layers)
     {
         $this->layers->removeElement($layers);
-    }
-
-    public function getTypeLabel()
-    {
-        return 'OGC WMS';
     }
 
     /**
@@ -901,14 +898,5 @@ class WmsSource extends HttpParsedSource
         }
 
         return $this;
-    }
-
-    public function getViewTemplate($frontend = false)
-    {
-        if ($frontend) {
-            return '@MapbenderWms/frontend/instance.html.twig';
-        } else {
-            return '@MapbenderWms/Repository/view.html.twig';
-        }
     }
 }

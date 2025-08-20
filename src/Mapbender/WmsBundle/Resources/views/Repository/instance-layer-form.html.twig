@@ -25,7 +25,7 @@
             {%- set _popover_id = 'popover_' ~ form_layer.vars.id -%}
             <div class="static-popover-wrap">
               <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
-                    title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
+                    title="{{'mb.manager.source.instancelayer.moreinfo'|trans}}">
                 <i class="fas fa-ellipsis"></i>
               </span>
               <div class="popover-inner-wrap">
@@ -48,6 +48,12 @@
                         <div class="col-sm-2">{{ form_label(form_layer.style) }}</div>
                         <div class="col-sm-10">{{ form_widget(form_layer.style) }}</div>
                       </div>
+                      {% if form_layer.legend is defined %}
+                          <div class="mb-3 form-check--inline">
+                            {{ form_widget(form_layer.legend) }}
+                            {{ form_help(form_layer.legend) }}
+                          </div>
+                      {% endif %}
                   </div>
                 </div>
               </div>

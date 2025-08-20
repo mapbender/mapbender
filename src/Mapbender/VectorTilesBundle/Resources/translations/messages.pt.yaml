@@ -1,0 +1,30 @@
+mb:
+  vectortiles:
+    admin:
+      json_url: 'URL para definição de estilo JSON'
+      referer: 'Referrer HTTP'
+      referer.help: 'Alguns servidores Vector Tiles requerem um referrer HTTP fixo para controle de acesso.'
+      min_scale: 'Escala mínima (denominador)'
+      max_scale: 'Escala máxima (denominador)'
+      selected: 'Ativar na inicialização da aplicação'
+      layer_hint: 'As camadas não são lidas separadamente para os azulejos vetoriais.'
+      print_scale_correction: 'Correção de resolução para impressão'
+      print_scale_correction_help: 'O valor padrão é 1.0. Valores maiores resultam em mais detalhes e rótulos menores; valores menores em menos detalhes e rótulos maiores.'
+      featureinfo:
+        heading: 'Informações das características'
+        active: 'Informações ativas na inicialização da aplicação'
+        allowtoggle: 'Informações alternáveis pelo usuário'
+        advanced: 'Configurações avançadas'
+        title: Título
+        title_help: 'Propriedade da característica que é exibida como título acima da tabela. <code>${property}</code> será substituído pelo valor da propriedade. Se não especificado, será usado o primeiro valor não vazio entre "label", "name" e "title".'
+        hide_if_no_title: 'Ocultar características com título vazio'
+        property_map: 'Filtro e tradução de campos'
+        property_map_help: 'Se não estiver vazio, apenas as propriedades especificadas serão exibidas. Especificar como array YAML, a chave é o nome do campo, o valor opcional é a tradução. Exemplo:<br><code>- class<br>- name<br>- layer: Nome da camada</code>'
+      error:
+        no_json: 'A URL especificada não pôde ser analisada como JSON.'
+        no_tile_json: 'A URL especificada em source.openmaptiles não pôde ser analisada como JSON.'
+      legend:
+        heading: Legenda
+        active: 'Ativar legenda'
+        property_map: 'Seleção de camadas e tradução'
+        property_map_help: 'Se não estiver vazio, apenas as camadas especificadas serão exibidas na legenda. Especifique como um array YAML. A chave é o ID da camada do campo "layers" do style JSON; o valor opcional é a tradução. Exemplo:<br><code>- class<br>- City<br>- Stations<br>- Transport: Public Transport</code>'

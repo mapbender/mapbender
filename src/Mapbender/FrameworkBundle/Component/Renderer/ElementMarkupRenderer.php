@@ -216,7 +216,8 @@ class ElementMarkupRenderer
         if ($tagName) {
             $renderedAttributes = array();
             foreach ($attributes as $name => $value) {
-                $renderedAttributes[] = $name . '=' . ($value ? ('"' . htmlspecialchars($value) . '"') : '""');
+                $value = $value !== null ? htmlspecialchars($value) : "";
+                $renderedAttributes[] = $name . '="' . $value . '"';
             }
             return
                 "<$tagName" . \rtrim(' ' . implode(' ', $renderedAttributes)) . '>'

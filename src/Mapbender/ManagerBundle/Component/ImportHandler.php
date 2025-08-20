@@ -13,6 +13,7 @@ use FOM\UserBundle\Security\Permission\SubjectDomainPublic;
 use FOM\UserBundle\Security\Permission\SubjectDomainRegistered;
 use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\UploadsManager;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
@@ -22,7 +23,6 @@ use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Component\Exchange\AbstractObjectHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityHelper;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
-use Mapbender\ManagerBundle\Component\Exchange\ExportDataPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\Exchange\ObjectHelper;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,11 +34,13 @@ use Symfony\Component\Yaml\Yaml;
 class ImportHandler extends ExchangeHandler
 {
 
-    public function __construct(EntityManagerInterface      $entityManager,
-                                protected ElementFilter     $elementFilter,
-                                protected ExportHandler     $exportHandler,
-                                protected UploadsManager    $uploadsManager,
-                                protected PermissionManager $permissionManager)
+    public function __construct(EntityManagerInterface                  $entityManager,
+                                protected ElementFilter                 $elementFilter,
+                                protected ExportHandler                 $exportHandler,
+                                protected UploadsManager                $uploadsManager,
+                                protected PermissionManager             $permissionManager,
+                                protected readonly TypeDirectoryService $typeDirectoryService
+    )
     {
         parent::__construct($entityManager);
     }
@@ -178,19 +180,15 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
-    /**
-     * @param mixed $data
-     * @return string|null
-     */
-    protected function extractClassName($data)
+    public static function extractClassName($data): ?string
     {
         if (is_array($data) && array_key_exists(self::KEY_CLASS, $data)) {
             $className = $data[self::KEY_CLASS];
             if (is_array($className)) {
                 $className = $className[0];
             }
-            while (!empty($this->legacyClassMapping[$className])) {
-                $className = $this->legacyClassMapping[$className];
+            while (!empty(self::$legacyClassMapping[$className])) {
+                $className = self::$legacyClassMapping[$className];
             }
             return $className;
         }
@@ -202,7 +200,7 @@ class ImportHandler extends ExchangeHandler
      * @param string[] $fieldNames
      * @return array
      */
-    protected function extractArrayFields(array $data, array $fieldNames)
+    public static function extractArrayFields(array $data, array $fieldNames)
     {
         return array_intersect_key($data, array_flip($fieldNames));
     }
@@ -289,72 +287,17 @@ class ImportHandler extends ExchangeHandler
         }
     }
 
-    /**
-     * @param ImportState $state
-     * @param array $data data to import
-     * @return Source|null
-     */
-    private function findMatchingSource(ImportState $state, $data)
+    private function findMatchingSource(ImportState $state, array $data): bool
     {
-        $className = $this->extractClassName($data);
-        // Avoid inserting "new" sources that are duplicates of already existing ones
-        // Finding equivalent sources is relatively expensive
-        $identFields = array(
-            'title',
-            'type',
-            'name',
-            'onlineResource',
-        );
-        $criteria = $this->extractArrayFields($data, $identFields);
-        foreach ($this->em->getRepository($className)->findBy($criteria) as $source) {
-            $tempPool = new EntityPool();
-            if ($this->compareSource($state, $tempPool, $source, $data)) {
-                $classMeta = $this->em->getClassMetadata($className);
-                $tempPool->add($source, $this->extractArrayFields($data, $classMeta->getIdentifier()));
-                // Move references to Source and its layers over into the "already imported" set,
-                // so no new entities will be created and persisted
-                $state->getEntityPool()->merge($tempPool);
-                return $source;
-            }
+        $instanceFactory = $this->typeDirectoryService->getInstanceFactoryByType($data['type']);
+        $entityPool = new EntityPool();
+        $hasMatch = $instanceFactory->matchInstanceToPersistedSource($state, $data, $entityPool);
+
+        if ($hasMatch) {
+            $state->getEntityPool()->merge($entityPool);
         }
-        return null;
-    }
 
-    /**
-     * @param ImportState $state
-     * @param EntityPool $entityPool
-     * @param Source $source
-     * @param array $data
-     * @return bool
-     */
-    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data)
-    {
-        foreach ($data['layers'] as $layerData) {
-            $layerClass = $this->extractClassName($layerData);
-
-            if (!$layerClass) {
-                throw new ImportException("Missing source item class definition");
-            }
-            if (is_a($layerClass, 'Mapbender\WmsBundle\Entity\WmsLayerSource', true)) {
-                $field = 'name';
-            } elseif (is_a($layerClass, 'Mapbender\WmtsBundle\Entity\WmtsLayerSource', true)) {
-                $field = 'identifier';
-            } else {
-                throw new ImportException("Unsupported layer type {$layerClass}");
-            }
-            $layerMeta = EntityHelper::getInstance($this->em, $layerClass)->getClassMeta();
-            $layerIdentData = $this->extractArrayFields($layerData, $layerMeta->getIdentifier());
-            $layerData = $state->getEntityData($layerClass, $layerIdentData) ?: $layerData;
-
-            $criteria = Criteria::create()->where(Criteria::expr()->eq($field, $layerData[$field]));
-            $match = $source->getLayers()->matching($criteria)->first();
-            if ($match) {
-                $entityPool->add($match, $layerIdentData);
-            } else {
-                return false;
-            }
-        }
-        return true;
+        return $hasMatch;
     }
 
     protected function isReference($data, array $criteria)
@@ -369,9 +312,9 @@ class ImportHandler extends ExchangeHandler
      */
     protected function handleData(ImportState $state, $data)
     {
-        if ($className = $this->extractClassName($data)) {
+        if ($className = self::extractClassName($data)) {
             if ($entityInfo = EntityHelper::getInstance($this->em, $className)) {
-                $identValues = $this->extractArrayFields($data, $entityInfo->getClassMeta()->getIdentifier());
+                $identValues = self::extractArrayFields($data, $entityInfo->getClassMeta()->getIdentifier());
                 if ($object = $state->getEntityPool()->get($className, $identValues)) {
                     return $object;
                 } else {
@@ -403,20 +346,6 @@ class ImportHandler extends ExchangeHandler
     }
 
     /**
-     * @param ExportDataPool $exportPool
-     * @param $targetClassName
-     * @param array $targetIdent
-     * @return object|null
-     */
-    public function dehydrateExportObject(ExportDataPool $exportPool, $targetClassName, array $targetIdent)
-    {
-        $entityPool = new EntityPool();
-        $importState = new ImportState($this->em, $exportPool->getAllGroupedByClassName(), $entityPool);
-        $this->handleData($importState, $importState->getEntityData($targetClassName, $targetIdent));
-        return $entityPool->get($targetClassName, $targetIdent);
-    }
-
-    /**
      * @param ImportState $state
      * @param EntityHelper $entityInfo
      * @param array $data
@@ -440,7 +369,7 @@ class ImportHandler extends ExchangeHandler
         }
 
         $this->em->persist($object);
-        $state->getEntityPool()->add($object, $this->extractArrayFields($data, $identFieldNames));
+        $state->getEntityPool()->add($object, self::extractArrayFields($data, $identFieldNames));
 
         foreach ($classMeta->getAssociationMappings() as $assocItem) {
             if ($this->isEntityClassBlacklisted($assocItem['targetEntity'])) {

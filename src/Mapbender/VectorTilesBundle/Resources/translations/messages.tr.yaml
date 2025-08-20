@@ -1,0 +1,30 @@
+mb:
+  vectortiles:
+    admin:
+      json_url: 'JSON stil tanımına URL'
+      referer: 'HTTP Referer'
+      referer.help: 'Bazı Vector Tiles sunucuları erişim kontrolü için sabit bir HTTP referer gerektirir.'
+      min_scale: 'Minimum ölçek (payda)'
+      max_scale: 'Maksimum ölçek (payda)'
+      selected: 'Uygulama başlangıcında etkinleştir'
+      layer_hint: 'Katmanlar, vektör karo için ayrı ayrı okunmaz.'
+      print_scale_correction: 'Baskı için çözünürlük düzeltmesi'
+      print_scale_correction_help: 'Varsayılan değer 1.0''dır. Daha yüksek değerler daha fazla detay ve daha küçük etiketler; daha düşük değerler ise daha az detay ve daha büyük etiketler ile sonuçlanır.'
+      featureinfo:
+        heading: 'Özellik Bilgisi'
+        active: 'Uygulama başlangıcında bilgi aktif'
+        allowtoggle: 'Kullanıcı tarafından değiştirilebilir bilgi'
+        advanced: 'Gelişmiş ayarlar'
+        title: 'Başlık alanı'
+        title_help: 'Tablonun üstünde başlık olarak görüntülenen özelliğin niteliği. <code>${property}</code> niteliğin değeri ile değiştirilecektir. Belirtilmezse, "label", "name" ve "title" arasındaki ilk boş olmayan değer kullanılır.'
+        hide_if_no_title: 'Boş başlıklı özellikleri gizle'
+        property_map: 'Alan filtresi ve çeviri'
+        property_map_help: 'Boş değilse, yalnızca belirtilen özellikler görüntülenecektir. YAML dizisi olarak belirtin, anahtar alanın adıdır, isteğe bağlı değer çeviridir. Örnek:<br><code>- class<br>- name<br>- layer: Katman adı</code>'
+      error:
+        no_json: 'Belirtilen URL JSON olarak ayrıştırılamadı.'
+        no_tile_json: 'source.openmaptiles içinde belirtilen URL JSON olarak ayrıştırılamadı.'
+      legend:
+        heading: Lejant
+        active: 'Lejantı etkinleştir'
+        property_map: 'Katman seçimi ve çeviri'
+        property_map_help: 'Boş değilse, yalnızca belirtilen katmanlar lejantta gösterilir. YAML dizisi olarak belirtin. Anahtar, style JSON’daki "layers" alanındaki katman kimliğidir; isteğe bağlı değer ise çevirisidir. Örnek:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

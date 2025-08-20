@@ -53,7 +53,7 @@
             var $rootList = $('ul.layers:first', this.element);
             $rootList.empty();
             for (var i = (sources.length - 1); i > -1; i--) {
-                if (this.options.showBaseSource || !sources[i].configuration.isBaseSource) {
+                if (this.options.showBaseSource || !sources[i].isBaseSource) {
                     var source = sources[i];
                     var $sourceNode = this._createSourceTree(sources[i]);
                     var themeOptions = this.options.useTheme && this._getThemeOptions(source.layerset);
@@ -98,6 +98,7 @@
             this.element.on('click', '.layer-metadata', function (evt) {
                 self._showMetadata(evt);
             });
+            this.element.on('input', '.layer-filter-input', this._filterLayer.bind(this));
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
@@ -217,6 +218,9 @@
             if (!layer.getParent()) {
                 $li.addClass("serviceContainer");
             }
+            if (layer.getParent() && layer.children.length) {
+                $li.addClass("subContainer");
+            }
             const li = $li[0];
             const isLeafNode = !layer.children || !layer.children.length || !treeOptions.toggle;
             li.classList.toggle('-js-leafnode', isLeafNode);
@@ -247,7 +251,7 @@
         },
         _onSourceAdded: function (event, data) {
             var source = data.source;
-            if (source.configuration.baseSource && !this.options.showBaseSource) {
+            if (source.isBaseSource && !this.options.showBaseSource) {
                 return;
             }
             var $sourceTree = this._createSourceTree(source);
@@ -271,15 +275,23 @@
             var $title = $('>.leaveContainer .layer-title', $li);
             // NOTE: outOfScale is only calculated for leaves. May be null
             //       for intermediate nodes.
-            $li.toggleClass('state-outofscale', !!layer.state.outOfScale);
-            $li.toggleClass('state-outofbounds', !!layer.state.outOfBounds);
-            $li.toggleClass('state-deselected', !layer.getSelected());
-            var tooltipParts = [layer.options.title];
+            if ($li.length === 1) {
+                const li = $li[0];
+                li.classList.toggle('state-outofscale', !!layer.state.outOfScale);
+                li.classList.toggle('state-outofbounds', !!layer.state.outOfBounds);
+                li.classList.toggle('state-unsupportedprojection', !!layer.state.unsupportedProjection);
+                li.classList.toggle('state-deselected', !layer.getSelected());
+            }
+
+            const tooltipParts = [layer.options.title];
             if (layer.state.outOfScale) {
                 tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofscale"));
             }
             if (layer.state.outOfBounds) {
                 tooltipParts.push(Mapbender.trans("mb.core.layertree.const.outofbounds"));
+            }
+            if (layer.state.unsupportedProjection) {
+                tooltipParts.push(Mapbender.trans("mb.core.layertree.const.unsupportedprojection"));
             }
             $title.text(layer.options.title);
             $title.attr('title', tooltipParts.join("\n"));
@@ -289,7 +301,7 @@
             // for performance reasons, only re-initialise sortable if tree has already been created
             if (this.treeCreated) this._reset();
         },
-        _resetLayer: function(layer, $parent) {
+        _resetLayer: function (layer, $parent) {
             const $li = this.element.find('li[data-id="' + layer.options.id + '"]');
             const treeOptions = layer.options.treeOptions;
             const symbolState = layer.children && layer.children.length && (treeOptions.allow.toggle || treeOptions.toggle);
@@ -439,7 +451,7 @@
             }
         },
         _updateChildrenState: function ($layer, newState) {
-            $layer.children('.layers').children('.leave').each((index, child)  => {
+            $layer.children('.layers').children('.leave').each((index, child) => {
                 const $child = $(child);
                 const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected');
                 this.updateIconVisual_($childToggle, newState, null);
@@ -454,6 +466,72 @@
             var layer = $target.closest('li.leave').data('layer');
             this.model.controlLayer(layer, null, newState);
         },
+        _resetLayerFilter: function () {
+            this.element.find('.layer-highlight').each((index, span) => {
+                $(span).replaceWith($(span).text());
+            });
+            this.element.find('.filtered').removeClass('filtered');
+            this.element.find('.layer-title').parent().show();
+        },
+        _filterLayer: function () {
+            const value = this.element.find('.layer-filter-input').val().toLowerCase();
+
+            if (typeof this._lastFilterLength === 'undefined') {
+                this._lastFilterLength = 0;
+            }
+            if (value.length < 2) {
+                if (this._lastFilterLength > 1) this._resetLayerFilter(false);
+                return;
+            }
+
+            // Mark all filter hits
+            const $layerTitles = this.element.find('.layer-title');
+            $layerTitles.each((index, element) => {
+                const title = $(element).text()?.toString().toLowerCase();
+                if (title) {
+                    $(element).toggleClass('filtered', title.includes(value));
+                }
+            });
+
+            // Hide all parent containers
+            $layerTitles.parent().hide();
+
+            this.element.find('.filtered').each((index, match) => {
+                const $match = $(match);
+
+                // Highlight the matching text in the layer title
+                const regex = new RegExp('(' + value + ')', 'i');
+                $match.html($match.text().replace(regex, '<span class="layer-highlight">$1</span>'));
+
+                // Show parent containers and decide whether to open the folders
+                $match.parent().show();
+                ['subContainer', 'serviceContainer', 'themeContainer'].forEach(containerClass => {
+                    const $container = $match.parents('.' + containerClass);
+                    $container.find('.leaveContainer:first').show();
+
+                    const isInContainer = $match.parent().parent().hasClass(containerClass);
+
+                    if (isInContainer) {
+                        $container.find('ul.layers .leaveContainer').show();
+                    }
+                    $container.toggleClass('showLeaves', !isInContainer);
+                    $container.find('.-fn-toggle-children:first > i')
+                        .toggleClass('fa-folder-open', !isInContainer)
+                        .toggleClass('fa-folder', isInContainer);
+
+                });
+            });
+
+            // Remove highlighted strings that are shorter than value
+            this.element.find('.layer-highlight').each((index, span) => {
+                if ($(span).text().length < value.length) {
+                    $(span).replaceWith($(span).text());
+                }
+            });
+
+            this._lastFilterLength = value.length;
+        },
+
         /**
          * initalise a layer menu, called when the burger menu is clicked
          * @param $layerNode jQuery
@@ -506,8 +584,8 @@
 
             const $wrapper = $opacityControl.find('.layer-opacity-bar');
             const $handle = $opacityControl.find('.layer-opacity-handle');
-            new Dragdealer($wrapper[0], {
-                x: source.configuration.options.opacity,
+            const dragDealer = new Dragdealer($wrapper[0], {
+                x: source.options.opacity,
                 horizontal: true,
                 vertical: false,
                 speed: 1,
@@ -516,6 +594,31 @@
                 animationCallback: (x, y) => {
                     var opacity = Math.max(0.0, Math.min(1.0, x));
                     var percentage = Math.round(opacity * 100);
+                    $handle.text(percentage);
+                    this.model.setSourceOpacity(source, opacity);
+                }
+            });
+
+            const $slider = $opacityControl.find('.layer-slider-handle');
+            $slider.attr('tabindex', '0'); // Make the handle focusable
+
+            // Add keyboard event listener for left and right arrow keys
+            $slider.on('keydown', (event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const currentX = dragDealer.getValue()[0];
+                    const step = 1 / 100; // Step size for opacity adjustment
+                    let newX = currentX;
+
+                    if (event.key === 'ArrowLeft') {
+                        newX = Math.max(0, currentX - step);
+                    } else if (event.key === 'ArrowRight') {
+                        newX = Math.min(1, currentX + step);
+                    }
+
+                    dragDealer.setValue(newX, 0);
+                    const opacity = Math.max(0.0, Math.min(1.0, newX));
+                    const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
@@ -548,7 +651,16 @@
             if (!$('>.layer-menu', $layerNode).length) {
                 $('.layer-menu', this.element).remove();
                 this._initMenu($layerNode);
+
+                const $menu = $layerNode.find('>.layer-menu');
+
+                $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
+                const $firstFocusable = $menu.find('[tabindex="0"]').first();
+                if ($firstFocusable.length) {
+                    $firstFocusable.focus();
+                }
             }
+
             return false;
         },
         _filterMenu: function (layer) {
@@ -568,7 +680,7 @@
             return layer.getSupportedMenuOptions();
         },
         _initDimensionsMenu: function ($element, $actionElement, source) {
-            var dims = source.configuration.options.dimensions || [];
+            var dims = source.options.dimensions || [];
             var self = this;
             var dimData = $element.data('dimensions') || {};
             var $controls = [];
@@ -675,6 +787,7 @@
                             cssClass: 'btn btn-sm btn-light popupClose critical'
                         }]
                     });
+                    metadataPopup.$element.find('button').focus();
                     if (initTabContainer) {
                         initTabContainer(metadataPopup.$element);
                     }
@@ -703,6 +816,7 @@
                     this.popup.$element.on('close', $.proxy(this.close, this));
                 } else {
                     this.popup.$element.show();
+                    this.popup.focus();
                 }
             }
             this._reset();
@@ -783,3 +897,13 @@
     });
 
 })(jQuery);
+
+// Ensure all mouse click events can also be triggered by pressing the Enter key
+$(document).on('keydown', function (event) {
+    if (event.key === 'Enter') {
+        var target = $(event.target);
+        if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
+            target.trigger("click");
+        }
+    }
+});

@@ -2,6 +2,8 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\ColorUtils;
+
 class CanvasLegend
 {
 
@@ -16,6 +18,8 @@ class CanvasLegend
     protected int $layerTitleFontSize = 12;
     protected float $layerTitleLineHeight = 1.5;
     protected string $layerLabelString = "Label";
+
+    protected array $imageCache = [];
 
     public function __construct(private array $layers)
     {
@@ -56,18 +60,43 @@ class CanvasLegend
 
     protected function populateCanvas(array $style): void
     {
-        $fillColor = $this->hexToRgb($style['fillColor']);
-        $fillOpacity = $style['fillOpacity'];
-        $fill = imagecolorallocatealpha($this->image, $fillColor['red'], $fillColor['green'], $fillColor['blue'], 127 * (1 - $fillOpacity));
-        imagefilledrectangle($this->image, 0, $this->offset, $this->symbolWidth, $this->offset + $this->symbolHeight, $fill);
+        if (isset($style['image'])) {
+            $this->drawExternalImage($style);
+            return;
+        }
 
-        // Set stroke color
-        if (isset($style['strokeColor']) && $style['strokeWidth'] > 0) {
-            $strokeColor = $this->hexToRgb($style['strokeColor']);
-            $strokeOpacity = $style['strokeOpacity'];
+        $circle = isset($style['circle']) && $style['circle'];
+        $circleRadius = $circle ? ($style['circleRadius'] ?? 5) : 0;
+
+        if (isset($style['fillColor'])) {
+            $fillColor = ColorUtils::parseColorToRgb($style['fillColor']);
+            $fillOpacity = $style['fillOpacity'] ?? 1;
+            $fill = imagecolorallocatealpha($this->image, $fillColor['red'], $fillColor['green'], $fillColor['blue'], 127 * (1 - $fillOpacity));
+            if ($circle) {
+                $cx = (int)($this->symbolWidth / 2);
+                $cy = (int)($this->offset + $this->symbolHeight / 2);
+                imagefilledellipse($this->image, $cx, $cy, $circleRadius * 2, $circleRadius * 2, $fill);
+            } else {
+                imagefilledrectangle($this->image, 0, $this->offset, $this->symbolWidth, $this->offset + $this->symbolHeight, $fill);
+            }
+        }
+
+        if (isset($style['strokeColor']) && ($style['strokeWidth'] ?? 0) > 0) {
+            $strokeColor = ColorUtils::parseColorToRgb($style['strokeColor']);
+            $strokeOpacity = $style['strokeOpacity'] ?? 1;
             $stroke = imagecolorallocatealpha($this->image, $strokeColor['red'], $strokeColor['green'], $strokeColor['blue'], 127 * (1 - $strokeOpacity));
             imagesetthickness($this->image, $style['strokeWidth']);
-            imagerectangle($this->image, 0, $this->offset, $this->symbolWidth - 1, $this->offset + $this->symbolHeight - 1, $stroke);
+            if ($circle) {
+                $cx = (int)($this->symbolWidth / 2);
+                $cy = (int)($this->offset + $this->symbolHeight / 2);
+                imageellipse($this->image, $cx, $cy, $circleRadius * 2, $circleRadius * 2, $stroke);
+            } elseif (!isset($style['fillColor'])) {
+                // draw a centered line if no fill color is set
+                $lineY = (int)($this->offset + $this->symbolHeight / 2);
+                imageline($this->image, 0, $lineY, $this->symbolWidth - 1, $lineY, $stroke);
+            } else {
+                imagerectangle($this->image, 0, $this->offset, $this->symbolWidth - 1, $this->offset + $this->symbolHeight - 1, $stroke);
+            }
         }
 
         if (array_key_exists('label', $style) && $style['label']) {
@@ -86,21 +115,6 @@ class CanvasLegend
         imagedestroy($canvas);
     }
 
-    private function hexToRgb($hex)
-    {
-        $hex = str_replace("#", "", $hex);
-        if (strlen($hex) == 3) {
-            $r = hexdec(str_repeat(substr($hex, 0, 1), 2));
-            $g = hexdec(str_repeat(substr($hex, 1, 1), 2));
-            $b = hexdec(str_repeat(substr($hex, 2, 1), 2));
-        } else {
-            $r = hexdec(substr($hex, 0, 2));
-            $g = hexdec(substr($hex, 2, 2));
-            $b = hexdec(substr($hex, 4, 2));
-        }
-        return ['red' => $r, 'green' => $g, 'blue' => $b];
-    }
-
     public function prepareCanvas(): void
     {
         $white = imagecolorallocate($this->image, 255, 255, 255);
@@ -109,7 +123,7 @@ class CanvasLegend
 
     public function drawLabelText(array $style): void
     {
-        $fontColor = $this->hexToRgb($style['fontColor']);
+        $fontColor = ColorUtils::parseColorToRgb($style['fontColor']);
         $fontSize = min(10, (int)$style['fontSize']);
         $textColor = imagecolorallocate($this->image, $fontColor['red'], $fontColor['green'], $fontColor['blue']);
 
@@ -122,7 +136,7 @@ class CanvasLegend
 
         // Draw label outline if needed
         if (isset($style['labelOutlineWidth']) && $style['labelOutlineWidth'] > 0) {
-            $labelOutlineColor = $this->hexToRgb($style['labelOutlineColor']);
+            $labelOutlineColor = ColorUtils::parseColorToRgb($style['labelOutlineColor']);
             $outlineColor = imagecolorallocate($this->image, $labelOutlineColor['red'], $labelOutlineColor['green'], $labelOutlineColor['blue']);
             $outlineWidth = $style['labelOutlineWidth'];
             for ($x = -$outlineWidth; $x <= $outlineWidth; $x++) {
@@ -143,7 +157,7 @@ class CanvasLegend
         $line = '';
         $currentWord = 0;
 
-        while($currentWord < count($words)) {
+        while ($currentWord < count($words)) {
             $dimensions = imagettfbbox($this->layerTitleFontSize, 0, $this->font, $line . $words[$currentWord]);
             $lineWidth = $dimensions[2] - $dimensions[0];
 
@@ -162,6 +176,49 @@ class CanvasLegend
             $this->offset += $this->layerTitleFontSize * 1.3;
         }
 
+    }
+
+    private function drawExternalImage(array $style)
+    {
+        if (!isset($this->imageCache[$style['image']])) {
+            $this->imageCache[$style['image']] = @file_get_contents($style['image']);
+        }
+        $externalImage = @imagecreatefromstring($this->imageCache[$style['image']]);
+        if (!$externalImage) {
+            return;
+        }
+
+        $srcW = imagesx($externalImage);
+        $srcH = imagesy($externalImage);
+
+        // Sprite Parameters
+        $sx = isset($style['imageX']) ? (int)$style['imageX'] : 0;
+        $sy = isset($style['imageY']) ? (int)$style['imageY'] : 0;
+        $sw = isset($style['imageWidth']) ? (int)$style['imageWidth'] : $srcW;
+        $sh = isset($style['imageHeight']) ? (int)$style['imageHeight'] : $srcH;
+
+        // Scale down to target size while maintaining aspect ratio
+        $scale = min(1, $this->symbolWidth / $sw, $this->symbolHeight / $sh);
+        $dw = (int)round($sw * $scale);
+        $dh = (int)round($sh * $scale);
+
+        // center the image in the canvas
+        $dx = (int)(($this->symbolWidth - $dw) / 2);
+        $dy = (int)($this->offset + ($this->symbolHeight - $dh) / 2);
+
+        imagecopyresampled(
+            $this->image,
+            $externalImage,
+            $dx,
+            $dy,
+            $sx,
+            $sy,
+            $dw,
+            $dh,
+            $sw,
+            $sh
+        );
+        imagedestroy($externalImage);
     }
 
 }

@@ -245,6 +245,7 @@ mb:
       const:
         outofscale: 'Слой вне масштаба'
         outofbounds: 'Слой за пределами поля'
+        unsupportedprojection: 'Текущая проекция не поддерживается этим слоем'
         parentinvisible: 'Родительский слой невидим'
       tooltip:
         sublayers_openclose: 'Подслои открыть/закрыть'
@@ -273,6 +274,8 @@ mb:
         select_style: 'Выберите стиль'
         metadata: 'Метаданные'
         dimension: 'Измерение'
+      filter:
+        placeholder: 'Фильтр…'
     zoombar:
       rotateclockwise: 'Поверните по часовой стрелке'
       rotatecounterclockwise: 'Повернуть против часовой стрелки'
@@ -493,6 +496,7 @@ mb:
           stroke_width_px: 'Толщина линии (Pixel)'
           fontColor: 'Цвет шрифта'
           fontSize: 'Размер шрифта'
+          point_radius_px: 'Радиус (для точечных геометрий)'
       printclient:
         label:
           rotatable: Поворачиваемые
@@ -513,6 +517,7 @@ mb:
           hidenottoggleable: 'Скрыть не переключаемые папки'
           hideinfo: 'Скрыть информацию'
           menu: 'Меню'
+          filter: 'Показать фильтры'
       template:
         sidepane:
           type:

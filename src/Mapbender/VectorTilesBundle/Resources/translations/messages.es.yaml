@@ -1,0 +1,30 @@
+mb:
+  vectortiles:
+    admin:
+      json_url: 'URL a la definición de estilo JSON'
+      referer: 'Referrer HTTP'
+      referer.help: 'Algunos servidores Vector Tiles requieren un referrer HTTP fijo para el control de acceso.'
+      min_scale: 'Escala mínima (denominador)'
+      max_scale: 'Escala máxima (denominador)'
+      selected: 'Activar al iniciar la aplicación'
+      layer_hint: 'Las capas no se leen por separado para los mosaicos vectoriales.'
+      print_scale_correction: 'Corrección de resolución para impresión'
+      print_scale_correction_help: 'El valor predeterminado es 1.0. Valores mayores producen más detalles y etiquetas más pequeñas; valores menores, menos detalles y etiquetas más grandes.'
+      featureinfo:
+        heading: 'Información de características'
+        active: 'Información activa al iniciar la aplicación'
+        allowtoggle: 'Información conmutable por el usuario'
+        advanced: 'Configuración avanzada'
+        title: Título
+        title_help: 'Propiedad de la característica que se muestra como título encima de la tabla. <code>${property}</code> será reemplazado por el valor de la propiedad. Si no se indica, se usará el primer valor no vacío de "label", "name" y "title".'
+        hide_if_no_title: 'Ocultar características con título vacío'
+        property_map: 'Filtro y traducción de campos'
+        property_map_help: 'Si no está vacío, solo se mostrarán las propiedades especificadas. Especificar como array YAML, la clave es el nombre del campo, el valor opcional es la traducción. Ejemplo:<br><code>- class<br>- name<br>- layer: Nombre de la capa</code>'
+      error:
+        no_json: 'La URL especificada no pudo ser analizada como JSON.'
+        no_tile_json: 'La URL especificada en source.openmaptiles no pudo ser analizada como JSON.'
+      legend:
+        heading: Leyenda
+        active: 'Activar leyenda'
+        property_map: 'Selección de capas y traducción'
+        property_map_help: 'Si no está vacío, solo se mostrarán en la leyenda las capas indicadas. Indique como un arreglo YAML. La clave es el ID de la capa del campo "layers" en el style JSON; el valor opcional es la traducción. Ejemplo:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

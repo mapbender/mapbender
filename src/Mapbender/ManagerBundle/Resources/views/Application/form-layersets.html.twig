@@ -42,11 +42,11 @@
                      {{- layerset.selected ? ' checked' : '' -}}>
                   <label for="toggle-layerset-selected-{{ layerset.id }}"
                          class="far fa-square checkbox-icon-toggled-label-off hover-highlight-effect"
-                         title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.unselectedtoc.help' | trans -}}"
+                         title="{{ 'mb.manager.source.instancelayer.unselectedtoc.help' | trans -}}"
                   ></label>
                   <label for="toggle-layerset-selected-{{ layerset.id }}"
                          class="far fa-square-check checkbox-icon-toggled-label-on hover-highlight-effect"
-                         title="{{ 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc.help' | trans -}}"
+                         title="{{ 'mb.manager.source.instancelayer.selectedtoc.help' | trans -}}"
                   ></label>
                 </span>
                 <a href="#" class="-fn-delete-layerset hover-highlight-effect"
@@ -99,9 +99,12 @@
                   {%- else -%}
                      title="{{ "mb.terms.sourceinstance.bound.singular" | trans }}"><i class="fas fa-anchor"></i>
                   {%- endif -%}
-                  &nbsp;{{ instance.source.type }}</td>
+                  &nbsp;{{ instance.source.type | source_label }}</td>
                 <td class="iconColumn">
                   {%- apply spaceless -%}
+                    {%- if _edit_url -%}
+                      <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
+                    {%- endif -%}
                   <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"
@@ -109,9 +112,6 @@
                        data-url="{{ _toggle_url }}">
                     <i class="fas {{ assignment.enabled ? 'fa-eye' : 'fa-eye-slash' }}"></i>
                   </a>
-                  {%- if _edit_url -%}
-                  <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
-                  {%- endif -%}
                   <a href="#"
                      class="-fn-delete hover-highlight-effect"
                      title="{{"mb.manager.admin.instance.delete.title"|trans}}"

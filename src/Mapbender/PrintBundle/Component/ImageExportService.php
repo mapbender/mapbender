@@ -1,12 +1,13 @@
 <?php
+
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Export\Resolution;
-use Mapbender\PrintBundle\Element\ImageExport;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -16,37 +17,16 @@ use Psr\Log\LoggerInterface;
  */
 class ImageExportService
 {
-    /** @var LoggerInterface */
-    protected $logger;
-    /** @var LayerRenderer[] */
-    protected $layerRenderers;
 
     /**
      * @param LayerRenderer[] $layerRenderers
-     * @param LoggerInterface $logger
      */
-    public function __construct($layerRenderers,
-                                LoggerInterface $logger)
+    public function __construct(
+        protected array           $layerRenderers,
+        protected LoggerInterface $logger,
+        protected TypeDirectoryService $typeDirectoryService,
+    )
     {
-        $this->layerRenderers = $layerRenderers;
-        $this->logger = $logger;
-    }
-
-    /**
-     * (Re-)register a renderer for a specific layer type.
-     * This should not be called anywhere in a request scope, but in a DI compiler pass.
-     * See WmsBundle registration into config service for a working example on how to do this:
-     * https://bit.ly/2SbvRSn
-     *
-     * NOTE that you should register layer renderers to both imageexport and print. These are separate
-     * objects, and they have separate mappings of layer renderers.
-     *
-     * @param $layerType
-     * @param LayerRenderer $layerRenderer
-     */
-    public function addLayerRenderer($layerType, LayerRenderer $layerRenderer)
-    {
-        $this->layerRenderers[$layerType] = $layerRenderer;
     }
 
     /**
@@ -96,7 +76,7 @@ class ImageExportService
             return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
         } else {
             $canvas = $this->canvasFactory($jobData);
-            $this->addLayers($canvas, $jobData['layers'], $extentBox);
+            $this->addLayers($canvas, $jobData['layers'], $extentBox, $jobData);
             return $canvas->resource;
         }
     }
@@ -191,29 +171,31 @@ class ImageExportService
      * @param ExportCanvas $canvas
      * @param array $layerDef
      * @param Box $extent projected
+     * @param array $jobData
      */
-    protected function addImageLayer($canvas, $layerDef, Box $extent)
+    protected function addImageLayer(ExportCanvas $canvas, array $layerDef, Box $extent, array $jobData)
     {
         if (empty($layerDef['type'])) {
             $this->getLogger()->warning("Missing 'type' in layer definition", $layerDef);
             return;
         }
         $renderer = $this->getLayerRenderer($layerDef);
-        $renderer->addLayer($canvas, $layerDef, $extent);
+        $renderer->addLayer($canvas, $layerDef, $extent, $jobData);
     }
 
     /**
-     * @param mixed[] $layerDef
-     * @return LayerRenderer
+     * for some types like GeoJSON, the layerRenderer is set directly via the services.xml, for "regular" sources
+     * like WMS or WMTS, the layerRenderer is read from the DataSource
+     * @param array $layerDef
      */
-    protected function getLayerRenderer($layerDef)
+    protected function getLayerRenderer(array $layerDef): LayerRenderer
     {
         $layerType = $layerDef['type'];
-        if (empty($this->layerRenderers[$layerType])) {
-            throw new \RuntimeException("Unhandled layer type {$layerType}");
-        } else {
+        if (!empty($this->layerRenderers[$layerType])) {
             return $this->layerRenderers[$layerType];
         }
+
+        return $this->typeDirectoryService->getLayerRenderer($layerType);
     }
 
     /**
@@ -264,19 +246,20 @@ class ImageExportService
     }
 
     /**
-     * Collect and merge WMS tiles and vector layers into a PNG file.
+     * Collect and merge layer data into a PNG file.
      *
      * @param ExportCanvas $canvas
      * @param mixed[][] $layers
      * @param Box $extent projected
+     * @param mixed[][] $jobData
      */
-    protected function addLayers($canvas, $layers, Box $extent)
+    protected function addLayers(ExportCanvas $canvas, array $layers, Box $extent, array $jobData)
     {
         $resolution = $canvas->getResolution($extent);
         $effectiveLayers = $this->squashLayers($layers, $resolution);
 
         foreach ($effectiveLayers as $k => $layerDef) {
-            $this->addImageLayer($canvas, $layerDef, $extent);
+            $this->addImageLayer($canvas, $layerDef, $extent, $jobData);
         }
     }
 

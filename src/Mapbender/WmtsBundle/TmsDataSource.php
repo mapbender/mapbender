@@ -1,0 +1,75 @@
+<?php
+
+namespace Mapbender\WmtsBundle;
+
+use Mapbender\CoreBundle\Component\Source\DataSource;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
+use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
+use Mapbender\PrintBundle\Component\LayerRenderer;
+use Mapbender\WmtsBundle\Component\Export\LayerRendererTms;
+use Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorTms;
+use Mapbender\WmtsBundle\Component\Wmts\Loader;
+use Mapbender\WmtsBundle\Entity\WmtsSource;
+
+class TmsDataSource extends DataSource
+{
+
+    const TYPE = "TMS";
+
+    public function __construct(
+        private ConfigGeneratorTms    $configService,
+        private SourceInstanceFactory $instanceFactory,
+        private Loader                $loader,
+        private LayerRendererTms      $layerRenderer,
+    )
+    {
+    }
+
+    public function getName(): string
+    {
+        return self::TYPE;
+    }
+
+    public function getLabel(bool $compact = false): string
+    {
+        // HACK: do not show separate Wmts + Tms type choices
+        //       when loading a new source
+        return $compact ? "TMS" : "OGC WMTS / TMS";
+    }
+
+    public function getConfigGenerator(): SourceInstanceConfigGenerator
+    {
+        return $this->configService;
+    }
+
+    public function getInstanceFactory(): SourceInstanceFactory
+    {
+        return $this->instanceFactory;
+    }
+
+    public function getLoader(): SourceLoader
+    {
+        return $this->loader;
+    }
+
+    public function getLayerRenderer(): LayerRenderer
+    {
+        return $this->layerRenderer;
+    }
+
+    public function allowAddSourceFromManager(): bool
+    {
+        return false;
+    }
+
+    public function getSourceEntityClass(): string
+    {
+        return WmtsSource::class;
+    }
+
+    public function getMetadataBackendTemplate(): ?string
+    {
+        return '@MapbenderWmts/Repository/view.html.twig';
+    }
+}

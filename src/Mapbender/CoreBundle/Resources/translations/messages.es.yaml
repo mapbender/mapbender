@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Capa fuera de la escala'
         outofbounds: 'Capa fuera de límites'
+        unsupportedprojection: 'La proyección actual no es compatible con esta capa'
         parentinvisible: 'Capa de origen invisible'
       tooltip:
         sublayers_openclose: 'Abrir/Cerrar subcapas'
@@ -272,6 +273,8 @@ mb:
         select_style: 'Seleccione el estilo'
         metadata: Metadatos
         dimension: Dimensión
+      filter:
+        placeholder: 'Filtrar capas…'
     zoombar:
       rotateclockwise: 'Girar en sentido horario'
       rotatecounterclockwise: 'Girar en sentido antihorario'
@@ -492,6 +495,7 @@ mb:
           stroke_width_px: 'Ancho del contorno (píxeles)'
           fontColor: 'Color de fuente'
           fontSize: 'Tamaño de fuente'
+          point_radius_px: 'Radio (para geometrías de puntos)'
       printclient:
         label:
           rotatable: Giratorio
@@ -512,6 +516,7 @@ mb:
           hidenottoggleable: 'Ocultar carpetas que no se pueden expandir'
           hideinfo: 'Ocultar información'
           menu: Menú
+          filter: 'Mostrar filtros'
       template:
         sidepane:
           type:

@@ -247,6 +247,7 @@ mb:
       const:
         outofscale: 'Layer out of scale'
         outofbounds: 'Layer out of bounds'
+        unsupportedprojection: 'Current projection is not supported by this layer'
         parentinvisible: 'Parent layer invisible'
       tooltip:
         sublayers_openclose: 'Sublayers open/close'
@@ -275,6 +276,8 @@ mb:
         select_style: 'Select style'
         metadata: Metadata
         dimension: Dimension
+      filter:
+        placeholder: 'Filter…'
     zoombar:
       rotateclockwise: 'Rotate clockwise'
       rotatecounterclockwise: 'Rotate counterclockwise'
@@ -497,6 +500,7 @@ mb:
           stroke_width_px: 'Stroke width (pixels)'
           fontColor: 'Font color'
           fontSize: 'Font size'
+          point_radius_px: 'Radius (for point geometries)'
       printclient:
         label:
           rotatable: Rotatable
@@ -517,6 +521,7 @@ mb:
           hidenottoggleable: 'Hide not toggleable'
           hideinfo: 'Hide info'
           menu: Menu
+          filter: 'Show filter'
       template:
         sidepane:
           type:

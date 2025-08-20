@@ -4,8 +4,6 @@ namespace Mapbender\WmsBundle\Component\Wms;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Mapbender\Component\SourceLoader;
-use Mapbender\Component\SourceLoaderSettings;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -13,6 +11,8 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\KeywordUpdater;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
+use Mapbender\CoreBundle\Component\Source\HttpSourceLoader;
+use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
@@ -34,51 +34,29 @@ use Symfony\Component\HttpFoundation\Response;
  * constructs).
  *
  * An instance is registered in container as mapbender.importer.source.wms.service, see services.xml
- *
- * @method WmsSource evaluateServer(HttpOriginInterface $origin)
  */
-class Importer extends SourceLoader
+class Importer extends HttpSourceLoader
 {
-    /** @var XmlValidatorService */
-    protected $validator;
-    /** @var EntityManager */
-    protected $entityManager;
 
-    /**
-     * @param HttpTransportInterface $transport
-     * @param EntityManager $entityManager
-     * @param XmlValidatorService $validator;
-     */
-    public function __construct(HttpTransportInterface $transport,
-                                EntityManager $entityManager,
-                                XmlValidatorService $validator)
+    public function __construct(
+        HttpTransportInterface        $transport,
+        protected EntityManager       $entityManager,
+        protected XmlValidatorService $validator)
     {
         parent::__construct($transport);
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-    }
-
-    public function getTypeCode()
-    {
-        return strtolower(Source::TYPE_WMS);
-    }
-
-    public function getTypeLabel()
-    {
-        return 'OGC WMS';
     }
 
     /**
      * @inheritdoc
      * @throws InvalidUrlException
      */
-    protected function getResponse(HttpOriginInterface $origin)
+    protected function getResponse(HttpOriginInterface $origin): Response
     {
         static::validateUrl($origin->getOriginUrl());
         return $this->capabilitiesRequest($origin);
     }
 
-    public function parseResponseContent($content)
+    public function parseResponseContent($content): Source
     {
         $document = $this->xmlToDom($content);
         switch ($document->documentElement->tagName) {
@@ -105,7 +83,7 @@ class Importer extends SourceLoader
         return $source;
     }
 
-    public function validateResponseContent($content)
+    public function validateResponseContent(string $content): void
     {
         $this->validator->validateDocument($this->xmlToDom($content));
     }
@@ -144,11 +122,7 @@ class Importer extends SourceLoader
         }
     }
 
-    /**
-     * @param Source $target
-     * @return string
-     */
-    public function getRefreshUrl(Source $target)
+    public function getRefreshUrl(Source $target): string
     {
         $persistedUrl = parent::getRefreshUrl($target);
         $detectedVersion = UrlUtil::getQueryParameterCaseInsensitive($persistedUrl, 'version', null);
@@ -156,17 +130,13 @@ class Importer extends SourceLoader
             return $persistedUrl;
         } else {
             /** @var WmsSource $target */
-            return  UrlUtil::validateUrl($persistedUrl, array(
+            return UrlUtil::validateUrl($persistedUrl, array(
                 'VERSION' => $target->getVersion(),
             ));
         }
     }
 
-    /**
-     * @param HttpOriginInterface $serviceOrigin
-     * @return Response
-     */
-    protected function capabilitiesRequest(HttpOriginInterface $serviceOrigin)
+    protected function capabilitiesRequest(HttpOriginInterface $serviceOrigin): Response
     {
         $addParams = array();
         $url = $serviceOrigin->getOriginUrl();
@@ -191,10 +161,6 @@ class Importer extends SourceLoader
         $this->setLayerSourceRecursive($target->getRootlayer(), $target);
     }
 
-    /**
-     * @param WmsLayerSource $layer
-     * @param WmsSource $source
-     */
     private function setLayerSourceRecursive(WmsLayerSource $layer, WmsSource $source)
     {
         $layer->setSource($source);

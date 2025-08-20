@@ -148,6 +148,7 @@ mb:
       const:
         outofscale: Laag buiten geldige schaal
         outofbounds: Laag buiten geldig gebied
+        unsupportedprojection: 'De huidige projectie wordt niet ondersteund door deze laag'
         parentinvisible: Onderliggende laag niet zichtbaar
       tooltip:
         sublayers_openclose: Sub-lagen openen/sluiten
@@ -171,6 +172,8 @@ mb:
         description: Mappen-structuur (LayerTree) van kaartlagen
       admin:
         Selecteer stijl
+      filter:
+        placeholder: 'Filteren…'
     zoombar:
       rotateclockwise: Rechtsom draaien
       rotatecounterclockwise: Linksom draaien
@@ -280,6 +283,7 @@ mb:
           stroke_width_px: 'Randbreedte (pixels)'
           fontColor: 'Tekstkleur'
           fontSize: 'Tekstgrootte'
+          point_radius_px: 'Straal (voor puntgeometrieën)'
       printclient:
         label:
           rotatable: Roteerbaar
@@ -298,6 +302,7 @@ mb:
             label: thema naam
           hidenottoggleable: Verberg niet-schakelbaar
           hideinfo: Verberg info
+          filter: 'Filters weergeven'
     htmlelement:
       class:
         title: null

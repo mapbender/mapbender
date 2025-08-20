@@ -23,6 +23,10 @@
         background-color: white;
     }
 
+    .btn-outline-secondary:focus {
+        color: #212529;
+    }
+
     .dropdown:not(.bs-dropdown) {
         margin-left: 0px;
         border: 1px solid #dee2e6;

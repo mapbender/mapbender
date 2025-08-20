@@ -1,8 +1,10 @@
 parameters:
-    applications: {}
+    applications: []
+    sources: []
+    config_check_extensions: []
 
     mapbender.branding.name: Mapbender
-    mapbender.version: 4.1.3
+    mapbender.version: 4.2.0-DEV
     mapbender.branding.logo: bundles/mapbendercore/image/logo_mb_notext.png
     # These should all remain empty here, they are just for IDE search results.
     # Customize these in your parameters.yaml.

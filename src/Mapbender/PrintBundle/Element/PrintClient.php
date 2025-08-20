@@ -317,6 +317,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             case 'print':
                 $rawData = $this->extractRequestData($request);
                 $jobData = $this->preparePrintData($rawData, $configuration);
+                $jobData['application'] = $element->getApplication();
 
                 $this->checkMemoryLimit();
                 $pdfBody = $this->printService->dumpPrint($jobData);
@@ -342,6 +343,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                     $queuePlugin = $this->pluginRegistry->getPlugin('print-queue');
                     $rawData = $this->extractRequestData($request);
                     $jobData = $this->preparePrintData($rawData, $configuration);
+                    $jobData['application'] = $element->getApplication()->getSlug();
                     $queuePlugin->putJob($jobData, $this->generateFilename($element));
                     return new Response('', Response::HTTP_NO_CONTENT);
                 } else {
@@ -414,7 +416,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     {
         if (!empty($overviewDef['layers'])) {
             foreach ($overviewDef['layers'] as $index => $layer) {
-                $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($layer['url']);
+                if (isset($layer['url'])) {
+                    $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($layer['url']);
+                }
             }
         }
         return $overviewDef;

@@ -12,13 +12,16 @@ use Mapbender\WmtsBundle\Entity\WmtsInstanceLayer;
 class ConfigGeneratorTms extends ConfigGeneratorCommon
 {
 
-    public function getScriptAssets(Application $application)
+    public function getAssets(Application $application, string $type): array
     {
-        return array(
+       if ($type !== 'js') {
+            return [];
+        }
+        return [
             '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
             '@MapbenderWmtsBundle/Resources/public/geosource-base.js',
             '@MapbenderWmtsBundle/Resources/public/mapbender.geosource.tms.js',
-        );
+        ];
     }
 
     protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
@@ -57,11 +60,6 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
             $layerConfigs[] = $this->formatInstanceLayer($layer);
         }
         return $layerConfigs;
-    }
-
-    public function getInternalLegendUrl(SourceInstanceItem $instanceLayer)
-    {
-        return null;
     }
 
     protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer)

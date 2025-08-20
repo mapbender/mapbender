@@ -13,6 +13,7 @@ var initTabContainer = function ($context) {
             $('>.tabs >.tab, >.container', $cnt).removeClass('active');
             $('>.container#' + $tabHeader.attr('id').replace("tab", "container"), $cnt).addClass('active');
             $tabHeader.addClass("active");
+            $tabHeader.trigger('mb.shown.tab');
         })
         .each(function() {
             $(this).data('tabcontainer-initialized', true)

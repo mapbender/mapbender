@@ -42,11 +42,13 @@
 
 window.Mapbender = Mapbender || {};
 (function () {
-    Mapbender.WmtsTmsBaseSource = class WmtsTmsBaseSource extends Mapbender.Source {
+    Mapbender.WmtsTmsBaseSource = class WmtsTmsBaseSource extends Mapbender.GetFeatureInfoSource {
         constructor(definition) {
             super(definition);
+            this.tilematrixsets = definition.tilematrixsets || [];
+
             var sourceArg = this;
-            this.configuration.layers = (this.getRootLayer().children || []).map((layerDef) => {
+            this.layers = (this.getRootLayer().children || []).map((layerDef) => {
                 return Mapbender.SourceLayer.factory(layerDef, sourceArg, this.getRootLayer());
             });
         }
@@ -94,7 +96,7 @@ window.Mapbender = Mapbender || {};
         }
 
         createNativeLayers(srsName, mapOptions) {
-            const allLayers = this._getAllLayers();
+            const allLayers = this.getRootLayer().children;
             const rootLayer = this.getRootLayer();
             rootLayer.children = allLayers;
 
@@ -130,7 +132,7 @@ window.Mapbender = Mapbender || {};
         }
 
         selectCompatibleMatrixSets(srsName) {
-            return this.configuration.tilematrixsets.filter(function (matrixSet) {
+            return this.tilematrixsets.filter(function (matrixSet) {
                 return -1 !== matrixSet.supportedCrs.indexOf(srsName);
             });
         }
@@ -149,7 +151,8 @@ window.Mapbender = Mapbender || {};
         }
 
         _isCompatible(layer, projectionCode) {
-            return (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected) && layer.selectMatrixSet(projectionCode);
+            const compat = (layer.options.treeOptions.allow.selected || layer.options.treeOptions.selected) && layer.selectMatrixSet(projectionCode);
+            return !!compat;
         }
 
         /**
@@ -159,7 +162,8 @@ window.Mapbender = Mapbender || {};
          * @return {Array<Object>}
          */
         getPrintConfigs(bounds, scale, srsName) {
-            var layerDef = this._selectCompatibleLayers(srsName)[0];
+            const layerDefs = this._selectCompatibleLayers(srsName);
+            const layerDef = layerDefs.length ? layerDefs[layerDefs.length - 1] : null;
             const rootLayer = this.getRootLayer();
             if (!rootLayer.state.visibility || !layerDef) {
                 return [];
@@ -177,8 +181,8 @@ window.Mapbender = Mapbender || {};
         getLayerById(id) {
             var foundLayer = super.getLayerById(id);
             if (!foundLayer) {
-                for (var i = 0; i < this.configuration.layers.length; ++i) {
-                    var candidate = this.configuration.layers[i];
+                for (var i = 0; i < this.layers.length; ++i) {
+                    var candidate = this.layers[i];
                     if (candidate.options.id === id) {
                         foundLayer = candidate;
                         break;

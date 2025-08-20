@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Camada fora da escala'
         outofbounds: 'Camada fora da BoundingBox'
+        unsupportedprojection: 'A projeção atual não é suportada por esta camada'
         parentinvisible: 'Camada superior não visível'
       tooltip:
         sublayers_openclose: abrir/fechar
@@ -272,6 +273,8 @@ mb:
         select_style: 'Selecionar estilo'
         metadata: Metadados
         dimension: Dimensão
+      filter:
+        placeholder: 'Filtrar…'
     zoombar:
       rotateclockwise: 'Rodar no sentido dos ponteiros do relógio'
       rotatecounterclockwise: 'Rodar no sentido contrário ao dos ponteiros do relógio'
@@ -492,6 +495,7 @@ mb:
           stroke_width_px: 'Largura do traçado (pixels)'
           fontColor: Cor da fonte
           fontSize: Tamanho da fonte
+          point_radius_px: 'Raio (para geometrias de pontos)'
       printclient:
         label:
           rotatable: Girável
@@ -512,6 +516,7 @@ mb:
           hidenottoggleable: 'Ocultar pastas não expansíveis'
           hideinfo: 'Ocultar info'
           menu: Menu
+          filter: 'Mostrar filtros'
       template:
         sidepane:
           type:

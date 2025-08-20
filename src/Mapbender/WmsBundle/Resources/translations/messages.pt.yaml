@@ -15,31 +15,10 @@ mb:
             formats: Formatos
         view:
           label:
-            metadata: Metadados
-            contact: Contato
-            details: Detalhes
-            layers: Layers
-            title: Título
-            name: Nome
-            version: Versão
-            originurl: 'URL'
-            abstract: Descrição
             onlineresource: 'Recurso online'
             exceptionformats: 'Formatos de exceção'
             fees: Taxas
             accessconstraints: 'Restrições de acesso'
-            person: Pessoa
-            organization: Organização
-            position: Cargo
-            telephone: Telefone
-            facsimile: Fax
-            email: E-mail
-            address: Endereço
-            addresstype: 'Tipo de endereço'
-            city: Cidade
-            state: Estado
-            postcode: CEP
-            country: País
           message:
             cautionscalehint: 'Atenção: Os cálculos de escala estão sujeitos à resolução limitada do ScaleHint no WMS 1.1.1'
         instance:
@@ -47,12 +26,8 @@ mb:
             save: Salvar
             cancel: Cancelar
           label:
-            originurl: 'URL de origem'
-            visible: Visibilidade
-            basesource: Fonte Base
-            proxy: Proxy
             transparency: Transparência
-            tiled: 'Tiled'
+            tiled: Tiled
             title: Título
             minsc: 'Escala mínima'
             maxsc: 'Escala máxima'
@@ -66,14 +41,16 @@ mb:
             ratio: 'Fator BBox'
             buffer: 'Tile buffer'
             layerorder: 'Ordenamento da layer'
-            layerorder.standard: 'Padrão'
-            layerorder.reverse: 'QGIS'
+            layerorder.standard: Padrão
+            layerorder.reverse: QGIS
             exceptionformat: 'Formato para erros'
             infoformat: 'Formato da requisição GetFeatureInfo'
             format: 'Formato da requisição GetMap'
-            dimensions: 'Dimensões'
+            dimensions: Dimensões
             vendorspecifics: 'Parâmetros de pedidos vendor'
-            layers: 'Layers'
+            layers: Layers
+            refresh_interval: 'Intervalo de atualização [s]'
+            refresh_interval_help: 'Se definido e diferente de 0, o serviço será atualizado automaticamente no intervalo especificado (em segundos).'
           vendorspecific:
             label: 'Pedidos vendor'
         preview:
@@ -113,27 +90,6 @@ mb:
             extent: Extensão
             dataurl: 'URL de dados'
             featurelisturl: 'URL de Lista de Recursos'
-        instancelayerform:
-          label:
-            layerstitle: 'Título da layer'
-            minscale: 'Escala mínima'
-            maxsclase: 'Escala máxima'
-            active: ativo
-            allowselecttoc: 'Permitir seleção na árvore de camadas'
-            selectedtoc: 'Deixar layer ativa na inicialização do aplicativo. Atenção: Deixe esta caixa marcada se não estiver usando camadas temáticas'
-            selectedtoc.help: 'A layer está ativa na inicialização do aplicativo. A configuração só deve ser alterada se camadas temáticas forem usadas.'
-            unselectedtoc.help: 'A layer está está inativa na inicialização do aplicativo. Atenção: Se camadas temáticas não forem usadas, este conjunto de camadas não será acessível.'
-            allowinfotoc: 'Permitir FeatureInfo na árvore de camadas'
-            infotoc: 'FeatureInfo na árvore de camadas'
-            allowtoggletoc: 'Permitir alternar na árvore de camadas'
-            toggletoc: 'Alternar na árvore de camadas'
-            allowreordertoc: 'Permitir reordenar na árvore de camadas'
-            moreinfo: 'Mais informações'
-            id:
-              title: ID
-              description: 'ID da Camada da Instância: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: Nome
-            style: Estilo
       class:
         title: 'Carregar WMS'
         description: 'Carrega um WMS sobre o pedido de getCapabilities'
@@ -148,7 +104,7 @@ mb:
     metadata:
       section:
         common:
-          title: Informações gerais
+          title: 'Informações gerais'
         contact:
           title: Contato
         items:
@@ -164,16 +120,16 @@ mb:
           dimensions: Dimensão
     dimhandler:
       class:
-        title: Manipulador de Dimensões
-        description: O Manipulador de Dimensões agrupa e chama as instâncias suportadas por dimensões no mapa
+        title: 'Manipulador de Dimensões'
+        description: 'O Manipulador de Dimensões agrupa e chama as instâncias suportadas por dimensões no mapa'
     dimensionsets:
       no_dimension: 'Não existe nenhuma dimensão'
   core:
     dimensionset:
       admin:
-        title: 'Título'
-        group: 'Grupo'
-        extent: 'Extensão'
+        title: Título
+        group: Grupo
+        extent: Extensão
     dimensionshandler:
       admin:
         tooltip: 'Dica de Ferramenta'
@@ -183,18 +139,18 @@ mb:
         defaultformat: 'Formato Padrão'
         defaultinfoformat: 'Formato de Informação Padrão'
       onlineresource:
-        format: 'Formato'
-        href: 'Href'
+        format: Formato
+        href: Href
       legendurltype:
-        width: 'Largura'
-        height: 'Altura'
+        width: Largura
+        height: Altura
         onlineresource: 'Fonte Online'
       vendorspecifictype:
-        hidden: 'Oculto'
+        hidden: Oculto
         setdefaults: 'Definir padrões'
     vendorspecifictype:
       admin:
         vstype: 'Tipo de Parâmetro'
-        name: 'Nome'
+        name: Nome
         default: 'Valor Padrão'
-        hidden: 'Oculto'
+        hidden: Oculto

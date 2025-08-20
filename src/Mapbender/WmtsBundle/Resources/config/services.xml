@@ -7,12 +7,31 @@
 		<parameter key="mapbender.imageexport.renderer.tms.class">Mapbender\WmtsBundle\Component\Export\LayerRendererTms</parameter>
 	</parameters>
 	<services>
+        <service id="mapbender.source.wmts" class="Mapbender\WmtsBundle\WmtsDataSource">
+            <tag name="mapbender.datasource" priority="10" />
+            <argument type="service" id="mapbender.source.wmts.config_generator" />
+            <argument type="service" id="mapbender.source.wmts.instance_factory" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+            <argument type="service" id="mapbender.imageexport.renderer.wmts" />
+        </service>
+
+        <service id="mapbender.source.tms" class="Mapbender\WmtsBundle\TmsDataSource">
+            <tag name="mapbender.datasource" priority="20" />
+            <argument type="service" id="mapbender.source.tms.config_generator" />
+            <argument type="service" id="mapbender.source.tms.instance_factory" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+            <argument type="service" id="mapbender.imageexport.renderer.tms" />
+        </service>
+
 		<service id="mapbender.source.wmts.config_generator" class="Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorWmts">
 			<argument type="service" id="mapbender.source.url_processor.service" />
 		</service>
 		<service id="mapbender.source.wmts.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryWmts"
-		         lazy="true" />
+		         lazy="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+        </service>
 		<service id="mapbender.imageexport.renderer.wmts" class="%mapbender.imageexport.renderer.wmts.class%">
 		  <argument type="service" id="mapbender.imageexport.image_transport.service" />
 		  <argument type="service" id="logger" />
@@ -24,7 +43,7 @@
 		<service id="mapbender.importer.source.wmts.service"
 				 class="Mapbender\WmtsBundle\Component\Wmts\Loader"
 				 lazy="true">
-			<argument type="service" id="doctrine.orm.default_entity_manager" />
+			<argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
 			<argument type="service" id="mapbender.http_transport.service" />
 			<argument type="service" id="mapbender.xmlvalidator.service" />
 		</service>
@@ -33,7 +52,10 @@
 		</service>
 		<service id="mapbender.source.tms.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryTms"
-				 lazy="true" />
+				 lazy="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="mapbender.importer.source.wmts.service" />
+        </service>
 	</services>
 </container>
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="mapbender.source.vectortiles.class">Mapbender\VectorTilesBundle\VectorTilesDataSource</parameter>
+    </parameters>
+    <services>
+        <service id="mapbender.source.vectortiles" class="%mapbender.source.vectortiles.class%">
+            <tag name="mapbender.datasource" />
+            <argument type="service" id="mapbender.source.vectortiles.config_generator" />
+            <argument type="service" id="mapbender.source.vectortiles.instance_factory" />
+            <argument type="service" id="mapbender.source.vectortiles.loader" />
+            <argument type="service" id="mapbender.source.vectortiles.renderer" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.config_generator"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesConfigGenerator">
+        </service>
+
+        <service id="mapbender.source.vectortiles.instance_factory"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesInstanceFactory"
+                 lazy="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.loader"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesLoader" lazy="true">
+            <argument type="service" id="mapbender.http_transport.service" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.renderer"
+                 class="Mapbender\VectorTilesBundle\Component\VectorTilesRenderer"
+                 lazy="true">
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="logger" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.instance_type"
+                 class="Mapbender\VectorTilesBundle\Type\VectorTileInstanceType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.source.vectortiles.config_check" class="Mapbender\VectorTilesBundle\PrintConfigCheckCommand">
+            <tag name="mapbender.config_check" />
+        </service>
+    </services>
+</container>
+

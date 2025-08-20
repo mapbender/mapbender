@@ -146,8 +146,9 @@ mb:
         button: button
     layertree:
       const:
-        outofscale: null
-        outofbounds: null
+        outofscale: 'Couche hors échelle'
+        outofbounds: 'Couche hors limites'
+        unsupportedprojection: 'La projection actuelle n''est pas prise en charge par cette couche'
         parentinvisible: La couche parent est invisible
       tooltip:
         sublayers_openclose: Ouvrir/Fermer la sous-couche
@@ -171,6 +172,8 @@ mb:
         description: Arborescence des couches de la carte
       admin:
         select_style: Choisir un style
+      filter:
+        placeholder: 'Filtrer…'
     zoombar:
       rotateclockwise: Tourner dans le sens des aiguilles d'une montre
       rotatecounterclockwise: Tourner dans le sens inverse des aiguilles d'une montre
@@ -280,6 +283,7 @@ mb:
           stroke_width_px: 'Largeur du contour (pixels)'
           fontColor: 'Couleur de la police'
           fontSize: 'Taille de la police'
+          point_radius_px: 'Rayon (pour géométries de points)'
       printclient:
         label:
           rotatable: Pivotable
@@ -298,6 +302,7 @@ mb:
             label: nom du thème
           hidenottoggleable: Ne pas afficher les couches non-basculables
           hideinfo: Ne pas afficher l'information
+          filter: 'Afficher les filtres'
       template:
         sidepane:
           type:

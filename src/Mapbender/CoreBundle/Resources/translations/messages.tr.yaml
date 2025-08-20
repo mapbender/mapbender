@@ -148,6 +148,7 @@ mb:
       const:
         outofscale: Ölçeksiz bakış
         outofbounds: Sınırın dışından bakış
+        unsupportedprojection: 'Geçerli projeksiyon bu katman tarafından desteklenmiyor'
         parentinvisible: Üst katmanı gizle
       tooltip:
         sublayers_openclose: Alt katmanları aç/kapa
@@ -171,6 +172,8 @@ mb:
         description: Haritanın katman ağacı
       admin:
         select_style: Stil seçin
+      filter:
+        placeholder: 'Filtreleme…'
     zoombar:
       rotateclockwise: Saat yönünde çevirin
       rotatecounterclockwise: Saat yönünün tersine çevirin
@@ -271,6 +274,7 @@ mb:
           printResult: '"Yazdır" düğmesini göster'
           onlyvalid: Sadece geçerli olan
           highlighting: null
+          point_radius_px: 'Yarıçap (nokta geometrileri için)'
       printclient:
         label:
           rotatable: Döndürülebilir
@@ -289,6 +293,7 @@ mb:
             label: Tema isimleri
           hidenottoggleable: Açılıp kapanamayan(lar)ı gizle
           hideinfo: Bilgileri gizle
+          filter: 'Filtreleri göster'
       template:
         sidepane:
           type:

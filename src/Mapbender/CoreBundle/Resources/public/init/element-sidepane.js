@@ -96,6 +96,12 @@
                 notifyElements(initialPanel, true);
             }
         }
+        $headers.attr('tabindex', '0');
+        $headers.on('keydown', function(event) {
+            if (event.key === 'Enter') {
+                $(this).click();
+            }
+        });
         $headers.on('selected', function(e, tabData) {
             var activatedHeader = tabData.current && tabData.current.get(0);
             var deactivatedHeader = tabData.previous && tabData.previous.get(0);

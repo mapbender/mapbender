@@ -45,18 +45,6 @@ window.Mapbender = Mapbender || {};
             return selectedLayers;
         }
 
-        isInScale(scale) {
-            // NOTE: undefined / "open" limits are null, but it's safe to treat zero and null
-            //       equivalently
-            var min = this.options.minScale;
-            var max = this.options.maxScale;
-            if (min && min > scale) {
-                return false;
-            } else {
-                return !(max && max < scale);
-            }
-        }
-
         intersectsExtent(extent, srsName) {
             var layerExtent = this.getBounds('EPSG:4326', false);
             if (layerExtent === null) {
@@ -74,14 +62,14 @@ window.Mapbender = Mapbender || {};
     }
 
     // @todo: add containing Layerset object to constructor (currently post-instantiation-patched in application setup)
-    Mapbender.WmsSource = class WmsSource extends Mapbender.Source {
+    Mapbender.WmsSource = class WmsSource extends Mapbender.GetFeatureInfoSource {
         constructor(definition) {
             super(definition);
             var customParams = {};
             if (definition.customParams) {
                 $.extend(this.customParams, definition.customParams);
             }
-            (definition.configuration.options.dimensions || []).map(function (dimensionConfig) {
+            (definition.options.dimensions || []).map(function (dimensionConfig) {
                 if (dimensionConfig.default) {
                     customParams[dimensionConfig.__name] = dimensionConfig.default;
                 }
@@ -92,6 +80,11 @@ window.Mapbender = Mapbender || {};
 
             // ... but we will not remember the following ~standard WMS params the same way
             this._runtimeParams = ['LAYERS', 'STYLES', 'EXCEPTIONS', 'QUERY_LAYERS', 'INFO_FORMAT', '_OLSALT'];
+
+            if (this.options.refreshInterval && this.options.refreshInterval > 0) {
+                this.options.refreshIntervalMs = this.options.refreshInterval * 1000;
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshIntervalMs);
+            }
         }
 
         createNativeLayers(srsName, mapOptions) {
@@ -164,10 +157,15 @@ window.Mapbender = Mapbender || {};
         }
 
         refresh() {
+            if (this.refreshIntervalCode) clearTimeout(this.refreshIntervalCode);
             var cacheBreakParams = {
                 _OLSALT: Math.random()
             };
             this.addParams(cacheBreakParams);
+
+            if (this.options.refreshIntervalMs) {
+                this.refreshIntervalCode = setTimeout(() => this.refresh(), this.options.refreshIntervalMs);
+            }
         }
 
         addParams(params) {
@@ -301,9 +299,9 @@ window.Mapbender = Mapbender || {};
             var params = {
                 LAYERS: [],
                 STYLES: [],
-                VERSION: this.configuration.options.version,
-                TRANSPARENT: this.configuration.options.transparent && 'TRUE' || 'FALSE',
-                FORMAT: this.configuration.options.format || null
+                VERSION: this.options.version,
+                TRANSPARENT: this.options.transparent && 'TRUE' || 'FALSE',
+                FORMAT: this.options.format || null
             };
             var activatedLeaves = this.getActivatedLeaves();
             for (var i = 0; i < activatedLeaves.length; ++i) {
@@ -319,7 +317,7 @@ window.Mapbender = Mapbender || {};
         }
 
         _isBboxFlipped(srsName) {
-            if (this.configuration.options.version === '1.3.0') {
+            if (this.options.version === '1.3.0') {
                 return Mapbender.mapEngine.isProjectionAxisFlipped(srsName);
             } else {
                 return false;
@@ -336,8 +334,8 @@ window.Mapbender = Mapbender || {};
             var baseUrl = Mapbender.mapEngine.getWmsBaseUrl(this.getNativeLayer(0), srsName, true);
             var extraParams = {
                 REQUEST: 'GetMap',          // required for tunnel resolution
-                VERSION: this.configuration.options.version,
-                FORMAT: this.configuration.options.format || 'image/png'
+                VERSION: this.options.version,
+                FORMAT: this.options.format || 'image/png'
             };
             var dataOut = [];
             var leafInfoMap = Mapbender.Geo.SourceHandler.getExtendedLeafInfo(this, scale, bounds);

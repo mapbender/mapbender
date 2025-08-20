@@ -5,6 +5,7 @@ namespace Mapbender\WmtsBundle\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\Component\Transformer\OneWayTransformer;
 use Mapbender\Component\Transformer\Target\MutableUrlTarget;
@@ -12,6 +13,8 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmtsBundle\TmsDataSource;
+use Mapbender\WmtsBundle\WmtsDataSource;
 
 
 /** Contains only fields and methods common to both Wmts and TMS **/
@@ -74,7 +77,7 @@ abstract class HttpTileSource extends HttpParsedSource
     public static function tmsFactory()
     {
         $source = new WmtsSource();
-        $source->setType($source::TYPE_TMS);
+        $source->setType(TmsDataSource::TYPE);
         return $source;
     }
 
@@ -84,16 +87,14 @@ abstract class HttpTileSource extends HttpParsedSource
     public static function wmtsFactory()
     {
         $source = new WmtsSource();
-        $source->setType($source::TYPE_WMTS);
+        $source->setType(WmtsDataSource::TYPE);
         return $source;
     }
 
-    /**
-     * @param string $version
-     */
-    public function setVersion($version)
+    public function setVersion(string $version): self
     {
         $this->version = $version;
+        return $this;
     }
 
     /**
@@ -105,9 +106,9 @@ abstract class HttpTileSource extends HttpParsedSource
     }
 
     /**
-     * @return WmtsLayerSource[]|ArrayCollection
+     * @return WmtsLayerSource[]|Collection
      */
-    public function getLayers()
+    public function getLayers(): array|Collection
     {
         return $this->layers;
     }
@@ -130,9 +131,9 @@ abstract class HttpTileSource extends HttpParsedSource
     }
 
     /**
-     * @return ArrayCollection|WmtsInstance[]
+     * @return Collection|WmtsInstance[]
      */
-    public function getInstances()
+    public function getInstances(): Collection|array
     {
         return $this->instances;
     }
@@ -162,9 +163,9 @@ abstract class HttpTileSource extends HttpParsedSource
     }
 
     /**
-     * @param ArrayCollection $keywords
+     * @param Collection $keywords
      */
-    public function setKeywords(ArrayCollection $keywords)
+    public function setKeywords(Collection $keywords)
     {
         $this->keywords = $keywords;
     }
@@ -178,17 +179,17 @@ abstract class HttpTileSource extends HttpParsedSource
     }
 
     /**
-     * @param ArrayCollection $tilematrixsets
+     * @param Collection $tilematrixsets
      */
-    public function setTilematrixsets(ArrayCollection $tilematrixsets)
+    public function setTilematrixsets(Collection $tilematrixsets)
     {
         $this->tilematrixsets = $tilematrixsets;
     }
 
     /**
-     * @return TileMatrixSet[]|ArrayCollection
+     * @return TileMatrixSet[]|Collection
      */
-    public function getTilematrixsets()
+    public function getTilematrixsets(): array|Collection
     {
         return $this->tilematrixsets;
     }

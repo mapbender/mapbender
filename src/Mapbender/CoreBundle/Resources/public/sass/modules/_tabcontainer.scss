@@ -46,7 +46,7 @@ $hoverEffects: true !default;
       z-index: 2;
       opacity: 1;
     }
-    &:hover, &:focus {
+    &:hover {
       outline: none;
     }
   }

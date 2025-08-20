@@ -62,7 +62,10 @@
          */
         _updateScale: function () {
             var scale = this.mbMap.getModel().getCurrentScale(false);
-            this.$select.val(scale);
+            const roundedScale = Number.parseInt(scale);
+            if (this.options.options.includes(roundedScale)) {
+                this.$select.val(roundedScale);
+            }
             const $displayArea = $('.dropdownValue', this.$select.closest('.dropdown', this.element.get(0)));
             const scaleText = Math.round(scale).toLocaleString();
             $displayArea.text(scaleText);

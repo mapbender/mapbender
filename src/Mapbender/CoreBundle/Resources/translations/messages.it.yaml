@@ -244,6 +244,7 @@ mb:
       const:
         outofscale: 'Layer al di fuori della scala'
         outofbounds: 'Layer al di fuori del riquadro'
+        unsupportedprojection: 'La proiezione corrente non è supportata da questo layer'
         parentinvisible: 'Parent layer non visibile'
       tooltip:
         sublayers_openclose: 'Sublayers aperto/chiuso'
@@ -272,6 +273,8 @@ mb:
         select_style: 'Seleziona lo stile'
         metadata: Metadata
         dimension: Dimensione
+      filter:
+        placeholder: 'Filtra…'
     zoombar:
       rotateclockwise: 'Ruotare in senso orario'
       rotatecounterclockwise: 'Ruotare in senso antiorario'
@@ -492,6 +495,7 @@ mb:
           stroke_width_px: 'Larghezza del tratto (pixel)'
           fontColor: 'Colore del carattere'
           fontSize: 'Dimensiona del carattere'
+          point_radius_px: 'Raggio (per geometrie di punti)'
       printclient:
         label:
           rotatable: Ruotabile
@@ -512,6 +516,7 @@ mb:
           hidenottoggleable: 'Funzione nascondi non modificabile'
           hideinfo: 'Nascondi info'
           menu: Menu
+          filter: 'Mostra filtri'
       template:
         sidepane:
           type:

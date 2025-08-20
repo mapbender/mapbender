@@ -15,31 +15,10 @@ mb:
             formats: Formats
         view:
           label:
-            metadata: Metadata
-            contact: Contact
-            details: Details
-            layers: Layers
-            title: Title
-            name: Name
-            version: Version
-            originurl: 'Origin URL'
-            abstract: Abstract
             onlineresource: 'Online Resource'
             exceptionformats: 'Exception Formats'
             fees: Fees
             accessconstraints: 'Access Constraints'
-            person: Person
-            organization: Organization
-            position: Position
-            telephone: Telephone
-            facsimile: Facsimile
-            email: Email
-            address: Address
-            addresstype: Addresstype
-            city: City
-            state: State
-            postcode: Postcode
-            country: Country
           message:
             cautionscalehint: 'Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Save
             cancel: Cancel
           label:
-            originurl: 'Origin URL'
-            visible: Visible
-            basesource: BaseSource
-            proxy: Proxy
             transparency: Transparency
             tiled: Tiled
             title: Title
@@ -74,6 +49,8 @@ mb:
             dimensions: Dimensions
             vendorspecifics: 'Vendor specific parameters'
             layers: Layers
+            refresh_interval: 'Update interval [s]'
+            refresh_interval_help: 'If set and not 0, the service will automatically update at the specified interval (in seconds).'
           vendorspecific:
             label: 'Vendor specifics'
         preview:
@@ -114,26 +91,6 @@ mb:
             dataurl: 'Data URL'
             featurelisturl: 'Featurelist URL'
         instancelayerform:
-          label:
-            layerstitle: 'Layer''s Title'
-            minscale: Minscale
-            maxsclase: Maxsclase
-            active: active
-            allowselecttoc: 'Allow Select at TOC'
-            selectedtoc: 'Select layer on startup. Caution: Leave this checkbox checked if you are not using thematic layers'
-            selectedtoc.help: 'The layerset is active upon startup. The setting should only be changed if thematic layers are used.'
-            unselectedtoc.help: 'The layerset is inactive upon startup. Caution: If thematic layers are not used, this layerset will not be accessible.'
-            allowinfotoc: 'Allow FeatureInfo at TOC'
-            infotoc: 'FeatureInfo at TOC'
-            allowtoggletoc: 'Allow Toggle at TOC'
-            toggletoc: 'Toggle at TOC'
-            allowreordertoc: 'Allow Reorder at TOC'
-            moreinfo: 'More information'
-            id:
-              title: ID
-              description: 'Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Layer''s Name'
-            style: Style
           style_leafs_only: 'Mapbender supports individual styles only for layers, not groups'
       class:
         title: 'WMS loader'

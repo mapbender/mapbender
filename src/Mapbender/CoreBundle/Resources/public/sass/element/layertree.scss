@@ -27,7 +27,7 @@ $textColor: $darkFontColor !default;
   .leave.state-loading .layer-title {
     opacity: 0.75;
   }
-  .leave.state-outofscale, .leave.state-outofbounds {
+  .leave.state-outofscale, .leave.state-outofbounds, .leave.state-unsupportedprojection {
     .layer-title {
       opacity: 0.5;
     }
@@ -59,6 +59,14 @@ $textColor: $darkFontColor !default;
     pointer-events: none;
     opacity: 0;
     cursor: default;
+  }
+  
+  .layer-filter-input {
+       margin: 3px;
+  }  
+
+  .layer-highlight {
+    color: $ciColor;
   }
 }
 

@@ -7,6 +7,8 @@ namespace Mapbender\ManagerBundle\Form\Type;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -36,34 +38,34 @@ class SourceInstanceItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('title', TextType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layerstitle',
+                'label' => 'mb.manager.source.instancelayer.title',
             ))
-            ->add('allowselected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('allowselected', CheckboxType::class, array(
                 'required' => false,
-                'label' => "mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc",
+                'label' => "mb.manager.source.instancelayer.allowselecttoc",
             ))
-            ->add('selected', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('selected', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc',
+                'label' => 'mb.manager.source.instancelayer.selectedtoc',
             ))
-            ->add('displayId', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('displayId', TextType::class, array(
                 'mapped' => false,
                 'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
-                    'title' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.description',
+                    'title' => 'mb.manager.source.instancelayer.id.help',
                 ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.id.title',
+                'label' => 'mb.manager.source.instancelayer.id',
             ))
-            ->add('displayName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('displayName', TextType::class, array(
                 'mapped' => false,
                 'required' => false,
                 'attr' => array(
                     'readonly' => 'readonly',
                 ),
-                'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.layersname',
+                'label' => 'mb.manager.source.instancelayer.name',
             ))
         ;
         $type = $this;
@@ -72,20 +74,20 @@ class SourceInstanceItemType extends AbstractType
         });
     }
 
-    /**
-     * @param FormInterface $form
-     * @param SourceInstanceItem|null $data
-     */
-    protected function addActiveField(FormInterface $form, $data)
+    protected function addActiveField(FormInterface $form, ?SourceInstanceItem $data)
     {
-        $disabled = $data && !$this->typeDirectory->canDeactivateLayer($data);
+        $disabled = false;
+        if ($data) {
+            $instanceFactory = $this->typeDirectory->getInstanceFactory($data->getSourceInstance()->getSource());
+            $disabled = !$instanceFactory->canDeactivateLayer($data);
+        }
         if ($form->has('active')) {
             $form->remove('active');
         }
-        $form->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+        $form->add('active', CheckboxType::class, array(
             'required' => false,
             'disabled' => $disabled,
-            'label' => 'mb.wms.wmsloader.repo.instancelayerform.label.active',
+            'label' => 'mb.manager.source.instancelayer.active',
         ));
     }
 

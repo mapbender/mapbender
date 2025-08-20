@@ -4,11 +4,11 @@ via parameters.yaml. Use the names exactly as given (dots _do_ _not_ imply array
 ## GetMap limits
 This is for WMS services that stop returning images if the requested pixel dimensions get too large.
 
-`mapbender.imaageexport.renderer.wms.max_getmap_size` (default 8192) sets the largest possible `WIDTH=`
+`mapbender.imageexport.renderer.wms.max_getmap_size` (default 8192) sets the largest possible `WIDTH=`
 and `HEIGHT=` parameter values for WMS requests generated from printing and ImageExport.
 
-`WIDTH=` and `HEIGHT=` parameters can also be limited separately. Use `mapbender.imaageexport.renderer.wms.max_getmap_size.x`
-for the `WIDTH=` limit, and `mapbender.imaageexport.renderer.wms.max_getmap_size.y` for the `HEIGHT=` limit.  
+`WIDTH=` and `HEIGHT=` parameters can also be limited separately. Use `mapbender.imageexport.renderer.wms.max_getmap_size.x`
+for the `WIDTH=` limit, and `mapbender.imageexport.renderer.wms.max_getmap_size.y` for the `HEIGHT=` limit.  
 
 ## Tile buffer
 This is to essentially throw away a ring of pixels around every requested WMS tile, to counteract
@@ -18,11 +18,11 @@ for fully deterministic label placement which may only depend on scale and poten
 options. Any amount of discarded pixels is an efficiency loss. With reliably placed labels, you
 can avoid this loss by turning the tile buffer down to zero pixels.
 
-`mapbender.imaageexport.renderer.wms.tile_buffer` (default 512) sets the amount of pixels to throw
+`mapbender.imageexport.renderer.wms.tile_buffer` (default 512) sets the amount of pixels to throw
 away on both x and y axes.  
 For typical western left-to-right text, it may be convenient to control buffering separately per
-axis. Use `mapbender.imaageexport.renderer.wms.tile_buffer.x` for the horizontal buffer amount and
-`mapbender.imaageexport.renderer.wms.tile_buffer.y` for vertical.
+axis. Use `mapbender.imageexport.renderer.wms.tile_buffer.x` for the horizontal buffer amount and
+`mapbender.imageexport.renderer.wms.tile_buffer.y` for vertical.
 
 # Directories
 ImageExport and print require temporary files. These are by default stored in the system temp directory

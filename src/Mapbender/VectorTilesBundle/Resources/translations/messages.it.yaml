@@ -1,0 +1,30 @@
+mb:
+  vectortiles:
+    admin:
+      json_url: 'URL alla definizione di stile JSON'
+      referer: 'Referrer HTTP'
+      referer.help: 'Alcuni server Vector Tiles richiedono un referrer HTTP fisso per il controllo degli accessi.'
+      min_scale: 'Scala minima (denominatore)'
+      max_scale: 'Scala massima (denominatore)'
+      selected: 'Attiva all''avvio dell''applicazione'
+      layer_hint: 'I layer non vengono letti separatamente per le tile vettoriali.'
+      print_scale_correction: 'Correzione della risoluzione per la stampa'
+      print_scale_correction_help: 'Il valore predefinito è 1.0. Valori più alti producono più dettagli ed etichette più piccole; valori più bassi meno dettagli ed etichette più grandi.'
+      featureinfo:
+        heading: 'Informazioni sulle caratteristiche'
+        active: 'Informazioni attive all''avvio dell''applicazione'
+        allowtoggle: 'Informazioni commutabili dall''utente'
+        advanced: 'Impostazioni avanzate'
+        title: Titolo
+        title_help: 'Proprietà della caratteristica che viene visualizzata come titolo sopra la tabella. <code>${property}</code> sarà sostituito dal valore della proprietà. Se non specificato, verrà utilizzato il primo valore non vuoto tra "label", "name" e "title".'
+        hide_if_no_title: 'Nascondi caratteristiche con titolo vuoto'
+        property_map: 'Filtro e traduzione dei campi'
+        property_map_help: 'Se non vuoto, verranno visualizzate solo le proprietà specificate. Specificare come array YAML, la chiave è il nome del campo, il valore opzionale è la traduzione. Esempio:<br><code>- class<br>- name<br>- layer: Nome del livello</code>'
+      error:
+        no_json: 'L''URL specificato non può essere analizzato come JSON.'
+        no_tile_json: 'L''URL specificato in source.openmaptiles non può essere analizzato come JSON.'
+      legend:
+        heading: Legenda
+        active: 'Attivare la legenda'
+        property_map: 'Selezione dei livelli e traduzione'
+        property_map_help: 'Se non vuoto, verranno visualizzati nella legenda solo i livelli specificati. Specificare come array YAML. La chiave è l’ID del livello dal campo "layers" dello style JSON; il valore opzionale è la traduzione. Esempio:<br><code>- City<br>- Stations<br>- Transport: Public Transport</code>'

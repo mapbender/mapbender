@@ -1,9 +1,24 @@
 ## next feature release
 Features:
+* Support Vector Tiles (using Mapbox Style JSONs) as new data source ([#PR1748](https://github.com/mapbender/mapbender/pull/1748), [#PR1753](https://github.com/mapbender/mapbender/pull/1753))
+* Support defining WMTS/TMS sources in YAML applications ([#PR1754](https://github.com/mapbender/mapbender/pull/1754))
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
+* [LayerTree] Functionality to filter themes, groups and layers ([#PR1749](https://github.com/mapbender/mapbender/pull/1749))
+* Accessibility: Buttons, control elements and elements in the sidepane can be accessed by clicking the tab key and triggered with the enter key ([PR#1742](https://github.com/mapbender/mapbender/pull/1742), [PR#1751](https://github.com/mapbender/mapbender/pull/1751))
+* Accessibility: IDs are no longer used in HTML for Mapbender elements ([#PR1750](https://github.com/mapbender/mapbender/pull/1750))
+* [FeatureInfo] Support point geometries in feature info highlighting ([#PR1747](https://github.com/mapbender/mapbender/pull/1747))
+* [WMS] Add auto-refresh functionality (e.g. for services visualising sensor data) ([#PR1759](https://github.com/mapbender/mapbender/pull/1759))
+* [WMS] Legend can be disabled per layer ([#PR1758](https://github.com/mapbender/mapbender/pull/1758))
+
+Bugfixes:
+* [WMTS] Fix layer order during printing ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
+* [SharedInstances] Fix shared instances are unusable when the instance was disabled during creation ([#PR1760](https://github.com/mapbender/mapbender/pull/1760))
 
 Other:
+* Data Sources handling refactored to simplify adding new sources ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
+* Improved performance for applications with many layers ([#PR1744](https://github.com/mapbender/mapbender/pull/1744), [#PR1756](https://github.com/mapbender/mapbender/pull/1756))
 * Removed Popup2 ([#PR1713](https://github.com/mapbender/mapbender/pull/1713))
+* Fixed typo for imageexport-related services and parameters (imaage -> image) ([#PR1745](https://github.com/mapbender/mapbender/pull/1745))
 
 ## v4.1.3
 Bugfixes:

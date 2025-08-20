@@ -2,17 +2,18 @@
 
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Event\ApplicationConfigEvent;
 use Mapbender\Component\Event\ApplicationEvent;
-use Mapbender\Component\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
-use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
@@ -34,13 +35,14 @@ class ConfigService
 
 
     public function __construct(protected EventDispatcherInterface $eventDispatcher,
-                                protected ElementFilter $elementFilter,
-                                protected TypeDirectoryService $sourceTypeDirectory,
-                                protected UrlProcessor $urlProcessor,
-                                protected UrlGeneratorInterface $router,
-                                protected PackageInterface $baseUrlPackage,
-                                protected TranslatorInterface $translator,
-                                protected bool $debug)
+                                protected ElementFilter            $elementFilter,
+                                protected TypeDirectoryService     $sourceTypeDirectory,
+                                protected EntityManagerInterface   $em,
+                                protected UrlProcessor             $urlProcessor,
+                                protected UrlGeneratorInterface    $router,
+                                protected PackageInterface         $baseUrlPackage,
+                                protected TranslatorInterface      $translator,
+                                protected bool                     $debug)
     {
         $this->assetBaseUrl = $baseUrlPackage->getUrl('');
     }
@@ -59,6 +61,7 @@ class ConfigService
             'application' => $this->getBaseConfiguration($entity),
             'elements'    => $this->getElementConfiguration($activeElements),
         );
+        $this->preloadSources($entity);
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
 
         $evt = new ApplicationConfigEvent($entity, $configuration);
@@ -71,10 +74,10 @@ class ConfigService
     public function getBaseConfiguration(Application $entity)
     {
         return array(
-            'title'         => $entity->getTitle(),
-            'urls'          => $this->getUrls($entity),
+            'title' => $entity->getTitle(),
+            'urls' => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
-            'slug'          => $entity->getSlug(),
+            'slug' => $entity->getSlug(),
             'debug' => $this->debug,
             'mapEngineCode' => 'current',
             'persistentView' => $entity->getPersistentView(),
@@ -89,7 +92,7 @@ class ConfigService
      */
     public function getUrls(Application $entity)
     {
-        $config        = array('slug' => $entity->getSlug());
+        $config = array('slug' => $entity->getSlug());
 
         $urls = array(
             'base' => $this->router->getContext()->getBaseUrl(),
@@ -123,18 +126,17 @@ class ConfigService
     }
 
     /**
-     * @param Layerset $layerset
      * @return array[]
      */
-    protected function getSourceInstanceConfigs(Layerset $layerset)
+    protected function getSourceInstanceConfigs(Layerset $layerset): array
     {
         $configs = array();
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
-            $sourceService = $this->getSourceService($assignment->getInstance());
-            if (!$sourceService->isInstanceEnabled($assignment->getInstance())) {
+            $configGenerator = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
+            if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configs[] = $sourceService->getConfiguration($assignment->getInstance());
+            $configs[] = $configGenerator->getConfiguration($assignment->getInstance());
         }
         return $configs;
     }
@@ -157,7 +159,7 @@ class ConfigService
                     if ($handler instanceof ValidatableConfigurationInterface) {
                         try {
                             $handler::validate($values['configuration'], null, $this->translator);
-                        } catch(ValidationFailedException $e) {
+                        } catch (ValidationFailedException $e) {
                             $values['errors'] = [$e->getMessage()];
                         }
                     }
@@ -170,18 +172,6 @@ class ConfigService
             }
         }
         return $elementConfig;
-    }
-
-    /**
-     * Get the concrete service that deals with the concrete SourceInstance type.
-     *
-     * @param SourceInstance $sourceInstance
-     * @return SourceInstanceConfigGenerator
-     */
-    protected function getSourceService(SourceInstance $sourceInstance)
-    {
-        // delegate to directory
-        return $this->sourceTypeDirectory->getConfigGenerator($sourceInstance);
     }
 
     /**
@@ -200,5 +190,61 @@ class ConfigService
             }
         }
         return $active;
+    }
+
+    /**
+     * Preload all sources used in this application to avoid separate requests to database caused
+     * by doctrine resolving references one by one
+     */
+    protected function preloadSources(Application $application): void
+    {
+        // Preloading sources is only necessary for DB-based applications
+        if ($application->getSource() !== Application::SOURCE_DB) return;
+
+        $layersets = $this->em->createQueryBuilder()
+            ->select('l')
+            ->from(Layerset::class, 'l')
+            ->where('l.application = :application')
+            ->setParameter('application', $application->getId())
+            ->getQuery()
+            ->getResult()
+        ;
+
+        /** @var SourceInstance[] $sources */
+        $sources = $this->em->createQueryBuilder()
+            ->select('s')
+            ->from(SourceInstance::class, 's')
+            ->where('s.layerset IN (:layersets)')
+            ->setParameter('layersets', $layersets)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        /** @var SourceInstance[] $sourcesFree */
+        $sourcesFree = $this->em->createQueryBuilder()
+            ->select('s')
+            ->from(ReusableSourceInstanceAssignment::class, 'a')
+            ->where('a.layerset IN (:layersets)')
+            ->setParameter('layersets', $layersets)
+            ->join(SourceInstance::class, 's', 'WITH', 's.id = a.instance')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        // iterate over sources and sourcesFree
+        $preloadConfig = [];
+        foreach (array_merge($sources, $sourcesFree) as $source) {
+            $type = $source->getType();
+            if (!array_key_exists($type, $preloadConfig)) {
+                $preloadConfig[$type] = [];
+            }
+            $preloadConfig[$type][] = $source;
+        }
+
+        foreach ($preloadConfig as $type => $sources) {
+            $configGenerator = $this->sourceTypeDirectory->getSource($type)->getConfigGenerator();
+            $configGenerator->preload($sources);
+        }
+
     }
 }

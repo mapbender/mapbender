@@ -167,6 +167,7 @@ mb:
       const:
         outofscale: Шар поза масштабом
         outofbounds: Шар за межами
+        unsupportedprojection: 'Поточна проекція не підтримується цим шаром'
         parentinvisible: Батьківський шар невидимий
       tooltip:
         sublayers_openclose: Підшари відкрити/закрити
@@ -190,6 +191,8 @@ mb:
         description: Дерево шарів мапи
       admin:
         select_style: Виберіть стиль
+      filter:
+        placeholder: 'Фільтрувати…'
     zoombar:
       rotateclockwise: Поверніть за годинниковою стрілкою
       rotatecounterclockwise: Обертання проти годинникової стрілки
@@ -343,6 +346,7 @@ mb:
           strokeColor: Колір штрихування
           opacity_pct: Непрозорість (%)
           stroke_width_px: Ширина штриха(пікселі)
+          point_radius_px: 'Радіус (для точкових геометрій)'
       printclient:
         label:
           autoopen: Автовідкриття
@@ -367,6 +371,7 @@ mb:
             label: назва теми
           hidenottoggleable: Приховати папки, що не перемикаються
           hideinfo: Приховати інформацію
+          filter: 'Показати фільтри'
       template:
         sidepane:
           type:

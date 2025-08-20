@@ -15,31 +15,10 @@ mb:
             formats: Formatos
         view:
           label:
-            metadata: Metadata
-            contact: Contacto
-            details: Detalles
-            layers: Capas
-            title: Título
-            name: Nombre
-            version: Versión
-            originurl: 'Origen de la URL'
-            abstract: Abstracto
             onlineresource: 'Recurso en línea'
             exceptionformats: 'Formatos de excepción'
             fees: Tasas
             accessconstraints: 'Restricciones de acceso'
-            person: Persona
-            organization: Organización
-            position: Posición
-            telephone: Teléfono
-            facsimile: Fax
-            email: Email
-            address: Dirección
-            addresstype: 'Tipo de dirección'
-            city: Ciudad
-            state: Estado
-            postcode: 'Código postal'
-            country: País
           message:
             cautionscalehint: 'Precaución: Los calculos de escala están sujetos a las limitaciones de resolución ScaleHint en WMS 1.1.1!'
         instance:
@@ -47,10 +26,6 @@ mb:
             save: Guardar
             cancel: Cancelar
           label:
-            originurl: 'Origen URL'
-            visible: Visible
-            basesource: 'Fuente WMS'
-            proxy: Proxy
             transparency: Transparencia
             tiled: Tiled
             title: Título
@@ -66,14 +41,16 @@ mb:
             ratio: 'BBOX factor'
             buffer: 'Tile buffer'
             layerorder: 'Orden de capas'
-            layerorder.standard: 'estándar'
+            layerorder.standard: estándar
             layerorder.reverse: QGIS
             exceptionformat: 'Formato de excepción'
             infoformat: 'Formato de la solicitud GetFeatureInfo'
             format: 'Formato de la solicitud GetMap'
-            dimensions: 'Dimensiones'
+            dimensions: Dimensiones
             vendorspecifics: 'Parámetros específicos de vendor'
-            layers: 'Capas'
+            layers: Capas
+            refresh_interval: 'Intervalo de actualización [s]'
+            refresh_interval_help: 'Si se establece y no es 0, el servicio se actualizará automáticamente en el intervalo especificado (en segundos).'
           vendorspecific:
             label: 'Vendor specífico'
         preview:
@@ -113,33 +90,13 @@ mb:
             extent: Extensión
             dataurl: 'URL de los datos'
             featurelisturl: 'URL de Featurelist'
-        instancelayerform:
-          label:
-            layerstitle: 'Título de las capas'
-            minscale: 'Escala mínima'
-            maxsclase: 'Escala máxima'
-            active: activo
-            allowselecttoc: 'Permitir seleccionar en el árbol de capas'
-            selectedtoc: 'Seleccione el conjunto de capas al iniciar la aplicación. Atención: Deje la casilla activa si no se utilizan capas temáticas.'
-            selectedtoc.help: 'El conjunto de capas se activa al iniciarse la apliación. Sólo debe modificarse si se utilizan capas temáticas.'
-            unselectedtoc.help: 'El conjunto de capas no se activa al iniciarse la apliación. Atención: Si no se utilizan capas temáticas, no se podrá acceder a este conjunto de capas.'
-            allowinfotoc: 'Permitir FeatureInfo en el árbol de capas'
-            infotoc: 'FeatureInfo en el árbol de capas'
-            allowtoggletoc: 'Permitir Toggle en el árbol de capas'
-            toggletoc: 'Toggle en el árbol de capas'
-            allowreordertoc: 'Permitir reordenar en el árbol de capas'
-            moreinfo: 'Más información'
-            id:
-              title: ID
-              description: 'Id de instancia de capa en la forma: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
-            layersname: 'Nombre de las capas'
-            style: Estilo
+        instancelayerform: null
       class:
         title: 'Cargar WMS'
         description: 'Carga un WMS via getCapabilities-Request'
       admin:
         label:
-            splitlayers: 'Separar las capas'
+          splitlayers: 'Separar las capas'
     repository:
       parser:
         couldnotparse: 'No se puede analizar el documento XML.'
@@ -157,7 +114,7 @@ mb:
         useconditions:
           title: 'Condiciones de uso'
       popup:
-        title: 'Metadatos'
+        title: Metadatos
     repo:
       instance:
         label:
@@ -195,6 +152,6 @@ mb:
     vendorspecifictype:
       admin:
         vstype: 'Tipo de parámetro'
-        name: 'Nombre'
+        name: Nombre
         default: 'Valor predeterminado'
-        hidden: 'Oculto'
+        hidden: Oculto

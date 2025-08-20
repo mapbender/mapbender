@@ -1,6 +1,10 @@
 <?php
+
 namespace Mapbender\PrintBundle\Component;
 
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
+use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
@@ -21,50 +25,33 @@ use Psr\Log\LoggerInterface;
  */
 class PrintService extends ImageExportService implements PrintServiceInterface
 {
-    /** @var PDF_Extensions|\FPDF */
-    protected $pdf;
-    /** @var Template|array */
-    protected $conf;
+    protected PDF_Extensions|\FPDF $pdf;
 
-    /** @var array */
-    protected $data;
+    protected Template|array $conf;
 
-    /** @var string */
-    protected $resourceDir;
-    /** @var OdgParser */
-    protected $templateParser;
-    /** @var PrintPluginHost */
-    protected $pluginHost;
-    /** @var ImageTransport */
-    protected $imageTransport;
-    /** @var LegendHandler */
-    protected $legendHandler;
-    /** @var PdfUtil */
-    protected $pdfUtil;
+    protected array $data;
+
+    protected PdfUtil $pdfUtil;
 
     /**
      * @param LayerRenderer[] $layerRenderers
-     * @param ImageTransport $imageTransport
-     * @param LegendHandler $legendHandler
-     * @param OdgParser $templateParser
-     * @param PrintPluginHost $pluginHost
-     * @param LoggerInterface $logger
-     * @param string $resourceDir
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
-    public function __construct($layerRenderers, ImageTransport $imageTransport,
-                                $legendHandler,
-                                $templateParser, $pluginHost, $logger,
-                                $resourceDir, $tempDir)
+    public function __construct(
+        array                     $layerRenderers,
+        protected ImageTransport  $imageTransport,
+        protected LegendHandler   $legendHandler,
+        protected OdgParser       $templateParser,
+        protected PrintPluginHost $pluginHost,
+        TypeDirectoryService      $typeDirectoryService,
+        LoggerInterface           $logger,
+        private readonly ApplicationResolver $applicationResolver,
+        protected string          $resourceDir,
+        ?string                   $tempDir,
+    )
     {
-        $this->templateParser = $templateParser;
-        $this->imageTransport = $imageTransport;
-        $this->legendHandler = $legendHandler;
-
-        $this->pluginHost = $pluginHost;
-        $this->resourceDir = $resourceDir;
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
-        parent::__construct($layerRenderers, $logger);
+        parent::__construct($layerRenderers, $logger, $typeDirectoryService);
     }
 
     /**
@@ -76,6 +63,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function doPrint($jobData)
     {
+        if (isset($jobData['application']) && !$jobData['application'] instanceof Application) {
+            $jobData['application'] = $this->applicationResolver->getApplicationEntityUnsecure($jobData['application']);
+        }
+
         $templateData = $this->getTemplateData($jobData);
         $this->setup($templateData, $jobData);
 
@@ -182,7 +173,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         require_once('PDF_Extensions.php');
 
         /** @var PDF_Extensions|\FPDF $pdf */
-        $pdf =  new PDF_Extensions();
+        $pdf = new PDF_Extensions();
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
         $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
@@ -253,15 +244,15 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Returns a list of template region names that should be excluded from regular template region
      * processing. If you have multiple main maps, this is the place to extend.
+     * @param array $jobData
+     * @return string[]
      * @see afterMainMap
      * @see handleRegion
      *
-     * @param array $jobData
-     * @return string[]
      */
     protected function getFirstPageSpecialRegionNames($jobData)
     {
-        return  array(
+        return array(
             // Map is already rendered (c.f. method name xD)
             'map',
             // Legend can perform page breaks, which means
@@ -522,10 +513,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             'height' => $ovImageHeight,
             'extent' => $ovExtent->getAbsWidthAndHeight(),
             'center' => $ovExtent->getCenterXy(),
+            'quality' => $quality,
         ));
 
         $ovTransform = FeatureTransform::boxToBox($ovExtent, $ovPixelBox, 1.0);
-        $red = imagecolorallocate($image,255,0,0);
+        $red = imagecolorallocate($image, 255, 0, 0);
         // GD imagepolygon expects a flat, numerically indexed, 1d list of concatenated coordinates,
         // and we have 2D sub-arrays with 'x' and 'y' keys. Convert.
         $flatPoints = call_user_func_array('array_merge', array_map('array_values', array(
@@ -563,14 +555,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // if the region width isn't evenly divided by 10mm, offset the bar to center it
         $barX0 = $region->getOffsetX() + 0.5 * ($totalWidth - $nSections * $sectionWidth);
 
-        $pdf->SetFont('arial', '', 10 );
+        $pdf->SetFont('arial', '', 10);
 
-        $pdf->Text($barX0, $region['y'] - 1 , '0');
+        $pdf->Text($barX0, $region['y'] - 1, '0');
         $scaleText = "{$totalMeters}m";
         $scaleTextLength = strlen($scaleText);
         // heuristics time: the 'm' takes ~2.75 units, 0 and most other digits ~2 units
         $endTextOffset = $barWidth - 2.75 - 1.975 * ($scaleTextLength - 1);
-        $pdf->Text($barX0 + $endTextOffset , $region['y'] - 1 , $scaleText);
+        $pdf->Text($barX0 + $endTextOffset, $region['y'] - 1, $scaleText);
 
         $pdf->SetLineWidth(0.1);
         $pdf->SetDrawColor(0, 0, 0);
@@ -668,11 +660,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $dynImage = $this->resourceDir . '/' . $jobData['dynamic_image']['path'];
         if (file_exists($dynImage)) {
             $pdf->Image($dynImage,
-                        $region->getOffsetX(),
-                        $region->getOffsetY(),
-                        0,
-                        $region->getHeight(),
-                        'png');
+                $region->getOffsetX(),
+                $region->getOffsetY(),
+                0,
+                $region->getHeight(),
+                'png');
             return true;
         } else {
             return false;
@@ -735,7 +727,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param int $width optional, to rescale image
      * @param int $height optional, to rescale image
      */
-    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width = 0, $height = 0)
     {
         return $this->pdfUtil->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
     }

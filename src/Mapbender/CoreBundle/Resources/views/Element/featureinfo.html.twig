@@ -4,13 +4,13 @@
 {% if displayType | default('tabs') == 'tabs' %}
     <div class="tabContainer js-content-parent hidden">
         <ul class="tabs js-header-parent ui-helper-clearfix">
-            <li class="tab js-header"></li>
+            <li class="tab js-header" tabindex="0"></li>
         </ul>
         <div class="container js-content js-content-content"></div>
     </div>
 {% else %}
     <div class="accordionContainer js-header-parent js-content-parent">
-        <div class="accordion js-header">
+        <div class="accordion js-header" tabindex="0">
         </div>
         <div class="container-accordion js-content">
             <div class="accordion-cell js-content-content"></div>
