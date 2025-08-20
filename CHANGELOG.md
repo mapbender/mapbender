@@ -9,6 +9,7 @@ Features:
 * [FeatureInfo] Support point geometries in feature info highlighting ([#PR1747](https://github.com/mapbender/mapbender/pull/1747))
 * [WMS] Add auto-refresh functionality (e.g. for services visualising sensor data) ([#PR1759](https://github.com/mapbender/mapbender/pull/1759))
 * [WMS] Legend can be disabled per layer ([#PR1758](https://github.com/mapbender/mapbender/pull/1758))
+* [Routing] Allow export of calculated routes ([#PR1764](https://github.com/mapbender/mapbender/pull/1764))
 
 Bugfixes:
 * [WMTS] Fix layer order during printing ([#PR1761](https://github.com/mapbender/mapbender/pull/1761))
