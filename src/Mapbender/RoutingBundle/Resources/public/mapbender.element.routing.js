@@ -31,9 +31,6 @@
                 id: 'geojson',
                 name: 'GeoJSON',
             }, {
-                id: 'gml',
-                name: 'GML',
-            }, {
                 id: 'gpx',
                 name: 'GPX',
             }, {
@@ -178,9 +175,6 @@
                 switch(exportFormat) {
                     case 'geojson':
                         format = new ol.format.GeoJSON();
-                        break;
-                    case 'gml':
-                        format = new ol.format.GML2();
                         break;
                     case 'gpx':
                         format = new ol.format.GPX();
