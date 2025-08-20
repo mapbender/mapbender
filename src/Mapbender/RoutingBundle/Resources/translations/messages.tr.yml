@@ -21,11 +21,13 @@ mb:
           bike: Bisiklet
           foot: Yürüyerek
           start: Başlangıç
+          selectExportFormat: Dışa aktarmak için format seçin
           intermediate: Ara Nokta
           destination: Hedef
           clearroute: Temizle
           flippoints: Ters çevir
           addintermediate: Nokta ekle
+          allowExport: İzin verilen rotaları dışa aktar
           getroute: Git!
       info: sürecek
       minutes: Dakika
@@ -76,6 +78,7 @@ mb:
           buffer: Yakınlaştırma aralığı (m)
           autoSubmit: Hemen rota oluştur
           addIntermediatePoints: Ara noktaları eklemeye izin ver
+          allowExport: Dışa aktarmaya izin ver
           advanced: Gelişmiş rota ayarları
           search: Aramayı etkinleştir
           reverseGeocoding: Ters coğrafi kodlama

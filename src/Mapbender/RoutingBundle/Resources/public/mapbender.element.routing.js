@@ -11,6 +11,7 @@
         markerLayer: null,
         elementUrl: null,
         isActive: false,
+        exportFormatOptions: [],
         styleLinearDistance: {
             pointRadius: 0,
             strokeLinecap : 'square',
@@ -26,6 +27,19 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             const searchDriver = this.options.searchConfig.driver;
             this.searchConfig = this.options.searchConfig[searchDriver];
+            this.exportFormatOptions = [{
+                id: 'geojson',
+                name: 'GeoJSON',
+            }, {
+                id: 'gml',
+                name: 'GML',
+            }, {
+                id: 'gpx',
+                name: 'GPX',
+            }, {
+                id: 'kml',
+                name: 'KML',
+            }];
         },
 
         _setup: function(mbMap) {
@@ -36,6 +50,7 @@
                 this._autoSubmit();
             }
 
+            this._setupExportFormatSelection();
             this._initializeEventListeners();
             this._trigger('ready');
         },
@@ -153,6 +168,63 @@
                     this._reorderInputFields();
                 }
             }).disableSelection();
+
+            $('.select-export-format', this.element).on('change', () => {
+                const exportFormat = $('.select-export-format', this.element).val();
+
+                let exportData = '';
+                let  format = null;
+
+                switch(exportFormat) {
+                    case 'geojson':
+                        format = new ol.format.GeoJSON();
+                        break;
+                    case 'gml':
+                        format = new ol.format.GML2();
+                        break;
+                    case 'gpx':
+                        format = new ol.format.GPX();
+                        break;
+                    case 'kml':
+                        format = new ol.format.KML();
+                        break;
+                    default:
+                        return;
+                }
+
+                const features = this.routingLayer.getSource().getFeatures();
+                exportData = format.writeFeatures(features, {
+                    dataProjection: 'EPSG:4326',
+                    featureProjection: Mapbender.Model.getCurrentProjectionCode(),
+                });
+                const timestamp = new Date().toISOString().replace('T', '_').slice(0, 16);
+                this._download(new Blob([exportData]), "route-" + timestamp + "." + exportFormat);
+            });
+        },
+
+        _setupExportFormatSelection: function () {
+            for(let i = 0; i < this.exportFormatOptions.length; i++) {
+                const option = this.exportFormatOptions[i];
+                this.element.find('.select-export-format').append($('<option/>', {
+                    value: option.id,
+                    text: option.name
+                }));
+            }
+            this.element.find('.select-export-format').hide();
+        },
+
+        _showSelectExportFormat: function () {
+            if(!this.options.allowExport) {
+                return;
+            }
+            this.element.find('.select-export-format').show();
+        },
+
+        _download: function (blob, filename) {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
         },
 
         _autoSubmit: function() {
@@ -244,6 +316,7 @@
             $('.attribution', this.element).addClass('d-none');
             $('.mb-routing-info', this.element).addClass('d-none').html('');
             $('.mb-routing-instructions', this.element).html('');
+            $('.select-export-format').hide();
             $('.mb-element-map').css('cursor', 'auto');
             return true;
         },
@@ -291,6 +364,7 @@
                     this._showAttribution();
                     this._showRouteInfo(response.routeInfo);
                     this._showRouteInstructions(response.routingInstructions);
+                    this._showSelectExportFormat();
                 }
                 this.setSpinnerVisible(false);
             });

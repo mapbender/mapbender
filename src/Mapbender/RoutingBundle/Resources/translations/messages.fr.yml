@@ -21,11 +21,13 @@ mb:
           bike: Vélo
           foot: À pied
           start: Départ
+          selectExportFormat: Sélectionner le format pour l'exportation
           intermediate: Via
           destination: Destination
           clearroute: Effacer
           flippoints: Inverser
           addintermediate: Ajouter un point
+          allowExport: Autoriser l'exportation des itinéraires recherchés
           getroute: Aller !
       info: prendra
       minutes: Min
@@ -76,6 +78,7 @@ mb:
           buffer: Zone tampon de zoom (m)
           autoSubmit: Itinéraire immédiat
           addIntermediatePoints: Autoriser les points intermédiaires
+          allowExport: Autoriser l'exportation
           advanced: Paramètres avancés de l'itinéraire
           search: Activer la recherche
           reverseGeocoding: Géocodage inversé
