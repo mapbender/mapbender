@@ -1,4 +1,4 @@
-;!(function($) {
+(function($) {
     "use strict";
     $.widget("mapbender.mbViewManager", {
         options: {
@@ -50,12 +50,16 @@
                 this._saveNew();
             }.bind(this));
             this.csrfToken = $form.attr('data-token');
-            this._load();   // Does not need map element to finish => can start asynchronously
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
             this._initEvents();
             this._toggleEnabled(true);
+            // save default layertree settings, so they can be reloaded by the ResetView-Element
+            this.saveDefaultSettings();
+            this.mbMap.map.olMap.on('rendercomplete', () => {
+                this._load();
+            });
         },
         _toggleEnabled: function(enabled) {
             $('.-fn-save-new', this.element).prop('disabled', !enabled);
@@ -101,6 +105,9 @@
         },
         _initEvents: function() {
             var self = this;
+            this.element.on('mousedown', '.-fn-apply, .-js-forward-to-apply', function() {
+                $(this).closest('tr').find('.-js-loadingspinner i').removeClass('d-none');
+            });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
                 var settings = self._extractLinkSettings(this);
@@ -108,9 +115,7 @@
                 var $marker = $('.recall-marker', $(this).closest('tr'));
                 $('.recall-marker', self.element).not($marker).css({opacity: ''});
                 $marker.css({opacity: '1'});
-                self.mbMap.element.one('mbmapviewchanged mb.sourcenodeselectionchanged mbmapsourcechanged', function() {
-                    $marker.animate({opacity: '0'});
-                });
+                $(this).closest('tr').find('.-js-loadingspinner i').addClass('d-none');
             });
             this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
@@ -140,11 +145,20 @@
             $.when(listingPromise, this.mapPromise)
                 .then(function(response) {
                     var $content = $(response[0]);
+                    const params = Mapbender.Util.getUrlQueryParams(window.location.href);
+                    const viewid = params.hasOwnProperty('viewid') ? params.viewid : false;
+                    let loadViewButton = false;
                     $('a.-fn-apply', $content).each(function() {
                         self._updateLinkUrl(this);
+                        if (parseInt(viewid) === parseInt($(this).closest('tr').attr('data-id'))) {
+                            loadViewButton = $(this);
+                        }
                     });
                     $loadingPlaceholder.replaceWith($content);
                     self._updatePlaceholder();
+                    if (loadViewButton !== false) {
+                        loadViewButton.trigger('click');
+                    }
                 }, function() {
                     $loadingPlaceholder.hide()
                 })
@@ -235,10 +249,32 @@
         _getCommonSaveData: function() {
             var currentSettings = this.mbMap.getModel().getCurrentSettings();
             var diff = this.mbMap.getModel().diffSettings(this.referenceSettings, currentSettings);
+            let sources = [];
+            this.mbMap.getModel().getSources().forEach((source) => {
+                sources.push({
+                    'id': source.id,
+                    'children': source.children,
+                    'options': source.options,
+                    'type': source.type,
+                    'customParams': source.customParams,
+                    'isBaseSource': source.isBaseSource,
+                    'isDynamicSource': source.isDynamicSource
+                });
+            });
+            let layersets = [];
+            Mapbender.layersets.forEach(layerset => {
+                layersets.push({
+                    'children': layerset.children,
+                    'id': layerset.id,
+                    'parent': layerset.parent,
+                    'selected': layerset.selected,
+                    'title_': layerset.title_,
+                });
+            });
             return {
                 viewParams: this.mbMap.getModel().encodeViewParams(diff.viewParams || this.mbMap.getModel().getCurrentViewParams()),
-                layersetsDiff: diff.layersets,
-                sourcesDiff: diff.sources,
+                layersetStates: JSON.stringify(layersets),
+                sourcesStates: JSON.stringify(sources),
                 token: this.csrfToken,
             };
         },
@@ -394,11 +430,38 @@
             });
             return diff;
         },
-        _apply: function(diff) {
-            var settings = this.mbMap.getModel().mergeSettings(this.referenceSettings, diff);
+        _apply: function(settings) {
+            const layertreeElement = $('.mb-element-layertree');
+            layertreeElement.find('ul.layers:first').empty();
+            this.mbMap.getModel().sourceTree = [];
+            this.mbMap.map.olMap.getAllLayers().forEach(layer => {
+                this.mbMap.map.olMap.removeLayer(layer);
+            });
+            let wmsloaderSources = [];
+            let sources = [];
 
-            this.mbMap.getModel().applyViewParams(diff.viewParams);
-            this.mbMap.getModel().applySettings(settings);
+            settings.sources.forEach(s => {
+                let source = Mapbender.Source.factory(s);
+                if (s.isDynamicSource) {
+                    wmsloaderSources.push(source);
+                    return; // continue
+                }
+                let layerset = settings.layersets.filter(l => {
+                    let layersetSource = l.children.filter(child => child.id === source.id)[0];
+                    return typeof(layersetSource) !== 'undefined' && source.id === layersetSource.id;
+                })[0];
+                source.layerset = new Mapbender.Layerset(layerset.title_, layerset.id, layerset.selected);
+                this.mbMap.getModel().sourceTree.push(source);
+                sources.push(source);
+            });
+
+            this.mbMap.getModel().initializeSourceLayers(sources);
+
+            layertreeElement.data('mapbenderMbLayertree')._createTree();
+            wmsloaderSources.forEach(source => {
+                this.mbMap.getModel().addSourceFromConfig(source);
+            });
+            this.mbMap.getModel().applyViewParams(settings.viewParams);
         },
         _flash: function($el, color) {
             $el.css({
@@ -413,6 +476,11 @@
                     $el.css('transition', '');
                 }, 1000);
             });
+        },
+        saveDefaultSettings: function () {
+            window.localStorage.removeItem('viewManagerSettings');
+            let settings = JSON.stringify(this._getCommonSaveData());
+            window.localStorage.setItem('viewManagerSettings', settings);
         },
         __dummy__: null
     });

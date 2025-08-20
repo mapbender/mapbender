@@ -44,16 +44,6 @@
                     <input name="title" type="text" class="form-control" />
                 </div>
             </div>
-            {%- if showDate -%}
-            <div class="row mb-3">
-                <label class="col-form-label col-xs-3 col-3">
-                    {{ 'mb.core.viewManager.date' | trans }}
-                </label>
-                <div class="col-xs-9 col-9">
-                    <input name="mtime" type="text" class="form-control" readonly="readonly" disabled="disabled" />
-                </div>
-            </div>
-            {%- endif -%}
             {%- if showPublicPrivateState -%}
             <p class="-js-record-status"></p>
             {%- endif -%}
