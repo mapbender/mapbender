@@ -14,7 +14,7 @@
         exportFormatOptions: [],
         styleLinearDistance: {
             pointRadius: 0,
-            strokeLinecap : 'square',
+            strokeLinecap: 'square',
             strokeDashstyle: 'dash'
         },
 
@@ -91,11 +91,11 @@
             this.callback ? this.callback.call() : this.callback;
         },
 
-        reveal: function () {
+        reveal: function() {
             this.isActive = true;
         },
 
-        hide: function () {
+        hide: function() {
             this.isActive = false;
         },
 
@@ -170,9 +170,9 @@
                 const exportFormat = $('.select-export-format', this.element).val();
 
                 let exportData = '';
-                let  format = null;
+                let format = null;
 
-                switch(exportFormat) {
+                switch (exportFormat) {
                     case 'geojson':
                         format = new ol.format.GeoJSON();
                         break;
@@ -196,8 +196,8 @@
             });
         },
 
-        _setupExportFormatSelection: function () {
-            for(let i = 0; i < this.exportFormatOptions.length; i++) {
+        _setupExportFormatSelection: function() {
+            for (let i = 0; i < this.exportFormatOptions.length; i++) {
                 const option = this.exportFormatOptions[i];
                 this.element.find('.select-export-format').append($('<option/>', {
                     value: option.id,
@@ -207,18 +207,20 @@
             this.element.find('.select-export-format').hide();
         },
 
-        _showSelectExportFormat: function () {
-            if(!this.options.allowExport) {
+        _showSelectExportFormat: function() {
+            if (!this.options.allowExport) {
                 return;
             }
             this.element.find('.select-export-format').show();
         },
 
-        _download: function (blob, filename) {
+        _download: function(blob, filename) {
             const a = document.createElement('a');
             a.href = window.URL.createObjectURL(blob);
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
         },
 
         _autoSubmit: function() {
@@ -260,7 +262,7 @@
             }
         },
 
-        _formatCoordinates: function (coordinates) {
+        _formatCoordinates: function(coordinates) {
             coordinates = [...coordinates];
             // do not format coordinates for WGS 84 / EPSG:4326
             if (this.olMap.getView().getProjection().getCode() !== 'EPSG:4326') {
@@ -347,7 +349,7 @@
                     'points': points,
                     'srs': mapProj
                 }
-            }).fail(() =>  {
+            }).fail(() => {
                 Mapbender.error('route service is not available');
                 this.setSpinnerVisible(false);
             }).done((response) => {
@@ -364,7 +366,7 @@
             });
         },
 
-        _handleAutocompleteSource: function (request, _response) {
+        _handleAutocompleteSource: function(request, _response) {
             const self = this;
             return $.ajax({
                 type: 'GET',
@@ -377,7 +379,7 @@
                 if (response.error) {
                     Mapbender.error(Mapbender.trans('mb.routing.exception.main.general'));
                 } else {
-                    _response($.map(response, function (value) {
+                    _response($.map(response, function(value) {
                         return {
                             label: self._formatLabel(value),
                             geom: value[self.searchConfig.geom_attribute],
@@ -432,7 +434,7 @@
             }
         },
 
-        _handleAutocompleteSelect: function (e, ui) {
+        _handleAutocompleteSelect: function(e, ui) {
             $(e.target).val(ui.item.label);
             let format;
             switch (this.searchConfig.geom_format) {
@@ -510,7 +512,7 @@
             if (this.options.useReverseGeocoding) {
                 const p = {
                     name: 'point',
-                    value: [coordinates.lon,coordinates.lat]
+                    value: [coordinates.lon, coordinates.lat]
                 };
                 this._getRevGeocode([p]).then(function(response) {
                     const resultLabel = this._checkResultLabel(coordinates, response);
@@ -734,7 +736,7 @@
             $instructionsDiv.append($table);
         },
 
-        _showAttribution: function () {
+        _showAttribution: function() {
             $('.attribution', this.element).removeClass('d-none');
         }
     });
