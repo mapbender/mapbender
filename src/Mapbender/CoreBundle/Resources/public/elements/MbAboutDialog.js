@@ -25,15 +25,19 @@
                     ]
                 });
             } else {
-                this.popup.$element.removeClass('hidden')
+                this.popup.$element.show();
                 this.popup.open();
             }
+            // request button focus asynchronously to ensure that the popup is fully rendered
+            setTimeout(() => {
+                this.popup.$element.find('button').focus();
+            }, 50);
         }
 
 
         close() {
             if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('hidden')
+                this.popup.$element.hide();
             }
         }
     }

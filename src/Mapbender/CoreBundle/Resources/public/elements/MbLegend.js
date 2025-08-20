@@ -106,7 +106,8 @@
             return $('<img/>').attr('src', layer.legend.url);
         }
 
-        createLegendForStyle(layer) {
+        async createLegendForStyle(layer) {
+            layer.legend.layers = await Promise.resolve(layer.legend.layers);
             return (new LegendEntry(layer.legend)).getContainer();
         }
 
@@ -122,7 +123,7 @@
                 return null;
             }
 
-            if (this.options.showSourceTitle) {
+            if (this.options.showSourceTitle && sourceData.legend?.type !== 'style') {
                 ul.append(this.createSourceTitle(sourceData));
             }
 
@@ -155,10 +156,10 @@
                 $li.append($ul);
                 return $li;
             } else if (layer.legend) {
-                if (options.showLayerTitle) {
+                if (options.showLayerTitle && layer.legend.type === 'url') {
                     $li.append(widget.createTitle(layer));
                 }
-                $li.append(widget.createLegendForLayer(layer));
+                this.createLegendForLayer(layer).then((result) => $li.append(result));
             }
             return $li;
         }
