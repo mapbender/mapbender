@@ -1,4 +1,6 @@
-## next feature release
+## v4.2.0-RC1
+:warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
+
 Features:
 * Support Vector Tiles (using Mapbox Style JSONs) as new data source ([#PR1748](https://github.com/mapbender/mapbender/pull/1748), [#PR1753](https://github.com/mapbender/mapbender/pull/1753))
 * Support defining WMTS/TMS sources in YAML applications ([#PR1754](https://github.com/mapbender/mapbender/pull/1754))

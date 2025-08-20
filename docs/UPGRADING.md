@@ -1,5 +1,25 @@
 # Upgrading Guide
 
+## 4.2.0
+
+### Update database
+Update your entities to the latest version by executing the following command
+```bash
+bin/console doctrine:schema:update --complete --force
+```
+:warning: If you update from Mapbender 3, read the upgrading guide for version 4.0 first!
+
+### DataSource handling in backend refactored
+To simplify integrating new data sources into Mapbender (starting with Mapbox Vector Tiles), the 
+DataSource handling in the backend has been refactored.   
+Refer to [#PR1745](https://github.com/mapbender/mapbender/pull/1745) for details.
+
+### ViewManager
+The ViewManager was refactored. It now stores the entire layer tree instead of just diffs, which
+allows to save reordering of layers and sources added via the WMS loader. A migration of existing
+saved views was not implemented, so all existing views will be lost during the upgrade.
+
+
 ## 4.1.0
 
 ### Added REST-API
