@@ -21,11 +21,13 @@ mb:
           bike: Bike
           foot: Foot
           start: Start
+          selectExportFormat: Select format for export
           intermediate: Via
           destination: Destination
           clearroute: Clear
           flippoints: Reverse
           addintermediate: Add point
+          allowExport: Allow export of searched routes
           getroute: Go!
       info: will take
       minutes: Min
@@ -76,6 +78,7 @@ mb:
           buffer: Zoom buffer (m)
           autoSubmit: Route immediately
           addIntermediatePoints: Allow intermediate points
+          allowExport: Allow export
           advanced: Advanced route settings
           search: Enable Search
           reverseGeocoding: Reverse Geocoding

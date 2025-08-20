@@ -11,9 +11,10 @@
         markerLayer: null,
         elementUrl: null,
         isActive: false,
+        exportFormatOptions: [],
         styleLinearDistance: {
             pointRadius: 0,
-            strokeLinecap : 'square',
+            strokeLinecap: 'square',
             strokeDashstyle: 'dash'
         },
 
@@ -26,6 +27,16 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             const searchDriver = this.options.searchConfig.driver;
             this.searchConfig = this.options.searchConfig[searchDriver];
+            this.exportFormatOptions = [{
+                id: 'geojson',
+                name: 'GeoJSON',
+            }, {
+                id: 'gpx',
+                name: 'GPX',
+            }, {
+                id: 'kml',
+                name: 'KML',
+            }];
         },
 
         _setup: function(mbMap) {
@@ -36,6 +47,7 @@
                 this._autoSubmit();
             }
 
+            this._setupExportFormatSelection();
             this._initializeEventListeners();
             this._trigger('ready');
         },
@@ -79,11 +91,11 @@
             this.callback ? this.callback.call() : this.callback;
         },
 
-        reveal: function () {
+        reveal: function() {
             this.isActive = true;
         },
 
-        hide: function () {
+        hide: function() {
             this.isActive = false;
         },
 
@@ -153,6 +165,62 @@
                     this._reorderInputFields();
                 }
             }).disableSelection();
+
+            $('.select-export-format', this.element).on('change', () => {
+                const exportFormat = $('.select-export-format', this.element).val();
+
+                let exportData = '';
+                let format = null;
+
+                switch (exportFormat) {
+                    case 'geojson':
+                        format = new ol.format.GeoJSON();
+                        break;
+                    case 'gpx':
+                        format = new ol.format.GPX();
+                        break;
+                    case 'kml':
+                        format = new ol.format.KML();
+                        break;
+                    default:
+                        return;
+                }
+
+                const features = this.routingLayer.getSource().getFeatures();
+                exportData = format.writeFeatures(features, {
+                    dataProjection: 'EPSG:4326',
+                    featureProjection: Mapbender.Model.getCurrentProjectionCode(),
+                });
+                const timestamp = new Date().toISOString().replace('T', '_').slice(0, 16);
+                this._download(new Blob([exportData]), "route-" + timestamp + "." + exportFormat);
+            });
+        },
+
+        _setupExportFormatSelection: function() {
+            for (let i = 0; i < this.exportFormatOptions.length; i++) {
+                const option = this.exportFormatOptions[i];
+                this.element.find('.select-export-format').append($('<option/>', {
+                    value: option.id,
+                    text: option.name
+                }));
+            }
+            this.element.find('.select-export-format').hide();
+        },
+
+        _showSelectExportFormat: function() {
+            if (!this.options.allowExport) {
+                return;
+            }
+            this.element.find('.select-export-format').show();
+        },
+
+        _download: function(blob, filename) {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         },
 
         _autoSubmit: function() {
@@ -194,7 +262,7 @@
             }
         },
 
-        _formatCoordinates: function (coordinates) {
+        _formatCoordinates: function(coordinates) {
             coordinates = [...coordinates];
             // do not format coordinates for WGS 84 / EPSG:4326
             if (this.olMap.getView().getProjection().getCode() !== 'EPSG:4326') {
@@ -244,6 +312,7 @@
             $('.attribution', this.element).addClass('d-none');
             $('.mb-routing-info', this.element).addClass('d-none').html('');
             $('.mb-routing-instructions', this.element).html('');
+            $('.select-export-format').hide();
             $('.mb-element-map').css('cursor', 'auto');
             return true;
         },
@@ -280,7 +349,7 @@
                     'points': points,
                     'srs': mapProj
                 }
-            }).fail(() =>  {
+            }).fail(() => {
                 Mapbender.error('route service is not available');
                 this.setSpinnerVisible(false);
             }).done((response) => {
@@ -291,12 +360,13 @@
                     this._showAttribution();
                     this._showRouteInfo(response.routeInfo);
                     this._showRouteInstructions(response.routingInstructions);
+                    this._showSelectExportFormat();
                 }
                 this.setSpinnerVisible(false);
             });
         },
 
-        _handleAutocompleteSource: function (request, _response) {
+        _handleAutocompleteSource: function(request, _response) {
             const self = this;
             return $.ajax({
                 type: 'GET',
@@ -309,7 +379,7 @@
                 if (response.error) {
                     Mapbender.error(Mapbender.trans('mb.routing.exception.main.general'));
                 } else {
-                    _response($.map(response, function (value) {
+                    _response($.map(response, function(value) {
                         return {
                             label: self._formatLabel(value),
                             geom: value[self.searchConfig.geom_attribute],
@@ -364,7 +434,7 @@
             }
         },
 
-        _handleAutocompleteSelect: function (e, ui) {
+        _handleAutocompleteSelect: function(e, ui) {
             $(e.target).val(ui.item.label);
             let format;
             switch (this.searchConfig.geom_format) {
@@ -442,7 +512,7 @@
             if (this.options.useReverseGeocoding) {
                 const p = {
                     name: 'point',
-                    value: [coordinates.lon,coordinates.lat]
+                    value: [coordinates.lon, coordinates.lat]
                 };
                 this._getRevGeocode([p]).then(function(response) {
                     const resultLabel = this._checkResultLabel(coordinates, response);
@@ -666,7 +736,7 @@
             $instructionsDiv.append($table);
         },
 
-        _showAttribution: function () {
+        _showAttribution: function() {
             $('.attribution', this.element).removeClass('d-none');
         }
     });
