@@ -3,7 +3,9 @@ class VectorTilesSource extends Mapbender.Source {
         definition.children = [{...definition}];
         super(definition);
         this.wkt = new ol.format.WKT();
+        this.propertyMaps = [];
     }
+
 
     createNativeLayers(srsName, mapOptions) {
         this.nativeLayers = [new ol.layer.MapboxVector({
@@ -116,18 +118,18 @@ class VectorTilesSource extends Mapbender.Source {
      */
     _getPropertyMap(subtype) {
         if (!this.options[subtype].propertyMap) return null;
-        if (!this.propertyMap) {
-            this.propertyMap = {};
+        if (!this.propertyMaps[subtype]) {
+            this.propertyMaps[subtype] = {};
             for (const entry of this.options[subtype].propertyMap) {
                 if (typeof entry === 'string') {
-                    this.propertyMap[entry] = Mapbender.trans(entry);
+                    this.propertyMaps[subtype][entry] = Mapbender.trans(entry);
                 } else {
                     const [key, value] = Object.entries(entry)[0];
-                    this.propertyMap[key] = Mapbender.trans(value);
+                    this.propertyMaps[subtype][key] = Mapbender.trans(value);
                 }
             }
         }
-        return this.propertyMap;
+        return this.propertyMaps[subtype];
     }
 
     _labelReplaceRegex(labelWithRegex, feature) {

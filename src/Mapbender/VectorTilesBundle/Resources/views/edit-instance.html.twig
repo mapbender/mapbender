@@ -15,7 +15,7 @@
     {{ form_row(form.selected) }}
     {{ form_row(form.allowSelected) }}
 
-    <h4>{{ 'mb.vectortiles.admin.featureinfo.heading' | trans }}</h4>
+    <h4 class="mt-4">{{ 'mb.vectortiles.admin.featureinfo.heading' | trans }}</h4>
     {{ form_row(form.featureInfo) }}
     {{ form_row(form.featureInfoAllowToggle) }}
     <div tabindex="0" class="showmore clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">
@@ -27,7 +27,7 @@
         {{ form_row(form.featureInfoPropertyMap) }}
     </div>
 
-    <h4>{{ 'mb.vectortiles.admin.legend.heading' | trans }}</h4>
+    <h4 class="mt-4">{{ 'mb.vectortiles.admin.legend.heading' | trans }}</h4>
     {{ form_row(form.legendEnabled) }}
     <div tabindex="0" class="showmore clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">
         {{ 'mb.vectortiles.admin.featureinfo.advanced' | trans }}
