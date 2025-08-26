@@ -4,6 +4,7 @@
 Features:
 * Support Vector Tiles (using Mapbox Style JSONs) as new data source ([#PR1748](https://github.com/mapbender/mapbender/pull/1748), [#PR1753](https://github.com/mapbender/mapbender/pull/1753))
 * Support defining WMTS/TMS sources in YAML applications ([#PR1754](https://github.com/mapbender/mapbender/pull/1754))
+* [ViewManager] Additionally save layer order, WMS added by WMSLoader and allow loading a saved state on startup using parameter _viewid_ ([#PR1755](https://github.com/mapbender/mapbender/pull/1755)) :warning: There is no migration for saved views of earlier versions
 * [Manager] Cloning of elements enabled ([#PR1705](https://github.com/mapbender/mapbender/pull/1705))
 * [LayerTree] Functionality to filter themes, groups and layers ([#PR1749](https://github.com/mapbender/mapbender/pull/1749))
 * Accessibility: Buttons, control elements and elements in the sidepane can be accessed by clicking the tab key and triggered with the enter key ([PR#1742](https://github.com/mapbender/mapbender/pull/1742), [PR#1751](https://github.com/mapbender/mapbender/pull/1751))

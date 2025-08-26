@@ -3,6 +3,12 @@
 ## 4.2.0
 
 ### Update database
+If you were using the ViewManager before, the old entries need to be deleted manually.
+
+```bash
+bin/console doctrine:query:sql "DELETE from mb_core_viewmanager_state;"
+```
+
 Update your entities to the latest version by executing the following command
 ```bash
 bin/console doctrine:schema:update --complete --force
@@ -32,7 +38,8 @@ bin/console mapbender:config:check
 ### ViewManager
 The ViewManager was refactored. It now stores the entire layer tree instead of just diffs, which
 allows to save reordering of layers and sources added via the WMS loader. A migration of existing
-saved views was not implemented, so all existing views will be lost during the upgrade.
+saved views was not implemented, so all existing views will be lost during the upgrade / must be deleted
+before the migration since otherwise the automatic migration will fail (see section "Update database").
 
 
 ## 4.1.0
