@@ -106,7 +106,7 @@
         _initEvents: function() {
             var self = this;
             this.element.on('mousedown', '.-fn-apply, .-js-forward-to-apply', function() {
-                $(this).closest('tr').find('.-js-loadingspinner i').removeClass('d-none');
+                $(this).closest('tr').find('.-js-loadingspinner i').removeClass('opacity-0');
             });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
@@ -115,7 +115,7 @@
                 var $marker = $('.recall-marker', $(this).closest('tr'));
                 $('.recall-marker', self.element).not($marker).css({opacity: ''});
                 $marker.css({opacity: '1'});
-                $(this).closest('tr').find('.-js-loadingspinner i').addClass('d-none');
+                $(this).closest('tr').find('.-js-loadingspinner i').addClass('opacity-0');
             });
             this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');

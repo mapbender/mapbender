@@ -46,7 +46,7 @@ class ViewManagerState
     /**
      * @var string
      */
-    #[ORM\Column(type: 'string', length: 63)]
+    #[ORM\Column(type: 'string', length: 255)]
     protected $title;
 
     /**
