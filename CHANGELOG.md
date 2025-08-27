@@ -1,4 +1,4 @@
-## v4.2.0-RC1
+## v4.2.0
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
 Features:
