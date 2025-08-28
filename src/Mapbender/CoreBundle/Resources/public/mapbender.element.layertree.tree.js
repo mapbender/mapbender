@@ -87,9 +87,6 @@
             this.element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
             this.element.on('click', '.layer-title:not(.disabled)', this._toggleSelectedLayer.bind(this));
             this.element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
-            this.element.on('click', '.layer-menu .exit-button', function () {
-                $(this).closest('.layer-menu').remove();
-            });
             this.element.on('click', '.layer-remove-btn', function () {
                 var $node = $(this).closest('li.leave');
                 var layer = $node.data('layer');
@@ -388,8 +385,8 @@
         _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
-                .toggleClass('fa-folder-open', active)
-                .toggleClass('fa-folder', !active)
+                .toggleClass('fa-caret-down', active)
+                .toggleClass('fa-caret-right', !active)
             ;
         },
         _toggleSelectedLayer: function (e) {
@@ -545,7 +542,10 @@
                 $menu.remove();
                 return;
             }
-            $layerNode.find('.leaveContainer:first', $layerNode).after($menu);
+            
+            // Insert the menu directly after the leaveContainer, but before any nested ul.layers
+            const $leaveContainer = $layerNode.find('.leaveContainer:first');
+            $leaveContainer.after($menu);
 
             $menu.find('[data-menu-action]').each((index, el) => {
                 const $actionElement = $(el);
@@ -584,6 +584,7 @@
 
             const $wrapper = $opacityControl.find('.layer-opacity-bar');
             const $handle = $opacityControl.find('.layer-opacity-handle');
+            const $valueDisplay = $opacityControl.find('.layer-opacity-value');
             const dragDealer = new Dragdealer($wrapper[0], {
                 x: source.options.opacity,
                 horizontal: true,
@@ -595,6 +596,7 @@
                     var opacity = Math.max(0.0, Math.min(1.0, x));
                     var percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
+                    $valueDisplay.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
             });
@@ -620,6 +622,7 @@
                     const opacity = Math.max(0.0, Math.min(1.0, newX));
                     const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
+                    $valueDisplay.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
             });
@@ -649,16 +652,30 @@
             var $target = $(e.target);
             var $layerNode = $target.closest('li.leave');
             if (!$('>.layer-menu', $layerNode).length) {
+                // Close all other menus first
                 $('.layer-menu', this.element).remove();
+                // Reset all menu button icons back to bars
+                $('.layer-menu-btn i', this.element).removeClass('fa-xmark').addClass('fa-bars');
+                
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
+                
+                // Change only this specific menu button icon to X
+                const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
+                $menuBtn.removeClass('fa-bars').addClass('fa-xmark');
 
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
                 const $firstFocusable = $menu.find('[tabindex="0"]').first();
                 if ($firstFocusable.length) {
                     $firstFocusable.focus();
                 }
+            } else {
+                // Menu is already open, close it
+                $('>.layer-menu', $layerNode).remove();
+                // Reset only this menu button icon back to bars
+                const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
+                $menuBtn.removeClass('fa-xmark').addClass('fa-bars');
             }
 
             return false;
@@ -782,10 +799,7 @@
                         destroyOnClose: true,
                         width: !useModal && 850 || '100%',
                         height: !useModal && 600 || null,
-                        buttons: [{
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-sm btn-light popupClose critical'
-                        }]
+                        buttons: []
                     });
                     metadataPopup.$element.find('button').focus();
                     if (initTabContainer) {
