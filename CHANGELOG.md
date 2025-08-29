@@ -1,5 +1,6 @@
 ## next feature release
 * [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766))
+* [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
 
 ## v4.2.1
 Bugfixes:
