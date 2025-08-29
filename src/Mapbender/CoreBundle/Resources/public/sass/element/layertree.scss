@@ -17,6 +17,8 @@ $textColor: $darkFontColor !default;
   }
   .leaveContainer {
     display: flex;
+    margin-bottom: 5px;
+    gap: 4px;
   }
   .layer-title {
     flex: 1 1 auto;
@@ -51,9 +53,6 @@ $textColor: $darkFontColor !default;
   .error-icon-wrapper, .leave.state-error .layer-title {
     color: $errorColor;
   }
-  .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
-    margin-left: 4px;
-  }
 
   .disabled-placeholder {
     pointer-events: none;
@@ -68,46 +67,84 @@ $textColor: $darkFontColor !default;
 
 $layer-slider-bar-height: 5px;
 .layer-menu {
-  color: #222;
-  position: absolute;
-  right: 0;
-  top: 1.5em;
+  color: var(--primary);
+  position: static;
   background-color: white;
   padding: $space / 4;
-
-  z-index: 45;
-  // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
-  width: auto;
-  min-width: 140px;
-  border: solid 1px $panelBorderColor;
   border-radius: $radius;
-  // arrow icon
-  &:before {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-bottom: 5px solid $panelBorderColor;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    position: absolute;
-    right: 0;
-    top: -5px;
-  }
-  &:after {
-    display: none;
-  }
+  margin-top: 2px;
+
+  // Align left edge of slider-bar with left edge of checkbox
+  // Only account for folder icon + spacing to reach checkbox position
+  margin-left: calc(1em + 4px); // folder icon + spacing = checkbox left edge
+
   .layer-slider-bar {
-    font-size: 85%;
-    background: rgba($textColor, 0.4);
-    border-color: transparent;
-    .layer-slider-handle {
-      // enforce minimum width so opacity handle (with text) doesn't
-      // look weird vs dimensions handle (no text)
-      min-width: 2.5em;
-    }
+  font-size: 85%;
+  flex: 1;
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  height: 4px;
+ }
+
+  .layer-opacity-title {
+    color: $textColor;
+    font-size: 0.8rem;
+  }
+
+  .layer-opacity-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .layer-opacity-value {
+    color: $textColor;
+    font-size: 0.9rem;
+    font-family: inherit;
+    min-width: 35px;
+    text-align: left;
+    position: relative;
+    top: -5px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1px;
+    width: 35px;
+  }
+
+  .layer-slider-handle {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 50% !important; // circle
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    text-indent: -9999px; // hide text
+    top: -1px;
   }
 }
 .layer-dimension-textfield {
     max-width: 120px;
+}
+
+.layer-menu-btn {
+  color: #626161;
+}
+
+.-fn-toggle-selected {
+  color: var(--primary);
+  font-size: 1.4em;
+  display: flex;
+  align-items: center;
+
+  i {
+    font-size: inherit;
+    line-height: 1;
+  }
+}
+
+.-fn-toggle-info {
+  color: var(--primary);
+}
+
+.layer-styles .input-group-text, .form-select{
+  font-size: 0.75rem;
 }
