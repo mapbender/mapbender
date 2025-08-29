@@ -12,25 +12,43 @@
         position: relative;
     }
 
+    .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    .form-control.searchterm {
+        transition: padding 0.2s ease;
+        border-radius: 0.375rem !important;
+
+        text-overflow: ellipsis;
+
+        &.with-icon {
+            padding-left: 40px;
+            padding-right: 12px;
+        }
+
+        &:not(.with-icon) {
+            padding-left: 12px;
+            padding-right: 40px;
+        }
+    }
+
     .button-close {
         margin-right: 5rem;
         background-color: $backgroundColor;
-        padding: 0px;       
-    }
-
-    .btn-outline-secondary:not(:hover) {
-        border-color: #dee2e6;
-        background-color: white;
-    }
-
-    .btn-outline-secondary:focus {
-        color: #212529;
+        padding: 0px;
     }
 
     .dropdown:not(.bs-dropdown) {
         margin-left: 0px;
         border: 1px solid #dee2e6;
-        border-right: none;
+        border-radius: 0.375rem !important;
         background: $backgroundColor;
         text-align: left;
         display: table-cell;
@@ -42,19 +60,27 @@
             border: none;
             background: none;
             min-height: initial;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
 
+            // Remove the old CSS-generated icon
             &:after {
-                left: 50%;
-                top: 50%;
-                transform: translateY(-50%) translateX(-50%);
-                margin-right: 5px;
-                margin-top: -1px;
+                display: none;
+            }
+
+            // Style the new Font Awesome icon
+            .fa-caret-down {
+                color: #6c757d;
+                font-size: 14px;
             }
         }
 
         .dropdownList {
             right: 0;
             margin-top: 21px;
+            width: 500%;
         }
     }
 

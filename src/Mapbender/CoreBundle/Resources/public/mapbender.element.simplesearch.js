@@ -105,8 +105,37 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         const configuration = this.options['configurations'][this.selectedConfiguration];
         this.searchInput = $('.searchterm', this.element);
+        this.searchIcon = $('.-fn-search-icon', this.element);
         this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
+        
+        if (this.searchInput.val().length > 0) {
+            this.searchIcon.hide();
+            this.searchInput.removeClass('with-icon');
+        }
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
+        
+        this.searchInput.on('focus', function() {
+            self.searchIcon.hide();
+            $(this).removeClass('with-icon');
+        });
+        
+        this.searchInput.on('blur', function() {
+            if ($(this).val().length === 0) {
+                self.searchIcon.show();
+                $(this).addClass('with-icon');
+            }
+        });
+        
+        this.searchInput.on('input', function() {
+            if ($(this).val().length > 0) {
+                self.searchIcon.hide();
+                $(this).removeClass('with-icon');
+            } else if (!$(this).is(':focus')) {
+                self.searchIcon.show();
+                $(this).addClass('with-icon');
+            }
+        });
+        
         this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
             const selectedVal = $(e.target).val();
             if (selectedVal < 0 || selectedVal >= this.options.configurations.length) return;
@@ -167,15 +196,11 @@ $.widget('mapbender.mbSimpleSearch', {
                 self._onAutocompleteSelected(ui.item);
             }
         });
-        // On manual submit (enter key, submit button), trigger autocomplete manually
+        // On manual submit (enter key), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
             if (form && form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete("search");
-        }.bind(this));
-        this.element.on('click', '.-fn-search', function() {
-            if (form && form.reportValidity && !form.reportValidity()) return;
-            this.searchInput.autocomplete('search');
         }.bind(this));
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
@@ -301,6 +326,8 @@ $.widget('mapbender.mbSimpleSearch', {
 
     _clearInputAndMarker: function () {
         this.searchInput.val('');
+        this.searchIcon.show();
+        this.searchInput.addClass('with-icon');
         this.layer.clear();
     },
 });
