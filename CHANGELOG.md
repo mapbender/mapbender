@@ -1,3 +1,6 @@
+* [Design] Design Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
+
+
 ## v4.2.0
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
