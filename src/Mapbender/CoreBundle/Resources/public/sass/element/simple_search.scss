@@ -29,13 +29,13 @@
         text-overflow: ellipsis;
 
         &.with-icon {
-            padding-left: 40px;
-            padding-right: 12px;
+            padding-left: 28px; // Reduced from 40px to move text closer to the magnifying glass
+            padding-right: 40px; // Increased to maintain total field width
         }
 
         &:not(.with-icon) {
             padding-left: 12px;
-            padding-right: 40px;
+            padding-right: 56px; // Increased to maintain total field width when icon is hidden
         }
     }
 
@@ -79,7 +79,6 @@
 
         .dropdownList {
             right: 0;
-            margin-top: 21px;
             width: 500%;
         }
     }
