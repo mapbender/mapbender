@@ -114,13 +114,11 @@ $.widget('mapbender.mbSimpleSearch', {
         }
         this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
         
-        this.searchInput.on('focus', function() {
-            self.searchIcon.hide();
-            $(this).removeClass('with-icon');
-        });
-        
-        this.searchInput.on('blur', function() {
-            if ($(this).val().length === 0) {
+        this.searchInput.on('input', function() {
+            if ($(this).val().length > 0) {
+                self.searchIcon.hide();
+                $(this).removeClass('with-icon');
+            } else {
                 self.searchIcon.show();
                 $(this).addClass('with-icon');
             }
