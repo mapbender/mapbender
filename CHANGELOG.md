@@ -1,3 +1,7 @@
+## next bugfix release
+* [WMSLoader] Fix default info format and overwritten info format via attributes was ignored ([#PR1769](https://github.com/mapbender/mapbender/pull/1769))
+
+
 ## v4.2.0
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
