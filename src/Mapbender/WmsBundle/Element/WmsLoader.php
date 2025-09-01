@@ -178,8 +178,8 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         }
         // amend info_format and format options
         foreach ($layerConfigurations as &$layerConfiguration) {
-            $layerConfiguration['configuration']['options']['info_format'] = $infoFormat ?? $config['defaultInfoFormat'];
-            $layerConfiguration['configuration']['options']['format'] = $config['defaultFormat'];
+            $layerConfiguration['options']['info_format'] = $infoFormat ?? $config['defaultInfoFormat'];
+            $layerConfiguration['options']['format'] = $config['defaultFormat'];
         }
 
         return new JsonResponse($layerConfigurations);
