@@ -275,6 +275,24 @@ $.widget('mapbender.mbSimpleSearch', {
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
         this._setFeatureMarker(feature);
+        
+        // Move cursor to the beginning of the input field
+        var self = this;
+        setTimeout(function() {
+            var inputElement = self.searchInput.get(0);
+            if (inputElement) {
+                inputElement.focus();
+                if (inputElement.setSelectionRange) {
+                    inputElement.setSelectionRange(0, 0);
+                } else if (inputElement.createTextRange) {
+                    // IE fallback
+                    var range = inputElement.createTextRange();
+                    range.moveStart('character', 0);
+                    range.moveEnd('character', 0);
+                    range.select();
+                }
+            }
+        }, 10);
     },
     _setFeatureMarker: function(feature) {
         this.layer.clear();
