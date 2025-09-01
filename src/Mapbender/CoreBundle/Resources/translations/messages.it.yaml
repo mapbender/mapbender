@@ -552,7 +552,7 @@ mb:
         circle: Cerchio
       inputs:
         label: Label
-        radius: Raggio
+        radius: Raggio (m)
       geometry:
         action:
           remove: 'Rimuovi la geometria'

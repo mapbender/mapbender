@@ -46,7 +46,7 @@
             <label for="label-text" class="form-label">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
             <div class="input-group">
                 <input name="radius" type="text" class="form-control" disabled="disabled">
-                <span class="input-group-text">m</span>
+                <span class="input-group-text"></span>
             </div>
         </div>
         {%- endif -%}
@@ -68,21 +68,18 @@
     </table>
     <div class="hidden -js-edit-content">
         <div class="popover-body">
-            <div class="row mb-3">
+            <div class="mb-1">
+                <span class="popupClose right" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}">
+                    <i class="fa fas fa-xmark -fn-close"></i>
+                </span>
+            </div>
+            <div class="mb-3 mr">
                 <label for="label-text" class="col-form-label col-5 col-xs-5">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
                 <div class="col-7 col-xs-7"><input type="text" name="label-text" class="form-control"></div>
             </div>
-            <div class="row mb-3" data-toolnames="circle">
+            <div class="mb-3 mr" data-toolnames="circle">
                 <label for="radius" class="col-form-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
-                <div class="col-8 col-xs-8">
-                    <div class="input-group">
-                        <input type="text" name="radius" class="form-control">
-                        <span class="input-group-text">m</span>
-                    </div>
-                </div>
-            </div>
-            <div class="text-nowrap text-end">
-                <button type="button" class="btn btn-sm btn-light -fn-close">{{ 'mb.actions.close' | trans }}</button>
+                <div class="col-7 col-xs-7"><input type="text" name="radius" class="form-control"></div>
             </div>
         </div>
     </div>
