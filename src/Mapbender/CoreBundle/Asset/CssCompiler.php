@@ -27,6 +27,7 @@ class CssCompiler extends AssetFactoryBase
     public function __construct(FileLocatorInterface $fileLocator,
                                 LoggerInterface $logger,
                                 $webDir, $bundleClassMap,
+                                /** @var ScssphpFilter  */
                                 protected FilterInterface $sassFilter,
                                 protected RouterInterface $router)
     {

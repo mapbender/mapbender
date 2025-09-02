@@ -4,11 +4,13 @@
 namespace Mapbender\ManagerBundle\Component;
 
 
+use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType;
 use Mapbender\ManagerBundle\Form\Type\ElementTitleType;
+use phpDocumentor\Reflection\Types\ClassString;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -78,6 +80,7 @@ class ElementFormFactory
         }
 
         $this->elementFilter->prepareForForm($element);
+        /** @var class-string<AbstractElementService> $handlingClass */
         $handlingClass = $this->elementFilter->getHandlingClassName($element);
 
         $formType = $this->formFactory->createBuilder(FormType::class, $element, $options);
@@ -144,6 +147,7 @@ class ElementFormFactory
      */
     public function getConfigurationFormType(Element $element)
     {
+        /** @var class-string<AbstractElementService> $handlingClass */
         $handlingClass = $this->elementFilter->getHandlingClassName($element);
         $typeName = $handlingClass::getType();
         if (is_string($typeName) && preg_match('#^[\w\d]+(\\\\[\w\d]+)+$#', $typeName)) {
