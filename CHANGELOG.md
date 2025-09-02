@@ -1,5 +1,6 @@
 ## next bugfix release
 * [WMSLoader] Fix default info format and overwritten info format via attributes was ignored ([#PR1769](https://github.com/mapbender/mapbender/pull/1769))
+* [FeatureInfo] Fix iframe did not use full height ([#PR1770](https://github.com/mapbender/mapbender/pull/1770))
 
 
 ## v4.2.0
