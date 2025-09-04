@@ -7,9 +7,19 @@
         constructor(configuration, $element) {
             super(configuration, $element);
             this.$toolBarItem = $(this.$element).closest('.toolBarItem');
+            if (!this.$toolBarItem.is('img') && !this.$toolBarItem.attr('tabindex')) {
+                this.$toolBarItem.attr('tabindex', '0');
+            }
             $(this.$element)
                 .on('click', $.proxy(this._onClick, this))
-                .on('mbButtonDeactivate', $.proxy(this.deactivate, this));
+                .on('mbButtonDeactivate', $.proxy(this.deactivate, this))
+                .on('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this._onClick();
+                    }
+                });
             // child widget may have initialized highlight state to a non-default
             this._setActive(this.isActive());
         }
@@ -204,8 +214,6 @@
                 const $target = $('#' + this.options.target);
                 const nameParts = targetInit.split('.');
                 if (nameParts.length === 1) {
-                    // This is a BC construct currently without known or conceivable use cases
-                    // this.targetWidget = $target[nameParts];
                     // handle new JS Native Classes here
                     const className = nameParts[0];
                     this.targetWidget = new Mapbender.Element[className](targetConf.configuration, $target);

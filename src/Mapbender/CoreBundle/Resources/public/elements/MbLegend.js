@@ -5,9 +5,8 @@
             super(configuration, $element);
 
             this.useDialog_ = !this.$element.closest('.sideContent, .mobilePane').length;
-            const self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
-                self._setup(mbMap);
+                this._setup(mbMap);
             }, () => {
                 Mapbender.checkTarget('mbLegend');
             });
@@ -15,7 +14,7 @@
         _setup(mbMap) {
             this.mbMap = mbMap;
             this.onMapLoaded();
-            //this._trigger('ready');
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
         }
 
         onMapLoaded(e) {
@@ -159,7 +158,7 @@
                 if (options.showLayerTitle && layer.legend.type === 'url') {
                     $li.append(widget.createTitle(layer));
                 }
-                this.createLegendForLayer(layer).then((result) => $li.append(result));
+                Promise.resolve(this.createLegendForLayer(layer)).then((result) => $li.append(result));
             }
             return $li;
         }

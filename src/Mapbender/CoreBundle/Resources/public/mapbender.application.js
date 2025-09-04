@@ -318,11 +318,6 @@ $.extend(Mapbender, (function($) {
         if (!$node.length) {
             throw new Error('Element #' + id + ' not found in DOM');
         }
-        if (data.init === "mapbender.mbAboutDialog") {
-            instance = new Mapbender.Element.MbAboutDialog(data.configuration, $node);
-            Mapbender.elementRegistry.markCreated(id, instance);
-            return;
-        }
         if (data.init) {
             var initInfo = _getElementInitInfo(data.init);
             // handle new JS-Native-Classes
