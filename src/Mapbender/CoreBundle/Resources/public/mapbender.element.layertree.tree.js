@@ -16,6 +16,16 @@
         _mobilePane: null,
         useDialog_: false,
         treeCreated: false,
+        cssClasses: {
+            menuClose: 'fa-xmark',
+            menuOpen: 'fa-sliders',
+            checkboxUnchecked: 'fa-square',
+            checkboxChecked: 'fa-square-check',
+            infoInactive: 'fa-info',
+            infoActive: 'fa-info-circle',
+            folderExpanded: 'fa-caret-down',
+            folderCollapsed: 'fa-caret-right'
+        },
 
         _create: function () {
             // see https://stackoverflow.com/a/4819886
@@ -310,7 +320,9 @@
                 if (!$layers.length) {
                     $layers = $(document.createElement('ul')).addClass('layers');
                     $parent.append($layers);
-                    $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
+                    $toggleChildrenButton
+                        .toggleClass(this.cssClasses.folderExpanded, treeOptions.toggle)
+                        .toggleClass(this.cssClasses.folderCollapsed, !treeOptions.toggle);
                 }
 
                 $layers.append(this._createLayerNode(layer));
@@ -385,8 +397,8 @@
         _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
-                .toggleClass('fa-caret-down', active)
-                .toggleClass('fa-caret-right', !active)
+                .toggleClass(this.cssClasses.folderExpanded, active)
+                .toggleClass(this.cssClasses.folderCollapsed, !active)
             ;
         },
         _toggleSelectedLayer: function (e) {
@@ -513,8 +525,8 @@
                     }
                     $container.toggleClass('showLeaves', !isInContainer);
                     $container.find('.-fn-toggle-children:first > i')
-                        .toggleClass('fa-folder-open', !isInContainer)
-                        .toggleClass('fa-folder', isInContainer);
+                        .toggleClass(this.cssClasses.folderExpanded, !isInContainer)
+                        .toggleClass(this.cssClasses.folderCollapsed, isInContainer);
 
                 });
             });
@@ -542,7 +554,7 @@
                 $menu.remove();
                 return;
             }
-            
+
             // Insert the menu directly after the leaveContainer, but before any nested ul.layers
             const $leaveContainer = $layerNode.find('.leaveContainer:first');
             $leaveContainer.after($menu);
@@ -655,15 +667,15 @@
                 // Close all other menus first
                 $('.layer-menu', this.element).remove();
                 // Reset all menu button icons back to bars
-                $('.layer-menu-btn i', this.element).removeClass('fa-xmark').addClass('fa-bars');
-                
+                $('.layer-menu-btn i', this.element).removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
-                
+
                 // Change only this specific menu button icon to X
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
-                $menuBtn.removeClass('fa-bars').addClass('fa-xmark');
+                $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
 
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
                 const $firstFocusable = $menu.find('[tabindex="0"]').first();
@@ -675,7 +687,7 @@
                 $('>.layer-menu', $layerNode).remove();
                 // Reset only this menu button icon back to bars
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
-                $menuBtn.removeClass('fa-xmark').addClass('fa-bars');
+                $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
             }
 
             return false;
@@ -875,9 +887,9 @@
             var icons;
             var hideLayerNameWhenCheckboxDisabled = false;
             if ($el.is('.-fn-toggle-info')) {
-                icons = ['fa-info', 'fa-info-circle'];
+                icons = [this.cssClasses.infoInactive, this.cssClasses.infoActive];
             } else {
-                icons = ['fa-square', 'fa-square-check'];
+                icons = [this.cssClasses.checkboxUnchecked, this.cssClasses.checkboxChecked];
                 hideLayerNameWhenCheckboxDisabled = !enabled && active;
             }
             $('>i', $el)
