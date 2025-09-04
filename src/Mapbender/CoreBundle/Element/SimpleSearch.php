@@ -58,7 +58,7 @@ class SimpleSearch extends AbstractElementService
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSimpleSearch';
+        return 'MbSimpleSearch';
     }
 
     public static function getDefaultConfiguration()
@@ -129,7 +129,7 @@ class SimpleSearch extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSimpleSearch.js',
             ),
             'css' => array(
                 "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
