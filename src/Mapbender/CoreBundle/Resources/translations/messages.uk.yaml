@@ -397,7 +397,7 @@ mb:
         circle: Коло
       inputs:
         label: Мітка
-        radius: Радіус
+        radius: Радіус (м)
       geometry:
         action:
           remove: Видалити геометрію

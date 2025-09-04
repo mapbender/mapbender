@@ -318,6 +318,9 @@ mb:
         polygon: Polygoon
         rectangle: Rechthoek
         circle: Cirkel
+      inputs:
+        label: Belettering
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Verwijder geometrie'

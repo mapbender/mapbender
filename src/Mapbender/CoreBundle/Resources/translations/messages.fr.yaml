@@ -325,6 +325,9 @@ mb:
         polygon: Polygone
         rectangle: Rectangle
         circle: Cercle
+      inputs:
+        label: Inscription
+        radius: Rayon (m)
       geometry:
         action:
           remove: Supprimer la géométrie
