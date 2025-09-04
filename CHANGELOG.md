@@ -1,3 +1,7 @@
+* [Design] Design Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766))
+
+
+
 ## v4.2.0
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 
