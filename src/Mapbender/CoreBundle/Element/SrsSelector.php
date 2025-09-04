@@ -47,7 +47,7 @@ class SrsSelector extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSrsSelector.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.scss',
@@ -71,7 +71,7 @@ class SrsSelector extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSrsSelector';
+        return 'MbSrsSelector';
     }
 
     public function getView(Element $element)
