@@ -130,7 +130,11 @@ $layer-slider-bar-height: 5px;
 }
 
 .-fn-toggle-selected {
-  color: var(--primary);
+  color: var(--checkbox-unchecked);
+
+    &.active {
+        color: var(--checkbox-checked);
+    }
   font-size: 1.4em;
   display: flex;
   align-items: center;
