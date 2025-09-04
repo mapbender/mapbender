@@ -106,34 +106,16 @@ $.widget('mapbender.mbSimpleSearch', {
         const configuration = this.options['configurations'][this.selectedConfiguration];
         this.searchInput = $('.searchterm', this.element);
         this.searchIcon = $('.-fn-search-icon', this.element);
+        this.clearIcon = $('.-fn-reset', this.element);
         this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
-        
-        if (this.searchInput.val().length > 0) {
-            this.searchIcon.hide();
-            this.searchInput.removeClass('with-icon');
-        }
-        this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
-        
-        this.searchInput.on('input', function() {
-            if ($(this).val().length > 0) {
-                self.searchIcon.hide();
-                $(this).removeClass('with-icon');
-            } else {
-                self.searchIcon.show();
-                $(this).addClass('with-icon');
-            }
+
+        this.clearIcon.on('click', () => this._clearInputAndMarker());
+
+        this._updateSearchAndClearIconState();
+        this.searchInput.on('input focus blur', () => {
+            this._updateSearchAndClearIconState();
         });
-        
-        this.searchInput.on('input', function() {
-            if ($(this).val().length > 0) {
-                self.searchIcon.hide();
-                $(this).removeClass('with-icon');
-            } else if (!$(this).is(':focus')) {
-                self.searchIcon.show();
-                $(this).addClass('with-icon');
-            }
-        });
-        
+
         this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
             const selectedVal = $(e.target).val();
             if (selectedVal < 0 || selectedVal >= this.options.configurations.length) return;
@@ -205,6 +187,17 @@ $.widget('mapbender.mbSimpleSearch', {
         });
         this.initialised = true;
     },
+    _updateSearchAndClearIconState: function() {
+          if (this.searchInput.val().length > 0) {
+                this.searchIcon.hide();
+                this.clearIcon.show();
+                this.searchInput.removeClass('with-icon');
+            } else {
+                this.searchIcon.show();
+                this.clearIcon.hide();
+                this.searchInput.addClass('with-icon');
+            }
+    },
     _parseFeature: function(doc) {
         const configuration = this.options['configurations'][this.selectedConfiguration];
         switch ((configuration.geom_format || '').toUpperCase()) {
@@ -275,22 +268,13 @@ $.widget('mapbender.mbSimpleSearch', {
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
         this._setFeatureMarker(feature);
-        
+
         // Move cursor to the beginning of the input field
-        var self = this;
-        setTimeout(function() {
-            var inputElement = self.searchInput.get(0);
+        setTimeout(() => {
+            var inputElement = this.searchInput.get(0);
             if (inputElement) {
                 inputElement.focus();
-                if (inputElement.setSelectionRange) {
-                    inputElement.setSelectionRange(0, 0);
-                } else if (inputElement.createTextRange) {
-                    // IE fallback
-                    var range = inputElement.createTextRange();
-                    range.moveStart('character', 0);
-                    range.moveEnd('character', 0);
-                    range.select();
-                }
+                inputElement.setSelectionRange(0, 0);
             }
         }, 10);
     },
@@ -342,8 +326,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
     _clearInputAndMarker: function () {
         this.searchInput.val('');
-        this.searchIcon.show();
-        this.searchInput.addClass('with-icon');
+        this._updateSearchAndClearIconState();
         this.layer.clear();
     },
 });
