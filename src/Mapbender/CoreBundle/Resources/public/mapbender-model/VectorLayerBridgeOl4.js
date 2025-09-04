@@ -53,9 +53,8 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                     break;
                 case 'poiIcon':
                     // @todo: move poi icon options out of mbMap widget
-                    const elements = Mapbender.configuration.elements;
-                    const mapElement = Object.values(elements).filter(el => el.init === 'MbMap')[0];
-                    var poiOptions = mapElement.configuration.poiIcon;
+                    const mapElement = $('.mb-element-map').data('MbMap');
+                    var poiOptions = mapElement.options.poiIcon;
                     var iconUrl = Mapbender.configuration.application.urls.asset + poiOptions.image;
                     this.markerStyle_ = new ol.style.Style({
                         image: new ol.style.Icon({

@@ -3,6 +3,7 @@ class MapbenderElement {
     constructor(configuration, $element) {
         this.options = configuration || {};
         this.$element = $element;
+        this.$element.data(this.constructor.name, this);
         this.popup = null;
         this.autoOpen = false;
     }

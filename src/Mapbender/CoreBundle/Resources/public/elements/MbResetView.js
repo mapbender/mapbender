@@ -26,7 +26,7 @@
                     sources: JSON.parse(settings.sourcesStates),
                     viewParams: this.mbMap.getModel().decodeViewParams(settings.viewParams)
                 };
-                viewManager.data('mapbenderMbViewManager')._apply(settings);
+                viewManager.data('MbViewManager')._apply(settings);
             }
             if (this.options.resetDynamicSources) {
                 this.resetDynamicSources();
