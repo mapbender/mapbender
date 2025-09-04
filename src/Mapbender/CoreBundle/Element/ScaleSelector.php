@@ -41,7 +41,7 @@ class ScaleSelector extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbScaleSelector.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.scss',
@@ -73,7 +73,7 @@ class ScaleSelector extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbScaleSelector';
+        return 'MbScaleSelector';
     }
 
     public function getClientConfiguration(Element $element)
