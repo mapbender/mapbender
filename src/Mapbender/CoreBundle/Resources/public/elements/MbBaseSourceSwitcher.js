@@ -1,30 +1,26 @@
-(function ($) {
-    'use strict';
+(function() {
 
-    $.widget("mapbender.mbBaseSourceSwitcher", {
-        options: {},
-        mbMap: null,
-
-        _create: function () {
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self.mbMap = mbMap;
-                self._setup();
+    class MbBaseSourceSwitcher extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this.mbMap = mbMap;
+                this._setup();
             }, function() {
-                Mapbender.checkTarget('mbBaseSourceSwitcher')
+                Mapbender.checkTarget('mbBaseSourceSwitcher');
             });
-        },
+        }
 
-        _setup: function () {
-            var self = this;
-            this.element.on('click', '.basesourcesetswitch', function(evt) {
+        _setup() {
+            const self = this;
+            this.$element.on('click', '.basesourcesetswitch', function(evt) {
                 self._toggleMapset(evt);
             });
             this.mbMap.element.on('mbmapsourcechanged', function() {
                 self.updateHighlights();
             });
             this.updateHighlights();
-            this.element.on('mouseover click', '.basesourcegroup', (evt) => {
+            this.$element.on('mouseover click', '.basesourcegroup', (evt) => {
                 const $group = $(evt.target).closest('.basesourcegroup');
                 if (evt.type === 'click') {
                     evt.stopPropagation();
@@ -37,12 +33,14 @@
                 }
                 $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
             });
-        },
-        updateHighlights: function() {
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
+
+        updateHighlights() {
             var allActiveSources = [];
             var remainingMenuItems = [];
             var i, menuItem, $menuItem;
-            var menuItems = $('.basesourcesetswitch[data-sourceset]', this.element).get();
+            var menuItems = $('.basesourcesetswitch[data-sourceset]', this.$element).get();
             for (i = 0; i < menuItems.length; ++i) {
                 menuItem = menuItems[i];
                 $menuItem = $(menuItem);
@@ -81,8 +79,9 @@
                 var noOtherSourcesActive = activeSubset.length === allActiveSources.length;
                 this._highlight($menuItem, allAssociatedSourcesActive && noOtherSourcesActive);
             }
-        },
-        _highlight: function($node, state) {
+        }
+
+        _highlight($node, state) {
             // Fake radio button for font size scalability on mobile
             // @todo: use a real radio button..?
             var $fakeRadio = $('>.state-check', $node);
@@ -92,24 +91,24 @@
                 .toggleClass('fa-dot-circle fa-dot-circle-o', state)
             ;
             if (state) {
-                $node.parentsUntil(this.element, '.basesourcegroup').attr('data-state', 'active');
+                $node.parentsUntil(this.$element, '.basesourcegroup').attr('data-state', 'active');
             } else {
                 $node.attr('data-state', null);
-                var $group = $node.closest('.basesourcegroup', this.element);
+                var $group = $node.closest('.basesourcegroup', this.$element);
                 while ($group.length) {
                     if ($('.basesourcesetswitch[data-state="active"]', $group).length) {
                         break;
                     } else {
                         $group.attr('data-state', null);
                     }
-                    $group = $group.parent().closest('.basesourcegroup', this.element);
+                    $group = $group.parent().closest('.basesourcegroup', this.$element);
                 }
             }
-        },
+        }
 
-        _toggleMapset: function (event) {
+        _toggleMapset(event) {
             var $menuItem = $(event.currentTarget);
-            var $others = $('.basesourcesetswitch', this.element).not($menuItem.get(0));
+            var $others = $('.basesourcesetswitch', this.$element).not($menuItem.get(0));
             var sourcesOn = $menuItem.data('sources');
             var sourcesOff = [];
             $others.map(function() {
@@ -139,13 +138,14 @@
                 this.mbMap.model.setSourceVisibility(sourcesOff[i], false, true);
             }
             this._hideMobile();
-        },
+        }
 
-        _hideMobile: function() {
-            $('.mobileClose', $(this.element).closest('.mobilePane')).click();
-        },
+        _hideMobile() {
+            $('.mobileClose', $(this.$element).closest('.mobilePane')).click();
+        }
+    }
 
-        _dummy_: null
-    });
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbBaseSourceSwitcher = MbBaseSourceSwitcher;
 
-})(jQuery);
+})();
