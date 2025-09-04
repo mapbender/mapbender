@@ -32,7 +32,7 @@ class Ruler extends AbstractElementService
     {
         return [
             'js' => [
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbRuler.js',
             ],
             'css' => [
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.css',
@@ -85,7 +85,7 @@ class Ruler extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbRuler';
+        return 'MbRuler';
     }
 
     public function getView(Element $element)
