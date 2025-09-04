@@ -34,7 +34,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
             'trans' => array(),
         );
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.gpsPosition.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbGpsPosition.js',
             // Uncomment to enable Geolocation API mock
             // '@MapbenderCoreBundle/Resources/public/GeolocationMock.js',
         ));
@@ -72,7 +72,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbGpsPosition';
+        return 'MbGpsPosition';
     }
 
     public function getView(Element $element)
