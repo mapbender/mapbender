@@ -19,8 +19,8 @@
         cssClasses: {
             menuClose: 'fa-xmark',
             menuOpen: 'fa-sliders',
-            checkboxUnchecked: 'fa-square',
-            checkboxChecked: 'fa-square-check',
+            checkboxUnchecked: 'far fa-square',
+            checkboxChecked: 'fas fa-square-check',
             infoInactive: 'fa-info',
             infoActive: 'fa-info-circle',
             folderExpanded: 'fa-caret-down',
