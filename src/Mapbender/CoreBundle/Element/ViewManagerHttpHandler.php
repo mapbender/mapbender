@@ -110,8 +110,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         }
 
         $criteria->orderBy(array(
-            'applicationSlug' => Criteria::ASC,
-            'userId' => Criteria::ASC,
+            'title' => Criteria::ASC,
         ));
         return $this->getRepository()->matching($criteria);
     }
@@ -191,8 +190,8 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         // NOTE: Empty arrays do not survive jQuery Ajax post, will be stripped completely from incoming data
         $allValues = $request->request->all();
         $record->setViewParams($allValues['viewParams']);
-        $record->setLayersetDiffs($allValues['layersetsDiff'] ?? []);
-        $record->setSourceDiffs($allValues['sourcesDiff'] ?? []);
+        $record->setLayersetStates(json_decode($allValues['layersetStates'], true) ?? []);
+        $record->setSourceStates(json_decode($allValues['sourcesStates'], true) ?? []);
         $record->setMtime(new \DateTime());
     }
 

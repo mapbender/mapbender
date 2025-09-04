@@ -17,10 +17,23 @@
         }
 
         run() {
+            const viewManager = $('.mb-element-viewmanager');
+            if (viewManager.length > 0) {
+                let settings = window.localStorage.getItem('viewManagerSettings');
+                settings = JSON.parse(settings);
+                settings = {
+                    layersets: JSON.parse(settings.layersetStates),
+                    sources: JSON.parse(settings.sourcesStates),
+                    viewParams: this.mbMap.getModel().decodeViewParams(settings.viewParams)
+                };
+                viewManager.data('mapbenderMbViewManager')._apply(settings);
+            }
             if (this.options.resetDynamicSources) {
                 this.resetDynamicSources();
             }
-            this.mbMap.getModel().applySettings(this.initial);
+            if (viewManager.length === 0) {
+                this.mbMap.getModel().applySettings(this.initial);
+            }
         }
 
         resetDynamicSources() {

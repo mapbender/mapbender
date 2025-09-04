@@ -21,11 +21,13 @@ mb:
           bike: Велосипед
           foot: Пішки
           start: Початок
+          selectExportFormat: Виберіть формат для експорту
           intermediate: Проміжний
           destination: Кінцева точка
           clearroute: Очистити
           flippoints: Перевернути
           addintermediate: Додати точку
+          allowExport: Дозволити експорт знайдених маршрутів
           getroute: Рухатися!
       info: займе
       minutes: Хв
@@ -76,6 +78,7 @@ mb:
           buffer: Буфер зуму (м)
           autoSubmit: Маршрут одразу
           addIntermediatePoints: Дозволити проміжні точки
+          allowExport: Дозволити експорт
           advanced: Розширені налаштування маршруту
           search: Увімкнути пошук
           reverseGeocoding: Зворотний геокодування

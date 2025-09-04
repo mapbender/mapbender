@@ -1,5 +1,47 @@
 # Upgrading Guide
 
+## 4.2.0
+
+### Update database
+If you were using the ViewManager before, the old entries need to be deleted manually.
+
+```bash
+bin/console doctrine:query:sql "DELETE from mb_core_viewmanager_state;"
+```
+
+Update your entities to the latest version by executing the following command
+```bash
+bin/console doctrine:schema:update --complete --force
+```
+:warning: If you update from Mapbender 3, read the upgrading guide for version 4.0 first!
+
+### DataSource handling in backend refactored
+To simplify integrating new data sources into Mapbender (starting with Mapbox Vector Tiles), the 
+DataSource handling in the backend has been refactored.   
+Refer to [#PR1745](https://github.com/mapbender/mapbender/pull/1745) for details.
+
+### New DataSource Mapbox Vector Tiles
+To use the print feature along with the new Mapbox Vector Tiles source, you need to have NodeJS
+and puppeteer globally installed on your system. This emulates a browser to render the vector tiles
+on the server side.
+
+```bash
+# for node js installation see https://nodejs.org/en/download
+# Important: installation must be done as the web server user, e.g.: sudo su - www-data -s /bin/bash
+npm install -g puppeteer
+puppeteer browsers install
+
+# check correct installation (also as web server user)
+bin/console mapbender:config:check
+```
+
+### ViewManager
+The ViewManager was refactored. It now stores the entire layer tree instead of just diffs, which
+allows to save reordering of layers and sources added via the WMS loader. A migration of existing
+saved views was not implemented, so all existing views will be lost during the upgrade / must be deleted
+before the migration since otherwise the automatic migration will fail (see section "Update database").
+
+
 ## 4.1.0
 
 ### Added REST-API

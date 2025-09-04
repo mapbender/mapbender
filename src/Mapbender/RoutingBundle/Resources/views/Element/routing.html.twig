@@ -62,6 +62,13 @@
 {% endif %}
 <div class="mb-routing-results">
     <div class="mb-routing-info alert alert-info d-none mt-3"></div>
+    <div class="mb-routing-export input-group">
+        <select class="select-export-format form-select form-select-sm">
+            <option value="" selected>
+                {{ 'mb.routing.frontend.dialog.label.selectExportFormat' | trans }}
+            </option>
+        </select>
+    </div>
     <div class="mb-routing-instructions"></div>
 </div>
 <!-- Templates -->

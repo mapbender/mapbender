@@ -21,11 +21,13 @@ mb:
           bike: Fahrrad
           foot: Fußgänger
           start: Start
+          selectExportFormat: Zum Exportieren Format auswählen
           intermediate: Via
           destination: Ziel
           clearroute: Zurücksetzen
           flippoints: Route umkehren
           addintermediate: Zwischenstop hinzufügen
+          allowExport: Export von gesuchten Routen
           getroute: Los geht's!
       info: benötigen
       minutes: Min
@@ -76,6 +78,7 @@ mb:
           buffer: Zoompuffer (m)
           autoSubmit: Route direkt ausgeben
           addIntermediatePoints: Zwischenpunkte erlauben
+          allowExport: Export erlauben
           advanced: Erweiterte Einstellungen
           search: Suche aktivieren
           reverseGeocoding: Geokodierung aktivieren

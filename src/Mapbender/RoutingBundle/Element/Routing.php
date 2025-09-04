@@ -71,6 +71,7 @@ class Routing extends AbstractElementService
             'advancedSettings' => false,
             'autoSubmit' => false,
             'allowIntermediatePoints' => false,
+            'allowExport' => false,
             'useSearch' => false,
             'useReverseGeocoding' => false,
             'buffer' => 100,
@@ -135,6 +136,7 @@ class Routing extends AbstractElementService
             'title' => $element->getTitle(),
             'transportationModes' => $this->getTransportationModes($element),
             'allowIntermediatePoints' => $config['allowIntermediatePoints'],
+            'allowExport' => $config['allowExport'],
             'attribution' => $config['routingConfig']['osrm']['attribution'],
         ];
         return $view;

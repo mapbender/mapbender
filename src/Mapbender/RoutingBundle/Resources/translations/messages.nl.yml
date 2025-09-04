@@ -21,11 +21,13 @@ mb:
           bike: Fiets
           foot: Te voet
           start: Start
+          selectExportFormat: Selecteer formaat voor export
           intermediate: Via
           destination: Bestemming
           clearroute: Wissen
           flippoints: Omkeren
           addintermediate: Punt toevoegen
+          allowExport: Toestaan van export van gezochte routes
           getroute: Ga!
       info: zal duren
       minutes: Min
@@ -76,6 +78,7 @@ mb:
           buffer: Zoom buffer (m)
           autoSubmit: Route onmiddellijk
           addIntermediatePoints: Tussenpunten toestaan
+          allowExport: Toestaan van export
           advanced: Geavanceerde route-instellingen
           search: Zoeken inschakelen
           reverseGeocoding: Omgekeerde geocodering

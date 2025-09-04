@@ -126,7 +126,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
         $action = $request->attributes->get('action');
         switch ($action) {
             case 'export':
-                $data = $this->prepareJobData($request, $element->getConfiguration());
+                $data = $this->prepareJobData($request, $element);
                 $format = $request->request->get('imageformat');
                 $image = $this->exportService->runJob($data);
                 return new Response($this->exportService->dumpImage($image, $format), Response::HTTP_OK, array(
@@ -138,9 +138,10 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
         }
     }
 
-    protected function prepareJobData(Request $request, $configuration)
+    protected function prepareJobData(Request $request, Element $element)
     {
         $data = json_decode($request->get('data'), true);
+        $data['application'] = $element->getApplication();
         // resolve tunnel requests
         foreach (ArrayUtil::getDefault($data, 'layers', array()) as $ix => $layerData) {
             if (!empty($layerData['url'])) {

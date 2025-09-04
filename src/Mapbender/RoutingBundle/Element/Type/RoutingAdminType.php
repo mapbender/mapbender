@@ -44,6 +44,10 @@ class RoutingAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.routing.backend.dialog.label.addIntermediatePoints',
             ])
+            ->add('allowExport', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.routing.backend.dialog.label.allowExport',
+            ])
             ->add('useSearch', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.routing.backend.dialog.label.search',
