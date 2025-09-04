@@ -10,13 +10,13 @@
             super(configuration, $element);
 
             this.element = this.$element;
-            this.options.poiIcon = {
+            this.options['poiIcon'] = {
                 image: 'bundles/mapbendercore/image/pin_red.png',
                 width: 32,
                 height: 41,
                 xoffset: -6,
                 yoffset: -38
-            };
+            }
             delete this.options.dpi;
             var self = this;
             Object.defineProperty(this.options, 'dpi', {
@@ -52,7 +52,7 @@
             }
             window.Mapbender.Model = this.model;
             this.map = this.model.map;
-            // self._trigger('ready');
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
         }
 
         getMapState() {

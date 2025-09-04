@@ -23,6 +23,7 @@
                     this.gpsElement = null;
                 }
             }
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
         }
 
         activate(closeCallback) {
