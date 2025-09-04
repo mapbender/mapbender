@@ -105,8 +105,17 @@ $.widget('mapbender.mbSimpleSearch', {
         var self = this;
         const configuration = this.options['configurations'][this.selectedConfiguration];
         this.searchInput = $('.searchterm', this.element);
+        this.searchIcon = $('.-fn-search-icon', this.element);
+        this.clearIcon = $('.-fn-reset', this.element);
         this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
-        this.element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
+
+        this.clearIcon.on('click', () => this._clearInputAndMarker());
+
+        this._updateSearchAndClearIconState();
+        this.searchInput.on('input focus blur', () => {
+            this._updateSearchAndClearIconState();
+        });
+
         this.element.on('change', '.-fn-simple_search-select-configuration', function(e) {
             const selectedVal = $(e.target).val();
             if (selectedVal < 0 || selectedVal >= this.options.configurations.length) return;
@@ -167,20 +176,27 @@ $.widget('mapbender.mbSimpleSearch', {
                 self._onAutocompleteSelected(ui.item);
             }
         });
-        // On manual submit (enter key, submit button), trigger autocomplete manually
+        // On manual submit (enter key), trigger autocomplete manually
         this.element.on('submit', function(evt) {
             evt.preventDefault();
             if (form && form.reportValidity && !form.reportValidity()) return;
             this.searchInput.autocomplete("search");
         }.bind(this));
-        this.element.on('click', '.-fn-search', function() {
-            if (form && form.reportValidity && !form.reportValidity()) return;
-            this.searchInput.autocomplete('search');
-        }.bind(this));
         this.mbMap.element.on('mbmapsrschanged', function(event, data) {
             self.layer.retransform(data.from, data.to);
         });
         this.initialised = true;
+    },
+    _updateSearchAndClearIconState: function() {
+          if (this.searchInput.val().length > 0) {
+                this.searchIcon.hide();
+                this.clearIcon.show();
+                this.searchInput.removeClass('with-icon');
+            } else {
+                this.searchIcon.show();
+                this.clearIcon.hide();
+                this.searchInput.addClass('with-icon');
+            }
     },
     _parseFeature: function(doc) {
         const configuration = this.options['configurations'][this.selectedConfiguration];
@@ -252,6 +268,15 @@ $.widget('mapbender.mbSimpleSearch', {
         this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
         this._hideMobile();
         this._setFeatureMarker(feature);
+
+        // Move cursor to the beginning of the input field
+        setTimeout(() => {
+            var inputElement = this.searchInput.get(0);
+            if (inputElement) {
+                inputElement.focus();
+                inputElement.setSelectionRange(0, 0);
+            }
+        }, 10);
     },
     _setFeatureMarker: function(feature) {
         this.layer.clear();
@@ -301,6 +326,7 @@ $.widget('mapbender.mbSimpleSearch', {
 
     _clearInputAndMarker: function () {
         this.searchInput.val('');
+        this._updateSearchAndClearIconState();
         this.layer.clear();
     },
 });
