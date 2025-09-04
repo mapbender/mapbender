@@ -59,7 +59,7 @@ abstract class Source
         return $this;
     }
 
-    public function getId(): int|string
+    public function getId(): null|int|string
     {
         return $this->id;
     }

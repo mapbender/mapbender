@@ -16,12 +16,10 @@
     }
 
     .popupContent {
-        height: 100%; // for accordion growth
-        .contentItem {
-            height: 100%; // for accordion growth
-            .mb-element-featureinfo {
-                height: 98%; // for accordion growth (conservative; avoid vertical scroll)
-            }
+        height: calc(100% - 20px); // for accordion growth minus padding
+
+        .mb-element-featureinfo {
+            height: 100%;
         }
     }
 }

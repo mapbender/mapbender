@@ -90,7 +90,7 @@ class WmsInstanceLayer extends SourceInstanceItem
         $this->legend = true;
         if ($settings !== null) {
             $this->active = $settings->activateNewLayers();
-            $this->selected = $settings->selectNewLayers();;
+            $this->selected = $settings->selectNewLayers();
         }
     }
 

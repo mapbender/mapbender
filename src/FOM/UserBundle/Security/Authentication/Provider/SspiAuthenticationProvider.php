@@ -17,7 +17,7 @@ class SspiAuthenticationProvider implements AuthenticationManagerInterface
 
     public function authenticate(TokenInterface $token)
     {
-        $user = $this->provider->loadUserByIdentifier($token->getUsername());
+        $user = $this->provider->loadUserByIdentifier($token->getUserIdentifier());
 
         if ($user) {
             $this->checker->checkPreAuth($user);

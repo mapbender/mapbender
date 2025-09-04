@@ -555,6 +555,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             ->leftJoin(WmsLayerSource::class, 'ls', 'WITH', 'l.sourceItem = ls.id')
             ->where('l.sourceInstance IN (:instances)')
             ->setParameter('instances', $sourceInstances)
+            ->orderBy('l.priority')
             ->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY)
         ;
