@@ -48,7 +48,7 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.coordinatesdisplay.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbCoordinatesDisplay.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/coordinatesdisplay.scss',
@@ -76,7 +76,7 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbCoordinatesDisplay';
+        return 'MbCoordinatesDisplay';
     }
 
     public function getView(Element $element)
