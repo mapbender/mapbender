@@ -1,29 +1,27 @@
-(function($){
+(function() {
 
-    $.widget("mapbender.mbWmsloader", $.mapbender.mbDialogElement, {
-        options: {
-            wms_url: null
-        },
-        loadedSourcesCount: 0,
-        elementUrl: null,
-        mbMap: null,
-        _layerOptionsOn: {options: {treeOptions: {selected: true}}},
-        _layerOptionsOff: {options: {treeOptions: {selected: false}}},
-        _create: function() {
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self.mbMap = mbMap;
-                self._setup();
-                self._trigger('ready');
+    class MbWmsLoader extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            this.loadedSourcesCount = 0;
+            this.elementUrl = null;
+            this.mbMap = null;
+            this._layerOptionsOn = {options: {treeOptions: {selected: true}}};
+            this._layerOptionsOff = {options: {treeOptions: {selected: false}}};
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this.mbMap = mbMap;
+                this._setup();
+                Mapbender.elementRegistry.markReady(this.$element.attr('id'));
             }, function() {
                 Mapbender.checkTarget('mbWmsloader');
             });
-        },
-        _setup: function(){
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+        }
+
+        _setup() {
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/';
             var queryParams = Mapbender.Util.getUrlQueryParams(window.location.href);
             Mapbender.declarative = Mapbender.declarative || {};
-            Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
+            Mapbender.declarative['source.add.wms'] = this.loadDeclarativeWms.bind(this);
             if (queryParams.wms_url) {
                 // Fold top-level "VERSION=" and "SERVICE=" onto url (case insensitive)
                 var wmsUrl = this._fixWmsUrl(queryParams.wms_url, queryParams);
@@ -34,28 +32,26 @@
                 this._getInstances(queryParams.wms_id);
             }
 
-            if (Mapbender.ElementUtil.checkDialogMode(this.element)) {
+            if (Mapbender.ElementUtil.checkDialogMode(this.$element)) {
                 if (this.checkAutoOpen()) {
                     this.open();
                 }
                 // Button is added via the popup constructor in dialog mode
-                this.element.find('.-js-submit').remove();
+                this.$element.find('.-js-submit').remove();
             } else {
-                this.element.find('.-js-submit').on('click', this._submit.bind(this));
+                this.$element.find('.-js-submit').on('click', this._submit.bind(this));
             }
-        },
-        defaultAction: function(callback){
-            this.open(callback);
-        },
-        open: function(callback){
+        }
+
+        open(callback){
             this.callback = callback ? callback : null;
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup({
-                    title: this.element.attr('data-title'),
+                    title: this.$element.attr('data-title'),
                     draggable: true,
                     modal: false,
                     closeOnESC: true,
-                    content: this.element,
+                    content: this.$element,
                     detachOnClose: false,
                     width: 500,
                     buttons: [
@@ -72,30 +68,32 @@
                         }
                     ]
                 });
-                this.popup.$element.on('close', $.proxy(this.close, this));
+                this.popup.$element.on('close', this.close.bind(this));
             } else {
                 this.popup.$element.removeClass('d-none');
                 this.popup.focus();
             }
 
             this.notifyWidgetActivated();
-        },
-        _submit: function(e) {
+        }
+
+        _submit(e) {
             if (e) e.preventDefault();
-            var form = this.element.find('form').get(0);
+            var form = this.$element.find('form').get(0);
             if (form.reportValidity && !form.reportValidity()) return;
-            var url = $('input[name="loadWmsUrl"]', this.element).val();
+            var url = $('input[name="loadWmsUrl"]', this.$element).val();
             if (url === '') {
-                $('input[name="loadWmsUrl"]', this.element).focus();
+                $('input[name="loadWmsUrl"]', this.$element).focus();
                 return false;
             }
             var urlObj = new Mapbender.Util.Url(url);
-            urlObj.username = $('input[name="loadWmsUser"]', this.element).val();
-            urlObj.password = $('input[name="loadWmsPass"]', this.element).val();
+            urlObj.username = $('input[name="loadWmsUser"]', this.$element).val();
+            urlObj.password = $('input[name="loadWmsPass"]', this.$element).val();
             this.loadWms(urlObj.asString());
             if (this.popup) this.close();
-        },
-        close: function(){
+        }
+
+        close(){
             if (this.popup && this.popup.$element) {
                 this.popup.$element.addClass('d-none');
             }
@@ -104,8 +102,9 @@
                 this.callback = null;
             }
             this.notifyWidgetDeactivated();
-        },
-        loadDeclarativeWms: function(elm){
+        }
+
+        loadDeclarativeWms(elm){
             const layers = elm.attr('data-mb-wms-layers') || elm.attr('mb-wms-layers');
             const merge = elm.attr('data-mb-wms-merge') || elm.attr('mb-wms-merge');
             var layerNamesToActivate = (layers && layers.split(',')) || ['_all'];
@@ -122,21 +121,22 @@
                     layers: layerNamesToActivate,
                     // Default other layers (=not passed in via mb-wms-layers) to off, as per documentation
                     keepOtherLayerStates: false,
-                    infoFormat : infoFormat
+                    infoFormat: infoFormat
                 }).then(function(source) {
                     if (typeof (source.addParams) === 'function') {
                         source.addParams(customParams);
                     }
                 });
             }
-        },
+        }
+
         /**
          * @param {jQuery} $link
          * @param {string} sourceUrl
          * @param {Array<string>|false} layerNamesToActivate
          * @return {(Mapbender.Source)|null} to indicate if a merge target was found and processed
          */
-        mergeDeclarative: function($link, sourceUrl, layerNamesToActivate) {
+        mergeDeclarative($link, sourceUrl, layerNamesToActivate) {
             // NOTE: The evaluated attribute name has always been 'mb-wms-layer-merge', but documenented name
             //       was 'mb-layer-merge'. Just support both equivalently.
             var mergeLayersAttribValue = $link.attr('data-mb-wms-layer-merge') || $link.attr('data-mb-layer-merge')
@@ -149,14 +149,15 @@
                 //       attributes and config params matter. We leave the source alone completely.
             }
             return mergeCandidate;
-        },
+        }
+
         /**
          * @param {String} url
          * @param {Object} [options]
          * @property {Array<String>} [options.layers]
          * @property {boolean} [options.keepOtherLayerStates]
          */
-        loadWms: function (url, options) {
+        loadWms(url, options) {
             var self = this;
             return $.ajax({
                 url: self.elementUrl + 'loadWms',
@@ -171,8 +172,9 @@
             }).then(function(data) {
                 return self._addSources(data, options || {});
             });
-        },
-        _getInstances: function(scvIds) {
+        }
+
+        _getInstances(scvIds) {
             var self = this;
             $.ajax({
                 url: self.elementUrl + 'getInstances',
@@ -192,16 +194,17 @@
                     Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
                 }
             });
-        },
+        }
+
         /**
          * @param {Array<Object>} sourceDefs
          * @param {Object} options
          * @property {Array<String>} [options.layers]
          * @property {boolean} [options.keepOtherLayerStates]
          */
-        _addSources: function(sourceDefs, options) {
+        _addSources(sourceDefs, options) {
             var keepStates = options.keepOtherLayerStates || (typeof (options.keepOtherLayerStates) === 'undefined');
-            var srcIdPrefix = 'wmsloader-' + $(this.element).attr('id');
+            var srcIdPrefix = 'wmsloader-' + $(this.$element).attr('id');
             var source;
             for (var i = 0; i < sourceDefs.length; ++i) {
                 var sourceDef = sourceDefs[i];
@@ -222,7 +225,8 @@
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
             return source || null;
-        },
+        }
+
         /**
          * Locates an already loaded source with an equivalent base url, returns that source object or null
          * if no source matched.
@@ -231,7 +235,7 @@
          * @returns {Object|null}
          * @private
          */
-        _findMergeCandidateByUrl: function(url) {
+        _findMergeCandidateByUrl(url) {
             var normalizeUrl = function(url) {
                 var strippedUrl = Mapbender.Util.removeSignature(Mapbender.Util.removeProxy(url)).toLowerCase();
                 // normalize query parameter encoding
@@ -247,8 +251,9 @@
                 return sourceNormUrl.indexOf(normUrl) === 0 || normUrl.indexOf(sourceNormUrl) === 0;
             });
             return matches[0] || null;
-        },
-        activateLayersByName: function(source, names, keepCurrentActive) {
+        }
+
+        activateLayersByName(source, names, keepCurrentActive) {
             var activateAll = names.indexOf('_all') !== -1;
             var matchedNames = [];
             if (!keepCurrentActive && !activateAll) {
@@ -283,8 +288,9 @@
                 console.warn("Declarative merge didn't find all layer names requested for activation", names, matchedNames);
             }
             Mapbender.Model.updateSource(source);
-        },
-        _fixWmsUrl: function(baseUrl, defaultParams) {
+        }
+
+        _fixWmsUrl(baseUrl, defaultParams) {
             var extraParams = {};
             var extraParamNames = ['VERSION', 'SERVICE', 'REQUEST'];
             var existingParams = Mapbender.Util.getUrlQueryParams(baseUrl);
@@ -298,12 +304,13 @@
                 }
             });
             return Mapbender.Util.replaceUrlParams(baseUrl, extraParams, true);
-        },
+        }
+
         /**
          * @param {jQuery} $element
          * @return {Object<String, String>}
          */
-        parseCustomParams: function($element) {
+        parseCustomParams($element) {
             var customParams = {};
             ($element.attr('data-mb-add-vendor-specific') || $element.attr('mb-add-vendor-specific') || '').split(/[&?]/).forEach(function(assignment) {
                 var match = assignment && assignment.match(/^(.*?)(?:=(.*))?$/);
@@ -314,11 +321,14 @@
                 }
             });
             return customParams;
-        },
-        _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
-            Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
-        },
-        _destroy: $.noop
-    });
+        }
 
-})(jQuery);
+        _getCapabilitiesUrlError(xml, textStatus, jqXHR){
+            Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
+        }
+    }
+
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbWmsLoader = MbWmsLoader;
+
+})();

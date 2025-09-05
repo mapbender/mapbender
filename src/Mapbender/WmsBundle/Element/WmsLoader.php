@@ -87,7 +87,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbWmsloader';
+        return 'MbWmsLoader';
     }
 
 
@@ -95,7 +95,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     {
         return array(
             'js' => array(
-                '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
+                '@MapbenderWmsBundle/Resources/public/MbWmsLoader.js',
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
