@@ -1,26 +1,23 @@
-(function($){
+(function() {
+    class MbSketch extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
 
-    $.widget("mapbender.mbSketch", $.mapbender.mbDialogElement, {
-        options: {
-            deactivate_on_close: true,
-            geometrytypes: ['point', 'line', 'polygon', 'rectangle', 'circle'],
-            radiusEditing: false,
-            colors: []
-        },
-        mbMap: null,
-        layer: null,
-        geomCounter: 0,
-        rowTemplate: null,
-        toolLabels: {},
-        editing_: null,
-        $labelInput_: null,
-        useDialog_: false,
-        editContent_: null,
-        decimalSeparator_: ((0.5).toLocaleString().substring(1, 2)),
-        selectedColor_: null,
-        drawStyle: null,
+            this.mbMap = null;
+            this.layer = null;
+            this.geomCounter = 0;
+            this.rowTemplate = null;
+            this.toolLabels = {};
+            this.editing_ = null;
+            this.$labelInput_ = null;
+            this.useDialog_ = false;
+            this.editContent_ = null;
+            this.decimalSeparator_ = ((0.5).toLocaleString().substring(1, 2));
+            this.selectedColor_ = null;
+            this.drawStyle = null;
+            this.editControl = null;
+            this.callback = null;
 
-        _create: function() {
             Object.assign(this.toolLabels, {
                 'point': Mapbender.trans('mb.core.sketch.geometrytype.point'),
                 'line': Mapbender.trans('mb.core.sketch.geometrytype.line'),
@@ -29,45 +26,46 @@
                 'circle': Mapbender.trans('mb.core.sketch.geometrytype.circle'),
             });
             this.useDialog_ = this.checkDialogMode();
-            this.editContent_ = $('.-js-edit-content', this.element).remove().removeClass('hidden').html();
-            this.$labelInput_ = $('input[name="label-text"]', this.element);
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self.mbMap = mbMap;
-                self._setup();
+            this.editContent_ = $('.-js-edit-content', this.$element).remove().removeClass('hidden').html();
+            this.$labelInput_ = $('input[name="label-text"]', this.$element);
+
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this.mbMap = mbMap;
+                this._setup();
             }, function() {
                 Mapbender.checkTarget('mbSketch');
             });
-        },
-        _setup: function(){
-            var $geomTable = $('.geometry-table', this.element);
+        }
+
+        _setup() {
+            var $geomTable = $('.geometry-table', this.$element);
             this.rowTemplate = $('tr', $geomTable).remove().removeClass('hidden');
             $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
             $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
             $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
             var self = this;
-            $('[data-tool-name]', this.element).on('click', function() {
+            $('[data-tool-name]', this.$element).on('click', function() {
                 return self._onToolButtonClick($(this));
             });
-            $('.-fn-tool-off', this.element).on('click', function() {
+            $('.-fn-tool-off', this.$element).on('click', function() {
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
-            var $pallette = $('.-js-pallette-container', this.element);
+            var $pallette = $('.-js-pallette-container', this.$element);
             $pallette.on('click', '.color-select[data-color]', function() {
                 var $btn = $(this);
                 self.setColor_($btn.attr('data-color'), $btn);
             });
-            this.selectedColor_ = $('.color-select', this.element).eq(0).attr('data-color') || '#ff3333';
+            this.selectedColor_ = $('.color-select', this.$element).eq(0).attr('data-color') || '#ff3333';
             this.setColor_(this.selectedColor_);
-            $('.-fn-color-customize', this.element).colorpicker({
+            $('.-fn-color-customize', this.$element).colorpicker({
                 format: 'hex',
                 input: false,
                 component: false,
                 align: $('.color-select', $pallette).not('.custom-color-select').length >= 2 && 'right' || 'left'
             }).on('changeColor', function(evt) {
                 var color = evt.color.toString(true, 'hex');
-                var $btn = $('.custom-color-select', self.element);
+                var $btn = $('.custom-color-select', self.$element);
                 $('.color-preview', $btn).css('background', color);
                 $btn
                     .attr('data-color', color)
@@ -81,23 +79,23 @@
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             this.layer.customizeStyle({
                 strokeWidth: 3,
-                fillColor: function(feature) {
+                fillColor: (feature) => {
                     return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
                 },
-                strokeColor: function(feature) {
+                strokeColor: (feature) => {
                     return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
                 },
-                label: function(feature) {
+                label: (feature) => {
                     return self._getFeatureAttribute(feature, 'label') || '';
                 },
-                labelAlign: function(feature) {
+                labelAlign: (feature) => {
                     if (-1 !== ['point'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
                         return 'lm';
                     } else {
                         return 'cm';
                     }
                 },
-                labelXOffset: function(feature) {
+                labelXOffset: (feature) => {
                     if (-1 !== ['point'].indexOf(self._getFeatureAttribute(feature, 'toolName'))) {
                         return 10;
                     } else {
@@ -108,16 +106,17 @@
 
             this.editControl = null;
             this.setupMapEventListeners();
-            this._trigger('ready');
             if (this.checkAutoOpen()) {
                 this.activate();
             }
             this.trackLabelInput_(this.$labelInput_);
-            this.trackRadiusInput_($('input[name="radius"]', this.element));
+            this.trackRadiusInput_($('input[name="radius"]', this.$element));
             this._setupColorpickerAccessibility();
-        },
-        _setupColorpickerAccessibility: function() {
-            var $button = $('.-fn-color-customize', this.element);
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
+
+        _setupColorpickerAccessibility() {
+            var $button = $('.-fn-color-customize', this.$element);
             var colorpicker = $button.data('colorpicker');
 
             $button.on('keydown', function(e) {
@@ -131,7 +130,7 @@
                 }
             });
 
-            $button.on('showPicker', function() {
+            $button.on('showPicker', () => {
                 var $picker = colorpicker.picker;
                 $picker.attr('tabindex', -1);
 
@@ -188,7 +187,7 @@
                         $saturation.trigger($.Event('mouseup'));
                     }
                 });
-                 $hue.on('keydown', function(e) {
+                $hue.on('keydown', function(e) {
                     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                         e.preventDefault();
                         var step = 2;
@@ -211,22 +210,26 @@
                     }
                 });
             });
-        },
-        setupMapEventListeners: function() {
+        }
+
+        setupMapEventListeners() {
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
-        },
-        defaultAction: function(callback){
+        }
+
+        defaultAction(callback) {
             this.activate(callback);
-        },
-        activate: function(callback){
+        }
+
+        activate(callback) {
             this.callback = callback ? callback : null;
             if (this.useDialog_) {
                 this._open();
             }
             Mapbender.vectorLayerPool.showElementLayers(this, true);
             this.notifyWidgetActivated();
-        },
-        deactivate: function() {
+        }
+
+        deactivate() {
             this._deactivateControl();
             this._endEdit();
             // end popup, if any
@@ -239,43 +242,48 @@
                 this.callback = null;
             }
             this.notifyWidgetDeactivated();
-        },
+        }
+
         // sidepane interaction, safe to use activate / deactivate unchanged
-        reveal: function() {
+        reveal() {
             this.activate();
-        },
-        hide: function() {
+        }
+
+        hide() {
             this.deactivate();
-        },
+        }
+
         /**
          * @deprecated
          * @param {array} callback
          */
-        open: function(callback){
+        open(callback) {
             this.activate(callback);
-        },
+        }
+
         /**
          * deprecated
          */
-        close: function(){
+        close() {
             this.deactivate();
-        },
-        _open: function(){
-            var self = this;
+        }
+
+        _open() {
             if (!this.popup || !this.popup.$element) {
                 var options = Object.assign(this.getPopupOptions(), {
-                    content: this.element
+                    content: this.$element
                 });
                 this.popup = new Mapbender.Popup(options);
-                this.popup.$element.on('close', function() {
-                    self.deactivate();
+                this.popup.$element.on('close', () => {
+                    this.deactivate();
                 });
             } else {
                 this.popup.$element.show();
                 this.popup.focus();
             }
-        },
-        getPopupOptions: function() {
+        }
+
+        getPopupOptions() {
             return {
                 title: Mapbender.trans(this.options.title),
                 cssClass: 'sketch-dialog',
@@ -294,15 +302,17 @@
                     }
                 ]
             };
-        },
-        _close: function(){
+        }
+
+        _close() {
             if (this.popup) {
                 this.popup.$element.hide();
             }
-        },
-        _onToolButtonClick: function($button) {
+        }
+
+        _onToolButtonClick($button) {
             this._endEdit();
-            $('[data-tool-name]', this.element).not($button).removeClass('active');
+            $('[data-tool-name]', this.$element).not($button).removeClass('active');
             if ($button.hasClass('active')) {
                 this._deactivateControl();
             } else {
@@ -312,26 +322,28 @@
                 $button.addClass('active');
             }
             return false;
-        },
-        _onFeatureAdded: function(toolName, feature) {
+        }
+
+        _onFeatureAdded(toolName, feature) {
             this._setFeatureAttribute(feature, 'toolName', toolName);
             this._setFeatureAttribute(feature, 'color', this.selectedColor_);
             var text = this.$labelInput_.val().trim();
             this._updateFeatureLabel(feature, text);
             this.$labelInput_.val('');
             if (this.options.radiusEditing) {
-                var radius = this.getFeatureRadius_(feature)
-                var $radiusInput = $('input[name="radius"]', this.element);
+                var radius = this.getFeatureRadius_(feature);
+                var $radiusInput = $('input[name="radius"]', this.$element);
                 $radiusInput.prop('disabled', toolName !== 'circle');
                 $radiusInput.val(radius !== null && radius.toLocaleString() || '');
             }
             this._addToGeomList(feature);
-        },
-        _startDraw: function(toolName) {
+        }
+
+        _startDraw(toolName) {
             var featureAdded = this._onFeatureAdded.bind(this, toolName);
-            $('.-fn-tool-off', this.element).prop('disabled', false);
-            $('input[name="radius"]', this.element).prop('disabled', true);
-            switch(toolName) {
+            $('.-fn-tool-off', this.$element).prop('disabled', false);
+            $('input[name="radius"]', this.$element).prop('disabled', true);
+            switch (toolName) {
                 case 'point':
                 case 'line':
                 case 'circle':
@@ -342,16 +354,17 @@
                 default:
                     throw new Error("No implementation for tool name " + toolName);
             }
-        },
+        }
+
         /**
          * @param {*} feature
          * @private
          * engine-specific
          */
-        _startEdit: function(feature) {
+        _startEdit(feature) {
             this.editing_ = feature;
             var $row = this._getFeatureAttribute(feature, 'row');
-            $('.geometry-item', this.element).not($row).removeClass('current-row');
+            $('.geometry-item', this.$element).not($row).removeClass('current-row');
             $row.addClass('current-row');
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var formScope;
@@ -387,32 +400,36 @@
                 $('input[name="radius"]', formScope).prop('disabled', true).val('');
             }
             var featureColor = this._getFeatureAttribute(feature, 'color') || this.selectedColor_;
-            var $colorBtn = $('.color-select[data-color="' + featureColor + '"]', this.element);
+            var $colorBtn = $('.color-select[data-color="' + featureColor + '"]', this.$element);
             if ($colorBtn.length) {
                 this.setColorButtonActive_($colorBtn);
             } else {
                 this.setPickerColor_(featureColor, true);
             }
-        },
-        _getDrawStyle: function() {
+        }
+
+        _getDrawStyle() {
             return this.drawStyle;
-        },
-        _endEdit: function() {
+        }
+
+        _endEdit() {
             if (this.editControl) {
                 this.mbMap.getModel().olMap.removeInteraction(this.editControl);
                 this.editControl.dispose();
                 this.editControl = null;
             }
-            $('.geometry-item', this.element).removeClass('current-row');
+            $('.geometry-item', this.$element).removeClass('current-row');
             this.editing_ = null;
-        },
-        _deactivateControl: function() {
+        }
+
+        _deactivateControl() {
             this.layer.endDraw();
             this.$labelInput_.prop('disabled', true);
-            $('.-fn-tool-off', this.element).prop('disabled', true);
-            $('[data-tool-name]', this.element).removeClass('active');
-        },
-        _getGeomLabel: function(feature) {
+            $('.-fn-tool-off', this.$element).prop('disabled', true);
+            $('[data-tool-name]', this.$element).removeClass('active');
+        }
+
+        _getGeomLabel(feature) {
             var toolName = this._getFeatureAttribute(feature, 'toolName');
             var typeLabel = this.toolLabels[toolName];
             var featureLabel = this._getFeatureLabel(feature);
@@ -421,16 +438,18 @@
             } else {
                 return typeLabel + ' ' + (++this.geomCounter);
             }
-        },
-        _addToGeomList: function(feature) {
+        }
+
+        _addToGeomList(feature) {
             var row = this.rowTemplate.clone();
             row.data('feature', feature);
             $('.geometry-name', row).text(this._getGeomLabel(feature));
-            var $geomtable = $('.geometry-table', this.element);
+            var $geomtable = $('.geometry-table', this.$element);
             $geomtable.append(row);
             this._setFeatureAttribute(feature, 'row', row);
-        },
-        _removeFromGeomList: function(e){
+        }
+
+        _removeFromGeomList(e) {
             var $tr = $(e.target).closest('tr');
             var feature = $tr.data('feature');
             if (feature === this.editing_) {
@@ -439,15 +458,17 @@
             }
             this.layer.removeNativeFeatures([feature]);
             $tr.remove();
-        },
-        _modifyFeature: function(e) {
+        }
+
+        _modifyFeature(e) {
             var $row = $(e.target).closest('tr');
             var eventFeature = $row.data('feature');
             this._deactivateControl();
             this._endEdit();
             this._startEdit(eventFeature);
-        },
-        trackLabelInput_: function($input) {
+        }
+
+        trackLabelInput_($input) {
             var self = this;
             $input.on('input', function() {
                 if (self.editing_) {
@@ -458,8 +479,9 @@
                     $('.geometry-name', $row).text(label);
                 }
             });
-        },
-        trackRadiusInput_: function($input) {
+        }
+
+        trackRadiusInput_($input) {
             var self = this;
             $input.on('input', function() {
                 if (self.editing_) {
@@ -470,27 +492,32 @@
                     }
                 }
             });
-        },
-        _zoomToFeature: function(e){
+        }
+
+        _zoomToFeature(e) {
             this._deactivateControl();
             var feature = $(e.target).closest('tr').data('feature');
             this.mbMap.getModel().zoomToFeature(feature);
-        },
-        _getFeatureLabel: function(feature) {
+        }
+
+        _getFeatureLabel(feature) {
             return this._getFeatureAttribute(feature, 'label') || '';
-        },
-        _updateFeatureLabel: function(feature, label) {
+        }
+
+        _updateFeatureLabel(feature, label) {
             this._setFeatureAttribute(feature, 'label', label);
-        },
+        }
+
         /**
          * @param {*} feature
          * @param {String} name
          * @private
          * engine-specific
          */
-        _getFeatureAttribute: function(feature, name) {
+        _getFeatureAttribute(feature, name) {
             return feature.get(name);
-        },
+        }
+
         /**
          * @param {*} feature
          * @param {String} name
@@ -498,17 +525,19 @@
          * @private
          * engine-specific
          */
-        _setFeatureAttribute: function(feature, name, value) {
+        _setFeatureAttribute(feature, name, value) {
             feature.set(name, value);
-        },
-        _onSrsChange: function(event, data) {
+        }
+
+        _onSrsChange(event, data) {
             this._endEdit();
             this._deactivateControl();
             if (this.layer) {
                 this.layer.retransform(data.from, data.to);
             }
-        },
-        _showRecordPopover: function($targetRow, $content) {
+        }
+
+        _showRecordPopover($targetRow, $content) {
             var self = this;
             this._closePopovers();
             var $popover = $(document.createElement('div'))
@@ -521,9 +550,10 @@
                 $popover.remove();
                 self._endEdit();
             });
-        },
-        _closePopovers: function() {
-            $('table .popover', this.element).each(function() {
+        }
+
+        _closePopovers() {
+            $('table .popover', this.$element).each(function() {
                 var $other = $(this);
                 var otherPromise = $other.data('deferred');
                 if (otherPromise) {
@@ -532,13 +562,14 @@
                 }
                 $other.remove();
             });
-        },
+        }
+
         /**
          * @param {Object} feature
          * @returns {null|number}
          * @private
          */
-        getFeatureRadius_: function(feature) {
+        getFeatureRadius_(feature) {
             if ('circle' !== this._getFeatureAttribute(feature, 'toolName') || !this.options.radiusEditing) {
                 return null;
             }
@@ -546,15 +577,17 @@
             var center = ol.extent.getCenter(extent);
             var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
             return (extent[2] - center[0]) / upm.h;
-        },
-        updateFeatureRadius_: function(feature, radius) {
+        }
+
+        updateFeatureRadius_(feature, radius) {
             var geom = feature.getGeometry();
             var center = ol.extent.getCenter(geom.getExtent());
             var upm = this.mbMap.getModel().getUnitsPerMeterAt(center);
             var radius_ = radius * upm.h;
             geom.setRadius(radius_);
-        },
-        setColor_: function(color, $button) {
+        }
+
+        setColor_(color, $button) {
             this.selectedColor_ = color;
             if ($button !== undefined && $button.length) {
                 this.setColorButtonActive_($button);
@@ -563,14 +596,16 @@
                 this._setFeatureAttribute(this.editing_, 'color', color);
             }
             this.drawStyle = Mapbender.StyleUtil.createDrawStyle(color);
-        },
-        setColorButtonActive_: function($button) {
-            $('.-js-pallette-container .color-select', this.element).not($button).removeClass('active');
+        }
+
+        setColorButtonActive_($button) {
+            $('.-js-pallette-container .color-select', this.$element).not($button).removeClass('active');
             $button.addClass('active');
-        },
-        setPickerColor_: function(color, activateButton) {
-            $('.-fn-color-customize', this.element).colorpicker('updatePicker', color);
-            var $btn = $('.custom-color-select', this.element);
+        }
+
+        setPickerColor_(color, activateButton) {
+            $('.-fn-color-customize', this.$element).colorpicker('updatePicker', color);
+            var $btn = $('.custom-color-select', this.$element);
             $('.color-preview', $btn).css('background', color);
             $btn
                 .attr('data-color', color)
@@ -579,8 +614,9 @@
             if (activateButton) {
                 this.setColorButtonActive_($btn);
             }
-        },
-        numberFromLocaleString_: (function() {
+        }
+
+        numberFromLocaleString_ = (function() {
             var groupSeparator = ',';
             var decimalSeparator = '.';
             try {
@@ -592,8 +628,10 @@
             }
             return function(localized) {
                 return parseFloat(localized.replace(groupSeparator, '').replace(decimalSeparator, '.'));
-            }
-        })(),
-        __dummy__: null
-    });
-})(jQuery);
+            };
+        })();
+    }
+
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbSketch = MbSketch;
+})();

@@ -1,0 +1,73 @@
+.mb-element-sketch {
+  .geometry-table {
+    .geometry-actions {
+      text-align:right;
+    }
+  }
+  .static-popover-wrap {
+    position: relative; // for anchoring of absolute-positioned .popover
+    .popover {
+      position: absolute;
+      font-size: inherit;
+      min-width: 20em;
+      display: initial;
+      left: initial;
+      right: -1em;
+      top: 25px;
+      .popover-arrow {
+        transform: translate(250px, -7px);
+      }
+      .popover-arrow::before {
+        top: 0;
+        border-bottom-color: var(--bs-popover-arrow-border);
+        border-width: 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
+      }
+      .popover-arrow::after {
+        top: var(--bs-popover-border-width);
+        border-bottom-color: var(--bs-popover-bg);
+        border-width: 0 calc(var(--bs-popover-arrow-width) * .5) var(--bs-popover-arrow-height);
+      }
+    }
+  }
+  .form-horizontal .control-label {
+    // Undo Bootstrap default right-aligned labels
+    text-align: left;
+  }
+  table {
+    td.compact, th.compact {
+      width: 1%;
+    }
+    >tbody>tr>td.geometry-name, >tbody>tr>td.row-marker {
+      padding-left: 0;
+    }
+    .row-marker i {
+      opacity: 0;
+    }
+    .current-row .row-marker i {
+      opacity: 1;
+    }
+  }
+
+  .btn.btn-sm-square, .btn-group-sm-square > .btn {
+    // Squarify button padding on .btn-sm (default: 5px 10px)
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .btn .color-preview {
+    display: inline-block;
+    min-width: 1.5em;
+  }
+  .btn-outline-secondary {
+    --bs-btn-color: #6c757d;
+    --bs-btn-border-color: #ccc;
+    --bs-btn-hover-color: #333;
+    --bs-btn-hover-bg: #e6e6e6;
+    --bs-btn-hover-border-color: #ccc;
+    --bs-btn-active-color: #6c757d;
+    --bs-btn-active-bg: #e6e6e6;
+    --bs-btn-active-border-color: #ccc;
+  }
+}
+.popup.sketch-dialog {
+  min-height: 380px;
+}
