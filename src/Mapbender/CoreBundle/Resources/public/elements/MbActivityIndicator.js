@@ -4,6 +4,10 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
+            this.ajaxActivity = false;
+            this.tileActivity = false;
+            this.loadingLayers = [];
+
             const $mbMap = $('.mb-element-map');
             if ($mbMap.length) {
                 this._setupMap({element: $mbMap.eq(0)});
