@@ -1,24 +1,22 @@
-;!(function($) {
-    "use strict";
-    $.widget("mapbender.mbShareUrl", {
-        mbMap: null,
-        baseUrl: null,
+(function() {
+    class MbShareUrl extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
 
-        _create: function() {
-            var self = this;
             this.baseUrl = window.location.href.replace(/[?#].*$/, '');
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self._setup(mbMap);
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this._setup(mbMap);
             });
-        },
-        _setup: function(mbMap) {
+        }
+
+        _setup(mbMap) {
             this.mbMap = mbMap;
             this._initEvents();
-        },
-        _initEvents: function() {
-            var self = this;
+        }
 
-            this.element.on('click', 'a.-fn-share-link', function(evt) {
+        _initEvents() {
+            var self = this;
+            this.$element.on('click', 'a.-fn-share-link', function(evt) {
                 var useClipboard = evt.which === 1 && !evt.ctrlKey && !evt.shiftKey;
                 var url = self._getUrl();
                 // Update href to preempt standard browser actions "open in new tab" / "open in new window"
@@ -33,12 +31,13 @@
                     return true;
                 }
             });
-            this.element.on('mousedown', 'a.-fn-share-link', function() {
+            this.$element.on('mousedown', 'a.-fn-share-link', function() {
                 // Update href to preempt standard browser actions "open in new tab" / "open in new window"
                 $(this).attr('href', self._getUrl());
             });
-        },
-        _getUrl: function() {
+        }
+
+        _getUrl() {
             var m = this.mbMap.getModel();
             var settings = m.getCurrentSettings();
             var diff = m.diffSettings(m.getConfiguredSettings(), m.getCurrentSettings());
@@ -46,8 +45,9 @@
             var url = Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, '');
             url = [url, m.encodeViewParams(settings.viewParams)].join('#');
             return url;
-        },
-        _copyToClipboard: function(text) {
+        }
+
+        _copyToClipboard(text) {
             // MUST use an input that is in the DOM and nominally visible.
             // We prevent visible rendering flashes with style="opacity: 0;" (works in Chrome + FF)
             // Remove input from DOM immediately after copy operation
@@ -59,8 +59,9 @@
             $input.select();
             document.execCommand('copy');
             document.body.removeChild($input.get(0));
-        },
-        __dummy__: null
-    });
-})(jQuery);
+        }
+    }
 
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbShareUrl = MbShareUrl;
+})();
