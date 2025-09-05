@@ -1,38 +1,32 @@
-(function($) {
+(function() {
+    class MbDataUpload extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
 
-    $.widget('mapbender.mbDataUpload', {
-        options: {
-            maxFileSize: 10,
-        },
-        map: null,
-        popup: null,
-        dropArea: null,
-
-        _create: function() {
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self._setup(mbMap);
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this._setup(mbMap);
             }, function() {
                 Mapbender.checkTarget('mbDataUpload');
             });
-        },
+        }
 
-        _setup: function(mbMap) {
+        _setup(mbMap) {
             var self = this;
             this.map = mbMap.map.olMap;
-            this.dropArea = this.element.find('.dropFileArea')[0];
+            this.dropArea = this.$element.find('.dropFileArea')[0];
             this.setupProjSelection();
             this.setupDropArea();
             this.setupFileUploadForm();
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
-        },
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
 
-        open: function(callback) {
+        open(callback) {
             this.callback = callback ? callback : null;
             this.openPopup();
-        },
+        }
 
-        close: function() {
+        close() {
             if (this.callback) {
                 this.callback.call();
                 this.callback = null;
@@ -43,18 +37,18 @@
             }
             this.removeLayers();
             this.removeTable();
-        },
+        }
 
-        openPopup: function () {
+        openPopup() {
             var self = this;
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup({
-                    title: this.element.attr('data-title'),
+                    title: this.$element.attr('data-title'),
                     draggable: true,
                     modal: false,
                     closeOnESC: false,
                     detachOnClose: false,
-                    content: this.element,
+                    content: this.$element,
                     resizable: true,
                     cssClass: 'datauploadDialog',
                     width: 500,
@@ -71,19 +65,19 @@
                 });
                 this.popup.$element.find('.fileUploadLink').focus();
             }
-        },
+        }
 
-        setupProjSelection: function () {
+        setupProjSelection() {
             var projections = Mapbender.Model.mbMap.getAllSrs();
             projections.forEach((proj) => {
-                this.element.find('.projSelection').append($('<option/>', {
+                this.$element.find('.projSelection').append($('<option/>', {
                     value: proj.name,
                     text: proj.title
                 }));
             });
-        },
+        }
 
-        setupDropArea: function () {
+        setupDropArea() {
             var self = this;
             var events = ['dragenter', 'dragover', 'dragleave', 'drop'];
             events.forEach(function (eventName) {
@@ -103,34 +97,34 @@
                 var files = dt.files;
                 self.handleFileUpload(files);
             });
-        },
+        }
 
-        setupFileUploadForm: function () {
+        setupFileUploadForm() {
             $('.mb-element-dataupload form').on('submit', function (e) {
                 e.preventDefault();
             });
-            this.element.find('.fileUploadLink').on('click', (e)=> {
+            this.$element.find('.fileUploadLink').on('click', (e)=> {
                 e.preventDefault();
-                this.element.find('.fileUploadField').trigger('click');
+                this.$element.find('.fileUploadField').trigger('click');
             });
 
             const self = this;
-            this.element.find('.fileUploadField').on('change', function () {
+            this.$element.find('.fileUploadField').on('change', function () {
                 self.handleFileUpload(this.files);
             });
-        },
+        }
 
-        highlight: function () {
+        highlight() {
             this.dropArea.classList.remove('unhighlight');
             this.dropArea.classList.add('highlight');
-        },
+        }
 
-        unhighlight: function () {
+        unhighlight() {
             this.dropArea.classList.remove('highlight');
             this.dropArea.classList.add('unhighlight');
-        },
+        }
 
-        handleFileUpload: function (files) {
+        handleFileUpload(files) {
             var self = this;
             let extent = undefined;
 
@@ -160,9 +154,9 @@
                 });
                 reader.readAsText(file);
             });
-        },
+        }
 
-        renderFeatures: function (file, uploadId, result) {
+        renderFeatures(file, uploadId, result) {
             var featureProjection = this.map.getView().getProjection().getCode();
 
             const [format, dataProjection] = this.findFormatByType(file, result);
@@ -184,14 +178,14 @@
             layer.id = uploadId;
             this.map.addLayer(layer);
             return source;
-        },
+        }
 
         /**
          * @param {File} file
          * @param {string | ArrayBuffer | null} result FileReader result
          * @returns {[ol.format.*,string]} An array containing the openlayers format and the appropriate projection
          */
-        findFormatByType: function(file, result) {
+        findFormatByType(file, result) {
             // best case: mime type is transmitted, but only works in some browsers/OS
             switch (file.type) {
                 case 'application/geo+json':
@@ -223,19 +217,19 @@
             }
 
             return [null, null];
-        },
+        }
 
-        findProjection: function () {
-            var proj = this.element.find('.projSelection').val();
+        findProjection() {
+            var proj = this.$element.find('.projSelection').val();
             if (proj !== '') {
                 return proj;
             }
             return this.map.getView().getProjection().getCode();
-        },
+        }
 
-        findGeoJsonProjection: function (geoJson) {
+        findGeoJsonProjection(geoJson) {
             // proj from selectbox overrides proj specification in geoJson
-            var proj = this.element.find('.projSelection').val();
+            var proj = this.$element.find('.projSelection').val();
             if (proj !== '') {
                 return proj;
             }
@@ -257,9 +251,9 @@
                 }
             }
             return 'EPSG:4326';
-        },
+        }
 
-        findGmlFormat: function (gml) {
+        findGmlFormat(gml) {
             var gmlFormats = {
                 gml: new ol.format.GML(),
                 gml2: new ol.format.GML2(),
@@ -281,11 +275,11 @@
             var msg = Mapbender.trans('mb.core.dataupload.error.gml');
             Mapbender.error(msg);
             throw new Error(msg);
-        },
+        }
 
-        renderTable: function (file, uploadId) {
+        renderTable(file, uploadId) {
             var self = this;
-            var table = this.element.find('.filesTable');
+            var table = this.$element.find('.filesTable');
             var tr = $('<tr>', {
                 id: uploadId
             });
@@ -328,9 +322,9 @@
             tr.append(td2);
             table.append(tr);
             $('.table-responsive').removeClass('d-none');
-        },
+        }
 
-        toggleActivation: function (e) {
+        toggleActivation(e) {
             var iconActivate = $(e.target);
             var activate = iconActivate.hasClass('fa-eye-slash');
             iconActivate.toggleClass(function () {
@@ -347,9 +341,9 @@
             if (layer) {
                 layer.setVisible(activate);
             }
-        },
+        }
 
-        zoom: function (e) {
+        zoom(e) {
             var iconZoom = $(e.target);
             var tr = iconZoom.parent().parent();
             var id = tr.attr('id');
@@ -360,23 +354,23 @@
                     padding: [75, 75, 75, 75],
                 });
             }
-        },
+        }
 
-        delete: function (e) {
+        delete(e) {
             var iconDelete = $(e.target);
             var tr = iconDelete.parent().parent();
             var id = tr.attr('id');
             var layer = this.getLayerById(id);
             if (layer) {
                 this.map.removeLayer(layer);
-                this.element.find('.filesTable').find(tr).remove();
-                if (this.element.find('.filesTable').find('tr').length < 2) {
+                this.$element.find('.filesTable').find(tr).remove();
+                if (this.$element.find('.filesTable').find('tr').length < 2) {
                     this.removeTable();
                 }
             }
-        },
+        }
 
-        getLayerById: function (id) {
+        getLayerById(id) {
             var layer = this.map.getLayers().getArray().filter(function (layer) {
                 return (layer.hasOwnProperty('id') && layer.id === id);
             });
@@ -384,15 +378,15 @@
                 return layer[0];
             }
             return false;
-        },
+        }
 
-        getLayers: function () {
+        getLayers() {
             return this.map.getLayers().getArray().filter(function (layer) {
                 return layer.hasOwnProperty('id');
             });
-        },
+        }
 
-        removeLayers: function () {
+        removeLayers() {
             var self = this;
             var layers = this.getLayers();
             if (layers.length > 0) {
@@ -400,14 +394,14 @@
                     self.map.removeLayer(layer);
                 });
             }
-        },
+        }
 
-        removeTable: function () {
-            this.element.find('.filesTable').find('tbody').find('tr').remove();
+        removeTable() {
+            this.$element.find('.filesTable').find('tbody').find('tr').remove();
             $('.table-responsive').addClass('d-none');
-        },
+        }
 
-        _onSrsChanged: function (event, data) {
+        _onSrsChanged(event, data) {
             var layers = this.getLayers();
             if (layers.length > 0) {
                 layers.forEach(function (layer) {
@@ -420,5 +414,8 @@
                 });
             }
         }
-    });
-})(jQuery);
+    }
+
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbDataUpload = MbDataUpload;
+})();
