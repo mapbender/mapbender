@@ -90,7 +90,7 @@ class FeatureInfo extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbFeatureInfo';
+        return 'MbFeatureInfo';
     }
 
     /**
@@ -108,7 +108,7 @@ class FeatureInfo extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.featureInfo.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbFeatureInfo.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss',
@@ -127,10 +127,10 @@ class FeatureInfo extends AbstractElementService
         $config = $element->getConfiguration() ?: array();
         $view->variables['displayType'] = ArrayUtil::getDefault($config, 'displayType', 'tabs');
         $view->variables['iframe_scripts'] = array(
-            file_get_contents(__DIR__ . '/../Resources/public/element/featureinfo-mb-action.js'),
+            file_get_contents(__DIR__ . '/../Resources/public/elements/featureinfo-mb-action.js'),
         );
         if (!empty($config['highlighting'])) {
-            $view->variables['iframe_scripts'][] = file_get_contents(__DIR__ . '/../Resources/public/element/featureinfo-highlighting.js');
+            $view->variables['iframe_scripts'][] = file_get_contents(__DIR__ . '/../Resources/public/elements/featureinfo-highlighting.js');
         }
         return $view;
     }
