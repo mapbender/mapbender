@@ -1,27 +1,26 @@
-(function ($) {
-    $.widget("mapbender.mbDimensionsHandler", {
-        options: {
-            dimensionsets: {}
-        },
-        model: null,
-        _create: function () {
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self._setup(mbMap);
+(function() {
+
+    class MbDimensionHandler extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this._setup(mbMap);
             }, function() {
                 Mapbender.checkTarget('mbDimensionsHandler');
             });
-        },
-        _setup: function (mbMap) {
+        }
+
+        _setup(mbMap) {
             this.model = mbMap.getModel();
-            var $sets = $('.dimensionset[data-group][data-extent]', this.element);
+            var $sets = $('.dimensionset[data-group][data-extent]', this.$element);
             for (var i = 0; i < $sets.length; ++i) {
                 var $set = $sets.eq(i);
                 var group = $set.attr('data-group').split('#');
                 var extent = $set.attr('data-extent');
                 var targetDimensions = (group || []).map(function(compoundId) {
                     return {
-                        sourceId: compoundId.replace(/-.*$/, ''),
+                        sourceId: compoundId.replace(/-.*/, ''),
                         dimensionName: compoundId.replace(/^.*-(\w+)-\w*$/, '$1')
                     };
                 });
@@ -30,12 +29,13 @@
                 if (dimHandler) {
                     this._initializeSlider($set, dimHandler, targetDimensions);
                 } else {
-                    console.error("Target dimension not found! Source deactivated or removed?", targetDimensions, groupConfig);
+                    console.error('Target dimension not found! Source deactivated or removed?', targetDimensions/*, groupConfig*/);
                 }
             }
-            this._trigger('ready');
-        },
-        _setupGroup: function(targetDimensions) {
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
+
+        _setupGroup(targetDimensions) {
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
                 var source = this.model.getSourceById(targetDimension.sourceId);
@@ -45,14 +45,15 @@
                 }
             }
             return null;
-        },
+        }
+
         /**
          * @param {jQuery} $set
          * @param dimension
          * @param targetDimensions
          * @private
          */
-        _initializeSlider: function($set, dimension, targetDimensions) {
+        _initializeSlider($set, dimension, targetDimensions) {
             var self = this;
             var valarea = $('.dimensionset-value', $set);
             valarea.text(dimension.getDefault());
@@ -74,8 +75,9 @@
                     }
                 }
             });
-        },
-        _getSourceDimensionConfig: function(source, name) {
+        }
+
+        _getSourceDimensionConfig(source, name) {
             var sourceDimensions = source && source.options.dimensions || [];
             for (var j = 0; j < sourceDimensions.length; ++j) {
                 var sourceDimension = sourceDimensions[j];
@@ -84,15 +86,17 @@
                 }
             }
             return false;
-        },
-        _preconfigureSources: function(targetDimensions, extent) {
+        }
+
+        _preconfigureSources(targetDimensions, extent) {
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
                 var source = this.model.getSourceById(targetDimension.sourceId);
                 this._preconfigureSource(source, targetDimension.dimensionName, extent);
             }
-        },
-        _preconfigureSource: function(source, dimensionName, extent) {
+        }
+
+        _preconfigureSource(source, dimensionName, extent) {
             var targetConfig = this._getSourceDimensionConfig(source, dimensionName);
             if (targetConfig) {
                 // @todo: support original string extent format in Mapbender.Dimension
@@ -108,7 +112,13 @@
                     // Source is not yet an object, but we made our config changes => error is safe to ignore
                 }
             }
-        },
-        _destroy: $.noop
-    });
-})(jQuery);
+        }
+
+        _destroy() {
+            // noop (mirrors original _destroy: $.noop)
+        }
+    }
+
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbDimensionHandler = MbDimensionHandler;
+})();

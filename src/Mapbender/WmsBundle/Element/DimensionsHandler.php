@@ -48,7 +48,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbDimensionsHandler';
+        return 'MbDimensionHandler';
     }
 
     /**
@@ -59,7 +59,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
-                '@MapbenderWmsBundle/Resources/public/mapbender.element.dimensionshandler.js',
+                '@MapbenderWmsBundle/Resources/public/MbDimensionHandler.js',
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
