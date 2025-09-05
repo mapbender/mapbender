@@ -1,30 +1,30 @@
-(function($) {
-    'use strict';
-    /**
-     * @namespace mapbender.mbRouting
-     */
-    $.widget('mapbender.mbRouting', {
-        map: null,
-        olMap: null,
-        popup: null,
-        routingLayer: null,
-        markerLayer: null,
-        elementUrl: null,
-        isActive: false,
-        exportFormatOptions: [],
-        styleLinearDistance: {
-            pointRadius: 0,
-            strokeLinecap: 'square',
-            strokeDashstyle: 'dash'
-        },
+(function() {
 
-        _create: function() {
+    class MbRouting extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+
+            this.map = null;
+            this.olMap = null;
+            this.popup = null;
+            this.routingLayer = null;
+            this.markerLayer = null;
+            this.elementUrl = null;
+            this.isActive = false;
+            this.exportFormatOptions = [];
+            this.styleLinearDistance = {
+                pointRadius: 0,
+                strokeLinecap: 'square',
+                strokeDashstyle: 'dash'
+            };
+
+            // Initialize (former _create) logic
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this._setup(mbMap);
             }, () => {
                 Mapbender.checkTarget('mbRoutingElement');
             });
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + $element.attr('id') + '/';
             const searchDriver = this.options.searchConfig.driver;
             this.searchConfig = this.options.searchConfig[searchDriver];
             this.exportFormatOptions = [{
@@ -37,9 +37,9 @@
                 id: 'kml',
                 name: 'KML',
             }];
-        },
+        }
 
-        _setup: function(mbMap) {
+        _setup(mbMap) {
             this.map = mbMap;
             this.olMap = mbMap.map.olMap;
 
@@ -49,10 +49,10 @@
 
             this._setupExportFormatSelection();
             this._initializeEventListeners();
-            this._trigger('ready');
-        },
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
 
-        open: function(callback) {
+        open(callback) {
             this.callback = callback ? callback : null;
             this.isActive = true;
 
@@ -64,7 +64,7 @@
                     header: true,
                     modal: false,
                     closeOnESC: false,
-                    content: this.element,
+                    content: this.$element,
                     width: 350,
                     buttons: [
                         {
@@ -74,13 +74,13 @@
                     ]
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-                $(this.element).show();
+                this.$element.show();
             }
-        },
+        }
 
-        close: function() {
+        close() {
             if (this.popup) {
-                this.element.hide().appendTo($('body'));
+                this.$element.hide().appendTo($('body'));
                 if (this.popup.$element) {
                     this.popup.destroy();
                 }
@@ -89,54 +89,54 @@
             this._clearRoute();
             this.isActive = false;
             this.callback ? this.callback.call() : this.callback;
-        },
+        }
 
-        reveal: function() {
+        reveal() {
             this.isActive = true;
-        },
+        }
 
-        hide: function() {
+        hide() {
             this.isActive = false;
-        },
+        }
 
-        _initializeEventListeners: function() {
+        _initializeEventListeners() {
             this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
 
             // flush points when srs is changed
             $(document).on('mbmapsrschanged', $.proxy(this._emptyPoints, this));
 
             // add point on click
-            $('.addPoint', this.element).click(() => {
+            $('.addPoint', this.$element).click(() => {
                 this._addInputField();
             });
 
             // remove input on click
-            $('.mb-routing-location-points', this.element).on('click', '.clearField', (e) => {
+            $('.mb-routing-location-points', this.$element).on('click', '.clearField', (e) => {
                 this._removeInputWrapper(e.target);
             });
 
             // reset route and input on click
-            $('.resetRoute', this.element).click(() => {
+            $('.resetRoute', this.$element).click(() => {
                 this._clearRoute();
             });
 
             // swap points on click
-            $('.swapPoints', this.element).click(() => {
+            $('.swapPoints', this.$element).click(() => {
                 this._flipPoints();
             });
 
             // calculate route button click
-            $('.calculateRoute', this.element).click(() => {
+            $('.calculateRoute', this.$element).click(() => {
                 this._getRoute();
             });
 
-            $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
+            $('.mb-routing-location-points', this.$element).on('focus', 'input[type="text"]', (e) => {
                 this.focusedInputField = e.target;
                 $('.mb-element-map').css('cursor', 'crosshair');
             });
 
             if (this.options.useSearch) {
-                $('.mb-routing-location-points', this.element).on('focus', 'input[type="text"]', (e) => {
+                $('.mb-routing-location-points', this.$element).on('focus', 'input[type="text"]', (e) => {
                     $(e.target).autocomplete({
                         classes: {
                             'ui-autocomplete': 'mb-routing-autocomplete',
@@ -156,7 +156,7 @@
                 });
             }
 
-            $('.mb-routing-location-points', this.element).sortable({
+            $('.mb-routing-location-points', this.$element).sortable({
                 start: (e, ui) => {
                     $(e.target).attr('data-previndex', ui.item.index());
                 },
@@ -166,8 +166,8 @@
                 }
             }).disableSelection();
 
-            $('.select-export-format', this.element).on('change', () => {
-                const exportFormat = $('.select-export-format', this.element).val();
+            $('.select-export-format', this.$element).on('change', () => {
+                const exportFormat = $('.select-export-format', this.$element).val();
 
                 let exportData = '';
                 let format = null;
@@ -192,54 +192,54 @@
                     featureProjection: Mapbender.Model.getCurrentProjectionCode(),
                 });
                 const timestamp = new Date().toISOString().replace('T', '_').slice(0, 16);
-                this._download(new Blob([exportData]), "route-" + timestamp + "." + exportFormat);
+                this._download(new Blob([exportData]), 'route-' + timestamp + '.' + exportFormat);
             });
-        },
+        }
 
-        _setupExportFormatSelection: function() {
+        _setupExportFormatSelection() {
             for (let i = 0; i < this.exportFormatOptions.length; i++) {
                 const option = this.exportFormatOptions[i];
-                this.element.find('.select-export-format').append($('<option/>', {
+                this.$element.find('.select-export-format').append($('<option/>', {
                     value: option.id,
                     text: option.name
                 }));
             }
-            this.element.find('.select-export-format').hide();
-        },
+            this.$element.find('.select-export-format').hide();
+        }
 
-        _showSelectExportFormat: function() {
+        _showSelectExportFormat() {
             if (!this.options.allowExport) {
                 return;
             }
-            this.element.find('.select-export-format').show();
-        },
+            this.$element.find('.select-export-format').show();
+        }
 
-        _download: function(blob, filename) {
+        _download(blob, filename) {
             const a = document.createElement('a');
             a.href = window.URL.createObjectURL(blob);
             a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-        },
+        }
 
-        _autoSubmit: function() {
-            $('.mb-routing-location-points, input[type="radio"]', this.element).change(() => {
+        _autoSubmit() {
+            $('.mb-routing-location-points, input[type="radio"]', this.$element).change(() => {
                 if (this._isInputValid()) {
                     this._getRoute();
                 }
             });
-        },
+        }
 
-        _isInputValid: function() {
+        _isInputValid() {
             let isValid = true;
-            $.each(this.element.find('.mb-routing-location-points input'), (index, element) => {
+            $.each(this.$element.find('.mb-routing-location-points input'), (index, element) => {
                 isValid = isValid && ($(element).val() !== '');
             });
             return isValid;
-        },
+        }
 
-        _mapClickHandler: function(event) {
+        _mapClickHandler(event) {
             if (this.isActive && this.focusedInputField) {
                 let coordinates = event.coordinate;
                 let formattedCoordinates = this._formatCoordinates(coordinates);
@@ -260,9 +260,9 @@
                     Mapbender.error('Invalid coordinates provided!')
                 }
             }
-        },
+        }
 
-        _formatCoordinates: function(coordinates) {
+        _formatCoordinates(coordinates) {
             coordinates = [...coordinates];
             // do not format coordinates for WGS 84 / EPSG:4326
             if (this.olMap.getView().getProjection().getCode() !== 'EPSG:4326') {
@@ -270,24 +270,24 @@
                 coordinates[1] = coordinates[1].toFixed(2);
             }
             return coordinates[0] + ', ' + coordinates[1];
-        },
+        }
 
-        _emptyPoints: function() {
+        _emptyPoints() {
             const $inputs = this._findLocationInputFields();
             $.each($inputs, (idx, input) => {
                 this._removeMarker(input);
                 $(input).val('').data('coords', null);
             });
-        },
+        }
 
-        _addInputField: function() {
-            const htmlIntermediatePoint = $(this.element.find('.tplIntermediatePoint').html());
-            const lastInputElement = $('.mb-routing-location-points div:last-child', this.element);
+        _addInputField() {
+            const htmlIntermediatePoint = $(this.$element.find('.tplIntermediatePoint').html());
+            const lastInputElement = $('.mb-routing-location-points div:last-child', this.$element);
             htmlIntermediatePoint.insertBefore(lastInputElement);
             htmlIntermediatePoint.find('input').focus();
-        },
+        }
 
-        _removeInputWrapper: function(btn) {
+        _removeInputWrapper(btn) {
             const inputGroup = $(btn).parent();
             let inputField = $('input', inputGroup);
             inputField.val('').data('coords', null);
@@ -298,9 +298,9 @@
             } else {
                 this.routingLayer.getSource().clear();
             }
-        },
+        }
 
-        _clearRoute: function() {
+        _clearRoute() {
             if (this.markerLayer !== null) {
                 this.markerLayer.getSource().clear();
             }
@@ -308,23 +308,23 @@
                 this.routingLayer.getSource().clear();
             }
             this._emptyPoints();
-            $('.mb-routing-location-points > .intermediatePoints', this.element).remove();
-            $('.attribution', this.element).addClass('d-none');
-            $('.mb-routing-info', this.element).addClass('d-none').html('');
-            $('.mb-routing-instructions', this.element).html('');
+            $('.mb-routing-location-points > .intermediatePoints', this.$element).remove();
+            $('.attribution', this.$element).addClass('d-none');
+            $('.mb-routing-info', this.$element).addClass('d-none').html('');
+            $('.mb-routing-instructions', this.$element).html('');
             $('.select-export-format').hide();
             $('.mb-element-map').css('cursor', 'auto');
             return true;
-        },
+        }
 
-        _flipPoints: function() {
-            const form = $('.mb-routing-location-points', this.element);
+        _flipPoints() {
+            const form = $('.mb-routing-location-points', this.$element);
             const inputFields = form.children('div');
             form.append(inputFields.get().reverse());
             this._reorderInputFields();
-        },
+        }
 
-        _getRoute: function() {
+        _getRoute() {
             const requestProj = 'EPSG:4326';
             const mapProj = this.olMap.getView().getProjection().getCode();
             let points = this._getRoutingPoints();
@@ -345,7 +345,7 @@
                 type: 'POST',
                 url: this.elementUrl + 'getRoute',
                 data: {
-                    'vehicle': $('input[name=vehicle]:checked', this.element).val(),
+                    'vehicle': $('input[name=vehicle]:checked', this.$element).val(),
                     'points': points,
                     'srs': mapProj
                 }
@@ -364,9 +364,9 @@
                 }
                 this.setSpinnerVisible(false);
             });
-        },
+        }
 
-        _handleAutocompleteSource: function(request, _response) {
+        _handleAutocompleteSource(request, _response) {
             const self = this;
             return $.ajax({
                 type: 'GET',
@@ -388,9 +388,9 @@
                     }));
                 }
             });
-        },
+        }
 
-        _extractAttribute: function(obj, path) {
+        _extractAttribute(obj, path) {
             var props = obj;
             var parts = path.split('.');
             var last = parts.pop();
@@ -405,9 +405,9 @@
             } else {
                 return null;
             }
-        },
+        }
 
-        _formatLabel: function(doc) {
+        _formatLabel(doc) {
             // Find / match '${attribute_name}' / '${nested.attribute.path}' placeholders
             const label_attribute = this.searchConfig.label_attribute;
             var templateParts = label_attribute.split(/\${([^}]+)}/g);
@@ -432,9 +432,9 @@
             } else {
                 return this._extractAttribute(doc, label_attribute);
             }
-        },
+        }
 
-        _handleAutocompleteSelect: function(e, ui) {
+        _handleAutocompleteSelect(e, ui) {
             $(e.target).val(ui.item.label);
             let format;
             switch (this.searchConfig.geom_format) {
@@ -473,10 +473,10 @@
             }
 
             return false;
-        },
+        }
 
-        _reorderInputFields: function() {
-            let inputFields = $('.mb-routing-location-points > div', this.element);
+        _reorderInputFields() {
+            let inputFields = $('.mb-routing-location-points > div', this.$element);
             inputFields.removeClass('intermediatePoints');
             inputFields.first().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-success');
             inputFields.last().find('.fa-location-dot').removeClass('text-success text-danger text-primary').addClass('text-danger');
@@ -506,9 +506,9 @@
             if (this.options.autoSubmit) {
                 this._getRoute();
             }
-        },
+        }
 
-        _addPointWithMarker: function(inputEl, coordinates) {
+        _addPointWithMarker(inputEl, coordinates) {
             if (this.options.useReverseGeocoding) {
                 const p = {
                     name: 'point',
@@ -527,21 +527,21 @@
                 $(inputEl).data('coords', coordinates).change();
                 this._createMarker(inputEl, feature);
             }
-        },
+        }
 
-        _findLocationInputFields: function() {
-            return $('.mb-routing-location-points .input-group input', this.element);
-        },
+        _findLocationInputFields() {
+            return $('.mb-routing-location-points .input-group input', this.$element);
+        }
 
-        _removeMarker: function(inputEl) {
+        _removeMarker(inputEl) {
             const marker = $(inputEl).data('marker');
             if (marker && this.markerLayer) {
                 this.markerLayer.getSource().removeFeature(marker);
             }
             $(inputEl).data('marker', null);
-        },
+        }
 
-        _getRoutingPoints: function() {
+        _getRoutingPoints() {
             let isValid = true;
             let routingPoints = [];
             this._findLocationInputFields().each((idx, element) => {
@@ -564,22 +564,22 @@
             } else {
                 return routingPoints;
             }
-        },
+        }
 
-        _transformCoordinates: function(coordinatePair, srcProj, destinationProj) {
+        _transformCoordinates(coordinatePair, srcProj, destinationProj) {
             return ol.proj.transform(coordinatePair, srcProj, destinationProj);
-        },
+        }
 
-        setSpinnerVisible: function(setVisible){
-            let calculateRouteBtn = $('.calculateRoute i', this.element);
+        setSpinnerVisible(setVisible){
+            let calculateRouteBtn = $('.calculateRoute i', this.$element);
             if (setVisible) {
                 calculateRouteBtn.attr('class', 'fa-solid fa-sync fa-spin').parent().prop('disabled', true);
             } else {
                 calculateRouteBtn.attr('class', 'fa-solid fa-flag-checkered').parent().prop('disabled', false);
             }
-        },
+        }
 
-        _renderRoute: function(response) {
+        _renderRoute(response) {
             if (!this.routingLayer) {
                 const styleConfig = this.options.routingStyles;
                 const lineColor = styleConfig.lineColor;
@@ -624,9 +624,9 @@
             this.olMap.getView().fit(extent, {
                 padding: new Array(4).fill(this.options.buffer)
             });
-        },
+        }
 
-        _createMarker: function(inputElement, feature) {
+        _createMarker(inputElement, feature) {
             this._createMarkerLayer();
             const inputIndex = $(inputElement).parent().index();
             const inputLength = this._findLocationInputFields().length;
@@ -649,9 +649,9 @@
 
             $(inputElement).data('marker', feature);
             this.markerLayer.getSource().addFeature(feature);
-        },
+        }
 
-        _createMarkerLayer: function() {
+        _createMarkerLayer() {
             if (!this.markerLayer) {
                 this.markerLayer = new ol.layer.Vector({
                     source: new ol.source.Vector(),
@@ -659,9 +659,9 @@
                 this.olMap.addLayer(this.markerLayer);
                 this.markerLayer.setZIndex(10);
             }
-        },
+        }
 
-        _getMarkerStyle: function(marker) {
+        _getMarkerStyle(marker) {
             const styleConfig = this.options.routingStyles[marker];
             if (!styleConfig.imagePath) {
                 const msg = Mapbender.trans('mb.routing.exception.main.icon');
@@ -683,17 +683,17 @@
             return new ol.style.Style({
                 image: new ol.style.Icon(options),
             });
-        },
+        }
 
-        _getRouteStyle: function() {
+        _getRouteStyle() {
             return this.options.styleMap.route;
-        },
+        }
 
-        _showRouteInfo: function(routeInfo) {
-            $('.mb-routing-info', this.element).html(routeInfo).removeClass('d-none');
-        },
+        _showRouteInfo(routeInfo) {
+            $('.mb-routing-info', this.$element).html(routeInfo).removeClass('d-none');
+        }
 
-        _showRouteInstructions: function(instructions) {
+        _showRouteInstructions(instructions) {
             let $table = $('<table/>');
             $table.addClass('table table-striped table-bordered table-sm instructions');
             let $tbody = $('<tbody/>');
@@ -725,7 +725,7 @@
                 }
                 $tbody.append($tr);
             });
-            let $instructionsDiv = $('.mb-routing-instructions', this.element);
+            let $instructionsDiv = $('.mb-routing-instructions', this.$element);
             let $instructionsTable = $instructionsDiv.children(':first');
             const maxHeight = ($instructionsDiv.offset().top - $('.mb-routing-info').offset().top);
             $instructionsTable.remove();
@@ -734,10 +734,13 @@
             }
             $table.append($tbody);
             $instructionsDiv.append($table);
-        },
-
-        _showAttribution: function() {
-            $('.attribution', this.element).removeClass('d-none');
         }
-    });
-})(jQuery);
+
+        _showAttribution() {
+            $('.attribution', this.$element).removeClass('d-none');
+        }
+    }
+
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbRouting = MbRouting;
+})();
