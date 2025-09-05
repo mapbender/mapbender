@@ -100,3 +100,9 @@ $imageBasePath: $rootPath + "image"; // Doesn't do anything
 $iconBasePath: $rootPath + "fonts"; // Doesn't do anything
 $darkFontColor: #3f3f3f; // Doesn't do anything; (re)define $textColor instead
 $ciColor2: #4899ba; // Doesn't do anything
+
+:root {
+    --primary: #079ee0;
+    --checkbox-checked: var(--primary);
+    --checkbox-unchecked: #a0a0a0;
+}

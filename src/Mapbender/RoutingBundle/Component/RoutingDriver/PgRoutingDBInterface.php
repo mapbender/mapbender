@@ -4,6 +4,7 @@ namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 
 class PgRoutingDBInterface {
 
@@ -86,7 +87,7 @@ class PgRoutingDBInterface {
                 ORDER BY
                   i.indkey_subscript";
 
-        return $db->fetchColumn($query);
+        return $db->fetchOne($query);
     }
 
     /**
@@ -99,9 +100,9 @@ class PgRoutingDBInterface {
     {
         $connection = $this->connection;
 
-        $result = $connection->query('SELECT DISTINCT f_geometry_column as geom
+        $result = $connection->executeQuery('SELECT DISTINCT f_geometry_column as geom
                                     FROM geometry_columns
-                                    WHERE f_table_name = ' . $connection->quote($tableName))->fetchColumn();
+                                    WHERE f_table_name = ' . $connection->quote($tableName))->fetchOne();
         return $result ?: '';
     }
 
@@ -131,9 +132,9 @@ class PgRoutingDBInterface {
      */
     protected function getSrid(string $table, bool $withEPSG = false)
     {
-        $result = $this->connection->query('SELECT DISTINCT srid
+        $result = $this->connection->executeQuery('SELECT DISTINCT srid
                                     FROM geometry_columns
-                                    WHERE f_table_name = ' . $this->connection->quote($table))->fetchColumn();
+                                    WHERE f_table_name = ' . $this->connection->quote($table))->fetchOne();
         return $withEPSG ? 'EPSG:' . $result : $result;
     }
 
@@ -150,7 +151,7 @@ class PgRoutingDBInterface {
         $qTable = $this->connection->quoteIdentifier($table);
 
         $query = "SELECT max(gid) FROM $qTable";
-        $result = $this->connection->query($query)->fetchColumn();
+        $result = $this->connection->executeQuery($query)->fetchOne();
 
         return $result;
     }
@@ -332,7 +333,7 @@ class PgRoutingDBInterface {
     /**
      * @param array $geom
      * @return bool|string
-     * @throws DBALException
+     * @throws Exception
      */
     public function getResultGeom(array $geom)
     {
@@ -340,7 +341,7 @@ class PgRoutingDBInterface {
         $wktGeomString = "'".implode("','", array_filter($geom, function($g) { return !!$g; }))."'";
         // get Multiline as GeoJSON
         $query = "SELECT ST_AsGeoJSON(ST_Union( ARRAY[$wktGeomString])) As geom";
-        return $db->query($query)->fetchColumn();
+        return $db->executeQuery($query)->fetchOne();
     }
 
 
@@ -348,7 +349,7 @@ class PgRoutingDBInterface {
      * get nearest point to given geometry
      * @param int $id
      * @return array
-     * @throws DBALException
+     * @throws Exception
      */
     public function getTransformedCoordinates()
     {
@@ -361,8 +362,7 @@ class PgRoutingDBInterface {
               FROM $this->temptablenodes where id > (select max(id) from $this->nodesTable)
             ";
 
-        $arr = $db->fetchAll($query);
-        return $arr;
+        return $db->fetchAllAssociative($query);
     }
 
 }

@@ -1,3 +1,15 @@
+## next feature release
+* [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766))
+* [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
+
+## v4.2.1
+Bugfixes:
+* [WMS] Fix layer order in frontend was wrong after updating instance layer properties ([#PR1773](https://github.com/mapbender/mapbender/pull/1773))
+* Fix wms:reload and wms:add commands were broken after update ([#PR1771](https://github.com/mapbender/mapbender/pull/1771))
+* [FeatureInfo] Fix iframe did not use full height ([#PR1770](https://github.com/mapbender/mapbender/pull/1770))
+* [WMSLoader] Fix default info format and overwritten info format via attributes was ignored ([#PR1769](https://github.com/mapbender/mapbender/pull/1769))
+
+
 ## v4.2.0
 :warning: requires schema update: `bin/console doctrine:schema:update --complete --force`
 

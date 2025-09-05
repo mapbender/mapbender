@@ -1,16 +1,30 @@
 (function () {
     class MbLayertree extends MapbenderElement {
-
         constructor(configuration, $element) {
             super(configuration, $element);
 
-            // see https://stackoverflow.com/a/4819886
+            this.model = null;
+            this.template = null;
+            this.menuTemplate = null;
+            this.popup = null;
+            this.treeCreated = false;
+            this.cssClasses = {
+                menuClose: 'fa-xmark',
+                menuOpen: 'fa-sliders',
+                checkboxUnchecked: 'far fa-square',
+                checkboxChecked: 'fas fa-square-check',
+                infoInactive: 'fa-info',
+                infoActive: 'fa-info-circle',
+                folderExpanded: 'fa-caret-down',
+                folderCollapsed: 'fa-caret-right'
+            };
+
             this.useDialog_ = this.checkDialogMode();
-            var self = this;
-            this._mobilePane = $(this.$element).closest('#mobilePane').get(0) || null;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
-                self._setup(mbMap);
-            }, function () {
+            this._mobilePane = this.$element.closest('#mobilePane').get(0) || null;
+
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this._setup(mbMap);
+            }, () => {
                 Mapbender.checkTarget('mbLayertree');
             });
         }
@@ -31,7 +45,6 @@
             }
             this._createEvents();
             Mapbender.elementRegistry.markReady(this.$element.attr('id'));
-
             Mapbender.ElementUtil.adjustScrollbarsIfNecessary(this.$element);
         }
 
@@ -77,9 +90,6 @@
             this.$element.on('click', '.-fn-toggle-selected:not(.disabled)', this._toggleSelected.bind(this));
             this.$element.on('click', '.layer-title:not(.disabled)', this._toggleSelectedLayer.bind(this));
             this.$element.on('click', '.layer-menu-btn', this._toggleMenu.bind(this));
-            this.$element.on('click', '.layer-menu .exit-button', function () {
-                $(this).closest('.layer-menu').remove();
-            });
             this.$element.on('click', '.layer-remove-btn', function () {
                 var $node = $(this).closest('li.leave');
                 var layer = $node.data('layer');
@@ -109,15 +119,7 @@
             this._initLayerStyleEvents();
         }
 
-        /**
-         * Applies the new (going by DOM) layer order inside a source.
-         *
-         * @param $sourceContainer
-         * @private
-         */
         _updateSource($sourceContainer) {
-            // this will capture the "configurationish" layer ids (e.g. "1_0_4_1") from
-            // all layers in the source container in DOM order
             var sourceId = $sourceContainer.attr('data-sourceid');
             var layerIdOrder = [];
             $('.-js-leafnode', $sourceContainer).each(function () {
@@ -130,11 +132,6 @@
             this.model.setSourceLayerOrder(sourceId, layerIdOrder.reverse());
         }
 
-        /**
-         * Applies the new (going by DOM) ordering between sources.
-         *
-         * @private
-         */
         _updateSourceOrder() {
             var $roots = $('.serviceContainer[data-sourceid]', this.$element);
             var sourceIds = $roots.map(function () {
@@ -256,7 +253,6 @@
             }
             var $sourceTree = this._createSourceTree(source);
             var $rootList = $('ul.layers:first', this.$element);
-            // Insert on top
             $rootList.prepend($sourceTree);
             this.reIndent_($rootList, false);
             this._reset();
@@ -276,8 +272,6 @@
 
         _redisplayLayerState($li, layer) {
             var $title = $('>.leaveContainer .layer-title', $li);
-            // NOTE: outOfScale is only calculated for leaves. May be null
-            //       for intermediate nodes.
             if ($li.length === 1) {
                 const li = $li[0];
                 li.classList.toggle('state-outofscale', !!layer.state.outOfScale);
@@ -302,7 +296,6 @@
 
         _resetSourceAtTree(source) {
             this._resetLayer(source.getRootLayer(), null);
-            // for performance reasons, only re-initialise sortable if tree has already been created
             if (this.treeCreated) this._reset();
         }
 
@@ -318,7 +311,9 @@
                 if (!$layers.length) {
                     $layers = $(document.createElement('ul')).addClass('layers');
                     $parent.append($layers);
-                    $toggleChildrenButton.toggleClass('fa-folder-open', treeOptions.toggle).toggleClass('fa-folder', !treeOptions.toggle);
+                    $toggleChildrenButton
+                        .toggleClass(this.cssClasses.folderExpanded, treeOptions.toggle)
+                        .toggleClass(this.cssClasses.folderCollapsed, !treeOptions.toggle);
                 }
 
                 $layers.append(this._createLayerNode(layer));
@@ -393,7 +388,7 @@
                 return false;
             }
             var $node = $me.closest('.leave,.themeContainer');
-            $node.toggleClass('showLeaves')
+            $node.toggleClass('showLeaves');
 
             this._updateFolderState($node);
             return false;
@@ -402,8 +397,8 @@
         _updateFolderState($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
-                .toggleClass('fa-folder-open', active)
-                .toggleClass('fa-folder', !active)
+                .toggleClass(this.cssClasses.folderExpanded, active)
+                .toggleClass(this.cssClasses.folderCollapsed, !active)
             ;
         }
 
@@ -437,16 +432,12 @@
             }
 
             if (e.shiftKey) {
-                // $layer is only set for "regular" layers, for themes the css class is themeContainer
                 this._updateChildrenState($layer.length ? $layer : $target.closest('li.themeContainer'), newState);
             }
 
             return false;
         }
 
-        /**
-         * ensure all parent layers become visible when toggling a child layer
-         */
         _updateParentState($target) {
             const $parentTarget = $target.parent().closest('li.leave, li.themeContainer');
             const $parentCheckbox = $parentTarget.find('> .leaveContainer > .-fn-toggle-selected');
@@ -455,15 +446,11 @@
             const source = layer && layer.source;
             const themeId = !source && $parentTarget.closest('.themeContainer').attr('data-layersetid');
 
-            // already in root level, no parents left to check
             if (!(layer && layer.source) && !themeId) return;
 
             if ($parentCheckbox.hasClass('active')) {
-                // recursively check the next higher hierarchy level
                 this._updateParentState($parentTarget);
             } else {
-                // only trigger checkbox click when it was not checked before
-                // _toggleSelected will take care of checking for the higher hierarchy levels
                 $parentCheckbox.trigger('click');
             }
         }
@@ -504,7 +491,6 @@
                 return;
             }
 
-            // Mark all filter hits
             const $layerTitles = this.$element.find('.layer-title');
             $layerTitles.each((index, element) => {
                 const title = $(element).text()?.toString().toLowerCase();
@@ -513,17 +499,13 @@
                 }
             });
 
-            // Hide all parent containers
             $layerTitles.parent().hide();
 
             this.$element.find('.filtered').each((index, match) => {
                 const $match = $(match);
-
-                // Highlight the matching text in the layer title
                 const regex = new RegExp('(' + value + ')', 'i');
                 $match.html($match.text().replace(regex, '<span class="layer-highlight">$1</span>'));
 
-                // Show parent containers and decide whether to open the folders
                 $match.parent().show();
                 ['subContainer', 'serviceContainer', 'themeContainer'].forEach(containerClass => {
                     const $container = $match.parents('.' + containerClass);
@@ -536,13 +518,12 @@
                     }
                     $container.toggleClass('showLeaves', !isInContainer);
                     $container.find('.-fn-toggle-children:first > i')
-                        .toggleClass('fa-folder-open', !isInContainer)
-                        .toggleClass('fa-folder', isInContainer);
+                        .toggleClass(this.cssClasses.folderExpanded, !isInContainer)
+                        .toggleClass(this.cssClasses.folderCollapsed, isInContainer);
 
                 });
             });
 
-            // Remove highlighted strings that are shorter than value
             this.$element.find('.layer-highlight').each((index, span) => {
                 if ($(span).text().length < value.length) {
                     $(span).replaceWith($(span).text());
@@ -552,10 +533,6 @@
             this._lastFilterLength = value.length;
         }
 
-        /**
-         * initalise a layer menu, called when the burger menu is clicked
-         * @param $layerNode jQuery
-         */
         _initMenu($layerNode) {
             const layer = $layerNode.data('layer');
             const $menu = $(this.menuTemplate.clone());
@@ -565,7 +542,9 @@
                 $menu.remove();
                 return;
             }
-            $layerNode.find('.leaveContainer:first', $layerNode).after($menu);
+
+            const $leaveContainer = $layerNode.find('.leaveContainer:first');
+            $leaveContainer.after($menu);
 
             $menu.find('[data-menu-action]').each((index, el) => {
                 const $actionElement = $(el);
@@ -578,15 +557,6 @@
             });
         }
 
-        /**
-         *
-         * @param {string} action
-         * @param {jQuery} $menu the menu container dom element
-         * @param {jQuery} $actionElement the dom element with the data-action attribute
-         * @param {jQuery} $layerNode the dom element for the layer node
-         * @param {Mapbender.SourceLayer} layer
-         * @private
-         */
         _initMenuAction($menu, action, $actionElement, $layerNode, layer) {
             switch (action) {
                 case 'opacity':
@@ -606,6 +576,7 @@
 
             const $wrapper = $opacityControl.find('.layer-opacity-bar');
             const $handle = $opacityControl.find('.layer-opacity-handle');
+            const $valueDisplay = $opacityControl.find('.layer-opacity-value');
             const dragDealer = new Dragdealer($wrapper[0], {
                 x: source.options.opacity,
                 horizontal: true,
@@ -617,19 +588,19 @@
                     var opacity = Math.max(0.0, Math.min(1.0, x));
                     var percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
+                    $valueDisplay.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
             });
 
             const $slider = $opacityControl.find('.layer-slider-handle');
-            $slider.attr('tabindex', '0'); // Make the handle focusable
+            $slider.attr('tabindex', '0');
 
-            // Add keyboard event listener for left and right arrow keys
             $slider.on('keydown', (event) => {
                 if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
                     event.preventDefault();
                     const currentX = dragDealer.getValue()[0];
-                    const step = 1 / 100; // Step size for opacity adjustment
+                    const step = 1 / 100;
                     let newX = currentX;
 
                     if (event.key === 'ArrowLeft') {
@@ -642,6 +613,7 @@
                     const opacity = Math.max(0.0, Math.min(1.0, newX));
                     const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
+                    $valueDisplay.text(percentage);
                     this.model.setSourceOpacity(source, opacity);
                 }
             });
@@ -675,15 +647,23 @@
             var $layerNode = $target.closest('li.leave');
             if (!$('>.layer-menu', $layerNode).length) {
                 $('.layer-menu', this.$element).remove();
+                $('.layer-menu-btn i', this.$element).removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
+                const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
+                $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
 
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
                 const $firstFocusable = $menu.find('[tabindex="0"]').first();
                 if ($firstFocusable.length) {
                     $firstFocusable.focus();
                 }
+            } else {
+                $('>.layer-menu', $layerNode).remove();
+                const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
+                $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
             }
 
             return false;
@@ -698,11 +678,6 @@
             });
         }
 
-        /**
-         * returns a list of supported menu options for this layer. Override this if you have a custom menu option
-         * @param {Mapbender.SourceLayer} layer
-         * @returns {string[]}
-         */
         _getSupportedMenuOptions(layer) {
             return layer.getSupportedMenuOptions();
         }
@@ -813,10 +788,7 @@
                         destroyOnClose: true,
                         width: !useModal && 850 || '100%',
                         height: !useModal && 600 || null,
-                        buttons: [{
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-sm btn-light popupClose critical'
-                        }]
+                        buttons: []
                     });
                     metadataPopup.$element.find('button').focus();
                     if (initTabContainer) {
@@ -826,6 +798,10 @@
                     Mapbender.error(errorThrown);
                 })
             ;
+        }
+
+        defaultAction(callback) {
+            this.open(callback);
         }
 
         open(callback) {
@@ -884,9 +860,9 @@
             var icons;
             var hideLayerNameWhenCheckboxDisabled = false;
             if ($el.is('.-fn-toggle-info')) {
-                icons = ['fa-info', 'fa-info-circle'];
+                icons = [this.cssClasses.infoInactive, this.cssClasses.infoActive];
             } else {
-                icons = ['fa-square', 'fa-square-check'];
+                icons = [this.cssClasses.checkboxUnchecked, this.cssClasses.checkboxChecked];
                 hideLayerNameWhenCheckboxDisabled = !enabled && active;
             }
             $('>i', $el)
@@ -905,8 +881,6 @@
             for (var l = 0; l < $lists.length; ++l) {
                 var list = $lists[l];
                 var $folderToggles = $('>li >.leaveContainer .-fn-toggle-children', list);
-                // If all folder toggles on this level of the tree are placeholders,
-                // "unindent" the whole list.
                 if ($folderToggles.filter('.disabled-placeholder').length === $folderToggles.length) {
                     $folderToggles.addClass('hidden');
                 } else {

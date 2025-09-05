@@ -275,7 +275,32 @@ ul.toolBar, .toolBar > ul {
       line-height: inherit;
     }
   }
+  .popupHead{
+    border-bottom: none;
+  }
+  .tabContainerAlt{
 
+    > .tabs {
+      border: transparent;
+      border-bottom: 2px solid #d6d3d3;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
+    }
+    .tab {
+      border: transparent;
+    }
+    .tab.active {
+      border-bottom: 3px solid;
+      border-bottom-color: var(--primary);
+      background-color: transparent;
+      margin-bottom: 0px;
+    }
+  }
+
+  .container {
+    margin-top: 2em;
+  }
+  
   table {
     margin-bottom: 1em;
     tbody th:first-child {

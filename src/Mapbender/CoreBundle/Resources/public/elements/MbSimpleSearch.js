@@ -3,8 +3,13 @@
     class MbSimpleSearch extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
+            this.initialised = false;
+            this.layer = null;
+            this.mbMap = null;
+            this.iconUrl_ = null;
+            this.selectedConfiguration = 0;
 
-            // Constructor code migrated from _create()
+            // Former _create body
             this._setSelectedConfiguration(this._getSavedConfiguration());
             this.initializeAutocompletePosition_();
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
@@ -15,11 +20,10 @@
 
         _setSelectedConfiguration(index) {
             this.selectedConfiguration = parseInt(index);
-            if (!(this.selectedConfiguration in (this.options['configurations'] || []))) {
+            if (!(this.selectedConfiguration in this.options['configurations'])) {
                 this.selectedConfiguration = 0;
             }
-            const configuration = (this.options['configurations'] || [])[this.selectedConfiguration];
-            if (!configuration) { return; }
+            const configuration = this.options['configurations'][this.selectedConfiguration];
 
             this.iconUrl_ = configuration.result_icon_url || null;
 
@@ -79,7 +83,7 @@
             var vertical = this.$element.closest('.toolBar.bottom,.anchored-element-wrap-lb,.anchored-element-wrap-rb').length ? 'up' : 'down';
             var horizontal = 'right';
             if (this.$element.closest('.toolBar,.anchored-element-wrap').length) {
-                var windowWidth = $('html').get(0).clientWidth;
+                var windowWidth = document.documentElement.clientWidth;
                 var node = this.$element.get(0);
                 var ownWidth = node.clientWidth;
                 var distanceLeft = 0;
@@ -99,15 +103,24 @@
         }
 
         _setup() {
-            const self = this;
+            var self = this;
             const configuration = this.options['configurations'][this.selectedConfiguration];
             this.searchInput = $('.searchterm', this.$element);
+            this.searchIcon = $('.-fn-search-icon', this.$element);
+            this.clearIcon = $('.-fn-reset', this.$element);
             this.searchInput.attr('placeholder', Mapbender.trans(configuration.placeholder || configuration.title));
-            this.$element.find('.-fn-reset').on('click', () => this._clearInputAndMarker());
+
+            this.clearIcon.on('click', () => this._clearInputAndMarker());
+
+            this._updateSearchAndClearIconState();
+            this.searchInput.on('input focus blur', () => {
+                this._updateSearchAndClearIconState();
+            });
+
             this.$element.on('change', '.-fn-simple_search-select-configuration', function(e) {
                 const selectedVal = $(e.target).val();
                 if (selectedVal < 0 || selectedVal >= this.options.configurations.length) return;
-                this._setSelectedConfiguration(selectedVal);
+                this._setSelectedConfiguration(selectedVal)
             }.bind(this));
             const form = this.$element.find('form').get(0);
             var url = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/search';
@@ -164,21 +177,29 @@
                     self._onAutocompleteSelected(ui.item);
                 }
             });
-            // On manual submit (enter key, submit button), trigger autocomplete manually
+            // On manual submit (enter key), trigger autocomplete manually
             this.$element.on('submit', function(evt) {
                 evt.preventDefault();
                 if (form && form.reportValidity && !form.reportValidity()) return;
                 this.searchInput.autocomplete("search");
-            }.bind(this));
-            this.$element.on('click', '.-fn-search', function() {
-                if (form && form.reportValidity && !form.reportValidity()) return;
-                this.searchInput.autocomplete('search');
             }.bind(this));
             this.mbMap.element.on('mbmapsrschanged', function(event, data) {
                 self.layer.retransform(data.from, data.to);
             });
             this.initialised = true;
             Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
+
+        _updateSearchAndClearIconState() {
+            if (this.searchInput.val().length > 0) {
+                this.searchIcon.hide();
+                this.clearIcon.show();
+                this.searchInput.removeClass('with-icon');
+            } else {
+                this.searchIcon.show();
+                this.clearIcon.hide();
+                this.searchInput.addClass('with-icon');
+            }
         }
 
         _parseFeature(doc) {
@@ -254,6 +275,15 @@
             this.mbMap.getModel().zoomToFeature(feature, zoomToFeatureOptions);
             this._hideMobile();
             this._setFeatureMarker(feature);
+
+            // Move cursor to the beginning of the input field
+            setTimeout(() => {
+                var inputElement = this.searchInput.get(0);
+                if (inputElement) {
+                    inputElement.focus();
+                    inputElement.setSelectionRange(0, 0);
+                }
+            }, 10);
         }
 
         _setFeatureMarker(feature) {
@@ -304,6 +334,7 @@
 
         _clearInputAndMarker() {
             this.searchInput.val('');
+            this._updateSearchAndClearIconState();
             this.layer.clear();
         }
     }
