@@ -44,7 +44,7 @@ class ScaleSelector extends AbstractElementService
                 '@MapbenderCoreBundle/Resources/public/elements/MbScaleSelector.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.scaleselector.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/scaleselector.scss',
             ),
         );
     }

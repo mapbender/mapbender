@@ -35,7 +35,7 @@ class Ruler extends AbstractElementService
                 '@MapbenderCoreBundle/Resources/public/elements/MbRuler.js',
             ],
             'css' => [
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.css',
+                '@MapbenderCoreBundle/Resources/public/sass/element/ruler.scss',
             ],
             'trans' => [
                 'mb.core.ruler.create_error',

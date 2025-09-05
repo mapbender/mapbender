@@ -50,7 +50,7 @@ class SrsSelector extends AbstractElementService
                 '@MapbenderCoreBundle/Resources/public/elements/MbSrsSelector.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.srsselector.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/srsselector.scss',
             ),
         );
     }
