@@ -1,5 +1,5 @@
 .mb-element-sketch {
-  .stop-sketching {
+  .-fn-tool-off:not(:disabled) .stop-sketching {
     color: red;
   }
   .geometry-table {
@@ -69,11 +69,6 @@
     --bs-btn-active-color: #6c757d;
     --bs-btn-active-bg: #e6e6e6;
     --bs-btn-active-border-color: #ccc;
-  }
-  .popover-body {
-    .popupClose {
-      margin-top: -0.75rem !important;
-    }
   }
 }
 .popup.sketch-dialog {
