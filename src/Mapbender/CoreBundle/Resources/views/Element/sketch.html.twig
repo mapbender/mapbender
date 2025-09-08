@@ -17,7 +17,7 @@
         {% endif %}
         </div>
         <button type="button" disabled="disabled" title="{{ "mb.core.sketch.geometry.action.stop_drawing"|trans }}" class="btn btn-outline-secondary -fn-tool-off">
-            <i class="fas fa-stop"></i>
+            <i class="fa-solid fa-xmark stop-sketching"></i>
         </button>
     </div>
     <div class="mb-3 -js-pallette-container{{- not allow_custom_color and colors | length <= 1 ? ' hidden' : '' -}}">
@@ -41,15 +41,6 @@
             <label for="label-text" class="form-label">{{ "mb.core.sketch.inputs.label"|trans}}</label>
             <input name="label-text" type="text" class="form-control" disabled="disabled" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}...">
         </div>
-        {%- if dialogMode -%}
-        <div class="col-5 col-xs-5">
-            <label for="label-text" class="form-label">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
-            <div class="input-group">
-                <input name="radius" type="text" class="form-control" disabled="disabled">
-                <span class="input-group-text"></span>
-            </div>
-        </div>
-        {%- endif -%}
     </div>
     <table class="table table-striped geometry-table">
         <tr class="geometry-item hidden" data-id="">
@@ -58,7 +49,7 @@
             </td>
             <td class="geometry-name"></td>
             <td class="geometry-actions compact text-nowrap">
-                <i class="geometry-zoom fa fas fa-magnifying-glass-plus clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.zoom" | trans }}" tabindex="0"></i>
+                <i class="geometry-zoom fa fas fa-search clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.zoom" | trans }}" tabindex="0"></i>
                 <span class="static-popover-wrap -js-edit-content-anchor">
                     <i class="geometry-edit fa fas fa-pencil-alt fa-pencil clickable hover-highlight-effect" title="{{"mb.core.sketch.geometry.action.edit" | trans }}" tabindex="0"></i>
                 </span>
@@ -69,17 +60,17 @@
     <div class="hidden -js-edit-content">
         <div class="popover-body">
             <div class="mb-1">
-                <span class="popupClose right" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}">
+                <span role="button" class="popupClose hover-highlight-effect right" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}" tabindex="0">
                     <i class="fa fas fa-xmark -fn-close"></i>
                 </span>
             </div>
-            <div class="mb-3 mr">
-                <label for="label-text" class="col-form-label col-5 col-xs-5">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
-                <div class="col-7 col-xs-7"><input type="text" name="label-text" class="form-control"></div>
+            <div class="mb-3">
+                <label for="label-text" class="col-form-label col-xs-5">{{- 'mb.core.sketch.inputs.label' | trans -}}</label>
+                <input type="text" name="label-text" class="form-control">
             </div>
-            <div class="mb-3 mr" data-toolnames="circle">
-                <label for="radius" class="col-form-label col-4 col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
-                <div class="col-7 col-xs-7"><input type="text" name="radius" class="form-control"></div>
+            <div class="mb-3" data-toolnames="circle">
+                <label for="radius" class="col-form-label col-xs-4">{{- 'mb.core.sketch.inputs.radius' | trans -}}</label>
+                <input type="text" name="radius" class="form-control">
             </div>
         </div>
     </div>

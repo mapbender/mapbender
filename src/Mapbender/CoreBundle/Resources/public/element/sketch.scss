@@ -1,4 +1,7 @@
 .mb-element-sketch {
+  .stop-sketching {
+    color: red;
+  }
   .geometry-table {
     .geometry-actions {
       text-align:right;
@@ -15,7 +18,7 @@
       right: -1em;
       top: 25px;
       .popover-arrow {
-        transform: translate(250px, -7px);
+        transform: translate(150px, -7px);
       }
       .popover-arrow::before {
         top: 0;
@@ -70,9 +73,6 @@
   .popover-body {
     .popupClose {
       margin-top: -0.75rem !important;
-    }
-    .mr {
-      margin-right: -10rem;
     }
   }
 }
