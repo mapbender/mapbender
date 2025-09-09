@@ -182,7 +182,6 @@ class ApplicationAssetService
                     '/components/datatables/media/js/dataTables.bootstrap4.min.js',
                     '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
