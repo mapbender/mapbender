@@ -13,11 +13,26 @@
         border: 2px dashed #333;
         color: #333;
     }
+    .filesTable {
+        table-layout: fixed;
+        width: 100%;
+    }
+    
     table .overflow {
         text-overflow: ellipsis;
         overflow: hidden;
-        width: 205px;
         white-space: nowrap;
+    }
+    
+    // Ensure action column maintains fixed width and doesn't get cut off
+    table .text-end {
+        width: 100px;
+        white-space: nowrap;
+    }
+    
+    // Make filename column flexible
+    table td:first-child {
+        width: calc(100% - 100px);
     }
     table .text-end i {
         cursor: pointer;
