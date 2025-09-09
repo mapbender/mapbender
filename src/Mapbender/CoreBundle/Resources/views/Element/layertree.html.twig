@@ -78,12 +78,12 @@
                   {% endblock %}
                   {% block layertree_menu_metadata %}
                   {% if 'metadata' in configuration.menu %}
-                  <span data-menu-action="metadata" class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect clickable" tabindex="0" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+                  <span data-menu-action="metadata" class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect ms-1 clickableqq" tabindex="0" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
                   {% endif %}
                   {% endblock %}
                   {% block layertree_menu_layerremove %}
                   {% if 'layerremove' in configuration.menu %}
-                  <span data-menu-action="layerremove" class="layer-remove-btn far fa-trash-alt hover-highlight-effect clickable" tabindex="0" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}" style="color: red;"></span>
+                  <span data-menu-action="layerremove" class="layer-remove-btn far fa-trash-alt hover-highlight-effect ms-1 clickable" tabindex="0" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}" style="color: red;"></span>
                   {% endif %}
                   {% endblock %}
                   {% block layertree_menu_custom_textend %}
