@@ -283,8 +283,6 @@ ul.toolBar, .toolBar > ul {
     > .tabs {
       border: transparent;
       border-bottom: 2px solid #d6d3d3;
-      margin-bottom: 0px;
-      padding-bottom: 0px;
     }
     .tab {
       border: transparent;
@@ -295,12 +293,15 @@ ul.toolBar, .toolBar > ul {
       background-color: transparent;
       margin-bottom: 0px;
     }
+    > .container {
+      flex: unset;
+    }
   }
 
   .container {
     margin-top: 2em;
   }
-  
+
   table {
     margin-bottom: 1em;
     tbody th:first-child {
