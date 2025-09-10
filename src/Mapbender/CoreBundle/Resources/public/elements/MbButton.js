@@ -216,7 +216,7 @@
                 if (nameParts.length === 1) {
                     // handle new JS Native Classes here
                     const className = nameParts[0];
-                    this.targetWidget = new Mapbender.Element[className](targetConf.configuration, $target);
+                    this.targetWidget = $target.data(className);
                 } else {
                     const namespace = nameParts[0];
                     let innerName = nameParts[1];
