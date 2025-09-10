@@ -1,42 +1,45 @@
-$.widget("mapbender.mbPrintClientJobList", {
-    options: {
-        locale: null,
-        url: null
-    },
-    reloadEnabled: false,
-    resumeState: false,
-    currentReloadInterval: null,
-    queueRefreshDelay: 3000,
-    $table: null,
+class MbPrintJobList {
 
-    _create: function() {
-        this.$table = $('table', this.element).first();
+    constructor(configuration, $element) {
+        this.options = configuration;
+        this.$element = $element;
+        this.reloadEnabled = false;
+        this.resumeState = false;
+        this.currentReloadInterval = null;
+        this.queueRefreshDelay = 3000;
+        this.$table = $('table', this.$element).first();
         this.$table.on('click', '.-fn-delete', this._deleteHandler.bind(this));
-    },
-    start: function() {
+    }
+
+    start() {
         this.resumeState = true;
         this._refresh(this.$table, false);
-    },
-    stop: function() {
+    }
+
+    stop() {
         this.resumeState = false;
         this._stop();
-    },
-    pause: function() {
+    }
+
+    pause() {
         this.resumeState = this.reloadEnabled;
         this._stop();
-    },
-    resume: function() {
+    }
+
+    resume() {
         if (this.resumeState) {
             this.start();
         }
-    },
-    _stop: function() {
+    }
+
+    _stop() {
         this.reloadEnabled = false;
         if (this.currentReloadInterval) {
             this.currentReloadInterval = clearTimeout(this.currentReloadInterval);
         }
-    },
-    _refresh: function($table, once) {
+    }
+
+    _refresh($table, once) {
         var firstLoad = !this._hasTableApi($table);
         if (typeof once !== 'undefined') {
             this.reloadEnabled = !once;
@@ -44,9 +47,9 @@ $.widget("mapbender.mbPrintClientJobList", {
         var callback;
         if (!this.reloadEnabled) {
             this.currentReloadInterval = clearTimeout(this.currentReloadInterval);
-            callback = this._noop;
+            callback = function() {};
         } else {
-            callback = function() {
+            callback = function () {
                 // just in case there are concurrent refresh loops going on, cancel them
                 this.currentReloadInterval = clearTimeout(this.currentReloadInterval);
                 if (this.reloadEnabled) {
@@ -66,85 +69,88 @@ $.widget("mapbender.mbPrintClientJobList", {
         } else {
             this._getTableApi($table).ajax.reload(callback);
         }
-    },
-    _hasTableApi: function($table) {
+    }
+
+    _hasTableApi($table) {
         // @see https://datatables.net/reference/api/$.fn.dataTable.isDataTable()
         return $.fn.DataTable.isDataTable($table);
-    },
-    _getTableApi: function($table) {
+    }
+
+    _getTableApi($table) {
         if (!this._hasTableApi($table)) {
-             var self = this;
-             var columns = ['id', 'ctime', 'status', 'interface'].map(function(name, i) {
-                 var column = {
-                     targets: i,
-                     orderarble: name === 'ctime',
-                     data: null,
-                     searchable: false,
-                     sortable: name === 'ctime'
-                 };
-                 switch(name) {
-                     case 'ctime':
-                         column.render = function (val, type, row, meta) {
-                             if (type !== 'display') {
-                                 return val;
-                             }
-                             var date = new Date(row['ctime']* 1000);
-                             return [
-                                 date.toLocaleDateString(self.options.locale),
-                                 date.toLocaleTimeString(self.options.locale)
-                             ].join(' ');
-                         };
-                         break;
-                     case 'interface':
-                         column.className = 'interface';
-                         column.render = function(val, type, row, meta) {
-                             if (type !== 'display') {
-                                 return null;
-                             }
-                             return self._renderInterface(row);
-                         };
-                         break;
-                     case 'status':
-                         column.render = function(val, type, row, meta) {
-                             if (type !== 'display') {
-                                 return null;
-                             }
-                             return Mapbender.trans(row['status']);
-                         };
-                         break;
-                     default:
-                         column.render = function (val, type, row, meta) {
-                             if (type !== 'display') {
-                                 return row[name];
-                             }
-                             return '' + row[name];
-                         };
-                         break;
-                 }
-                 return column;
-             });
-             $table.DataTable({
-                 ajax:       {
-                     url: this.options.url,
-                     dataSrc: "",
-                     type: "GET"
-                 },
-                 paging:     false,
-                 searching:  false,
-                 ordering: false,
-                 order: [1, 'desc'],
-                 info:       false,
-                 autoWidth:  false,
-                 columnDefs: columns,
-                 language: {
-                     "loadingRecords" : Mapbender.trans('mb.print.printclient.joblist.loading'),
-                     "emptyTable" : Mapbender.trans('mb.print.printclient.joblist.nodata')
-                 }
-             });
+            var self = this;
+            var columns = ['id', 'ctime', 'status', 'interface'].map(function (name, i) {
+                var column = {
+                    targets: i,
+                    orderarble: name === 'ctime',
+                    data: null,
+                    searchable: false,
+                    sortable: name === 'ctime'
+                };
+                switch (name) {
+                    case 'ctime':
+                        column.render = function (val, type, row, meta) {
+                            if (type !== 'display') {
+                                return val;
+                            }
+                            var date = new Date(row['ctime'] * 1000);
+                            return [
+                                date.toLocaleDateString(self.options.locale),
+                                date.toLocaleTimeString(self.options.locale)
+                            ].join(' ');
+                        };
+                        break;
+                    case 'interface':
+                        column.className = 'interface';
+                        column.render = function (val, type, row, meta) {
+                            if (type !== 'display') {
+                                return null;
+                            }
+                            return self._renderInterface(row);
+                        };
+                        break;
+                    case 'status':
+                        column.render = function (val, type, row, meta) {
+                            if (type !== 'display') {
+                                return null;
+                            }
+                            return Mapbender.trans(row['status']);
+                        };
+                        break;
+                    default:
+                        column.render = function (val, type, row, meta) {
+                            if (type !== 'display') {
+                                return row[name];
+                            }
+                            return '' + row[name];
+                        };
+                        break;
+                }
+                return column;
+            });
+            $table.DataTable({
+                ajax: {
+                    url: this.options.url,
+                    dataSrc: "",
+                    type: "GET"
+                },
+                paging: false,
+                searching: false,
+                ordering: false,
+                order: [1, 'desc'],
+                info: false,
+                autoWidth: false,
+                columnDefs: columns,
+                language: {
+                    "loadingRecords": Mapbender.trans('mb.print.printclient.joblist.loading'),
+                    "emptyTable": Mapbender.trans('mb.print.printclient.joblist.nodata')
+                }
+            });
         }
         return $table.dataTable().api();
-    },
-    _renderInterface: function (row) {
+    }
+
+    _renderInterface(row) {
         var $icon;
 
         var buttonsEmpty = true;
@@ -184,8 +190,9 @@ $.widget("mapbender.mbPrintClientJobList", {
             buttonsEmpty = false;
         }
         return buttonsEmpty ? '' : $group.get(0).outerHTML;
-    },
-    _deleteHandler: function(evt) {
+    }
+
+    _deleteHandler(evt) {
         var $button = $(evt.currentTarget);
         var $tr = $button.closest('tr');
         this.stop();
@@ -196,12 +203,8 @@ $.widget("mapbender.mbPrintClientJobList", {
                 id: $button.attr('data-id')
             },
             method: 'POST'
-        }).then(function() {
+        }).then(function () {
             $tr.remove();
         }).always(this.start.bind(this));
-    },
-    _noop: function() {}
-});
-
-
-
+    }
+}

@@ -1,52 +1,45 @@
-(function ($) {
-    'use strict';
+(function() {
 
-    /**
-     * @typedef {{type:string, opacity:number, geometries: Array<Object>}} VectorLayerData~export
-     * @typedef {{type:string, opacity:number, markers: Array<Object>}} MarkerLayerData~export
-     */
-    $.widget("mapbender.mbImageExport", {
-        options: {},
-        map: null,
-        $form: null,
-
-        _create: function () {
-            this.$form = $('form', this.element);
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
-                self.mbMap = mbMap;
-                self.map = mbMap;   // legacy
-                self._setup();
-            }, function () {
-                Mapbender.checkTarget(self.widgetName, self.options.target);
+    class MbImageExport extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            this.$form = $('form', this.$element);
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
+                this.mbMap = mbMap;
+                this.map = mbMap; // legacy alias
+                this._setup();
+            }, () => {
+                // original jQuery widget used this.widgetName ('mbImageExport')
+                Mapbender.checkTarget('mbImageExport', this.options.target);
             });
-        },
-        _setup: function () {
+        }
+
+        _setup() {
             this.$form.on('submit', this._onSubmit.bind(this));
-            this._trigger('ready');
-        },
-        defaultAction: function (callback) {
-            this.open(callback);
-        },
-        getPopupOptions: function () {
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+        }
+
+        getPopupOptions() {
             return {
-                title: this.element.attr('data-title'),
+                title: this.$element.attr('data-title'),
                 draggable: true,
                 modal: false,
                 closeOnESC: false,
-                content: this.element,
+                content: this.$element,
                 width: 250,
                 scrollable: false
             };
-        },
-        open: function (callback) {
+        }
+
+        open(callback) {
             this.callback = callback || null;
             if (!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup(this.getPopupOptions());
                 this.popup.$element.one('close', $.proxy(this.close, this));
             }
-        },
-        close: function () {
+        }
+
+        close() {
             if (this.popup) {
                 this.popup.close();
                 this.popup = null;
@@ -55,20 +48,23 @@
                 (this.callback)();
                 this.callback = null;
             }
-        },
+        }
+
         /**
          * @returns {Array<Mapbender.Source>}
          * @private
          */
-        _getRasterSources: function () {
+        _getRasterSources() {
             return this.map.getModel().getSources().filter(function (x) {
                 return x.getActive();
             });
-        },
-        _getExportScale: function () {
+        }
+
+        _getExportScale() {
             return this.mbMap.getModel().getCurrentScale(false);
-        },
-        _getExportExtent: function () {
+        }
+
+        _getExportExtent() {
             var lbrt = this.map.model.getCurrentExtentArray();
             return {
                 left: lbrt[0],
@@ -76,8 +72,9 @@
                 right: lbrt[2],
                 top: lbrt[3]
             };
-        },
-        _collectRasterLayerData: function () {
+        }
+
+        _collectRasterLayerData() {
             var sources = this._getRasterSources();
             var scale = this._getExportScale();
             var extent = this._getExportExtent();
@@ -91,8 +88,9 @@
                 dataOut.push.apply(dataOut, sourcePrintData);
             }
             return dataOut;
-        },
-        _collectJobData: async function () {
+        }
+
+        async _collectJobData() {
             var mapExtent = this._getExportExtent();
             var imageSize = this.map.model.getCurrentViewportSize();
             var rasterLayers = this._collectRasterLayerData();
@@ -111,8 +109,9 @@
                     height: Math.abs(mapExtent.top - mapExtent.bottom)
                 }
             };
-        },
-        _onSubmit: function (evt) {
+        }
+
+        _onSubmit(evt) {
             // isTrusted is true when the event was triggered by a user action, jobData needs to injected first
             // then, the form is submitted by triggering it in the code
             if (evt.originalEvent?.isTrusted !== true) return true;
@@ -122,7 +121,8 @@
             this._collectJobData().then((jobData) => {
                 if (jobData.layers.length) {
                     this._injectJobData(jobData);
-                    this.$form.submit();
+                    // Use native submit to avoid re-triggering this handler
+                    this.$form.get(0).submit();
                 } else {
                     Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
                 }
@@ -130,25 +130,28 @@
                 throw error;
             });
             return false;
-        },
-        _injectJobData: function (jobData) {
+        }
+
+        _injectJobData(jobData) {
             var $hiddenArea = $('.-fn-hidden-fields', this.$form);
             $hiddenArea.empty();
             var submitValue = JSON.stringify(jobData);
             var $input = $('<input/>').attr('type', 'hidden').attr('name', 'data');
             $input.val(submitValue);
             $input.appendTo($hiddenArea);
-        },
+        }
+
         /**
          * Injects data AND submits form
          * @param {Object} jobData
          * @private
          * @deprecated distinctly use _injectJobData and regular form submit events
          */
-        _submitJob: function (jobData) {
+        _submitJob(jobData) {
             this._injectJobData(jobData);
             $('input[type="submit"]', this.$form).click();
-        },
+        }
+
         /**
          * Should return true if the given layer needs to be included in export
          *
@@ -156,7 +159,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterGeometryLayer: function (layer) {
+        _filterGeometryLayer(layer) {
             if ('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                 return false;
             }
@@ -164,7 +167,8 @@
                 return false;
             }
             return true;
-        },
+        }
+
         /**
          * Should return true if the given layer needs to be included in export
          *
@@ -172,7 +176,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterMarkerLayer: function (layer) {
+        _filterMarkerLayer(layer) {
             if ('OpenLayers.Layer.Markers' !== layer.CLASS_NAME || layer.visibility === false || this.layer === layer) {
                 return false;
             }
@@ -180,7 +184,8 @@
                 return false;
             }
             return layer.opacity > 0;
-        },
+        }
+
         /**
          * Should return true if the given feature should be included in export.
          *
@@ -188,11 +193,12 @@
          * @returns {boolean}
          * @private
          */
-        _filterFeature: function (feature) {
+        _filterFeature(feature) {
             // onScreen throws an error if geometry is not populated, see
             // https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L198
             return feature.geometry && feature.onScreen(true);
-        },
+        }
+
         /**
          * Extracts and preprocesses the geometry from a feature for export backend consumption.
          *
@@ -202,14 +208,15 @@
          * @private
          * engine-agnostic
          */
-        _extractFeatureGeometry: function (layer, feature) {
+        _extractFeatureGeometry(layer, feature) {
             var geometry = this.map.model.featureToGeoJsonGeometry(feature);
             geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
                 geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
             }
             return geometry;
-        },
+        }
+
         /**
          * Should return true if the given feature geometry should be included in export.
          *
@@ -217,7 +224,7 @@
          * @returns {boolean}
          * @private
          */
-        _filterFeatureGeometry: function (geometry) {
+        _filterFeatureGeometry(geometry) {
             if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
                 return true;
             }
@@ -228,8 +235,9 @@
                 return true;
             }
             return false;
-        },
-        _dumpFeatureGeometries: function (layer, features, resolution) {
+        }
+
+        _dumpFeatureGeometries(layer, features, resolution) {
             return this.map.model.dumpGeoJsonFeatures(features, layer, resolution, true)
                 .map(function (gjFeature) {
                     // Legacy data format quirks (not actually GeoJson):
@@ -240,7 +248,8 @@
                     });
                 })
                 ;
-        },
+        }
+
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
          * to have passsed through the _filterGeometryLayer check positively.
@@ -249,7 +258,7 @@
          * @returns VectorLayerData~export
          * @private
          */
-        _extractGeometryLayerData: function (layer) {
+        _extractGeometryLayerData(layer) {
             var postFilter = this._filterFeatureGeometry.bind(this);
             var features = layer.features.filter(this._filterFeature.bind(this))
             var geometries = this._dumpFeatureGeometries(layer, features);
@@ -258,8 +267,9 @@
                 opacity: 1,
                 geometries: geometries.filter(postFilter)
             };
-        },
-        _collectGeometryLayers: function () {
+        }
+
+        _collectGeometryLayers() {
             var vectorLayers = [];
             // For (nested) group layers, visibility must be checked at
             // each level.
@@ -299,7 +309,8 @@
                 });
             }
             return dataOut;
-        },
+        }
+
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
          * to have passsed through the _filterGeometryLayer check positively.
@@ -308,7 +319,7 @@
          * @returns MarkerLayerData~export
          * @private
          */
-        _extractMarkerLayerData: function (layer) {
+        _extractMarkerLayerData(layer) {
             var markerData = [];
             for (var i = 0; i < layer.markers.length; ++i) {
                 var marker = layer.markers[i];
@@ -336,14 +347,15 @@
                 opacity: layer.opacity,
                 markers: markerData
             };
-        },
+        }
+
         /**
          * Convert potentially absolute URL to web-local url pointing somewhere into bundles/
          * @param {String} url
          * @returns {String|boolean}
          * @private
          */
-        _fixAssetPath: function (url) {
+        _fixAssetPath(url) {
             // @todo: fold copy&paste vs Mapbender.StyleUtil
             var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
             if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
@@ -352,8 +364,10 @@
             } else {
                 return urlOut;
             }
-        },
-        _noDanglingCommaDummy: null
-    });
+        }
+    }
 
-})(jQuery);
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbImageExport = MbImageExport;
+
+})();
