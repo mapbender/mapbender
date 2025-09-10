@@ -11,6 +11,13 @@ $panelBorderColor: #888 !default;
     margin-right: 0.5em;
   }
 
+  .sidePane & {
+      .group-title {
+          font-weight: 600;
+          margin-top: 5px;
+      }
+  }
+
   &.toolBarItem {
     // Reset toolbar text alignment (vs .itemsRight / .itemsCenter)
     position: relative;

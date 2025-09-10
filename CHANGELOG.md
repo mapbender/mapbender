@@ -1,3 +1,7 @@
+## next bugfix release
+Bugfixes:
+* [BaseSourceSwitcher] Fix behaviour in sidepane ([#PR1776](https://github.com/mapbender/mapbender/pull/1776))
+
 ## v4.2.1
 Bugfixes:
 * [WMS] Fix layer order in frontend was wrong after updating instance layer properties ([#PR1773](https://github.com/mapbender/mapbender/pull/1773))
