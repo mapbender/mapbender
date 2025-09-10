@@ -552,7 +552,7 @@ mb:
         circle: Círculo
       inputs:
         label: Rótulo
-        radius: Raio
+        radius: Raio (m)
       geometry:
         action:
           remove: 'Remover geometria'

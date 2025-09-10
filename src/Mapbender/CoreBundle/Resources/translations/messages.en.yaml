@@ -557,7 +557,7 @@ mb:
         circle: Circle
       inputs:
         label: Label
-        radius: Radius
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Remove geometry'

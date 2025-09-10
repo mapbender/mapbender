@@ -1,4 +1,7 @@
 .mb-element-sketch {
+  .-fn-tool-off:not(:disabled) .stop-sketching {
+    color: red;
+  }
   .geometry-table {
     .geometry-actions {
       text-align:right;
@@ -9,13 +12,13 @@
     .popover {
       position: absolute;
       font-size: inherit;
-      min-width: 20em;
+      min-width: 15em;
       display: initial;
       left: initial;
       right: -1em;
       top: 25px;
       .popover-arrow {
-        transform: translate(250px, -7px);
+        transform: translate(150px, -7px);
       }
       .popover-arrow::before {
         top: 0;

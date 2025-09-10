@@ -557,7 +557,7 @@ mb:
         circle: Kreis
       inputs:
         label: Beschriftung
-        radius: Radius
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Entfernen der Geometrie'
