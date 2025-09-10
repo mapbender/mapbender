@@ -550,6 +550,13 @@
                 $popover.remove();
                 self._endEdit();
             });
+            $popover.on('keydown', 'span[role="button"]', function(e) {
+                if (e.key === 'Enter') {
+                    $popover.remove();
+                    self._endEdit();
+                    e.preventDefault();
+                }
+            });
         }
 
         _closePopovers() {

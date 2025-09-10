@@ -546,7 +546,7 @@ mb:
         circle: Круг
       inputs:
         label: 'Надпись'
-        radius: 'Радиус'
+        radius: 'Радиус (м)'
       geometry:
         action:
           remove: 'Удалить геометрию'

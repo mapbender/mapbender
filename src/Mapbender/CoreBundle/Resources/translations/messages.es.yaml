@@ -552,7 +552,7 @@ mb:
         circle: Círculo
       inputs:
         label: Etiqueta
-        radius: Radio
+        radius: Radio (m)
       geometry:
         action:
           remove: 'Eliminar la geometría'
