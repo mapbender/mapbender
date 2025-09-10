@@ -59,12 +59,7 @@
                     cssClass: 'datauploadDialog',
                     width: 500,
                     height: 500,
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-danger popupClose'
-                        }
-                    ]
+                    buttons: []
                 });
                 this.popup.$element.on('close', function () {
                     self.close();
@@ -309,7 +304,7 @@
                 }
             });
             var iconZoom = $('<i>', {
-                'class': 'fas fa-magnifying-glass-plus ms-2',
+                'class': 'fa fas fa-search ms-2',
                 'tabindex': 0,
                 click: function (e) {
                     self.zoom(e);
