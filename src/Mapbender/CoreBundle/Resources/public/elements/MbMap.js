@@ -6,7 +6,6 @@
         map = null;
 
         constructor(configuration, $element) {
-
             super(configuration, $element);
 
             this.element = this.$element;

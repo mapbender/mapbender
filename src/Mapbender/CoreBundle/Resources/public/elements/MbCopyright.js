@@ -4,20 +4,15 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
-            // Former _create content from legacy widget
             this.content_ = $('.-js-popup-content', this.$element).remove().removeClass('hidden');
             if (this.checkAutoOpen && this.checkAutoOpen()) {
                 this.open();
             }
-            // Defer ready signalling into _setup (migration pattern like MbScaledisplay)
             this._setup();
         }
 
         _setup() {
-            // Replace legacy this._trigger('ready') with elementRegistry markReady
-            if (window.Mapbender && Mapbender.elementRegistry) {
-                Mapbender.elementRegistry.markReady(this.$element.attr('id'));
-            }
+            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
         }
 
         open(callback) {
@@ -64,10 +59,6 @@
             if (this.notifyWidgetDeactivated) {
                 this.notifyWidgetDeactivated();
             }
-        }
-
-        _destroy() {
-            // No-op placeholder (legacy $.noop)
         }
     }
 

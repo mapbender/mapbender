@@ -64,7 +64,6 @@
             this.highlightLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
             this._setupResultCallback();
-            // Replaced legacy this._trigger('ready')
             Mapbender.elementRegistry.markReady(this.$element.attr('id'));
             if (this.checkAutoOpen()) {
                 this.open();

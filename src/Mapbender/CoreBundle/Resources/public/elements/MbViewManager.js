@@ -40,7 +40,6 @@
             this.mbMap.map.olMap.on('rendercomplete', () => {
                 this._load();
             });
-            // Replaces former this._trigger('ready')
             Mapbender.elementRegistry.markReady(this.$element.attr('id'));
         }
 

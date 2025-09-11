@@ -21,26 +21,6 @@
         }
 
         /**
-         * Creates the overview
-         */
-        _create(){
-            this._updateToggleIcon();
-            var lsId = this.options.layerset;
-            var layerset = Mapbender.layersets.filter(function(x) {
-                return ('' + lsId) === ('' + x.id);
-            })[0];
-            this.sources_ = layerset && layerset.children.slice().reverse() || [];
-
-            var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
-                self.mbMap = mbMap;
-                self._setup();
-            }, function() {
-                Mapbender.checkTarget('mbOverview');
-            });
-        }
-
-        /**
          * Initializes the overview
          */
         _setup() {
