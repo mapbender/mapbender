@@ -678,9 +678,15 @@
                 $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
 
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
-                const $firstFocusable = $menu.find('[tabindex="0"]').first();
-                if ($firstFocusable.length) {
-                    $firstFocusable.focus();
+                
+                // Only focus the first element if the menu was opened via keyboard (Enter key)
+                // Check if the event was triggered by Enter key (originalEvent will have key === 'Enter')
+                const isKeyboardTriggered = e.originalEvent && e.originalEvent.key === 'Enter';
+                if (isKeyboardTriggered) {
+                    const $firstFocusable = $menu.find('[tabindex="0"]').first();
+                    if ($firstFocusable.length) {
+                        $firstFocusable.focus();
+                    }
                 }
             } else {
                 // Menu is already open, close it
@@ -929,7 +935,10 @@ $(document).on('keydown', function (event) {
     if (event.key === 'Enter') {
         var target = $(event.target);
         if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
-            target.trigger("click");
+            // Create a click event with the original keyboard event as originalEvent
+            var clickEvent = $.Event('click');
+            clickEvent.originalEvent = event;
+            target.trigger(clickEvent);
         }
     }
 });
