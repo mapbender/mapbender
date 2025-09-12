@@ -5,26 +5,26 @@
 {% endif %}
   <ul class="layers" >
       <li class="-fn-theme-template themeContainer hidden">
-        <div class="leaveContainer">
-          <span class="-fn-toggle-children clickable" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}" tabindex="0">
+        <div class="leaveContainer mb-3">
+          <span class="-fn-toggle-children clickable me-1" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}" tabindex="0">
               <i class="fa-solid fa-fw"></i>
           </span>
-          <span class="-fn-toggle-selected clickable" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans }}" tabindex="0">
+          <span class="-fn-toggle-selected clickable me-1" title="{{ 'mb.core.layertree.label.sourcevisibility_onoff' | trans }}" tabindex="0">
                 <i class="far fa-square fa-fw"></i>
           </span>
-          <span class="layer-title clickable" tabindex="-1"></span>
+          <span class="layer-title clickable me-1" tabindex="-1"></span>
         </div>
         <ul class="layers"></ul>
       </li>
       <li class="-fn-template hidden leave showLeaves">
-        <div class="leaveContainer">
-          <span class="-fn-toggle-children clickable" data-test="mb-lt-layer-folder-icon" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}" tabindex="0">
+        <div class="leaveContainer mb-3">
+          <span class="-fn-toggle-children clickable me-1" data-test="mb-lt-layer-folder-icon" title="{{ 'mb.core.layertree.tooltip.sublayers_openclose'|trans }}" tabindex="0">
             <i class="fa-solid fa-fw"></i>
           </span>
-          <span class="clickable -fn-toggle-selected" data-test="mb-lt-layer-visibility" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}" tabindex="0">
+          <span class="clickable -fn-toggle-selected me-1" data-test="mb-lt-layer-visibility" title="{{ 'mb.core.layertree.label.visibility_onoff' | trans }}" tabindex="0">
               <i class="far fa-square fa-fw"></i>
           </span>
-          <span class="clickable -fn-toggle-info" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" tabindex="0">
+          <span class="clickable -fn-toggle-info me-1" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}" tabindex="0">
             <i class="fas fa-info fa-fw"></i>
           </span>
           <span class="layer-title clickable" data-test="mb-lt-layer-title" tabindex="-1"></span>
@@ -36,10 +36,10 @@
               <div class="layer-menu hidden">
                 {% block layertree_menu_opacity %}
                 {% if 'opacity' in configuration.menu %}
-                    <div class="layer-control-opacity focus-highlight" data-menu-action="opacity">
-                      <div class="layer-opacity-title">{{ "mb.core.layertree.label.opacity"|trans }}</div>
-                      <div class="layer-opacity-container">
-                          <div class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
+                    <div class="layer-control-opacity focus-highlight mb-3 mt-4" data-menu-action="opacity">
+                      <div class="layer-opacity-title mb-3">{{ "mb.core.layertree.label.opacity"|trans }}</div>
+                      <div class="layer-opacity-container mb-3">
+                          <div class="layer-opacity-bar layer-slider-bar me-2" title="{{ "mb.core.layertree.label.opacity"|trans }}">
                               <div class="layer-opacity-handle layer-slider-handle">100</div>
                           </div>
                           <div class="layer-opacity-value">100</div>
@@ -49,9 +49,9 @@
                 {% endblock %}
                 {% block layertree_menu_dimension %}
                 {% if 'dimension' in configuration.menu %}
-                    <div class="layer-control-dimensions" data-menu-action="dimension">
-                        <div class="checkbox"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
-                        <div class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
+                    <div class="layer-control-dimensions mb-3 mt-4" data-menu-action="dimension">
+                        <div class="checkbox mb-3"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
+                        <div class="layer-dimension-bar layer-slider-bar mb-3" title="{{ "mb.core.layertree.label.dimension" |trans }}">
                           <div class="layer-dimension-handle layer-slider-handle"></div>
                         </div>
                         <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
@@ -60,7 +60,7 @@
                 {% endblock %}
                 {% block layertree_menu_select_style %}
                 {% if 'select_style' in configuration.menu %}
-                    <div class="layer-styles input-group mb-1" data-menu-action="select_style">
+                    <div class="layer-styles input-group mb-3 mt-4" data-menu-action="select_style">
                         <label class="input-group-text">{{ 'mb.core.layertree.label.select_style'|trans }}</label>
                         <select
                             class="select-layer-styles form-select"
@@ -70,20 +70,20 @@
                 {% endif %}
                 {% endblock %}
 
-                <div class="text-end">
+                <div class="text-end mb-4">
                   {% block layertree_menu_zoomtolayer %}
                   {% if 'zoomtolayer' in configuration.menu %}
-                  <span data-menu-action="zoomtolayer" class="layer-zoom fa fas fa-search hover-highlight-effect clickable" tabindex="0" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
+                  <span data-menu-action="zoomtolayer" class="layer-zoom fa fas fa-search clickable" tabindex="0" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></span>
                   {% endif %}
                   {% endblock %}
                   {% block layertree_menu_metadata %}
                   {% if 'metadata' in configuration.menu %}
-                  <span data-menu-action="metadata" class="layer-metadata fa far fa-file-alt fa-file-text-o hover-highlight-effect ms-1 clickableqq" tabindex="0" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
+                  <span data-menu-action="metadata" class="layer-metadata fa far fa-file-alt fa-file-text-o ms-2 clickable" tabindex="0" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></span>
                   {% endif %}
                   {% endblock %}
                   {% block layertree_menu_layerremove %}
                   {% if 'layerremove' in configuration.menu %}
-                  <span data-menu-action="layerremove" class="layer-remove-btn far fa-trash-alt hover-highlight-effect ms-1 clickable" tabindex="0" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}" style="color: red;"></span>
+                  <span data-menu-action="layerremove" class="layer-remove-btn far fa-trash-alt ms-2 clickable" tabindex="0" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}" style="color: red;"></span>
                   {% endif %}
                   {% endblock %}
                   {% block layertree_menu_custom_textend %}

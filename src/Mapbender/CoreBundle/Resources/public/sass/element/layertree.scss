@@ -9,7 +9,7 @@ $textColor: $darkFontColor !default;
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: 0.6em;
+    margin-left: 1.6em;
   }
   .disabled {
     opacity: 0.4;
@@ -17,8 +17,6 @@ $textColor: $darkFontColor !default;
   }
   .leaveContainer {
     display: flex;
-    margin-bottom: 5px;
-    gap: 4px;
   }
   .layer-title {
     flex: 1 1 auto;
@@ -69,31 +67,31 @@ $layer-slider-bar-height: 5px;
 .layer-menu {
   color: var(--primary);
   position: static;
-  padding: $space / 4;
   border-radius: $radius;
-  margin-top: 2px;
 
   // Align left edge of slider-bar with left edge of checkbox
   // Only account for folder icon + spacing to reach checkbox position
   margin-left: calc(1em + 4px); // folder icon + spacing = checkbox left edge
 
+  .text-end {
+    font-size: 1.2rem;
+  }
+
   .layer-slider-bar {
-  font-size: 85%;
-  flex: 1;
-  background: var(--primary) !important;
-  border-color: var(--primary) !important;
-  height: 4px;
- }
+    font-size: 0.85rem;
+    flex: 1;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    height: 4px;
+  }
 
   .layer-opacity-title {
     color: $textColor;
-    font-size: 0.8rem;
   }
 
   .layer-opacity-container {
     display: flex;
     align-items: center;
-    gap: 8px;
   }
 
   .layer-opacity-value {
