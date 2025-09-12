@@ -69,10 +69,6 @@ $layer-slider-bar-height: 5px;
   position: static;
   border-radius: $radius;
 
-  // Align left edge of slider-bar with left edge of checkbox
-  // Only account for folder icon + spacing to reach checkbox position
-  margin-left: calc(1em + 4px); // folder icon + spacing = checkbox left edge
-
   .text-end {
     font-size: 1.2rem;
   }
@@ -146,8 +142,11 @@ $layer-slider-bar-height: 5px;
   color: var(--primary);
 }
 
-.layer-styles .input-group-text, .form-select{
-  font-size: 0.75rem;
+.layer-styles {
+    color: $textColor;
+    .form-select{
+        font-size: 0.85em;
+    }
 }
 
 .layer-dimension-title {
