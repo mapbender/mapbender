@@ -40,7 +40,7 @@
             this.mbMap.map.olMap.on('rendercomplete', () => {
                 this._load();
             });
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _toggleEnabled(enabled) {

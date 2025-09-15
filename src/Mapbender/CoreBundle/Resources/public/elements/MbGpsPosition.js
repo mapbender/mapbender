@@ -39,7 +39,7 @@
             if (this.options.autoStart === true) {
                 this.activate();
             }
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _getMarkerFeatures(position, accuracy) {

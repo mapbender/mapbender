@@ -44,7 +44,7 @@
                 this.open();
             }
             this._createEvents();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
             Mapbender.ElementUtil.adjustScrollbarsIfNecessary(this.$element);
         }
 

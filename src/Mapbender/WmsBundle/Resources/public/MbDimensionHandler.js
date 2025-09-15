@@ -32,7 +32,7 @@
                     console.error('Target dimension not found! Source deactivated or removed?', targetDimensions/*, groupConfig*/);
                 }
             }
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _setupGroup(targetDimensions) {

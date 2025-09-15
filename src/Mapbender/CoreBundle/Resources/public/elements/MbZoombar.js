@@ -29,7 +29,7 @@
                 this.$element.draggable({containment: '.mb-element-map'});
             }
             this._initRotation();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _worldZoom(e) {

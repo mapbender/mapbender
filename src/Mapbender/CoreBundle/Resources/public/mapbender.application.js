@@ -238,9 +238,12 @@ Mapbender.ElementRegistry = (function($){
         bundle.created.resolveWith(null, [instance]);
     };
     /**
-     * @param {string|int} ident can be id or .class-name, but must be unique in the DOM.
+     * @param {string|int|object} ident can be id or .class-name, but must be unique in the DOM. Can also be an MbElement-Class
      */
     ElementRegistry.prototype.markReady = function(ident) {
+        if (typeof ident === 'object') {
+            ident = ident.$element.attr('id');
+        }
         var bundle = this.matchSingle_(ident);
         bundle.readyEvent.resolve();
     };

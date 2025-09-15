@@ -14,7 +14,7 @@
         _setup(mbMap) {
             this.mbMap = mbMap;
             this.onMapLoaded();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         onMapLoaded(e) {

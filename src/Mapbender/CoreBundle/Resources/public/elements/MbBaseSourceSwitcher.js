@@ -33,7 +33,7 @@
                 }
                 $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
             });
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         updateHighlights() {

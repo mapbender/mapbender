@@ -11,7 +11,7 @@
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this.mbMap = mbMap;
                 this._setup();
-                Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+                Mapbender.elementRegistry.markReady(this);
             }, function() {
                 Mapbender.checkTarget('mbWmsloader');
             });

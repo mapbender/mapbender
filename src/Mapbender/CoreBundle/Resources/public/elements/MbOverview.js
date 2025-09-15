@@ -29,7 +29,7 @@
                 this._initOverview();
             }
             $('.toggleOverview', this.$element).on('click', $.proxy(this._openClose, this));
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _initOverview() {

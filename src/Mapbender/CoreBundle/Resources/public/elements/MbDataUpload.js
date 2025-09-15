@@ -18,7 +18,7 @@
             this.setupDropArea();
             this.setupFileUploadForm();
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         open(callback) {

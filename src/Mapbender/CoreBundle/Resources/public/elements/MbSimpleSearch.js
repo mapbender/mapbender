@@ -187,7 +187,7 @@
                 self.layer.retransform(data.from, data.to);
             });
             this.initialised = true;
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _updateSearchAndClearIconState() {

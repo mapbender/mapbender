@@ -20,7 +20,7 @@
         _setup() {
             $(document).on('mbmapsrschanged', this._reset.bind(this));
             this._reset();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _reset(event, data) {

@@ -16,7 +16,7 @@
 
         _setup() {
             this.$form.on('submit', this._onSubmit.bind(this));
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         getPopupOptions() {

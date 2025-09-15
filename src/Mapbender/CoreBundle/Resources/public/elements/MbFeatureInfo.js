@@ -54,7 +54,7 @@
                 this.$element.on('selected', '.accordion', () => this._checkPrintVisibility());
             }
 
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         // former defaultAction

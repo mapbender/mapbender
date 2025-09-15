@@ -28,7 +28,7 @@
             $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
 
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _switchSrs(evt) {

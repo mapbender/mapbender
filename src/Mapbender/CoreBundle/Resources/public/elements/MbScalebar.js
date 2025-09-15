@@ -20,7 +20,7 @@
                 units: this.options.units === 'ml' ? 'imperial' : 'metric'
             });
             this.mbMap.getModel().olMap.addControl(control);
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
     }
     window.Mapbender.Element = window.Mapbender.Element || {};

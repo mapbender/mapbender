@@ -28,7 +28,7 @@
                 self._autoUpdate();
             });
             this._autoUpdate();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _updateDisplay(scale) {

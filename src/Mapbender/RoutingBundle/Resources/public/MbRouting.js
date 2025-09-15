@@ -49,7 +49,7 @@
 
             this._setupExportFormatSelection();
             this._initializeEventListeners();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         open(callback) {

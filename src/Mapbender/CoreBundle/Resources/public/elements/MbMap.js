@@ -51,7 +51,7 @@
             }
             window.Mapbender.Model = this.model;
             this.map = this.model.map;
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         getMapState() {

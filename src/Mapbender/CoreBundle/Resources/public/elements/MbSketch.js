@@ -112,7 +112,7 @@
             this.trackLabelInput_(this.$labelInput_);
             this.trackRadiusInput_($('input[name="radius"]', this.$element));
             this._setupColorpickerAccessibility();
-            Mapbender.elementRegistry.markReady(this.$element.attr('id'));
+            Mapbender.elementRegistry.markReady(this);
         }
 
         _setupColorpickerAccessibility() {
