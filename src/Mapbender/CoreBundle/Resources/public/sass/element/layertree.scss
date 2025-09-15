@@ -1,6 +1,8 @@
 $panelBorderColor: #888 !default;
 $darkFontColor: #3f3f3f !default;
 $textColor: $darkFontColor !default;
+$menuBackgroundColor: #f2f5f5 !default;
+$menuBackgroundOpacity: 0.5 !default;
 
 .mb-element-layertree{
   user-select: none;
@@ -152,3 +154,8 @@ $layer-slider-bar-height: 5px;
 .layer-dimension-title {
     padding-left: 6px;
 }
+.menuBackground {
+    background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
+    box-shadow: -5rem 0 0 0.5rem rgba($menuBackgroundColor, $menuBackgroundOpacity), 5rem 0 0 0.5rem rgba($menuBackgroundColor, $menuBackgroundOpacity);
+  }
+

@@ -676,9 +676,9 @@
                 // Change only this specific menu button icon to X
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
-
+                $menuBtn.prevObject.addClass('menuBackground');
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
-                
+
                 // Only focus the first element if the menu was opened via keyboard (Enter key)
                 // Check if the event was triggered by Enter key (originalEvent will have key === 'Enter')
                 const isKeyboardTriggered = e.originalEvent && e.originalEvent.key === 'Enter';
@@ -694,6 +694,7 @@
                 // Reset only this menu button icon back to bars
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                $menuBtn.prevObject.removeClass('menuBackground');
             }
 
             return false;
