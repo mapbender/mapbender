@@ -557,6 +557,15 @@
             });
         }
 
+        /**
+         *
+         * @param {jQuery} $menu the menu container dom element
+         * @param {string} action
+         * @param {jQuery} $actionElement the dom element with the data-action attribute
+         * @param {jQuery} $layerNode the dom element for the layer node
+         * @param {Mapbender.SourceLayer} layer
+         * @private
+         */
         _initMenuAction($menu, action, $actionElement, $layerNode, layer) {
             switch (action) {
                 case 'opacity':
@@ -678,6 +687,11 @@
             });
         }
 
+        /**
+         * returns a list of supported menu options for this layer. Override this if you have a custom menu option
+         * @param {Mapbender.SourceLayer} layer
+         * @returns {string[]}
+         */
         _getSupportedMenuOptions(layer) {
             return layer.getSupportedMenuOptions();
         }
