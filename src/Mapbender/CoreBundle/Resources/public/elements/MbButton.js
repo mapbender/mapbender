@@ -212,18 +212,8 @@
                 const targetInit = targetConf.init;
                 const $target = $('#' + this.options.target);
                 const nameParts = targetInit.split('.');
-                if (nameParts.length === 1) {
-                    // handle new JS Native Classes here
-                    const className = nameParts[0];
-                    this.targetWidget = $target.data(className);
-                } else {
-                    const namespace = nameParts[0];
-                    let innerName = nameParts[1];
-                    // widget data ends up in a key composed of
-                    // namespace, no dot, innerName with upper-cased first letter
-                    const dataKey = [namespace, innerName.charAt(0).toUpperCase(), innerName.slice(1)].join('');
-                    this.targetWidget = $target.data(dataKey);
-                }
+                const className = nameParts[0];
+                this.targetWidget = $target.data(className);
                 if (!this.targetWidget) {
                     if (this.allowRetryFindingTarget) {
                         this.targetWidget = null;
