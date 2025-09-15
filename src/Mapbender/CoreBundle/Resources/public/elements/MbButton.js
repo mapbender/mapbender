@@ -126,7 +126,7 @@
                     this._initializeHighlightState();
                 });
                 $(document).on('mapbender.elementactivated mapbender.elementdeactivated', (e, data) => {
-                    const widgetId = data.widget && data.widget.element && parseInt(data.widget.element.attr('id'));
+                    const widgetId = data.widget && data.widget.$element && parseInt(data.widget.$element.attr('id'));
                     this._initializeTarget();
                     if (data.sender !== this && widgetId === this.options.target) {
                         // Our target element has been activated or deactivated, but not by us
@@ -252,9 +252,9 @@
                     || targetOptions.auto_activate // Sketch / Redlining style
                 ;
                 if (state) {
-                    const isDialog = this.targetWidget.element.closest('.contentPane').length
-                        || this.targetWidget.element.closest('.popup').length
-                        || this.targetWidget.element.closest('.mobilePane').length;
+                    const isDialog = this.targetWidget.$element.closest('.contentPane').length
+                        || this.targetWidget.$element.closest('.popup').length
+                        || this.targetWidget.$element.closest('.mobilePane').length;
                     state = state && isDialog;
                 }
                 this._setActive(!!state);
