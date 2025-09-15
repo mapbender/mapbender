@@ -1,6 +1,7 @@
 ## next bugfix release
 Bugfixes:
 * [BaseSourceSwitcher] Fix behaviour in sidepane ([#PR1776](https://github.com/mapbender/mapbender/pull/1776))
+* [ViewManager] Fix unnecessary listing request ([#PR1779](https://github.com/mapbender/mapbender/pull/1779))
 
 ## v4.2.1
 Bugfixes:
