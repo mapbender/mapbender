@@ -4,7 +4,6 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
-            // Code aus _create Funktion der alten jQuery-Widget Implementierung
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this.mbMap = mbMap;
                 this._setup();

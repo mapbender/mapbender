@@ -2,7 +2,6 @@
     class MbSearchRouter extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
-            // Code from legacy _create
             this.callbackUrl = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/';
             this.useDialog_ = this.checkDialogMode();
             this.selected = null;

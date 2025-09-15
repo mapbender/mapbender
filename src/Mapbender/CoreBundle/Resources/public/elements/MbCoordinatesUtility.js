@@ -18,7 +18,6 @@
             this.DECIMAL_METRIC = 2;
             this.STRING_SEPARATOR = ' ';
 
-            // Former _create logic
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this.mbMap = mbMap;
                 this._setup();
@@ -26,7 +25,6 @@
         }
 
         /**
-         * Setup (formerly _setup)
          * @private
          */
         _setup() {
