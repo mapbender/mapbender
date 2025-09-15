@@ -120,19 +120,18 @@
                 // so we still need to load the JS asset, and we still end up right here
                 return;
             }
-            const self = this;
 
             if (this.options.target) {
                 $(document).on('mapbender.setupfinished', () => {
-                    self._initializeHighlightState();
+                    this._initializeHighlightState();
                 });
                 $(document).on('mapbender.elementactivated mapbender.elementdeactivated', (e, data) => {
                     const widgetId = data.widget && data.widget.element && parseInt(data.widget.element.attr('id'));
-                    self._initializeTarget();
-                    if (data.sender !== self && widgetId === self.options.target) {
+                    this._initializeTarget();
+                    if (data.sender !== this && widgetId === this.options.target) {
                         // Our target element has been activated or deactivated, but not by us
                         // Remember new target state and update our own highlighting
-                        self._setActive(data.active);
+                        this._setActive(data.active);
                     }
                 });
             }

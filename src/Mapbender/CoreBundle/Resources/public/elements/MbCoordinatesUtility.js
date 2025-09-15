@@ -159,9 +159,8 @@
 
         /** Popup handling */
         popup() {
-            var self = this;
-            if (!self.popupWindow || !self.popupWindow.$element) {
-                self.popupWindow = new Mapbender.Popup({
+            if (!this.popupWindow || !this.popupWindow.$element) {
+                this.popupWindow = new Mapbender.Popup({
                     title: this.$element.attr('data-title'),
                     draggable: true,
                     resizable: true,
@@ -173,10 +172,10 @@
                     height: 400,
                     buttons: {}
                 });
-                self.popupWindow.$element.on('close', function () { self.close(); });
+                this.popupWindow.$element.on('close', () => this.close());
             }
-            self.popupWindow.$element.show();
-            self.popupWindow.focus();
+            this.popupWindow.$element.show();
+            this.popupWindow.focus();
         }
 
         open(callback) {

@@ -4,9 +4,8 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
-            const self = this;
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
-                    self._setup(mbMap);
+                this._setup(mbMap);
                 }, () => {
                     Mapbender.checkTarget('mbPOI');
                 }
