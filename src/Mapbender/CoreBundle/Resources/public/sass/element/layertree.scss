@@ -1,7 +1,7 @@
 $panelBorderColor: #888 !default;
 $darkFontColor: #3f3f3f !default;
 $textColor: $darkFontColor !default;
-$menuBackgroundColor: #f2f5f5 !default;
+$menuBackgroundColor: #ebefef !default;
 $menuBackgroundOpacity: 0.5 !default;
 
 .mb-element-layertree{
@@ -154,8 +154,20 @@ $layer-slider-bar-height: 5px;
 .layer-dimension-title {
     padding-left: 6px;
 }
+
 .menuBackground {
-    background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
-    box-shadow: -5rem 0 0 0.5rem rgba($menuBackgroundColor, $menuBackgroundOpacity), 5rem 0 0 0.5rem rgba($menuBackgroundColor, $menuBackgroundOpacity);
-  }
+    position: relative;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: -0.5rem;
+        left: -100vw; // Erweitert bis zum sideContent Rand
+        right: -2rem;
+        bottom: var(--menu-background-bottom, 1rem); // Dynamischer Wert
+        background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
+        z-index: -1;
+        pointer-events: none;
+    }
+}
 

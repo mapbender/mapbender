@@ -123,6 +123,17 @@
                     $('.-fn-toggle-selected', this).click();
                 });
             }
+            
+            // Aktualisiere Menü-Hintergrund bei Fenster-Resize
+            $(window).on('resize.layertree', function() {
+                $('.layer-menu-btn.menuBackground', self.element).each(function() {
+                    const $layerNode = $(this).closest('li.leave');
+                    if ($layerNode.find('>.layer-menu').length) {
+                        self._updateMenuBackgroundPosition($layerNode);
+                    }
+                });
+            });
+            
             this._initLayerStyleEvents();
         },
         /**
@@ -391,8 +402,28 @@
             var $node = $me.closest('.leave,.themeContainer');
             $node.toggleClass('showLeaves')
 
+            // When folder is closed close all layer-menus of its children as well
+            if (!$node.hasClass('showLeaves')) {
+                this._closeChildrenMenus($node);
+            }
+
             this._updateFolderState($node);
             return false;
+        },
+        _closeChildrenMenus: function ($parentNode) {
+            const $childrenLayers = $parentNode.find('ul.layers li.leave');
+            
+            $childrenLayers.each((index, childNode) => {
+                const $childNode = $(childNode);
+                const $childMenu = $childNode.find('>.layer-menu');
+                
+                if ($childMenu.length) {
+                    $childMenu.remove();
+                    const $menuBtn = $childNode.find('>.leaveContainer .layer-menu-btn i');
+                    $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                    $menuBtn.prevObject.removeClass('menuBackground');
+                }
+            });
         },
         _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
@@ -668,7 +699,7 @@
                 $('.layer-menu', this.element).remove();
                 // Reset all menu button icons back to bars
                 $('.layer-menu-btn i', this.element).removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
-
+                $('.layer-menu-btn', this.element).offsetParent().removeClass('menuBackground');
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
@@ -688,6 +719,9 @@
                         $firstFocusable.focus();
                     }
                 }
+
+                // calculate bottom of class menuBackground
+                this._updateMenuBackgroundPosition($menuBtn.prevObject);
             } else {
                 // Menu is already open, close it
                 $('>.layer-menu', $layerNode).remove();
@@ -698,6 +732,18 @@
             }
 
             return false;
+        },
+        _updateMenuBackgroundPosition: function ($container) {
+            const $menu = $container.find('>.layer-menu');
+            const $menuBackground = $container.filter('.menuBackground');
+            if ($menu.length && $menuBackground.length) {
+                setTimeout(() => {
+                    const menuRect = $menu[0].getBoundingClientRect();
+                    const menuBackgroundRect = $menuBackground[0].getBoundingClientRect();
+                    const distanceFromBottom = menuBackgroundRect.bottom - menuRect.bottom - 8;
+                    $menuBackground[0].style.setProperty('--menu-background-bottom', `${distanceFromBottom}px`);
+                }, 10);
+            }
         },
         _filterMenu: function (layer) {
             const enabled = this.options.menu;
