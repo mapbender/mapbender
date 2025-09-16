@@ -97,6 +97,7 @@ $hoverEffects: true !default;
 .accordionContainer > .container-accordion > .accordion-cell {
   // Extend content to fill entire accordion cell; this is a Hack helping nested absolte-positioned
   // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
+  padding-right: 10px;
   width: 100%;
   height: 100%;
   .sidePane & {
