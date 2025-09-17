@@ -123,17 +123,6 @@
                     $('.-fn-toggle-selected', this).click();
                 });
             }
-            
-            // Aktualisiere Menü-Hintergrund bei Fenster-Resize
-            $(window).on('resize.layertree', function() {
-                $('.layer-menu-btn.menuBackground', self.element).each(function() {
-                    const $layerNode = $(this).closest('li.leave');
-                    if ($layerNode.find('>.layer-menu').length) {
-                        self._updateMenuBackgroundPosition($layerNode);
-                    }
-                });
-            });
-            
             this._initLayerStyleEvents();
         },
         /**
@@ -402,10 +391,19 @@
             var $node = $me.closest('.leave,.themeContainer');
             $node.toggleClass('showLeaves')
 
-            // When folder is closed close all layer-menus of its children as well
+            // Close all layer-menus of its children as well
             if (!$node.hasClass('showLeaves')) {
                 this._closeChildrenMenus($node);
             }
+
+            // Update menuBackground positions after folder toggle
+            const self = this;
+            setTimeout(() => {
+                $('.menuBackground', this.element).each(function() {
+                    const $menuBackground = $(this);
+                    self._updateMenuBackgroundPosition($menuBackground);
+                });
+            }, 10);
 
             this._updateFolderState($node);
             return false;
