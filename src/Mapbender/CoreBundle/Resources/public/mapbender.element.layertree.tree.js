@@ -391,8 +391,37 @@
             var $node = $me.closest('.leave,.themeContainer');
             $node.toggleClass('showLeaves')
 
+            // Close all layer-menus of its children as well
+            if (!$node.hasClass('showLeaves')) {
+                this._closeChildrenMenus($node);
+            }
+
+            // Update menuBackground positions after folder toggle
+            const self = this;
+            setTimeout(() => {
+                $('.menuBackground', this.element).each(function() {
+                    const $menuBackground = $(this);
+                    self._updateMenuBackgroundPosition($menuBackground);
+                });
+            }, 10);
+
             this._updateFolderState($node);
             return false;
+        },
+        _closeChildrenMenus: function ($parentNode) {
+            const $childrenLayers = $parentNode.find('ul.layers li.leave');
+            
+            $childrenLayers.each((index, childNode) => {
+                const $childNode = $(childNode);
+                const $childMenu = $childNode.find('>.layer-menu');
+                
+                if ($childMenu.length) {
+                    $childMenu.remove();
+                    const $menuBtn = $childNode.find('>.leaveContainer .layer-menu-btn i');
+                    $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                    $menuBtn.prevObject.removeClass('menuBackground');
+                }
+            });
         },
         _updateFolderState: function ($node) {
             const active = $node.hasClass('showLeaves');
@@ -668,7 +697,7 @@
                 $('.layer-menu', this.element).remove();
                 // Reset all menu button icons back to bars
                 $('.layer-menu-btn i', this.element).removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
-
+                $('.layer-menu-btn', this.element).offsetParent().removeClass('menuBackground');
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
@@ -676,21 +705,43 @@
                 // Change only this specific menu button icon to X
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
-
+                $menuBtn.prevObject.addClass('menuBackground');
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
-                const $firstFocusable = $menu.find('[tabindex="0"]').first();
-                if ($firstFocusable.length) {
-                    $firstFocusable.focus();
+
+                // Only focus the first element if the menu was opened via keyboard (Enter key)
+                // Check if the event was triggered by Enter key (originalEvent will have key === 'Enter')
+                const isKeyboardTriggered = e.originalEvent && e.originalEvent.key === 'Enter';
+                if (isKeyboardTriggered) {
+                    const $firstFocusable = $menu.find('[tabindex="0"]').first();
+                    if ($firstFocusable.length) {
+                        $firstFocusable.focus();
+                    }
                 }
+
+                // calculate bottom of class menuBackground
+                this._updateMenuBackgroundPosition($menuBtn.prevObject);
             } else {
                 // Menu is already open, close it
                 $('>.layer-menu', $layerNode).remove();
                 // Reset only this menu button icon back to bars
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                $menuBtn.prevObject.removeClass('menuBackground');
             }
 
             return false;
+        },
+        _updateMenuBackgroundPosition: function ($container) {
+            const $menu = $container.find('>.layer-menu');
+            const $menuBackground = $container.filter('.menuBackground');
+            if ($menu.length && $menuBackground.length) {
+                setTimeout(() => {
+                    const menuRect = $menu[0].getBoundingClientRect();
+                    const menuBackgroundRect = $menuBackground[0].getBoundingClientRect();
+                    const distanceFromBottom = menuBackgroundRect.bottom - menuRect.bottom - 8;
+                    $menuBackground[0].style.setProperty('--menu-background-bottom', `${distanceFromBottom}px`);
+                }, 10);
+            }
         },
         _filterMenu: function (layer) {
             const enabled = this.options.menu;
@@ -929,7 +980,10 @@ $(document).on('keydown', function (event) {
     if (event.key === 'Enter') {
         var target = $(event.target);
         if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
-            target.trigger("click");
+            // Create a click event with the original keyboard event as originalEvent
+            var clickEvent = $.Event('click');
+            clickEvent.originalEvent = event;
+            target.trigger(clickEvent);
         }
     }
 });
