@@ -20,7 +20,7 @@
         onMapLoaded(e) {
             this.onMapLayerChanges();
             if (this.checkAutoOpen()) {
-                this.open();
+                this.activateByButton();
             }
             const rerenderOn = [
                 'mbmapsourceadded',
@@ -173,31 +173,6 @@
             return $(' > *', html);
         }
 
-        open(callback) {
-            this.callback = callback;
-            if (this.useDialog_) {
-                if (!this.popupWindow) {
-                    this.popupWindow = new Mapbender.Popup(this.getPopupOptions());
-                    this.popupWindow.$element.on('close', $.proxy(this.close, this));
-                } else {
-                    this.popupWindow.open();
-                }
-            }
-            this.notifyWidgetActivated();
-        }
-
-        close() {
-            this.notifyWidgetDeactivated();
-            if (this.popupWindow) {
-                this.popupWindow.destroy();
-                this.popupWindow = null;
-            }
-            if (this.callback) {
-                this.callback.call();
-                this.callback = null;
-            }
-        }
-
         getPopupOptions() {
             return {
                 title: this.$element.attr('data-title'),
@@ -205,7 +180,7 @@
                 resizable: true,
                 modal: false,
                 closeOnESC: false,
-                detachOnClose: true,
+                detachOnClose: false,
                 content: [this.$element],
                 cssClass: 'legend-dialog',
                 width: 350,
@@ -218,6 +193,18 @@
                     }
                 ]
             };
+        }
+
+        activateByButton(callback) {
+            if (this.useDialog_) {
+                super.activateByButton(callback)
+            }
+            this.notifyWidgetActivated();
+        }
+
+        closeByButton() {
+            this.notifyWidgetDeactivated();
+            super.closeByButton();
         }
     }
     window.Mapbender.Element = window.Mapbender.Element || {};

@@ -142,59 +142,6 @@
         }
 
         /**
-         *
-         * @param {*} object
-         * @param {string[]} names
-         * @return {Array<function>}
-         * @private
-         */
-        _extractCallableMethods(object, names) {
-            return names.map((name) => {
-                const method = name && object[name];
-                return typeof method === 'function' ? method : null;
-            }).filter((x) => {
-                // throw out anything emptyish (including the nulls just produced)
-                return !!x;
-            });
-        }
-
-        /**
-         *
-         * @param targetWidget
-         * @return {{activate: function|null, deactivate: function|null}}
-         * @private
-         */
-        _extractActionMethods(targetWidget) {
-            let methodPair = {
-                activate: null,
-                deactivate: null
-            };
-            const activateCandidateNames = [this.options.action, 'defaultAction', 'open', 'activate'];
-            const deactivateCandidateNames = [this.options.deactivate, 'close', 'deactivate'];
-            const activateCandidates = this._extractCallableMethods(
-                targetWidget, activateCandidateNames);
-            const deactivateCandidates = this._extractCallableMethods(
-                targetWidget, deactivateCandidateNames);
-            if (activateCandidates.length) {
-                methodPair.activate = activateCandidates[0]
-                    .bind(targetWidget, this.reset.bind(this));
-            } else {
-                console.error('Target widget', targetWidget,
-                    'does not seem to have any potential activation method.',
-                    'Tried: ', activateCandidateNames);
-            }
-            if (deactivateCandidates.length) {
-                methodPair.deactivate = deactivateCandidates[0]
-                    .bind(targetWidget, this.reset.bind(this));
-            } else {
-                console.error('Target widget', targetWidget,
-                    'does not seem to have any potential deactivation method.',
-                    'Tried: ', deactivateCandidateNames);
-            }
-            return methodPair;
-        }
-
-        /**
          * @returns {null|object} the target widget object (NOT the DOM node; NOT a jQuery selection)
          * @private
          */
@@ -229,16 +176,6 @@
             return this.targetWidget || null;
         }
 
-        _initializeActionMethods() {
-            if (this.actionMethods === null) {
-                if (this._initializeTarget()) {
-                    this.actionMethods = this._extractActionMethods(this.targetWidget);
-                } else {
-                    this.actionMethods = {};
-                }
-            }
-        }
-
         _initializeHighlightState() {
             // skip logic if already active
             if (this.active) {
@@ -269,11 +206,8 @@
             if (this.active) {
                 return;
             }
-            this._initializeActionMethods();
-            if (this.actionMethods.activate) {
-                (this.actionMethods.activate)();
-                this.notifyActivation_(this.targetWidget, true);
-            }
+            this.targetWidget.activateByButton(this.reset.bind(this));
+            this.notifyActivation_(this.targetWidget, true);
             super.activate();
         }
 
@@ -286,10 +220,7 @@
                 // defensive deactivation to prevent unneeded state transitions
                 return;
             }
-            this._initializeActionMethods();
-            if (this.actionMethods.deactivate) {
-                (this.actionMethods.deactivate)();
-            }
+            this.targetWidget.closeByButton(this.reset.bind(this));
             super.deactivate();
         }
 

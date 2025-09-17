@@ -25,67 +25,15 @@
             Mapbender.elementRegistry.markReady(this);
         }
 
-        activate(closeCallback) {
-            this._open(closeCallback);
+        activate(callback) {
+            this.activateByButton(callback);
         }
 
         deactivate() {
-            this.close();
+            this.closeByButton();
         }
 
-        /**
-         * Same as activate, but proper Button API name expectation
-         * @param closeCallback
-         */
-        open(closeCallback) {
-            this.activate(closeCallback);
-        }
-
-        /**
-         * Method name aliasing to Avoid detection by control button
-         * @param closeCallback
-         */
-        _open(closeCallback) {
-            if (!this.popup) {
-                this.popup = new Mapbender.Popup(this._getPopupOptions());
-                this.popup.$element.one('close', this.close.bind(this));
-            }
-            this.closeCallback = closeCallback;
-            this.clickActive = true;
-        }
-
-        _mapClickHandler(event, data) {
-            if (this.clickActive) {
-                this._updatePoi(data.coordinate[0], data.coordinate[1]);
-                this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
-                // Stop further handlers
-                return false;
-            }
-        }
-
-        _updatePoi(lon, lat) {
-            const srsName = Mapbender.Model.getCurrentProjectionCode();
-            const deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
-            this.poi = {
-                point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
-                scale: this.mbMap.model.getCurrentScale(),
-                srs: srsName
-            };
-            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
-        }
-
-        _setPoiMarker(lon, lat) {
-            if (!this.poiMarkerLayer) {
-                this.poiMarkerLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            }
-
-            this.poiMarkerLayer.clear();
-            this.poiMarkerLayer.setBuiltinMarkerStyle('poiIcon');
-            this.poiMarkerLayer.addMarker(lon, lat);
-            this.poiMarkerLayer.show();
-        }
-
-        _getPopupOptions() {
+        getPopupOptions() {
             const self = this;
             let options = {
                 draggable: true,
@@ -127,24 +75,52 @@
             return options;
         }
 
-        close() {
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.clickActive = true;
+        }
+
+        closeByButton() {
             this._reset();
             if (this.gpsElement) {
                 this.gpsElement.mbGpsPosition('deactivate');
             }
-
             if (this.poiMarkerLayer) {
                 this.poiMarkerLayer.hide();
             }
-            if (this.popup) {
-                this.popup.close();
-            }
-            if (this.closeCallback && typeof this.closeCallback === 'function') {
-                this.closeCallback.call();
-            }
-            this.closeCallback = null;
-            this.popup = null;
+            super.closeByButton();
             this.clickActive = false;
+        }
+
+        _mapClickHandler(event, data) {
+            if (this.clickActive) {
+                this._updatePoi(data.coordinate[0], data.coordinate[1]);
+                this._setPoiMarker(data.coordinate[0], data.coordinate[1]);
+                // Stop further handlers
+                return false;
+            }
+        }
+
+        _updatePoi(lon, lat) {
+            const srsName = Mapbender.Model.getCurrentProjectionCode();
+            const deci = (Mapbender.Model.getProjectionUnitsPerMeter(srsName) < 0.25) ? 5 : 2;
+            this.poi = {
+                point: lon.toFixed(deci) + ',' + lat.toFixed(deci),
+                scale: this.mbMap.model.getCurrentScale(),
+                srs: srsName
+            };
+            this.popup.subtitle(this.poi.point + ' @ 1:' + this.poi.scale);
+        }
+
+        _setPoiMarker(lon, lat) {
+            if (!this.poiMarkerLayer) {
+                this.poiMarkerLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            }
+
+            this.poiMarkerLayer.clear();
+            this.poiMarkerLayer.setBuiltinMarkerStyle('poiIcon');
+            this.poiMarkerLayer.addMarker(lon, lat);
+            this.poiMarkerLayer.show();
         }
 
         _sendPoi(content) {

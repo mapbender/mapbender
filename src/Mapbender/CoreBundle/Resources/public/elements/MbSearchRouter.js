@@ -65,7 +65,7 @@
             this._setupResultCallback();
             Mapbender.elementRegistry.markReady(this);
             if (this.checkAutoOpen()) {
-                this.open();
+                this.activateByButton();
             }
             this.initTableEvents_();
             this._setupCsrf();
@@ -85,65 +85,52 @@
                 }.bind(this));
         }
 
-        defaultAction(callback) {
-            this.open(callback);
-        }
-
-        /**
-         * Open popup dialog, when triggered by button; not in sidepane / mobile container
-         */
-        open(callback) {
-            this.callback = callback ? callback : null;
-            if (this.useDialog_) {
-                if (!this.popup || !this.popup.$element) {
-                    this.popup = new Mapbender.Popup({
-                        title: this.$element.attr('data-title'),
-                        draggable: true,
-                        modal: false,
-                        closeOnESC: false,
-                        content: this.$element,
-                        width: this.options.width ? this.options.width : 450,
-                        resizable: true,
-                        height: this.options.height ? this.options.height : 500,
-                        detachOnClose: false,
-                        buttons: [
-                            {
-                                label: Mapbender.trans("mb.actions.search"),
-                                cssClass: 'btn btn-sm btn-primary',
-                                callback: $.proxy(this._search, this)
-                            },
-                            {
-                                label: Mapbender.trans('mb.actions.reset'),
-                                cssClass: 'btn btn-sm btn-light',
-                                callback: $.proxy(this._reset, this)
-                            },
-                            {
-                                label: Mapbender.trans('mb.actions.close'),
-                                cssClass: 'btn btn-sm btn-light popupClose'
-                            }
-                        ]
-                    });
-                    this.popup.$element.on('close', $.proxy(this.close, this));
-                } else {
-                    this.popup.$element.show();
-                    this.popup.focus();
-                }
-            }
+        activate() {
             this.notifyWidgetActivated();
         }
 
-        /**
-         * Closes popup dialog.
-         */
-        close() {
-            if (this.popup && this.popup.$element) {
-                this.popup.$element.hide();
-            }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
+        deactivate() {
             this.notifyWidgetDeactivated();
+        }
+
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                draggable: true,
+                modal: false,
+                closeOnESC: false,
+                content: this.$element,
+                width: this.options.width ? this.options.width : 450,
+                resizable: true,
+                height: this.options.height ? this.options.height : 500,
+                detachOnClose: false,
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.search'),
+                        cssClass: 'btn btn-sm btn-primary',
+                        callback: $.proxy(this._search, this)
+                    },
+                    {
+                        label: Mapbender.trans('mb.actions.reset'),
+                        cssClass: 'btn btn-sm btn-light',
+                        callback: $.proxy(this._reset, this)
+                    },
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'btn btn-sm btn-light popupClose'
+                    }
+                ]
+            };
+        }
+
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.activate();
+        }
+
+        closeByButton() {
+            super.closeByButton();
+            this.deactivate();
         }
 
         /**

@@ -124,11 +124,6 @@
             return $("<label />").append(radioLine).append(Mapbender.trans("mb.core.ruler.tag." + type));
         }
 
-        // Default action for mapbender element
-        defaultAction(callback) {
-            this.activate(callback);
-        }
-
         _toggleControl(state) {
             if (state) {
                 this.mapModel.olMap.addInteraction(this.control);
@@ -142,58 +137,53 @@
             }
         }
 
-        reveal() { this.activate(); }
-        hide() { this.deactivate(); }
-
-        activate(callback) {
-            this.callback = callback ? callback : null;
-            this._toggleControl(true);
-
-            this._reset();
-            if (this.isDialog) {
-                this.showPopup();
-                this.popup.$element.find('button').focus();
-            } else {
-                this.$element.append(this.container);
-            }
+        reveal() {
+            this.activate();
         }
 
-        showPopup() {
-            if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup({
-                    title: this.$element.attr('data-title'),
-                    modal: false,
-                    draggable: true,
-                    resizable: true,
-                    closeOnESC: true,
-                    destroyOnClose: true,
-                    content: this.container,
-                    width: 300,
-                    height: 300,
-                    buttons: [
-                        {
-                            label: Mapbender.trans("mb.actions.close"),
-                            cssClass: 'btn btn-sm btn-light popupClose'
-                        }
-                    ]
-                });
-                this.popup.$element.on('close', $.proxy(this.deactivate, this));
-            } else {
-                this.popup.open();
-            }
+        hide() {
+            this.deactivate();
+        }
+
+        activate() {
+            this._toggleControl(true);
+            this._reset();
+            this.$element.append(this.container);
         }
 
         deactivate() {
             this.container.detach();
             this._toggleControl(false);
-            if (this.popup && this.popup.$element) {
-                this.popup.destroy();
-            }
-            this.popup = null;
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
+        }
+
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                modal: false,
+                draggable: true,
+                resizable: true,
+                closeOnESC: true,
+                destroyOnClose: true,
+                content: this.$element,
+                width: 300,
+                height: 300,
+                buttons: [
+                    {
+                        label: Mapbender.trans("mb.actions.close"),
+                        cssClass: 'btn btn-sm btn-light popupClose'
+                    }
+                ]
+            };
+        }
+
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.activate();
+        }
+
+        closeByButton() {
+            super.closeByButton();
+            this.deactivate();
         }
 
         _mapSrsChanged(event, srs) {

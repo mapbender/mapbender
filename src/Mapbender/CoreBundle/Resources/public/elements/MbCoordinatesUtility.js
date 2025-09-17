@@ -157,45 +157,6 @@
             });
         }
 
-        /** Popup handling */
-        popup() {
-            if (!this.popupWindow || !this.popupWindow.$element) {
-                this.popupWindow = new Mapbender.Popup({
-                    title: this.$element.attr('data-title'),
-                    draggable: true,
-                    resizable: true,
-                    modal: false,
-                    closeOnESC: false,
-                    detachOnClose: false,
-                    content: this.$element,
-                    width: 450,
-                    height: 400,
-                    buttons: {}
-                });
-                this.popupWindow.$element.on('close', () => this.close());
-            }
-            this.popupWindow.$element.show();
-            this.popupWindow.focus();
-        }
-
-        open(callback) {
-            this.callback = callback;
-            this.popup();
-            this.activate();
-        }
-
-        close() {
-            if (this.popupWindow && this.popupWindow.$element) {
-                this.popupWindow.$element.hide();
-            }
-            if (this.callback) {
-                this.callback.call();
-                this.callback = null;
-            }
-            this.deactivate();
-            this._resetFields();
-        }
-
         activate() {
             this.mbMap.map.element.addClass('crosshair');
             Mapbender.vectorLayerPool.showElementLayers(this);
@@ -208,6 +169,32 @@
             Mapbender.vectorLayerPool.hideElementLayers(this);
             $('.coordinate-search', this.$element).removeClass('active');
             this.mapClickActive = false;
+        }
+
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                draggable: true,
+                resizable: true,
+                modal: false,
+                closeOnESC: false,
+                detachOnClose: false,
+                content: this.$element,
+                width: 450,
+                height: 400,
+                buttons: {}
+            };
+        }
+
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.activate();
+        }
+
+        closeByButton() {
+            super.closeByButton();
+            this.deactivate();
+            this._resetFields();
         }
 
         // Sidepane API

@@ -16,7 +16,6 @@
             this.selectedColor_ = null;
             this.drawStyle = null;
             this.editControl = null;
-            this.callback = null;
 
             Object.assign(this.toolLabels, {
                 'point': Mapbender.trans('mb.core.sketch.geometrytype.point'),
@@ -107,7 +106,7 @@
             this.editControl = null;
             this.setupMapEventListeners();
             if (this.checkAutoOpen()) {
-                this.activate();
+                this.activateByButton();
             }
             this.trackLabelInput_(this.$labelInput_);
             this.trackRadiusInput_($('input[name="radius"]', this.$element));
@@ -216,34 +215,6 @@
             $(document).on('mbmapsrschanged', this._onSrsChange.bind(this));
         }
 
-        defaultAction(callback) {
-            this.activate(callback);
-        }
-
-        activate(callback) {
-            this.callback = callback ? callback : null;
-            if (this.useDialog_) {
-                this._open();
-            }
-            Mapbender.vectorLayerPool.showElementLayers(this, true);
-            this.notifyWidgetActivated();
-        }
-
-        deactivate() {
-            this._deactivateControl();
-            this._endEdit();
-            // end popup, if any
-            this._close();
-            if (this.options.deactivate_on_close) {
-                Mapbender.vectorLayerPool.hideElementLayers(this);
-            }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
-            this.notifyWidgetDeactivated();
-        }
-
         // sidepane interaction, safe to use activate / deactivate unchanged
         reveal() {
             this.activate();
@@ -253,34 +224,18 @@
             this.deactivate();
         }
 
-        /**
-         * @deprecated
-         * @param {array} callback
-         */
-        open(callback) {
-            this.activate(callback);
+        activate() {
+            Mapbender.vectorLayerPool.showElementLayers(this, true);
+            this.notifyWidgetActivated();
         }
 
-        /**
-         * deprecated
-         */
-        close() {
-            this.deactivate();
-        }
-
-        _open() {
-            if (!this.popup || !this.popup.$element) {
-                var options = Object.assign(this.getPopupOptions(), {
-                    content: this.$element
-                });
-                this.popup = new Mapbender.Popup(options);
-                this.popup.$element.on('close', () => {
-                    this.deactivate();
-                });
-            } else {
-                this.popup.$element.show();
-                this.popup.focus();
+        deactivate() {
+            this._deactivateControl();
+            this._endEdit();
+            if (this.options.deactivate_on_close) {
+                Mapbender.vectorLayerPool.hideElementLayers(this);
             }
+            this.notifyWidgetDeactivated();
         }
 
         getPopupOptions() {
@@ -295,6 +250,7 @@
                 width: 500,
                 height: 500,
                 resizable: true,
+                content: this.$element,
                 buttons: [
                     {
                         label: Mapbender.trans('mb.actions.close'),
@@ -304,11 +260,16 @@
             };
         }
 
-        _close() {
-            if (this.popup) {
-                this.popup.$element.hide();
-            }
+        activateByButton() {
+            super.activateByButton();
+            this.activate();
         }
+
+        closeByButton() {
+            super.closeByButton();
+            this.deactivate();
+        }
+
 
         _onToolButtonClick($button) {
             this._endEdit();

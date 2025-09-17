@@ -48,45 +48,31 @@
             $('.-js-viewmanager-new-name', this.$element).prop('disabled', !enabled);
         }
 
-        open(callback) {
-            this.closeCallback = callback || null;
-            if (!this.popup_) {
-                this.popup_ = new Mapbender.Popup({
-                    modal: false,
-                    detachOnClose: false,
-                    destroyOnClose: false,
-                    draggable: true,
-                    resizable: true,
-                    title: this.$element.attr('data-title'),
-                    content: this.$element.get(0),
-                    cssClass: 'mbViewManager-dialog',
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'popupClose btn btn-sm btn-primary'
-                        }
-                    ]
-                });
-                this.popup_.$element.on('close', () => {
-                    this.close();
-                });
-            }
-            this.popup_.$element.show();
-            this.popup_.focus();
+        getPopupOptions() {
+            return {
+                modal: false,
+                detachOnClose: false,
+                destroyOnClose: false,
+                draggable: true,
+                resizable: true,
+                title: this.$element.attr('data-title'),
+                content: this.$element.get(0),
+                cssClass: 'mbViewManager-dialog',
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'popupClose btn btn-sm btn-primary'
+                    }
+                ]
+            };
         }
 
-        close() {
-            if (this.popup_) {
-                this.popup_.$element.hide();
-            }
+        closeByButton() {
+            super.closeByButton();
             if (this.recordPopup_ && this.recordPopup_.$element) {
                 this.recordPopup_.close();
             }
             this.recordPopup_ = null;
-            if (this.closeCallback) {
-                (this.closeCallback)();
-                this.closeCallback = null;
-            }
         }
 
         _initEvents() {

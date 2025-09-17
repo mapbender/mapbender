@@ -7,6 +7,43 @@ class MapbenderElement {
         this.popup = null;
     }
 
+    getPopupOptions() {
+        return {
+            title: this.$element.attr('data-title'),
+            draggable: true,
+            resizable: true,
+            modal: false,
+            closeOnESC: false,
+            detachOnClose: false,
+            content: this.$element,
+            width: 450,
+            height: 400,
+            scrollable: false,
+            buttons: {}
+        };
+    }
+
+    activateByButton(callback) {
+        this.callback = callback ? callback : null;
+        if (!this.popup || !this.popup.$element) {
+            const options = this.getPopupOptions();
+            this.popup = new Mapbender.Popup(options);
+            this.popup.$element.on('close', () => this.closeByButton());
+        }
+        this.popup.$element.show();
+        this.popup.focus();
+    }
+
+    closeByButton() {
+        if (this.popup && this.popup.$element) {
+            this.popup.$element.hide();
+        }
+        if (this.callback) {
+            this.callback.call();
+            this.callback = null;
+        }
+    }
+
     /**
      * Called when a widget is becoming visible through user action.
      * This is (currently only) used by sidepane machinery.

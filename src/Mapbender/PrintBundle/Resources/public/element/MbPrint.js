@@ -88,14 +88,22 @@
             });
         }
 
-        open(callback) {
-            this.callback = callback || null;
+        activateByButton(callback) {
             if (this.useDialog_) {
-                if (!this.popup || !this.popup.$element) {
-                    super.open(callback);
-                }
+                super.activateByButton(callback);
                 this.activate();
             }
+        }
+
+        closeByButton() {
+            this.deactivate();
+            if (this.popup) {
+                if (this.overwriteTemplates) {
+                    this._overwriteTemplateSelect(this.options.templates);
+                    this.overwriteTemplates = false;
+                }
+            }
+            super.closeByButton();
         }
 
         _activateSelection() {
@@ -138,17 +146,6 @@
                 this.jobList.pause();
             }
             this._deactivateSelection();
-        }
-
-        close() {
-            this.deactivate();
-            if (this.popup) {
-                if (this.overwriteTemplates) {
-                    this._overwriteTemplateSelect(this.options.templates);
-                    this.overwriteTemplates = false;
-                }
-            }
-            super.close();
         }
 
         /**
@@ -650,7 +647,7 @@
                 this._overwriteTemplateSelect(templates);
                 this.overwriteTemplates = true;
             }
-            this.open();
+            this.activateByButton();
         }
 
         _overwriteTemplateSelect(templates) {

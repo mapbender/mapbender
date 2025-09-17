@@ -113,10 +113,6 @@
                 }
             }
         }
-
-        _destroy() {
-            // noop (mirrors original _destroy: $.noop)
-        }
     }
 
     window.Mapbender.Element = window.Mapbender.Element || {};

@@ -34,7 +34,7 @@
 
             if (Mapbender.ElementUtil.checkDialogMode(this.$element)) {
                 if (this.checkAutoOpen()) {
-                    this.open();
+                    this.activateByButton();
                 }
                 // Button is added via the popup constructor in dialog mode
                 this.$element.find('.-js-submit').remove();
@@ -43,38 +43,39 @@
             }
         }
 
-        open(callback){
-            this.callback = callback ? callback : null;
-            if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup({
-                    title: this.$element.attr('data-title'),
-                    draggable: true,
-                    modal: false,
-                    closeOnESC: true,
-                    content: this.$element,
-                    detachOnClose: false,
-                    width: 500,
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.add'),
-                            cssClass: 'btn btn-sm btn-primary',
-                            attrDataTest: 'mb-wms-btn-add',
-                            callback: this._submit.bind(this),
-                        },
-                        {
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-sm btn-light popupClose',
-                            attrDataTest: 'mb-wms-btn-close',
-                        }
-                    ]
-                });
-                this.popup.$element.on('close', this.close.bind(this));
-            } else {
-                this.popup.$element.removeClass('d-none');
-                this.popup.focus();
-            }
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                draggable: true,
+                modal: false,
+                closeOnESC: true,
+                content: this.$element,
+                detachOnClose: false,
+                width: 500,
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.add'),
+                        cssClass: 'btn btn-sm btn-primary',
+                        attrDataTest: 'mb-wms-btn-add',
+                        callback: this._submit.bind(this),
+                    },
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'btn btn-sm btn-light popupClose',
+                        attrDataTest: 'mb-wms-btn-close',
+                    }
+                ]
+            };
+        }
 
+        activateByButton(callback){
+            super.activateByButton(callback);
             this.notifyWidgetActivated();
+        }
+
+        closeByButton(){
+            super.closeByButton();
+            this.notifyWidgetDeactivated();
         }
 
         _submit(e) {
@@ -90,18 +91,9 @@
             urlObj.username = $('input[name="loadWmsUser"]', this.$element).val();
             urlObj.password = $('input[name="loadWmsPass"]', this.$element).val();
             this.loadWms(urlObj.asString());
-            if (this.popup) this.close();
-        }
-
-        close(){
-            if (this.popup && this.popup.$element) {
-                this.popup.$element.addClass('d-none');
-            }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
-            this.notifyWidgetDeactivated();
+            if (this.popup) {
+                this.closeByButton();
+            };
         }
 
         loadDeclarativeWms(elm){

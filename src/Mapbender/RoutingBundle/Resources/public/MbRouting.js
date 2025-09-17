@@ -6,7 +6,6 @@
 
             this.map = null;
             this.olMap = null;
-            this.popup = null;
             this.routingLayer = null;
             this.markerLayer = null;
             this.elementUrl = null;
@@ -52,50 +51,42 @@
             Mapbender.elementRegistry.markReady(this);
         }
 
-        open(callback) {
-            this.callback = callback ? callback : null;
-            this.isActive = true;
-
-            if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup({
-                    title: Mapbender.trans('mb.routing.backend.title'),
-                    draggable: true,
-                    resizable: true,
-                    header: true,
-                    modal: false,
-                    closeOnESC: false,
-                    content: this.$element,
-                    width: 350,
-                    buttons: [
-                        {
-                            label: Mapbender.trans('mb.actions.close'),
-                            cssClass: 'btn btn-sm btn-light popupClose'
-                        }
-                    ]
-                });
-                this.popup.$element.on('close', $.proxy(this.close, this));
-                this.$element.show();
-            }
-        }
-
-        close() {
-            if (this.popup) {
-                this.$element.hide().appendTo($('body'));
-                if (this.popup.$element) {
-                    this.popup.destroy();
-                }
-                this.popup = null;
-            }
-            this._clearRoute();
-            this.isActive = false;
-            this.callback ? this.callback.call() : this.callback;
-        }
-
         reveal() {
             this.isActive = true;
         }
 
         hide() {
+            this.isActive = false;
+        }
+
+        getPopupOptions() {
+            return {
+                title: Mapbender.trans('mb.routing.backend.title'),
+                draggable: true,
+                detachOnClose: false,
+                resizable: true,
+                header: true,
+                modal: false,
+                closeOnESC: false,
+                content: this.$element,
+                width: 350,
+                buttons: [
+                    {
+                        label: Mapbender.trans('mb.actions.close'),
+                        cssClass: 'popupClose btn btn-sm btn-light'
+                    }
+                ]
+            };
+        }
+
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.isActive = true;
+        }
+
+        closeByButton() {
+            super.closeByButton();
+            this._clearRoute();
             this.isActive = false;
         }
 

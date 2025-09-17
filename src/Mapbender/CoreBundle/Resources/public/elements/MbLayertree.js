@@ -41,7 +41,7 @@
             this.model = mbMap.getModel();
             this._createTree();
             if (this.checkAutoOpen()) {
-                this.open();
+                this.activateByButton();
             }
             this._createEvents();
             Mapbender.elementRegistry.markReady(this);
@@ -814,28 +814,6 @@
             ;
         }
 
-        defaultAction(callback) {
-            this.open(callback);
-        }
-
-        open(callback) {
-            this.callback = callback ? callback : null;
-            if (this.useDialog_) {
-                if (!this.popup || !this.popup.$element) {
-                    var popupOptions = Object.assign(this.getPopupOptions(), {
-                        content: [this.$element.show()]
-                    });
-                    this.popup = new Mapbender.Popup(popupOptions);
-                    this.popup.$element.on('close', $.proxy(this.close, this));
-                } else {
-                    this.popup.$element.show();
-                    this.popup.focus();
-                }
-            }
-            this._reset();
-            this.notifyWidgetActivated();
-        }
-
         getPopupOptions() {
             return {
                 title: this.$element.attr('data-title'),
@@ -844,6 +822,7 @@
                 draggable: true,
                 closeOnESC: false,
                 detachOnClose: false,
+                content: this.$element,
                 width: 350,
                 height: 500,
                 cssClass: 'layertree-dialog customLayertree',
@@ -856,15 +835,17 @@
             };
         }
 
-        close() {
+        activateByButton(callback) {
             if (this.useDialog_) {
-                if (this.popup && this.popup.$element) {
-                    this.popup.$element.hide();
-                }
+                super.activateByButton(callback);
             }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
+            this._reset();
+            this.notifyWidgetActivated();
+        }
+
+        closeByButton() {
+            if (this.useDialog_) {
+                super.closeByButton();
             }
             this.notifyWidgetDeactivated();
         }

@@ -21,45 +21,31 @@
             Mapbender.elementRegistry.markReady(this);
         }
 
-        open(callback) {
-            this.callback = callback ? callback : null;
-            this.openPopup();
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                draggable: true,
+                modal: false,
+                closeOnESC: false,
+                detachOnClose: false,
+                content: this.$element,
+                resizable: true,
+                cssClass: 'datauploadDialog',
+                width: 500,
+                height: 500,
+                buttons: []
+            };
         }
 
-        close() {
-            if (this.callback) {
-                this.callback.call();
-                this.callback = null;
-            }
-            if (this.popup && this.popup.$element) {
-                this.popup.$element.hide();
-                this.popup = null;
-            }
+        activateByButton(callback) {
+            super.activateByButton(callback);
+            this.popup.$element.find('.fileUploadLink').focus();
+        }
+
+        closeByButton() {
+            super.closeByButton();
             this.removeLayers();
             this.removeTable();
-        }
-
-        openPopup() {
-            var self = this;
-            if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup({
-                    title: this.$element.attr('data-title'),
-                    draggable: true,
-                    modal: false,
-                    closeOnESC: false,
-                    detachOnClose: false,
-                    content: this.$element,
-                    resizable: true,
-                    cssClass: 'datauploadDialog',
-                    width: 500,
-                    height: 500,
-                    buttons: []
-                });
-                this.popup.$element.on('close', function () {
-                    self.close();
-                });
-                this.popup.$element.find('.fileUploadLink').focus();
-            }
         }
 
         setupProjSelection() {

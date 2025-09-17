@@ -57,11 +57,6 @@
             Mapbender.elementRegistry.markReady(this);
         }
 
-        // former defaultAction
-        defaultAction(callback) {
-            this.activate(callback);
-        }
-
         reveal() {
             this.activate();
         }
@@ -124,7 +119,7 @@
                     if (result) {
                         this.showingSources.push(source);
                         this.showResponseContent_(source, result);
-                        this._open();
+                        this.activateByButton();
                     } else {
                         this._removeContent(source);
                     }
@@ -160,7 +155,23 @@
             });
         }
 
-        _open() {
+        getPopupOptions() {
+            return {
+                title: this.$element.attr('data-title'),
+                draggable: true,
+                modal: false,
+                closeOnESC: false,
+                detachOnClose: false,
+                content: this.$element,
+                resizable: true,
+                cssClass: 'featureinfoDialog',
+                width: this.options.width,
+                height: this.options.height,
+                buttons: this._getPopupButtonOptions()
+            };
+        }
+
+        activateByButton() {
             if (this.highlightLayer && this.startedNewRequest) {
                 this.highlightLayer.getSource().clear();
                 this.startedNewRequest = false;
@@ -173,37 +184,15 @@
 
             if (!this.isPopup) return; // sidepane mode
 
-            if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup({
-                    title: this.$element.attr('data-title'),
-                    draggable: true,
-                    modal: false,
-                    closeOnESC: false,
-                    detachOnClose: false,
-                    content: this.$element,
-                    resizable: true,
-                    cssClass: 'featureinfoDialog',
-                    width: this.options.width,
-                    height: this.options.height,
-                    buttons: this._getPopupButtonOptions()
-                });
-                this.popup.$element.on('close', () => this._close());
-            }
-            this.popup.$element.show();
+            super.activateByButton();
             this.popup.$element.find('.popupClose').focus();
         }
 
-        _hide() {
-            if (this.popup && this.popup.$element) {
-                this.popup.$element.hide();
-            }
-        }
-
-        _close() {
+        closeByButton() {
             if (this.options.deactivateOnClose) {
                 this.deactivate();
             } else {
-                this._hide();
+                super.closeByButton();
             }
         }
 
@@ -211,7 +200,7 @@
             this.$element.find('.-js-placeholder').addClass('hidden');
 
             if (this.popup) {
-                this._hide();
+                super.closeByButton();
             } else {
                 this.$element.find('.-js-no-content').removeClass('hidden');
                 this.$element.find('.js-content-parent').addClass('hidden');

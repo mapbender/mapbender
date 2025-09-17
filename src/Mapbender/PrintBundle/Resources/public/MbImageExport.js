@@ -23,31 +23,13 @@
             return {
                 title: this.$element.attr('data-title'),
                 draggable: true,
+                detachOnClose: false,
                 modal: false,
                 closeOnESC: false,
                 content: this.$element,
                 width: 250,
                 scrollable: false
             };
-        }
-
-        open(callback) {
-            this.callback = callback || null;
-            if (!this.popup || !this.popup.$element) {
-                this.popup = new Mapbender.Popup(this.getPopupOptions());
-                this.popup.$element.one('close', $.proxy(this.close, this));
-            }
-        }
-
-        close() {
-            if (this.popup) {
-                this.popup.close();
-                this.popup = null;
-            }
-            if (this.callback) {
-                (this.callback)();
-                this.callback = null;
-            }
         }
 
         /**
