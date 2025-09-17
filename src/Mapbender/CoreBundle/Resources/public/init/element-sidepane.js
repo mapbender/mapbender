@@ -39,7 +39,6 @@
                         return;
                     }
                 }
-                // See mapbender.element.base.js for why those method names are what they are
                 var method = state ? elementWidget.reveal : elementWidget.hide;
                 if (typeof method === 'function') {
                     method.call(elementWidget);

@@ -47,7 +47,7 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbScaledisplay';
+        return 'MbScaledisplay';
     }
 
     /**
@@ -73,7 +73,7 @@ class ScaleDisplay extends AbstractElementService implements FloatableElement
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.scaledisplay.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbScaledisplay.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/scaledisplay.scss',

@@ -56,7 +56,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbImageExport';
+        return 'MbImageExport';
     }
 
     /**
@@ -66,7 +66,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     {
         return array(
             'js' => array(
-                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+                '@MapbenderPrintBundle/Resources/public/MbImageExport.js',
             ),
             'css' => array(
                 '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',

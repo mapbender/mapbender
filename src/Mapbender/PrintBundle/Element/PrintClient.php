@@ -95,9 +95,9 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         return array(
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js',
-                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
-                '@MapbenderPrintBundle/Resources/public/element/printclient.job-list.js',
-                '@MapbenderPrintBundle/Resources/public/element/printclient.js',
+                '@MapbenderPrintBundle/Resources/public/MbImageExport.js',
+                '@MapbenderPrintBundle/Resources/public/element/MbPrintJobList.js',
+                '@MapbenderPrintBundle/Resources/public/element/MbPrint.js',
             ),
             'css' => array(
                 '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
@@ -199,7 +199,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbPrintClient';
+        return 'MbPrint';
     }
 
     public function getClientConfiguration(Element $element)

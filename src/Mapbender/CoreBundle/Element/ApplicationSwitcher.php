@@ -73,17 +73,17 @@ class ApplicationSwitcher extends AbstractElementService
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbApplicationSwitcher';
+        return 'MbApplicationSwitcher';
     }
 
     public function getRequiredAssets(Element $element)
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/element/mbApplicationSwitcher.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbApplicationSwitcher.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/element/mbApplicationSwitcher.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/mbApplicationSwitcher.scss',
             ),
         );
     }

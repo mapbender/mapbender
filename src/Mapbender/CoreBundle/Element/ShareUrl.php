@@ -22,7 +22,7 @@ class ShareUrl extends ButtonLike
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbShareUrl';
+        return 'MbShareUrl';
     }
 
     public static function getType()
@@ -42,10 +42,10 @@ class ShareUrl extends ButtonLike
         );
         // Remove / replace base button script
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbShareUrl.js',
         ));
         $required['css'] = array_merge($required['css'], array(
-            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.scss',
+            '@MapbenderCoreBundle/Resources/public/sass/element/mbShareUrl.scss',
         ));
         $required['trans'] = array_merge($required['trans'], array(
             'mb.core.ShareUrl.*',

@@ -42,7 +42,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     {
         return [
             'js' => [
-                '@MapbenderCoreBundle/Resources/public/element/mapbender.element.coordinatesutility.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbCoordinatesUtility.js',
             ],
             'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/coordinatesutility.scss',
@@ -70,7 +70,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbCoordinatesUtility';
+        return 'MbCoordinatesUtility';
     }
 
     /**

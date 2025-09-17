@@ -41,7 +41,7 @@ class AboutDialog extends ButtonLike
             'js' => array(),
         );
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbAboutDialog.js',
         ));
         return $required;
     }
@@ -71,7 +71,7 @@ class AboutDialog extends ButtonLike
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbAboutDialog';
+        return 'MbAboutDialog';
     }
 
     public function getView(Element $element)

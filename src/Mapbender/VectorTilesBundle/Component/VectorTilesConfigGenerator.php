@@ -16,7 +16,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         return match ($type) {
             "js" => [
                 '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                '@MapbenderCoreBundle/Resources/public/element/featureinfo-highlighting.js',
+                '@MapbenderCoreBundle/Resources/public/elements/featureinfo-highlighting.js',
                 '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.source.js',
                 '@MapbenderVectorTilesBundle/Resources/public/geosource.vectortiles.sourcelayer.js',
             ],

@@ -32,7 +32,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbLayertree';
+        return 'MbLayertree';
     }
 
     /**
@@ -54,7 +54,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
                 // For nested layer toggling in source view
                 '@MapbenderCoreBundle/Resources/public/widgets/content-toggle.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.layertree.tree.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbLayertree.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss',
