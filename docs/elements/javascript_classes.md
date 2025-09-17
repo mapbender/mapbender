@@ -130,7 +130,19 @@ Keine Kommata zwischen den Methoden mehr. `function`-Keyword entfällt.
 
 ---
 
-## 6. `this.element` -> `this.$element`
+## 6. Registrierung in der Element-Registry
+
+Statt `this._trigger('ready')` (jQuery UI) wird jetzt folgender Aufruf verwendet:
+
+```js
+Mapbender.elementRegistry.markReady(this);
+```
+
+Dies geschieht normalerweise am Ende von `_setup()`.
+
+---
+
+## 7. `this.element` -> `this.$element`
 
 Das Widget erhielt vom jQuery UI Core das Root-Element in `this.element`. In der neuen Basisklasse `MapbenderElement` ist es `this.$element` (jQuery-Objekt). Alle Vorkommen ersetzen:
 
@@ -142,7 +154,7 @@ Das Widget erhielt vom jQuery UI Core das Root-Element in `this.element`. In der
 
 ---
 
-## 7. Popup 
+## 8. Popup 
 
 Vorher wurden Popups manuell über `new Mapbender.Popup({...})` gesteuert; Aktivierung oft via `defaultAction / activate / deactivate`. Jetzt stellt `MapbenderElement` eine Standard-Mechanik bereit:
 
@@ -170,18 +182,6 @@ getPopupOptions() {
 	};
 }
 ```
-
----
-
-## 8. Registrierung im Element-Registry
-
-Statt `this._trigger('ready')` (jQuery UI) wird jetzt folgender Aufruf verwendet:
-
-```js
-Mapbender.elementRegistry.markReady(this);
-```
-
-Dies geschieht normalerweise am Ende von `_setup()`.
 
 ---
 
@@ -269,8 +269,8 @@ Beispiel:
 5. Registrierung am Ende: `window.Mapbender.Element.<Klasse> = <Klasse>`.
 6. `_create` -> `constructor(configuration, $element)` + `super(...)`.
 7. Methoden-Syntax konvertieren (`name: function` -> `name()`).
-8. `this.element` -> `this.$element` ersetzen.
-9. `this._trigger('ready')` -> `Mapbender.elementRegistry.markReady(this)`.
+8. `this._trigger('ready')` -> `Mapbender.elementRegistry.markReady(this)`.
+9. `this.element` -> `this.$element` ersetzen.
 10. Popup-Handling auf `getPopupOptions`, `activateByButton`, `closeByButton` umstellen.
 11. Arrow Functions nutzen, `var self=this;` entfernen.
 
