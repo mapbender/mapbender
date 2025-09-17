@@ -197,7 +197,7 @@
 
         activateByButton(callback) {
             if (this.useDialog_) {
-                super.activateByButton(callback)
+                super.activateByButton(callback);
             }
             this.notifyWidgetActivated();
         }
