@@ -1,22 +1,20 @@
-# Migration: jQuery UI Widget -> Native JavaScript Klasse
+# Migration: jQuery UI Widget -> Native JavaScript Class
 
-Dieses Dokument beschreibt Schritt für Schritt, wie ein bestehendes Mapbender jQuery-UI-Widget (z. B. `mapbender.mbRuler`) in eine native ES6-JavaScript-Klasse (z. B. `MbRuler`) überführt wird. Grundlage sind die Dateien
+This document describes step by step how to convert an existing Mapbender jQuery UI widget (e.g. `mapbender.mbRuler`) into a native ES6 JavaScript class (e.g. `MbRuler`). The basis for this are the files
 
-- Vorher: `mapbender.element.ruler.js`
-- Nachher: `MbRuler.js`
+- before: `mapbender.element.ruler.js`
+- after: `MbRuler.js`
 
-Die gleichen Prinzipien gelten für andere Elemente.
+The same principles apply to other elements.
 
----
+## 1. Adjustments in the PHP Element-Class
 
-## 1. Änderungen in der PHP Element-Klasse
+Two adjustments are necessary in the PHP-Element-Class (e.g. `Mapbender\CoreBundle\Element\Ruler`):
 
-In der PHP-Elementklasse (z. B. `Mapbender\CoreBundle\Element\Ruler`) sind zwei Anpassungen nötig:
+1. `getWidgetName()` -> change return value from `mapbender.mbRuler` to `MbRuler`.
+2. `getRequiredAssets()` -> Modify the path and refer to the new class script (new file name `MbRuler.js`). Delete the old path `.../mapbender.element.ruler.js`.
 
-1. `getWidgetName()` -> Rückgabewert von `mapbender.mbRuler` auf `MbRuler` ändern.
-2. `getRequiredAssets()` -> Den Pfad zum neuen Klassenskript anpassen (Dateiname jetzt `MbRuler.js`). Entferne den alten Pfad `.../mapbender.element.ruler.js`.
-
-Beispiel (vereinfacht):
+Example (simplified):
 
 ```php
 public static function getWidgetName() : ?string
@@ -30,26 +28,23 @@ public static function getRequiredAssets(Entity\Element $element) : array
 		'js' => [
 			'@MapbenderCoreBundle/Resources/public/elements/MbRuler.js',
 		],
-		// ... css / translation wie zuvor
+		// ... css / translation as before
 	];
 }
 ```
 
----
+## 2. File / name conventions
 
-## 2. Datei- / Namens-Konventionen
-
-| Alt (Widget)                    | Neu (Native Klasse) |
+| Old (widget)                    | New (native class) |
 |---------------------------------|----------------------|
 | `mapbender.element.ruler.js`    | `MbRuler.js`         |
-| Widget-Namespace: `$.widget("mapbender.mbRuler", {...})` | ES6 Klasse: `class MbRuler extends MapbenderElement {}` |
-| Widget-Name (`getWidgetName`) = `mapbender.mbRuler` | Klassenname = `MbRuler` |
+| Widget-Namespace: `$.widget("mapbender.mbRuler", {...})` | ES6 class: `class MbRuler extends MapbenderElement {}` |
+| Widget-Name (`getWidgetName`) = `mapbender.mbRuler` | class name = `MbRuler` |
 
----
 
-## 3. Wrapper & Klassendefinition anpassen
+## 3. Adjust wrapper & class definition
 
-### Vorher (Widget-Pattern)
+### Before (widget pattern)
 ```js
 (function($) {
 	$.widget("mapbender.mbRuler", {
@@ -57,8 +52,7 @@ public static function getRequiredAssets(Entity\Element $element) : array
 	});
 })(jQuery);
 ```
-
-### Nachher (Native Klasse)
+### After (native class)
 ```js
 (function() {
 	class MbRuler extends MapbenderElement {
@@ -69,16 +63,13 @@ public static function getRequiredAssets(Entity\Element $element) : array
 	window.Mapbender.Element.MbRuler = MbRuler;
 })();
 ```
+Important: The class must be registered globally under `window.Mapbender.Element.<Name>` so that the element loader can find it.
 
-Wichtig: Die Klasse muss global unter `window.Mapbender.Element.<Name>` registriert werden, damit der Element-Loader sie findet.
+## 4. The **_create() -> constructor()**
 
----
+The old jQuery-Widget used `_create()`. In the class, we replace this with an ES6 constructor:
 
-## 4. _create() -> constructor()
-
-Das jQuery-Widget nutzte `_create()`. In der Klasse ersetzen wir das durch einen ES6-Konstruktor:
-
-### Vorher
+### Before
 ```js
 _create: function() {
 	var self = this;
@@ -89,7 +80,7 @@ _create: function() {
 }
 ```
 
-### Nachher
+### After
 ```js
 constructor(configuration, $element) {
 	super(configuration, $element);
@@ -104,65 +95,59 @@ constructor(configuration, $element) {
 }
 ```
 
-Es werden immer die Parameter `configuration` und `$element` übergeben. Der Eltern-Konstruktor muss zuerst via `super` aufgerufen werden.
+The parameters `configuration` and `$element` are always passed. The parent constructor must first be called via `super`.
 
----
+## 5. Change method syntax
 
-## 5. Methoden-Syntax umstellen
+All function literals in the object (`name: function (...) {}`) become class methods (`name(...) {}`).
 
-Alle Funktionsliterale im Objekt (`name: function (...) {}`) werden zu Klassenmethoden (`name(...) {}`).
-
-### Beispiel
-Vorher:
+### Example
+Before:
 ```js
 _setup: function(mbMap) {
 	this.mapModel = mbMap.getModel();
 }
 ```
-Nachher:
+After:
 ```js
 _setup(mbMap) {
 	this.mapModel = mbMap.getModel();
 }
 ```
 
-Keine Kommata zwischen den Methoden mehr. `function`-Keyword entfällt. 
+No more commas between methods. The `function` keyword is no longer required. 
 
----
 
-## 6. Registrierung in der Element-Registry
+## 6. Registration in the element registry
 
-Statt `this._trigger('ready')` (jQuery UI) wird jetzt folgender Aufruf verwendet:
+Instead of `this._trigger(‘ready’)` (jQuery UI), the following call is now used:
 
 ```js
 Mapbender.elementRegistry.markReady(this);
 ```
 
-Dies geschieht normalerweise am Ende von `_setup()`.
+This usually happens at the end of `_setup()`.
 
----
 
 ## 7. `this.element` -> `this.$element`
 
-Das Widget erhielt vom jQuery UI Core das Root-Element in `this.element`. In der neuen Basisklasse `MapbenderElement` ist es `this.$element` (jQuery-Objekt). Alle Vorkommen ersetzen:
+The widget received the root element in `this.element` from jQuery UI Core. In the new base class `MapbenderElement`, it is `this.$element` (jQuery object). Replace all occurrences:
 
-| Alt              | Neu              |
+| Old              | New              |
 |------------------|------------------|
 | `this.element`   | `this.$element`  |
 
 
-
----
-
 ## 8. Popup 
 
-Vorher wurden Popups manuell über `new Mapbender.Popup({...})` gesteuert; Aktivierung oft via `defaultAction / activate / deactivate`. Jetzt stellt `MapbenderElement` eine Standard-Mechanik bereit:
+Previously, popups were controlled manually via `new Mapbender.Popup({...})`; activation was often via `defaultAction / activate / deactivate`. Now `MapbenderElement` provides a standard mechanism:
 
-- Verwende `activate()` / `deactivate()` weiterhin für technische Aktivierung (Layer, Interactions etc.).
-- Für Button-gestützte Aktivierung (Toolbar) gibt es `activateByButton(callback)` und `closeByButton()`
-- Überschreibe `getPopupOptions()` um Titel, Größe, Buttons etc. anzupassen.
+- Continue to use `activate()` / `deactivate()` for technical activation (layers, interactions, etc.).
+- For button-based activation (toolbar), use `activateByButton(callback)` and `closeByButton()`
+- Overwrite `getPopupOptions()` to customize titles, sizes, buttons, etc.
 
-### Beispiel aus `MbRuler.js`
+### Example from `MbRuler.js`
+
 ```js
 getPopupOptions() {
 	return {
@@ -183,16 +168,14 @@ getPopupOptions() {
 }
 ```
 
----
+## 9. Other adjustments / patterns
 
-## 9. Sonstige Anpassungen / Muster
+1. Method order can be freely adjusted; recommended: constructor -> private setup functions -> event handlers -> calculations -> formatting.
+2. Use arrow functions for callbacks if `this` is required by the class context (e.g., `geometry.on(‘change’, () => { ... })`).
+3. Where `var self = this;` was previously required, this is no longer necessary thanks to arrow functions or direct method binding (`.bind(this)`).
 
-1. Methodenreihenfolge kann frei angepasst werden; empfehlenswert: constructor -> private Setup-Funktionen -> Event Handler -> Berechnungen -> Formatierung.
-2. Arrow Functions für Callbacks nutzen, wenn `this` vom Klassenkontext benötigt wird (z. B. `geometry.on('change', () => { ... })`).
-3. Wo früher `var self = this;` nötig war, entfällt dies durch Arrow Functions oder direkte Methodenbindung (`.bind(this)`).
-
-### Beispiel
-Vorher:
+### Example
+Before:
 ```js
 _createControl: function() {
 	const source = this.layer.getNativeLayer().getSource();
@@ -205,7 +188,7 @@ _createControl: function() {
 	control.on('drawstart', function(event) { /* self */ });
 }
 ```
-Nachher:
+After:
 ```js
 _createControl() {
 	const source = this.layer.getNativeLayer().getSource();
@@ -219,15 +202,12 @@ _createControl() {
 }
 ```
 
----
+## 10. Inheritance
 
-## 10. Vererbung
+1. Inheritance is achieved by referencing the complete path of the parent class namespace.
+2. Parent functions can be called using `super.parentFunction()`.
 
-1. Vererbung gelingt indem der vollständige Pfad des Namespace der Elternklasse referenziert wird
-2. Eltern-Funktionen können mit `super.parentFunction()` aufgerufen werden
-
-Beispiel:
-
+Example:
 
 ```js
 (function() {
@@ -258,25 +238,22 @@ Beispiel:
 })();
 ```
 
----
+## 11. Migration checklist
 
-## 11. Checkliste Migration
-
-1. PHP: `getWidgetName()` anpassen -> Klassenname.
-2. PHP: `getRequiredAssets()` – alten JS-Dateinamen entfernen, neuen hinzufügen.
-3. JS-Datei umbenennen (`mapbender.element.<name>.js` -> `Mb<Name>.js`).
-4. Widget-Wrapper entfernen; ES6 IIFE + Klasse einführen.
-5. Registrierung am Ende: `window.Mapbender.Element.<Klasse> = <Klasse>`.
+1. PHP: Adjust `getWidgetName()` -> class name.
+2. PHP: `getRequiredAssets()` – remove old JS file name, add new one.
+3. Rename JS file (`mapbender.element.<name>.js` -> `Mb<Name>.js`).
+4. Remove widget wrapper; introduce ES6 IIFE + class.
+5. Registration at the end: `window.Mapbender.Element.<class> = <class>`.
 6. `_create` -> `constructor(configuration, $element)` + `super(...)`.
-7. Methoden-Syntax konvertieren (`name: function` -> `name()`).
-8. `this._trigger('ready')` -> `Mapbender.elementRegistry.markReady(this)`.
-9. `this.element` -> `this.$element` ersetzen.
-10. Popup-Handling auf `getPopupOptions`, `activateByButton`, `closeByButton` umstellen.
-11. Arrow Functions nutzen, `var self=this;` entfernen.
+7. Convert method syntax (`name: function` -> `name()`).
+8. `this._trigger(‘ready’)` -> `Mapbender.elementRegistry.markReady(this)`.
+9. Replace `this.element` -> `this.$element`.
+10. Change popup handling to `getPopupOptions`, `activateByButton`, `closeByButton`.
+11. Use arrow functions, remove `var self=this;`.
 
----
 
-## 12. Minimales Gerüst einer MbElement-Klasse
+## 12. Minimal framework of an MbElement class
 
 ```js
 (function() {
