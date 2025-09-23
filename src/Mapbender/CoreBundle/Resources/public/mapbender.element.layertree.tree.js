@@ -642,6 +642,38 @@
                 }
             });
 
+            // Positioning the slider-handle when resizing sidepane or popup:
+            $opacityControl.data('dragDealer', dragDealer);
+
+            // Get layer ID for unique event namespace
+            const layerId = layer.options.id;
+            const eventNamespace = 'resize.opacitySlider' + layerId;
+
+            const handleSidePaneResize = () => {
+                setTimeout(() => {
+                    const currentOpacity = source.options.opacity;
+
+                    if (dragDealer) {
+                        dragDealer.reflow();
+                        dragDealer.setValue(currentOpacity, 0);
+                    }
+                }, 10);
+            };
+
+            let resizeObserver = null;
+            const $sidePane = $opacityControl.closest('.sidePane');
+
+            // Case: Layertree is displayed in sidepane
+            if ($sidePane.length && window.ResizeObserver) {
+                resizeObserver = new ResizeObserver(handleSidePaneResize);
+                resizeObserver.observe($sidePane[0]);
+
+                $opacityControl.data('resizeObserver', resizeObserver);
+            } else {
+                // Case: Layertree is displayed in a popup
+                $(window).on(eventNamespace, handleSidePaneResize);
+            }
+
             const $slider = $opacityControl.find('.layer-slider-handle');
             $slider.attr('tabindex', '0'); // Make the handle focusable
 
