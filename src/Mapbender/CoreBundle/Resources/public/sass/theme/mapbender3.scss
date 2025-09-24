@@ -128,6 +128,17 @@ ul.toolBar, .toolBar > ul {
     margin-bottom: 0;
   }
   .menu-wrapper {
+    .btn {
+        color: var(--bs-secondary-color);
+    }
+    .btn.active {
+      border: none;
+    }
+    .btn:focus, .btn:active, .btn:focus-visible {
+      border: none;
+      outline: none;
+      box-shadow: none;
+    }
     .dropdown-menu {
       font-size: inherit;
       line-height: 1.25;
@@ -300,7 +311,7 @@ ul.toolBar, .toolBar > ul {
   .container {
     margin-top: 2em;
   }
-  
+
   table {
     margin-bottom: 1em;
     tbody th:first-child {

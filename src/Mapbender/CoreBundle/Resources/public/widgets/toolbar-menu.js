@@ -8,6 +8,10 @@
             // @see https://getbootstrap.com/docs/3.4/components/#dropdowns
             $wrapper.toggleClass('open');
             $btn.toggleClass('active', $wrapper.is('.open'));
+            $('i', $btn)
+                .toggleClass('fa-bars', !$wrapper.is('.open'))
+                .toggleClass('fa-x', $wrapper.is('.open'))
+            ;
         }
     });
 }(jQuery));
