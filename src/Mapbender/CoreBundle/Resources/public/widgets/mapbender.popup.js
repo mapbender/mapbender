@@ -135,7 +135,7 @@
                 this.$element.css("z-index", 101);  // One more than .ui-front
 
                 // Focus the first visible and interactive element in the dialog window
-                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible').not('.popupClose');
+                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible');
                 const $firstFocusable = $visibleElements.first();
                 if ($firstFocusable.length) {
                     const $activeRadioButton = this.$element.find('input[type="radio"]:checked:visible');
@@ -237,6 +237,13 @@
             $target.on('click', '.popupClose', function(evt) {
                 evt.stopPropagation();
                 self.close();
+            });
+            $target.on('keydown', '.popupClose', function(evt) {
+                if (evt.key === 'Enter') {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    self.close();
+                }
             });
             $(document).on('keyup', function(event) {
                 if (self.options.closeOnESC && event.keyCode === 27) {

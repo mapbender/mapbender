@@ -16,12 +16,7 @@
                 closeOnOutsideClick: true,
                 content: this.content_,
                 width: 350,
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
-                    }
-                ]
+                buttons: []
             };
         }
 

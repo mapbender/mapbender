@@ -70,12 +70,7 @@
                 closeOnESC: false,
                 content: this.$element,
                 width: 350,
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'popupClose btn btn-sm btn-light'
-                    }
-                ]
+                buttons: []
             };
         }
 
