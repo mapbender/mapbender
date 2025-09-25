@@ -5,9 +5,8 @@ $popupBackgroundColor: $backgroundColor !default;
 
 .popupHead {
   .popupTitle {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
-  border-bottom:dashed 1px $popupBorderColor;
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
