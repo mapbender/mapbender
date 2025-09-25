@@ -797,6 +797,7 @@
             var dimData = $element.data('dimensions') || {};
             var $controls = [];
             var dragHandlers = [];
+            var dimensionHandlers = [];
             var updateData = function (key, props) {
                 $.extend(dimData[key], props);
                 var ourData = {};
@@ -830,6 +831,7 @@
                     updateData(dimDataKey, {value: dimData.value || item.extent});
                 } else if (item.type === 'multiple' || item.type === 'interval') {
                     var dimHandler = Mapbender.Dimension(item);
+                    dimensionHandlers.push(dimHandler);
                     dragHandlers.push(new Dragdealer($('.layer-dimension-bar', $control).get(0), {
                         x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
@@ -849,6 +851,7 @@
                         }
                     }));
                 } else {
+                    dimensionHandlers.push(null);
                     Mapbender.error("Source dimension " + item.type + " is not supported.");
                 }
                 $controls.push($control);
@@ -857,9 +860,87 @@
             dragHandlers.forEach(function (dh) {
                 dh.reflow();
             });
+
+            // Resize handling for dimension sliders
+            if ($controls.length > 0) {
+                const $dimensionControls = $($controls);
+
+                const sourceId = source.id;
+                const eventNamespace = 'resize.dimensionSlider' + sourceId;
+
+                const handleSidePaneResize = () => {
+                    setTimeout(() => {
+                        dragHandlers.forEach(function (dh, index) {
+                            if (dh && dimensionHandlers[index]) {
+                                dh.reflow();
+
+                                // Reposition the slider based on current value
+                                const $control = $($dimensionControls[index]);
+                                const $checkbox = $control.find('input[type="checkbox"]');
+                                const currentValue = $checkbox.attr('data-value');
+
+                                if (currentValue) {
+                                    const dimHandler = dimensionHandlers[index];
+                                    const currentStep = dimHandler.getStep(currentValue);
+                                    const currentX = currentStep / dimHandler.getStepsNum();
+                                    dh.setValue(currentX, 0);
+                                }
+                            }
+                        });
+                    }, 10);
+                };
+
+                let resizeObserver = null;
+                let $container = $(self.element);
+
+                if ($container.length && window.ResizeObserver) {
+                    resizeObserver = new ResizeObserver(handleSidePaneResize);
+                    resizeObserver.observe($container[0]);
+                    $dimensionControls.first().data('resizeObserver', resizeObserver);
+                } else {
+                    $(window).on(eventNamespace, handleSidePaneResize);
+                }
+
+                // Keyboard support for dimension sliders
+                $dimensionControls.each((index, control) => {
+                    const $control = $(control);
+                    const $slider = $control.find('.layer-dimension-handle');
+                    const dragHandler = dragHandlers[index];
+
+                    if ($slider.length && dragHandler) {
+
+                        $slider.attr('tabindex', '0');
+
+                        $slider.on('keydown', (event) => {
+                            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                                event.preventDefault();
+                                const currentX = dragHandler.getValue()[0];
+                                const stepSize = 1 / dragHandler.options.steps;
+                                let newX = currentX;
+
+                                if (event.key === 'ArrowLeft') {
+                                    newX = Math.max(0, currentX - stepSize);
+                                } else if (event.key === 'ArrowRight') {
+                                    newX = Math.min(1, currentX + stepSize);
+                                }
+
+                                dragHandler.setValue(newX, 0);
+                            }
+                        });
+                    }
+                });
+            }
         },
         _callDimension: function (source, chkbox) {
+            // Check if checkbox still exists in DOM and has dimension data
+            if (!chkbox || !chkbox.length || !chkbox.closest('body').length) {
+                return false;
+            }
+
             var dimension = chkbox.data('dimension');
+            if (!dimension) {
+                return false;
+            }
             var paramName = dimension['__name'];
             if (chkbox.is(':checked') && paramName) {
                 var params = {};
