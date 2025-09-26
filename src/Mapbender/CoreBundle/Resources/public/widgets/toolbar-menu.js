@@ -23,7 +23,7 @@
             $btn.toggleClass('active', $wrapper.is('.open'));
             $('i', $btn)
                 .toggleClass('fa-bars', !$wrapper.is('.open'))
-                .toggleClass('fa-x', $wrapper.is('.open'));
+                .toggleClass('fa-xmark', $wrapper.is('.open'));
         }
     });
 }(jQuery));
