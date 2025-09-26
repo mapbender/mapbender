@@ -168,10 +168,21 @@ ul.toolBar, .toolBar > ul {
       }
     }
   }
+  .menu-wrapper {
+    position: relative;
+  }
+
   .menu-wrapper.open {
     .dropdown-menu {
       display: block;
+      border: none;
+      background: $toolBarTopBackground;
+      position: fixed;
       right: 0;
+      left: auto;
+      min-width: 200px;
+      z-index: 1000;
+      top: var(--dropdown-top, 50px);
     }
   }
 }
