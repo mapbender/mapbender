@@ -70,7 +70,7 @@
             const allMatrixSets = this.source.tilematrixsets;
 
             for (const matrixSetId of matrixSetIds) {
-                for (const matrixSet of allMatrixSets.filter((ms) => ms.identifier === matrixSetId)) {
+                for (const matrixSet of allMatrixSets) {
                     if (matrixSet.identifier !== matrixSetId) {
                         continue;
                     }
