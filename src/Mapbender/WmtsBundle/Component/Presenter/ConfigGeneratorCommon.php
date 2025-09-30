@@ -191,7 +191,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
         // there seems to be no convention, so set it fix to the order OpenLayers requires
         // if someone finds a better solution, have fun
         if ($tilematrixset->getSupportedCrs() === "EPSG:4326") {
-            foreach($tileMatrices as $tilematrix) {
+            foreach ($tileMatrices as $tilematrix) {
                 $tilematrix->setTopleftcorner([-180, 90]);
             }
             /** @noinspection PhpConditionAlreadyCheckedInspection */
