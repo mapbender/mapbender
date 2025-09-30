@@ -1,5 +1,6 @@
 ## next bugfix release
 Bugfixes:
+* [WMTS] Check if current projection is supported by WMTS layer and show message if it isn't ([#PR1783](https://github.com/mapbender/mapbender/pull/1783))
 * [BaseSourceSwitcher] Fix behaviour in sidepane ([#PR1776](https://github.com/mapbender/mapbender/pull/1776))
 * [ViewManager] Fix unnecessary listing request ([#PR1779](https://github.com/mapbender/mapbender/pull/1779))
 
