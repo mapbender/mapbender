@@ -55,6 +55,32 @@
             var template = this.options.tileUrls[0];
             return template.replace('{TileMatrixSet}', tileMatrixSet.identifier);
         }
+
+        supportsProjection(srsName) {
+            if (!this.parent) {
+                for (const children of this.children) {
+                    if (children.supportsProjection(srsName)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            const matrixSetIds = this.options.matrixLinks;
+            const allMatrixSets = this.source.tilematrixsets;
+
+            for (const matrixSetId of matrixSetIds) {
+                for (const matrixSet of allMatrixSets) {
+                    if (matrixSet.identifier !== matrixSetId) {
+                        continue;
+                    }
+                    if (matrixSet.supportedCrs.includes(srsName)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
     Mapbender.SourceLayer.typeMap['wmts'] = Mapbender.WmtsLayer;
     Mapbender.Source.typeMap['wmts'] = Mapbender.WmtsSource;
