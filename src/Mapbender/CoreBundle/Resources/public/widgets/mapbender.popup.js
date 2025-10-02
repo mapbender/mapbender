@@ -45,6 +45,9 @@
 
             var value = self.options[optionName];
             switch(optionName) {
+                case 'icon':
+                    self.icon(value);
+                    break;
                 case 'title':
                     self.title(value);
                     break;
@@ -95,9 +98,10 @@
             scrollable: true,
             template: [
                 '    <div class="popupHead">',
+                '      <span class="iconBig me-1"><i class="popupIcon"></i></span>',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right" tabindex="0"><i class="fas fa-xmark fa-lg"></i></span>',
+                '      <span class="popupClose right" tabindex="0"><i class="fa-solid fa-xmark"></i></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
                 '   <div class="popup-body">',
@@ -188,6 +192,14 @@
                 this.$modalWrap.remove();
                 this.$modalWrap = null;
             }
+        },
+        icon: function(icon) {
+            if(icon) {
+              $('.popupIcon', this.$element).addClass(icon);
+            } else {
+                $('.iconBig', this.$element).addClass('noIconFound');
+            }
+
         },
         title: function(title) {
             $('.popupTitle', this.$element).html(title || '');

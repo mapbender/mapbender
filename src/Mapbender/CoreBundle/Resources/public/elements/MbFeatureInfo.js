@@ -171,7 +171,7 @@
             };
         }
 
-        activateByButton() {
+        activateByButton(callback, mbButton) {
             if (this.highlightLayer && this.startedNewRequest) {
                 this.highlightLayer.getSource().clear();
                 this.startedNewRequest = false;
@@ -184,7 +184,7 @@
 
             if (!this.isPopup) return; // sidepane mode
 
-            super.activateByButton();
+            super.activateByButton(callback, mbButton);
         }
 
         closeByButton() {

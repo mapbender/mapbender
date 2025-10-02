@@ -63,8 +63,8 @@
             };
         }
 
-        activateByButton(callback){
-            super.activateByButton(callback);
+        activateByButton(callback, mbButton){
+            super.activateByButton(callback, mbButton);
             this.notifyWidgetActivated();
         }
 

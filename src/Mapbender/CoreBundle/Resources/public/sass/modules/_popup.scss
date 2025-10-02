@@ -5,11 +5,21 @@ $popupBackgroundColor: $backgroundColor !default;
 
 .popupHead {
   .popupTitle {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
+    color: var(--primary);
+      font-weight: 600;
   }
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
+
+  .popupIcon {
+    color: var(--primary);
+    font-size: 1.5rem;
+  }
+  .iconBig.noIconFound {
+    display: none;
+  }
 }
 .popup .popupButtons {
   text-align: right;
@@ -77,6 +87,8 @@ $popupBackgroundColor: $backgroundColor !default;
   }
   .popupHead .popupClose {
     cursor: pointer;
+    color: var(--bs-secondary-color);
+    font-size: 1.5rem;
   }
   &.ui-draggable {
     // Overrule ui draggable's relative breaking layout on first movement

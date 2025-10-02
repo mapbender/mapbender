@@ -189,9 +189,9 @@
             };
         }
 
-        activateByButton(callback) {
+        activateByButton(callback, mbButton) {
             if (this.useDialog_) {
-                super.activateByButton(callback);
+                super.activateByButton(callback, mbButton);
             }
             this.notifyWidgetActivated();
         }

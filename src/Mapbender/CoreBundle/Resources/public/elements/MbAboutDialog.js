@@ -20,8 +20,8 @@
             };
         }
 
-        activateByButton() {
-            super.activateByButton();
+        activateByButton(callback, mbButton) {
+            super.activateByButton(callback, mbButton);
             this.popup.open();
             // request button focus asynchronously to ensure that the popup is fully rendered
             setTimeout(() => {
