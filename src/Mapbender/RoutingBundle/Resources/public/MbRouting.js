@@ -49,6 +49,11 @@
             this._setupExportFormatSelection();
             this._initializeEventListeners();
             Mapbender.elementRegistry.markReady(this);
+
+            if (Mapbender.ElementUtil.checkDialogMode(this.$element)) {
+                // Buttons are added in getPopupOptions
+                this.$element.find('.hideInDialogMode').remove();
+            }
         }
 
         reveal() {
@@ -60,6 +65,34 @@
         }
 
         getPopupOptions() {
+            let $buttons = [
+                {
+                    title: Mapbender.trans('mb.routing.frontend.dialog.label.clearroute'),
+                    cssClass: 'btn btn-light resetRoute',
+                    iconClass: 'far fa-trash-can',
+                    callback: this._clearRoute.bind(this),
+                },
+                {
+                    title: Mapbender.trans('mb.routing.frontend.dialog.label.flippoints'),
+                    cssClass: 'btn btn-primary swapPoints',
+                    iconClass: 'fa-solid fa-arrow-right-arrow-left fa-rotate-90',
+                    callback: this._flipPoints.bind(this),
+                },
+                {
+                    title: Mapbender.trans('mb.routing.frontend.dialog.label.getroute'),
+                    cssClass: 'btn btn-primary calculateRoute',
+                    iconClass: 'fa-solid fa-flag-checkered',
+                    callback: this._getRoute.bind(this),
+                },
+            ];
+            if(this.options.allowIntermediatePoints) {
+                $buttons.push({
+                    title: Mapbender.trans('mb.routing.frontend.dialog.label.addintermediate'),
+                    cssClass: 'btn btn-primary addPoint',
+                    iconClass: 'fa-solid fa-plus',
+                    callback: this._addInputField.bind(this),
+                });
+            }
             return {
                 title: Mapbender.trans('mb.routing.backend.title'),
                 draggable: true,
@@ -70,7 +103,7 @@
                 closeOnESC: false,
                 content: this.$element,
                 width: 350,
-                buttons: []
+                buttons: $buttons
             };
         }
 

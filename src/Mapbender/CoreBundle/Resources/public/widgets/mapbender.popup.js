@@ -281,8 +281,15 @@
                     if (confOrNode.attrDataTest !== undefined) {
                         $btn.attr('data-test', confOrNode.attrDataTest);
                     }
+                    if (confOrNode.title !== undefined) {
+                        $btn.attr('title', confOrNode.title);
+                    }
                     if (confOrNode.callback) {
                         $btn.on('click', confOrNode.callback.bind(self));
+                    }
+                    if(confOrNode.iconClass !== undefined) {
+                        var $icon = $('<i>').addClass(confOrNode.iconClass);
+                        $btn.prepend($icon).prepend(' ');
                     }
                 }
                 buttonset.append($btn);
