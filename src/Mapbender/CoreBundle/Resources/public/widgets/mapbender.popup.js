@@ -3,6 +3,7 @@
     window.Mapbender = window.Mapbender || {};
 
     var currentModal_ = null;
+    var mobileBreakpoint = 599; // Mobile breakpoint in pixels
 
     window.Mapbender.Popup = function Popup(options) {
         this.options = Object.assign({}, this.defaults, options);
@@ -110,6 +111,10 @@
                 '   <div class="footer row no-gutters">',
                 '       <div class="popupButtons"></div>',
                 '       <div class="clear"></div>',
+                '   </div>',
+                '   <div class="popup-mobile-resize">',
+                '     <i class="fa fa-angle-up"></i>',
+                '     <i class="fa fa-angle-down"></i>',
                 '   </div>'
             ].join("\n"),
             buttons: [],
@@ -263,6 +268,46 @@
                 }
                 return true;
             });
+
+            // Mobile resize functionality
+            this.setupMobileResize_($target);
+        },
+        setupMobileResize_: function($target) {
+            var self = this;
+            var isDragging = false;
+            var startY = 0;
+            var startHeight = 0;
+            var minHeight = 200;
+            var maxHeight = window.innerHeight - 100;
+
+            $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
+                if (window.innerWidth > mobileBreakpoint) return; // Only on mobile
+                
+                evt.preventDefault();
+                isDragging = true;
+                startY = evt.type === 'touchstart' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                startHeight = self.$element.height();
+                
+                $('body').addClass('popup-resizing').css('user-select', 'none');
+            });
+
+            $(document).on('mousemove touchmove', function(evt) {
+                if (!isDragging) return;
+                
+                evt.preventDefault();
+                var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                var deltaY = currentY - startY;
+                var newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
+                
+                self.$element.css('height', newHeight + 'px');
+            });
+
+            $(document).on('mouseup touchend', function(evt) {
+                if (isDragging) {
+                    isDragging = false;
+                    $('body').removeClass('popup-resizing').css('user-select', '');
+                }
+            });
         },
         addButtons: function(buttons) {
             var self = this;
@@ -306,6 +351,9 @@
                 currentModal_ = this;
             }
 
+            // Set toolbar bottom position for mobile layouts
+            this.setToolbarBottomPosition_();
+
             var container = this.getContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
@@ -325,6 +373,17 @@
                 Mapbender.restrictPopupPositioning(this.$element);
             }
             this.focus();
+        },
+        setToolbarBottomPosition_: function() {
+            // Set CSS property for toolbar bottom position on mobile
+            if (window.innerWidth <= mobileBreakpoint) {
+                var $toolbar = $('.toolBar').first();
+                if ($toolbar.length) {
+                    var toolbarRect = $toolbar[0].getBoundingClientRect();
+                    var toolbarBottom = toolbarRect.bottom;
+                    document.documentElement.style.setProperty('--toolbar-bottom', toolbarBottom - 1 + 'px');
+                }
+            }
         }
     });
 }());
