@@ -194,6 +194,10 @@ body.popup-resizing {
     
     border: none;
     
+    .popup-body{
+      overflow: hidden;
+    }
+
     .popupContainer.modal & {
       position: fixed !important;
       top: var(--toolbar-bottom, 60px) !important;
