@@ -1,4 +1,7 @@
 ## next bugfix release
+Features:
+* [WMTS] Support services defined via OperationsMetadata tag ([#PR1784](https://github.com/mapbender/mapbender/pull/1784))
+
 Bugfixes:
 * [WMTS] Check if current projection is supported by WMTS layer and show message if it isn't ([#PR1783](https://github.com/mapbender/mapbender/pull/1783))
 * [BaseSourceSwitcher] Fix behaviour in sidepane ([#PR1776](https://github.com/mapbender/mapbender/pull/1776))
