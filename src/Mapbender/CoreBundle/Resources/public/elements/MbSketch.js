@@ -251,17 +251,12 @@
                 height: 500,
                 resizable: true,
                 content: this.$element,
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
-                    }
-                ]
+                buttons: []
             };
         }
 
-        activateByButton() {
-            super.activateByButton();
+        activateByButton(callback, mbButton) {
+            super.activateByButton(callback, mbButton);
             this.activate();
         }
 

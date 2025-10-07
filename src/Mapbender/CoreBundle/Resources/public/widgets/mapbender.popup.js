@@ -3,6 +3,7 @@
     window.Mapbender = window.Mapbender || {};
 
     var currentModal_ = null;
+    var mobileBreakpoint = 599; // Mobile breakpoint in pixels
 
     window.Mapbender.Popup = function Popup(options) {
         this.options = Object.assign({}, this.defaults, options);
@@ -45,6 +46,9 @@
 
             var value = self.options[optionName];
             switch(optionName) {
+                case 'icon':
+                    self.icon(value);
+                    break;
                 case 'title':
                     self.title(value);
                     break;
@@ -95,9 +99,10 @@
             scrollable: true,
             template: [
                 '    <div class="popupHead">',
+                '      <span class="iconBig me-1"><i class="popupIcon"></i></span>',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right" tabindex="0"><i class="fas fa-xmark fa-lg"></i></span>',
+                '      <span class="popupClose right" tabindex="0"><i class="fa-solid fa-xmark"></i></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
                 '   <div class="popup-body">',
@@ -106,6 +111,10 @@
                 '   <div class="footer row no-gutters">',
                 '       <div class="popupButtons"></div>',
                 '       <div class="clear"></div>',
+                '   </div>',
+                '   <div class="popup-mobile-resize">',
+                '     <i class="fa fa-angle-up"></i>',
+                '     <i class="fa fa-angle-down"></i>',
                 '   </div>'
             ].join("\n"),
             buttons: [],
@@ -135,7 +144,7 @@
                 this.$element.css("z-index", 101);  // One more than .ui-front
 
                 // Focus the first visible and interactive element in the dialog window
-                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible').not('.popupClose');
+                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible');
                 const $firstFocusable = $visibleElements.first();
                 if ($firstFocusable.length) {
                     const $activeRadioButton = this.$element.find('input[type="radio"]:checked:visible');
@@ -189,6 +198,14 @@
                 this.$modalWrap = null;
             }
         },
+        icon: function(icon) {
+            if(icon) {
+              $('.popupIcon', this.$element).addClass(icon);
+            } else {
+                $('.iconBig', this.$element).addClass('noIconFound');
+            }
+
+        },
         title: function(title) {
             $('.popupTitle', this.$element).html(title || '');
         },
@@ -238,11 +255,58 @@
                 evt.stopPropagation();
                 self.close();
             });
+            $target.on('keydown', '.popupClose', function(evt) {
+                if (evt.key === 'Enter') {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    self.close();
+                }
+            });
             $(document).on('keyup', function(event) {
                 if (self.options.closeOnESC && event.keyCode === 27) {
                     self.close();
                 }
                 return true;
+            });
+
+            // Mobile resize functionality
+            this.setupMobileResize_($target);
+        },
+        setupMobileResize_: function($target) {
+            var self = this;
+            var isDragging = false;
+            var startY = 0;
+            var startHeight = 0;
+            var minHeight = 200;
+            var maxHeight = window.innerHeight - 100;
+
+            $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
+                if (window.innerWidth > mobileBreakpoint) return; // Only on mobile
+                
+                evt.preventDefault();
+                isDragging = true;
+                startY = evt.type === 'touchstart' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                startHeight = self.$element.height();
+                
+                $('body').addClass('popup-resizing').css('user-select', 'none');
+            });
+
+            $(document).on('mousemove touchmove', function(evt) {
+                if (!isDragging) return;
+                
+                evt.preventDefault();
+                var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                var deltaY = currentY - startY;
+                var newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
+                
+                self.$element.css('height', newHeight + 'px');
+            });
+
+            $(document).on('mouseup touchend', function(evt) {
+                if (isDragging) {
+                    isDragging = false;
+                    $('body').removeClass('popup-resizing').css('user-select', '');
+                }
             });
         },
         addButtons: function(buttons) {
@@ -262,8 +326,15 @@
                     if (confOrNode.attrDataTest !== undefined) {
                         $btn.attr('data-test', confOrNode.attrDataTest);
                     }
+                    if (confOrNode.title !== undefined) {
+                        $btn.attr('title', confOrNode.title);
+                    }
                     if (confOrNode.callback) {
                         $btn.on('click', confOrNode.callback.bind(self));
+                    }
+                    if(confOrNode.iconClass !== undefined) {
+                        var $icon = $('<i>').addClass(confOrNode.iconClass);
+                        $btn.prepend($icon).prepend(' ');
                     }
                 }
                 buttonset.append($btn);
@@ -279,6 +350,9 @@
                 }
                 currentModal_ = this;
             }
+
+            // Set toolbar bottom position for mobile layouts
+            this.setToolbarBottomPosition_();
 
             var container = this.getContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
@@ -299,6 +373,17 @@
                 Mapbender.restrictPopupPositioning(this.$element);
             }
             this.focus();
+        },
+        setToolbarBottomPosition_: function() {
+            // Set CSS property for toolbar bottom position on mobile
+            if (window.innerWidth <= mobileBreakpoint) {
+                var $toolbar = $('.toolBar').first();
+                if ($toolbar.length) {
+                    var toolbarRect = $toolbar[0].getBoundingClientRect();
+                    var toolbarBottom = toolbarRect.bottom;
+                    document.documentElement.style.setProperty('--toolbar-bottom', toolbarBottom - 1 + 'px');
+                }
+            }
         }
     });
 }());
