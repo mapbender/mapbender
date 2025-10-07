@@ -1,4 +1,4 @@
-## next bugfix release
+## v4.2.2
 Features:
 * [WMTS] Support services defined via OperationsMetadata tag ([#PR1784](https://github.com/mapbender/mapbender/pull/1784))
 
