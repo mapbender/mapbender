@@ -181,6 +181,13 @@ ul.toolBar, .toolBar > ul {
       min-width: 200px;
       z-index: 1000;
       top: var(--dropdown-top, 50px);
+      
+      // Make menu scrollable on small screens
+      @media (max-height: 600px) {
+        max-height: calc(100vh - var(--dropdown-top, 50px) - 40px);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
     }
   }
 }
