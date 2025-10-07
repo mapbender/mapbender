@@ -195,7 +195,7 @@ body.popup-resizing {
     border: none;
     
     .popup-body{
-      overflow: hidden;
+      overflow: scroll;
     }
 
     .popupContainer.modal & {
