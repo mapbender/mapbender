@@ -150,5 +150,14 @@
             processSidePane(this);
         });
     }
+    $(document).on('click', '.sidePane .toggleSideBar', function(e) {
+        var $btn = $(this);
+        var $icon = $btn.find('i');
+        
+        $icon.toggleClass(['fa-bars', 'fa-xmark']);
+
+        e.stopPropagation();
+    });
+
     $(document).on("mapbender.setupfinished", processSidepanes);
 })(jQuery));
