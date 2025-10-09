@@ -144,9 +144,9 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
     {
-        $styles = $this->getAvailableStyles($layer);
+        $styles = $this->getAvailableStyles($instance, $layer);
         if ($layer['legendEnabled'] === false) {
-            foreach($styles as $style) {
+            foreach ($styles as $style) {
                 /** @var Style $style */
                 $style->setLegendUrl(null);
             }
@@ -317,11 +317,17 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * partial reimplementation of WmsLayerSource::getStyles() since we don't have the object here for performance reasons
      * @see WmsLayerSource::getStyles()
      */
-    protected function getAvailableStyles(array $layer): array
+    protected function getAvailableStyles(WmsInstance $instance, array $layer): array
     {
         $styles = [];
         // store "hash" of style by using name and title
         foreach ($layer['lsStyles'] ?? [] as $style) {
+            /** @var Style $style */
+            $legendHref = $style->getLegendUrl()?->getOnlineResource()?->getHref();
+            if ($legendHref) {
+                $proxifiedUrl = $this->proxifyLegendUrl($instance, $layer, $legendHref);
+                $style->getLegendUrl()->getOnlineResource()->setHref($proxifiedUrl);
+            }
             $styles[$style->getName() . "|" . $style->getTitle()] = $style;
         }
 
@@ -388,18 +394,24 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
         // @todo: implement legend url generation for reusable instances
         if ($legendUrl) {
-            if ($this->useTunnel($instance)) {
-                // request via tunnel, see ApplicationController::instanceTunnelLegendAction
-                $tunnelService = $this->urlProcessor->getTunnelService();
-                $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer, $instance);
-            } else {
-                $publicLegendUrl = $legendUrl;
-            }
+            $publicLegendUrl = $this->proxifyLegendUrl($instance, $instanceLayer, $legendUrl);
             return array(
                 "url" => $publicLegendUrl,
             );
         }
         return array();
+    }
+
+    private function proxifyLegendUrl(WmsInstance $instance, array $instanceLayer, string $legendUrl): string
+    {
+        if ($this->useTunnel($instance)) {
+            // request via tunnel, see ApplicationController::instanceTunnelLegendAction
+            $tunnelService = $this->urlProcessor->getTunnelService();
+            $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer, $instance, $legendUrl);
+        } else {
+            $publicLegendUrl = $legendUrl;
+        }
+        return $publicLegendUrl;
     }
 
     /**

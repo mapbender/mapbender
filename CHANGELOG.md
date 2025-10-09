@@ -1,3 +1,6 @@
+## next bugfix release
+* [Legend] Fix legend urls within a style were not proxified
+
 ## v4.2.2
 Features:
 * [WMTS] Support services defined via OperationsMetadata tag ([#PR1784](https://github.com/mapbender/mapbender/pull/1784))
