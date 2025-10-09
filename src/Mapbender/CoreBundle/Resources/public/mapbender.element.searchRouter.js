@@ -246,47 +246,63 @@
         },
 
         /**
+         * @param $form jQuery
+         * @return {boolean}
+         * @private
+         */
+        _validateForm: function ($form) {
+            const form = $form.get(0);
+            if (form.reportValidity && !form.reportValidity()) return false;
+
+            let valid = true;
+            $form.find(':input[required]').each((index, el) => {
+                if ($(el).val() === '') valid = false;
+            });
+            return valid;
+        },
+
+        _prepareSearchRequestData: function (formValues) {
+            return {
+                properties: formValues,
+                extent: this.mbMap.model.getMaxExtentArray(),
+                srs: this.mbMap.model.getCurrentProjectionCode()
+            };
+        },
+
+        _createFeaturesFromResponse: function (response) {
+            return response.features.map((data) => {
+                const gjInput = {
+                    type: 'Feature',
+                    geometry: data.geometry,
+                    properties: data.properties || {}
+                };
+                return this.mbMap.model.parseGeoJsonFeature(gjInput);
+            });
+        },
+
+        /**
          * Start a search, but only after successful form validation
          */
         _search: function () {
-            var form = $('form[name="' + this.selected + '"]', this.element);
-            if (form.get(0).reportValidity && !form.get(0).reportValidity()) return;
-            var valid = true;
-            $.each($(':input[required]', form), function () {
-                if ('' === $(this).val()) {
-                    valid = false;
-                }
-            });
+            const $form = this.element.find('form[name="' + this.selected + '"]');
+            if (!this._validateForm($form)) return;
 
-            if (valid) {
-                var formValues = this._getFormValues(form);
-                var data = {
-                    properties: formValues,
-                    extent: this.mbMap.model.getMaxExtentArray(),
-                    srs: this.mbMap.model.getCurrentProjectionCode()
-                };
-                var url = this.callbackUrl + this.selected + '/search';
-                var self = this;
-                $.getJSON({
-                    url: url,
-                    data: JSON.stringify(data),
-                    method: 'POST'
+            const formValues = this._getFormValues($form);
+            const data = this._prepareSearchRequestData(formValues);
+            const url = this.callbackUrl + this.selected + '/search';
+
+            $.getJSON({
+                url: url,
+                data: JSON.stringify(data),
+                method: 'POST'
+            })
+                .fail((err) => {
+                    Mapbender.error(Mapbender.trans(err.responseText));
                 })
-                    .fail(function (err) {
-                        Mapbender.error(Mapbender.trans(err.responseText));
-                    })
-                    .then(function (response) {
-                        var features = response.features.map(function (data) {
-                            var gjInput = {
-                                type: 'Feature',
-                                geometry: data.geometry,
-                                properties: data.properties || {}
-                            };
-                            return self.mbMap.model.parseGeoJsonFeature(gjInput);
-                        });
-                        self._searchResults(features);
-                    });
-            }
+                .then((response) => {
+                    const features = this._createFeaturesFromResponse(response);
+                    this._searchResults(features);
+                });
         },
 
         /**
@@ -481,18 +497,11 @@
          * @private
          */
         _getLabelValue: function (feature, style) {
-            let currentRoute = this.getCurrentRoute();
-            let styleMap = currentRoute.results.styleMap;
+            const currentRoute = this.getCurrentRoute();
+            const labelWithRegex = currentRoute?.results?.styleMap?.[style]?.label;
+            if (!labelWithRegex) return '';
 
-            if (style === 'default') {
-                return this._labelReplaceRegex(styleMap.default.label, feature);
-            } else if (style === 'select') {
-                return this._labelReplaceRegex(styleMap.select.label, feature);
-            } else if (style === 'temporary') {
-                return this._labelReplaceRegex(styleMap.temporary.label, feature);
-            } else {
-                throw new Error('No such style!');
-            }
+            return this._labelReplaceRegex(labelWithRegex, feature);
         },
 
         _labelReplaceRegex: function(labelWithRegex, feature) {
@@ -507,52 +516,55 @@
             return label;
         },
 
-        _createStyleMap: function (styles) {
-            function _createSingleStyle(options) {
-                var fill = new ol.style.Fill({
-                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
-                });
-                var stroke = new ol.style.Stroke({
-                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
-                    width: options.strokeWidth || 2
-                });
-                // labeling
-                let fontweight = options.fontWeight  || 'normal';
-                let fontsize = options.fontSize  || '18px';
-                let fontfamily = options.fontFamily  || 'arial';
-                const textfill = new ol.style.Fill({
-                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fontColor', '1')
-                });
-                const textstroke = new ol.style.Stroke({
-                    color: Mapbender.StyleUtil.svgToCssColorRule(options, 'labelOutlineColor', '1'),
-                    width: options.labelOutlineWidth || 2
-                });
-                const text = new ol.style.Text({
-                    font: fontweight + ' ' + fontsize + ' ' + fontfamily,
-                    offsetX: options.fontOffsetX || 2,
-                    offsetY: options.fontOffsetY || 2,
-                    placement: options.fontPlacement || 'point',
-                    text: options.label || '',
-                    fill: textfill,
-                    stroke: textstroke,
-                });
+        _createTextStyle: function(options) {
+            const fontweight = options.fontWeight  || 'normal';
+            const fontsize = options.fontSize  || '18px';
+            const fontfamily = options.fontFamily  || 'arial';
 
-                return new ol.style.Style({
-                    image: new ol.style.Circle({
-                        fill: fill,
-                        stroke: stroke,
-                        radius: options.pointRadius || 5
-                    }),
+            const textfill = new ol.style.Fill({
+                color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fontColor', '1')
+            });
+            const textstroke = new ol.style.Stroke({
+                color: Mapbender.StyleUtil.svgToCssColorRule(options, 'labelOutlineColor', '1'),
+                width: options.labelOutlineWidth || 2
+            });
+
+            return new ol.style.Text({
+                font: fontweight + ' ' + fontsize + ' ' + fontfamily,
+                offsetX: options.fontOffsetX || 2,
+                offsetY: options.fontOffsetY || 2,
+                placement: options.fontPlacement || 'point',
+                text: options.label || '',
+                fill: textfill,
+                stroke: textstroke,
+            });
+        },
+
+        _createSingleStyle: function(options) {
+            const fill = new ol.style.Fill({
+                color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
+            });
+            const stroke = new ol.style.Stroke({
+                color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
+                width: options.strokeWidth || 2
+            });
+
+            return new ol.style.Style({
+                image: new ol.style.Circle({
                     fill: fill,
                     stroke: stroke,
-                    text: text
-                });
-            }
-
+                    radius: options.pointRadius || 5
+                }),
+                fill: fill,
+                stroke: stroke,
+                text: this._createTextStyle(options),
+            });
+        },
+        _createStyleMap: function (styles) {
             return {
-                default: _createSingleStyle(styles.default),
-                select: _createSingleStyle(styles.select),
-                temporary: _createSingleStyle(styles.temporary)
+                default: this._createSingleStyle(styles.default),
+                select: this._createSingleStyle(styles.select),
+                temporary: this._createSingleStyle(styles.temporary)
             }
         },
 
