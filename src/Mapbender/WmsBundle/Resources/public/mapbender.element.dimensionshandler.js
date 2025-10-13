@@ -30,7 +30,7 @@
                 if (dimHandler) {
                     this._initializeSlider($set, dimHandler, targetDimensions);
                 } else {
-                    console.error("Target dimension not found! Source deactivated or removed?", targetDimensions, groupConfig);
+                    console.error("Target dimension not found! Source deactivated or removed?", targetDimensions);
                 }
             }
             this._trigger('ready');
