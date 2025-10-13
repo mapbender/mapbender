@@ -303,7 +303,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
      * Override this method if you want to modify the features returned by the search engine before displaying,
      * e.g. sort them or perform a string replace on the results
      */
-    private function postProcessFeatures($features, array $categoryConf, array $data): array
+    protected function postProcessFeatures($features, array $categoryConf, array $data): array
     {
         return $features;
     }
@@ -312,7 +312,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
      * Override this method if you want to modify the features returned by the search engine before displaying,
      * e.g. sort them or perform a string replace on the results
      */
-    private function postProcessAutocomplete($results, array $categoryConf, array $data): array
+    protected function postProcessAutocomplete($results, array $categoryConf, array $data): array
     {
         return $results;
     }
