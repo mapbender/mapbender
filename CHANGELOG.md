@@ -1,5 +1,6 @@
 ## next bugfix release
-* [Legend] Fix legend urls within a style were not proxified
+* [Legend] Fix legend urls within a style were not proxified ([#PR1787](https://github.com/mapbender/mapbender/pull/1787))
+* [Print] Fix proxified legend urls were not correctly resolved ([#PR1788](https://github.com/mapbender/mapbender/pull/1788))
 
 ## v4.2.2
 Features:
