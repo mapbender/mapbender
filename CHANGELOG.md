@@ -1,5 +1,6 @@
 ## next bugfix release
 * [Legend] Fix legend urls within a style were not proxified
+* [Print] Fix proxified legend urls were not correctly resolved
 
 ## v4.2.2
 Features:
