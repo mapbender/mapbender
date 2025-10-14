@@ -153,8 +153,8 @@
     $(document).on('click', '.sidePane .toggleSideBar', function(e) {
         var $btn = $(this);
         var $icon = $btn.find('i');
-        
-        $icon.toggleClass(['fa-bars', 'fa-xmark']);
+
+        $icon.toggleClass('fa-bars fa-xmark');
 
         e.stopPropagation();
     });

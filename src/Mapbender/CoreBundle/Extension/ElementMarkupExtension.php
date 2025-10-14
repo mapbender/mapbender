@@ -59,7 +59,7 @@ class ElementMarkupExtension extends AbstractExtension
         return $this->markupRenderer->getElementVisibilityClass($element);
     }
 
-        /**
+    /**
      * @param Element $element
      * @return string
      */
