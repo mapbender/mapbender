@@ -37,6 +37,7 @@ class ElementMarkupExtension extends AbstractExtension
         return array(
             'element_visibility_class' => new TwigFunction('element_visibility_class', array($this, 'element_visibility_class')),
             'element_markup' => new TwigFunction('element_markup', array($this, 'element_markup')),
+            'find_icon' => new TwigFunction('find_icon', array($this, 'find_icon'))
         );
     }
 
@@ -56,5 +57,14 @@ class ElementMarkupExtension extends AbstractExtension
     public function element_visibility_class($element)
     {
         return $this->markupRenderer->getElementVisibilityClass($element);
+    }
+
+        /**
+     * @param Element $element
+     * @return string
+     */
+    public function find_icon($element)
+    {
+        return $this->markupRenderer->getIcon($element);
     }
 }

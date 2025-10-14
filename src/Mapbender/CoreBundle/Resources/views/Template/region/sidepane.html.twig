@@ -35,7 +35,15 @@
       <div class="accordionContainer">
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
-          <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}"><div>{{ element.title | trans }}</div></div>
+          {%- set element_icon = find_icon(element) -%}
+          <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+              <div>
+                {%- if element_icon != '' -%}
+                  <i class="{{element_icon}} me-2"></i>
+                {%- endif -%}
+                 {{ element.title | trans }}
+              </div>
+          </div>
           <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
               <div class="accordion-cell">
                   {{ element_info.content | raw }}

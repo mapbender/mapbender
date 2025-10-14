@@ -14,6 +14,8 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Mapbender\CoreBundle\Component\IconPackageFa4;
+use Mapbender\CoreBundle\Component\IconPackageMbIcons;
 use Twig;
 
 
@@ -192,6 +194,31 @@ class ElementMarkupRenderer
                 return 'hide-screentype-mobile';
         }
     }
+
+    public function getIcon($element){
+
+        if (!isset($element->getConfiguration()['icon'])) {
+            return '';
+        }
+
+        $iconCode = $element->getConfiguration()['icon'];
+
+        $iconPackages = [
+            new IconPackageFa4(false, []),
+            new IconPackageMbIcons(false, [])
+        ];
+
+        foreach ($iconPackages as $package) {
+            if ($package->isHandled($iconCode)) {
+                $markup = $package->getIconMarkup($iconCode);
+                if (preg_match('/class=["\']([^"\']+)["\']/', $markup, $matches)) {
+                    return $matches[1];
+                }
+            }
+        }
+        return '';
+    }
+
 
     public function isMenuSupported(Element $element)
     {

@@ -151,6 +151,7 @@ $hoverEffects: true !default;
     user-select: none;
     cursor: pointer;
     padding: 5px 0.5em;
+    font-weight: 600;
     font-size: $accordionFontSize;
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
@@ -171,6 +172,6 @@ $hoverEffects: true !default;
   }
   // spacing between consecutive content blocks
   .container-accordion + .accordion {
-    margin-top: 2px;
+    margin-top: 15px;
   }
 }

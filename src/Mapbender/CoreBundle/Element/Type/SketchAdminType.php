@@ -44,6 +44,10 @@ class SketchAdminType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.sketch.admin.allow_custom_color'
             ))
+            ->add('icon', 'Mapbender\CoreBundle\Element\Type\IconClassType', array(
+                'required' => false,
+                'label' => 'mb.core.basebutton.admin.icon',
+            ))
         ;
         $builder->get('colors')->addModelTransformer(new ArrayToCsvScalarTransformer());
     }
