@@ -63,7 +63,7 @@ class IconPackageFa4 implements IconPackageInterface
         return $choices;
     }
 
-    public function getIconMarkup($iconCode)
+    public function getIconMarkup($iconCode, $additionalClass = '')
     {
         $class = null;
         foreach ($this->additionalIcons as $icon) {
@@ -136,7 +136,7 @@ class IconPackageFa4 implements IconPackageInterface
         }
 
         return HtmlUtil::renderTag('i', '', array(
-            'class' => $class,
+            'class' => $class . ' ' . $additionalClass,
         ));
     }
 

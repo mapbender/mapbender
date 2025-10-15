@@ -14,8 +14,7 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Mapbender\CoreBundle\Component\IconPackageFa4;
-use Mapbender\CoreBundle\Component\IconPackageMbIcons;
+use Mapbender\FrameworkBundle\Component\IconIndex;
 use Twig;
 
 
@@ -36,18 +35,22 @@ class ElementMarkupRenderer
     protected $allowResponsiveElements;
     /** @var bool */
     protected $debug;
+    /** @var IconIndex */
+    protected $iconIndex;
 
     public function __construct(Twig\Environment $templatingEngine,
                                 TranslatorInterface $translator,
                                 ElementInventoryService $inventory,
                                 $allowResponsiveElements,
-                                $debug)
+                                $debug,
+                                IconIndex $iconIndex)
     {
         $this->templatingEngine = $templatingEngine;
         $this->translator = $translator;
         $this->inventory = $inventory;
         $this->allowResponsiveElements = $allowResponsiveElements;
         $this->debug = $debug;
+        $this->iconIndex = $iconIndex;
     }
 
     /**
@@ -195,7 +198,7 @@ class ElementMarkupRenderer
         }
     }
 
-    public function getIcon($element){
+    public function getIcon($element, $additionalClass = ''){
 
         if (!isset($element->getConfiguration()['icon'])) {
             return '';
@@ -203,18 +206,8 @@ class ElementMarkupRenderer
 
         $iconCode = $element->getConfiguration()['icon'];
 
-        $iconPackages = [
-            new IconPackageFa4(false, []),
-            new IconPackageMbIcons(false, [])
-        ];
-
-        foreach ($iconPackages as $package) {
-            if ($package->isHandled($iconCode)) {
-                $markup = $package->getIconMarkup($iconCode);
-                if (preg_match('/class=["\']([^"\']+)["\']/', $markup, $matches)) {
-                    return $matches[1];
-                }
-            }
+        if ($this->iconIndex->isHandled($iconCode)) {
+            return $this->iconIndex->getIconMarkup($iconCode, $additionalClass);
         }
         return '';
     }

@@ -63,8 +63,8 @@ class ElementMarkupExtension extends AbstractExtension
      * @param Element $element
      * @return string
      */
-    public function find_icon($element)
+    public function find_icon($element, $additionalClass = '')
     {
-        return $this->markupRenderer->getIcon($element);
+        return $this->markupRenderer->getIcon($element, $additionalClass);
     }
 }

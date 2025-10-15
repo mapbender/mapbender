@@ -35,12 +35,10 @@
       <div class="accordionContainer">
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
-          {%- set element_icon = find_icon(element) -%}
+          {%- set element_icon = find_icon(element, 'me-2') -%}
           <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
               <div>
-                {%- if element_icon != '' -%}
-                  <i class="{{element_icon}} me-2"></i>
-                {%- endif -%}
+                 {{element_icon | raw }}
                  {{ element.title | trans }}
               </div>
           </div>
