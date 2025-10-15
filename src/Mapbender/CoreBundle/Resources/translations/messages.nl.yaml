@@ -337,6 +337,9 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Sleep om opnieuw te ordenen'
+    basebutton:
+      admin:
+        elementIcon: 'element-symbool'
 'Bad credentials.': 'Ongeldige inloggegevens.'
 'User account is locked.': 'Gebruikers account is geblokkeerd.'
 'User account is disabled.': 'Gebruikers account is uitgeschakeld.'

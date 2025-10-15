@@ -131,9 +131,9 @@ class ElementFormFactory
             }
         }
         if ($regionName && str_contains($regionName, 'sidepane')) {
-            $form->get('configuration')->add('icon', IconClassType::class, array(
+            $form->get('configuration')->add('element_icon', IconClassType::class, array(
                 'required' => false,
-                'label' => 'mb.core.basebutton.admin.icon',
+                'label' => 'mb.core.basebutton.admin.elementIcon',
             ));
         }
     }

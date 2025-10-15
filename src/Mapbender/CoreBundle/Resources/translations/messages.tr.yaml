@@ -335,3 +335,6 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Yeniden sıralamak için sürükleyin'
+    basebutton:
+      admin:
+        elementIcon: 'element sembolü'

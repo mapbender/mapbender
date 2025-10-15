@@ -200,11 +200,11 @@ class ElementMarkupRenderer
 
     public function getIcon($element, $additionalClass = ''){
 
-        if (!isset($element->getConfiguration()['icon'])) {
+        if (!isset($element->getConfiguration()['element_icon'])) {
             return '';
         }
 
-        $iconCode = $element->getConfiguration()['icon'];
+        $iconCode = $element->getConfiguration()['element_icon'];
 
         if ($this->iconIndex->isHandled($iconCode)) {
             return $this->iconIndex->getIconMarkup($iconCode, $additionalClass);

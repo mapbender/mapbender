@@ -624,6 +624,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icona
+        elementIcon: 'simbolo dell''elemento'
     icon:
       mb:
         about: Info

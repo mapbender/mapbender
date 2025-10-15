@@ -428,6 +428,9 @@ mb:
       admin:
         open_in_new_tab: 'Відкрити в новій вкладці'
         drag_to_reorder: 'Перетягніть, щоб змінити порядок'
+    basebutton:
+      admin:
+        elementIcon: 'символ елемента'
   template:
     toolbar_menu_tooltip: Перемкнути меню
     region:

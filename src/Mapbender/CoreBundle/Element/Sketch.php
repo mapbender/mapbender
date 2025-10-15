@@ -74,7 +74,7 @@ class Sketch extends AbstractElementService
                 '#44ee44',
             ),
             'allow_custom_color' => true,
-            'icon' => self::getDefaultIcon(),
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 

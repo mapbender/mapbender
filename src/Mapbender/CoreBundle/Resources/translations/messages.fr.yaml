@@ -344,6 +344,9 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Faites glisser pour réorganiser'
+    basebutton:
+      admin:
+        elementIcon: 'symbole élémentaire'
 'Bad credentials.': 'Le mot de passe ou le nom d''utilisateur est invalide'
 Search: __Search
 FeatureInfo: Données caractéristiques

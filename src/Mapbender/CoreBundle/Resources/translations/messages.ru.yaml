@@ -618,6 +618,7 @@ mb:
       admin:
         tooltip: 'Всплывающая подсказка'
         icon: 'Символ'
+        elementIcon: 'символ элемента'
     icon:
       mb:
         about: 'Информация'

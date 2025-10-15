@@ -604,6 +604,7 @@ mb:
       admin:
         tooltip: Ajuda
         icon: Ícone
+        elementIcon: 'símbolo do elemento'
     icon:
       mb:
         about: Informação
