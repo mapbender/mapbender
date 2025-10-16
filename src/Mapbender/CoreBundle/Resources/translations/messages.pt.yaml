@@ -640,6 +640,8 @@ mb:
         map: Mapa
         pin_alt: 'Alfinete (alternativo)'
         help: Ajuda
+        dataupload: 'Carregar'
+        bookmark: 'Marcador de página'
   template:
     toolbar_menu_tooltip: 'Abrir menu'
     region:

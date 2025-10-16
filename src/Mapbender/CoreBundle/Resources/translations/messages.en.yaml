@@ -666,6 +666,7 @@ mb:
         pin_alt: 'Pin (Alternative)'
         help: Help
         dataupload: Upload
+        bookmark: Bookmark
   template:
     toolbar_menu_tooltip: 'Toggle menu'
     region:

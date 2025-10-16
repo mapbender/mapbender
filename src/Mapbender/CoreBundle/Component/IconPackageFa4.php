@@ -54,6 +54,7 @@ class IconPackageFa4 implements IconPackageInterface
             'mb.core.icon.fa.pin_alt' => 'iconMapPin',
             'mb.core.icon.fa.dataupload' => 'iconDataUpload',
             'mb.routing.backend.iconTitle' => 'iconRouting',
+            'mb.core.icon.fa.bookmark' => 'iconBookmark',
         ];
 
         foreach ($this->additionalIcons as $icon) {
@@ -131,6 +132,8 @@ class IconPackageFa4 implements IconPackageInterface
                 $class = 'fas fa-upload'; break;
             case 'iconRouting':
                 $class = 'fa-solid fa-route'; break;
+            case 'iconBookmark':
+                $class = 'fa-regular fa-bookmark'; break;
 
         }
         }

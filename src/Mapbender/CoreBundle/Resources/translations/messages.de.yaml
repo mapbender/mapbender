@@ -666,6 +666,7 @@ mb:
         pin_alt: 'Stecknadel (Alternative)'
         help: Hilfe
         dataupload: Hochladen
+        bookmark: Lesezeichen
   template:
     toolbar_menu_tooltip: 'Menü öffnen'
     region:

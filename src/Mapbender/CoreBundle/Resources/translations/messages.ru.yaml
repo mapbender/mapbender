@@ -654,6 +654,8 @@ mb:
         map: 'Карта'
         pin_alt: 'Маркер достопримечательности (альтернатива)'
         help: 'Помощь'
+        dataupload: 'загрузка'
+        bookmark: 'закладка'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:

@@ -76,6 +76,7 @@ class ViewManager extends AbstractElementService
             'privateEntries' => true,
             'allowAnonymousSave' => false,
             'showDate' => false,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -107,5 +108,10 @@ class ViewManager extends AbstractElementService
     public function getHttpHandler(Element $element)
     {
         return $this->httpHandler;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconBookmark';
     }
 }

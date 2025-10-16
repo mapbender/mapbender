@@ -82,6 +82,7 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
             'allowReorder' => true,
             'themes' => array(),
             'showFilter' => false,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -135,5 +136,10 @@ class Layertree extends AbstractElementService implements ImportAwareInterface
     public function getTwigTemplatePath(): string
     {
         return '@MapbenderCore/Element/layertree.html.twig';
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'icon-layer-tree';
     }
 }

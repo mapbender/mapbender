@@ -640,6 +640,7 @@ mb:
         map: Mapa
         pin_alt: 'Pin (Alternativo)'
         help: Ayuda
+        bookmark: 'marcador de página'
   template:
     toolbar_menu_tooltip: 'Abrir menú'
     region:

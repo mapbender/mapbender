@@ -77,6 +77,7 @@ class Ruler extends AbstractElementService
             'strokeWidthWhileDrawing' => 3,
             'fontColor' => '#000000',
             'fontSize' => 12,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -95,5 +96,10 @@ class Ruler extends AbstractElementService
         $view->attributes['data-title'] = $element->getTitle();
         $view->attributes['data-test'] = 'mb-ruler-test';
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'icon-line-ruler';
     }
 }

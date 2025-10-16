@@ -68,6 +68,7 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
             'empty' => 'x= - y= -',
             'prefix' => 'x= ',
             'separator' => ' y= ',
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -99,4 +100,8 @@ class CoordinatesDisplay extends AbstractElementService implements FloatableElem
         return '@MapbenderManager/Element/coordinatesdisplay.html.twig';
     }
 
+    public static function getDefaultIcon()
+    {
+        return 'iconCoordinates';
+    }
 }

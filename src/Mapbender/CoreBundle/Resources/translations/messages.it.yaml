@@ -660,6 +660,8 @@ mb:
         map: Mappa
         pin_alt: 'Pin (Alternativa)'
         help: Aiuto
+        dataupload: 'Caricamento'
+        bookmark: 'Segnalibro'
   template:
     toolbar_menu_tooltip: 'Menu a tendina'
     region:
