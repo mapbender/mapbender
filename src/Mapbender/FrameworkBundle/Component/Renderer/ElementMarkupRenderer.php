@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Mapbender\FrameworkBundle\Component\IconIndex;
 use Twig;
 
 
@@ -34,18 +35,22 @@ class ElementMarkupRenderer
     protected $allowResponsiveElements;
     /** @var bool */
     protected $debug;
+    /** @var IconIndex */
+    protected $iconIndex;
 
     public function __construct(Twig\Environment $templatingEngine,
                                 TranslatorInterface $translator,
                                 ElementInventoryService $inventory,
                                 $allowResponsiveElements,
-                                $debug)
+                                $debug,
+                                IconIndex $iconIndex)
     {
         $this->templatingEngine = $templatingEngine;
         $this->translator = $translator;
         $this->inventory = $inventory;
         $this->allowResponsiveElements = $allowResponsiveElements;
         $this->debug = $debug;
+        $this->iconIndex = $iconIndex;
     }
 
     /**
@@ -192,6 +197,21 @@ class ElementMarkupRenderer
                 return 'hide-screentype-mobile';
         }
     }
+
+    public function getIcon($element, $additionalClass = ''){
+
+        if (!isset($element->getConfiguration()['element_icon'])) {
+            return '';
+        }
+
+        $iconCode = $element->getConfiguration()['element_icon'];
+
+        if ($this->iconIndex->isHandled($iconCode)) {
+            return $this->iconIndex->getIconMarkup($iconCode, $additionalClass);
+        }
+        return '';
+    }
+
 
     public function isMenuSupported(Element $element)
     {

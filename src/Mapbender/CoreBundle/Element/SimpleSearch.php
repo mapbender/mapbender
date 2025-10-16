@@ -66,7 +66,8 @@ class SimpleSearch extends AbstractElementService
         return [
             'configurations' => [
                 self::getDefaultChildConfiguration()
-            ]
+            ],
+            'element_icon' => self::getDefaultIcon(),
         ];
     }
 
@@ -244,6 +245,11 @@ class SimpleSearch extends AbstractElementService
         }
 
         $entity->setConfiguration($config);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconSearch';
     }
 
 }

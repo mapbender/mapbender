@@ -82,6 +82,7 @@ class FeatureInfo extends AbstractElementService
             'fontColorHover' => '#000000',
             'fontSizeDefault' => 12,
             'fontSizeHover' => 12,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -165,5 +166,9 @@ class FeatureInfo extends AbstractElementService
         $entity->setConfiguration($config);
     }
 
+    public static function getDefaultIcon()
+    {
+        return 'icon-feature-info';
+    }
 
 }

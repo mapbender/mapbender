@@ -79,6 +79,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
             "splitLayers" => false,
+            "element_icon" => self::getDefaultIcon(),
         );
     }
 
@@ -234,5 +235,10 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     protected function getConfigGenerator(SourceInstance $instance): SourceInstanceConfigGenerator
     {
         return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconWms';
     }
 }
