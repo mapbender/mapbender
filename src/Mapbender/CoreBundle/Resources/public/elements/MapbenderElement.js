@@ -25,10 +25,12 @@ class MapbenderElement {
 
     activateByButton(callback, mbButton) {
         this.callback = callback ? callback : null;
-        let $mbButton = mbButton || {};
+        let $mbButton = mbButton;
         if (!this.popup || !this.popup.$element) {
             const options = this.getPopupOptions();
-            options.icon = $mbButton.find('i').attr('class') || $mbButton.find('span.mb-glyphicon').attr('class') || '';
+            if($mbButton) {
+                options.icon = $mbButton.find('i').attr('class') || $mbButton.find('span.mb-glyphicon').attr('class') || '';
+            }
             this.popup = new Mapbender.Popup(options);
             this.popup.$element.on('close', () => this.closeByButton());
         }
