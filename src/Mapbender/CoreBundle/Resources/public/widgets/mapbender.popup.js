@@ -8,6 +8,8 @@
         this.mobileBreakpoint = 599;     // If this value is changed, it must also be adjusted in _popup.scss
         this.mobileResizeMinHeight = 200;
         this.mobileResizeMaxHeight = window.innerHeight;
+        this.mobileAutoSize = true;       // Auto-size popup based on screen size
+        this.mobileMaxHeightRatio = 0.8;  // Maximum height as ratio of viewport (0.8 = 80%)
         this.options = Object.assign({}, this.defaults, options);
         delete this.options['__dummy__'];
 
@@ -204,7 +206,7 @@
             if(icon) {
               $('.popupIcon', this.$element).addClass(icon);
             } else {
-                $('.iconBig', this.$element).addClass('noIconFound');
+              $('.iconBig', this.$element).addClass('noIconFound');
             }
 
         },
@@ -363,6 +365,10 @@
                     this.$element.appendTo(container);
                 }
             }
+
+            // Auto-size popup based on screen size
+            this.adjustPopupSizeForScreen_();
+
             if (this.options.draggable) {
                 var containment = (this.options.modal && this.$modalWrap) || this.options.container && container || false;
                 this.$element.draggable({
@@ -373,6 +379,32 @@
                 Mapbender.restrictPopupPositioning(this.$element);
             }
             this.focus();
+        },
+        adjustPopupSizeForScreen_: function() {
+
+            var isMobile = window.innerWidth <= this.mobileBreakpoint;
+
+            if (!this.mobileAutoSize || !isMobile) {
+                return;
+            }
+
+            var viewportHeight = window.innerHeight;
+
+            // Calculate available space considering toolbars
+            var toolbarHeight = $('.toolBar.top')[0].getBoundingClientRect().height + $('.toolBar.bottom')[0].getBoundingClientRect().height;
+            var maxAvailableHeight = (viewportHeight * this.mobileMaxHeightRatio) - toolbarHeight;
+
+            // Check if popup is currently larger than available space and adjust height if necessary
+            var currentHeight = this.$element.height();
+            if (currentHeight > maxAvailableHeight) {
+                this.$element.css('height', Math.max(this.mobileResizeMinHeight, maxAvailableHeight) + 'px');
+            }
+
+            // Ensure popup content is scrollable if needed
+            var $popupBody = this.$element.find('.popup-body');
+            if ($popupBody.length && this.$element.height() < currentHeight) {
+                $popupBody.css('overflow-y', 'auto');
+            }
         },
         setToolbarBottomPosition_: function() {
             // Set CSS property for toolbar bottom position on mobile
