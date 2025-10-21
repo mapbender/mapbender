@@ -6,6 +6,8 @@
 
     window.Mapbender.Popup = function Popup(options) {
         this.mobileBreakpoint = 599;     // If this value is changed, it must also be adjusted in _popup.scss
+        this.mobileResizeMinHeight = 200;
+        this.mobileResizeMaxHeight = window.innerHeight;
         this.options = Object.assign({}, this.defaults, options);
         delete this.options['__dummy__'];
 
@@ -277,8 +279,6 @@
             var isDragging = false;
             var startY = 0;
             var startHeight = 0;
-            var minHeight = 200;
-            var maxHeight = window.innerHeight - 100;
 
             $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
                 if (window.innerWidth > self.mobileBreakpoint) return; // Only on mobile
@@ -297,7 +297,7 @@
                 evt.preventDefault();
                 var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
                 var deltaY = currentY - startY;
-                var newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
+                var newHeight = Math.max(self.mobileResizeMinHeight, Math.min(self.mobileResizeMaxHeight, startHeight + deltaY));
 
                 self.$element.css('height', newHeight + 'px');
             });
