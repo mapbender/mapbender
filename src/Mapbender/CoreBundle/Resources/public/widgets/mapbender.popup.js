@@ -3,9 +3,9 @@
     window.Mapbender = window.Mapbender || {};
 
     var currentModal_ = null;
-    var mobileBreakpoint = 599; // Mobile breakpoint in pixels
 
     window.Mapbender.Popup = function Popup(options) {
+        this.mobileBreakpoint = 599;     // If this value is changed, it must also be adjusted in _popup.scss
         this.options = Object.assign({}, this.defaults, options);
         delete this.options['__dummy__'];
 
@@ -281,24 +281,24 @@
             var maxHeight = window.innerHeight - 100;
 
             $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
-                if (window.innerWidth > mobileBreakpoint) return; // Only on mobile
-                
+                if (window.innerWidth > self.mobileBreakpoint) return; // Only on mobile
+
                 evt.preventDefault();
                 isDragging = true;
                 startY = evt.type === 'touchstart' ? evt.originalEvent.touches[0].clientY : evt.clientY;
                 startHeight = self.$element.height();
-                
+
                 $('body').addClass('popup-resizing').css('user-select', 'none');
             });
 
             $(document).on('mousemove touchmove', function(evt) {
                 if (!isDragging) return;
-                
+
                 evt.preventDefault();
                 var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
                 var deltaY = currentY - startY;
                 var newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
-                
+
                 self.$element.css('height', newHeight + 'px');
             });
 
@@ -376,7 +376,7 @@
         },
         setToolbarBottomPosition_: function() {
             // Set CSS property for toolbar bottom position on mobile
-            if (window.innerWidth <= mobileBreakpoint) {
+            if (window.innerWidth <= this.mobileBreakpoint) {
                 var $toolbar = $('.toolBar').first();
                 if ($toolbar.length) {
                     var toolbarRect = $toolbar[0].getBoundingClientRect();

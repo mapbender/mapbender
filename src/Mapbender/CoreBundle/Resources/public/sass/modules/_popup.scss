@@ -2,7 +2,7 @@ $panelBorderColor: #b9BABC !default;
 $popupBorderColor: $panelBorderColor !default;
 $backgroundColor: #fff !default;
 $popupBackgroundColor: $backgroundColor !default;
-$mobileBreakpoint: 599px !default;
+$mobileBreakpoint: 599px !default;  // If this value is changed, it must also be adjusted in mapbender.popup.js
 
 .popupHead {
   .popupTitle {
@@ -191,9 +191,9 @@ body.popup-resizing {
     margin: 0 !important;
     z-index: 1050; // Higher than toolbar
     min-height: unset !important; // Allow smaller heights on mobile
-    
+
     border: none;
-    
+
     .popup-body{
       overflow: scroll;
     }
@@ -216,15 +216,15 @@ body.popup-resizing {
     &.ui-resizable {
       min-height: unset !important;
     }
-    
+
     &.fom-popup {
       min-height: unset !important;
     }
   }
-  
+
   .popupContainer.modal {
     padding: 0;
-    
+
     .overlay {
       display: none;
     }
