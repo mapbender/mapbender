@@ -6,14 +6,21 @@
             var $wrapper = $btn.closest('.menu-wrapper');
             var $toolbar = $wrapper.closest('.toolBar');
 
-            // Calculate the dropdown-menu position
             if ($wrapper.hasClass('open')) {
                 $wrapper.removeClass('open');
             } else {
-                var toolbarRect = $toolbar[0].getBoundingClientRect();
-                var dropdownTop = toolbarRect.bottom -3;
+                // Calculate the dropdown-menu position
+                var toolbarHeight = $toolbar[0].getBoundingClientRect().bottom;
+                var dropdownTop = toolbarHeight - 3;
 
                 document.documentElement.style.setProperty('--dropdown-top', dropdownTop + 'px');
+
+                // Calculate dropdown-menu height
+                var toolbarBottomHeight = $('.toolBar.bottom')[0].getBoundingClientRect().height;
+                var toolbarHeightSum = toolbarHeight + toolbarBottomHeight;
+                var dropdownMenuMaxHeight = window.innerHeight - toolbarHeightSum - 3;
+
+                document.documentElement.style.setProperty('--dropdown-menu-max-height', dropdownMenuMaxHeight + 'px');
 
                 $wrapper.addClass('open');
             }
