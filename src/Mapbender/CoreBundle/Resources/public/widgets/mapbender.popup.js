@@ -159,6 +159,9 @@
                     }
                 }
             }
+
+            // Close toolbar menu on mobile when popup opens
+            this.closeToolbarMenu_();
         },
         close: function() {
             if (!this.$element) {
@@ -379,6 +382,17 @@
                 Mapbender.restrictPopupPositioning(this.$element);
             }
             this.focus();
+        },
+        closeToolbarMenu_: function () {
+
+            if (window.innerWidth > this.mobileBreakpoint) {
+                return;
+            }
+            // Trigger click on open menu button to close it
+            var $openMenu = $('.toolBar .menu-wrapper.open > button');
+            if ($openMenu.length) {
+                $openMenu.trigger('click');
+            }
         },
         adjustPopupSizeForScreen_: function() {
 
