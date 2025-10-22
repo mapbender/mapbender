@@ -813,12 +813,19 @@
                 dimData[dimDataKey] = dimData[dimDataKey] || {
                     checked: false
                 };
-                var inpchkbox = $('input[type="checkbox"]', $control);
+                var inpchkbox = $('.-fn-toggle-dimension', $control);
                 inpchkbox.data('dimension', item);
-                inpchkbox.prop('checked', dimData[dimDataKey].checked);
-                inpchkbox.on('change', function (e) {
-                    updateData(dimDataKey, {checked: $(this).prop('checked')});
-                    self._callDimension(source, $(e.target));
+                inpchkbox.data('checked', dimData[dimDataKey].checked);
+                // Update visual state
+                self.updateIconVisual_(inpchkbox, dimData[dimDataKey].checked, true);
+                inpchkbox.on('click', function (e) {
+                    var $this = $(this);
+                    var newState = !$this.data('checked');
+                    $this.data('checked', newState);
+                    self.updateIconVisual_($this, newState, true);
+                    updateData(dimDataKey, {checked: newState});
+                    self._callDimension(source, $this);
+                    return false;
                 });
                 label.attr('title', label.attr('title') + ' ' + item.name);
                 $('.layer-dimension-bar', $actionElement).toggleClass('hidden', item.type === 'single');
@@ -942,7 +949,8 @@
                 return false;
             }
             var paramName = dimension['__name'];
-            if (chkbox.is(':checked') && paramName) {
+            var isChecked = chkbox.data('checked');
+            if (isChecked && paramName) {
                 var params = {};
                 params[paramName] = chkbox.attr('data-value');
                 source.addParams(params);

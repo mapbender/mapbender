@@ -124,7 +124,7 @@ $layer-slider-bar-height: 5px;
   color: #626161;
 }
 
-.-fn-toggle-selected {
+.-fn-toggle-selected, .-fn-toggle-dimension {
   color: var(--checkbox-unchecked);
 
     &.active {
@@ -153,6 +153,11 @@ $layer-slider-bar-height: 5px;
 
 .layer-dimension-title {
     padding-left: 6px;
+}
+
+.dimension-checkbox-container {
+    display: flex;
+    align-items: center;
 }
 
 .menuBackground {

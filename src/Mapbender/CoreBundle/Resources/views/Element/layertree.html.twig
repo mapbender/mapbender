@@ -50,7 +50,12 @@
                 {% block layertree_menu_dimension %}
                 {% if 'dimension' in configuration.menu %}
                     <div class="layer-control-dimensions mb-3 mt-4" data-menu-action="dimension">
-                        <div class="checkbox mb-3"><label><input type="checkbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}"/><span class="layer-dimension-title"></span></label></div>
+                        <div class="dimension-checkbox-container mb-3">
+                            <span class="clickable -fn-toggle-dimension me-1" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}" tabindex="0">
+                                <i class="far fa-square fa-fw"></i>
+                            </span>
+                            <span class="layer-dimension-title"></span>
+                        </div>
                         <div class="layer-dimension-bar layer-slider-bar mb-3" title="{{ "mb.core.layertree.label.dimension" |trans }}">
                             <div class="layer-dimension-handle layer-slider-handle"></div>
                         </div>
