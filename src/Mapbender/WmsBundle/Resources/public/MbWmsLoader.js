@@ -58,18 +58,13 @@
                         cssClass: 'btn btn-sm btn-primary',
                         attrDataTest: 'mb-wms-btn-add',
                         callback: this._submit.bind(this),
-                    },
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose',
-                        attrDataTest: 'mb-wms-btn-close',
                     }
                 ]
             };
         }
 
-        activateByButton(callback){
-            super.activateByButton(callback);
+        activateByButton(callback, mbButton){
+            super.activateByButton(callback, mbButton);
             this.notifyWidgetActivated();
         }
 
