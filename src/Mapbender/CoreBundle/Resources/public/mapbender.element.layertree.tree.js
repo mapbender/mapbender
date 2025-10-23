@@ -619,6 +619,72 @@
                     return $actionElement.on('click', this._zoomToLayer.bind(this));
             }
         },
+        /**
+         * Creates a reusable resize handler for sliders (opacity/dimension)
+         * @param {Object} options Configuration object
+         * @param {string} options.type - Type of slider ('opacity' or 'dimension')
+         * @param {string} options.id - Unique identifier for the slider
+         * @param {jQuery} options.$container - Container element to observe for resize
+         * @param {Function} options.handleResize - Custom resize handling function
+         * @private
+         */
+        _setupSliderResizeHandler: function (options) {
+            const eventNamespace = 'resize.' + options.type + 'Slider' + options.id;
+
+            const handleSidePaneResize = () => {
+                setTimeout(() => {
+                    options.handleResize();
+                }, 10);
+            };
+
+            let resizeObserver = null;
+            const $sidePane = options.$container.closest('.sidePane');
+
+            // Case: Layertree is displayed in sidepane
+            if ($sidePane.length && window.ResizeObserver) {
+                resizeObserver = new ResizeObserver(handleSidePaneResize);
+                resizeObserver.observe($sidePane[0]);
+
+                options.$container.data('resizeObserver', resizeObserver);
+            } else {
+                // Case: Layertree is displayed in a popup
+                $(window).on(eventNamespace, handleSidePaneResize);
+            }
+        },
+
+        /**
+         * Setup keyboard navigation for slider elements
+         * @param {Object} options - Configuration object
+         * @param {jQuery} options.$slider - Slider element to add keyboard support to
+         * @param {Object} options.dragHandler - Dragdealer instance
+         * @param {number} options.stepSize - Size of each increment/decrement step
+         * @param {Function} [options.onValueChange] - Optional callback when value changes
+         * @private
+         */
+        _setupSliderKeyboardNavigation: function (options) {
+            const { $slider, dragHandler, stepSize, onValueChange } = options;
+
+            $slider.on('keydown', (event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const currentX = dragHandler.getValue()[0];
+                    let newX = currentX;
+
+                    if (event.key === 'ArrowLeft') {
+                        newX = Math.max(0, currentX - stepSize);
+                    } else if (event.key === 'ArrowRight') {
+                        newX = Math.min(1, currentX + stepSize);
+                    }
+
+                    dragHandler.setValue(newX, 0);
+
+                    // Call optional callback for additional value handling
+                    if (onValueChange) {
+                        onValueChange(newX);
+                    }
+                }
+            });
+        },
         _initOpacitySlider: function ($opacityControl, layer) {
             const source = layer.source;
             if (!$opacityControl.length) return;
@@ -647,51 +713,29 @@
 
             // Get layer ID for unique event namespace
             const layerId = layer.options.id;
-            const eventNamespace = 'resize.opacitySlider' + layerId;
 
-            const handleSidePaneResize = () => {
-                setTimeout(() => {
+            // Setup resize handling using the common function
+            this._setupSliderResizeHandler({
+                type: 'opacity',
+                id: layerId,
+                $container: $opacityControl,
+                handleResize: () => {
                     const currentOpacity = source.options.opacity;
 
                     if (dragDealer) {
                         dragDealer.reflow();
                         dragDealer.setValue(currentOpacity, 0);
                     }
-                }, 10);
-            };
-
-            let resizeObserver = null;
-            const $sidePane = $opacityControl.closest('.sidePane');
-
-            // Case: Layertree is displayed in sidepane
-            if ($sidePane.length && window.ResizeObserver) {
-                resizeObserver = new ResizeObserver(handleSidePaneResize);
-                resizeObserver.observe($sidePane[0]);
-
-                $opacityControl.data('resizeObserver', resizeObserver);
-            } else {
-                // Case: Layertree is displayed in a popup
-                $(window).on(eventNamespace, handleSidePaneResize);
-            }
-
-            const $slider = $opacityControl.find('.layer-slider-handle');
-            $slider.attr('tabindex', '0'); // Make the handle focusable
+                }
+            });
 
             // Add keyboard event listener for left and right arrow keys
-            $slider.on('keydown', (event) => {
-                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                    event.preventDefault();
-                    const currentX = dragDealer.getValue()[0];
-                    const step = 1 / 100; // Step size for opacity adjustment
-                    let newX = currentX;
-
-                    if (event.key === 'ArrowLeft') {
-                        newX = Math.max(0, currentX - step);
-                    } else if (event.key === 'ArrowRight') {
-                        newX = Math.min(1, currentX + step);
-                    }
-
-                    dragDealer.setValue(newX, 0);
+            const $slider = $opacityControl.find('.layer-opacity-handle');
+            this._setupSliderKeyboardNavigation({
+                $slider: $slider,
+                dragHandler: dragDealer,
+                stepSize: 1 / 100, // Step size for opacity adjustment
+                onValueChange: (newX) => {
                     const opacity = Math.max(0.0, Math.min(1.0, newX));
                     const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
@@ -871,19 +915,21 @@
             // Resize handling for dimension sliders
             if ($controls.length > 0) {
                 const $dimensionControls = $($controls);
-
                 const sourceId = source.id;
-                const eventNamespace = 'resize.dimensionSlider' + sourceId;
 
-                const handleSidePaneResize = () => {
-                    setTimeout(() => {
+                // Setup resize handling using the common function
+                this._setupSliderResizeHandler({
+                    type: 'dimension',
+                    id: sourceId,
+                    $container: $(self.element),
+                    handleResize: () => {
                         dragHandlers.forEach(function (dh, index) {
                             if (dh && dimensionHandlers[index]) {
                                 dh.reflow();
 
                                 // Reposition the slider based on current value
                                 const $control = $($dimensionControls[index]);
-                                const $checkbox = $control.find('input[type="checkbox"]');
+                                const $checkbox = $control.find('.-fn-toggle-dimension');
                                 const currentValue = $checkbox.attr('data-value');
 
                                 if (currentValue) {
@@ -894,19 +940,8 @@
                                 }
                             }
                         });
-                    }, 10);
-                };
-
-                let resizeObserver = null;
-                let $container = $(self.element);
-
-                if ($container.length && window.ResizeObserver) {
-                    resizeObserver = new ResizeObserver(handleSidePaneResize);
-                    resizeObserver.observe($container[0]);
-                    $dimensionControls.first().data('resizeObserver', resizeObserver);
-                } else {
-                    $(window).on(eventNamespace, handleSidePaneResize);
-                }
+                    }
+                });
 
                 // Keyboard support for dimension sliders
                 $dimensionControls.each((index, control) => {
@@ -915,24 +950,10 @@
                     const dragHandler = dragHandlers[index];
 
                     if ($slider.length && dragHandler) {
-
-                        $slider.attr('tabindex', '0');
-
-                        $slider.on('keydown', (event) => {
-                            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                                event.preventDefault();
-                                const currentX = dragHandler.getValue()[0];
-                                const stepSize = 1 / dragHandler.options.steps;
-                                let newX = currentX;
-
-                                if (event.key === 'ArrowLeft') {
-                                    newX = Math.max(0, currentX - stepSize);
-                                } else if (event.key === 'ArrowRight') {
-                                    newX = Math.min(1, currentX + stepSize);
-                                }
-
-                                dragHandler.setValue(newX, 0);
-                            }
+                        this._setupSliderKeyboardNavigation({
+                            $slider: $slider,
+                            dragHandler: dragHandler,
+                            stepSize: 1 / dragHandler.options.steps
                         });
                     }
                 });

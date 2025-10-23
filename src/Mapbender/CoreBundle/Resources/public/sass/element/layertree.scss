@@ -105,7 +105,9 @@ $layer-slider-bar-height: 5px;
     width: 35px;
   }
 
-  .layer-slider-handle {
+  .layer-slider-handle,
+  .layer-opacity-handle,
+  .layer-dimension-handle {
     background-color: var(--primary);
     border-color: var(--primary);
     border-radius: 50% !important; // circle
@@ -114,6 +116,13 @@ $layer-slider-bar-height: 5px;
     min-width: 14px !important;
     text-indent: -9999px; // hide text
     top: -1px;
+    
+    // Focus styling for accessibility
+    &:focus {
+      outline: 2px solid var(--focus-color, #007bff);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    }
   }
 }
 .layer-dimension-textfield {

@@ -36,11 +36,11 @@
               <div class="layer-menu hidden ms-4">
                 {% block layertree_menu_opacity %}
                 {% if 'opacity' in configuration.menu %}
-                    <div class="layer-control-opacity focus-highlight mb-3 mt-4" data-menu-action="opacity">
+                    <div class="layer-control-opacity mb-3 mt-4" data-menu-action="opacity">
                       <div class="layer-opacity-title mb-3">{{ "mb.core.layertree.label.opacity"|trans }}</div>
                       <div class="layer-opacity-container mb-3">
                           <div class="layer-opacity-bar layer-slider-bar me-2" title="{{ "mb.core.layertree.label.opacity"|trans }}">
-                              <div class="layer-opacity-handle layer-slider-handle">100</div>
+                              <div class="layer-opacity-handle layer-slider-handle" tabindex="0">100</div>
                           </div>
                           <div class="layer-opacity-value">100</div>
                       </div>
@@ -57,7 +57,7 @@
                             <span class="layer-dimension-title"></span>
                         </div>
                         <div class="layer-dimension-bar layer-slider-bar mb-3" title="{{ "mb.core.layertree.label.dimension" |trans }}">
-                            <div class="layer-dimension-handle layer-slider-handle"></div>
+                            <div class="layer-dimension-handle layer-slider-handle" tabindex="0"></div>
                         </div>
                         <input type="text" class="layer-dimension-textfield" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
                     </div>
