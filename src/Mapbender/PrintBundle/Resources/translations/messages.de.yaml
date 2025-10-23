@@ -21,6 +21,19 @@ mb:
       tab:
         settings: Einstellungen
         joblist: Druckaufträge
+      btn:
+        batchprint: 'Seriendruck starten'
+      batchprint:
+        tracking:
+          title: 'Druckrahmen'
+          no: 'Nr.'
+          scale: 'Maßstab'
+          template: 'Vorlage'
+          quality: 'Qualität'
+          rotation: 'Drehung'
+          delete: 'Löschen'
+        alert:
+          noframes: 'Bitte platzieren Sie mindestens einen Druckrahmen auf der Karte.'
       joblist:
         header:
           id: '#'

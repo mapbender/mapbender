@@ -1,0 +1,26 @@
+{% extends '@MapbenderPrint/Element/printclient-settings.html.twig' %}
+
+{# Override the form bottom to add batch print specific elements #}
+{% block printclient_form_bottom %}
+    {{ parent() }}
+    
+    {# Frame tracking table #}
+    <div class="form-group no-gutters frame-table -fn-frame-table" style="display: block; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; margin-bottom: 20px;">
+        <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.no' | trans }}</th>
+                    <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.scale' | trans }}</th>
+                    <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
+                    <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>
+                    <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.rotation' | trans }}</th>
+                    <th style="text-align: right;">{{ 'mb.print.printclient.batchprint.tracking.delete' | trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {# Rows will be added dynamically by JavaScript #}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

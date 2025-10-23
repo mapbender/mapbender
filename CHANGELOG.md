@@ -1,3 +1,23 @@
+## Unreleased
+Features:
+* **BatchPrintClient element**: New batch print functionality for serial printing with multiple frames
+  * Created: `src/Mapbender/PrintBundle/Element/BatchPrintClient.php`
+  * Created: `src/Mapbender/PrintBundle/Component/BatchPrintService.php`
+  * Created: `src/Mapbender/PrintBundle/Resources/public/element/batchprintclient.js`
+  * Created: `src/Mapbender/PrintBundle/Resources/views/Element/batchprintclient-settings.html.twig`
+  * Mouse-follow frame placement with click-to-pin
+  * Drag-to-rotate functionality with visual handles
+  * Per-frame settings (scale, template, quality, rotation)
+  * Frame management table with hover interactions
+  * Support for both queued and direct print modes
+  * Multi-template support within single batch job
+
+Other:
+* `src/Mapbender/PrintBundle/Component/PrintService.php`: Removed unnecessary `require_once` statement, added PHPDoc type hints for FPDI and GdImage compatibility
+* `src/Mapbender/PrintBundle/Resources/config/elements.xml`: Registered BatchPrintClient element service
+* `src/Mapbender/PrintBundle/Resources/translations/messages.en.yaml`: Added batch print translations
+* `src/Mapbender/PrintBundle/Resources/translations/messages.de.yaml`: Added German batch print translations
+
 ## v4.2.2
 Features:
 * [WMTS] Support services defined via OperationsMetadata tag ([#PR1784](https://github.com/mapbender/mapbender/pull/1784))

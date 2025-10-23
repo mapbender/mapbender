@@ -20,6 +20,19 @@ mb:
       tab:
         settings: 'Job settings'
         joblist: 'Recent jobs'
+      btn:
+        batchprint: 'Start Batch Print'
+      batchprint:
+        tracking:
+          title: 'Print Frames'
+          no: 'No.'
+          scale: 'Scale'
+          template: 'Template'
+          quality: 'Quality'
+          rotation: 'Rotation'
+          delete: 'Delete'
+        alert:
+          noframes: 'Please place at least one print frame on the map.'
       joblist:
         header:
           id: '#'
