@@ -176,9 +176,9 @@ $layer-slider-bar-height: 5px;
         content: "";
         position: absolute;
         top: -0.5rem;
-        left: -100vw; // Erweitert bis zum sideContent Rand
+        left: -100vw; // Extends to the sideContent margin
         right: -2rem;
-        bottom: var(--menu-background-bottom, 1rem); // Dynamischer Wert
+        bottom: var(--menu-background-bottom, 1rem); // Dynamic value
         background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
         z-index: -1;
         pointer-events: none;
