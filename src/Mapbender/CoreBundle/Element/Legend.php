@@ -56,6 +56,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
             "showSourceTitle" => true,
             "showLayerTitle" => true,
             "showGroupedLayerTitle" => true,
+            "element_icon" => self::getDefaultIcon(),
         );
     }
 
@@ -104,5 +105,10 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
         }
         unset($config['showGrouppedTitle']);
         $entity->setConfiguration($config);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconLegend';
     }
 }

@@ -62,6 +62,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
             'srsList' => array(),
             'addMapSrsList' => true,
             'zoomlevel' => 6,
+            'element_icon' => self::getDefaultIcon(),
         ];
     }
 
@@ -198,5 +199,10 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
         }
 
         $entity->setConfiguration($conf);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconCoordinates';
     }
 }

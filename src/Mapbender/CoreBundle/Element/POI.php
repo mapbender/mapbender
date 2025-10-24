@@ -47,7 +47,8 @@ class POI extends AbstractElementService
             'useMailto' => true,
             /** @todo: use translatable texts */
             'body'      => 'mb.core.poi.admin.placeholder',
-            'gps'       => null
+            'gps'       => null,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -99,5 +100,10 @@ class POI extends AbstractElementService
         $config = $element->getConfiguration() ?: array();
         $view->variables['body'] = ArrayUtil::getDefault($config, 'body', $this->getDefaultConfiguration()['body']);
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconPoi';
     }
 }

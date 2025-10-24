@@ -42,6 +42,11 @@
     <div class="mb-3">
         {{ form_widget(form.configuration.showFilter, {'label_attr': {'class': 'checkbox-inline'}}) }}
     </div>
+    {% if form.configuration.element_icon is defined %}
+    <div class="mb-3">
+        {{form_row(form.configuration.element_icon) }}
+    </div>
+    {% endif %}
 </div>
 {% if form.configuration.themes is defined %}
     <script type="text/javascript">

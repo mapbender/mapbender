@@ -51,4 +51,9 @@ abstract class AbstractElementService
     {
         return $options;
     }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconMapPin';
+    }
 }
