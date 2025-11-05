@@ -310,6 +310,8 @@ mb:
             choice:
               tabs: Onglets
               accordion: Accordéon
+              list: 'Liste'
+              unstyled: Non formaté
     htmlelement:
       class:
         title: HTML

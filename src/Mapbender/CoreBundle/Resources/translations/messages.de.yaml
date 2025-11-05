@@ -529,6 +529,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Akkordeon
+              list: 'Liste'
               unstyled: Unformatiert
       button:
         show_label: 'Beschriftung anzeigen'

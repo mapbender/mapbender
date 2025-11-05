@@ -524,6 +524,7 @@ mb:
             choice:
               tabs: Botões
               accordion: Acordeão
+              list: 'Lista'
               unstyled: Sem estilo
       button:
         show_label: 'Mostrar rótulo'

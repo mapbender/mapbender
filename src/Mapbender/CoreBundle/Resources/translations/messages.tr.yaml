@@ -301,6 +301,8 @@ mb:
             choice:
               tabs: Sekmeler
               accordion: Akordiyon
+              list: Liste
+              unstyled: Biçimlendirilmemiş
     htmlelement:
       class:
         title: HTML

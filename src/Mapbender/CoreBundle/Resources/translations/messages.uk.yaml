@@ -379,6 +379,7 @@ mb:
             choice:
               tabs: Кнопки
               accordion: Гармошка
+              list: 'Список'
               unstyled: Без стилю
     htmlelement:
       class:

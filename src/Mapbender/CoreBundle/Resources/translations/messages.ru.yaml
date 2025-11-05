@@ -525,6 +525,7 @@ mb:
             choice:
               tabs: Вкладки
               accordion: Вкладки
+              list: 'список'
               unstyled: 'Неформатированный'
     htmlelement:
       class:

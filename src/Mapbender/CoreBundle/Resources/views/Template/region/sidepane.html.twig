@@ -1,3 +1,4 @@
+{%- set return_text = 'mb.actions.back' -%}
 <div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}{% if region_props.resizable %} resizable{% endif %}"
      {%- if region_props.width | default('') -%}
          {%- if region_props.closed | default(false) -%}
@@ -8,7 +9,7 @@
      {%- endif -%}
 >
   <div class="sideContent">
-  {%- if region_props.name in ['tabs', 'accordion'] -%}
+  {%- if region_props.name in ['tabs', 'accordion', 'list'] -%}
       {%- set _visible = [] -%}
       {%- for element in elements -%}
         {%- set element_content = element_markup(element) -%}
@@ -21,7 +22,13 @@
         <ul class="tabs">
           {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
-            <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">{{ element.title | trans }}</li>
+            {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+            <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+              <div class="hidden">
+                {{element_icon | raw }}
+              </div>
+              {{ element.title | trans }}
+            </li>
           {%- endfor -%}
         </ul>
         {%- for element_info in _visible -%}
@@ -35,7 +42,7 @@
       <div class="accordionContainer">
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
-          {%- set element_icon = find_icon(element, 'me-2') -%}
+          {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
           <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
               <div>
                  {{element_icon | raw }}
@@ -49,6 +56,40 @@
           </div>
         {%- endfor -%}
       </div>
+    {% elseif region_props.name == 'list' %}
+        <div class="listContainer">
+            <ul class="list-group">
+                {%- for element_info in _visible -%}
+                    {%- set element = element_info.element -%}
+                    {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+                    <li id="list_group_item{{loop.index}}" class="{{ ('list-group-item ' ~ element_visibility_class(element)) | trim }}">
+                        <div>
+                            {{element_icon | raw }}
+                            {{ element.title | trans }}
+                        </div>
+                    </li>
+                {%- endfor -%}
+            </ul>
+        </div>
+        {%- for element_info in _visible -%}
+            {%- set element = element_info.element -%}
+            {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+            <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
+                <div class="list-group-item-header pb-3">
+                    <button class="list-back-btn pt-3 ps-3" type="button">
+                        <i class="fa-solid fa-angle-left me-3 iconBig"></i>
+                        <span>{{ return_text | trans}}</span>
+                    </button>
+                </div>
+                <div class="list-group-item-cell pt-3 pe-3 ps-3">
+                    <div class="list-group-item-title pb-4">
+                        {{ element_icon | raw }}
+                        {{ element.title | trans }}
+                    </div>
+                    {{ element_info.content | raw }}
+                </div>
+            </div>
+        {%- endfor -%}
     {%- endif -%}
   {%- else -%}
         <div class="auto-scroll-v">
@@ -56,5 +97,8 @@
         </div>
   {% endif %}
   </div>
-  <span class="toggleSideBar collapse-toggle"><i class="fa-solid fa-xmark"></i></span>
+  <span class="toggleSideBar collapse-toggle">
+    <i class="fa-solid fa-xmark pt-3 pe-2"></i>
+    <div class="element-icons hidden"></div>
+  </span>
 </div>

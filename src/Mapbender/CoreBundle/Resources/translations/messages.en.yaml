@@ -529,6 +529,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Accordion
+              list: 'List'
               unstyled: Unstyled
       button:
         show_label: 'Show label'

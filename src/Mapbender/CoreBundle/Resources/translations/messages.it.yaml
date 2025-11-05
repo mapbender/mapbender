@@ -524,6 +524,7 @@ mb:
             choice:
               tabs: Buttoni
               accordion: Accordion
+              list: 'Elenco'
               unstyled: 'Senza stile'
       button:
         show_label: 'Mostra label'
