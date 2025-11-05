@@ -57,7 +57,7 @@
         {%- endfor -%}
       </div>
     {% elseif region_props.name == 'list' %}
-        <div class="listContainer">
+        <div class="listContainer pt-5">
             <ul class="list-group">
                 {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
@@ -76,9 +76,13 @@
             {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
             <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
                 <div class="list-group-item-header pb-3">
-                    <button class="list-back-btn pt-3 ps-3" type="button">
-                        <i class="fa-solid fa-angle-left me-3 iconBig"></i>
-                        <span>{{ return_text | trans}}</span>
+                    <button class="list-back-btn pt-3 ps-3 pe-3" type="button">
+                        {%- if region_props.align == 'left' -%}
+                          <i class="fa-solid fa-angle-left me-3 iconBig"></i>
+                        {% else %}
+                          <i class="fa-solid fa-angle-right ms-3 iconBig"></i>
+                        {%- endif -%}
+                        <span">{{ return_text | trans}}</span>
                     </button>
                 </div>
                 <div class="list-group-item-cell pt-3 pe-3 ps-3">
@@ -98,7 +102,7 @@
   {% endif %}
   </div>
   <span class="toggleSideBar collapse-toggle">
-    <i class="fa-solid fa-xmark pt-3 pe-2"></i>
+    <i class="fa-solid fa-xmark pt-3 pe-2 ps-2"></i>
     <div class="element-icons hidden"></div>
   </span>
 </div>

@@ -217,6 +217,7 @@ ul.toolBar, .toolBar > ul {
 
       i {
         padding-right: 0 !important;
+        padding-left: 0 !important;
       }
 
       .element-icons {
@@ -264,6 +265,9 @@ ul.toolBar, .toolBar > ul {
 
   // style for the right side pane
   &.right {
+    .list-back-btn {
+      flex-direction: row-reverse;
+    }
     right: 0;
     .toggleSideBar {
       left: 0.5rem;
