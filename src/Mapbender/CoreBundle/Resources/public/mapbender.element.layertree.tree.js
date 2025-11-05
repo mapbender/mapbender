@@ -18,7 +18,7 @@
         treeCreated: false,
         cssClasses: {
             menuClose: 'fa-xmark',
-            menuOpen: 'fa-sliders',
+            menuOpen: 'fa-ellipsis-vertical',
             checkboxUnchecked: 'far fa-square',
             checkboxChecked: 'fas fa-square-check',
             infoInactive: 'fa-info',
@@ -410,11 +410,11 @@
         },
         _closeChildrenMenus: function ($parentNode) {
             const $childrenLayers = $parentNode.find('ul.layers li.leave');
-            
+
             $childrenLayers.each((index, childNode) => {
                 const $childNode = $(childNode);
                 const $childMenu = $childNode.find('>.layer-menu');
-                
+
                 if ($childMenu.length) {
                     $childMenu.remove();
                     const $menuBtn = $childNode.find('>.leaveContainer .layer-menu-btn i');
