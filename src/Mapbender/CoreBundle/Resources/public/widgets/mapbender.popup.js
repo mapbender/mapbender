@@ -6,7 +6,7 @@
 
     window.Mapbender.Popup = function Popup(options) {
         this.mobileBreakpoint = 599;     // If this value is changed, it must also be adjusted in _popup.scss
-        this.mobileResizeMinHeight = 200;
+        this.mobileResizeMinHeight = 50;
         this.mobileResizeMaxHeight = window.innerHeight;
         this.mobileAutoSize = true;       // Auto-size popup based on screen size
         this.mobileMaxHeightRatio = 0.8;  // Maximum height as ratio of viewport (0.8 = 80%)
