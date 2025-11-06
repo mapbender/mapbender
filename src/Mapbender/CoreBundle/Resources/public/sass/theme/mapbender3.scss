@@ -269,6 +269,9 @@ ul.toolBar, .toolBar > ul {
       flex-direction: row-reverse;
     }
     right: 0;
+    .logoContainer {
+      float: right;
+    }
     .toggleSideBar {
       left: 0.5rem;
 
@@ -287,6 +290,7 @@ ul.toolBar, .toolBar > ul {
     .logoContainer {
       top: -1rem;
       position: relative;
+      font-weight: 600;
     }
   }
 }
@@ -541,15 +545,13 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
         border: none;
         user-select: none;
 
-        &.active {
-          background-color: $sidepaneButtonActiveBackgroundColor;
-          color: $sidepaneButtonActiveTextColor;
-        }
-
         div {
-          display: flex;
           align-items: center;
         }
+      }
+
+      .inline {
+          font-size: 1rem;
       }
     }
   }

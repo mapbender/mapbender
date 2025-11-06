@@ -66,6 +66,8 @@ mb:
       error:
         geometry:
           missing: L'entrée sélectionnée ne contient aucune géométrie.
+      admin:
+        openInline: 'Ouvrir inline'
     searchrouter:
       no_results: Aucun résultat.
       result_counter: 'Résultats: %count%'

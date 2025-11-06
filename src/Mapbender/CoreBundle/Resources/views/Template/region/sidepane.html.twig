@@ -44,20 +44,32 @@
               <img tabindex="-1" class="logo" src="{{ asset(fom.server_logo) }}"/>
               <span class="project-name">{{ fom.server_name }}</span>
           </div>
+          {%- for element_info in _visible -%}
+              {%- set element = element_info.element -%}
+              {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                  <li class="ps-1 pe-0 mt-2 mb-3 accordion inline">
+                      <div>
+                          {{ element_info.content | raw }}
+                      </div>
+                  </li>
+              {% endif %}
+          {%- endfor -%}
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
-          {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
-          <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
-              <div>
-                 {{element_icon | raw }}
-                 {{ element.title | trans }}
+          {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
+              {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+              <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+                  <div>
+                     {{element_icon | raw }}
+                     {{ element.title | trans }}
+                  </div>
               </div>
-          </div>
-          <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
-              <div class="accordion-cell">
-                  {{ element_info.content | raw }}
+              <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
+                  <div class="accordion-cell">
+                      {{ element_info.content | raw }}
+                  </div>
               </div>
-          </div>
+            {% endif %}
         {%- endfor -%}
       </div>
     {% elseif region_props.name == 'list' %}
@@ -67,15 +79,27 @@
         </div>
         <div class="listContainer pt-5">
             <ul class="list-group">
+              {%- for element_info in _visible -%}
+                    {%- set element = element_info.element -%}
+                    {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                      <li class="ps-1 pe-0 mt-2 list-group-item inline">
+                          <div>
+                              {{ element_info.content | raw }}
+                          </div>
+                      </li>
+                    {% endif %}
+                {%- endfor -%}
                 {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
-                    {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
-                    <li id="list_group_item{{loop.index}}" class="ps-2 mt-2 {{ ('list-group-item ' ~ element_visibility_class(element)) | trim }}">
-                        <div>
-                            {{element_icon | raw }}
-                            {{ element.title | trans }}
-                        </div>
-                    </li>
+                    {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
+                      {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+                      <li id="list_group_item{{loop.index}}" class="ps-2 mt-2 list-group-item">
+                          <div>
+                              {{element_icon | raw }}
+                              {{ element.title | trans }}
+                          </div>
+                      </li>
+                    {% endif %}
                 {%- endfor -%}
             </ul>
         </div>
