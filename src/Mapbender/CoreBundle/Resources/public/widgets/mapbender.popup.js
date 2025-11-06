@@ -302,8 +302,14 @@
                 evt.preventDefault();
                 var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
                 var deltaY = currentY - startY;
-                var newHeight = Math.max(self.mobileResizeMinHeight, Math.min(self.mobileResizeMaxHeight, startHeight + deltaY));
-
+                const newHeight = Math.max(
+                    self.mobileResizeMinHeight,
+                    Math.min(
+                        self.mobileResizeMaxHeight,
+                        startHeight + deltaY,
+                        window.innerHeight - self.$element[0].getBoundingClientRect().y
+                    )
+                );
                 self.$element.css('height', newHeight + 'px');
             });
 
