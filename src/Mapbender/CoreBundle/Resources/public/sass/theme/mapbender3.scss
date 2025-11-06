@@ -284,6 +284,10 @@ ul.toolBar, .toolBar > ul {
       // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
       height: 100%;
     }
+    .logoContainer {
+      top: -1rem;
+      position: relative;
+    }
   }
 }
 

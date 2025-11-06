@@ -40,6 +40,10 @@
       </div>
     {% elseif region_props.name == 'accordion' %}
       <div class="accordionContainer">
+          <div class="logoContainer text-nowrap ps-2">
+              <img tabindex="-1" class="logo" src="{{ asset(fom.server_logo) }}"/>
+              <span class="project-name">{{ fom.server_name }}</span>
+          </div>
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
           {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
@@ -57,12 +61,16 @@
         {%- endfor -%}
       </div>
     {% elseif region_props.name == 'list' %}
+        <div class="logoContainer text-nowrap ps-2">
+            <img tabindex="-1" class="logo" src="{{ asset(fom.server_logo) }}"/>
+            <span class="project-name">{{ fom.server_name }}</span>
+        </div>
         <div class="listContainer pt-5">
             <ul class="list-group">
                 {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
                     {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
-                    <li id="list_group_item{{loop.index}}" class="{{ ('list-group-item ' ~ element_visibility_class(element)) | trim }}">
+                    <li id="list_group_item{{loop.index}}" class="ps-2 {{ ('list-group-item ' ~ element_visibility_class(element)) | trim }}">
                         <div>
                             {{element_icon | raw }}
                             {{ element.title | trans }}
