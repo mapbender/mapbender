@@ -22,6 +22,25 @@ mb:
       tab:
         settings: 'Настройки'
         joblist: 'На печать'
+      btn:
+        batchprint: 'Начать пакетную печать'
+      batchprint:
+        kml:
+          upload: 'Загрузить файл KML'
+          load: 'Загрузить KML'
+          clear: 'Очистить KML'
+          placeframes: 'Разместить рамки вдоль маршрута'
+        tracking:
+          title: 'Рамки печати'
+          no: '№'
+          scale: 'Масштаб'
+          template: 'Шаблон'
+          quality: 'Качество'
+          rotation: 'Поворот'
+          delete: 'Удалить'
+          deleteall: 'Удалить все рамки'
+        alert:
+          noframes: 'Пожалуйста, разместите хотя бы одну рамку печати на карте.'
       joblist:
         header:
           id: '#'

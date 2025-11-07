@@ -20,6 +20,25 @@ mb:
       tab:
         settings: Налаштування завдання
         joblist: Останні завдання
+      btn:
+        batchprint: 'Почати пакетний друк'
+      batchprint:
+        kml:
+          upload: 'Завантажити файл KML'
+          load: 'Завантажити KML'
+          clear: 'Очистити KML'
+          placeframes: 'Розмістити рамки вздовж маршруту'
+        tracking:
+          title: 'Рамки друку'
+          no: '№'
+          scale: 'Масштаб'
+          template: 'Шаблон'
+          quality: 'Якість'
+          rotation: 'Обертання'
+          delete: 'Видалити'
+          deleteall: 'Видалити всі рамки'
+        alert:
+          noframes: 'Будь ласка, розмістіть принаймні одну рамку друку на карті.'
       joblist:
         header:
           id: '#'

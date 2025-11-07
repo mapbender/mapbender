@@ -24,6 +24,11 @@ mb:
       btn:
         batchprint: 'Seriendruck starten'
       batchprint:
+        kml:
+          upload: 'KML-Datei hochladen'
+          load: 'KML laden'
+          clear: 'KML löschen'
+          placeframes: 'Rahmen entlang Strecke platzieren'
         tracking:
           title: 'Druckrahmen'
           no: 'Nr.'
@@ -32,6 +37,7 @@ mb:
           quality: 'Qualität'
           rotation: 'Drehung'
           delete: 'Löschen'
+          deleteall: 'Alle Rahmen löschen'
         alert:
           noframes: 'Bitte platzieren Sie mindestens einen Druckrahmen auf der Karte.'
       joblist:

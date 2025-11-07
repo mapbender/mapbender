@@ -16,3 +16,23 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    printclient:
+      btn:
+        batchprint: 'Démarrer l''impression par lots'
+      batchprint:
+        kml:
+          upload: 'Télécharger un fichier KML'
+          load: 'Charger KML'
+          clear: 'Effacer KML'
+          placeframes: 'Placer des cadres le long du parcours'
+        tracking:
+          title: 'Cadres d''impression'
+          no: 'N°'
+          scale: 'Échelle'
+          template: 'Modèle'
+          quality: 'Qualité'
+          rotation: 'Rotation'
+          delete: 'Supprimer'
+          deleteall: 'Supprimer tous les cadres'
+        alert:
+          noframes: 'Veuillez placer au moins un cadre d''impression sur la carte.'

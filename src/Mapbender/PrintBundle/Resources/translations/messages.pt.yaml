@@ -20,6 +20,25 @@ mb:
       tab:
         settings: Configurações
         joblist: Trabalhos de impressão
+      btn:
+        batchprint: 'Iniciar impressão em lote'
+      batchprint:
+        kml:
+          upload: 'Carregar arquivo KML'
+          load: 'Carregar KML'
+          clear: 'Limpar KML'
+          placeframes: 'Colocar molduras ao longo do percurso'
+        tracking:
+          title: 'Molduras de impressão'
+          no: 'Nº'
+          scale: 'Escala'
+          template: 'Modelo'
+          quality: 'Qualidade'
+          rotation: 'Rotação'
+          delete: 'Excluir'
+          deleteall: 'Excluir todas as molduras'
+        alert:
+          noframes: 'Por favor, coloque pelo menos uma moldura de impressão no mapa.'
       joblist:
         header:
           id: #

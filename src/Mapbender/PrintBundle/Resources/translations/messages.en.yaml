@@ -23,6 +23,11 @@ mb:
       btn:
         batchprint: 'Start Batch Print'
       batchprint:
+        kml:
+          upload: 'Upload KML File'
+          load: 'Load KML'
+          clear: 'Clear KML'
+          placeframes: 'Place Frames Along Track'
         tracking:
           title: 'Print Frames'
           no: 'No.'
@@ -31,6 +36,7 @@ mb:
           quality: 'Quality'
           rotation: 'Rotation'
           delete: 'Delete'
+          deleteall: 'Delete All Frames'
         alert:
           noframes: 'Please place at least one print frame on the map.'
       joblist:

@@ -43,11 +43,21 @@
             this.featureCounter = 0;
             this.multiFrameData = [];
             this.pinnedFeatures = [];
+            this.kmlLayer = null;
+            this.kmlFeatures = [];
             
             var self = this;
             
             // Change submit button text
             $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.btn.batchprint'));
+            
+            // Setup KML file upload handlers
+            this._setupKmlUploadHandlers();
+            
+            // Setup delete all frames button
+            $('.-fn-delete-all-frames', this.element).on('click', function() {
+                self._deleteAllFrames();
+            });
             
             // Stop mouse-follow when mouse enters widget
             this.element.on('mouseenter', function() {
@@ -132,6 +142,7 @@
         _deactivateSelection: function() {
             this._stopMouseFollow();
             this._clearPinnedFeatures();
+            this._clearKmlLayer();
             
             // Remove map hover handler
             if (this.mapHoverHandler) {
@@ -374,6 +385,14 @@
             }
             
             $tbody.empty();
+            
+            // Show/hide delete all button based on whether there are frames
+            var $deleteAllBtn = $('.-fn-delete-all-frames', this.element);
+            if (this.pinnedFeatures.length > 0) {
+                $deleteAllBtn.show();
+            } else {
+                $deleteAllBtn.hide();
+            }
             
             var self = this;
             this.pinnedFeatures.forEach(function(frameData) {
@@ -986,6 +1005,373 @@
             }
             
             return false;
+        },
+
+        /**
+         * Setup KML file upload handlers
+         */
+        _setupKmlUploadHandlers: function() {
+            var self = this;
+            
+            // Load KML button handler
+            $('.-fn-load-kml-button', this.element).on('click', function() {
+                self._loadKmlFile();
+            });
+            
+            // Clear KML button handler
+            $('.-fn-clear-kml-button', this.element).on('click', function() {
+                self._clearKmlLayer();
+            });
+            
+            // Place frames along track button handler
+            $('.-fn-place-frames-button', this.element).on('click', function() {
+                self._placeFramesAlongTrack();
+            });
+            
+            // File input change handler - show buttons when file is selected
+            $('.-fn-kml-file-input', this.element).on('change', function() {
+                var fileName = this.files && this.files[0] ? this.files[0].name : '';
+                var $buttons = $('.-fn-kml-buttons', self.element);
+                
+                if (fileName) {
+                    $('.-fn-kml-status', self.element).text('Selected: ' + fileName);
+                    $buttons.css('display', 'flex');
+                    // Hide place frames button until KML is loaded
+                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                } else {
+                    $('.-fn-kml-status', self.element).text('');
+                    $buttons.css('display', 'none');
+                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                }
+            });
+        },
+        
+        /**
+         * Load and display KML file on map
+         */
+        _loadKmlFile: function() {
+            var $fileInput = $('.-fn-kml-file-input', this.element);
+            var file = $fileInput[0].files && $fileInput[0].files[0];
+            
+            if (!file) {
+                alert('Please select a KML file first.');
+                return;
+            }
+            
+            // Validate file extension
+            if (!file.name.match(/\.kml$/i)) {
+                alert('Please select a valid KML file.');
+                return;
+            }
+            
+            var self = this;
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    self._parseAndDisplayKml(e.target.result);
+                    $('.-fn-kml-status', self.element)
+                        .text('Loaded: ' + file.name)
+                        .css('color', '#28a745');
+                    // Ensure buttons container is visible and show the "Place Frames Along Track" button
+                    $('.-fn-kml-buttons', self.element).css('display', 'flex');
+                    $('.-fn-place-frames-button', self.element).css('display', 'inline-block');
+                } catch (error) {
+                    alert('Error loading KML file: ' + error.message);
+                    $('.-fn-kml-status', self.element)
+                        .text('Error: ' + error.message)
+                        .css('color', '#dc3545');
+                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file.');
+                $('.-fn-kml-status', self.element)
+                    .text('Error reading file')
+                    .css('color', '#dc3545');
+                $('.-fn-place-frames-button', self.element).css('display', 'none');
+            };
+            
+            reader.readAsText(file);
+        },
+        
+        /**
+         * Parse KML content and display on map
+         */
+        _parseAndDisplayKml: function(kmlContent) {
+            var map = this.map.getModel().olMap;
+            var mapProjection = map.getView().getProjection();
+            
+            // Create KML format parser
+            var format = new ol.format.KML({
+                extractStyles: true,
+                showPointNames: false
+            });
+            
+            // Parse KML features
+            var features = format.readFeatures(kmlContent, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: mapProjection
+            });
+            
+            if (!features || features.length === 0) {
+                throw new Error('No features found in KML file');
+            }
+            
+            // Validate: must contain exactly one feature
+            if (features.length !== 1) {
+                throw new Error('KML file must contain exactly one feature (found ' + features.length + ')');
+            }
+            
+            // Validate: feature must be a LineString
+            var geometry = features[0].getGeometry();
+            if (!geometry || geometry.getType() !== 'LineString') {
+                var foundType = geometry ? geometry.getType() : 'no geometry';
+                throw new Error('KML file must contain a LineString (found ' + foundType + ')');
+            }
+            
+            // Clear existing KML layer if present
+            this._clearKmlLayer();
+            
+            // Create new vector layer for KML features
+            this.kmlLayer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: features
+                }),
+                style: new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: '#FF0000',
+                        width: 3
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 0, 0, 0.1)'
+                    }),
+                    image: new ol.style.Circle({
+                        radius: 6,
+                        fill: new ol.style.Fill({
+                            color: '#FF0000'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#FFFFFF',
+                            width: 2
+                        })
+                    })
+                }),
+                zIndex: 999
+            });
+            
+            // Add layer to map
+            map.addLayer(this.kmlLayer);
+            
+            // Store features for reference
+            this.kmlFeatures = features;
+            
+            // Zoom to LineString extent with padding
+            var extent = geometry.getExtent();
+            if (!ol.extent.isEmpty(extent)) {
+                map.getView().fit(extent, {
+                    padding: [100, 100, 100, 100],
+                    duration: 500,
+                    maxZoom: 16
+                });
+            }
+        },
+        
+        /**
+         * Clear KML layer from map
+         */
+        _clearKmlLayer: function() {
+            if (this.kmlLayer) {
+                var map = this.map.getModel().olMap;
+                map.removeLayer(this.kmlLayer);
+                this.kmlLayer = null;
+                this.kmlFeatures = [];
+            }
+            
+            // Reset file input, status and hide place frames button
+            $('.-fn-kml-file-input', this.element).val('');
+            $('.-fn-kml-status', this.element)
+                .text('')
+                .css('color', '#666');
+            $('.-fn-kml-buttons', this.element).css('display', 'none');
+            $('.-fn-place-frames-button', this.element).css('display', 'none');
+        },
+        
+        /**
+         * Place print frames along the KML track
+         */
+        _placeFramesAlongTrack: function() {
+            if (!this.kmlFeatures || this.kmlFeatures.length === 0) {
+                alert('Please load a KML file first.');
+                return;
+            }
+            
+            var lineString = this.kmlFeatures[0].getGeometry();
+            if (!lineString || lineString.getType() !== 'LineString') {
+                alert('Invalid KML geometry. Expected LineString.');
+                return;
+            }
+            
+            // Get the current template size to determine frame spacing
+            var templateWidth = this.width;
+            var templateHeight = this.height;
+            var scale = this._getPrintScale();
+            var pupm = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
+            
+            // Calculate frame width in map units (use the smaller dimension for overlap calculation)
+            var frameSize = Math.min(templateWidth, templateHeight) * scale * pupm.h;
+            
+            // Get total length
+            var totalLength = lineString.getLength();
+            
+            // Calculate ideal spacing with 10% overlap
+            var idealSpacing = frameSize * 0.9;
+            
+            // Calculate number of frames needed to cover the entire track
+            // We need at least 2 frames (start and end), and enough to cover the distance
+            var numFrames = Math.max(2, Math.ceil(totalLength / idealSpacing) + 1);
+            
+            // Recalculate actual spacing to evenly distribute frames from start to end
+            var actualSpacing = totalLength / (numFrames - 1);
+            
+            if (numFrames > 100) {
+                if (!confirm('This will create ' + numFrames + ' frames. Continue?')) {
+                    return;
+                }
+            }
+            
+            // Place frames along the line with even spacing
+            for (var i = 0; i < numFrames; i++) {
+                var distance = i * actualSpacing;
+                
+                // Get coordinate and bearing at this distance
+                var coord = this._getCoordinateAtDistance(lineString, distance);
+                if (!coord) break;
+                
+                // Get bearing (direction) at this point
+                var bearing = this._getBearingAtDistance(lineString, distance);
+                
+                // Move current feature to this position
+                this._moveFeatureToCoordinate(coord);
+                
+                // Set rotation to match track direction
+                var entry = this._getFeatureEntry(this.feature);
+                entry.rotationBias = bearing;
+                entry.tempRotation = 0;
+                this._redrawSelectionFeatures();
+                
+                // Pin the frame
+                this._pinCurrentFrame();
+            }
+            
+            $('.-fn-kml-status', this.element)
+                .text('Placed ' + this.pinnedFeatures.length + ' frames along track')
+                .css('color', '#28a745');
+        },
+        
+        /**
+         * Get coordinate at a specific distance along a LineString
+         */
+        _getCoordinateAtDistance: function(lineString, distance) {
+            var coordinates = lineString.getCoordinates();
+            var currentDistance = 0;
+            
+            for (var i = 0; i < coordinates.length - 1; i++) {
+                var segmentStart = coordinates[i];
+                var segmentEnd = coordinates[i + 1];
+                var segmentLength = Math.sqrt(
+                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
+                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
+                );
+                
+                if (currentDistance + segmentLength >= distance) {
+                    // The target distance is within this segment
+                    var ratio = (distance - currentDistance) / segmentLength;
+                    return [
+                        segmentStart[0] + ratio * (segmentEnd[0] - segmentStart[0]),
+                        segmentStart[1] + ratio * (segmentEnd[1] - segmentStart[1])
+                    ];
+                }
+                
+                currentDistance += segmentLength;
+            }
+            
+            // Return last coordinate if distance exceeds line length
+            return coordinates[coordinates.length - 1];
+        },
+        
+        /**
+         * Get bearing (direction in degrees) at a specific distance along a LineString
+         */
+        _getBearingAtDistance: function(lineString, distance) {
+            var coordinates = lineString.getCoordinates();
+            var currentDistance = 0;
+            
+            for (var i = 0; i < coordinates.length - 1; i++) {
+                var segmentStart = coordinates[i];
+                var segmentEnd = coordinates[i + 1];
+                var segmentLength = Math.sqrt(
+                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
+                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
+                );
+                
+                if (currentDistance + segmentLength >= distance) {
+                    // Calculate bearing for this segment
+                    var dx = segmentEnd[0] - segmentStart[0];
+                    var dy = segmentEnd[1] - segmentStart[1];
+                    var bearing = Math.atan2(dx, dy) * (180 / Math.PI);
+                    return bearing;
+                }
+                
+                currentDistance += segmentLength;
+            }
+            
+            // Return bearing of last segment
+            var lastIdx = coordinates.length - 1;
+            if (lastIdx > 0) {
+                var dx = coordinates[lastIdx][0] - coordinates[lastIdx - 1][0];
+                var dy = coordinates[lastIdx][1] - coordinates[lastIdx - 1][1];
+                return Math.atan2(dx, dy) * (180 / Math.PI);
+            }
+            
+            return 0;
+        },
+        
+        /**
+         * Delete all frames at once
+         */
+        _deleteAllFrames: function() {
+            if (this.pinnedFeatures.length === 0) {
+                return;
+            }
+            
+            if (!confirm('Delete all ' + this.pinnedFeatures.length + ' frames?')) {
+                return;
+            }
+            
+            // Clear all pinned features from the map
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
+            layerBridge.clear();
+            
+            // Clear rotation handles
+            this.rotationHandles = [];
+            if (this.rotationOverlayLayer) {
+                var source = this.rotationOverlayLayer.getSource();
+                source.clear();
+            }
+            
+            // Clear data arrays
+            this.pinnedFeatures = [];
+            this.multiFrameData = [];
+            this.featureCounter = 0;
+            
+            // Update table and UI
+            this._updateFrameTable();
+            
+            $('.-fn-kml-status', this.element)
+                .text('All frames deleted')
+                .css('color', '#666');
         },
 
         __dummy__: null

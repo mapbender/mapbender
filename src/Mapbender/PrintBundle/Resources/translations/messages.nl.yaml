@@ -16,3 +16,23 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    printclient:
+      btn:
+        batchprint: 'Start batchafdrukken'
+      batchprint:
+        kml:
+          upload: 'KML-bestand uploaden'
+          load: 'KML laden'
+          clear: 'KML wissen'
+          placeframes: 'Plaats frames langs het traject'
+        tracking:
+          title: 'Afdrukframes'
+          no: 'Nr.'
+          scale: 'Schaal'
+          template: 'Sjabloon'
+          quality: 'Kwaliteit'
+          rotation: 'Rotatie'
+          delete: 'Verwijderen'
+          deleteall: 'Alle frames verwijderen'
+        alert:
+          noframes: 'Plaats ten minste één afdrukframe op de kaart.'

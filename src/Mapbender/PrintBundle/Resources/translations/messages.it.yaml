@@ -20,6 +20,25 @@ mb:
       tab:
         settings: 'Impostazioni del lavoro'
         joblist: 'Lavori recenti'
+      btn:
+        batchprint: 'Avvia stampa in serie'
+      batchprint:
+        kml:
+          upload: 'Carica file KML'
+          load: 'Carica KML'
+          clear: 'Cancella KML'
+          placeframes: 'Posiziona cornici lungo il percorso'
+        tracking:
+          title: 'Cornici di stampa'
+          no: 'N.'
+          scale: 'Scala'
+          template: 'Modello'
+          quality: 'Qualità'
+          rotation: 'Rotazione'
+          delete: 'Elimina'
+          deleteall: 'Elimina tutte le cornici'
+        alert:
+          noframes: 'Si prega di posizionare almeno una cornice di stampa sulla mappa.'
       joblist:
         header:
           id: '#'
