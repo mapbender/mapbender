@@ -1,3 +1,7 @@
 .mb-element-map.crosshair {
     cursor: crosshair !important;
 }
+.btn.active {
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-bg);
+}
