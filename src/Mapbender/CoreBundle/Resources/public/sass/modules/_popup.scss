@@ -191,7 +191,7 @@ body.popup-resizing {
     margin: 0 !important;
     z-index: 1050; // Higher than toolbar
     min-height: unset !important; // Allow smaller heights on mobile
-
+    box-shadow: 0 5px 5px rgba(100, 100, 111, 0.2);
     border: none;
 
     .popup-body{
@@ -210,6 +210,11 @@ body.popup-resizing {
 
     .popupHead {
       padding-top: 10px;
+      background-color: #f7f7fd;
+      margin-right: 0;
+      margin-left: 0;
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
     // Override min-height for all popup variants on mobile
