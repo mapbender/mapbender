@@ -35,6 +35,32 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
+    public static function getDefaultConfiguration()
+    {
+        return array_merge(parent::getDefaultConfiguration(), array(
+            'enableKmlUpload' => true,
+        ));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getType()
+    {
+        return 'Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return '@MapbenderPrint/ElementAdmin/batchprintclient.html.twig';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getWidgetName(Element $element)
     {
         return 'mapbender.mbBatchPrintClient';
@@ -62,6 +88,19 @@ class BatchPrintClient extends PrintClient
     protected function getSettingsTemplate()
     {
         return '@MapbenderPrint/Element/batchprintclient-settings.html.twig';
+    }
+
+    /**
+     * Override to pass additional configuration to the view
+     */
+    public function getView(Element $element)
+    {
+        $view = parent::getView($element);
+        $config = $element->getConfiguration();
+        // TemplateView has a public $variables array property
+        /** @var \Mapbender\Component\Element\TemplateView $view */
+        $view->variables['enableKmlUpload'] = !empty($config['enableKmlUpload']);
+        return $view;
     }
 
     /**

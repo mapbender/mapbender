@@ -107,6 +107,19 @@ mb:
         label: Bezeichnung
     admin:
       printclient:
+        renderMode:
+          label: 'Modus'
+          choice:
+            direct: 'Direkt'
+            queued: 'Warteschlange'
+        queueAccess:
+          label: 'Warteschlange'
+          choice:
+            global: 'global'
+            private: 'privat'
         label:
           qualitylevels: Qualitätsstufen
           templates: Vorlagen
+      batchprintclient:
+        label:
+          enableKmlUpload: 'KML Upload aktivieren'

@@ -4,6 +4,7 @@
 {% block printclient_form_bottom %}
     {{ parent() }}
     
+    {% if enableKmlUpload %}
     {# KML File Upload #}
     <div class="form-group no-gutters kml-upload -fn-kml-upload" style="display: block; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; margin-bottom: 15px;">
         <label for="kml-file-input">{{ 'mb.print.printclient.batchprint.kml.upload' | trans }}</label>
@@ -35,6 +36,7 @@
         </div>
         <small class="-fn-kml-status" style="display: block; margin-top: 5px; color: #666;"></small>
     </div>
+    {% endif %}
     
     {# Frame tracking table #}
     <div class="form-group no-gutters frame-table -fn-frame-table" style="display: block; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; margin-bottom: 20px;">

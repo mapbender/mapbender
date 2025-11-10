@@ -106,6 +106,19 @@ mb:
         label: Label
     admin:
       printclient:
+        renderMode:
+          label: 'Mode'
+          choice:
+            direct: 'Direct'
+            queued: 'Queued'
+        queueAccess:
+          label: 'Queue'
+          choice:
+            global: 'global'
+            private: 'private'
         label:
           qualitylevels: 'Quality levels'
           templates: Templates
+      batchprintclient:
+        label:
+          enableKmlUpload: 'Enable KML Upload'
