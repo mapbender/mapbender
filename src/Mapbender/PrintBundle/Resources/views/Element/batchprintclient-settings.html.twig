@@ -32,6 +32,10 @@
                         style="white-space: nowrap; padding: 4px 12px; display: none;">
                     {{ 'mb.print.printclient.batchprint.kml.placeframes' | trans }}
                 </button>
+                <label style="display: inline-flex; align-items: center; margin-left: 12px;">
+                    <input type="checkbox" class="-fn-adjust-frames-checkbox" style="margin-right: 6px;">
+                    {{ 'mb.print.printclient.batchprint.kml.adjustframes' | trans }}
+                </label>
             </div>
         </div>
         <small class="-fn-kml-status" style="display: block; margin-top: 5px; color: #666;"></small>
@@ -47,7 +51,7 @@
                 {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
             </button>
         </div>
-        <div style="max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+        <div style="max-height: 150px; overflow-y: auto; overflow-x: hidden;">
             <table style="width: 100%;">
                 <thead>
                     <tr>

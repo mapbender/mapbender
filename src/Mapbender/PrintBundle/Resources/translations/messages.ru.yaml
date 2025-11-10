@@ -30,6 +30,7 @@ mb:
           load: 'Загрузить KML'
           clear: 'Очистить KML'
           placeframes: 'Разместить рамки вдоль маршрута'
+          adjustframes: 'Настроить рамки'
           selected: 'Выбран'
           loaded: 'Загружен'
           error: 'Ошибка'

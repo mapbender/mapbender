@@ -28,6 +28,7 @@ mb:
           load: 'Carica KML'
           clear: 'Cancella KML'
           placeframes: 'Posiziona cornici lungo il percorso'
+          adjustframes: 'Adatta cornici'
           selected: 'Selezionato'
           loaded: 'Caricato'
           error: 'Errore'

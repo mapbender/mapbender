@@ -246,6 +246,81 @@
         },
         
         /**
+         * Rotate the current selection feature by a bearing in degrees
+         * @param {number} bearingDegrees - Bearing in degrees from East (0 = East, 90 = North, -90 = South)
+         * @param {number|null} previousRotation - Previous frame's rotation in degrees (for continuity)
+         */
+        _rotateCurrentFeature: function(bearingDegrees, previousRotation) {
+            if (!this.feature) {
+                return;
+            }
+            
+            // The bearing represents the direction of the track (angle from East)
+            // We want to rotate the frame so this direction is parallel to one of its axes
+            
+            // Normalize bearing to -180 to 180 range
+            var normalizedBearing = bearingDegrees;
+            while (normalizedBearing > 180) normalizedBearing -= 360;
+            while (normalizedBearing <= -180) normalizedBearing += 360;
+            
+            // Calculate two possible target rotations:
+            // Option 1: Track aligned with horizontal axis
+            var option1 = normalizedBearing;
+            // Option 2: Track aligned with vertical axis (90° rotated)
+            var option2 = normalizedBearing - 90;
+            
+            // Normalize both options to -180 to 180 range
+            while (option2 > 180) option2 -= 360;
+            while (option2 <= -180) option2 += 360;
+            
+            var targetRotation;
+            
+            if (previousRotation !== null) {
+                // Choose the option that is closer to the previous frame's rotation
+                // to maintain smooth transitions and avoid sudden jumps
+                var diff1 = Math.abs(option1 - previousRotation);
+                var diff2 = Math.abs(option2 - previousRotation);
+                
+                // Handle wraparound at -180/180 boundary
+                if (diff1 > 180) diff1 = 360 - diff1;
+                if (diff2 > 180) diff2 = 360 - diff2;
+                
+                targetRotation = (diff1 < diff2) ? option1 : option2;
+            } else {
+                // First frame: choose based on whether track is more horizontal or vertical
+                var absNormalizedBearing = Math.abs(normalizedBearing);
+                if (absNormalizedBearing <= 45 || absNormalizedBearing >= 135) {
+                    // Track is more horizontal
+                    targetRotation = option1;
+                } else {
+                    // Track is more vertical
+                    targetRotation = option2;
+                }
+            }
+            
+            // Get current feature entry and calculate current total rotation
+            var entry = this._getFeatureEntry(this.feature);
+            var currentRotationRadians = entry.rotationBias + entry.tempRotation;
+            
+            // Convert target rotation to radians
+            var targetRotationRadians = targetRotation * (Math.PI / 180);
+            
+            // Calculate rotation delta needed
+            var rotationDelta = targetRotationRadians - currentRotationRadians;
+            
+            // Get feature center as rotation anchor
+            var center = this.map.getModel().getFeatureCenter(this.feature);
+            
+            // Apply rotation to geometry
+            var geom = this.feature.getGeometry();
+            geom.rotate(rotationDelta, center);
+            
+            // Update the feature entry's rotation bias
+            entry.rotationBias = targetRotationRadians;
+            entry.tempRotation = 0;
+        },
+        
+        /**
          * Pin the current frame to the map (create static copy)
          */
         _pinCurrentFrame: function() {
@@ -1212,6 +1287,9 @@
                 return;
             }
             
+            // Check if frame adjustment is enabled
+            var adjustFrames = $('.-fn-adjust-frames-checkbox', this.element).is(':checked');
+            
             // Get the current template size to determine frame spacing
             var templateWidth = this.width;
             var templateHeight = this.height;
@@ -1235,6 +1313,7 @@
             var actualSpacing = totalLength / (numFrames - 1);
             
             // Place frames along the line with even spacing
+            var previousRotation = null;
             for (var i = 0; i < numFrames; i++) {
                 var distance = i * actualSpacing;
                 
@@ -1245,7 +1324,17 @@
                 // Move current feature to this position
                 this._moveFeatureToCoordinate(coord);
                 
-                // Pin the frame (without rotation)
+                // If adjust frames is enabled, rotate the frame according to the track direction
+                if (adjustFrames) {
+                    var bearing = this._getBearingAtDistance(lineString, distance);
+                    this._rotateCurrentFeature(bearing, previousRotation);
+                    
+                    // Store the rotation for the next frame to maintain continuity
+                    var entry = this._getFeatureEntry(this.feature);
+                    previousRotation = (entry.rotationBias + entry.tempRotation) * (180 / Math.PI);
+                }
+                
+                // Pin the frame
                 this._pinCurrentFrame();
             }
             
@@ -1303,10 +1392,12 @@
                 
                 if (currentDistance + segmentLength >= distance) {
                     // Calculate bearing for this segment
+                    // atan2(dy, dx) gives angle from East (positive X-axis) in radians
                     var dx = segmentEnd[0] - segmentStart[0];
                     var dy = segmentEnd[1] - segmentStart[1];
-                    var bearing = Math.atan2(dx, dy) * (180 / Math.PI);
-                    return bearing;
+                    var angleRadians = Math.atan2(dy, dx);
+                    var angleDegrees = angleRadians * (180 / Math.PI);
+                    return angleDegrees;
                 }
                 
                 currentDistance += segmentLength;
@@ -1317,7 +1408,9 @@
             if (lastIdx > 0) {
                 var dx = coordinates[lastIdx][0] - coordinates[lastIdx - 1][0];
                 var dy = coordinates[lastIdx][1] - coordinates[lastIdx - 1][1];
-                return Math.atan2(dx, dy) * (180 / Math.PI);
+                var angleRadians = Math.atan2(dy, dx);
+                var angleDegrees = angleRadians * (180 / Math.PI);
+                return angleDegrees;
             }
             
             return 0;

@@ -28,6 +28,7 @@ mb:
           load: 'Carregar KML'
           clear: 'Limpar KML'
           placeframes: 'Colocar molduras ao longo do percurso'
+          adjustframes: 'Ajustar molduras'
           selected: 'Selecionado'
           loaded: 'Carregado'
           error: 'Erro'

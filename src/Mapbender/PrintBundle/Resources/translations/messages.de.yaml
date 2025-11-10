@@ -30,6 +30,7 @@ mb:
           load: 'KML laden'
           clear: 'KML löschen'
           placeframes: 'Rahmen entlang Strecke platzieren'
+          adjustframes: 'Rahmen anpassen'
           selected: 'Ausgewählt'
           loaded: 'Geladen'
           error: 'Fehler'

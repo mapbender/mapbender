@@ -28,6 +28,7 @@ mb:
           load: 'Cargar KML'
           clear: 'Borrar KML'
           placeframes: 'Colocar marcos a lo largo del recorrido'
+          adjustframes: 'Ajustar marcos'
           selected: 'Seleccionado'
           loaded: 'Cargado'
           error: 'Error'
