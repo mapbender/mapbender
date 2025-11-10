@@ -27,7 +27,7 @@ mb:
           load: 'KML laden'
           clear: 'KML wissen'
           placeframes: 'Plaats frames langs het traject'
-          adjustframes: 'Frames aanpassen'
+          adjustframes: 'Framerotatie aanpassen'
           selected: 'Geselecteerd'
           loaded: 'Geladen'
           error: 'Fout'

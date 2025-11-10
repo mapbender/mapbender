@@ -29,7 +29,7 @@ mb:
           load: 'Load KML'
           clear: 'Clear KML'
           placeframes: 'Place Frames Along Track'
-          adjustframes: 'Adjust Frames'
+          adjustframes: 'Adjust Frame Rotation'
           selected: 'Selected'
           loaded: 'Loaded'
           error: 'Error'

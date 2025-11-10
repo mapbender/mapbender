@@ -1084,9 +1084,19 @@
         _setupKmlUploadHandlers: function() {
             var self = this;
             
-            // Load KML button handler
-            $('.-fn-load-kml-button', this.element).on('click', function() {
-                self._loadKmlFile();
+            // File input change handler - automatically load KML when file is selected
+            $('.-fn-kml-file-input', this.element).on('change', function() {
+                var file = this.files && this.files[0];
+                
+                if (file) {
+                    // Automatically load the KML file
+                    self._loadKmlFile();
+                } else {
+                    // No file selected - hide buttons and clear status
+                    $('.-fn-kml-status', self.element).text('');
+                    $('.-fn-kml-buttons', self.element).removeClass('show');
+                    $('.-fn-place-frames-button', self.element).removeClass('show');
+                }
             });
             
             // Clear KML button handler
@@ -1097,23 +1107,6 @@
             // Place frames along track button handler
             $('.-fn-place-frames-button', this.element).on('click', function() {
                 self._placeFramesAlongTrack();
-            });
-            
-            // File input change handler - show buttons when file is selected
-            $('.-fn-kml-file-input', this.element).on('change', function() {
-                var fileName = this.files && this.files[0] ? this.files[0].name : '';
-                var $buttons = $('.-fn-kml-buttons', self.element);
-                
-                if (fileName) {
-                    $('.-fn-kml-status', self.element).text(Mapbender.trans('mb.print.printclient.batchprint.kml.selected') + ': ' + fileName);
-                    $buttons.addClass('show');
-                    // Hide place frames button until KML is loaded
-                    $('.-fn-place-frames-button', self.element).removeClass('show');
-                } else {
-                    $('.-fn-kml-status', self.element).text('');
-                    $buttons.removeClass('show');
-                    $('.-fn-place-frames-button', self.element).removeClass('show');
-                }
             });
         },
         
@@ -1145,7 +1138,7 @@
                         .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
                         .addClass('success')
                         .removeClass('error');
-                    // Ensure buttons container is visible and show the "Place Frames Along Track" button
+                    // Show all KML-related buttons (Clear, Place Frames, Adjust checkbox)
                     $('.-fn-kml-buttons', self.element).addClass('show');
                     $('.-fn-place-frames-button', self.element).addClass('show');
                 } catch (error) {
@@ -1154,6 +1147,7 @@
                         .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
                         .addClass('error')
                         .removeClass('success');
+                    $('.-fn-kml-buttons', self.element).removeClass('show');
                     $('.-fn-place-frames-button', self.element).removeClass('show');
                 }
             };
@@ -1164,6 +1158,7 @@
                     .text(Mapbender.trans('mb.print.printclient.batchprint.kml.readerror'))
                     .addClass('error')
                     .removeClass('success');
+                $('.-fn-kml-buttons', self.element).removeClass('show');
                 $('.-fn-place-frames-button', self.element).removeClass('show');
             };
             
@@ -1263,7 +1258,7 @@
                 this.kmlFeatures = [];
             }
             
-            // Reset file input, status and hide place frames button
+            // Reset file input, status and hide all KML-related buttons
             $('.-fn-kml-file-input', this.element).val('');
             $('.-fn-kml-status', this.element)
                 .text('')

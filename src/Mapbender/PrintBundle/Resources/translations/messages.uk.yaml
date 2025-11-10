@@ -28,7 +28,7 @@ mb:
           load: 'Завантажити KML'
           clear: 'Очистити KML'
           placeframes: 'Розмістити рамки вздовж маршруту'
-          adjustframes: 'Налаштувати рамки'
+          adjustframes: 'Налаштувати поворот рамок'
           selected: 'Вибрано'
           loaded: 'Завантажено'
           error: 'Помилка'

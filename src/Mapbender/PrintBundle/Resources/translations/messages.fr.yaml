@@ -27,7 +27,7 @@ mb:
           load: 'Charger KML'
           clear: 'Effacer KML'
           placeframes: 'Placer des cadres le long du parcours'
-          adjustframes: 'Ajuster les cadres'
+          adjustframes: 'Ajuster la rotation des cadres'
           selected: 'Sélectionné'
           loaded: 'Chargé'
           error: 'Erreur'
