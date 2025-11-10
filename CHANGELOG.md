@@ -11,12 +11,19 @@ Features:
   * Frame management table with hover interactions
   * Support for both queued and direct print modes
   * Multi-template support within single batch job
+  * **KML track upload support**: Upload KML files containing LineString geometries to automatically place print frames along tracks
+    * Automatic frame placement along track with configurable spacing based on template dimensions
+    * Optional frame rotation adjustment to align frames with track gradient for optimal orientation
+    * Smooth rotation transitions between consecutive frames to avoid sudden orientation changes
+    * Auto-load KML files on selection for improved user experience
+    * Configurable KML upload feature via backend admin interface (enable/disable per element)
+  * Created: `src/Mapbender/PrintBundle/Element/Type/BatchPrintClientAdminType.php` - Admin form type for element configuration
 
 Other:
 * `src/Mapbender/PrintBundle/Component/PrintService.php`: Removed unnecessary `require_once` statement, added PHPDoc type hints for FPDI and GdImage compatibility
 * `src/Mapbender/PrintBundle/Resources/config/elements.xml`: Registered BatchPrintClient element service
-* `src/Mapbender/PrintBundle/Resources/translations/messages.en.yaml`: Added batch print translations
-* `src/Mapbender/PrintBundle/Resources/translations/messages.de.yaml`: Added German batch print translations
+* `src/Mapbender/PrintBundle/Resources/config/services.xml`: Registered BatchPrintClientAdminType form type service
+* `src/Mapbender/PrintBundle/Resources/views/ElementAdmin/batchprintclient.html.twig`: Created admin configuration template for BatchPrintClient element
 
 ## v4.2.2
 Features:
