@@ -49,7 +49,7 @@
             var self = this;
             
             // Change submit button text
-            $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.btn.batchprint'));
+            $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.batchprint.btn.submit'));
             
             // Setup KML file upload handlers
             this._setupKmlUploadHandlers();
@@ -259,9 +259,10 @@
             var geom = this.feature.getGeometry().clone();
             var pinnedFeature = new ol.Feature(geom);
             
-            // Get current rotation
+            // Get current rotation from feature entry (in radians) and convert to degrees
             var entry = this._getFeatureEntry(this.feature);
-            var totalRotation = entry.rotationBias + entry.tempRotation;
+            var totalRotationRadians = entry.rotationBias + entry.tempRotation;
+            var totalRotationDegrees = totalRotationRadians * (180 / Math.PI);
             
             // Get extent from feature geometry
             var extent = this.feature.getGeometry().getExtent();
@@ -272,7 +273,7 @@
             var frameData = {
                 id: this.featureCounter,
                 feature: pinnedFeature,
-                rotation: totalRotation,
+                rotation: totalRotationDegrees,
                 scale: this._getPrintScale(),
                 center: this.map.getModel().getFeatureCenter(pinnedFeature),
                 template: $('select[name="template"]', this.$form).val(),
@@ -389,9 +390,9 @@
             // Show/hide delete all button based on whether there are frames
             var $deleteAllBtn = $('.-fn-delete-all-frames', this.element);
             if (this.pinnedFeatures.length > 0) {
-                $deleteAllBtn.show();
+                $deleteAllBtn.addClass('show');
             } else {
-                $deleteAllBtn.hide();
+                $deleteAllBtn.removeClass('show');
             }
             
             var self = this;
@@ -400,7 +401,7 @@
                 $row.attr('data-frame-id', frameData.id);
                 
                 // Frame number
-                $row.append($('<td></td>').text('Frame ' + frameData.id));
+                $row.append($('<td></td>').text(frameData.id));
                 
                 // Scale
                 $row.append($('<td></td>').text('1:' + frameData.scale));
@@ -418,13 +419,8 @@
                 $row.append($('<td></td>').text(rotationText));
                 
                 // Delete button
-                var $deleteCell = $('<td></td>').css('text-align', 'right');
+                var $deleteCell = $('<td></td>');
                 var $deleteIcon = $('<i class="fa fa-trash"></i>');
-                $deleteIcon.css({
-                    'cursor': 'pointer',
-                    'font-size': '16px',
-                    'color': '#000'
-                });
                 $deleteIcon.attr('title', 'Delete frame');
                 $deleteIcon.on('click', function(e) {
                     e.stopPropagation();
@@ -436,12 +432,12 @@
                 // Add hover handlers for highlighting
                 $row.on('mouseenter', function() {
                     self._highlightFeature(frameData.id);
-                    $(this).css('background-color', '#e6f2ff');
+                    $(this).addClass('highlighted');
                 });
                 
                 $row.on('mouseleave', function() {
                     self._unhighlightFeature(frameData.id);
-                    $(this).css('background-color', '');
+                    $(this).removeClass('highlighted');
                 });
                 
                 $tbody.append($row);
@@ -465,7 +461,7 @@
             
             this.mapHoverHandler = function(evt) {
                 // Clear all highlights first
-                $('.-fn-frame-table tbody tr', self.element).css('background-color', '');
+                $('.-fn-frame-table tbody tr', self.element).removeClass('highlighted');
                 self.pinnedFeatures.forEach(function(frameData) {
                     self._unhighlightFeature(frameData.id);
                 });
@@ -489,7 +485,7 @@
                 foundFrames.forEach(function(frameData) {
                     self._highlightFeature(frameData.id);
                     var $row = $('.-fn-frame-table tbody tr[data-frame-id="' + frameData.id + '"]', self.element);
-                    $row.css('background-color', '#e6f2ff');
+                    $row.addClass('highlighted');
                 });
             };
             
@@ -1001,7 +997,7 @@
                     this._resetSelectionFeature();
                     this._moveFeatureToCoordinate(selectionCenter);
                 }
-                alert('Error creating print job: ' + error.message);
+                alert(Mapbender.trans('mb.print.printclient.batchprint.alert.error') + ': ' + error.message);
             }
             
             return false;
@@ -1034,14 +1030,14 @@
                 var $buttons = $('.-fn-kml-buttons', self.element);
                 
                 if (fileName) {
-                    $('.-fn-kml-status', self.element).text('Selected: ' + fileName);
-                    $buttons.css('display', 'flex');
+                    $('.-fn-kml-status', self.element).text(Mapbender.trans('mb.print.printclient.batchprint.kml.selected') + ': ' + fileName);
+                    $buttons.addClass('show');
                     // Hide place frames button until KML is loaded
-                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                    $('.-fn-place-frames-button', self.element).removeClass('show');
                 } else {
                     $('.-fn-kml-status', self.element).text('');
-                    $buttons.css('display', 'none');
-                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                    $buttons.removeClass('show');
+                    $('.-fn-place-frames-button', self.element).removeClass('show');
                 }
             });
         },
@@ -1054,13 +1050,13 @@
             var file = $fileInput[0].files && $fileInput[0].files[0];
             
             if (!file) {
-                alert('Please select a KML file first.');
+                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.selectfile'));
                 return;
             }
             
             // Validate file extension
             if (!file.name.match(/\.kml$/i)) {
-                alert('Please select a valid KML file.');
+                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.validfile'));
                 return;
             }
             
@@ -1071,26 +1067,29 @@
                 try {
                     self._parseAndDisplayKml(e.target.result);
                     $('.-fn-kml-status', self.element)
-                        .text('Loaded: ' + file.name)
-                        .css('color', '#28a745');
+                        .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
+                        .addClass('success')
+                        .removeClass('error');
                     // Ensure buttons container is visible and show the "Place Frames Along Track" button
-                    $('.-fn-kml-buttons', self.element).css('display', 'flex');
-                    $('.-fn-place-frames-button', self.element).css('display', 'inline-block');
+                    $('.-fn-kml-buttons', self.element).addClass('show');
+                    $('.-fn-place-frames-button', self.element).addClass('show');
                 } catch (error) {
-                    alert('Error loading KML file: ' + error.message);
+                    alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.error') + ': ' + error.message);
                     $('.-fn-kml-status', self.element)
-                        .text('Error: ' + error.message)
-                        .css('color', '#dc3545');
-                    $('.-fn-place-frames-button', self.element).css('display', 'none');
+                        .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
+                        .addClass('error')
+                        .removeClass('success');
+                    $('.-fn-place-frames-button', self.element).removeClass('show');
                 }
             };
             
             reader.onerror = function() {
-                alert('Error reading file.');
+                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.readerror'));
                 $('.-fn-kml-status', self.element)
-                    .text('Error reading file')
-                    .css('color', '#dc3545');
-                $('.-fn-place-frames-button', self.element).css('display', 'none');
+                    .text(Mapbender.trans('mb.print.printclient.batchprint.kml.readerror'))
+                    .addClass('error')
+                    .removeClass('success');
+                $('.-fn-place-frames-button', self.element).removeClass('show');
             };
             
             reader.readAsText(file);
@@ -1193,9 +1192,9 @@
             $('.-fn-kml-file-input', this.element).val('');
             $('.-fn-kml-status', this.element)
                 .text('')
-                .css('color', '#666');
-            $('.-fn-kml-buttons', this.element).css('display', 'none');
-            $('.-fn-place-frames-button', this.element).css('display', 'none');
+                .removeClass('success error');
+            $('.-fn-kml-buttons', this.element).removeClass('show');
+            $('.-fn-place-frames-button', this.element).removeClass('show');
         },
         
         /**
@@ -1203,13 +1202,13 @@
          */
         _placeFramesAlongTrack: function() {
             if (!this.kmlFeatures || this.kmlFeatures.length === 0) {
-                alert('Please load a KML file first.');
+                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.loadfirst'));
                 return;
             }
             
             var lineString = this.kmlFeatures[0].getGeometry();
             if (!lineString || lineString.getType() !== 'LineString') {
-                alert('Invalid KML geometry. Expected LineString.');
+                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.invalidgeometry'));
                 return;
             }
             
@@ -1235,39 +1234,25 @@
             // Recalculate actual spacing to evenly distribute frames from start to end
             var actualSpacing = totalLength / (numFrames - 1);
             
-            if (numFrames > 100) {
-                if (!confirm('This will create ' + numFrames + ' frames. Continue?')) {
-                    return;
-                }
-            }
-            
             // Place frames along the line with even spacing
             for (var i = 0; i < numFrames; i++) {
                 var distance = i * actualSpacing;
                 
-                // Get coordinate and bearing at this distance
+                // Get coordinate at this distance
                 var coord = this._getCoordinateAtDistance(lineString, distance);
                 if (!coord) break;
-                
-                // Get bearing (direction) at this point
-                var bearing = this._getBearingAtDistance(lineString, distance);
                 
                 // Move current feature to this position
                 this._moveFeatureToCoordinate(coord);
                 
-                // Set rotation to match track direction
-                var entry = this._getFeatureEntry(this.feature);
-                entry.rotationBias = bearing;
-                entry.tempRotation = 0;
-                this._redrawSelectionFeatures();
-                
-                // Pin the frame
+                // Pin the frame (without rotation)
                 this._pinCurrentFrame();
             }
             
             $('.-fn-kml-status', this.element)
-                .text('Placed ' + this.pinnedFeatures.length + ' frames along track')
-                .css('color', '#28a745');
+                .text(Mapbender.trans('mb.print.printclient.batchprint.kml.placed', {count: this.pinnedFeatures.length}))
+                .addClass('success')
+                .removeClass('error');
         },
         
         /**
@@ -1346,7 +1331,7 @@
                 return;
             }
             
-            if (!confirm('Delete all ' + this.pinnedFeatures.length + ' frames?')) {
+            if (!confirm(Mapbender.trans('mb.print.printclient.batchprint.confirm.deleteall', {count: this.pinnedFeatures.length}))) {
                 return;
             }
             
@@ -1370,8 +1355,8 @@
             this._updateFrameTable();
             
             $('.-fn-kml-status', this.element)
-                .text('All frames deleted')
-                .css('color', '#666');
+                .text(Mapbender.trans('mb.print.printclient.batchprint.alldeleted'))
+                .removeClass('success error');
         },
 
         __dummy__: null

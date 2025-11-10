@@ -20,11 +20,25 @@ mb:
       btn:
         batchprint: 'Start batchafdrukken'
       batchprint:
+        btn:
+          submit: 'Start batchafdrukken'
         kml:
           upload: 'KML-bestand uploaden'
           load: 'KML laden'
           clear: 'KML wissen'
           placeframes: 'Plaats frames langs het traject'
+          selected: 'Geselecteerd'
+          loaded: 'Geladen'
+          error: 'Fout'
+          readerror: 'Fout bij het lezen van het bestand'
+          placed: '%count% frames geplaatst langs het traject'
+          alert:
+            selectfile: 'Selecteer eerst een KML-bestand.'
+            validfile: 'Selecteer een geldig KML-bestand.'
+            error: 'Fout bij het laden van het KML-bestand'
+            readerror: 'Fout bij het lezen van het bestand.'
+            loadfirst: 'Laad eerst een KML-bestand.'
+            invalidgeometry: 'Ongeldige KML-geometrie. LineString verwacht.'
         tracking:
           title: 'Afdrukframes'
           no: 'Nr.'
@@ -34,5 +48,9 @@ mb:
           rotation: 'Rotatie'
           delete: 'Verwijderen'
           deleteall: 'Alle frames verwijderen'
+        confirm:
+          deleteall: 'Alle %count% frames verwijderen?'
+        alldeleted: 'Alle frames verwijderd'
         alert:
           noframes: 'Plaats ten minste één afdrukframe op de kaart.'
+          error: 'Fout bij het aanmaken van de afdrukopdracht'

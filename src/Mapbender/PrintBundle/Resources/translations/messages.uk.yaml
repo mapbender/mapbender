@@ -28,6 +28,18 @@ mb:
           load: 'Завантажити KML'
           clear: 'Очистити KML'
           placeframes: 'Розмістити рамки вздовж маршруту'
+          selected: 'Вибрано'
+          loaded: 'Завантажено'
+          error: 'Помилка'
+          readerror: 'Помилка читання файлу'
+          placed: 'Розміщено %count% рамок вздовж маршруту'
+          alert:
+            selectfile: 'Спочатку виберіть файл KML.'
+            validfile: 'Виберіть дійсний файл KML.'
+            error: 'Помилка завантаження файлу KML'
+            readerror: 'Помилка читання файлу.'
+            loadfirst: 'Спочатку завантажте файл KML.'
+            invalidgeometry: 'Недійсна геометрія KML. Очікується LineString.'
         tracking:
           title: 'Рамки друку'
           no: '№'
@@ -37,8 +49,12 @@ mb:
           rotation: 'Обертання'
           delete: 'Видалити'
           deleteall: 'Видалити всі рамки'
+        confirm:
+          deleteall: 'Видалити всі %count% рамок?'
+        alldeleted: 'Всі рамки видалено'
         alert:
           noframes: 'Будь ласка, розмістіть принаймні одну рамку друку на карті.'
+          error: 'Помилка створення завдання друку'
       joblist:
         header:
           id: '#'

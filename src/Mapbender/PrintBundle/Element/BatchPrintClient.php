@@ -47,15 +47,11 @@ class BatchPrintClient extends PrintClient
             'js' => array_merge($upstream['js'], array(
                 '@MapbenderPrintBundle/Resources/public/element/batchprintclient.js',
             )),
-            'css' => $upstream['css'],
+            'css' => array_merge($upstream['css'], array(
+                '@MapbenderPrintBundle/Resources/public/sass/element/batchprintclient.scss',
+            )),
             'trans' => array_merge($upstream['trans'] ?? array(), array(
-                'mb.print.printclient.btn.batchprint',
-                'mb.print.printclient.batchprint.alert.noframes',
-                'mb.print.printclient.batchprint.kml.upload',
-                'mb.print.printclient.batchprint.kml.load',
-                'mb.print.printclient.batchprint.kml.clear',
-                'mb.print.printclient.batchprint.kml.placeframes',
-                'mb.print.printclient.batchprint.tracking.deleteall',
+                'mb.print.printclient.batchprint.*',
             )),
         );
     }

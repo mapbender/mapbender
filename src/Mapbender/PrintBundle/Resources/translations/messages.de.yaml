@@ -21,14 +21,27 @@ mb:
       tab:
         settings: Einstellungen
         joblist: Druckaufträge
-      btn:
-        batchprint: 'Seriendruck starten'
       batchprint:
+        title: 'Titel'
+        btn:
+          submit: 'Seriendruck starten'
         kml:
           upload: 'KML-Datei hochladen'
           load: 'KML laden'
           clear: 'KML löschen'
           placeframes: 'Rahmen entlang Strecke platzieren'
+          selected: 'Ausgewählt'
+          loaded: 'Geladen'
+          error: 'Fehler'
+          readerror: 'Fehler beim Lesen der Datei'
+          placed: '%count% Rahmen entlang der Strecke platziert'
+          alert:
+            selectfile: 'Bitte wählen Sie zuerst eine KML-Datei aus.'
+            validfile: 'Bitte wählen Sie eine gültige KML-Datei aus.'
+            error: 'Fehler beim Laden der KML-Datei'
+            readerror: 'Fehler beim Lesen der Datei.'
+            loadfirst: 'Bitte laden Sie zuerst eine KML-Datei.'
+            invalidgeometry: 'Ungültige KML-Geometrie. LineString erwartet.'
         tracking:
           title: 'Druckrahmen'
           no: 'Nr.'
@@ -38,8 +51,13 @@ mb:
           rotation: 'Drehung'
           delete: 'Löschen'
           deleteall: 'Alle Rahmen löschen'
+        confirm:
+          create: 'Es werden %count% Rahmen erstellt. Fortfahren?'
+          deleteall: 'Alle %count% Rahmen löschen?'
+        alldeleted: 'Alle Rahmen gelöscht'
         alert:
           noframes: 'Bitte platzieren Sie mindestens einen Druckrahmen auf der Karte.'
+          error: 'Fehler beim Erstellen des Druckauftrags'
       joblist:
         header:
           id: '#'

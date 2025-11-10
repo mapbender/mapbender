@@ -20,11 +20,25 @@ mb:
       btn:
         batchprint: 'Démarrer l''impression par lots'
       batchprint:
+        btn:
+          submit: 'Démarrer l''impression par lots'
         kml:
           upload: 'Télécharger un fichier KML'
           load: 'Charger KML'
           clear: 'Effacer KML'
           placeframes: 'Placer des cadres le long du parcours'
+          selected: 'Sélectionné'
+          loaded: 'Chargé'
+          error: 'Erreur'
+          readerror: 'Erreur de lecture du fichier'
+          placed: '%count% cadres placés le long du parcours'
+          alert:
+            selectfile: 'Veuillez d''abord sélectionner un fichier KML.'
+            validfile: 'Veuillez sélectionner un fichier KML valide.'
+            error: 'Erreur lors du chargement du fichier KML'
+            readerror: 'Erreur de lecture du fichier.'
+            loadfirst: 'Veuillez d''abord charger un fichier KML.'
+            invalidgeometry: 'Géométrie KML invalide. LineString attendu.'
         tracking:
           title: 'Cadres d''impression'
           no: 'N°'
@@ -34,5 +48,9 @@ mb:
           rotation: 'Rotation'
           delete: 'Supprimer'
           deleteall: 'Supprimer tous les cadres'
+        confirm:
+          deleteall: 'Supprimer tous les %count% cadres?'
+        alldeleted: 'Tous les cadres supprimés'
         alert:
           noframes: 'Veuillez placer au moins un cadre d''impression sur la carte.'
+          error: 'Erreur lors de la création de la tâche d''impression'

@@ -20,14 +20,26 @@ mb:
       tab:
         settings: 'Impostazioni del lavoro'
         joblist: 'Lavori recenti'
-      btn:
-        batchprint: 'Avvia stampa in serie'
       batchprint:
+        btn:
+          submit: 'Avvia stampa in serie'
         kml:
           upload: 'Carica file KML'
           load: 'Carica KML'
           clear: 'Cancella KML'
           placeframes: 'Posiziona cornici lungo il percorso'
+          selected: 'Selezionato'
+          loaded: 'Caricato'
+          error: 'Errore'
+          readerror: 'Errore nella lettura del file'
+          placed: '%count% cornici posizionate lungo il percorso'
+          alert:
+            selectfile: 'Seleziona prima un file KML.'
+            validfile: 'Seleziona un file KML valido.'
+            error: 'Errore nel caricamento del file KML'
+            readerror: 'Errore nella lettura del file.'
+            loadfirst: 'Carica prima un file KML.'
+            invalidgeometry: 'Geometria KML non valida. Previsto LineString.'
         tracking:
           title: 'Cornici di stampa'
           no: 'N.'
@@ -37,8 +49,12 @@ mb:
           rotation: 'Rotazione'
           delete: 'Elimina'
           deleteall: 'Elimina tutte le cornici'
+        confirm:
+          deleteall: 'Eliminare tutte le %count% cornici?'
+        alldeleted: 'Tutte le cornici eliminate'
         alert:
           noframes: 'Si prega di posizionare almeno una cornice di stampa sulla mappa.'
+          error: 'Errore nella creazione del lavoro di stampa'
       joblist:
         header:
           id: '#'

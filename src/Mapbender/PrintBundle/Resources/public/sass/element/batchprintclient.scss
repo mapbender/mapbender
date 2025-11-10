@@ -1,0 +1,120 @@
+// BatchPrintClient specific styles
+// Only includes styles that were moved from inline CSS in JS and Twig files
+
+.mb-element-batchprintclient {
+  // KML Upload section
+  .-fn-kml-upload {
+    display: block;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    > div {
+      display: block;
+      width: 100%;
+
+      > div:first-child {
+        margin-bottom: 8px;
+      }
+    }
+
+    .-fn-kml-file-input {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .-fn-kml-buttons {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      &.show {
+        display: flex !important;
+      }
+
+      button {
+        white-space: nowrap;
+        padding: 4px 12px;
+      }
+    }
+
+    .-fn-place-frames-button {
+      display: none;
+
+      &.show {
+        display: inline-block !important;
+      }
+    }
+
+    .-fn-kml-status {
+      display: block;
+      margin-top: 5px;
+      color: #666;
+
+      &.success {
+        color: #28a745;
+      }
+
+      &.error {
+        color: #dc3545;
+      }
+    }
+  }
+
+  // Frame tracking table section
+  .-fn-frame-table {
+    display: block;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+
+    > div:first-of-type {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+
+      h4 {
+        margin: 0;
+      }
+    }
+
+    .-fn-delete-all-frames {
+      padding: 4px 12px;
+      display: none;
+
+      &.show {
+        display: inline-block !important;
+      }
+    }
+  }
+
+  .-fn-table-scroll-wrapper {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .-fn-frame-tracking-table {
+    width: 100%;
+
+    thead th {
+      text-align: left;
+    }
+
+    tbody {
+      td:last-child {
+        text-align: right;
+      }
+
+      tr {
+        &:hover,
+        &.highlighted {
+          background-color: #e6f2ff;
+        }
+      }
+    }
+  }
+}

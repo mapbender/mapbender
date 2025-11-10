@@ -20,14 +20,27 @@ mb:
       tab:
         settings: 'Job settings'
         joblist: 'Recent jobs'
-      btn:
-        batchprint: 'Start Batch Print'
       batchprint:
+        title: 'Title'
+        btn:
+          submit: 'Start Batch Print'
         kml:
           upload: 'Upload KML File'
           load: 'Load KML'
           clear: 'Clear KML'
           placeframes: 'Place Frames Along Track'
+          selected: 'Selected'
+          loaded: 'Loaded'
+          error: 'Error'
+          readerror: 'Error reading file'
+          placed: 'Placed %count% frames along track'
+          alert:
+            selectfile: 'Please select a KML file first.'
+            validfile: 'Please select a valid KML file.'
+            error: 'Error loading KML file'
+            readerror: 'Error reading file.'
+            loadfirst: 'Please load a KML file first.'
+            invalidgeometry: 'Invalid KML geometry. Expected LineString.'
         tracking:
           title: 'Print Frames'
           no: 'No.'
@@ -37,8 +50,13 @@ mb:
           rotation: 'Rotation'
           delete: 'Delete'
           deleteall: 'Delete All Frames'
+        confirm:
+          create: 'This will create %count% frames. Continue?'
+          deleteall: 'Delete all %count% frames?'
+        alldeleted: 'All frames deleted'
         alert:
           noframes: 'Please place at least one print frame on the map.'
+          error: 'Error creating print job'
       joblist:
         header:
           id: '#'

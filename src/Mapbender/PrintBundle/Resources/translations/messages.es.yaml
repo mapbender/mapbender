@@ -20,14 +20,26 @@ mb:
       tab:
         settings: Configuración
         joblist: 'Tareas de impresión recientes'
-      btn:
-        batchprint: 'Iniciar impresión por lotes'
       batchprint:
+        btn:
+          submit: 'Iniciar impresión por lotes'
         kml:
           upload: 'Cargar archivo KML'
           load: 'Cargar KML'
           clear: 'Borrar KML'
           placeframes: 'Colocar marcos a lo largo del recorrido'
+          selected: 'Seleccionado'
+          loaded: 'Cargado'
+          error: 'Error'
+          readerror: 'Error al leer el archivo'
+          placed: '%count% marcos colocados a lo largo del recorrido'
+          alert:
+            selectfile: 'Por favor, seleccione primero un archivo KML.'
+            validfile: 'Por favor, seleccione un archivo KML válido.'
+            error: 'Error al cargar el archivo KML'
+            readerror: 'Error al leer el archivo.'
+            loadfirst: 'Por favor, cargue primero un archivo KML.'
+            invalidgeometry: 'Geometría KML inválida. Se esperaba LineString.'
         tracking:
           title: 'Marcos de impresión'
           no: 'No.'
@@ -37,8 +49,12 @@ mb:
           rotation: 'Rotación'
           delete: 'Eliminar'
           deleteall: 'Eliminar todos los marcos'
+        confirm:
+          deleteall: '¿Eliminar todos los %count% marcos?'
+        alldeleted: 'Todos los marcos eliminados'
         alert:
           noframes: 'Por favor, coloque al menos un marco de impresión en el mapa.'
+          error: 'Error al crear la tarea de impresión'
       joblist:
         header:
           id: '#'
