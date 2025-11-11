@@ -66,7 +66,7 @@ class POI extends AbstractElementService
     {
         return array(
             'js'    => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.poi.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbPoi.js',
                 // to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
             ),
             'css'   => array(
@@ -84,7 +84,7 @@ class POI extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbPOI';
+        return 'MbPoi';
     }
 
     /**

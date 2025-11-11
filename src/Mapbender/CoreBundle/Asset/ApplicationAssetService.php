@@ -176,14 +176,12 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mb-action.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/media/js/jquery.dataTables.min.js',
                     '/components/datatables/media/js/dataTables.bootstrap4.min.js',
                     '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
@@ -205,6 +203,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/elements/MapbenderElement.js',
                 ];
             case 'css':
                 return [

@@ -316,6 +316,9 @@ mb:
         polygon: Çokgen
         rectangle: Dikdörtgen
         circle: Çember
+      inputs:
+        label: Etiketleme
+        radius: Yarıçap (m)
       geometry:
         action:
           remove: Geometriyi kaldır

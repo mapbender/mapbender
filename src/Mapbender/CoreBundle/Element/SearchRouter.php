@@ -59,7 +59,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSearchRouter';
+        return 'MbSearchRouter';
     }
 
     public static function getDefaultConfiguration()
@@ -144,8 +144,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
-                '@MapbenderCoreBundle/Resources/public/element/csv-export.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSearchRouter.js',
+                '@MapbenderCoreBundle/Resources/public/elements/csv-export.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',

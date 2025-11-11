@@ -32,7 +32,7 @@ class Sketch extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSketch';
+        return 'MbSketch';
     }
 
     /**
@@ -42,10 +42,10 @@ class Sketch extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/element/sketch.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSketch.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/element/sketch.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/sketch.scss',
             ),
             'trans' => array(
                 'mb.core.sketch.*',

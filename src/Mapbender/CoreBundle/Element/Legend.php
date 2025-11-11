@@ -37,8 +37,8 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/element/LegendEntry.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.legend.js',
+                '@MapbenderCoreBundle/Resources/public/elements/LegendEntry.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbLegend.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
@@ -72,7 +72,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbLegend';
+        return 'MbLegend';
     }
 
     public function getView(Element $element)

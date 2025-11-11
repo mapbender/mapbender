@@ -1,16 +1,11 @@
-(function($) {
-
-$.widget("mapbender.mb{{ widgetName }}", {
-    options: {},
-
-    elementUrl: null,
-
-    _create: function() {
-        this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-    },
-
-    _destroy: $.noop
-});
-
-})(jQuery);
+(function() {
+    class Mb{{ widgetName }} extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+        }
+    }
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.Mb{{ widgetName }} = Mb{{ widgetName }};
+})();
 

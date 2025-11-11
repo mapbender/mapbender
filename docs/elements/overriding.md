@@ -46,33 +46,33 @@ Furthermore, the widget name must be adapted.
 ```php
 public function getWidgetName(Element $element)
 {
-    return 'mycustombundle.ruler';
+    return 'MbCustomRuler';
 }
 ```
 
-The file just referenced can now be created in the *Resources/public* folder. It is important that not the entire file has to be copied from the core! This would make updates very time-consuming. Instead, in jQuery-UI - each element is a jQuery-UI widget at JavaScript level - has an inheritance functionality.
+The file just referenced can now be created in the *Resources/public/elements* folder. It is important that not the entire file has to be copied from the core! This would make updates very time-consuming. Instead, you can extend the javascript class.
 
-Widgets are defined with `$.widget`. The arguments of this function are
-
-- `widgetName`: Must match the declaration in the PHP file,
-- `parentWidget`: This is where the superclass goes. Already defined widgets are available directly under the jQuery $ variable.
-- `widgetDefinition`: Object with all variables and methods.
-
-Methods do not have to be completely overwritten if only something is to be added. The method of the same name of the parent widget can be called via `this._super()`. The example here works exactly like the mapbender core ruler, except that it also outputs a message on the console when it is activated and deactivated.
+Methods do not have to be completely overwritten if only something is to be added. The method of the same name of the parent widget can be called via `super.functionName()`. The example here works exactly like the mapbender core ruler, except that it also outputs a message on the console when it is activated and deactivated.
 
 ```js
-(function ($) {
-    $.widget("mycustombundle.ruler", $.mapbender.mbRuler, {
-        activate: function (callback) {
-            console.log('Hello world');
-            this._super(callback);
-        },
-        deactivate: function () {
-            console.log('Bye bye world');
-            this._super();
+(function () {
+    class MbCustomRuler extends Mapbender.Element.MbRuler {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            ...
         }
-    })
-})(jQuery);
+        activate (callback) {
+            console.log('Hello world');
+            super.activate(callback);
+        }
+        deactivate () {
+            console.log('Bye bye world');
+            super.deactivate();
+        }
+    }
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbCustomRuler = MbCustomRuler;
+})();
 ```
 
 For a more thorough documentation of the widgets, see [elements.md](elements.md)
