@@ -114,17 +114,13 @@
                         label: Mapbender.trans('mb.actions.reset'),
                         cssClass: 'btn btn-sm btn-light',
                         callback: $.proxy(this._reset, this)
-                    },
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
                     }
                 ]
             };
         }
 
-        activateByButton(callback) {
-            super.activateByButton(callback);
+        activateByButton(callback, mbButton) {
+            super.activateByButton(callback, mbButton);
             this.activate();
         }
 

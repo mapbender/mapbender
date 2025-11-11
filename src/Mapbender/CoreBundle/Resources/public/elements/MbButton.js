@@ -206,7 +206,7 @@
             if (this.active) {
                 return;
             }
-            this.targetWidget.activateByButton(this.reset.bind(this));
+            this.targetWidget.activateByButton(this.reset.bind(this), this.$element);
             this.notifyActivation_(this.targetWidget, true);
             super.activate();
         }

@@ -5,6 +5,11 @@
     var currentModal_ = null;
 
     window.Mapbender.Popup = function Popup(options) {
+        this.mobileBreakpoint = 599;     // If this value is changed, it must also be adjusted in _popup.scss
+        this.mobileResizeMinHeight = 50;
+        this.mobileResizeMaxHeight = window.innerHeight;
+        this.mobileAutoSize = true;       // Auto-size popup based on screen size
+        this.mobileMaxHeightRatio = 0.8;  // Maximum height as ratio of viewport (0.8 = 80%)
         this.options = Object.assign({}, this.defaults, options);
         delete this.options['__dummy__'];
 
@@ -45,6 +50,9 @@
 
             var value = self.options[optionName];
             switch(optionName) {
+                case 'icon':
+                    self.icon(value);
+                    break;
                 case 'title':
                     self.title(value);
                     break;
@@ -95,17 +103,22 @@
             scrollable: true,
             template: [
                 '    <div class="popupHead">',
+                '      <span class="iconBig me-1"><i class="popupIcon"></i></span>',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
-                '      <span class="popupClose right" tabindex="0"><i class="fas fa-xmark fa-lg"></i></span>',
+                '      <span class="popupClose right" tabindex="0"><i class="fa-solid fa-xmark"></i></span>',
                 '      <div class="clear"></div>',
                 '    </div>',
                 '   <div class="popup-body">',
                 '      <div class="popupContent"></div>',
+                '      <div class="footer row no-gutters">',
+                '        <div class="popupButtons"></div>',
+                '        <div class="clear"></div>',
+                '      </div>',
                 '   </div>',
-                '   <div class="footer row no-gutters">',
-                '       <div class="popupButtons"></div>',
-                '       <div class="clear"></div>',
+                '   <div class="popup-mobile-resize">',
+                '     <i class="fa fa-angle-up"></i>',
+                '     <i class="fa fa-angle-down"></i>',
                 '   </div>'
             ].join("\n"),
             buttons: [],
@@ -135,7 +148,7 @@
                 this.$element.css("z-index", 101);  // One more than .ui-front
 
                 // Focus the first visible and interactive element in the dialog window
-                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible').not('.popupClose');
+                const $visibleElements = this.$element.find('input:visible, select:visible, textarea:visible, button:visible, [tabindex]:not([tabindex="-1"]):visible');
                 const $firstFocusable = $visibleElements.first();
                 if ($firstFocusable.length) {
                     const $activeRadioButton = this.$element.find('input[type="radio"]:checked:visible');
@@ -146,6 +159,9 @@
                     }
                 }
             }
+
+            // Close toolbar menu on mobile when popup opens
+            this.closeToolbarMenu_();
         },
         close: function() {
             if (!this.$element) {
@@ -188,6 +204,14 @@
                 this.$modalWrap.remove();
                 this.$modalWrap = null;
             }
+        },
+        icon: function(icon) {
+            if(icon) {
+              $('.popupIcon', this.$element).addClass(icon);
+            } else {
+              $('.iconBig', this.$element).addClass('noIconFound');
+            }
+
         },
         title: function(title) {
             $('.popupTitle', this.$element).html(title || '');
@@ -238,11 +262,62 @@
                 evt.stopPropagation();
                 self.close();
             });
+            $target.on('keydown', '.popupClose', function(evt) {
+                if (evt.key === 'Enter') {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    self.close();
+                }
+            });
             $(document).on('keyup', function(event) {
                 if (self.options.closeOnESC && event.keyCode === 27) {
                     self.close();
                 }
                 return true;
+            });
+
+            // Mobile resize functionality
+            this.setupMobileResize_($target);
+        },
+        setupMobileResize_: function($target) {
+            var self = this;
+            var isDragging = false;
+            var startY = 0;
+            var startHeight = 0;
+
+            $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
+                if (window.innerWidth > self.mobileBreakpoint) return; // Only on mobile
+
+                evt.preventDefault();
+                isDragging = true;
+                startY = evt.type === 'touchstart' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                startHeight = self.$element.height();
+
+                $('body').addClass('popup-resizing').css('user-select', 'none');
+            });
+
+            $(document).on('mousemove touchmove', function(evt) {
+                if (!isDragging) return;
+
+                evt.preventDefault();
+                var currentY = evt.type === 'touchmove' ? evt.originalEvent.touches[0].clientY : evt.clientY;
+                var deltaY = currentY - startY;
+                const newHeight = Math.max(
+                    self.mobileResizeMinHeight,
+                    Math.min(
+                        self.mobileResizeMaxHeight,
+                        startHeight + deltaY,
+                        window.innerHeight - self.$element[0].getBoundingClientRect().y
+                    )
+                );
+                self.$element.css('height', newHeight + 'px');
+            });
+
+            $(document).on('mouseup touchend', function(evt) {
+                if (isDragging) {
+                    isDragging = false;
+                    $('body').removeClass('popup-resizing').css('user-select', '');
+                }
             });
         },
         addButtons: function(buttons) {
@@ -262,8 +337,15 @@
                     if (confOrNode.attrDataTest !== undefined) {
                         $btn.attr('data-test', confOrNode.attrDataTest);
                     }
+                    if (confOrNode.title !== undefined) {
+                        $btn.attr('title', confOrNode.title);
+                    }
                     if (confOrNode.callback) {
                         $btn.on('click', confOrNode.callback.bind(self));
+                    }
+                    if(confOrNode.iconClass !== undefined) {
+                        var $icon = $('<i>').addClass(confOrNode.iconClass);
+                        $btn.prepend($icon).prepend(' ');
                     }
                 }
                 buttonset.append($btn);
@@ -280,6 +362,9 @@
                 currentModal_ = this;
             }
 
+            // Set toolbar bottom position for mobile layouts
+            this.setToolbarBottomPosition_();
+
             var container = this.getContainer_();
             if(!this.options.detachOnClose || !$.contains(document, this.$element[0])) {
                 if (this.$modalWrap) {
@@ -289,6 +374,10 @@
                     this.$element.appendTo(container);
                 }
             }
+
+            // Auto-size popup based on screen size
+            this.adjustPopupSizeForScreen_();
+
             if (this.options.draggable) {
                 var containment = (this.options.modal && this.$modalWrap) || this.options.container && container || false;
                 this.$element.draggable({
@@ -299,6 +388,54 @@
                 Mapbender.restrictPopupPositioning(this.$element);
             }
             this.focus();
+        },
+        closeToolbarMenu_: function () {
+
+            if (window.innerWidth > this.mobileBreakpoint) {
+                return;
+            }
+            // Trigger click on open menu button to close it
+            var $openMenu = $('.toolBar .menu-wrapper.open > button');
+            if ($openMenu.length) {
+                $openMenu.trigger('click');
+            }
+        },
+        adjustPopupSizeForScreen_: function() {
+
+            var isMobile = window.innerWidth <= this.mobileBreakpoint;
+
+            if (!this.mobileAutoSize || !isMobile) {
+                return;
+            }
+
+            var viewportHeight = window.innerHeight;
+
+            // Calculate available space considering toolbars
+            var toolbarHeight = $('.toolBar.top')[0].getBoundingClientRect().height + $('.toolBar.bottom')[0].getBoundingClientRect().height;
+            var maxAvailableHeight = (viewportHeight * this.mobileMaxHeightRatio) - toolbarHeight;
+
+            // Check if popup is currently larger than available space and adjust height if necessary
+            var currentHeight = this.$element.height();
+            if (currentHeight > maxAvailableHeight) {
+                this.$element.css('height', Math.max(this.mobileResizeMinHeight, maxAvailableHeight) + 'px');
+            }
+
+            // Ensure popup content is scrollable if needed
+            var $popupBody = this.$element.find('.popup-body');
+            if ($popupBody.length && this.$element.height() < currentHeight) {
+                $popupBody.css('overflow-y', 'auto');
+            }
+        },
+        setToolbarBottomPosition_: function() {
+            // Set CSS property for toolbar bottom position on mobile
+            if (window.innerWidth <= this.mobileBreakpoint) {
+                var $toolbar = $('.toolBar').first();
+                if ($toolbar.length) {
+                    var toolbarRect = $toolbar[0].getBoundingClientRect();
+                    var toolbarBottom = toolbarRect.bottom;
+                    document.documentElement.style.setProperty('--toolbar-bottom', toolbarBottom - 1 + 'px');
+                }
+            }
         }
     });
 }());
