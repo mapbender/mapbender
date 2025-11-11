@@ -1,6 +1,8 @@
 $panelBorderColor: #888 !default;
 $darkFontColor: #3f3f3f !default;
 $textColor: $darkFontColor !default;
+$menuBackgroundColor: #ebefef !default;
+$menuBackgroundOpacity: 0.5 !default;
 
 .mb-element-layertree{
   user-select: none;
@@ -9,7 +11,7 @@ $textColor: $darkFontColor !default;
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: 0.6em;
+    margin-left: 1.6em;
   }
   .disabled {
     opacity: 0.4;
@@ -17,8 +19,6 @@ $textColor: $darkFontColor !default;
   }
   .leaveContainer {
     display: flex;
-    margin-bottom: 5px;
-    gap: 4px;
   }
   .layer-title {
     flex: 1 1 auto;
@@ -69,32 +69,27 @@ $layer-slider-bar-height: 5px;
 .layer-menu {
   color: var(--primary);
   position: static;
-  background-color: white;
-  padding: $space / 4;
   border-radius: $radius;
-  margin-top: 2px;
 
-  // Align left edge of slider-bar with left edge of checkbox
-  // Only account for folder icon + spacing to reach checkbox position
-  margin-left: calc(1em + 4px); // folder icon + spacing = checkbox left edge
+  .text-end {
+    font-size: 1.2rem;
+  }
 
   .layer-slider-bar {
-  font-size: 85%;
-  flex: 1;
-  background: var(--primary) !important;
-  border-color: var(--primary) !important;
-  height: 4px;
- }
+    font-size: 0.85rem;
+    flex: 1;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    height: 4px;
+  }
 
   .layer-opacity-title {
     color: $textColor;
-    font-size: 0.8rem;
   }
 
   .layer-opacity-container {
     display: flex;
     align-items: center;
-    gap: 8px;
   }
 
   .layer-opacity-value {
@@ -110,7 +105,9 @@ $layer-slider-bar-height: 5px;
     width: 35px;
   }
 
-  .layer-slider-handle {
+  .layer-slider-handle,
+  .layer-opacity-handle,
+  .layer-dimension-handle {
     background-color: var(--primary);
     border-color: var(--primary);
     border-radius: 50% !important; // circle
@@ -119,6 +116,13 @@ $layer-slider-bar-height: 5px;
     min-width: 14px !important;
     text-indent: -9999px; // hide text
     top: -1px;
+    
+    // Focus styling for accessibility
+    &:focus {
+      outline: 2px solid var(--focus-color, #007bff);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    }
   }
 }
 .layer-dimension-textfield {
@@ -129,7 +133,7 @@ $layer-slider-bar-height: 5px;
   color: #626161;
 }
 
-.-fn-toggle-selected {
+.-fn-toggle-selected, .-fn-toggle-dimension {
   color: var(--checkbox-unchecked);
 
     &.active {
@@ -149,10 +153,35 @@ $layer-slider-bar-height: 5px;
   color: var(--primary);
 }
 
-.layer-styles .input-group-text, .form-select{
-  font-size: 0.75rem;
+.layer-styles {
+    color: $textColor;
+    .form-select{
+        font-size: 0.85em;
+    }
 }
 
 .layer-dimension-title {
     padding-left: 6px;
 }
+
+.dimension-checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.menuBackground {
+    position: relative;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: -0.5rem;
+        left: -100vw; // Extends to the sideContent margin
+        right: -2rem;
+        bottom: var(--menu-background-bottom, 1rem); // Dynamic value
+        background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
+        z-index: -1;
+        pointer-events: none;
+    }
+}
+

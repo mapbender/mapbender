@@ -1,23 +1,23 @@
     <div class="tabContainerAlt">
-        <ul class="tabs">
+        <ul class="tabs mb-0 pb-0">
             <li id="tab-general" class="tab active">{{ 'mb.wms.metadata.section.common.title' | trans }}</li>
             <li id="tab-usage" class="tab">{{ 'mb.wms.metadata.section.useconditions.title' | trans }}</li>
             <li id="tab-contact" class="tab">{{ 'mb.wms.metadata.section.contact.title' | trans }}</li>
             <li id="tab-layers" class="tab">{{ 'mb.wms.metadata.section.items.title' | trans }}</li>
         </ul>
-        <div id="container-general" class="container active">
+        <div id="container-general" class="container active ps-4">
             {%- include '@MapbenderWms/Repository/source/view-metadata.html.twig' with {'show_constraints': false} -%}
         </div>
-        <div id="container-usage" class="container">
+        <div id="container-usage" class="container ps-4">
             <table class="table table-borderless table-condensed">
                 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees }}</td></tr>
                 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints }}</td></tr>
             </table>
         </div>
-        <div id="container-contact" class="container">
+        <div id="container-contact" class="container ps-4">
             {%- include '@MapbenderManager/Repository/source/view-contact.html.twig' with {'contact' : source.contact} -%}
         </div>
-        <div id="container-layers" class="container">
+        <div id="container-layers" class="container ps-4">
             {%- include '@MapbenderWms/frontend/instancelayer.html.twig' with {layer: startLayerInstance, itemLevel: 1} -%}
         </div>
     </div>

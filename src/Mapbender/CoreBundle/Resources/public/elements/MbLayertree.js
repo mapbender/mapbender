@@ -10,7 +10,7 @@
             this.treeCreated = false;
             this.cssClasses = {
                 menuClose: 'fa-xmark',
-                menuOpen: 'fa-sliders',
+                menuOpen: 'fa-ellipsis-vertical',
                 checkboxUnchecked: 'far fa-square',
                 checkboxChecked: 'fas fa-square-check',
                 infoInactive: 'fa-info',
@@ -390,10 +390,39 @@
             var $node = $me.closest('.leave,.themeContainer');
             $node.toggleClass('showLeaves');
 
+            // Close all layer-menus of its children as well
+            if (!$node.hasClass('showLeaves')) {
+                this._closeChildrenMenus($node);
+            }
+
+            // Update menuBackground positions after folder toggle
+            const self = this;
+            setTimeout(() => {
+                $('.menuBackground', this.$element).each(function() {
+                    const $menuBackground = $(this);
+                    self._updateMenuBackgroundPosition($menuBackground);
+                });
+            }, 10);
+
             this._updateFolderState($node);
             return false;
         }
 
+        _closeChildrenMenus($parentNode) {
+            const $childrenLayers = $parentNode.find('ul.layers li.leave');
+
+            $childrenLayers.each((index, childNode) => {
+                const $childNode = $(childNode);
+                const $childMenu = $childNode.find('>.layer-menu');
+
+                if ($childMenu.length) {
+                    $childMenu.remove();
+                    const $menuBtn = $childNode.find('>.leaveContainer .layer-menu-btn i');
+                    $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                    $menuBtn.prevObject.removeClass('menuBackground');
+                }
+            });
+        }
         _updateFolderState($node) {
             const active = $node.hasClass('showLeaves');
             $node.children('.leaveContainer').children('.-fn-toggle-children').children('i')
@@ -493,7 +522,7 @@
 
             const $layerTitles = this.$element.find('.layer-title');
             $layerTitles.each((index, element) => {
-                const title = $(element).text()?.toString().toLowerCase();
+                const title = $(element).text().toLowerCase();
                 if (title) {
                     $(element).toggleClass('filtered', title.includes(value));
                 }
@@ -578,6 +607,72 @@
                     return $actionElement.on('click', this._zoomToLayer.bind(this));
             }
         }
+        /**
+         * Creates a reusable resize handler for sliders (opacity/dimension)
+         * @param {Object} options Configuration object
+         * @param {string} options.type - Type of slider ('opacity' or 'dimension')
+         * @param {string} options.id - Unique identifier for the slider
+         * @param {jQuery} options.$container - Container element to observe for resize
+         * @param {Function} options.handleResize - Custom resize handling function
+         * @private
+         */
+        _setupSliderResizeHandler(options) {
+            const eventNamespace = 'resize.' + options.type + 'Slider' + options.id;
+
+            const handleSidePaneResize = () => {
+                setTimeout(() => {
+                    options.handleResize();
+                }, 10);
+            };
+
+            let resizeObserver = null;
+            const $sidePane = options.$container.closest('.sidePane');
+
+            // Case: Layertree is displayed in sidepane
+            if ($sidePane.length && window.ResizeObserver) {
+                resizeObserver = new ResizeObserver(handleSidePaneResize);
+                resizeObserver.observe($sidePane[0]);
+
+                options.$container.data('resizeObserver', resizeObserver);
+            } else {
+                // Case: Layertree is displayed in a popup
+                $(window).on(eventNamespace, handleSidePaneResize);
+            }
+        }
+
+        /**
+         * Setup keyboard navigation for slider elements
+         * @param {Object} options - Configuration object
+         * @param {jQuery} options.$slider - Slider element to add keyboard support to
+         * @param {Object} options.dragHandler - Dragdealer instance
+         * @param {number} options.stepSize - Size of each increment/decrement step
+         * @param {Function} [options.onValueChange] - Optional callback when value changes
+         * @private
+         */
+        _setupSliderKeyboardNavigation(options) {
+            const { $slider, dragHandler, stepSize, onValueChange } = options;
+
+            $slider.on('keydown', (event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const currentX = dragHandler.getValue()[0];
+                    let newX = currentX;
+
+                    if (event.key === 'ArrowLeft') {
+                        newX = Math.max(0, currentX - stepSize);
+                    } else if (event.key === 'ArrowRight') {
+                        newX = Math.min(1, currentX + stepSize);
+                    }
+
+                    dragHandler.setValue(newX, 0);
+
+                    // Call optional callback for additional value handling
+                    if (onValueChange) {
+                        onValueChange(newX);
+                    }
+                }
+            });
+        }
 
         _initOpacitySlider($opacityControl, layer) {
             const source = layer.source;
@@ -602,23 +697,34 @@
                 }
             });
 
-            const $slider = $opacityControl.find('.layer-slider-handle');
-            $slider.attr('tabindex', '0');
+            // Positioning the slider-handle when resizing sidepane or popup:
+            $opacityControl.data('dragDealer', dragDealer);
 
-            $slider.on('keydown', (event) => {
-                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                    event.preventDefault();
-                    const currentX = dragDealer.getValue()[0];
-                    const step = 1 / 100;
-                    let newX = currentX;
+            // Get layer ID for unique event namespace
+            const layerId = layer.options.id;
 
-                    if (event.key === 'ArrowLeft') {
-                        newX = Math.max(0, currentX - step);
-                    } else if (event.key === 'ArrowRight') {
-                        newX = Math.min(1, currentX + step);
+            // Setup resize handling using the common function
+            this._setupSliderResizeHandler({
+                type: 'opacity',
+                id: layerId,
+                $container: $opacityControl,
+                handleResize: () => {
+                    const currentOpacity = source.options.opacity;
+
+                    if (dragDealer) {
+                        dragDealer.reflow();
+                        dragDealer.setValue(currentOpacity, 0);
                     }
+                }
+            });
 
-                    dragDealer.setValue(newX, 0);
+            // Add keyboard event listener for left and right arrow keys
+            const $slider = $opacityControl.find('.layer-opacity-handle');
+            this._setupSliderKeyboardNavigation({
+                $slider: $slider,
+                dragHandler: dragDealer,
+                stepSize: 1 / 100, // Step size for opacity adjustment
+                onValueChange: (newX) => {
                     const opacity = Math.max(0.0, Math.min(1.0, newX));
                     const percentage = Math.round(opacity * 100);
                     $handle.text(percentage);
@@ -655,27 +761,52 @@
             var $target = $(e.target);
             var $layerNode = $target.closest('li.leave');
             if (!$('>.layer-menu', $layerNode).length) {
+                // Close all other menus first
                 $('.layer-menu', this.$element).remove();
+                // Reset all menu button icons back to bars
                 $('.layer-menu-btn i', this.$element).removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
-
+                $('.layer-menu-btn', this.$element).offsetParent().removeClass('menuBackground');
                 this._initMenu($layerNode);
 
                 const $menu = $layerNode.find('>.layer-menu');
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuOpen).addClass(this.cssClasses.menuClose);
-
+                $menuBtn.prevObject.addClass('menuBackground');
                 $menu.find('.exit-button:visible, .layer-opacity-handle:visible, .clickable:visible').attr('tabindex', '0');
-                const $firstFocusable = $menu.find('[tabindex="0"]').first();
-                if ($firstFocusable.length) {
-                    $firstFocusable.focus();
+
+                // Only focus the first element if the menu was opened via keyboard (Enter key)
+                // Check if the event was triggered by Enter key (originalEvent will have key === 'Enter')
+                const isKeyboardTriggered = e.originalEvent && e.originalEvent.key === 'Enter';
+                if (isKeyboardTriggered) {
+                    const $firstFocusable = $menu.find('[tabindex="0"]').first();
+                    if ($firstFocusable.length) {
+                        $firstFocusable.focus();
+                    }
                 }
+
+                // calculate bottom of class menuBackground
+                this._updateMenuBackgroundPosition($menuBtn.prevObject);
             } else {
                 $('>.layer-menu', $layerNode).remove();
                 const $menuBtn = $layerNode.find('>.leaveContainer .layer-menu-btn i');
                 $menuBtn.removeClass(this.cssClasses.menuClose).addClass(this.cssClasses.menuOpen);
+                $menuBtn.prevObject.removeClass('menuBackground');
             }
 
             return false;
+        }
+
+        _updateMenuBackgroundPosition ($container) {
+            const $menu = $container.find('>.layer-menu');
+            const $menuBackground = $container.filter('.menuBackground');
+            if ($menu.length && $menuBackground.length) {
+                setTimeout(() => {
+                    const menuRect = $menu[0].getBoundingClientRect();
+                    const menuBackgroundRect = $menuBackground[0].getBoundingClientRect();
+                    const distanceFromBottom = menuBackgroundRect.bottom - menuRect.bottom - 8;
+                    $menuBackground[0].style.setProperty('--menu-background-bottom', `${distanceFromBottom}px`);
+                }, 10);
+            }
         }
 
         _filterMenu(layer) {
@@ -702,6 +833,7 @@
             var dimData = $element.data('dimensions') || {};
             var $controls = [];
             var dragHandlers = [];
+            var dimensionHandlers = [];
             var updateData = function (key, props) {
                 $.extend(dimData[key], props);
                 var ourData = {};
@@ -717,12 +849,19 @@
                 dimData[dimDataKey] = dimData[dimDataKey] || {
                     checked: false
                 };
-                var inpchkbox = $('input[type="checkbox"]', $control);
+                var inpchkbox = $('.-fn-toggle-dimension', $control);
                 inpchkbox.data('dimension', item);
-                inpchkbox.prop('checked', dimData[dimDataKey].checked);
-                inpchkbox.on('change', function (e) {
-                    updateData(dimDataKey, {checked: $(this).prop('checked')});
-                    self._callDimension(source, $(e.target));
+                inpchkbox.data('checked', dimData[dimDataKey].checked);
+                // Update visual state
+                self.updateIconVisual_(inpchkbox, dimData[dimDataKey].checked, true);
+                inpchkbox.on('click', function (e) {
+                    var $this = $(this);
+                    var newState = !$this.data('checked');
+                    $this.data('checked', newState);
+                    self.updateIconVisual_($this, newState, true);
+                    updateData(dimDataKey, {checked: newState});
+                    self._callDimension(source, $this);
+                    return false;
                 });
                 label.attr('title', label.attr('title') + ' ' + item.name);
                 $('.layer-dimension-bar', $actionElement).toggleClass('hidden', item.type === 'single');
@@ -735,6 +874,7 @@
                     updateData(dimDataKey, {value: dimData.value || item.extent});
                 } else if (item.type === 'multiple' || item.type === 'interval') {
                     var dimHandler = Mapbender.Dimension(item);
+                    dimensionHandlers.push(dimHandler);
                     dragHandlers.push(new Dragdealer($('.layer-dimension-bar', $control).get(0), {
                         x: dimHandler.getStep(dimData[dimDataKey].value || dimHandler.getDefault()) / dimHandler.getStepsNum(),
                         horizontal: true,
@@ -754,6 +894,7 @@
                         }
                     }));
                 } else {
+                    dimensionHandlers.push(null);
                     Mapbender.error("Source dimension " + item.type + " is not supported.");
                 }
                 $controls.push($control);
@@ -762,12 +903,68 @@
             dragHandlers.forEach(function (dh) {
                 dh.reflow();
             });
+
+            // Resize handling for dimension sliders
+            if ($controls.length > 0) {
+                const $dimensionControls = $($controls);
+                const sourceId = source.id;
+
+                // Setup resize handling using the common function
+                this._setupSliderResizeHandler({
+                    type: 'dimension',
+                    id: sourceId,
+                    $container: $(self.element),
+                    handleResize: () => {
+                        dragHandlers.forEach(function (dh, index) {
+                            if (dh && dimensionHandlers[index]) {
+                                dh.reflow();
+
+                                // Reposition the slider based on current value
+                                const $control = $($dimensionControls[index]);
+                                const $checkbox = $control.find('.-fn-toggle-dimension');
+                                const currentValue = $checkbox.attr('data-value');
+
+                                if (currentValue) {
+                                    const dimHandler = dimensionHandlers[index];
+                                    const currentStep = dimHandler.getStep(currentValue);
+                                    const currentX = currentStep / dimHandler.getStepsNum();
+                                    dh.setValue(currentX, 0);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // Keyboard support for dimension sliders
+                $dimensionControls.each((index, control) => {
+                    const $control = $(control);
+                    const $slider = $control.find('.layer-dimension-handle');
+                    const dragHandler = dragHandlers[index];
+
+                    if ($slider.length && dragHandler) {
+                        this._setupSliderKeyboardNavigation({
+                            $slider: $slider,
+                            dragHandler: dragHandler,
+                            stepSize: 1 / dragHandler.options.steps
+                        });
+                    }
+                });
+            }
         }
 
-        _callDimension(source, chkbox) {
+        _callDimension (source, chkbox) {
+            // Check if checkbox still exists in DOM and has dimension data
+            if (!chkbox || !chkbox.length || !chkbox.closest('body').length) {
+                return false;
+            }
+
             var dimension = chkbox.data('dimension');
+            if (!dimension) {
+                return false;
+            }
             var paramName = dimension['__name'];
-            if (chkbox.is(':checked') && paramName) {
+            var isChecked = chkbox.data('checked');
+            if (isChecked && paramName) {
                 var params = {};
                 params[paramName] = chkbox.attr('data-value');
                 source.addParams(params);
@@ -886,8 +1083,23 @@
                 }
             }
         }
+
     }
 
     window.Mapbender.Element = window.Mapbender.Element || {};
     window.Mapbender.Element.MbLayertree = MbLayertree;
 })();
+
+// Ensure all mouse click events can also be triggered by pressing the Enter key
+$(document).on('keydown', function (event) {
+    if (event.key === 'Enter') {
+        var target = $(event.target);
+        if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
+            console.log("dfhkesekfe");
+            // Create a click event with the original keyboard event as originalEvent
+            var clickEvent = $.Event('click');
+            clickEvent.originalEvent = event;
+            target.trigger(clickEvent);
+        }
+    }
+});
