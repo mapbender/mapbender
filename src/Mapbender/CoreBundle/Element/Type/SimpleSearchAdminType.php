@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Element\SimpleSearch;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Count;
 
@@ -13,6 +14,10 @@ class SimpleSearchAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('openInline', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.core.simplesearch.admin.openInline',
+            ))
             ->add('configurations', CollapsibleCollectionType::class, array(
                 'label' => 'mb.core.simplesearch.admin.configurations',
                 'allow_add' => true,

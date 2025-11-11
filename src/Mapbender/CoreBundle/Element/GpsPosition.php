@@ -64,6 +64,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
             'follow'                => false,
             'centerOnFirstPosition' => true,
             'zoomToAccuracyOnFirstPosition' => true,
+            'element_icon' => self::getDefaultIcon(),
         ));
     }
 
@@ -100,5 +101,9 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
         }
         unset($config['zoomToAccuracy']);
         $entity->setConfiguration($config);
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconGpsTarget';
     }
 }

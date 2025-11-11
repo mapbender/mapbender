@@ -31,6 +31,12 @@
     {{ form_row(form.configuration.destinationImageSize) }}
     {{ form_row(form.configuration.destinationImageOffset) }}
 </div>
+
+{% if form.configuration.element_icon is defined %}
+    <div class="mb-3">
+        {{form_row(form.configuration.element_icon) }}
+    </div>
+{% endif %}
 <hr>
 <h3 class="my-4">Routingsoftware</h3>
 {{ form_row(form.configuration.routingDriver) }}

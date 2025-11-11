@@ -76,6 +76,7 @@ mb:
         geometry:
           missing: Обраний об''єкт не містить геометрії.
       admin:
+        openInline: 'Відкрити вбудований'
         placeholder: Заповнювач
         sourceSrs: Джерело SRS
     searchrouter:
@@ -379,6 +380,7 @@ mb:
             choice:
               tabs: Кнопки
               accordion: Гармошка
+              list: 'Список'
               unstyled: Без стилю
     htmlelement:
       class:
@@ -428,6 +430,46 @@ mb:
       admin:
         open_in_new_tab: 'Відкрити в новій вкладці'
         drag_to_reorder: 'Перетягніть, щоб змінити порядок'
+    basebutton:
+      admin:
+        elementIcon: 'символ елемента'
+    icon:
+      mb:
+        about: 'Інформація'
+        layer_tree: 'Дерево рівнів'
+        feature_info: 'Інформація про функцію'
+        area_ruler: 'Вимірювання площі'
+        polygon: 'Полігон'
+        line_ruler: 'Виміряти відстань'
+        image_export: 'Експорт зображень'
+        legend: 'Легенда'
+      fa:
+        about: 'Група'
+        accessibility: 'Безбар''єрність'
+        info: 'Інформація'
+        pin: 'маркер'
+        home: 'Головна сторінка'
+        legend: 'Список'
+        print: 'Друк'
+        search: 'Пошук'
+        layer_tree: 'ієрархія'
+        logout: 'Вийти'
+        wms: 'глобус'
+        edit: 'Редагувати'
+        wmc: 'папка'
+        coordinates: 'координати'
+        poi: 'шпилька'
+        camera: 'Камера'
+        copyright: 'Авторське право'
+        share: 'Поділитися'
+        forward: 'Переслати'
+        refresh: 'Перезавантажити'
+        earth: 'земна куля'
+        map: 'Карта країни'
+        pin_alt: 'маркер (альтернатива)'
+        help: 'Допомога'
+        dataupload: 'Завантажити'
+        bookmark: 'Завантажити'
   template:
     toolbar_menu_tooltip: Перемкнути меню
     region:

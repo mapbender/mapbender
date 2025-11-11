@@ -89,6 +89,7 @@ mb:
         geometry:
           missing: 'La entrada seleccionada no contiene ninguna geometría.'
       admin:
+        openInline: 'Abrir inline'
         configurations: Configuraciones
         title: Título
         title.help: 'Texto mostrado en el menú desplegable de configuraciones'
@@ -524,6 +525,7 @@ mb:
             choice:
               tabs: Botones
               accordion: Acordeón
+              list: 'Lista'
               unstyled: 'Sin estilo'
       button:
         show_label: 'Mostrar etiqueta'
@@ -604,6 +606,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icono
+        elementIcon: 'Símbolo del elemento'
     icon:
       mb:
         about: Información
@@ -639,6 +642,7 @@ mb:
         map: Mapa
         pin_alt: 'Pin (Alternativo)'
         help: Ayuda
+        bookmark: 'marcador de página'
   template:
     toolbar_menu_tooltip: 'Abrir menú'
     region:

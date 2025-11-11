@@ -51,6 +51,58 @@ var initTabContainer = function ($context) {
             $(this).data('accordion-initialized', true);
         })
     ;
+    $(".listContainer", $context)
+        .filter(function() {
+            return (typeof ($(this).data('list-initialized')) === 'undefined');
+        })
+        .on('click', '.list-group-item', function() {
+            var $header = $(this);
+            if ($header.hasClass('active')) {
+                return;
+            }
+            var $group = $(this).closest('.listContainer');
+            var $sideContent = $group.closest('.sideContent');
+            var $previous = $('.list-group .list-group-item.active', $group);
+
+            $previous.removeClass('active');
+
+            $header.addClass('active');
+
+            // Get the container ID by replacing list_group_item with list_group_item_container
+            var containerId = $header.attr("id").replace("list_group_item", "list_group_item_container");
+            var $container = $("#" + containerId, $sideContent);
+
+            // Hide all containers first
+            $('.container-list-group-item', $sideContent).removeClass('active');
+
+            $container.addClass('active');
+
+            // Slide the listContainer to the left and container to the right
+            $group.addClass('list-shifted');
+        })
+        .each(function() {
+            $(this).data('list-initialized', true);
+        })
+    ;
+
+    // Handle back button clicks
+    $context.on('click', '.list-back-btn', function(e) {
+        var $sideContent = $(this).closest('.sideContent');
+        var $group = $('.listContainer', $sideContent);
+        var $activeContainer = $('.container-list-group-item.active', $sideContent);
+
+        $('.list-group-item.active', $group).removeClass('active');
+        $activeContainer.removeClass('active');
+
+        // Slide back to original position
+        $group.removeClass('list-shifted');
+
+        // Trigger event to notify elements to deactivate
+        $sideContent.trigger('listgroup:back', [$activeContainer]);
+
+        return false;
+    })
+    ;
 };
 
 $(function () {

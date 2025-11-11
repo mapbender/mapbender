@@ -54,6 +54,7 @@ class AboutDialog extends ButtonLike
         $defaults = array_replace(parent::getDefaultConfiguration(), array(
             "tooltip" => "mb.core.aboutdialog.admin.tooltip",
         ));
+        $defaults['element_icon'] = self::getDefaultIcon();
         unset($defaults['icon']);
         return $defaults;
     }
@@ -95,5 +96,10 @@ class AboutDialog extends ButtonLike
     protected function getContentTemplateName(Element $element)
     {
         return '@MapbenderCore/Element/about_dialog_content.html.twig';
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconAbout';
     }
 }

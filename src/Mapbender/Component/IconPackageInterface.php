@@ -17,9 +17,10 @@ interface IconPackageInterface
 
     /**
      * @param string $iconCode
+     * @param string $additionalClass Optional additional CSS class to add to the icon element
      * @return string
      */
-    public function getIconMarkup($iconCode);
+    public function getIconMarkup($iconCode, $additionalClass = '');
 
     /**
      * Can this package render an icon for this code?

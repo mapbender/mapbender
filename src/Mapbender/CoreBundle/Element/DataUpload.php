@@ -58,6 +58,7 @@ class DataUpload extends AbstractElementService
         return array(
             'maxFileSize' => 10,
             'helpText' => 'mb.core.dataupload.admin.helpText',
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -90,5 +91,10 @@ class DataUpload extends AbstractElementService
         $view->attributes['class'] = 'mb-element-dataupload me-3';
         $view->attributes['data-title'] = $element->getTitle();
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconDataUpload';
     }
 }
