@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mapbender\CoreBundle\Element;
-
 
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
@@ -13,7 +11,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Symfony\Component\Form\FormFactoryInterface;
-
 
 class ApplicationSwitcher extends AbstractElementService
 {
@@ -53,12 +50,6 @@ class ApplicationSwitcher extends AbstractElementService
             'open_in_new_tab' => false,
             'applications' => array(),
         );
-    }
-
-    public static function getFormOptions(Element $element, array $options): array
-    {
-        $options['sort_first'] = $element->getConfiguration()['applications'];
-        return $options;
     }
 
     public static function getType()
