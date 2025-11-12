@@ -31,6 +31,7 @@ mb:
           clear: 'KML löschen'
           placeframes: 'Rahmen entlang Strecke platzieren'
           adjustframes: 'Rahmendrehung anpassen'
+          overlap: 'Rahmenüberlappung'
           selected: 'Ausgewählt'
           loaded: 'Geladen'
           error: 'Fehler'

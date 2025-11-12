@@ -28,6 +28,7 @@ mb:
           clear: 'KML wissen'
           placeframes: 'Plaats frames langs het traject'
           adjustframes: 'Framerotatie aanpassen'
+          overlap: 'Frame-overlapping'
           selected: 'Geselecteerd'
           loaded: 'Geladen'
           error: 'Fout'

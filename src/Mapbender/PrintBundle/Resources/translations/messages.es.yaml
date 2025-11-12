@@ -29,6 +29,7 @@ mb:
           clear: 'Borrar KML'
           placeframes: 'Colocar marcos a lo largo del recorrido'
           adjustframes: 'Ajustar rotación de marcos'
+          overlap: 'Superposición de marcos'
           selected: 'Seleccionado'
           loaded: 'Cargado'
           error: 'Error'

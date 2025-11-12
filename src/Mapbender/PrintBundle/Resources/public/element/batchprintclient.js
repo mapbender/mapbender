@@ -1285,6 +1285,11 @@
             // Check if frame adjustment is enabled
             var adjustFrames = $('.-fn-adjust-frames-checkbox', this.element).is(':checked');
             
+            // Get the overlap percentage from input field (default 10%)
+            var overlapPercent = parseFloat($('.-fn-frame-overlap-input', this.element).val()) || 10;
+            // Clamp between 0 and 100
+            overlapPercent = Math.max(0, Math.min(100, overlapPercent));
+            
             // Get the current template size to determine frame spacing
             var templateWidth = this.width;
             var templateHeight = this.height;
@@ -1297,8 +1302,10 @@
             // Get total length
             var totalLength = lineString.getLength();
             
-            // Calculate ideal spacing with 10% overlap
-            var idealSpacing = frameSize * 0.9;
+            // Calculate ideal spacing based on overlap percentage
+            // If overlap is 10%, spacing is 90% of frame size (frameSize * 0.9)
+            var spacingFactor = 1 - (overlapPercent / 100);
+            var idealSpacing = frameSize * spacingFactor;
             
             // Calculate number of frames needed to cover the entire track
             // We need at least 2 frames (start and end), and enough to cover the distance

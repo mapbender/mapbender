@@ -29,6 +29,7 @@ mb:
           clear: 'Cancella KML'
           placeframes: 'Posiziona cornici lungo il percorso'
           adjustframes: 'Adatta rotazione cornici'
+          overlap: 'Sovrapposizione cornici'
           selected: 'Selezionato'
           loaded: 'Caricato'
           error: 'Errore'

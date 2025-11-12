@@ -29,6 +29,7 @@ mb:
           clear: 'Limpar KML'
           placeframes: 'Colocar molduras ao longo do percurso'
           adjustframes: 'Ajustar rotação das molduras'
+          overlap: 'Sobreposição de molduras'
           selected: 'Selecionado'
           loaded: 'Carregado'
           error: 'Erro'

@@ -33,6 +33,21 @@
                     {{ 'mb.print.printclient.batchprint.kml.adjustframes' | trans }}
                 </label>
             </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                <label for="frame-overlap-input" style="margin: 0;">
+                    {{ 'mb.print.printclient.batchprint.kml.overlap' | trans }}
+                </label>
+                <input type="number" 
+                       id="frame-overlap-input" 
+                       name="frame_overlap" 
+                       class="-fn-frame-overlap-input"
+                       value="10"
+                       min="0"
+                       max="100"
+                       step="1"
+                       style="width: 60px;">
+                <span>%</span>
+            </div>
         </div>
         <small class="-fn-kml-status" style="display: block; margin-top: 5px; color: #666;"></small>
     </div>
