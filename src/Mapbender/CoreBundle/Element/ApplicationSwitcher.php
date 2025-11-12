@@ -2,15 +2,16 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\Form\FormFactoryInterface;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 
 class ApplicationSwitcher extends AbstractElementService
 {
@@ -18,20 +19,20 @@ class ApplicationSwitcher extends AbstractElementService
     protected $formFactory;
     /** @var ManagerRegistry */
     protected $managerRegistry;
-    /** @var ElementHttpHandlerInterface */
-    protected $httpHandler;
     /** @var ApplicationYAMLMapper */
     protected $yamlAppRepository;
+    /** @var AuthorizationCheckerInterface */
+    protected $authChecker;
 
     public function __construct(FormFactoryInterface $formFactory,
                                 ManagerRegistry $managerRegistry,
-                                ElementHttpHandlerInterface $httpHandler,
-                                ApplicationYAMLMapper $yamlAppRepository)
+                                ApplicationYAMLMapper $yamlAppRepository,
+                                AuthorizationCheckerInterface $authChecker)
     {
         $this->formFactory = $formFactory;
         $this->managerRegistry = $managerRegistry;
-        $this->httpHandler = $httpHandler;
         $this->yamlAppRepository = $yamlAppRepository;
+        $this->authChecker = $authChecker;
     }
 
     public static function getClassTitle()
@@ -87,48 +88,42 @@ class ApplicationSwitcher extends AbstractElementService
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    public function getClientConfiguration(Element $element)
     {
-        return $this->httpHandler;
+        $dbRepository = $this->managerRegistry->getRepository(Application::class);
+        $currentApplication = $element->getApplication();
+        $applications = [];
+        // Always offer the Application this Element is part of
+        $applications[$currentApplication->getTitle()] = $currentApplication->getSlug();
+        $config = $element->getConfiguration() ?: [];
+        foreach ($config['applications'] as $slug) {
+            if (\in_array($slug, $applications)) {
+                continue;
+            }
+            $application = $this->yamlAppRepository->getApplication($slug);
+            if (!$application) {
+                $application = $dbRepository->findOneBy([
+                    'slug' => $slug,
+                ]);
+            }
+            if ($application && $this->authChecker->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
+                $applications[$application->getTitle()] = $application->getSlug();
+            }
+        }
+        $config['applications'] = $applications;
+        return $config;
     }
 
     protected function buildChoiceForm(Element $element)
     {
         $current = $element->getApplication()->getSlug();
+        $config = $this->getClientConfiguration($element);
         $options = array(
-            'choices' => $this->getApplicationChoices($element),
+            'choices' => $config['applications'],
             'attr' => array(
                 'title' => $element->getTitle(),
             ),
         );
         return $this->formFactory->createNamed('application', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $current, $options);
-    }
-
-    protected function getApplicationChoices(Element $element)
-    {
-        // @todo: provide a combined yaml+db repository for Application entities
-        $dbRepository = $this->managerRegistry->getRepository(Application::class);
-
-        $currentApplication = $element->getApplication();
-        $choices = array();
-
-        // Always offer the Application this Element is part of
-        $choices[$currentApplication->getTitle()] = $currentApplication->getSlug();
-
-        $slugsConfigured = ArrayUtil::getDefault($element->getConfiguration(), 'applications', array());
-
-        foreach ($slugsConfigured as $slug) {
-            if (\in_array($slug, $choices)) {
-                continue;
-            }
-            $application = $this->yamlAppRepository->getApplication($slug);
-            if (!$application) {
-                $application = $dbRepository->findOneBy(array('slug' => $slug));
-            }
-            if ($application) {
-                $choices[$application->getTitle()] = $application->getSlug();
-            }
-        }
-        return $choices;
     }
 }

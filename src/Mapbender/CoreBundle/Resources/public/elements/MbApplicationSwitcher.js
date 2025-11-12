@@ -9,10 +9,6 @@
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this._setup(mbMap);
             });
-            $.ajax([this.elementUrl, 'granted'].join('/')).then((response) => {
-                var slugs = response.concat([Mapbender.configuration.application.slug]);
-                this._filterGranted(slugs);
-            });
             this._updateDropoutDirection();
         }
 
@@ -28,25 +24,6 @@
             window.addEventListener('resize', () => {
                 this._updateDropoutDirection();
             });
-        }
-
-        _filterGranted(slugs) {
-            var $options = $('select option', this.$element);
-            var optionsCount = $options.length;
-            for (var i = 0; i < $options.length; ++i) {
-                var value = $options[i].value;
-                if (value && -1 === slugs.indexOf(value)) {
-                    $options.eq(i).remove();
-                    --optionsCount;
-                    // Custom dropdown widget support needs separate removal of display element corresponding to option
-                    $('.dropdownList [data-value="' + value + '"]', this.$element).remove();
-                }
-            }
-            $('select', this.$element).trigger('dropdown.changevisual');
-            // If we have nothing left to switch to (deleted yaml applications...), remove from DOM
-            if (optionsCount <= 1) {
-                this.$element.remove();
-            }
         }
 
         _switchApplication(slug) {
