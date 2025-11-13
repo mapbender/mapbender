@@ -25,10 +25,12 @@ mb:
         title: 'Titel'
         btn:
           submit: 'Seriendruck starten'
+        track:
+          upload: 'Strecke hochladen (KML, GeoJSON)'
         kml:
-          upload: 'KML-Datei hochladen'
-          load: 'KML laden'
-          clear: 'KML löschen'
+          upload: 'Strecke hochladen (KML, GeoJSON)'
+          load: 'Datei laden'
+          clear: 'Datei löschen'
           placeframes: 'Rahmen entlang Strecke platzieren'
           adjustframes: 'Rahmendrehung anpassen'
           overlap: 'Rahmenüberlappung'
@@ -38,12 +40,12 @@ mb:
           readerror: 'Fehler beim Lesen der Datei'
           placed: '%count% Rahmen entlang der Strecke platziert'
           alert:
-            selectfile: 'Bitte wählen Sie zuerst eine KML-Datei aus.'
-            validfile: 'Bitte wählen Sie eine gültige KML-Datei aus.'
-            error: 'Fehler beim Laden der KML-Datei'
+            selectfile: 'Bitte wählen Sie zuerst eine Datei aus.'
+            validfile: 'Bitte wählen Sie eine gültige Datei aus (KML, GeoJSON).'
+            error: 'Fehler beim Laden der Datei'
             readerror: 'Fehler beim Lesen der Datei.'
-            loadfirst: 'Bitte laden Sie zuerst eine KML-Datei.'
-            invalidgeometry: 'Ungültige KML-Geometrie. LineString erwartet.'
+            loadfirst: 'Bitte laden Sie zuerst eine Streckendatei.'
+            invalidgeometry: 'Ungültige Geometrie. LineString erwartet.'
         tracking:
           title: 'Druckrahmen'
           no: 'Nr.'

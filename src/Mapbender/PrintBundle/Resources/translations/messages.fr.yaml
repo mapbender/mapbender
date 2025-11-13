@@ -22,10 +22,12 @@ mb:
       batchprint:
         btn:
           submit: 'Démarrer l''impression par lots'
+        track:
+          upload: 'Télécharger un parcours (KML, GeoJSON)'
         kml:
-          upload: 'Télécharger un fichier KML'
-          load: 'Charger KML'
-          clear: 'Effacer KML'
+          upload: 'Télécharger un parcours (KML, GeoJSON)'
+          load: 'Charger le fichier'
+          clear: 'Effacer le fichier'
           placeframes: 'Placer des cadres le long du parcours'
           adjustframes: 'Ajuster la rotation des cadres'
           overlap: 'Chevauchement des cadres'
@@ -35,12 +37,12 @@ mb:
           readerror: 'Erreur de lecture du fichier'
           placed: '%count% cadres placés le long du parcours'
           alert:
-            selectfile: 'Veuillez d''abord sélectionner un fichier KML.'
-            validfile: 'Veuillez sélectionner un fichier KML valide.'
-            error: 'Erreur lors du chargement du fichier KML'
+            selectfile: 'Veuillez d''abord sélectionner un fichier.'
+            validfile: 'Veuillez sélectionner un fichier valide (KML, GeoJSON).'
+            error: 'Erreur lors du chargement du fichier'
             readerror: 'Erreur de lecture du fichier.'
-            loadfirst: 'Veuillez d''abord charger un fichier KML.'
-            invalidgeometry: 'Géométrie KML invalide. LineString attendu.'
+            loadfirst: 'Veuillez d''abord charger un fichier de parcours.'
+            invalidgeometry: 'Géométrie invalide. LineString attendu.'
         tracking:
           title: 'Cadres d''impression'
           no: 'N°'

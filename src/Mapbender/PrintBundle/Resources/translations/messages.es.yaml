@@ -23,10 +23,12 @@ mb:
       batchprint:
         btn:
           submit: 'Iniciar impresión por lotes'
+        track:
+          upload: 'Cargar recorrido (KML, GeoJSON)'
         kml:
-          upload: 'Cargar archivo KML'
-          load: 'Cargar KML'
-          clear: 'Borrar KML'
+          upload: 'Cargar recorrido (KML, GeoJSON)'
+          load: 'Cargar archivo'
+          clear: 'Borrar archivo'
           placeframes: 'Colocar marcos a lo largo del recorrido'
           adjustframes: 'Ajustar rotación de marcos'
           overlap: 'Superposición de marcos'
@@ -36,12 +38,12 @@ mb:
           readerror: 'Error al leer el archivo'
           placed: '%count% marcos colocados a lo largo del recorrido'
           alert:
-            selectfile: 'Por favor, seleccione primero un archivo KML.'
-            validfile: 'Por favor, seleccione un archivo KML válido.'
-            error: 'Error al cargar el archivo KML'
+            selectfile: 'Por favor, seleccione primero un archivo.'
+            validfile: 'Por favor, seleccione un archivo válido (KML, GeoJSON).'
+            error: 'Error al cargar el archivo'
             readerror: 'Error al leer el archivo.'
-            loadfirst: 'Por favor, cargue primero un archivo KML.'
-            invalidgeometry: 'Geometría KML inválida. Se esperaba LineString.'
+            loadfirst: 'Por favor, cargue primero un archivo de recorrido.'
+            invalidgeometry: 'Geometría inválida. Se esperaba LineString.'
         tracking:
           title: 'Marcos de impresión'
           no: 'No.'

@@ -23,10 +23,14 @@ mb:
       btn:
         batchprint: 'Почати пакетний друк'
       batchprint:
+        btn:
+          submit: 'Почати пакетний друк'
+        track:
+          upload: 'Завантажити маршрут (KML, GeoJSON)'
         kml:
-          upload: 'Завантажити файл KML'
-          load: 'Завантажити KML'
-          clear: 'Очистити KML'
+          upload: 'Завантажити маршрут (KML, GeoJSON)'
+          load: 'Завантажити файл'
+          clear: 'Очистити файл'
           placeframes: 'Розмістити рамки вздовж маршруту'
           adjustframes: 'Налаштувати поворот рамок'
           overlap: 'Перекриття рамок'
@@ -36,12 +40,12 @@ mb:
           readerror: 'Помилка читання файлу'
           placed: 'Розміщено %count% рамок вздовж маршруту'
           alert:
-            selectfile: 'Спочатку виберіть файл KML.'
-            validfile: 'Виберіть дійсний файл KML.'
-            error: 'Помилка завантаження файлу KML'
+            selectfile: 'Спочатку виберіть файл.'
+            validfile: 'Виберіть дійсний файл (KML, GeoJSON).'
+            error: 'Помилка завантаження файлу'
             readerror: 'Помилка читання файлу.'
-            loadfirst: 'Спочатку завантажте файл KML.'
-            invalidgeometry: 'Недійсна геометрія KML. Очікується LineString.'
+            loadfirst: 'Спочатку завантажте файл маршруту.'
+            invalidgeometry: 'Недійсна геометрія. Очікується LineString.'
         tracking:
           title: 'Рамки друку'
           no: '№'

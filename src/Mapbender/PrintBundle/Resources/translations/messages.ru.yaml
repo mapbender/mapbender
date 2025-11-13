@@ -25,10 +25,14 @@ mb:
       btn:
         batchprint: 'Начать пакетную печать'
       batchprint:
+        btn:
+          submit: 'Начать пакетную печать'
+        track:
+          upload: 'Загрузить маршрут (KML, GeoJSON)'
         kml:
-          upload: 'Загрузить файл KML'
-          load: 'Загрузить KML'
-          clear: 'Очистить KML'
+          upload: 'Загрузить маршрут (KML, GeoJSON)'
+          load: 'Загрузить файл'
+          clear: 'Очистить файл'
           placeframes: 'Разместить рамки вдоль маршрута'
           adjustframes: 'Настроить поворот рамок'
           overlap: 'Перекрытие рамок'
@@ -38,12 +42,12 @@ mb:
           readerror: 'Ошибка чтения файла'
           placed: 'Размещено %count% рамок вдоль маршрута'
           alert:
-            selectfile: 'Сначала выберите файл KML.'
-            validfile: 'Выберите действительный файл KML.'
-            error: 'Ошибка загрузки файла KML'
+            selectfile: 'Сначала выберите файл.'
+            validfile: 'Выберите действительный файл (KML, GeoJSON).'
+            error: 'Ошибка загрузки файла'
             readerror: 'Ошибка чтения файла.'
-            loadfirst: 'Сначала загрузите файл KML.'
-            invalidgeometry: 'Недопустимая геометрия KML. Ожидается LineString.'
+            loadfirst: 'Сначала загрузите файл маршрута.'
+            invalidgeometry: 'Недопустимая геометрия. Ожидается LineString.'
         tracking:
           title: 'Рамки печати'
           no: '№'

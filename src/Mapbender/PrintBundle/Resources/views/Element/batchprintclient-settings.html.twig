@@ -5,14 +5,14 @@
     {{ parent() }}
     
     {% if enableKmlUpload %}
-    {# KML File Upload #}
+    {# Geospatial File Upload (KML, GeoJSON) #}
     <div class="form-group no-gutters kml-upload -fn-kml-upload">
-        <label class="kml-upload-label">{{ 'mb.print.printclient.batchprint.kml.upload' | trans }}</label>
+        <label class="kml-upload-label">{{ 'mb.print.printclient.batchprint.track.upload' | trans }}</label>
         <div>
             <div>
                 <input type="file" 
                        name="kml_file" 
-                       accept=".kml,application/vnd.google-earth.kml+xml"
+                       accept=".kml,.geojson,.json,application/vnd.google-earth.kml+xml,application/geo+json"
                        class="kml-file-input -fn-kml-file-input">
             </div>
             <div class="kml-buttons -fn-kml-buttons">

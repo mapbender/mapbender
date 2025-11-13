@@ -23,10 +23,14 @@ mb:
       btn:
         batchprint: 'Iniciar impressão em lote'
       batchprint:
+        btn:
+          submit: 'Iniciar impressão em lote'
+        track:
+          upload: 'Carregar percurso (KML, GeoJSON)'
         kml:
-          upload: 'Carregar arquivo KML'
-          load: 'Carregar KML'
-          clear: 'Limpar KML'
+          upload: 'Carregar percurso (KML, GeoJSON)'
+          load: 'Carregar arquivo'
+          clear: 'Limpar arquivo'
           placeframes: 'Colocar molduras ao longo do percurso'
           adjustframes: 'Ajustar rotação das molduras'
           overlap: 'Sobreposição de molduras'
@@ -36,12 +40,12 @@ mb:
           readerror: 'Erro ao ler o arquivo'
           placed: '%count% molduras colocadas ao longo do percurso'
           alert:
-            selectfile: 'Selecione primeiro um arquivo KML.'
-            validfile: 'Selecione um arquivo KML válido.'
-            error: 'Erro ao carregar o arquivo KML'
+            selectfile: 'Selecione primeiro um arquivo.'
+            validfile: 'Selecione um arquivo válido (KML, GeoJSON).'
+            error: 'Erro ao carregar o arquivo'
             readerror: 'Erro ao ler o arquivo.'
-            loadfirst: 'Carregue primeiro um arquivo KML.'
-            invalidgeometry: 'Geometria KML inválida. Esperado LineString.'
+            loadfirst: 'Carregue primeiro um arquivo de percurso.'
+            invalidgeometry: 'Geometria inválida. Esperado LineString.'
         tracking:
           title: 'Molduras de impressão'
           no: 'Nº'

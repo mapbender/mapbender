@@ -51,7 +51,7 @@
             // Change submit button text
             $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.batchprint.btn.submit'));
             
-            // Setup KML file upload handlers
+            // Setup geospatial file upload handlers
             this._setupKmlUploadHandlers();
             
             // Setup delete all frames button
@@ -1079,18 +1079,18 @@
         },
 
         /**
-         * Setup KML file upload handlers
+         * Setup geospatial file upload handlers (KML, GeoJSON, etc.)
          */
         _setupKmlUploadHandlers: function() {
             var self = this;
             
-            // File input change handler - automatically load KML when file is selected
+            // File input change handler - automatically load geospatial file when selected
             $('.-fn-kml-file-input', this.element).on('change', function() {
                 var file = this.files && this.files[0];
                 
                 if (file) {
-                    // Automatically load the KML file
-                    self._loadKmlFile();
+                    // Automatically load the geospatial file
+                    self._loadGeospatialFile();
                 } else {
                     // No file selected - hide buttons and clear status
                     $('.-fn-kml-status', self.element).text('');
@@ -1099,7 +1099,7 @@
                 }
             });
             
-            // Clear KML button handler
+            // Clear file button handler
             $('.-fn-clear-kml-button', this.element).on('click', function() {
                 self._clearKmlLayer();
             });
@@ -1111,9 +1111,40 @@
         },
         
         /**
-         * Load and display KML file on map
+         * Get appropriate OpenLayers format parser based on file extension
+         * @param {string} filename - Name of the file
+         * @returns {Object} Object with format parser and readMethod ('text' or 'arraybuffer'), or null if unsupported
          */
-        _loadKmlFile: function() {
+        _getFormatParser: function(filename) {
+            var extension = filename.split('.').pop().toLowerCase();
+            
+            switch (extension) {
+                case 'kml':
+                    return {
+                        parser: new ol.format.KML({
+                            extractStyles: true,
+                            showPointNames: false
+                        }),
+                        readMethod: 'text'
+                    };
+                    
+                case 'geojson':
+                case 'json':
+                    return {
+                        parser: new ol.format.GeoJSON(),
+                        readMethod: 'text'
+                    };
+                    
+                default:
+                    // Unsupported format
+                    return null;
+            }
+        },
+        
+        /**
+         * Load and display geospatial file on map (KML, GeoJSON, etc.)
+         */
+        _loadGeospatialFile: function() {
             var $fileInput = $('.-fn-kml-file-input', this.element);
             var file = $fileInput[0].files && $fileInput[0].files[0];
             
@@ -1122,8 +1153,9 @@
                 return;
             }
             
-            // Validate file extension
-            if (!file.name.match(/\.kml$/i)) {
+            // Get format parser for file type
+            var formatInfo = this._getFormatParser(file.name);
+            if (!formatInfo) {
                 alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.validfile'));
                 return;
             }
@@ -1133,12 +1165,12 @@
             
             reader.onload = function(e) {
                 try {
-                    self._parseAndDisplayKml(e.target.result);
+                    self._parseAndDisplayGeospatialFile(e.target.result, formatInfo.parser, file.name);
                     $('.-fn-kml-status', self.element)
                         .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
                         .addClass('success')
                         .removeClass('error');
-                    // Show all KML-related buttons (Clear, Place Frames, Adjust checkbox)
+                    // Show all file-related buttons (Clear, Place Frames, Adjust checkbox)
                     $('.-fn-kml-buttons', self.element).addClass('show');
                     $('.-fn-place-frames-button', self.element).addClass('show');
                 } catch (error) {
@@ -1162,48 +1194,50 @@
                 $('.-fn-place-frames-button', self.element).removeClass('show');
             };
             
-            reader.readAsText(file);
+            // Read file based on format requirements
+            if (formatInfo.readMethod === 'arraybuffer') {
+                reader.readAsArrayBuffer(file);
+            } else {
+                reader.readAsText(file);
+            }
         },
         
         /**
-         * Parse KML content and display on map
+         * Parse geospatial file content and display on map (format-agnostic)
+         * @param {string} fileContent - The file content as text
+         * @param {ol.format.Feature} format - OpenLayers format parser
+         * @param {string} filename - Original filename for error messages
          */
-        _parseAndDisplayKml: function(kmlContent) {
+        _parseAndDisplayGeospatialFile: function(fileContent, format, filename) {
             var map = this.map.getModel().olMap;
             var mapProjection = map.getView().getProjection();
             
-            // Create KML format parser
-            var format = new ol.format.KML({
-                extractStyles: true,
-                showPointNames: false
-            });
-            
-            // Parse KML features
-            var features = format.readFeatures(kmlContent, {
+            // Parse features using provided format parser
+            var features = format.readFeatures(fileContent, {
                 dataProjection: 'EPSG:4326',
                 featureProjection: mapProjection
             });
             
             if (!features || features.length === 0) {
-                throw new Error('No features found in KML file');
+                throw new Error('No features found in file');
             }
             
             // Validate: must contain exactly one feature
             if (features.length !== 1) {
-                throw new Error('KML file must contain exactly one feature (found ' + features.length + ')');
+                throw new Error('File must contain exactly one feature (found ' + features.length + ')');
             }
             
             // Validate: feature must be a LineString
             var geometry = features[0].getGeometry();
             if (!geometry || geometry.getType() !== 'LineString') {
                 var foundType = geometry ? geometry.getType() : 'no geometry';
-                throw new Error('KML file must contain a LineString (found ' + foundType + ')');
+                throw new Error('File must contain a LineString (found ' + foundType + ')');
             }
             
-            // Clear existing KML layer if present
+            // Clear existing geospatial layer if present
             this._clearKmlLayer();
             
-            // Create new vector layer for KML features
+            // Create new vector layer for geospatial features
             this.kmlLayer = new ol.layer.Vector({
                 source: new ol.source.Vector({
                     features: features
@@ -1248,7 +1282,7 @@
         },
         
         /**
-         * Clear KML layer from map
+         * Clear geospatial layer from map
          */
         _clearKmlLayer: function() {
             if (this.kmlLayer) {
@@ -1268,7 +1302,7 @@
         },
         
         /**
-         * Place print frames along the KML track
+         * Place print frames along the geospatial track
          */
         _placeFramesAlongTrack: function() {
             if (!this.kmlFeatures || this.kmlFeatures.length === 0) {

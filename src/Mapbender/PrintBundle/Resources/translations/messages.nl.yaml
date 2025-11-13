@@ -22,10 +22,12 @@ mb:
       batchprint:
         btn:
           submit: 'Start batchafdrukken'
+        track:
+          upload: 'Traject uploaden (KML, GeoJSON)'
         kml:
-          upload: 'KML-bestand uploaden'
-          load: 'KML laden'
-          clear: 'KML wissen'
+          upload: 'Traject uploaden (KML, GeoJSON)'
+          load: 'Bestand laden'
+          clear: 'Bestand wissen'
           placeframes: 'Plaats frames langs het traject'
           adjustframes: 'Framerotatie aanpassen'
           overlap: 'Frame-overlapping'
@@ -35,12 +37,12 @@ mb:
           readerror: 'Fout bij het lezen van het bestand'
           placed: '%count% frames geplaatst langs het traject'
           alert:
-            selectfile: 'Selecteer eerst een KML-bestand.'
-            validfile: 'Selecteer een geldig KML-bestand.'
-            error: 'Fout bij het laden van het KML-bestand'
+            selectfile: 'Selecteer eerst een bestand.'
+            validfile: 'Selecteer een geldig bestand (KML, GeoJSON).'
+            error: 'Fout bij het laden van het bestand'
             readerror: 'Fout bij het lezen van het bestand.'
-            loadfirst: 'Laad eerst een KML-bestand.'
-            invalidgeometry: 'Ongeldige KML-geometrie. LineString verwacht.'
+            loadfirst: 'Laad eerst een trajectbestand.'
+            invalidgeometry: 'Ongeldige geometrie. LineString verwacht.'
         tracking:
           title: 'Afdrukframes'
           no: 'Nr.'

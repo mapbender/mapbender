@@ -24,10 +24,12 @@ mb:
         title: 'Title'
         btn:
           submit: 'Start Batch Print'
+        track:
+          upload: 'Upload Track (KML, GeoJSON)'
         kml:
-          upload: 'Upload KML File'
-          load: 'Load KML'
-          clear: 'Clear KML'
+          upload: 'Upload Track (KML, GeoJSON)'
+          load: 'Load File'
+          clear: 'Clear File'
           placeframes: 'Place Frames Along Track'
           adjustframes: 'Adjust Frame Rotation'
           overlap: 'Frame Overlap'
@@ -37,12 +39,12 @@ mb:
           readerror: 'Error reading file'
           placed: 'Placed %count% frames along track'
           alert:
-            selectfile: 'Please select a KML file first.'
-            validfile: 'Please select a valid KML file.'
-            error: 'Error loading KML file'
+            selectfile: 'Please select a file first.'
+            validfile: 'Please select a valid file (KML, GeoJSON).'
+            error: 'Error loading file'
             readerror: 'Error reading file.'
-            loadfirst: 'Please load a KML file first.'
-            invalidgeometry: 'Invalid KML geometry. Expected LineString.'
+            loadfirst: 'Please load a track file first.'
+            invalidgeometry: 'Invalid geometry. Expected LineString.'
         tracking:
           title: 'Print Frames'
           no: 'No.'
