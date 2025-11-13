@@ -7,11 +7,10 @@
     {% if enableKmlUpload %}
     {# KML File Upload #}
     <div class="form-group no-gutters kml-upload -fn-kml-upload">
-        <label for="kml-file-input">{{ 'mb.print.printclient.batchprint.kml.upload' | trans }}</label>
+        <label class="kml-upload-label">{{ 'mb.print.printclient.batchprint.kml.upload' | trans }}</label>
         <div>
             <div>
                 <input type="file" 
-                       id="kml-file-input" 
                        name="kml_file" 
                        accept=".kml,application/vnd.google-earth.kml+xml"
                        class="kml-file-input -fn-kml-file-input">
@@ -25,24 +24,22 @@
                         class="button kml-place-frames-button -fn-place-frames-button">
                     {{ 'mb.print.printclient.batchprint.kml.placeframes' | trans }}
                 </button>
-                <label style="display: inline-flex; align-items: center; margin-left: 12px;">
-                    <input type="checkbox" class="-fn-adjust-frames-checkbox" style="margin-right: 6px;">
+                <label class="kml-adjust-label">
+                    <input type="checkbox" class="kml-adjust-checkbox -fn-adjust-frames-checkbox">
                     {{ 'mb.print.printclient.batchprint.kml.adjustframes' | trans }}
                 </label>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                <label for="frame-overlap-input" style="margin: 0;">
+            <div class="kml-overlap-section">
+                <label class="kml-overlap-label">
                     {{ 'mb.print.printclient.batchprint.kml.overlap' | trans }}
                 </label>
                 <input type="number" 
-                       id="frame-overlap-input" 
                        name="frame_overlap" 
-                       class="-fn-frame-overlap-input"
+                       class="kml-overlap-input -fn-frame-overlap-input"
                        value="10"
                        min="0"
                        max="100"
-                       step="1"
-                       style="width: 60px;">
+                       step="1">
                 <span>%</span>
             </div>
         </div>

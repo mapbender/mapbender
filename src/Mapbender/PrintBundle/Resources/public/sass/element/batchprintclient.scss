@@ -25,6 +25,11 @@
       max-width: 100%;
     }
 
+    .kml-file-input {
+      width: 100%;
+      max-width: 100%;
+    }
+
     .kml-buttons {
       display: none;
       gap: 8px;
@@ -48,7 +53,34 @@
       }
     }
 
+    // Adjust frames checkbox
+    .kml-adjust-label {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 12px;
+
+      .kml-adjust-checkbox {
+        margin-right: 6px;
+      }
+    }
+
     // Frame overlap section
+    .kml-overlap-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+
+      .kml-overlap-label {
+        margin: 0;
+      }
+
+      .kml-overlap-input {
+        width: 60px;
+      }
+    }
+
+    // Legacy structural selectors (can be removed once Twig is fully updated)
     > div > div:last-child {
       display: flex;
       align-items: center;
@@ -64,7 +96,6 @@
       }
     }
 
-    // Adjust frames checkbox
     label {
       display: inline-flex;
       align-items: center;
