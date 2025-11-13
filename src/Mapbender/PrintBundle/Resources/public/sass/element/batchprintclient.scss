@@ -1,9 +1,10 @@
 // BatchPrintClient specific styles
 // Only includes styles that were moved from inline CSS in JS and Twig files
 
+.mb-element-printclient,
 .mb-element-batchprintclient {
   // KML Upload section
-  .-fn-kml-upload {
+  .kml-upload {
     display: block;
     border-top: 1px solid #ccc;
     padding-top: 10px;
@@ -19,12 +20,12 @@
       }
     }
 
-    .-fn-kml-file-input {
+    input[type="file"] {
       width: 100%;
       max-width: 100%;
     }
 
-    .-fn-kml-buttons {
+    .kml-buttons {
       display: none;
       gap: 8px;
       flex-wrap: wrap;
@@ -39,7 +40,7 @@
       }
     }
 
-    .-fn-place-frames-button {
+    .kml-place-frames-button {
       display: none;
 
       &.show {
@@ -47,7 +48,34 @@
       }
     }
 
-    .-fn-kml-status {
+    // Frame overlap section
+    > div > div:last-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+
+      label {
+        margin: 0;
+      }
+
+      input[type="number"] {
+        width: 60px;
+      }
+    }
+
+    // Adjust frames checkbox
+    label {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 12px;
+
+      input[type="checkbox"] {
+        margin-right: 6px;
+      }
+    }
+
+    .kml-status {
       display: block;
       margin-top: 5px;
       color: #666;
@@ -63,7 +91,7 @@
   }
 
   // Frame tracking table section
-  .-fn-frame-table {
+  .frame-table {
     display: block;
     border-top: 1px solid #ccc;
     padding-top: 10px;
@@ -81,7 +109,7 @@
       }
     }
 
-    .-fn-delete-all-frames {
+    .delete-all-frames {
       padding: 4px 12px;
       display: none;
 
@@ -89,30 +117,37 @@
         display: inline-block !important;
       }
     }
-  }
 
-  .-fn-table-scroll-wrapper {
-    max-height: 150px;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-
-  .-fn-frame-tracking-table {
-    width: 100%;
-
-    thead th {
-      text-align: left;
+    > div:last-of-type {
+      max-height: 150px;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
-    tbody {
-      td:last-child {
-        text-align: right;
+    table {
+      width: 100%;
+
+      thead th {
+        text-align: left;
+
+        &:last-child {
+          text-align: right;
+        }
       }
 
-      tr {
-        &:hover,
-        &.highlighted {
-          background-color: #e6f2ff;
+      tbody {
+        td:last-child {
+          text-align: right;
+        }
+
+        tr {
+          transition: background-color 0.2s ease;
+
+          &:hover,
+          &.highlighted {
+            background-color: #ffeb99;
+            cursor: pointer;
+          }
         }
       }
     }

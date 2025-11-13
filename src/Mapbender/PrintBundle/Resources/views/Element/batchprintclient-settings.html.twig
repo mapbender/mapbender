@@ -6,26 +6,23 @@
     
     {% if enableKmlUpload %}
     {# KML File Upload #}
-    <div class="form-group no-gutters kml-upload -fn-kml-upload" style="display: block; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; margin-bottom: 15px;">
+    <div class="form-group no-gutters kml-upload -fn-kml-upload">
         <label for="kml-file-input">{{ 'mb.print.printclient.batchprint.kml.upload' | trans }}</label>
-        <div style="display: block; width: 100%;">
-            <div style="margin-bottom: 8px;">
+        <div>
+            <div>
                 <input type="file" 
                        id="kml-file-input" 
                        name="kml_file" 
                        accept=".kml,application/vnd.google-earth.kml+xml"
-                       class="-fn-kml-file-input"
-                       style="width: 100%; max-width: 100%;">
+                       class="kml-file-input -fn-kml-file-input">
             </div>
-            <div style="display: none; gap: 8px; flex-wrap: wrap;" class="-fn-kml-buttons">
+            <div class="kml-buttons -fn-kml-buttons">
                 <button type="button" 
-                        class="button -fn-clear-kml-button"
-                        style="white-space: nowrap; padding: 4px 12px;">
+                        class="button -fn-clear-kml-button">
                     {{ 'mb.print.printclient.batchprint.kml.clear' | trans }}
                 </button>
                 <button type="button" 
-                        class="button -fn-place-frames-button"
-                        style="white-space: nowrap; padding: 4px 12px;">
+                        class="button kml-place-frames-button -fn-place-frames-button">
                     {{ 'mb.print.printclient.batchprint.kml.placeframes' | trans }}
                 </button>
                 <label style="display: inline-flex; align-items: center; margin-left: 12px;">
@@ -49,30 +46,29 @@
                 <span>%</span>
             </div>
         </div>
-        <small class="-fn-kml-status" style="display: block; margin-top: 5px; color: #666;"></small>
+        <small class="kml-status -fn-kml-status"></small>
     </div>
     {% endif %}
     
     {# Frame tracking table #}
-    <div class="form-group no-gutters frame-table -fn-frame-table" style="display: block; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h4 style="margin: 0;">{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
+    <div class="form-group no-gutters frame-table -fn-frame-table">
+        <div>
+            <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
             <button type="button" 
-                    class="button -fn-delete-all-frames"
-                    style="padding: 4px 12px; display: none;">
+                    class="button delete-all-frames -fn-delete-all-frames">
                 {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
             </button>
         </div>
-        <div style="max-height: 150px; overflow-y: auto; overflow-x: hidden;">
-            <table style="width: 100%;">
+        <div>
+            <table>
                 <thead>
                     <tr>
-                        <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.no' | trans }}</th>
-                        <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.scale' | trans }}</th>
-                        <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
-                        <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>
-                        <th style="text-align: left;">{{ 'mb.print.printclient.batchprint.tracking.rotation' | trans }}</th>
-                        <th style="text-align: right;">{{ 'mb.print.printclient.batchprint.tracking.delete' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.no' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.scale' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.rotation' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.delete' | trans }}</th>
                     </tr>
                 </thead>
                 <tbody>
