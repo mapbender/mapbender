@@ -94,10 +94,11 @@
         </service>
         <service id="mapbender.element.ApplicationSwitcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
             <tag name="mapbender.element" />
-            <argument type="service" id="form.factory" />
             <argument type="service" id="doctrine" />
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="router" />
+            <argument>%kernel.project_dir%</argument>
         </service>
         <service id="mapbender.element.AboutDialog" class="Mapbender\CoreBundle\Element\AboutDialog">
             <tag name="mapbender.element" />

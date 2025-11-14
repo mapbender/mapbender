@@ -1,1 +1,30 @@
-{{ form_widget(form) }}
+{% for group, apps in config.applications %}
+    {% if group != '__nogroup__' %}
+    <h3 class="mb-3 text-center">{{ group }}</h3>
+    {% else %}
+        <hr>
+    {% endif %}
+    <div class="row mb-3">
+        {% for slug, app in apps %}
+            <div class="col">
+                <a href="{{ app.url }}">
+                    <div class="card">
+                        {% if app.imgUrl != false %}
+                        <img src="{{ app.imgUrl }}" class="card-img-top" alt="{{ app.title }}">
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grey rectangle">
+                            <rect x="0" y="0" width="100%" height="100%" fill="#ccc" />
+                        </svg>
+                        {% endif %}
+                        <div class="card-body">
+                            <p class="card-text text-center">{{ app.title }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% if loop.index % 3 == 0 %}
+                </div><div class="row mb-3">
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endfor %}
