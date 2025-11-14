@@ -52,12 +52,6 @@
             <tag name="form.type" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
         </service>
-        <service id="mapbender.form_type.application_choice" class="Mapbender\ManagerBundle\Form\Type\ApplicationChoiceType">
-            <tag name="form.type" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.application.yaml_entity_repository" />
-            <argument type="service" id="security.authorization_checker" />
-        </service>
         <service id="mapbender.form_type.source_selection" class="Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType">
             <tag name="form.type" />
         </service>
