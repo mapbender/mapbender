@@ -65,7 +65,9 @@
                 }
                 notifyElements(panel, true);
                 currentPanel = panel;
-                var activeIndex = $buttons.index(this);
+                // Calculate index considering only non-inline buttons
+                var $nonInlineButtons = $buttons.not('.inline');
+                var activeIndex = $nonInlineButtons.index(this);
                 updateActiveIcon($sidePane, activeIndex);
             }
         }
@@ -115,7 +117,9 @@
             }
             if (activatedPanel) {
                 notifyElements(activatedPanel, true);
-                var activeIndex = $headers.index(activatedHeader);
+                // Calculate index considering only non-inline headers
+                var $nonInlineHeaders = $headers.not('.inline');
+                var activeIndex = $nonInlineHeaders.index(activatedHeader);
                 updateActiveIcon($sidePane, activeIndex);
             }
         });
@@ -171,8 +175,9 @@
                 });
                 // Activate the selected panel
                 notifyElements(activatedPanel, true);
-                // Get the index of the active list item
-                var activeIndex = $headers.index(this);
+                // Get the index of the active list item (considering only non-inline items)
+                var $nonInlineHeaders = $headers.not('.inline');
+                var activeIndex = $nonInlineHeaders.index(this);
                 updateActiveIcon($(this).closest('.sidePane'), activeIndex);
             }
         });
@@ -218,10 +223,10 @@
         // Get all visible elements in the sidepane
         var $elementIcons = $sidePane.find('.toggleSideBar .element-icons');
 
-        // Get all tab/accordion/list-item elements that are visible
-        var $tabButtons = $sidePane.find('.tabs > .tab:visible');
-        var $accordionButtons = $sidePane.find('.accordionContainer > .accordion:visible');
-        var $listItems = $sidePane.find('.list-group-item:visible');
+        // Get all tab/accordion/list-item elements that are visible (excluding inline elements)
+        var $tabButtons = $sidePane.find('.tabs > .tab:visible:not(.inline)');
+        var $accordionButtons = $sidePane.find('.accordionContainer > .accordion:visible:not(.inline)');
+        var $listItems = $sidePane.find('.list-group-item:visible:not(.inline)');
 
         var $allButtons = $tabButtons.add($accordionButtons).add($listItems);
 
