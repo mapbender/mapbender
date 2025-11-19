@@ -596,8 +596,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
         }
 
         &:focus {
-          outline: 2px solid rgba(255, 255, 255, 0.5);
-          outline-offset: -2px;
+              outline-offset: -2px;
         }
       }
     }

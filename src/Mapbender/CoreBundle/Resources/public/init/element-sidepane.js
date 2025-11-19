@@ -1,4 +1,5 @@
 ((function($) {
+    var lastFocusedListItem = null; // Global tracking of last focused list item
     function updateResponsive($buttons) {
         var $activeButton = $buttons.filter('.active').first();
         if ($activeButton.length && !$($activeButton).is(':visible')) {
@@ -141,10 +142,152 @@
             return panelId && $panels.filter('#' + panelId + ':first').get(0);
         }
 
+        function getFocusableElements(container) {
+            // Get all potentially focusable elements
+            var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
+            
+            // Filter out non-first radio buttons in groups (only count first radio per name)
+            var seenRadioNames = {};
+            return $allElements.filter(function() {
+                var $el = $(this);
+                if ($el.attr('type') === 'radio') {
+                    var name = $el.attr('name');
+                    if (seenRadioNames[name]) {
+                        return false; // Skip non-first radio buttons in this group
+                    }
+                    seenRadioNames[name] = true;
+                }
+                return true;
+            });
+        }
+
+        function isLastFocusableElement(container, currentElement) {
+            // Check if currentElement is the last effectively focusable element
+            // This accounts for radio button groups where only the first is in the tab order
+            var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
+            
+            if ($allElements.length === 0) return false;
+            
+            var $current = $(currentElement);
+            var currentIndex = $allElements.index($current);
+            
+            if (currentIndex === -1) return false; // Not found in container
+            
+            // Check if there are any focusable elements after current one
+            var hasElementsAfter = false;
+            for (var i = currentIndex + 1; i < $allElements.length; i++) {
+                var $el = $allElements.eq(i);
+                // Skip elements that are in the same radio group but not the first
+                if ($el.attr('type') === 'radio') {
+                    var radioName = $el.attr('name');
+                    var $firstInGroup = $allElements.filter('[type="radio"][name="' + radioName + '"]').first();
+                    if ($firstInGroup[0] === $el[0]) {
+                        // This is the first radio in the group, so it counts as a focusable element
+                        hasElementsAfter = true;
+                        break;
+                    }
+                } else {
+                    // Not a radio button, counts as focusable
+                    hasElementsAfter = true;
+                    break;
+                }
+            }
+            
+            return !hasElementsAfter; // Return true if there are no focusable elements after current
+        }
+
+        function focusFirstFocusableElement(container) {
+            if (!container) return;
+            var $focusable = getFocusableElements(container).first();
+            if ($focusable.length) {
+                $focusable.focus();
+            }
+        }
+
+        function setupFocusTrap(container) {
+            if (!container) return;
+            var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+            var $toggleSideBar = $(container).closest('.sidePane').find('.toggleSideBar');
+            
+            // Use event delegation to capture Tab events on any focusable element within the container
+            $(container).on('keydown.focustrap', focusableSelectors, function(event) {
+                if (event.key !== 'Tab') return;
+
+                var $focusableElements = getFocusableElements(container);
+                if ($focusableElements.length === 0) return;
+
+                var $firstElement = $focusableElements.first();
+                var $currentElement = $(document.activeElement);
+
+                if (event.shiftKey) {
+                    // Shift+Tab on first element -> focus last element
+                    if ($currentElement[0] === $firstElement[0]) {
+                        event.preventDefault(); 
+                        // Find the last effectively focusable element
+                        var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+                        var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
+                        if ($allElements.length > 0) {
+                            $allElements.last().focus();
+                        }
+                    }
+                } else {
+                    // Tab on last element -> focus toggleSideBar (if available)
+                    if (isLastFocusableElement(container, $currentElement[0])) {
+                        event.preventDefault();
+                        if ($toggleSideBar.length) {
+                            $toggleSideBar.focus();
+                        } else {
+                            $firstElement.focus();
+                        }
+                    }
+                }
+            });
+            
+            // Add handler to toggleSideBar to handle Shift+Tab back to last element
+            if ($toggleSideBar.length) {
+                $toggleSideBar.on('keydown.toggletrap', function(event) {
+                    if (event.key !== 'Tab' || !event.shiftKey) return;
+                    
+                    // Shift+Tab on toggleSideBar -> focus last element of container
+                    var $focusableElements = getFocusableElements(container);
+                    event.preventDefault();
+                    if ($focusableElements.length) {
+                        $focusableElements.last().focus();
+                    }
+                });
+            }
+        }
+
+        function removeFocusTrap(container) {
+            if (!container) return;
+            var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+            $(container).off('keydown.focustrap', focusableSelectors);
+            // Also remove the toggletrap handler from toggleSideBar
+            $(container).closest('.sidePane').find('.toggleSideBar').off('keydown.toggletrap');
+        }
+
         $headers.attr('tabindex', '0');
         $headers.on('keydown', function(event) {
             if (event.key === 'Enter') {
+                // Store the currently focused element before opening the panel
+                lastFocusedListItem = this;
                 $(this).click();
+            } else if (event.key === 'Tab') {
+                // Tab on last list item should go to toggleSideBar
+                var $sidePane = $(this).closest('.sidePane');
+                var $toggleSideBar = $sidePane.find('.toggleSideBar');
+                var $lastHeader = $headers.last();
+                
+                if (!event.shiftKey && this === $lastHeader[0] && $toggleSideBar.length) {
+                    event.preventDefault();
+                    $toggleSideBar.focus();
+                } else if (event.shiftKey && this === $headers[0] && $toggleSideBar.length) {
+                    // Shift+Tab on first list item should go to toggleSideBar (wrap around)
+                    event.preventDefault();
+                    $toggleSideBar.focus();
+                }
             }
         });
 
@@ -157,9 +300,12 @@
 
             if (deactivatedPanel) {
                 notifyElements(deactivatedPanel, false);
+                removeFocusTrap(deactivatedPanel);
             }
             if (activatedPanel) {
                 notifyElements(activatedPanel, true);
+                focusFirstFocusableElement(activatedPanel);
+                setupFocusTrap(activatedPanel);
             }
         });
 
@@ -171,16 +317,52 @@
                 $panels.each(function() {
                     if (this !== activatedPanel) {
                         notifyElements(this, false);
+                        removeFocusTrap(this);
                     }
                 });
                 // Activate the selected panel
                 notifyElements(activatedPanel, true);
+                
+                // Add active class to trigger CSS animation
+                $(activatedPanel).addClass('active');
+                
+                // Add list-shifted class to listContainer to shift the list view
+                var $listContainer = $(activatedPanel).closest('.sideContent').find('.listContainer');
+                $listContainer.addClass('list-shifted');
+                
+                // Wait for animation to complete before setting focus
+                var transitionHandler = function() {
+                    activatedPanel.removeEventListener('transitionend', transitionHandler);
+                    focusFirstFocusableElement(activatedPanel);
+                    setupFocusTrap(activatedPanel);
+                };
+                activatedPanel.addEventListener('transitionend', transitionHandler);
+                
+                // Fallback in case transitionend doesn't fire (e.g., if transition is disabled)
+                setTimeout(function() {
+                    focusFirstFocusableElement(activatedPanel);
+                    setupFocusTrap(activatedPanel);
+                }, 350);
+                
                 // Get the index of the active list item (considering only non-inline items)
                 var $nonInlineHeaders = $headers.not('.inline');
                 var activeIndex = $nonInlineHeaders.index(this);
                 updateActiveIcon($(this).closest('.sidePane'), activeIndex);
             }
         });
+
+        // Add Shift+Tab handler to toggleSideBar to return focus to list items
+        var $sidePane = $headers.first().closest('.sidePane');
+        var $toggleSideBar = $sidePane.find('.toggleSideBar');
+        if ($toggleSideBar.length) {
+            $toggleSideBar.on('keydown.listgroup-toggle', function(event) {
+                if (event.key === 'Tab' && event.shiftKey) {
+                    // Shift+Tab on toggleSideBar -> focus last list item
+                    event.preventDefault();
+                    $headers.last().focus();
+                }
+            });
+        }
 
         window.addEventListener('resize', function() {
             // Switch active panel if screen size change caused current active panel to visually disappear
@@ -189,6 +371,62 @@
         // Also select a different active panel if default active panel is already invisible on initialization
         updateResponsive($headers);
     }
+
+    // Handle back button clicks and keyboard events
+    $(document).on('click keydown', '.list-back-btn', function(event) {
+        // Only handle clicks and Enter key
+        if (event.type === 'keydown' && event.key !== 'Enter') {
+            return;
+        }
+        if (event.type === 'keydown') {
+            event.preventDefault();
+        }
+
+        var $backBtn = $(this);
+        var $container = $backBtn.closest('.container-list-group-item');
+        var containerId = $container.attr('id');
+        
+        if (containerId) {
+            // Find the corresponding list-group-item by parsing the ID
+            var correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
+            var $correspondingItem = $('body').find('#' + correspondingItemId);
+            
+            // Find the listContainer and remove the list-shifted class
+            var $listContainer = $container.closest('.sideContent').find('.listContainer');
+            $listContainer.removeClass('list-shifted');
+            
+            // Remove active class from container to trigger animation back
+            $container.removeClass('active');
+            
+            // Notify elements that the container is being deactivated
+            notifyElements($container.get(0), false);
+            
+            // Remove focus trap from the closing container
+            var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+            $container.find(focusableSelectors).off('keydown.focustrap');
+            
+            // Focus management after transition completes
+            var focusAfterTransition = function() {
+                $container.get(0).removeEventListener('transitionend', focusAfterTransition);
+                
+                // Try to restore lastFocusedListItem, otherwise focus the corresponding item
+                if (lastFocusedListItem && $(lastFocusedListItem).closest('.list-group').length) {
+                    $(lastFocusedListItem).focus();
+                    lastFocusedListItem = null;
+                } else if ($correspondingItem.length) {
+                    $correspondingItem.focus();
+                }
+            };
+            
+            // Set up transition listener
+            if ($container.length) {
+                $container.get(0).addEventListener('transitionend', focusAfterTransition);
+                
+                // Fallback timeout
+                setTimeout(focusAfterTransition, 350);
+            }
+        }
+    });
 
     function processSidePane(node) {
         // Generate unified Element signals independent of sidepane organization
@@ -307,6 +545,14 @@
         updateToggleButtonIcons($btn);
 
         e.stopPropagation();
+    });
+
+    $(document).on('keydown', '.sidePane .toggleSideBar', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).click();
+        }
     });
 
     // Listen for back button event to deactivate elements
