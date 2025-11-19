@@ -1,3 +1,6 @@
+## next bugfix release
+* [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
+
 ## v4.2.3
 Bugfixes:
 * [Legend] Fix legend urls within a style were not proxified ([#PR1787](https://github.com/mapbender/mapbender/pull/1787))
