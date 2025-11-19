@@ -20,7 +20,7 @@
                 self.updateHighlights();
             });
             this.updateHighlights();
-            if (this.element.parent(".toolbar").length) {
+            if (this.$element.parent(".toolbar").length) {
                 this.$element.on('mouseover click', '.basesourcegroup', (evt) => {
                     const $group = $(evt.target).closest('.basesourcegroup');
                     if (evt.type === 'click') {

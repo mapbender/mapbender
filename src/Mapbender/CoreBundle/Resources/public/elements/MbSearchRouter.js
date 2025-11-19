@@ -266,7 +266,7 @@
          * Start a search, but only after successful form validation
          */
         _search() {
-            const $form = this.element.find('form[name="' + this.selected + '"]');
+            const $form = this.$element.find('form[name="' + this.selected + '"]');
             if (!this._validateForm($form)) return;
 
             const formValues = this._getFormValues($form);
