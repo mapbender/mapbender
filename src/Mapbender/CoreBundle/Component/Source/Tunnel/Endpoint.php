@@ -125,9 +125,7 @@ class Endpoint
         /** @var WmsInstance $wmsInstance */
         $wmsInstance = $this->instance;
 
-        $layerCriteria = Criteria::create()
-            ->where(Criteria::expr()->eq('id', $instanceLayerId))
-        ;
+        $layerCriteria = Criteria::create()->where(Criteria::expr()->eq('id', intval($instanceLayerId)));
         /** @var SourceInstanceItem|false $layer */
         $layer = $wmsInstance->getLayers()->matching($layerCriteria)->first();
         if (!$layer || $layer->getSourceInstance()->getId() != $this->instance->getId()) {

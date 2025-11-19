@@ -91,7 +91,7 @@ class TileMatrixSet implements MutableUrlTarget
      */
     public function getSupportedCrs()
     {
-        return $this->supportedCrs;
+        return str_contains($this->supportedCrs, "CRS84") ? "EPSG:4326" : $this->supportedCrs;
     }
 
     /**

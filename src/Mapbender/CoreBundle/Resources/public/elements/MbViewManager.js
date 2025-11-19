@@ -37,7 +37,7 @@
             this._toggleEnabled(true);
             // save default layertree settings, so they can be reloaded by the ResetView-Element
             this.saveDefaultSettings();
-            this.mbMap.map.olMap.on('rendercomplete', () => {
+            this.mbMap.map.olMap.once('postrender', () => {
                 this._load();
             });
             Mapbender.elementRegistry.markReady(this);

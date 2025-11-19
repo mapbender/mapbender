@@ -39,6 +39,7 @@ class RequestInformation implements MutableUrlTarget
     }
 
     /**
+     * Kvp = Key-Value Pair
      * @return string|null
      */
     public function getHttpGetKvp()
