@@ -58,12 +58,7 @@
                 title: this.$element.attr('data-title'),
                 content: this.$element.get(0),
                 cssClass: 'mbViewManager-dialog',
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'popupClose btn btn-sm btn-primary'
-                    }
-                ]
+                buttons: []
             };
         }
 

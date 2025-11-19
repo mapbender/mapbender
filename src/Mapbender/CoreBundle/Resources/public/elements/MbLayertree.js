@@ -1023,18 +1023,13 @@
                 width: 350,
                 height: 500,
                 cssClass: 'layertree-dialog customLayertree',
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
-                    }
-                ]
+                buttons: []
             };
         }
 
-        activateByButton(callback) {
+        activateByButton(callback, mbButton) {
             if (this.useDialog_) {
-                super.activateByButton(callback);
+                super.activateByButton(callback, mbButton);
             }
             this._reset();
             this.notifyWidgetActivated();
