@@ -20,19 +20,21 @@
                 self.updateHighlights();
             });
             this.updateHighlights();
-            this.$element.on('mouseover click', '.basesourcegroup', (evt) => {
-                const $group = $(evt.target).closest('.basesourcegroup');
-                if (evt.type === 'click') {
-                    evt.stopPropagation();
-                    $group.toggleClass('active');
-                    if ($group.hasClass('active')) {
-                        $(document).one('click', () => {
-                            $group.removeClass('active')
-                        });
+            if (this.$element.parent(".toolbar").length) {
+                this.$element.on('mouseover click', '.basesourcegroup', (evt) => {
+                    const $group = $(evt.target).closest('.basesourcegroup');
+                    if (evt.type === 'click') {
+                        evt.stopPropagation();
+                        $group.toggleClass('active');
+                        if ($group.hasClass('active')) {
+                            $(document).one('click', () => {
+                                $group.removeClass('active')
+                            });
+                        }
                     }
-                }
-                $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
-            });
+                    $group.find('.basesourcesubswitcher').toggleClass('right', evt.clientX < 150);
+                });
+            }
             Mapbender.elementRegistry.markReady(this);
         }
 

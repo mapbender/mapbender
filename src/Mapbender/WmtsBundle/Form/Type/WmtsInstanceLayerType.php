@@ -68,7 +68,7 @@ class WmtsInstanceLayerType extends AbstractType
         $view['allowinfo']->vars['columnClass'] = 'group-start';
         $view['info']->vars['disabled'] = !$isQueryable;
         $view['info']->vars['columnClass'] = 'group-end';
-        if (!$isQueryable) {
+        if (!$isQueryable && !$form->isSubmitted()) {
             $form['info']->setData(false);
             $form['allowinfo']->setData(false);
         }

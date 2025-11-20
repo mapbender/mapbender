@@ -12,10 +12,10 @@
         <div class="menu-wrapper mt-1 float-end {{ direction }}">
             {%- set _menu_label = region_props['menu_label'] | default('') -%}
             {{- _menu_label | trans -}}{{- _menu_label ? '&nbsp;' : '' -}}
-            <button type="button" class="btn btn-light"
+            <button type="button" class="btn"
                     {%- if not _menu_label -%} title="{{ 'mb.template.toolbar_menu_tooltip' | trans }}" {%-endif -%}>
                 {#- eat whitespace -#}
-                <i class="fas fa-bars iconBig"></i></button>
+                <i class="fa-solid fa-bars iconBig"></i></button>
             <ul class="dropdown-menu">
                 {{- menu_content | raw -}}
             </ul>

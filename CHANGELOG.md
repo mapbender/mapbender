@@ -1,8 +1,25 @@
 ## next feature release
-* [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766))
+* [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774))
 * [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
 * [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))
 * [Design] Redesign data upload ([#PR1775](https://github.com/mapbender/mapbender/pull/1775))
+
+## next bugfix release
+* [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
+
+## v4.2.3
+Bugfixes:
+* [Legend] Fix legend urls within a style were not proxified ([#PR1787](https://github.com/mapbender/mapbender/pull/1787))
+* [Print] Fix proxified legend urls were not correctly resolved ([#PR1788](https://github.com/mapbender/mapbender/pull/1788))
+
+## v4.2.2
+Features:
+* [WMTS] Support services defined via OperationsMetadata tag ([#PR1784](https://github.com/mapbender/mapbender/pull/1784))
+
+Bugfixes:
+* [WMTS] Check if current projection is supported by WMTS layer and show message if it isn't ([#PR1783](https://github.com/mapbender/mapbender/pull/1783))
+* [BaseSourceSwitcher] Fix behaviour in sidepane ([#PR1776](https://github.com/mapbender/mapbender/pull/1776))
+* [ViewManager] Fix unnecessary listing request ([#PR1779](https://github.com/mapbender/mapbender/pull/1779))
 
 ## v4.2.1
 Bugfixes:

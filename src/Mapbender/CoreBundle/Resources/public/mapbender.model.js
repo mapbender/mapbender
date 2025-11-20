@@ -426,6 +426,7 @@ window.Mapbender.MapModelOl4 = (function() {
         var gjf = this._geojsonFormat;
         var dumpFeature = this._geojsonFormat.writeFeatureObject.bind(this._geojsonFormat);
         var dumpGeometry = function(geometry) {
+            if (!geometry) return null;
             var geometry_ = (geometry instanceof ol.geom.Circle) ? ol.geom.Polygon.fromCircle(geometry, 128) : geometry;
             return gjf.writeGeometryObject(geometry_);
         };
@@ -443,12 +444,13 @@ window.Mapbender.MapModelOl4 = (function() {
                 var featureDump = Object.assign({}, baseFeatureDump);
                 var geom = (style.getGeometryFunction())(feature);
                 featureDump.geometry = dumpGeometry(geom);
+                if (!featureDump.geometry) return null;
                 if (includeStyle) {
                     featureDump.style = self._dumpSvgStyle(style);
                 }
                 return featureDump;
             }).filter(function(dump) {
-                return (!includeStyle) || !!dump.style;
+                return dump && ((!includeStyle) || !!dump.style);
             });
             if (components.length) {
                 Array.prototype.push.apply(featuresDump, components);

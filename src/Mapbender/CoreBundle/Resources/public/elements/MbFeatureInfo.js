@@ -171,7 +171,7 @@
             };
         }
 
-        activateByButton() {
+        activateByButton(callback, mbButton) {
             if (this.highlightLayer && this.startedNewRequest) {
                 this.highlightLayer.getSource().clear();
                 this.startedNewRequest = false;
@@ -184,8 +184,7 @@
 
             if (!this.isPopup) return; // sidepane mode
 
-            super.activateByButton();
-            this.popup.$element.find('.popupClose').focus();
+            super.activateByButton(callback, mbButton);
         }
 
         closeByButton() {
@@ -208,10 +207,7 @@
         }
 
         _getPopupButtonOptions() {
-            const buttons = [{
-                label: Mapbender.trans('mb.actions.close'),
-                cssClass: 'btn btn-sm btn-light popupClose'
-            }];
+            const buttons = [];
             if (this.options.printResult) {
                 buttons.unshift({
                     label: Mapbender.trans('mb.actions.print'),

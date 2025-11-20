@@ -185,19 +185,13 @@
                 cssClass: 'legend-dialog',
                 width: 350,
                 height: 500,
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose',
-                        attrDataTest: 'mb-legend-btn-close'
-                    }
-                ]
+                buttons: []
             };
         }
 
-        activateByButton(callback) {
+        activateByButton(callback, mbButton) {
             if (this.useDialog_) {
-                super.activateByButton(callback);
+                super.activateByButton(callback, mbButton);
             }
             this.notifyWidgetActivated();
         }

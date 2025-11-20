@@ -6,8 +6,8 @@
         $cnt.toggleClass('closed');
         var state = !$cnt.hasClass('closed');
         $('>.content-toggle i', $cnt)
-            .toggleClass('fa-plus', !state)
-            .toggleClass('fa-minus', state)
+            .toggleClass('fa-caret-right', !state)
+            .toggleClass('fa-caret-down', state)
         ;
     });
 }(jQuery));

@@ -37,7 +37,7 @@
             this._toggleEnabled(true);
             // save default layertree settings, so they can be reloaded by the ResetView-Element
             this.saveDefaultSettings();
-            this.mbMap.map.olMap.on('rendercomplete', () => {
+            this.mbMap.map.olMap.once('postrender', () => {
                 this._load();
             });
             Mapbender.elementRegistry.markReady(this);
@@ -58,12 +58,7 @@
                 title: this.$element.attr('data-title'),
                 content: this.$element.get(0),
                 cssClass: 'mbViewManager-dialog',
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'popupClose btn btn-sm btn-primary'
-                    }
-                ]
+                buttons: []
             };
         }
 

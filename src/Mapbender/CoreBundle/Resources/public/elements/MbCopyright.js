@@ -25,17 +25,12 @@
                 width: this.options.popupWidth || 350,
                 height: this.options.popupHeight || null,
                 cssClass: 'copyright-dialog',
-                buttons: [
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose'
-                    }
-                ]
+                buttons: []
             };
         }
 
-        activateByButton(callback) {
-            super.activateByButton(callback);
+        activateByButton(callback, mbButton) {
+            super.activateByButton(callback, mbButton);
             this.popup.open();
             if (this.notifyWidgetActivated) {
                 this.notifyWidgetActivated();

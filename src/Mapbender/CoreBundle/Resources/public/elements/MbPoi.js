@@ -52,11 +52,6 @@
                         callback: () => {
                             self._sendPoi(this.$element);
                         }
-                    },
-                    {
-                        label: Mapbender.trans('mb.actions.close'),
-                        cssClass: 'btn btn-sm btn-light popupClose',
-                        attrDataTest: 'mb-poi-btn-close'
                     }
                 ]
             };
@@ -75,8 +70,8 @@
             return options;
         }
 
-        activateByButton(callback) {
-            super.activateByButton(callback);
+        activateByButton(callback, mbButton) {
+            super.activateByButton(callback, mbButton);
             this.clickActive = true;
         }
 
