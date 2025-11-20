@@ -356,6 +356,9 @@ mb:
         dialog: dialog
       admin:
         content: Content
+        dontShowAgain: "\"Don't show again\"-Option"
+        dontShowAgainLabel: "\"Don't show again\"-Label"
+        dontShowAgainDefaultLabel: "Don't show again"
     map:
       class:
         title: Map
