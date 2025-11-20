@@ -152,6 +152,11 @@
                     } else {
                         extent = createdSource.getExtent();
                     }
+                    if (!extent || extent.some(n => !Number.isFinite(n))) {
+                        Mapbender.info(Mapbender.trans('mb.core.dataupload.error.nogeometry'));
+                        return;
+                    }
+
                     self.map.getView().fit(extent, {
                         padding: [75, 75, 75, 75],
                     });
