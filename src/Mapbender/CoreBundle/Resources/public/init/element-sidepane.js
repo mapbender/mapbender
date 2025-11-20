@@ -145,7 +145,7 @@
         function getFocusableElements(container) {
             // Get all potentially focusable elements
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
+            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]');
             
             // Filter out non-first radio buttons in groups (only count first radio per name)
             var seenRadioNames = {};
@@ -166,7 +166,7 @@
             // Check if currentElement is the last effectively focusable element
             // This accounts for radio button groups where only the first is in the tab order
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
+            var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]');
             
             if ($allElements.length === 0) return false;
             
@@ -215,6 +215,7 @@
             $(container).on('keydown.focustrap', focusableSelectors, function(event) {
                 if (event.key !== 'Tab') return;
 
+                // Re-evaluate focusable elements dynamically (in case visibility changed)
                 var $focusableElements = getFocusableElements(container);
                 if ($focusableElements.length === 0) return;
 
@@ -222,14 +223,11 @@
                 var $currentElement = $(document.activeElement);
 
                 if (event.shiftKey) {
-                    // Shift+Tab on first element -> focus last element
+                    // Shift+Tab on first element -> focus toggleSideBar
                     if ($currentElement[0] === $firstElement[0]) {
                         event.preventDefault(); 
-                        // Find the last effectively focusable element
-                        var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-                        var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]');
-                        if ($allElements.length > 0) {
-                            $allElements.last().focus();
+                        if ($toggleSideBar.length) {
+                            $toggleSideBar.focus();
                         }
                     }
                 } else {
