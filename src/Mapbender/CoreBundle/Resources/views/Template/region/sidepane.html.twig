@@ -100,12 +100,8 @@
             {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
             <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
                 <div class="list-group-item-header pb-3">
-                    <button class="list-back-btn pt-3 ps-3 pe-3" type="button">
-                        {%- if region_props.align == 'left' -%}
-                          <i class="fa-solid fa-angle-left me-3 iconBig"></i>
-                        {% else %}
-                          <i class="fa-solid fa-angle-right ms-3 iconBig"></i>
-                        {%- endif -%}
+                    <button class="list-back-btn pt-3 ps-3 pe-3 {% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
+                        <i class="fa-solid fa-angle-left me-3 iconBig"></i>
                         <span>{{ return_text | trans}}</span>
                     </button>
                 </div>

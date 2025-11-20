@@ -288,9 +288,6 @@ ul.toolBar, .toolBar > ul {
 
   // style for the right side pane
   &.right {
-    .list-back-btn {
-      flex-direction: row-reverse;
-    }
     right: 0;
     .logoContainer {
       float: right;
