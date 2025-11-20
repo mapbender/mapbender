@@ -49,7 +49,7 @@
                 e.preventDefault();
                 this._saveNew();
             }.bind(this));
-            this.csrfToken = $form.attr('data-token');
+            this._setupCsrf();
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
@@ -481,6 +481,17 @@
             window.localStorage.removeItem('viewManagerSettings');
             let settings = JSON.stringify(this._getCommonSaveData());
             window.localStorage.setItem('viewManagerSettings', settings);
+        },
+        _setupCsrf: function () {
+            $.ajax({
+                url: this.elementUrl + '/csrf',
+                method: 'POST'
+            }).fail(function (err) {
+                Mapbender.error(Mapbender.trans(err.responseText));
+            }).then(function (response) {
+                this.element.find('form').attr('data-token', response);
+                this.csrfToken = response;
+            }.bind(this));
         },
         __dummy__: null
     });
