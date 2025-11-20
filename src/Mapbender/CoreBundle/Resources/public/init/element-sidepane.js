@@ -210,6 +210,7 @@
             if (!container) return;
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             var $toggleSideBar = $(container).closest('.sidePane').find('.toggleSideBar');
+            var $toggleIcon = $toggleSideBar.children('i').first();
             
             // Use event delegation to capture Tab events on any focusable element within the container
             $(container).on('keydown.focustrap', focusableSelectors, function(event) {
@@ -223,19 +224,19 @@
                 var $currentElement = $(document.activeElement);
 
                 if (event.shiftKey) {
-                    // Shift+Tab on first element -> focus toggleSideBar
+                    // Shift+Tab on first element -> focus toggleSideBar icon
                     if ($currentElement[0] === $firstElement[0]) {
                         event.preventDefault(); 
-                        if ($toggleSideBar.length) {
-                            $toggleSideBar.focus();
+                        if ($toggleIcon.length) {
+                            $toggleIcon.focus();
                         }
                     }
                 } else {
-                    // Tab on last element -> focus toggleSideBar (if available)
+                    // Tab on last element -> focus toggleSideBar icon
                     if (isLastFocusableElement(container, $currentElement[0])) {
                         event.preventDefault();
-                        if ($toggleSideBar.length) {
-                            $toggleSideBar.focus();
+                        if ($toggleIcon.length) {
+                            $toggleIcon.focus();
                         } else {
                             $firstElement.focus();
                         }
@@ -243,12 +244,12 @@
                 }
             });
             
-            // Add handler to toggleSideBar to handle Shift+Tab back to last element
-            if ($toggleSideBar.length) {
-                $toggleSideBar.on('keydown.toggletrap', function(event) {
+            // Add handler to toggleSideBar icon to handle Shift+Tab back to last element
+            if ($toggleIcon.length) {
+                $toggleIcon.on('keydown.toggletrap', function(event) {
                     if (event.key !== 'Tab' || !event.shiftKey) return;
                     
-                    // Shift+Tab on toggleSideBar -> focus last element of container
+                    // Shift+Tab on toggleSideBar icon -> focus last element of container
                     var $focusableElements = getFocusableElements(container);
                     event.preventDefault();
                     if ($focusableElements.length) {
@@ -262,8 +263,8 @@
             if (!container) return;
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             $(container).off('keydown.focustrap', focusableSelectors);
-            // Also remove the toggletrap handler from toggleSideBar
-            $(container).closest('.sidePane').find('.toggleSideBar').off('keydown.toggletrap');
+            // Also remove the toggletrap handler from toggleSideBar icon
+            $(container).closest('.sidePane').find('.toggleSideBar i').off('keydown.toggletrap');
         }
 
         $headers.attr('tabindex', '0');
@@ -273,18 +274,19 @@
                 lastFocusedListItem = this;
                 $(this).click();
             } else if (event.key === 'Tab') {
-                // Tab on last list item should go to toggleSideBar
+                // Tab on last list item should go to toggleSideBar icon
                 var $sidePane = $(this).closest('.sidePane');
                 var $toggleSideBar = $sidePane.find('.toggleSideBar');
+                var $toggleIcon = $toggleSideBar.children('i').first();
                 var $lastHeader = $headers.last();
                 
-                if (!event.shiftKey && this === $lastHeader[0] && $toggleSideBar.length) {
+                if (!event.shiftKey && this === $lastHeader[0] && $toggleIcon.length) {
                     event.preventDefault();
-                    $toggleSideBar.focus();
-                } else if (event.shiftKey && this === $headers[0] && $toggleSideBar.length) {
-                    // Shift+Tab on first list item should go to toggleSideBar (wrap around)
+                    $toggleIcon.focus();
+                } else if (event.shiftKey && this === $headers[0] && $toggleIcon.length) {
+                    // Shift+Tab on first list item should go to toggleSideBar icon (wrap around)
                     event.preventDefault();
-                    $toggleSideBar.focus();
+                    $toggleIcon.focus();
                 }
             }
         });
@@ -470,12 +472,14 @@
         $allButtons.each(function(index) {
             var $button = $(this);
             var $icon = $button.find('.js-mb-icon').first().clone();
-
+            
             if ($icon.length) {
                 // Create a wrapper to hold the icon with the button reference
                 var $iconWrapper = $('<span class="element-icon-wrapper"></span>');
                 var buttonId = $button.attr('id');
                 $iconWrapper.data('button-id', buttonId);
+                $iconWrapper.attr('tabindex', '0'); // Make icon focusable
+                $iconWrapper.attr('role', 'button'); // Semantic role
                 $iconWrapper.append($icon);
                 $elementIcons.append($iconWrapper);
             } else {
@@ -483,6 +487,8 @@
                 var $placeholder = $('<span class="element-icon-placeholder"></span>');
                 var buttonId = $button.attr('id');
                 $placeholder.data('button-id', buttonId);
+                $placeholder.attr('tabindex', '0'); // Make placeholder focusable
+                $placeholder.attr('role', 'button'); // Semantic role
                 $elementIcons.append($placeholder);
             }
         });
@@ -510,7 +516,18 @@
             }
         });
 
-        // If there are accordions or tabs, set the first one as active by default
+        // Add Enter handler for keyboard activation of icons
+        $elementIcons.on('keydown.element-icon', '[class*="element-icon"]', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).click();
+            }
+        });
+
+        // Add Tab navigation within the icon list when sidepane is closed
+        // (This is now handled by the global keydown handler below)        
+        // // If there are accordions or tabs, set the first one as active by default
         if($accordionButtons.length || $tabButtons.length > 0) {
             updateActiveIcon($('.sidePane'), 0);
         }
@@ -565,6 +582,72 @@
         $elementIcons.toggleClass('hidden', !$btn.hasClass('closed'));
     }
 
+    $(document).on('keydown', '.sidePane .toggleSideBar i', function(e) {
+        if (e.key !== 'Tab') return;
+
+        var $toggleButton = $(this).closest('.toggleSideBar');
+        var $sidePane = $toggleButton.closest('.sidePane');
+        var $elementIcons = $toggleButton.find('.element-icons');
+        var $icons = $elementIcons.find('[class*="element-icon"]');
+
+        if ($toggleButton.hasClass('closed')) {
+            // Sidepane is closed - navigate through icons
+            if ($icons.length > 0) {
+                if (e.shiftKey) {
+                    // Shift+Tab on toggle button: go to last icon
+                    e.preventDefault();
+                    $icons.last().focus();
+                } else {
+                    // Tab on toggle button: go to first icon
+                    e.preventDefault();
+                    $icons.first().focus();
+                }
+            }
+        } else {
+            // Sidepane is open - Shift+Tab should go to last element in panel
+            if (e.shiftKey) {
+                e.preventDefault();
+                // Find the active panel and get its last focusable element
+                var $activeContainer = $sidePane.find('.container-accordion.active, .container-list-group-item.active, .container.active').first();
+                if ($activeContainer.length) {
+                    var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+                    var $focusable = $activeContainer.find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]').last();
+                    if ($focusable.length) {
+                        $focusable.focus();
+                    }
+                }
+            }
+        }
+    });
+
+    $(document).on('keydown', '.sidePane .toggleSideBar .element-icons [class*="element-icon"]', function(e) {
+        if (e.key !== 'Tab') return;
+
+        var $elementIcons = $(this).closest('.element-icons');
+        var $icons = $elementIcons.find('[class*="element-icon"]');
+        var $toggleButton = $elementIcons.closest('.toggleSideBar');
+        var $toggleIcon = $toggleButton.children('i').first();
+        var $currentIcon = $(this);
+        var currentIndex = $icons.index($currentIcon);
+
+        if (e.shiftKey) {
+            // Shift+Tab: go to previous icon or to toggle button (fa-bars/fa-xmark)
+            e.preventDefault();
+            if (currentIndex > 0) {
+                $icons.eq(currentIndex - 1).focus();
+            } else {
+                // On first icon, go to toggle button
+                $toggleIcon.focus();
+            }
+        } else {
+            // Tab: go to next icon or to next element outside sidepane
+            if (currentIndex < $icons.length - 1) {
+                e.preventDefault();
+                $icons.eq(currentIndex + 1).focus();
+            }
+        }
+    });
+
     $(document).on('click', '.sidePane .toggleSideBar', function(e) {
         var $btn = $(this);
         var $icon = $btn.children('i').first();
@@ -574,11 +657,18 @@
 
         updateToggleButtonIcons($btn);
 
+        // When closing the sidepane, focus the fa-bars icon
+        if ($btn.hasClass('closed')) {
+            setTimeout(function() {
+                $icon.focus();
+            }, 50);
+        }
+
         e.stopPropagation();
     });
 
     $(document).on('keydown', '.sidePane .toggleSideBar', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === 'Enter') {
             e.preventDefault();
             e.stopPropagation();
             $(this).click();
