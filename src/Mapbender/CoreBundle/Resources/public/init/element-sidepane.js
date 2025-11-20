@@ -460,6 +460,7 @@
     function buildElementIcons($sidePane) {
         // Get all visible elements in the sidepane
         var $elementIcons = $sidePane.find('.toggleSideBar .element-icons');
+        $elementIcons.empty(); // Clear existing icons first
 
         // Get all tab/accordion/list-item elements that are visible (excluding inline elements)
         var $tabButtons = $sidePane.find('.tabs > .tab:visible:not(.inline)');
@@ -468,15 +469,46 @@
 
         var $allButtons = $tabButtons.add($accordionButtons).add($listItems);
 
-        // For each visible button, try to find and copy its icon
-        $allButtons.each(function() {
+        $allButtons.each(function(index) {
             var $button = $(this);
             var $icon = $button.find('.js-mb-icon').first().clone();
+
             if ($icon.length) {
-                $elementIcons.append($icon);
+                // Create a wrapper to hold the icon with the button reference
+                var $iconWrapper = $('<span class="element-icon-wrapper"></span>');
+                var buttonId = $button.attr('id');
+                $iconWrapper.data('button-id', buttonId);
+                $iconWrapper.append($icon);
+                $elementIcons.append($iconWrapper);
             } else {
                 // If no icon found, add a placeholder
-                $elementIcons.append('<span class="element-icon-placeholder"></span>');
+                var $placeholder = $('<span class="element-icon-placeholder"></span>');
+                var buttonId = $button.attr('id');
+                $placeholder.data('button-id', buttonId);
+                $elementIcons.append($placeholder);
+            }
+        });
+
+        // Add click handlers to icons to activate corresponding elements
+        $elementIcons.on('click.element-icon', '[class*="element-icon"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var $iconElement = $(this);
+            var buttonId = $iconElement.data('button-id');
+            var $button = $sidePane.find('#' + buttonId);
+
+            if ($button && $button.length) {
+                // Trigger the corresponding button click first (this will activate the panel)
+                $button.click();
+
+                // Then open the sidepane if it's closed (after a short delay to let the panel activate)
+                var $toggleSideBar = $sidePane.find('.toggleSideBar');
+                if ($toggleSideBar.hasClass('closed')) {
+                    setTimeout(function() {
+                        $toggleSideBar.click();
+                    }, 50);
+                }
             }
         });
 
