@@ -1,40 +1,35 @@
 <?php
 
-
 namespace Mapbender\CoreBundle\Element;
 
-
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
-use Symfony\Component\Form\FormFactoryInterface;
-
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 
 class ApplicationSwitcher extends AbstractElementService
 {
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-    /** @var ElementHttpHandlerInterface */
-    protected $httpHandler;
-    /** @var ApplicationYAMLMapper */
-    protected $yamlAppRepository;
+    protected ManagerRegistry $managerRegistry;
+    protected ApplicationYAMLMapper $yamlAppRepository;
+    protected AuthorizationCheckerInterface $authChecker;
+    protected UrlGeneratorInterface $router;
 
-    public function __construct(FormFactoryInterface $formFactory,
-                                ManagerRegistry $managerRegistry,
-                                ElementHttpHandlerInterface $httpHandler,
-                                ApplicationYAMLMapper $yamlAppRepository)
+    public function __construct(ManagerRegistry $managerRegistry,
+                                ApplicationYAMLMapper $yamlAppRepository,
+                                AuthorizationCheckerInterface $authChecker,
+                                UrlGeneratorInterface $router,
+                                $rootDir)
     {
-        $this->formFactory = $formFactory;
         $this->managerRegistry = $managerRegistry;
-        $this->httpHandler = $httpHandler;
         $this->yamlAppRepository = $yamlAppRepository;
+        $this->authChecker = $authChecker;
+        $this->router = $router;
+        $this->rootDir = $rootDir;
     }
 
     public static function getClassTitle()
@@ -53,12 +48,6 @@ class ApplicationSwitcher extends AbstractElementService
             'open_in_new_tab' => false,
             'applications' => array(),
         );
-    }
-
-    public static function getFormOptions(Element $element, array $options): array
-    {
-        $options['sort_first'] = $element->getConfiguration()['applications'];
-        return $options;
     }
 
     public static function getType()
@@ -92,52 +81,51 @@ class ApplicationSwitcher extends AbstractElementService
     {
         $view = new TemplateView('@MapbenderCore/Element/application_switcher.html.twig');
         $view->attributes['class'] = 'mb-element-applicationswitcher';
-        $view->variables['form'] = $this->buildChoiceForm($element)->createView();
+        $view->attributes['data-title'] = $element->getTitle();
+        $view->variables['config'] = $this->getClientConfiguration($element);
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    public function getClientConfiguration(Element $element)
     {
-        return $this->httpHandler;
+        $config = $element->getConfiguration() ?: [];
+        $config['applications'] = $this->prepareAppConfigurations($config['applications']);
+        return $config;
     }
 
-    protected function buildChoiceForm(Element $element)
+    public function prepareAppConfigurations($appConfigurations)
     {
-        $current = $element->getApplication()->getSlug();
-        $options = array(
-            'choices' => $this->getApplicationChoices($element),
-            'attr' => array(
-                'title' => $element->getTitle(),
-            ),
-        );
-        return $this->formFactory->createNamed('application', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $current, $options);
-    }
-
-    protected function getApplicationChoices(Element $element)
-    {
-        // @todo: provide a combined yaml+db repository for Application entities
         $dbRepository = $this->managerRegistry->getRepository(Application::class);
-
-        $currentApplication = $element->getApplication();
-        $choices = array();
-
-        // Always offer the Application this Element is part of
-        $choices[$currentApplication->getTitle()] = $currentApplication->getSlug();
-
-        $slugsConfigured = ArrayUtil::getDefault($element->getConfiguration(), 'applications', array());
-
-        foreach ($slugsConfigured as $slug) {
-            if (\in_array($slug, $choices)) {
+        $preparedAppConfig = [];
+        foreach ($appConfigurations as $slug => $appConfig) {
+            $group = (!empty($appConfig['group'])) ? $appConfig['group'] : '__nogroup__';
+            if (!empty($preparedAppConfig[$group]) && array_key_exists($slug, $preparedAppConfig[$group])) {
                 continue;
             }
             $application = $this->yamlAppRepository->getApplication($slug);
             if (!$application) {
-                $application = $dbRepository->findOneBy(array('slug' => $slug));
+                $application = $dbRepository->findOneBy([
+                    'slug' => $slug,
+                ]);
             }
-            if ($application) {
-                $choices[$application->getTitle()] = $application->getSlug();
+            if ($application && $this->authChecker->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
+                $appConfig['title'] = (!empty($appConfig['title'])) ? $appConfig['title'] : $application->getTitle();
+                if (empty($appConfig['url'])) {
+                    $appConfig['url'] = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
+                }
+                if (empty($appConfig['imgUrl'])) {
+                    $appConfig['imgUrl'] = false;
+                    $imgPath = '/uploads/' . $slug . '/' . $application->getScreenshot();
+                    if (@\file_exists($this->rootDir . '/public' . $imgPath)) {
+                        $appConfig['imgUrl'] = $this->router->getContext()->getBaseUrl() . $imgPath;
+                    }
+                    // zoom lon/lat(center) epsg/srs rotation
+                }
+                $preparedAppConfig[$group][$slug] = $appConfig;
+            } else { // external app (neither yaml nor database app)
+                $preparedAppConfig[$group][$slug] = $appConfig;
             }
         }
-        return $choices;
+        return $preparedAppConfig;
     }
 }
