@@ -1090,7 +1090,6 @@ $(document).on('keydown', function (event) {
     if (event.key === 'Enter') {
         var target = $(event.target);
         if (target.is(':focus') && target.is(':visible') && target.attr('tabindex') !== undefined) {
-            console.log("dfhkesekfe");
             // Create a click event with the original keyboard event as originalEvent
             var clickEvent = $.Event('click');
             clickEvent.originalEvent = event;

@@ -91,6 +91,7 @@ mb:
         geometry:
           missing: 'The selected entry does not contain a geometry.'
       admin:
+        openInline: 'Open inline'
         configurations: Configurations
         title: Title
         title.help: 'Text shown in the configurations dropdown'
@@ -529,6 +530,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Accordion
+              list: 'List'
               unstyled: Unstyled
       button:
         show_label: 'Show label'
@@ -629,6 +631,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icon
+        elementIcon: 'Element symbol'
     icon:
       mb:
         about: Information
@@ -665,6 +668,7 @@ mb:
         pin_alt: 'Pin (Alternative)'
         help: Help
         dataupload: Upload
+        bookmark: Bookmark
   template:
     toolbar_menu_tooltip: 'Toggle menu'
     region:

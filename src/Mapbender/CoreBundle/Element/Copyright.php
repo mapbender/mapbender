@@ -74,6 +74,7 @@ class Copyright extends AbstractElementService
             'content' => null,
             'popupWidth'    => 300,
             'popupHeight' => null,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -110,5 +111,10 @@ class Copyright extends AbstractElementService
     public static function getFormTemplate()
     {
         return '@MapbenderCore/ElementAdmin/copyright.html.twig';
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconCopyright';
     }
 }

@@ -56,6 +56,7 @@ class ShareUrl extends ButtonLike
     public static function getDefaultConfiguration()
     {
         $defaults = parent::getDefaultConfiguration();
+        $defaults['element_icon'] = self::getDefaultIcon();
         // icon is hard-coded (see twig template)
         unset($defaults['icon']);
         return $defaults;
@@ -67,5 +68,10 @@ class ShareUrl extends ButtonLike
         parent::initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-element-shareurl';
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconShare';
     }
 }

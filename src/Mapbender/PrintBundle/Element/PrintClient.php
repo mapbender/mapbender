@@ -175,6 +175,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             "file_prefix" => 'mapbender',
             'renderMode' => 'direct',
             'queueAccess' => 'global',
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -607,5 +608,10 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
             $values['scales'] = array_filter($values['scales']);
             $entity->setConfiguration($values);
         }
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconPrint';
     }
 }

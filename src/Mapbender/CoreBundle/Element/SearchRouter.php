@@ -121,6 +121,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 "fillOpacity" => 0.8,
                 "strokeOpacity" => 1.0,
             ),
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -297,6 +298,11 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
         $config['routes'] = \array_values($config['routes']);
         return $config;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconSearch';
     }
 
     /**

@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Validator\Constraints\HtmlTwigConstraint;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -19,6 +20,17 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('openInline', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'mb.core.simplesearch.admin.openInline',
+                'attr' => array(
+                    'style' => 'display:none',
+                ),
+                'label_attr' => array(
+                    'style' => 'display:none',
+                ),
+                'data' => true,
+            ))
             // Temporary. Replaced in preSetData
             ->add('content', TextareaType::class, [
                 'required' => false,

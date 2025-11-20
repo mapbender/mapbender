@@ -89,6 +89,7 @@ mb:
         geometry:
           missing: 'Выбраный объект не содержит геометрии.'
       admin:
+        openInline: 'Открыть встроенный'
         configurations: 'Настройки'
         title: 'Заголовок'
         title.help: 'Текст, который показывается в выпадающем меню настроек.'
@@ -525,6 +526,7 @@ mb:
             choice:
               tabs: Вкладки
               accordion: Вкладки
+              list: 'список'
               unstyled: 'Неформатированный'
     htmlelement:
       class:
@@ -618,6 +620,7 @@ mb:
       admin:
         tooltip: 'Всплывающая подсказка'
         icon: 'Символ'
+        elementIcon: 'символ элемента'
     icon:
       mb:
         about: 'Информация'
@@ -653,6 +656,8 @@ mb:
         map: 'Карта'
         pin_alt: 'Маркер достопримечательности (альтернатива)'
         help: 'Помощь'
+        dataupload: 'загрузка'
+        bookmark: 'закладка'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:
