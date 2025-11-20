@@ -281,7 +281,7 @@ ul.toolBar, .toolBar > ul {
     }
   }
   .sideContent{
-    padding:$space $space $space $space/4;
+    padding:$space/4 $space $space $space/4;
     height: 100%;
     > .auto-scroll-v {
       // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
