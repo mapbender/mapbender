@@ -33,13 +33,10 @@ class IconExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @param string $iconCode
-     * @return string
-     */
-    public function icon_markup($iconCode)
+    public function icon_markup(string $iconCode, ?string $additionalClass = null): string
     {
-        return $this->iconIndex->getIconMarkup($iconCode) ?: '';
+        $additionalClass = empty($additionalClass) ? $additionalClass . ' mb-icon' : 'mb-icon';
+        return $this->iconIndex->getIconMarkup($iconCode, $additionalClass) ?: '';
     }
 
     /**

@@ -146,7 +146,7 @@
             // Get all potentially focusable elements
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]');
-            
+
             // Filter out non-first radio buttons in groups (only count first radio per name)
             var seenRadioNames = {};
             return $allElements.filter(function() {
@@ -167,14 +167,14 @@
             // This accounts for radio button groups where only the first is in the tab order
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             var $allElements = $(container).find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]');
-            
+
             if ($allElements.length === 0) return false;
-            
+
             var $current = $(currentElement);
             var currentIndex = $allElements.index($current);
-            
+
             if (currentIndex === -1) return false; // Not found in container
-            
+
             // Check if there are any focusable elements after current one
             var hasElementsAfter = false;
             for (var i = currentIndex + 1; i < $allElements.length; i++) {
@@ -194,7 +194,7 @@
                     break;
                 }
             }
-            
+
             return !hasElementsAfter; // Return true if there are no focusable elements after current
         }
 
@@ -211,7 +211,7 @@
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             var $toggleSideBar = $(container).closest('.sidePane').find('.toggleSideBar');
             var $toggleIcon = $toggleSideBar.children('i').first();
-            
+
             // Use event delegation to capture Tab events on any focusable element within the container
             $(container).on('keydown.focustrap', focusableSelectors, function(event) {
                 if (event.key !== 'Tab') return;
@@ -226,7 +226,7 @@
                 if (event.shiftKey) {
                     // Shift+Tab on first element -> focus toggleSideBar icon
                     if ($currentElement[0] === $firstElement[0]) {
-                        event.preventDefault(); 
+                        event.preventDefault();
                         if ($toggleIcon.length) {
                             $toggleIcon.focus();
                         }
@@ -243,12 +243,12 @@
                     }
                 }
             });
-            
+
             // Add handler to toggleSideBar icon to handle Shift+Tab back to last element
             if ($toggleIcon.length) {
                 $toggleIcon.on('keydown.toggletrap', function(event) {
                     if (event.key !== 'Tab' || !event.shiftKey) return;
-                    
+
                     // Shift+Tab on toggleSideBar icon -> focus last element of container
                     var $focusableElements = getFocusableElements(container);
                     event.preventDefault();
@@ -279,7 +279,7 @@
                 var $toggleSideBar = $sidePane.find('.toggleSideBar');
                 var $toggleIcon = $toggleSideBar.children('i').first();
                 var $lastHeader = $headers.last();
-                
+
                 if (!event.shiftKey && this === $lastHeader[0] && $toggleIcon.length) {
                     event.preventDefault();
                     $toggleIcon.focus();
@@ -322,14 +322,14 @@
                 });
                 // Activate the selected panel
                 notifyElements(activatedPanel, true);
-                
+
                 // Add active class to trigger CSS animation
                 $(activatedPanel).addClass('active');
-                
+
                 // Add list-shifted class to listContainer to shift the list view
                 var $listContainer = $(activatedPanel).closest('.sideContent').find('.listContainer');
                 $listContainer.addClass('list-shifted');
-                
+
                 // Wait for animation to complete before setting focus
                 var transitionHandler = function() {
                     activatedPanel.removeEventListener('transitionend', transitionHandler);
@@ -337,13 +337,13 @@
                     setupFocusTrap(activatedPanel);
                 };
                 activatedPanel.addEventListener('transitionend', transitionHandler);
-                
+
                 // Fallback in case transitionend doesn't fire (e.g., if transition is disabled)
                 setTimeout(function() {
                     focusFirstFocusableElement(activatedPanel);
                     setupFocusTrap(activatedPanel);
                 }, 350);
-                
+
                 // Get the index of the active list item (considering only non-inline items)
                 var $nonInlineHeaders = $headers.not('.inline');
                 var activeIndex = $nonInlineHeaders.index(this);
@@ -385,30 +385,30 @@
         var $backBtn = $(this);
         var $container = $backBtn.closest('.container-list-group-item');
         var containerId = $container.attr('id');
-        
+
         if (containerId) {
             // Find the corresponding list-group-item by parsing the ID
             var correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
             var $correspondingItem = $('body').find('#' + correspondingItemId);
-            
+
             // Find the listContainer and remove the list-shifted class
             var $listContainer = $container.closest('.sideContent').find('.listContainer');
             $listContainer.removeClass('list-shifted');
-            
+
             // Remove active class from container to trigger animation back
             $container.removeClass('active');
-            
+
             // Notify elements that the container is being deactivated
             notifyElements($container.get(0), false);
-            
+
             // Remove focus trap from the closing container
             var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
             $container.find(focusableSelectors).off('keydown.focustrap');
-            
+
             // Focus management after transition completes
             var focusAfterTransition = function() {
                 $container.get(0).removeEventListener('transitionend', focusAfterTransition);
-                
+
                 // Try to restore lastFocusedListItem, otherwise focus the corresponding item
                 if (lastFocusedListItem && $(lastFocusedListItem).closest('.list-group').length) {
                     $(lastFocusedListItem).focus();
@@ -417,11 +417,11 @@
                     $correspondingItem.focus();
                 }
             };
-            
+
             // Set up transition listener
             if ($container.length) {
                 $container.get(0).addEventListener('transitionend', focusAfterTransition);
-                
+
                 // Fallback timeout
                 setTimeout(focusAfterTransition, 350);
             }
@@ -472,10 +472,10 @@
         $allButtons.each(function(index) {
             var $button = $(this);
             var $icon = $button.find('.js-mb-icon').first().clone();
-            
+
             if ($icon.length) {
                 // Create a wrapper to hold the icon with the button reference
-                var $iconWrapper = $('<span class="element-icon-wrapper"></span>');
+                var $iconWrapper = $('<span class="sidePane--collapsed__element-icon"></span>');
                 var buttonId = $button.attr('id');
                 $iconWrapper.data('button-id', buttonId);
                 $iconWrapper.attr('tabindex', '0'); // Make icon focusable
@@ -484,7 +484,7 @@
                 $elementIcons.append($iconWrapper);
             } else {
                 // If no icon found, add a placeholder
-                var $placeholder = $('<span class="element-icon-placeholder"></span>');
+                var $placeholder = $('<span class="sidePane--collapsed__element-icon"></span>');
                 var buttonId = $button.attr('id');
                 $placeholder.data('button-id', buttonId);
                 $placeholder.attr('tabindex', '0'); // Make placeholder focusable
@@ -526,7 +526,7 @@
         });
 
         // Add Tab navigation within the icon list when sidepane is closed
-        // (This is now handled by the global keydown handler below)        
+        // (This is now handled by the global keydown handler below)
         // // If there are accordions or tabs, set the first one as active by default
         if($accordionButtons.length || $tabButtons.length > 0) {
             updateActiveIcon($('.sidePane'), 0);

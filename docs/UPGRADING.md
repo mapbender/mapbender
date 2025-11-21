@@ -1,5 +1,16 @@
 # Upgrading Guide
 
+## next feature release
+
+### Design
+Migrate sass variables to css variables.
+
+$sidepaneBorderColor => sidepane-border-color
+$sidepaneTextColor => sidepane-text-color
+$sidepaneBackgroundColor => sidepane-background-color
+
+
+
 ## 4.2.0
 
 ### Update database

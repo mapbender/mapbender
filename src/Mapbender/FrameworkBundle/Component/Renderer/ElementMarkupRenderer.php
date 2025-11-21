@@ -207,7 +207,7 @@ class ElementMarkupRenderer
         $iconCode = $element->getConfiguration()['element_icon'];
 
         if ($this->iconIndex->isHandled($iconCode)) {
-            return $this->iconIndex->getIconMarkup($iconCode, $additionalClass);
+            return $this->iconIndex->getIconMarkup($iconCode, 'mb-icon ' . $additionalClass);
         }
         return '';
     }

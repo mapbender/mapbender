@@ -53,7 +53,7 @@
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
           {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-              {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+              {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
               <div id="accordion{{loop.index}}" class="mt-3 {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
                   <div>
                      {{element_icon | raw }}
@@ -84,7 +84,7 @@
                 {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
                     {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-                      {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+                      {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
                       <li id="list_group_item{{loop.index}}" class="ps-2 mt-2 list-group-item">
                           <div>
                               {{element_icon | raw }}
@@ -97,7 +97,7 @@
         </div>
         {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
-            {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+            {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
             <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
                 <div class="list-group-item-header pb-3">
                     <button class="list-back-btn pt-3 ps-3 pe-3 {% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
@@ -121,8 +121,8 @@
         </div>
   {% endif %}
   </div>
-  <span class="toggleSideBar collapse-toggle">
-    <i class="fa-solid fa-xmark pt-3 pe-2 ps-2" tabindex="0"></i>
-    <div class="element-icons hidden"></div>
-  </span>
+  <div class="sidePane--collapsed toggleSideBar collapse-toggle">
+    <i class="fa-solid fa-xmark sidePane__toggle" tabindex="0" role="button"></i>
+    <div class="sidePane--collapsed__icons element-icons hidden"></div>
+  </div>
 </div>
