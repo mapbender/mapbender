@@ -58,9 +58,9 @@
           {%- set element = element_info.element -%}
           {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
               {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-              <div id="accordion{{loop.index}}" class="sidePane__element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+              <div id="accordion{{loop.index}}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
                   {% if element_icon %}
-                    <span class="sidePane__element-icon-wrapper">{{element_icon | raw }}</span>
+                    <span class="element-icon-wrapper">{{element_icon | raw }}</span>
                   {% endif %}
                    {{ element.title | trans }}
               </div>
@@ -90,9 +90,9 @@
                     {%- set element = element_info.element -%}
                     {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
                       {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-                      <div id="list_group_item{{loop.index}}" class="sidePane__element-title list-group-item {{ element_visibility_class(element) | trim }}">
+                      <div id="list_group_item{{loop.index}}" class="element-title list-group-item {{ element_visibility_class(element) | trim }}">
                           {% if element_icon %}
-                              <span class="sidePane__element-icon-wrapper">{{ element_icon | raw }}</span>
+                              <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
                           {% endif %}
                           {{ element.title | trans }}
                       </div>
@@ -110,9 +110,9 @@
                     </button>
                 </div>
                 <div class="list-group-item-cell">
-                    <div class="list-group-item-title active sidePane__element-title">
+                    <div class="list-group-item-title active element-title">
                         {% if element_icon %}
-                            <span class="sidePane__element-icon-wrapper">{{ element_icon | raw }}</span>
+                            <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
                         {% endif %}
                         {{ element.title | trans }}
                     </div>

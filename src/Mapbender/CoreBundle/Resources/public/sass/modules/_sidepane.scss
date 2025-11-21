@@ -115,33 +115,6 @@
         }
     }
 
-    &__element-icon-wrapper {
-        display: inline-block;
-        width: 2rem;
-        margin-right: 5px;
-        text-align: center;
-        font-size: 1.5rem;
-        transform: translateY(1px);
-    }
-
-    &__element-title {
-        margin-bottom: 4px !important;
-        user-select: none;
-        cursor: pointer;
-        padding: 5px var(--sidepane-padding-x) !important;
-        font-weight: 600;
-        font-size: 1.3rem;
-        color: var(--sidepane-inactive-text-color);
-
-        &:hover {
-            color: var(--sidepane-text-color);
-        }
-
-        &.active {
-            color: var(--primary);
-        }
-    }
-
     .accordion-cell, .list-group-item-content {
         padding: 5px var(--sidepane-padding-x) !important;
     }

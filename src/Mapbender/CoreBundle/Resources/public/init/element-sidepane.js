@@ -425,6 +425,7 @@
                 // Fallback timeout
                 setTimeout(focusAfterTransition, 350);
             }
+            updateActiveIcon($container.closest('.sidePane'), -1);
         }
     });
 
@@ -668,6 +669,7 @@
     $(document).on('listgroup:back', '.sideContent', function(e, $container) {
         if ($container && $container.length) {
             notifyElements($container.get(0), false);
+            updateActiveIcon($container.closest('.sidePane'), -1);
         }
     });
 
