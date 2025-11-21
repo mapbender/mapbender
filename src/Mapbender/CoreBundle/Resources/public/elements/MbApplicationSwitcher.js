@@ -35,11 +35,14 @@
         replacePlaceholders(url) {
             const viewParams = this.mbMap.getModel().getCurrentViewParams();
             const center = ol.proj.transform(viewParams.center, viewParams.srsName, 'EPSG:4326');
-            url = url.replaceAll('%zoom%', parseInt(viewParams.scale));
+            url = url.replaceAll('%scale%', parseInt(viewParams.scale));
             url = url.replaceAll('%lat%', center[0]);
             url = url.replaceAll('%lon%', center[1]);
+            url = url.replaceAll('%center_x%', viewParams.center[0]);
+            url = url.replaceAll('%center_y%', viewParams.center[1]);
             url = url.replaceAll('%rotation%', viewParams.rotation);
             url = url.replaceAll('%srs%', viewParams.srsName.toLowerCase().replace('epsg:', ''));
+            url = url.replaceAll('%zoom%', this.mbMap.getModel().pickZoomForScale(viewParams.scale));
             return url;
         }
     }
