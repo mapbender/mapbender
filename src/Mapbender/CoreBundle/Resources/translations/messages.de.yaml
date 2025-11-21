@@ -357,6 +357,9 @@ mb:
         dialog: Dialog
       admin:
         content: Inhalt
+        dontShowAgain: '"Nicht mehr anzeigen"-Option'
+        dontShowAgainLabel: '"Nicht mehr anzeigen"-Text'
+        dontShowAgainDefaultLabel: 'Nicht mehr anzeigen'
     map:
       class:
         title: Karte

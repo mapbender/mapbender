@@ -5,9 +5,17 @@
             super(configuration, $element);
 
             this.content_ = $('.-js-popup-content', this.$element).remove().removeClass('hidden');
-            if (this.checkAutoOpen && this.checkAutoOpen()) {
+
+            if (this.options.autoOpen) {
+                const currentText = this.content_.text().trim();
+                const storedText = localStorage.getItem('mbCopyrightText-' + Mapbender.configuration.application.slug);
+                this.options.autoOpen = (storedText === null) || (currentText !== storedText);
+            }
+
+            if (this.checkAutoOpen(this.element, this.options)) {
                 this.activateByButton();
             }
+
             this._setup();
         }
 
@@ -35,6 +43,10 @@
             if (this.notifyWidgetActivated) {
                 this.notifyWidgetActivated();
             }
+
+            if (this.options.dontShowAgain) {
+                this.initListeners();
+            }
         }
 
         closeByButton() {
@@ -42,6 +54,23 @@
             if (this.notifyWidgetDeactivated) {
                 this.notifyWidgetDeactivated();
             }
+        }
+
+        initListeners() {
+            const currentText = this.content_.text().trim();
+            const localStorageKey = 'mbCopyrightText-' + Mapbender.configuration.application.slug;
+            const storedText = localStorage.getItem(localStorageKey);
+            const $checkbox = this.content_.find('.copyright-dont-show-again');
+
+            $checkbox.prop('checked', (storedText !== null) && (storedText === currentText));
+            $checkbox.off('change.mbCopyright')
+                .on('change.mbCopyright', function() {
+                    if (this.checked) {
+                        localStorage.setItem(localStorageKey, currentText);
+                    } else {
+                        localStorage.removeItem(localStorageKey);
+                    }
+                });
         }
     }
 
