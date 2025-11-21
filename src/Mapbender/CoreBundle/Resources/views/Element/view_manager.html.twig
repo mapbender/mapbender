@@ -1,6 +1,6 @@
     {%- if grants.savePublic or grants.savePrivate -%}
     <div>
-        <form class="ps-1" data-token="{{ csrf_token('view_manager') }}">
+        <form class="ps-1">
             <div class="input-group my-3">
                 <input type="text" name="title" class="form-control -js-viewmanager-new-name" required="required" placeholder="{{ 'mb.core.viewManager.enter_title' | trans }}..." value="">
                 <button class="btn btn-outline-secondary -fn-save-new" title="{{ 'mb.actions.save' | trans }}">

@@ -489,7 +489,6 @@
             }).fail(function (err) {
                 Mapbender.error(Mapbender.trans(err.responseText));
             }).then(function (response) {
-                this.element.find('form').attr('data-token', response);
                 this.csrfToken = response;
             }.bind(this));
         },
