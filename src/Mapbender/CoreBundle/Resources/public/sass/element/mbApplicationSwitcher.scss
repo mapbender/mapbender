@@ -1,4 +1,47 @@
 .mb-element-applicationswitcher {
+    ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    img {
+        width: 100%;
+    }
+    /*Flex items*/
+    .list {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .list-item {
+        display: flex;
+        margin: 0.5em;
+        padding: 0.5em;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+    @media all and (min-width: 40em) {
+        .list-item {
+            width: 50%;
+        }
+    }
+    @media all and (min-width: 60em) {
+        .list-item {
+            width: 33.33%;
+        }
+    }
+    .list-content {
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .list-content p {
+        flex: 1 0 auto;
+    }
+
+
+
     .dropdown {
         min-width: 9em;
     }

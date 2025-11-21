@@ -4,27 +4,32 @@
     {% else %}
         <hr>
     {% endif %}
-    <div class="row mb-3">
+    <ul class="list">
         {% for slug, app in apps %}
-            <div class="col">
+            <li class="list-item">
                 <a href="{{ app.url }}">
-                    <div class="card">
+                    <div class="list-content">
                         {% if app.imgUrl != false %}
-                        <img src="{{ app.imgUrl }}" class="card-img-top" alt="{{ app.title }}">
+                        <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
                         {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grey rectangle">
-                            <rect x="0" y="0" width="100%" height="100%" fill="#ccc" />
-                        </svg>
+                            <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
+                                ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
+                                nO3TsQkCQRBF0YdBCWwAi2ACI7ACJ7ACJ7ACJ7ACJ7ACJ7ACZ+u2bWvP5u7d87Ozs7Oz
+                                s7OzszuzHdu2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
+                                CTaTAAAAAElFTkSuQmCC" alt="">
                         {% endif %}
-                        <div class="card-body">
-                            <p class="card-text text-center">{{ app.title }}</p>
-                        </div>
+                        <p class="text-center my-2">{{ app.title }}</p>
                     </div>
                 </a>
-            </div>
+            </li>
             {% if loop.index % 3 == 0 %}
-                </div><div class="row mb-3">
+                </ul><ul class="list">
             {% endif %}
         {% endfor %}
-    </div>
+    </ul>
 {% endfor %}
