@@ -14,22 +14,13 @@ use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 
 class ApplicationSwitcher extends AbstractElementService
 {
-    protected ManagerRegistry $managerRegistry;
-    protected ApplicationYAMLMapper $yamlAppRepository;
-    protected AuthorizationCheckerInterface $authChecker;
-    protected UrlGeneratorInterface $router;
-
-    public function __construct(ManagerRegistry $managerRegistry,
-                                ApplicationYAMLMapper $yamlAppRepository,
-                                AuthorizationCheckerInterface $authChecker,
-                                UrlGeneratorInterface $router,
-                                $rootDir)
+    public function __construct(protected ManagerRegistry $managerRegistry,
+                                protected ApplicationYAMLMapper $yamlAppRepository,
+                                protected AuthorizationCheckerInterface $authChecker,
+                                protected UrlGeneratorInterface $router,
+                                protected string $rootDir)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->yamlAppRepository = $yamlAppRepository;
-        $this->authChecker = $authChecker;
-        $this->router = $router;
-        $this->rootDir = $rootDir;
+
     }
 
     public static function getClassTitle()
