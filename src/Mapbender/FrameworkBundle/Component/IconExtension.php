@@ -35,7 +35,7 @@ class IconExtension extends AbstractExtension
 
     public function icon_markup(string $iconCode, ?string $additionalClass = null): string
     {
-        $additionalClass = empty($additionalClass) ? $additionalClass . ' mb-icon' : 'mb-icon';
+        $additionalClass = empty($additionalClass) ? 'mb-icon' : $additionalClass . ' mb-icon';
         return $this->iconIndex->getIconMarkup($iconCode, $additionalClass) ?: '';
     }
 

@@ -102,7 +102,7 @@
         {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
             {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-            <div id="list_group_item_container{{loop.index}}" class="container-list-group-item container-list-group-item">
+            <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
                 <div class="list-group-item-header">
                     <button class="list-back-btn{% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
                         <i class="fa-solid fa-angle-left iconBig"></i>
