@@ -37,13 +37,13 @@
         text-overflow: ellipsis;
 
         &.with-icon {
-            padding-left: 28px; // Reduced from 40px to move text closer to the magnifying glass
-            padding-right: 36px; // Increased to maintain total field width
+            padding-left: 32px;
+            padding-right: 36px;
         }
 
         &:not(.with-icon) {
             padding-left: 12px;
-            padding-right: 36px; // Increased to maintain total field width when icon is hidden
+            padding-right: 36px;
         }
     }
 

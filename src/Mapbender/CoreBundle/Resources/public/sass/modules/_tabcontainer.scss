@@ -148,8 +148,7 @@ $hoverEffects: true !default;
   width: 100%;  // overrule Bootstrap .container (which has varying width depending on screen size)
 }
 
-.accordionContainer {
-  .accordion{
+.accordion {
     user-select: none;
     cursor: pointer;
     padding: 5px 0.5em;
@@ -157,16 +156,17 @@ $hoverEffects: true !default;
     font-size: $accordionFontSize;
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
+
     &.active {
-      color: $accordionActiveTextColor;
-      background-color: $accordionActiveBackgroundColor;
+        color: $accordionActiveTextColor;
+        background-color: $accordionActiveBackgroundColor;
     }
+
     @if $hoverEffects {
-      &:hover:not(.active) {
-        background-color: $accordionHoverBackgroundColor;
-      }
+        &:hover:not(.active) {
+            background-color: $accordionHoverBackgroundColor;
+        }
     }
-  }
   .container-accordion {
     .accordion-cell {
       padding-top: $space / 2;
@@ -175,8 +175,5 @@ $hoverEffects: true !default;
   // spacing between consecutive content blocks
   .container-accordion + .accordion {
     margin-top: 15px;
-  }
-  .inline {
-      font-size: 1rem;
   }
 }
