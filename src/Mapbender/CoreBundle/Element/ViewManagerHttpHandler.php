@@ -59,6 +59,9 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
                 return $this->getSaveResponse($element, $request);
             case 'delete':
                 return $this->getDeleteResponse($element, $request);
+            case 'csrf':
+                $generatedToken = $this->csrfTokenManager->getToken('view_manager');
+                return new Response($generatedToken->getValue());
         }
     }
 
