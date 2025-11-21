@@ -1,9 +1,12 @@
 :root {
     --sidepane-border-color: var(--border-color);
     --sidepane-text-color: var(--text-color);
-    --sidepane-button-color: var(--text-color-inactive);
+    --sidepane-inactive-text-color: var(--text-color-inactive);
+    --sidepane-button-color: var(--text-color-button-inactive);
     --sidepane-background-color: rgba(255, 255, 255, 0.9);
     --sidepane-collapsed-width: 3rem;
+    --sidepane-padding-x: 1rem;
+    --sidepane-padding-y: 1rem;
 }
 
 .sidePane {
@@ -94,7 +97,53 @@
     }
 
     &__toggle {
-        padding: 1rem .5rem 1rem .5rem;
+        padding: var(--sidepane-padding-y) .5rem var(--sidepane-padding-y) .5rem;
+    }
+
+
+    &__inline-element {
+        font-size: 1rem;
+        padding: 0 var(--sidepane-padding-x);
+        margin-bottom: 0.5rem;
+
+        .sidePane.left & {
+            padding-right: 40px;
+        }
+
+        .sidePane.right & {
+            padding-left: 40px;
+        }
+    }
+
+    &__element-icon-wrapper {
+        display: inline-block;
+        width: 2rem;
+        margin-right: 5px;
+        text-align: center;
+        font-size: 1.5rem;
+        transform: translateY(1px);
+    }
+
+    &__element-title {
+        margin-bottom: 4px !important;
+        user-select: none;
+        cursor: pointer;
+        padding: 5px var(--sidepane-padding-x) !important;
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: var(--sidepane-inactive-text-color);
+
+        &:hover {
+            color: var(--sidepane-text-color);
+        }
+
+        &.active {
+            color: var(--primary);
+        }
+    }
+
+    .accordion-cell, .list-group-item-content {
+        padding: 5px var(--sidepane-padding-x) !important;
     }
 }
 
@@ -129,107 +178,86 @@
 .sideContent {
     position: relative;
     overflow: hidden;
-    padding: $space/4 $space $space $space/4;
+    padding-top: 16px;
     height: 100%;
 
     > .auto-scroll-v {
         // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
         height: 100%;
     }
+}
 
-    .listContainer {
-        position: relative;
-        height: 100%;
-        transform: translateX(0);
-        transition: transform 0.3s ease-in-out;
+.listContainer {
+    position: relative;
+    height: 100%;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
 
-        &.list-shifted {
-            transform: translateX(-100%);
-        }
+    &.list-shifted {
+        transform: translateX(-100%);
+    }
+}
 
-        .list-group {
-            list-style: none;
-            font-size: 1.1rem;
-            font-weight: 600;
+.container-list-group-item {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    background-color: $backgroundColor;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
 
-            .list-group-item {
-                cursor: pointer;
-                background-color: $sidepaneButtonBackgroundColor;
-                color: $sidepaneButtonTextColor;
-                border: none;
-                user-select: none;
+    &.active {
+        transform: translateX(-100%);
+        opacity: 1;
+        pointer-events: all;
+    }
 
-                div {
-                    align-items: center;
-                }
+    .list-group-item-header {
+
+        .list-back-btn {
+            padding: var(--sidepane-padding-y) var(--sidepane-padding-x);
+            background: none;
+            border: none;
+            color: var(--sidepane-inactive-text-color);
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+
+            i {
+                margin-right: 8px;
             }
 
-            .inline {
-                font-size: 1rem;
+            &:hover {
+                color: var(--sidepane-text-color)
+            }
+
+            &:focus {
+                outline-offset: -2px;
             }
         }
     }
 
-    .container-list-group-item {
-        position: absolute;
-        top: 0;
-        left: 100%;
-        width: 100%;
-        height: 100%;
-        background-color: $backgroundColor;
-        transform: translateX(0);
-        transition: transform 0.3s ease-in-out;
-        z-index: 10;
-        opacity: 0;
-        pointer-events: none;
+    .list-group-item-cell {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
         display: flex;
         flex-direction: column;
 
-        &.active {
-            transform: translateX(-100%);
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .list-group-item-header {
-
-            .list-back-btn {
-                background: none;
-                border: none;
-                color: inherit;
-                width: 100%;
-                text-align: left;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                font-size: inherit;
-                opacity: 0.7;
-
-                &:hover {
-                    background-color: rgba(255, 255, 255, 0.1);
-                }
-
-                &:focus {
-                    outline-offset: -2px;
-                }
-            }
-        }
-
-        .list-group-item-cell {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
+        .list-group-item-title {
             display: flex;
-            flex-direction: column;
-
-            .list-group-item-title {
-                font-size: 1.1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-weight: 600;
-                color: $accordionActiveTextColor;
-            }
+            align-items: center;
+            gap: 0.5rem;
         }
     }
 }

@@ -473,24 +473,13 @@
             var $button = $(this);
             var $icon = $button.find('.js-mb-icon').first().clone();
 
-            if ($icon.length) {
-                // Create a wrapper to hold the icon with the button reference
-                var $iconWrapper = $('<span class="sidePane--collapsed__element-icon"></span>');
-                var buttonId = $button.attr('id');
-                $iconWrapper.data('button-id', buttonId);
-                $iconWrapper.attr('tabindex', '0'); // Make icon focusable
-                $iconWrapper.attr('role', 'button'); // Semantic role
-                $iconWrapper.append($icon);
-                $elementIcons.append($iconWrapper);
-            } else {
-                // If no icon found, add a placeholder
-                var $placeholder = $('<span class="sidePane--collapsed__element-icon"></span>');
-                var buttonId = $button.attr('id');
-                $placeholder.data('button-id', buttonId);
-                $placeholder.attr('tabindex', '0'); // Make placeholder focusable
-                $placeholder.attr('role', 'button'); // Semantic role
-                $elementIcons.append($placeholder);
-            }
+            var $iconWrapper = $('<span class="sidePane--collapsed__element-icon"></span>');
+            var buttonId = $button.attr('id');
+            $iconWrapper.data('button-id', buttonId);
+            $iconWrapper.attr('tabindex', '0'); // Make icon focusable
+            $iconWrapper.attr('role', 'button'); // Semantic role
+            if ($icon.length) $iconWrapper.append($icon);
+            $elementIcons.append($iconWrapper);
         });
 
         // Add click handlers to icons to activate corresponding elements
