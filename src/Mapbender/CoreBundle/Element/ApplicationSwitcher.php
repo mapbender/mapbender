@@ -119,7 +119,6 @@ class ApplicationSwitcher extends AbstractElementService
                     if (@\file_exists($this->rootDir . '/public' . $imgPath)) {
                         $appConfig['imgUrl'] = $this->router->getContext()->getBaseUrl() . $imgPath;
                     }
-                    // zoom lon/lat(center) epsg/srs rotation
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
             } else { // external app (neither yaml nor database app)
