@@ -517,11 +517,13 @@
                 // Add hover handlers for highlighting
                 $row.on('mouseenter', function() {
                     self._highlightFeature(frameData.id);
+                    self._showRotationControls(frameData.id);  // Show rotation controls
                     $(this).addClass('highlight');
                 });
                 
                 $row.on('mouseleave', function() {
                     self._unhighlightFeature(frameData.id);
+                    self._hideRotationControls(frameData.id);  // Hide rotation controls
                     $(this).removeClass('highlight');
                 });
                 
@@ -608,44 +610,71 @@
         },
         
         /**
-         * Setup hover handlers on map features to highlight table rows
+         * Setup hover handlers on map features to highlight table rows and show/hide rotation controls
+         * A frame is considered "entered" when mouse is over the feature itself OR its rotation controls
          */
         _setupMapHoverHandlers: function() {
             var self = this;
             var map = this.map.getModel().olMap;
             
-            // Remove old handler if exists
+            // Remove existing handler if present
             if (this.mapHoverHandler) {
                 map.un('pointermove', this.mapHoverHandler);
             }
             
             this.mapHoverHandler = function(evt) {
-                // Clear all highlights first
-                $('.-fn-frame-table tbody tr', self.element).removeClass('highlight');
-                self.pinnedFeatures.forEach(function(frameData) {
-                    self._unhighlightFeature(frameData.id);
-                });
+                var enteredFrameIds = [];
                 
-                var pixel = evt.pixel;
-                var foundFrames = [];
-                
-                // Collect ALL features at this pixel
-                map.forEachFeatureAtPixel(pixel, function(feature) {
-                    // Check if this feature is one of our pinned features
+                // Detect pinned features at cursor position
+                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
+                map.forEachFeatureAtPixel(evt.pixel, function(feature) {
                     var frameData = self.pinnedFeatures.find(function(f) {
                         return f.feature === feature;
                     });
                     
-                    if (frameData) {
-                        foundFrames.push(frameData);
+                    if (frameData && enteredFrameIds.indexOf(frameData.id) === -1) {
+                        enteredFrameIds.push(frameData.id);
                     }
+                }, {
+                    layerFilter: function(layer) {
+                        return layer === layerBridge.getNativeLayer();
+                    },
+                    hitTolerance: 5
                 });
                 
-                // Highlight all found frames and their rows
-                foundFrames.forEach(function(frameData) {
-                    self._highlightFeature(frameData.id);
-                    var $row = $('.-fn-frame-table tbody tr[data-frame-id="' + frameData.id + '"]', self.element);
-                    $row.addClass('highlight');
+                // Detect rotation controls (dotted box and circle) at cursor position
+                map.forEachFeatureAtPixel(evt.pixel, function(feature) {
+                    var featureType = feature.get('type');
+                    if (featureType === 'rotation-box' || featureType === 'rotation-handle') {
+                        var frameId = feature.get('frameId');
+                        if (enteredFrameIds.indexOf(frameId) === -1) {
+                            enteredFrameIds.push(frameId);
+                        }
+                    }
+                }, {
+                    layerFilter: function(layer) {
+                        return layer === self.rotationOverlayLayer;
+                    },
+                    hitTolerance: 10
+                });
+                
+                // Update visibility and highlighting for all frames
+                $('.-fn-frame-table tbody tr', self.element).removeClass('highlight');
+                
+                self.pinnedFeatures.forEach(function(frameData) {
+                    var isEntered = enteredFrameIds.indexOf(frameData.id) !== -1;
+                    
+                    if (isEntered) {
+                        // Show controls and highlight when mouse is over feature or its controls
+                        self._showRotationControls(frameData.id);
+                        self._highlightFeature(frameData.id);
+                        var $row = $('.-fn-frame-table tbody tr[data-frame-id="' + frameData.id + '"]', self.element);
+                        $row.addClass('highlight');
+                    } else {
+                        // Hide controls and remove highlight when mouse leaves
+                        self._hideRotationControls(frameData.id);
+                        self._unhighlightFeature(frameData.id);
+                    }
                 });
             };
             
@@ -1005,6 +1034,7 @@
         
         /**
          * Add rotation handle overlay for a pinned frame
+         * Creates invisible but interactive rotation controls (dotted box and circle)
          */
         _addRotationHandle: function(feature) {
             var frameData = this.pinnedFeatures.find(function(f) {
@@ -1016,57 +1046,84 @@
             var geometry = feature.getGeometry();
             var extent = geometry.getExtent();
             
-            // Create bounding box (4 line segments)
-            var coords = [
+            // Create dotted bounding box around feature
+            var boxCoords = [
                 [extent[0], extent[1]],  // bottom-left
                 [extent[2], extent[1]],  // bottom-right
                 [extent[2], extent[3]],  // top-right
                 [extent[0], extent[3]],  // top-left
-                [extent[0], extent[1]]   // close
+                [extent[0], extent[1]]   // close polygon
             ];
-            
-            var boxLine = new ol.geom.LineString(coords);
-            var boxFeature = new ol.Feature(boxLine);
-            boxFeature.setStyle(new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: this.rotationControlColor,
-                    width: 2,
-                    lineDash: [5, 5]  // Dotted line
-                })
-            }));
+            var boxFeature = new ol.Feature(new ol.geom.LineString(boxCoords));
             boxFeature.set('type', 'rotation-box');
             boxFeature.set('frameId', frameData.id);
             
-            // Create rotation handle (circle at bottom-right)
-            var handleCoord = [extent[2], extent[1]];
-            var handlePoint = new ol.geom.Point(handleCoord);
-            var handleFeature = new ol.Feature(handlePoint);
+            // Create rotation handle circle at bottom-right corner
+            var handleFeature = new ol.Feature(new ol.geom.Point([extent[2], extent[1]]));
+            handleFeature.set('type', 'rotation-handle');
+            handleFeature.set('frameId', frameData.id);
             
-            // Convert color to rgba with configurable opacity
+            // Add features to overlay layer (initially invisible via empty style)
+            var source = this.rotationOverlayLayer.getSource();
+            source.addFeature(boxFeature);
+            source.addFeature(handleFeature);
+            
+            // Track handles for later updates
+            this.rotationHandles.push({
+                frameId: frameData.id,
+                boxFeature: boxFeature,
+                handleFeature: handleFeature
+            });
+        },
+        
+        /**
+         * Show rotation controls (dotted frame and circle) for a specific frame
+         */
+        _showRotationControls: function(frameId) {
+            var handle = this.rotationHandles.find(function(h) {
+                return h.frameId === frameId;
+            });
+            
+            if (!handle) return;
+            
+            // Parse color and create semi-transparent fill
             var rgb = Mapbender.StyleUtil.parseCssColor(this.rotationControlColor);
             var fillColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + this.rotationControlOpacity + ')';
             
-            handleFeature.setStyle(new ol.style.Style({
+            // Apply visible style to dotted box
+            handle.boxFeature.setStyle(new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: this.rotationControlColor,
+                    width: 2,
+                    lineDash: [5, 5]
+                })
+            }));
+            
+            // Apply visible style to rotation handle circle
+            handle.handleFeature.setStyle(new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 8,
                     fill: new ol.style.Fill({ color: fillColor }),
                     stroke: new ol.style.Stroke({ color: '#000000', width: 1 })
                 })
             }));
-            handleFeature.set('type', 'rotation-handle');
-            handleFeature.set('frameId', frameData.id);
-            
-            // Add to overlay layer
-            var source = this.rotationOverlayLayer.getSource();
-            source.addFeature(boxFeature);
-            source.addFeature(handleFeature);
-            
-            // Track handles
-            this.rotationHandles.push({
-                frameId: frameData.id,
-                boxFeature: boxFeature,
-                handleFeature: handleFeature
+        },
+        
+        /**
+         * Hide rotation controls (dotted frame and circle) for a specific frame
+         * Uses empty style to keep geometry for hit detection while making invisible
+         */
+        _hideRotationControls: function(frameId) {
+            var handle = this.rotationHandles.find(function(h) {
+                return h.frameId === frameId;
             });
+            
+            if (!handle) return;
+            
+            // Apply empty style - features remain interactive but invisible
+            var emptyStyle = new ol.style.Style({});
+            handle.boxFeature.setStyle(emptyStyle);
+            handle.handleFeature.setStyle(emptyStyle);
         },
         
         /**
