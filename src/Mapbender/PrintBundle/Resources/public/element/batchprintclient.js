@@ -87,9 +87,9 @@
          * Override parent's _pickScale to select a scale two steps bigger (more zoomed out)
          * than the current map scale for batch printing
          */
-        _pickScale: function() {
+        _pickScale: function(closestToMapScale) {
             // Get the scale that the parent would choose (current map scale or smallest that fits)
-            var parentScale = this._superApply(arguments);
+            const parentScale = this._super(closestToMapScale);
             
             // Get available scales from options
             var scales = this.options.scales;
