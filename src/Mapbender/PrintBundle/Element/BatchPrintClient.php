@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Element;
 
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "Batch Print";
     }
@@ -27,7 +28,7 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "Batch Print - Serial printing with multiple frames";
     }
@@ -35,17 +36,17 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array_merge(parent::getDefaultConfiguration(), array(
+        return array_merge(parent::getDefaultConfiguration(), [
             'enableKmlUpload' => true,
-        ));
+        ]);
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
         return 'Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType';
     }
@@ -53,7 +54,7 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderPrint/ElementAdmin/batchprintclient.html.twig';
     }
@@ -61,31 +62,31 @@ class BatchPrintClient extends PrintClient
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'mapbender.mbBatchPrintClient';
     }
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         $upstream = parent::getRequiredAssets($element);
-        return array(
-            'js' => array_merge($upstream['js'], array(
+        return [
+            'js' => array_merge($upstream['js'], [
                 '@MapbenderPrintBundle/Resources/public/element/batchprintclient.js',
-            )),
-            'css' => array_merge($upstream['css'], array(
+            ]),
+            'css' => array_merge($upstream['css'], [
                 '@MapbenderPrintBundle/Resources/public/sass/element/batchprintclient.scss',
-            )),
-            'trans' => array_merge($upstream['trans'] ?? array(), array(
+            ]),
+            'trans' => array_merge($upstream['trans'] ?? [], [
                 'mb.print.printclient.batchprint.*',
-            )),
-        );
+            ]),
+        ];
     }
 
     /**
      * Use custom template for batch print settings
      */
-    protected function getSettingsTemplate()
+    protected function getSettingsTemplate(): string
     {
         return '@MapbenderPrint/Element/batchprintclient-settings.html.twig';
     }
@@ -93,12 +94,12 @@ class BatchPrintClient extends PrintClient
     /**
      * Override to pass additional configuration to the view
      */
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = parent::getView($element);
         $config = $element->getConfiguration();
         // TemplateView has a public $variables array property
-        /** @var \Mapbender\Component\Element\TemplateView $view */
+        /** @var TemplateView $view */
         $view->variables['enableKmlUpload'] = !empty($config['enableKmlUpload']);
         return $view;
     }
@@ -111,7 +112,7 @@ class BatchPrintClient extends PrintClient
      * @param Request $request
      * @return Response
      */
-    public function handleRequest(Element $element, Request $request)
+    public function handleRequest(Element $element, Request $request): Response
     {
         $action = $request->attributes->get('action');
         $configuration = $element->getConfiguration();
@@ -136,7 +137,7 @@ class BatchPrintClient extends PrintClient
      * @param array $configuration
      * @return array Array of prepared job data for each frame
      */
-    private function prepareMultiPrintData($request, $configuration)
+    private function prepareMultiPrintData(Request $request, array $configuration): array
     {
         $multiFrameJobDataArr = [];
         $formData = $this->extractRequestData($request);
@@ -160,7 +161,7 @@ class BatchPrintClient extends PrintClient
      * @param Element $element
      * @return array Job data wrapper structure
      */
-    private function prepareMultiFrameJobData($request, $configuration, $element)
+    private function prepareMultiFrameJobData(Request $request, array $configuration, Element $element): array
     {
         // Prepare multiframe data
         $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $configuration);
@@ -188,7 +189,7 @@ class BatchPrintClient extends PrintClient
      * @param Element $element
      * @return Response JSON response with job ID
      */
-    private function handleMultiFrameQueue($request, $configuration, $element)
+    private function handleMultiFrameQueue(Request $request, array $configuration, Element $element): Response
     {
         // Prepare multiframe job data wrapper using shared logic
         $jobDataWrapper = $this->prepareMultiFrameJobData($request, $configuration, $element);
@@ -210,7 +211,7 @@ class BatchPrintClient extends PrintClient
      * @param Element $element
      * @return Response PDF response
      */
-    private function handleMultiFrameDirect($request, $configuration, $element)
+    private function handleMultiFrameDirect(Request $request, array $configuration, Element $element): Response
     {
         // Prepare multiframe job data
         $jobDataWrapper = $this->prepareMultiFrameJobData($request, $configuration, $element);

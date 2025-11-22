@@ -2,8 +2,11 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Exception;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
 use Mapbender\Utils\MemoryUtil;
+use RuntimeException;
+use setasign\Fpdi\Fpdi;
 
 /**
  * Batch Print Service
@@ -26,14 +29,14 @@ class BatchPrintService extends PrintService
      * @param mixed[] $jobData
      * @param bool $multiFrame
      * @return string
-     * @throws \Exception on invalid template
+     * @throws Exception on invalid template
      */
-    public function dumpPrint(array $jobData, $multiFrame = false)
+    public function dumpPrint(array $jobData, bool $multiFrame = false): string
     {
         // Handle multiframe structure: {frames: [...], multiFrame: true, ...}
         if (isset($jobData['multiFrame']) && $jobData['multiFrame'] === true) {
             if (!isset($jobData['frames']) || !is_array($jobData['frames'])) {
-                throw new \RuntimeException("Invalid multiframe structure: missing 'frames' array");
+                throw new RuntimeException("Invalid multiframe structure: missing 'frames' array");
             }
             return $this->doMultiFramePrint($jobData['frames']);
         } else {
@@ -46,9 +49,9 @@ class BatchPrintService extends PrintService
      * 
      * @param array $jobData Array of frame data
      * @return string PDF binary content
-     * @throws \Exception
+     * @throws Exception
      */
-    public function doMultiFramePrint(array $jobData)
+    public function doMultiFramePrint(array $jobData): string
     {
         $mapImageNames = [];
 
@@ -85,18 +88,18 @@ class BatchPrintService extends PrintService
      * @param array $jobData Job data for this frame
      * @param PDF_Extensions|\FPDF|null $pdf Existing PDF object or null for first frame
      * @return PDF_Extensions|\FPDF PDF object with added page
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function buildMultiFramePdf($mapImageName, $template, $jobData, $pdf = null)
+    protected function buildMultiFramePdf(string $mapImageName, Template|array $template, array $jobData, PDF_Extensions|\FPDF|null $pdf = null): PDF_Extensions|\FPDF
     {
         if (!$pdf) {
             $pdf = $this->makeBlankPdf($template, $jobData['template']);
         } else {
             if ($template['orientation'] == 'portrait') {
-                $format = array($template['pageSize']['width'], $template['pageSize']['height']);
+                $format = [$template['pageSize']['width'], $template['pageSize']['height']];
                 $orientation = 'P';
             } else {
-                $format = array($template['pageSize']['height'], $template['pageSize']['width']);
+                $format = [$template['pageSize']['height'], $template['pageSize']['width']];
                 $orientation = 'L';
             }
             $pdf->addPage($orientation, $format);
@@ -107,7 +110,7 @@ class BatchPrintService extends PrintService
             $pdf->setSourceFile($pdfPath);
         }
         // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
-        /** @var \setasign\Fpdi\Fpdi $pdf */
+        /** @var Fpdi $pdf */
         $tplidx = $pdf->importPage(1);
         $pdf->useTemplate($tplidx);
 
@@ -141,7 +144,7 @@ class BatchPrintService extends PrintService
      * @param Template|array $template Template data
      * @param array $jobData Job data
      */
-    protected function afterMainMapMulti($pdf, $template, $jobData)
+    protected function afterMainMapMulti(PDF_Extensions|\FPDF $pdf, Template|array $template, array $jobData): void
     {
         $legends = $this->mergeCollectedLegends();
 
@@ -156,7 +159,7 @@ class BatchPrintService extends PrintService
      * 
      * @return array Merged legend block groups
      */
-    protected function mergeCollectedLegends()
+    protected function mergeCollectedLegends(): array
     {
         // Collect all unique legend blocks by title
         $uniqueBlocks = [];
