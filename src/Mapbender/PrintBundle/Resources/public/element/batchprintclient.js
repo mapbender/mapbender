@@ -31,6 +31,7 @@
         
         // Layer constants
         PINNED_FRAMES_LAYER: 1,  // Layer index for pinned frame features
+        ROTATION_ZINDEX : 999,
 
         _setup: function(){
             this._super();
@@ -608,12 +609,13 @@
          * Create and configure the rotation overlay layer
          */
         _createRotationOverlayLayer: function() {
+            var self = this;
             var map = this.map.getModel().olMap;
             var source = new ol.source.Vector();
             this.rotationOverlayLayer = new ol.layer.Vector({
                 source: source,
                 style: null,  // Features will have their own styles
-                zIndex: 999  // Below pinned frames but above map content
+                zIndex: self.ROTATION_ZINDEX  // Below pinned frames but above map content
             });
             map.addLayer(this.rotationOverlayLayer);
         },
