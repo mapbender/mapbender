@@ -5,6 +5,7 @@ namespace Mapbender\PrintBundle\Element;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -200,7 +201,7 @@ class BatchPrintClient extends PrintClient
         $jobId = $queuePlugin->putJob($jobDataWrapper, $this->generateFilename($element));
         
         // Return JSON response with job ID
-        return new Response(json_encode(['success' => true, 'jobId' => $jobId]), 200, ['Content-Type' => 'application/json']);
+        return new JsonResponse(['success' => true, 'jobId' => $jobId]);
     }
 
     /**
