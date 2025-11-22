@@ -9,10 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class BatchPrintClientAdminType extends PrintClientAdminType
 {
-    /**
-     * Constructor
-     * @param bool $queueable
-     */
+
     public function __construct(bool $queueable)
     {
         parent::__construct($queueable);
