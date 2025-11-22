@@ -31,11 +31,55 @@
         
         // Layer constants
         PINNED_FRAMES_LAYER: 1,  // Layer index for pinned frame features
-        ROTATION_ZINDEX : 999,
+        PINNED_FRAMES_ZINDEX: 1000,  // Top layer - actual print frames
+        ROTATION_ZINDEX: 999,         // Middle layer - interactive rotation controls
+        TRACK_LAYER_ZINDEX: 998,      // Bottom layer - reference track/guide layer
         
         // Configurable colors (can be overridden in client implementations)
-        rotationControlColor: '#0066cc',  // Blue color matching Mapbender's highlight color
+        highlightColor: '#0066cc',        // Blue color matching Mapbender's highlight color
         rotationControlOpacity: 0.6,      // Opacity for rotation handle fill
+        highlightFillOpacity: 0.3,        // Opacity for frame highlight fill
+        defaultFrameStrokeColor: '#000000',
+        defaultFrameFillColor: 'rgba(255, 255, 255, 0.5)',
+        trackColor: '#FF0000',
+        trackFillOpacity: 0.1,
+        
+        // Style dimensions
+        highlightStrokeWidthThin: 0.5,
+        highlightStrokeWidthNormal: 2,
+        frameStrokeWidth: 2,
+        rotationBoxStrokeWidth: 2,
+        rotationHandleStrokeWidth: 1,
+        rotationHandleRadius: 8,
+        trackStrokeWidth: 3,
+        trackPointRadius: 6,
+        trackPointStrokeWidth: 2,
+        
+        // Line dash patterns
+        rotationBoxLineDash: [5, 5],
+        
+        // Interaction tolerances
+        hitToleranceFrame: 5,
+        hitToleranceRotation: 10,
+        
+        // Animation and timing
+        dragEndDelay: 50,
+        frameDragEndDelay: 100,
+        tabSwitchDelay: 50,
+        
+        // Map view settings
+        trackFitPadding: [100, 100, 100, 100],
+        trackFitDuration: 500,
+        trackFitMaxZoom: 16,
+
+        /**
+         * Get highlight fill color with configured opacity
+         * @returns {string} RGBA color string
+         */
+        _getHighlightFillColor: function() {
+            var rgb = Mapbender.StyleUtil.parseCssColor(this.highlightColor);
+            return 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + this.highlightFillOpacity + ')';
+        },
 
         _setup: function(){
             this._super();
@@ -49,8 +93,8 @@
             // Initialize multiframe functionality
             this.featureCounter = 0;
             this.pinnedFeatures = [];
-            this.kmlLayer = null;
-            this.kmlFeatures = [];
+            this.geofileLayer = null;
+            this.geofileFeatures = [];
             
             var self = this;
             
@@ -58,7 +102,7 @@
             $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.batchprint.btn.submit'));
             
             // Setup geospatial file upload handlers
-            this._setupKmlUploadHandlers();
+            this._setupGeofileUploadHandlers();
             
             // Setup delete all frames button
             $('.-fn-delete-all-frames', this.element).on('click', function() {
@@ -148,7 +192,7 @@
         _deactivateSelection: function() {
             this._stopMouseFollow();
             this._clearPinnedFeatures();
-            this._clearKmlLayer();
+            this._clearGeofileLayer();
             
             // Remove map hover handler
             if (this.mapHoverHandler) {
@@ -389,11 +433,11 @@
         _getDefaultStyle: function() {
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: '#000000',
-                    width: 2
+                    color: this.defaultFrameStrokeColor,
+                    width: this.frameStrokeWidth
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 255, 0.5)'
+                    color: this.defaultFrameFillColor
                 })
             });
         },
@@ -406,7 +450,7 @@
             var nativeLayer = layerBridge.getNativeLayer();
             
             // Ensure pinned frames layer has higher z-index than rotation overlay
-            nativeLayer.setZIndex(1000);
+            nativeLayer.setZIndex(this.PINNED_FRAMES_ZINDEX);
             
             // Create black outline style for pinned features (normal state)
             var style = this._getDefaultStyle();
@@ -441,11 +485,11 @@
                 // Base highlight style with very thin border and fill
                 var baseStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
-                        color: '#0066cc',
-                        width: 0.5  // Very thin border for bottom, left, right
+                        color: this.highlightColor,
+                        width: this.highlightStrokeWidthThin
                     }),
                     fill: new ol.style.Fill({
-                        color: 'rgba(0, 102, 204, 0.3)'
+                        color: this._getHighlightFillColor()
                     })
                 });
                 
@@ -453,8 +497,8 @@
                 var topBorderStyle = new ol.style.Style({
                     geometry: new ol.geom.LineString(topLineCoords),
                     stroke: new ol.style.Stroke({
-                        color: '#0066cc',
-                        width: 2  // Normal border width for top edge
+                        color: this.highlightColor,
+                        width: this.highlightStrokeWidthNormal
                     })
                 });
                 
@@ -662,7 +706,7 @@
                     layerFilter: function(layer) {
                         return layer === layerBridge.getNativeLayer();
                     },
-                    hitTolerance: 5
+                    hitTolerance: self.hitToleranceFrame
                 });
                 
                 // Detect rotation controls (dotted box and circle) at cursor position
@@ -678,7 +722,7 @@
                     layerFilter: function(layer) {
                         return layer === self.rotationOverlayLayer;
                     },
-                    hitTolerance: 10
+                    hitTolerance: self.hitToleranceRotation
                 });
                 
                 // Update visibility and highlighting for all frames
@@ -751,7 +795,7 @@
             this.rotationOverlayLayer = new ol.layer.Vector({
                 source: source,
                 style: null,  // Features will have their own styles
-                zIndex: self.ROTATION_ZINDEX  // Below pinned frames but above map content
+                zIndex: this.ROTATION_ZINDEX  // Below pinned frames but above map content
             });
             map.addLayer(this.rotationOverlayLayer);
         },
@@ -985,7 +1029,7 @@
             setTimeout(function() {
                 self.isRotating = false;
                 self.rotatingFrameId = null;
-            }, 50);
+            }, self.dragEndDelay);
             
             return true;
         },
@@ -1003,13 +1047,13 @@
             }
             
             // Delay flag reset to prevent immediate re-triggering of click handlers
-            // that might fire as the drag ends. Slightly longer delay (100ms) than rotation
+            // that might fire as the drag ends. Slightly longer delay than rotation
             // to ensure all drag-related events have fully completed
             setTimeout(function() {
                 self.isDraggingFrame = false;
                 self.draggedFrameId = null;
                 self.dragStartCoordinate = null;
-            }, 100);
+            }, self.frameDragEndDelay);
             
             return true;
         },
@@ -1110,24 +1154,24 @@
             if (!handle) return;
             
             // Parse color and create semi-transparent fill
-            var rgb = Mapbender.StyleUtil.parseCssColor(this.rotationControlColor);
+            var rgb = Mapbender.StyleUtil.parseCssColor(this.highlightColor);
             var fillColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + this.rotationControlOpacity + ')';
             
             // Apply visible style to dotted box
             handle.boxFeature.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: this.rotationControlColor,
-                    width: 2,
-                    lineDash: [5, 5]
+                    color: this.highlightColor,
+                    width: this.rotationBoxStrokeWidth,
+                    lineDash: this.rotationBoxLineDash
                 })
             }));
             
             // Apply visible style to rotation handle circle
             handle.handleFeature.setStyle(new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: 8,
+                    radius: this.rotationHandleRadius,
                     fill: new ol.style.Fill({ color: fillColor }),
-                    stroke: new ol.style.Stroke({ color: '#000000', width: 1 })
+                    stroke: new ol.style.Stroke({ color: this.defaultFrameStrokeColor, width: this.rotationHandleStrokeWidth })
                 })
             }));
         },
@@ -1336,7 +1380,7 @@
                     // and ensure smooth UI transition
                     window.setTimeout(function() {
                         $tabs.tabs({active: 1});
-                    }, 50);
+                    }, self.tabSwitchDelay);
                 }
             } catch (error) {
                 // Restore selection feature on error too
@@ -1353,11 +1397,11 @@
         /**
          * Setup geospatial file upload handlers (KML, GeoJSON, etc.)
          */
-        _setupKmlUploadHandlers: function() {
+        _setupGeofileUploadHandlers: function() {
             var self = this;
             
             // File input change handler - automatically load geospatial file when selected
-            $('.-fn-kml-file-input', this.element).on('change', function() {
+            $('.-fn-geofile-file-input', this.element).on('change', function() {
                 var file = this.files && this.files[0];
                 
                 if (file) {
@@ -1365,15 +1409,15 @@
                     self._loadGeospatialFile();
                 } else {
                     // No file selected - hide buttons and clear status
-                    $('.-fn-kml-status', self.element).text('');
-                    $('.-fn-kml-buttons', self.element).removeClass('show');
+                    $('.-fn-geofile-status', self.element).text('');
+                    $('.-fn-geofile-buttons', self.element).removeClass('show');
                     $('.-fn-place-frames-button', self.element).removeClass('show');
                 }
             });
             
             // Clear file button handler
-            $('.-fn-clear-kml-button', this.element).on('click', function() {
-                self._clearKmlLayer();
+            $('.-fn-clear-geofile-button', this.element).on('click', function() {
+                self._clearGeofileLayer();
             });
             
             // Place frames along track button handler
@@ -1395,7 +1439,7 @@
          * Load and display geospatial file on map (KML, GeoJSON, GPX, GML)
          */
         _loadGeospatialFile: function() {
-            var $fileInput = $('.-fn-kml-file-input', this.element);
+            var $fileInput = $('.-fn-geofile-file-input', this.element);
             var file = $fileInput[0].files && $fileInput[0].files[0];
             
             if (!file) {
@@ -1413,11 +1457,11 @@
                 onSuccess: function(features, file) {
                     try {
                         self._renderTrackFeatures(features, file);
-                        $('.-fn-kml-status', self.element)
+                        $('.-fn-geofile-status', self.element)
                             .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.loaded') + ': ' + file.name)
                             .addClass('text-success')
                             .removeClass('text-danger');
-                        $('.-fn-kml-buttons', self.element).addClass('show');
+                        $('.-fn-geofile-buttons', self.element).addClass('show');
                         $('.-fn-place-frames-button', self.element).addClass('show');
                     } catch (error) {
                         self._handleFileLoadError(error, file);
@@ -1436,11 +1480,11 @@
          */
         _handleFileLoadError: function(error, file) {
             alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.error') + ': ' + error.message);
-            $('.-fn-kml-status', this.element)
+            $('.-fn-geofile-status', this.element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.error') + ': ' + error.message)
                 .addClass('text-danger')
                 .removeClass('text-success');
-            $('.-fn-kml-buttons', this.element).removeClass('show');
+            $('.-fn-geofile-buttons', this.element).removeClass('show');
             $('.-fn-place-frames-button', this.element).removeClass('show');
         },
         
@@ -1469,50 +1513,53 @@
             }
             
             // Clear existing geospatial layer if present
-            this._clearKmlLayer();
+            this._clearGeofileLayer();
             
             // Create new vector layer for geospatial features
             var source = new ol.source.Vector({
                 features: features
             });
             
-            this.kmlLayer = new ol.layer.Vector({
+            var rgb = Mapbender.StyleUtil.parseCssColor(this.trackColor);
+            var trackFillColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + this.trackFillOpacity + ')';
+            
+            this.geofileLayer = new ol.layer.Vector({
                 source: source,
                 style: new ol.style.Style({
                     stroke: new ol.style.Stroke({
-                        color: '#FF0000',
-                        width: 3
+                        color: this.trackColor,
+                        width: this.trackStrokeWidth
                     }),
                     fill: new ol.style.Fill({
-                        color: 'rgba(255, 0, 0, 0.1)'
+                        color: trackFillColor
                     }),
                     image: new ol.style.Circle({
-                        radius: 6,
+                        radius: this.trackPointRadius,
                         fill: new ol.style.Fill({
-                            color: '#FF0000'
+                            color: this.trackColor
                         }),
                         stroke: new ol.style.Stroke({
                             color: '#FFFFFF',
-                            width: 2
+                            width: this.trackPointStrokeWidth
                         })
                     })
                 }),
-                zIndex: 999
+                zIndex: this.TRACK_LAYER_ZINDEX
             });
             
             // Add layer to map
-            map.addLayer(this.kmlLayer);
+            map.addLayer(this.geofileLayer);
             
             // Store features for reference
-            this.kmlFeatures = features;
+            this.geofileFeatures = features;
             
             // Zoom to LineString extent with padding
             var extent = geometry.getExtent();
             if (!ol.extent.isEmpty(extent)) {
                 map.getView().fit(extent, {
-                    padding: [100, 100, 100, 100],
-                    duration: 500,
-                    maxZoom: 16
+                    padding: this.trackFitPadding,
+                    duration: this.trackFitDuration,
+                    maxZoom: this.trackFitMaxZoom
                 });
             }
         },
@@ -1520,20 +1567,20 @@
         /**
          * Clear geospatial layer from map
          */
-        _clearKmlLayer: function() {
-            if (this.kmlLayer) {
+        _clearGeofileLayer: function() {
+            if (this.geofileLayer) {
                 var map = this.map.getModel().olMap;
-                map.removeLayer(this.kmlLayer);
-                this.kmlLayer = null;
-                this.kmlFeatures = [];
+                map.removeLayer(this.geofileLayer);
+                this.geofileLayer = null;
+                this.geofileFeatures = [];
             }
             
-            // Reset file input, status and hide all KML-related buttons
-            $('.-fn-kml-file-input', this.element).val('');
-            $('.-fn-kml-status', this.element)
+            // Reset file input, status and hide all geofile-related buttons
+            $('.-fn-geofile-file-input', this.element).val('');
+            $('.-fn-geofile-status', this.element)
                 .text('')
                 .removeClass('success error');
-            $('.-fn-kml-buttons', this.element).removeClass('show');
+            $('.-fn-geofile-buttons', this.element).removeClass('show');
             $('.-fn-place-frames-button', this.element).removeClass('show');
         },
         
@@ -1541,12 +1588,12 @@
          * Place print frames along the geospatial track
          */
         _placeFramesAlongTrack: function() {
-            if (!this.kmlFeatures || this.kmlFeatures.length === 0) {
+            if (!this.geofileFeatures || this.geofileFeatures.length === 0) {
                 alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
                 return;
             }
             
-            var lineString = this.kmlFeatures[0].getGeometry();
+            var lineString = this.geofileFeatures[0].getGeometry();
             if (!lineString || lineString.getType() !== 'LineString') {
                 alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
                 return;
@@ -1618,7 +1665,7 @@
                 this._pinCurrentFrame();
             }
             
-            $('.-fn-kml-status', this.element)
+            $('.-fn-geofile-status', this.element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {count: this.pinnedFeatures.length}))
                 .addClass('text-success')
                 .removeClass('text-danger');
@@ -1726,7 +1773,7 @@
             // Update table and UI
             this._updateFrameTable();
             
-            $('.-fn-kml-status', this.element)
+            $('.-fn-geofile-status', this.element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.alldeleted'))
                 .removeClass('success error');
         }

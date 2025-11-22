@@ -92,6 +92,12 @@ mb:
           choice:
             global: 'глобально'
             private: 'приватно'
+        label:
+          qualitylevels: 'Уровни качества'
+          templates: 'Черновики'
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Включить загрузку геофайлов'
   core:
     printclient:
       admin:

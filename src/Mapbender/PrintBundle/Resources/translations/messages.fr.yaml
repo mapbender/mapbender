@@ -61,3 +61,45 @@ mb:
         alert:
           noframes: 'Veuillez placer au moins un cadre d''impression sur la carte.'
           error: 'Erreur lors de la création de la tâche d''impression'
+  core:
+    printclient:
+      admin:
+        scales: 'Échelles (séparées par des virgules)'
+        fileprefix: 'Préfixe du fichier'
+        optionalfields: 'Champs optionnels'
+        replacepattern: 'Remplacer le modèle'
+        templates: Modèles
+        qualitylevels: 'Niveaux de qualité'
+      label:
+        quality: Qualité
+      class:
+        title: Imprimer
+    batchprintclient:
+      class:
+        title: 'Impression par lots'
+        description: 'Impression par lots - Impression sérielle avec plusieurs cadres'
+    printclienttemplate:
+      admin:
+        template: Modèle
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        renderMode:
+          label: 'Mode'
+          choice:
+            direct: 'Direct'
+            queued: 'En file d''attente'
+        queueAccess:
+          label: 'File d''attente'
+          choice:
+            global: 'global'
+            private: 'privé'
+        label:
+          qualitylevels: 'Niveaux de qualité'
+          templates: Modèles
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Activer le téléchargement de géofichiers'

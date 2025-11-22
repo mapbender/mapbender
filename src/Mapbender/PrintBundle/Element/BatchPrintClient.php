@@ -40,7 +40,7 @@ class BatchPrintClient extends PrintClient
     public static function getDefaultConfiguration(): array
     {
         return array_merge(parent::getDefaultConfiguration(), [
-            'enableKmlUpload' => true,
+            'enableGeofileUpload' => true,
         ]);
     }
 
@@ -101,7 +101,7 @@ class BatchPrintClient extends PrintClient
         $config = $element->getConfiguration();
         // TemplateView has a public $variables array property
         /** @var TemplateView $view */
-        $view->variables['enableKmlUpload'] = !empty($config['enableKmlUpload']);
+        $view->variables['enableGeofileUpload'] = !empty($config['enableGeofileUpload']);
         return $view;
     }
 

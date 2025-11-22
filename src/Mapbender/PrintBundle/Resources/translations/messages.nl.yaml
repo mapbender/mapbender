@@ -61,3 +61,45 @@ mb:
         alert:
           noframes: 'Plaats ten minste één afdrukframe op de kaart.'
           error: 'Fout bij het aanmaken van de afdrukopdracht'
+  core:
+    printclient:
+      admin:
+        scales: 'Schalen (kommagescheiden)'
+        fileprefix: Bestandsprefix
+        optionalfields: 'Optionele velden'
+        replacepattern: 'Patroon vervangen'
+        templates: Sjablonen
+        qualitylevels: Kwaliteitsniveaus
+      label:
+        quality: Kwaliteit
+      class:
+        title: Afdrukken
+    batchprintclient:
+      class:
+        title: 'Batchafdrukken'
+        description: 'Batchafdrukken - Serieel afdrukken met meerdere frames'
+    printclienttemplate:
+      admin:
+        template: Sjabloon
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        renderMode:
+          label: 'Modus'
+          choice:
+            direct: 'Direct'
+            queued: 'In wachtrij'
+        queueAccess:
+          label: 'Wachtrij'
+          choice:
+            global: 'globaal'
+            private: 'privé'
+        label:
+          qualitylevels: Kwaliteitsniveaus
+          templates: Sjablonen
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Geobestand-upload inschakelen'

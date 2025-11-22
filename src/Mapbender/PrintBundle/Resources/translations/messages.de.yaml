@@ -132,4 +132,4 @@ mb:
           templates: Vorlagen
       batchprintclient:
         label:
-          enableKmlUpload: 'KML Upload aktivieren'
+          enableGeofileUpload: 'Geodatei Upload aktivieren'

@@ -1,8 +1,8 @@
 // BatchPrintClient specific styles
 // Only includes styles that were moved from inline CSS in JS and Twig files
 .mb-element-batchprintclient {
-  // KML Upload section
-  .kml-upload {
+  // Geospatial file upload section
+  .geofile-upload {
     display: block;
     border-top: 1px solid #ccc;
     padding-top: 10px;
@@ -23,12 +23,12 @@
       max-width: 100%;
     }
 
-    .kml-file-input {
+    .geofile-file-input {
       width: 100%;
       max-width: 100%;
     }
 
-    .kml-buttons {
+    .geofile-buttons {
       display: none;
       gap: 8px;
       flex-wrap: wrap;
@@ -43,7 +43,7 @@
       }
     }
 
-    .kml-place-frames-button {
+    .geofile-place-frames-button {
       display: none;
 
       &.show {
@@ -52,27 +52,27 @@
     }
 
     // Adjust frames checkbox
-    .kml-adjust-label {
+    .geofile-adjust-label {
       display: inline-flex;
       align-items: center;
 
-      .kml-adjust-checkbox {
+      .geofile-adjust-checkbox {
         margin-right: 6px;
       }
     }
 
     // Frame overlap section
-    .kml-overlap-section {
+    .geofile-overlap-section {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-top: 8px;
 
-      .kml-overlap-label {
+      .geofile-overlap-label {
         margin: 0;
       }
 
-      .kml-overlap-input {
+      .geofile-overlap-input {
         width: 60px;
       }
     }
@@ -86,7 +86,7 @@
       }
     }
 
-    .kml-status {
+    .geofile-status {
       display: block;
       margin-top: 5px;
       color: #666;

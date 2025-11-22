@@ -4,38 +4,38 @@
 {% block printclient_form_bottom %}
     {{ parent() }}
     
-    {% if enableKmlUpload %}
+    {% if enableGeofileUpload %}
     {# Geospatial File Upload (KML, GeoJSON) #}
-    <div class="form-group no-gutters kml-upload -fn-kml-upload">
-        <label class="kml-upload-label">{{ 'mb.print.printclient.batchprint.track.upload' | trans }}</label>
+    <div class="form-group no-gutters geofile-upload -fn-geofile-upload">
+        <label class="geofile-upload-label">{{ 'mb.print.printclient.batchprint.track.upload' | trans }}</label>
         <div>
             <div>
                 <input type="file" 
-                       name="kml_file" 
+                       name="geofile" 
                        accept=".kml,.geojson,.json,.gpx,.gml,.xml,application/vnd.google-earth.kml+xml,application/geo+json,application/gpx+xml,application/gml+xml"
-                       class="form-control kml-file-input -fn-kml-file-input">
+                       class="form-control geofile-file-input -fn-geofile-file-input">
             </div>
-            <div class="kml-buttons -fn-kml-buttons">
+            <div class="geofile-buttons -fn-geofile-buttons">
                 <button type="button" 
-                        class="btn -fn-clear-kml-button">
+                        class="btn -fn-clear-geofile-button">
                     {{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}
                 </button>
                 <button type="button" 
-                        class="btn kml-place-frames-button -fn-place-frames-button">
+                        class="btn geofile-place-frames-button -fn-place-frames-button">
                     {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
                 </button>
-                <label class="kml-adjust-label">
-                    <input type="checkbox" class="kml-adjust-checkbox -fn-adjust-frames-checkbox">
+                <label class="geofile-adjust-label">
+                    <input type="checkbox" class="geofile-adjust-checkbox -fn-adjust-frames-checkbox">
                     {{ 'mb.print.printclient.batchprint.geofile.adjustframes' | trans }}
                 </label>
             </div>
-            <div class="kml-overlap-section">
-                <label class="kml-overlap-label">
+            <div class="geofile-overlap-section">on">
+                <label class="geofile-overlap-label">
                     {{ 'mb.print.printclient.batchprint.geofile.overlap' | trans }}
                 </label>
                 <input type="number" 
                        name="frame_overlap" 
-                       class="form-control kml-overlap-input -fn-frame-overlap-input"
+                       class="form-control geofile-overlap-input -fn-frame-overlap-input"
                        value="10"
                        min="0"
                        max="100"
@@ -43,7 +43,7 @@
                 <span>%</span>
             </div>
         </div>
-        <small class="kml-status -fn-kml-status"></small>
+        <small class="geofile-status -fn-geofile-status"></small>
     </div>
     {% endif %}
     

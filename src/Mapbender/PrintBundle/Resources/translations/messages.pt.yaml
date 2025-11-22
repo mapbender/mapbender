@@ -23,6 +23,7 @@ mb:
       btn:
         batchprint: 'Iniciar impressão em lote'
       batchprint:
+        title: 'Título'
         btn:
           submit: 'Iniciar impressão em lote'
         track:
@@ -59,6 +60,7 @@ mb:
           deleteall: 'Excluir todas as molduras'
           empty: 'Nenhuma moldura de impressão colocada ainda. Clique no mapa para adicionar molduras.'
         confirm:
+          create: 'Isto criará %count% molduras. Continuar?'
           deleteall: 'Excluir todas as %count% molduras?'
         alldeleted: 'Todas as molduras excluídas'
         alert:
@@ -116,6 +118,19 @@ mb:
         label: Rótulo
     admin:
       printclient:
+        renderMode:
+          label: 'Modo'
+          choice:
+            direct: 'Direto'
+            queued: 'Enfileirado'
+        queueAccess:
+          label: 'Fila'
+          choice:
+            global: 'global'
+            private: 'privada'
         label:
           qualitylevels: Níveis de Qualidade
           templates: Modelos
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Ativar carregamento de geodados'

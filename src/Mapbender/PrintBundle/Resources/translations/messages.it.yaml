@@ -21,6 +21,7 @@ mb:
         settings: 'Impostazioni del lavoro'
         joblist: 'Lavori recenti'
       batchprint:
+        title: 'Titolo'
         btn:
           submit: 'Avvia stampa in serie'
         track:
@@ -57,6 +58,7 @@ mb:
           deleteall: 'Elimina tutte le cornici'
           empty: 'Nessuna cornice di stampa posizionata ancora. Fai clic sulla mappa per aggiungere cornici.'
         confirm:
+          create: 'Questo creerà %count% cornici. Continuare?'
           deleteall: 'Eliminare tutte le %count% cornici?'
         alldeleted: 'Tutte le cornici eliminate'
         alert:
@@ -114,6 +116,19 @@ mb:
         label: Label
     admin:
       printclient:
+        renderMode:
+          label: 'Modo'
+          choice:
+            direct: 'diretto'
+            queued: 'in coda'
+        queueAccess:
+          label: 'Coda'
+          choice:
+            global: 'globale'
+            private: 'privato'
         label:
           qualitylevels: 'Livelli di qualità'
           templates: Templates
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Abilita caricamento geodati'

@@ -23,6 +23,7 @@ mb:
       btn:
         batchprint: 'Почати пакетний друк'
       batchprint:
+        title: 'Назва'
         btn:
           submit: 'Почати пакетний друк'
         track:
@@ -59,6 +60,7 @@ mb:
           deleteall: 'Видалити всі рамки'
           empty: 'Рамки друку ще не розміщено. Натисніть на карту, щоб додати рамки.'
         confirm:
+          create: 'Це створить %count% рамок. Продовжити?'
           deleteall: 'Видалити всі %count% рамок?'
         alldeleted: 'Всі рамки видалено'
         alert:
@@ -90,3 +92,33 @@ mb:
           choice:
             global: глобальний
             private: приватний
+        label:
+          qualitylevels: Рівні якості
+          templates: Шаблони
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Увімкнути завантаження геофайлів'
+  core:
+    printclient:
+      admin:
+        scales: 'Масштаби (розділені комами)'
+        fileprefix: 'Префікс файлу'
+        optionalfields: 'Необов''язкові поля'
+        replacepattern: 'Замінити шаблон'
+        templates: Шаблони
+        qualitylevels: 'Рівні якості'
+      label:
+        quality: 'Якість'
+      class:
+        title: Друк
+    batchprintclient:
+      class:
+        title: 'Пакетний друк'
+        description: 'Пакетний друк - Серійний друк з декількома рамками'
+    printclienttemplate:
+      admin:
+        template: Шаблон
+        label: Мітка
+    printclientquality:
+      admin:
+        label: Мітка
