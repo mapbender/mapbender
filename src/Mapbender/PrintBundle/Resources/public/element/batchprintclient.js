@@ -246,12 +246,38 @@
                 var pixel = map.getEventPixel(evt.originalEvent);
                 var coordinate = map.getCoordinateFromPixel(pixel);
                 
+                // Hide mouse-move-frame when hovering over any feature (excluding the selection frame itself)
+                var hasOtherFeature = map.forEachFeatureAtPixel(pixel, function(mapFeature) {
+                    return mapFeature !== self.feature;
+                });
+                
+                if (hasOtherFeature) {
+                    self.feature.setStyle(new ol.style.Style({}));  // Make invisible
+                } else {
+                    self.feature.setStyle(null);  // Reset to default style
+                    self._redrawSelectionFeatures();
+                }
+                
                 if (coordinate) {
                     self._moveFeatureToCoordinate(coordinate);
                 }
             };
             
             $mapElement.on('mousemove', this.mouseMoveHandler);
+            
+            // Hide feature when mouse leaves map and enters any widget
+            $mapElement.on('mouseleave', function() {
+                if (self.feature) {
+                    self.feature.setStyle(new ol.style.Style({}));  // Make invisible
+                }
+            });
+            
+            $mapElement.on('mouseenter', function() {
+                if (self.feature && self.mouseFollowActive) {
+                    self.feature.setStyle(null);  // Reset to default style
+                    self._redrawSelectionFeatures();
+                }
+            });
         },
         
         /**
