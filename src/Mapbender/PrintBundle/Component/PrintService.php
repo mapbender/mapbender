@@ -279,6 +279,24 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function afterMainMap($pdf, $template, $jobData)
     {
+        $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
+
+        $legends = $this->legendHandler->collectLegends($jobData);
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
+
+    /**
+     * Process template regions, text fields, and coordinates.
+     * Extracted to avoid code duplication between single and batch printing.
+     *
+     * @param \FPDF|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     */
+    protected function processTemplateRegionsAndFields($pdf, $template, $jobData)
+    {
         $regionBlacklist = $this->getFirstPageSpecialRegionNames($jobData);
         foreach ($template->getRegions() as $region) {
             if (!in_array($region->getName(), $regionBlacklist)) {
@@ -291,12 +309,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         if (!empty($template['fields'])) {
             $this->addTextFields($pdf, $template, $jobData);
         }
-        $this->addCoordinates($pdf, $template, $jobData);
 
-        $legends = $this->legendHandler->collectLegends($jobData);
-        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
-        $this->finishMainPage($pdf, $template, $jobData);
-        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+        $this->addCoordinates($pdf, $template, $jobData);
     }
 
     /**

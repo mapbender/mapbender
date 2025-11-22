@@ -116,20 +116,8 @@ class BatchPrintService extends PrintService
 
         $this->addMapImage($pdf, $mapImageName, $template);
         unlink($mapImageName);
-        $regionBlacklist = $this->getFirstPageSpecialRegionNames($jobData);
-        foreach ($template->getRegions() as $region) {
-            if (!in_array($region->getName(), $regionBlacklist)) {
-                if (!$this->handleRegion($pdf, $region, $jobData)) {
-                    $this->logger->warning("Unhandled print template region " . print_r($region->getName(), true));
-                }
-            }
-        }
-
-        if (!empty($template['fields'])) {
-            $this->addTextFields($pdf, $template, $jobData);
-        }
-
-        $this->addCoordinates($pdf, $template, $jobData);
+        
+        $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
 
         $this->collectedLegends[] = $this->legendHandler->collectLegends($jobData);
 
