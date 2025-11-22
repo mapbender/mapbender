@@ -173,17 +173,17 @@
                 this._initializeRotationOverlay();
             }
             
-            // Mouse click handler - pin frames on click
+            // Use OpenLayers click event - fires immediately on click
             this.mouseClickHandler = function(evt) {
                 if (!self.mouseFollowActive || self.isRotating || self.isDraggingFrame) {
                     return;
                 }
                 
-                // Always pin the current frame
+                // Pin the current frame
                 self._pinCurrentFrame();
             };
             
-            $mapElement.on('click', this.mouseClickHandler);
+            map.on('click', this.mouseClickHandler);
             
             // Mouse move handler - update feature position
             this.mouseMoveHandler = function(evt) {
@@ -221,7 +221,7 @@
             }
             
             if (this.mouseClickHandler) {
-                $mapElement.off('click', this.mouseClickHandler);
+                map.un('click', this.mouseClickHandler);
                 this.mouseClickHandler = null;
             }
         },
