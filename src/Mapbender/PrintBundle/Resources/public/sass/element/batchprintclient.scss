@@ -176,15 +176,32 @@
         }
 
         tr {
-          cursor: pointer;
+          cursor: move;
           transition: background-color 0.15s ease;
 
           &.highlight {
-
             td  {
-            background-color: rgba(0, 102, 204, 0.15) !important;
+              background-color: rgba(0, 102, 204, 0.15) !important;
             }
           }
+
+          &.dragging {
+            opacity: 0.5;
+          }
+
+          &.ui-sortable-helper {
+            display: table;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0.9;
+          }
+        }
+
+        // Placeholder styling during drag
+        .ui-sortable-placeholder {
+          visibility: visible !important;
+          background-color: rgba(0, 102, 204, 0.1);
+          border: 1px dashed #0066cc;
         }
       }
     }

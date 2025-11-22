@@ -482,12 +482,12 @@
             }
             
             var self = this;
-            this.pinnedFeatures.forEach(function(frameData) {
+            this.pinnedFeatures.forEach(function(frameData, index) {
                 var $row = $('<tr></tr>');
                 $row.attr('data-frame-id', frameData.id);
                 
-                // Frame number
-                $row.append($('<td></td>').text(frameData.id));
+                // Frame number (display order position, not ID)
+                $row.append($('<td></td>').text(index + 1));
                 
                 // Scale
                 $row.append($('<td></td>').text('1:' + frameData.scale));
@@ -528,8 +528,83 @@
                 $tbody.append($row);
             });
             
+            // Initialize sortable functionality for table rows
+            this._initFrameTableSortable();
+            
             // Add map hover handlers for highlighting table rows
             this._setupMapHoverHandlers();
+        },
+        
+        /**
+         * Initialize sortable functionality for frame table rows
+         */
+        _initFrameTableSortable: function() {
+            var self = this;
+            var $tbody = $('.-fn-frame-table tbody', this.element);
+            
+            // Destroy existing sortable if it exists
+            if ($tbody.hasClass('ui-sortable')) {
+                $tbody.sortable('destroy');
+            }
+            
+            // Initialize jQuery UI sortable
+            $tbody.sortable({
+                axis: 'y',
+                cursor: 'move',
+                handle: 'td',
+                helper: function(e, tr) {
+                    var $originals = tr.children();
+                    var $helper = tr.clone();
+                    $helper.children().each(function(index) {
+                        $(this).width($originals.eq(index).width());
+                    });
+                    return $helper;
+                },
+                start: function(e, ui) {
+                    // Add visual feedback during drag
+                    ui.item.addClass('dragging');
+                },
+                stop: function(e, ui) {
+                    // Remove visual feedback
+                    ui.item.removeClass('dragging');
+                },
+                update: function(e, ui) {
+                    self._handleFrameTableReorder();
+                }
+            });
+        },
+        
+        /**
+         * Handle reordering of frame table rows by updating pinnedFeatures array
+         */
+        _handleFrameTableReorder: function() {
+            var self = this;
+            var $tbody = $('.-fn-frame-table tbody', this.element);
+            
+            // Get new order of frame IDs from table rows
+            var newOrder = [];
+            $tbody.find('tr').each(function() {
+                var frameId = parseInt($(this).attr('data-frame-id'));
+                newOrder.push(frameId);
+            });
+            
+            // Reorder pinnedFeatures array to match new table order
+            var reorderedFeatures = [];
+            newOrder.forEach(function(frameId) {
+                var frameData = self.pinnedFeatures.find(function(f) {
+                    return f.id === frameId;
+                });
+                if (frameData) {
+                    reorderedFeatures.push(frameData);
+                }
+            });
+            
+            this.pinnedFeatures = reorderedFeatures;
+            
+            // Update frame numbers in table to reflect new order
+            $tbody.find('tr').each(function(index) {
+                $(this).find('td:first').text(index + 1);
+            });
         },
         
         /**
