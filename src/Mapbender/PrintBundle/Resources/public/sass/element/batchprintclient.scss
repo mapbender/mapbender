@@ -160,6 +160,18 @@
       tbody {
         td:last-child {
           text-align: right;
+
+          // Delete icon styling
+          .fa-trash {
+            padding: 6px 16px;
+            cursor: pointer;
+            color: black;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: #c9302c;
+            }
+          }
         }
 
         tr {
