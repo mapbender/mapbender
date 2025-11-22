@@ -1175,8 +1175,8 @@
                     self._parseAndDisplayGeospatialFile(e.target.result, formatInfo.parser, file.name);
                     $('.-fn-kml-status', self.element)
                         .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
-                        .addClass('success')
-                        .removeClass('error');
+                        .addClass('text-success')
+                        .removeClass('text-danger');
                     // Show all file-related buttons (Clear, Place Frames, Adjust checkbox)
                     $('.-fn-kml-buttons', self.element).addClass('show');
                     $('.-fn-place-frames-button', self.element).addClass('show');
@@ -1184,8 +1184,8 @@
                     alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.error') + ': ' + error.message);
                     $('.-fn-kml-status', self.element)
                         .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
-                        .addClass('error')
-                        .removeClass('success');
+                        .addClass('text-danger')
+                        .removeClass('text-success');
                     $('.-fn-kml-buttons', self.element).removeClass('show');
                     $('.-fn-place-frames-button', self.element).removeClass('show');
                 }
@@ -1195,8 +1195,8 @@
                 alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.readerror'));
                 $('.-fn-kml-status', self.element)
                     .text(Mapbender.trans('mb.print.printclient.batchprint.kml.readerror'))
-                    .addClass('error')
-                    .removeClass('success');
+                    .addClass('text-danger')
+                    .removeClass('text-success');
                 $('.-fn-kml-buttons', self.element).removeClass('show');
                 $('.-fn-place-frames-button', self.element).removeClass('show');
             };
@@ -1383,8 +1383,8 @@
             
             $('.-fn-kml-status', this.element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.kml.placed', {count: this.pinnedFeatures.length}))
-                .addClass('success')
-                .removeClass('error');
+                .addClass('text-success')
+                .removeClass('text-danger');
         },
         
         /**
