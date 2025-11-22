@@ -52,6 +52,7 @@ mb:
           rotation: 'Rotatie'
           delete: 'Verwijderen'
           deleteall: 'Alle frames verwijderen'
+          empty: 'Nog geen afdrukframes geplaatst. Klik op de kaart om frames toe te voegen.'
         confirm:
           deleteall: 'Alle %count% frames verwijderen?'
         alldeleted: 'Alle frames verwijderd'

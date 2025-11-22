@@ -52,6 +52,7 @@ mb:
           rotation: 'Rotation'
           delete: 'Supprimer'
           deleteall: 'Supprimer tous les cadres'
+          empty: 'Aucun cadre d''impression n''a encore été placé. Cliquez sur la carte pour ajouter des cadres.'
         confirm:
           deleteall: 'Supprimer tous les %count% cadres?'
         alldeleted: 'Tous les cadres supprimés'

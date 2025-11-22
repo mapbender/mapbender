@@ -55,6 +55,7 @@ mb:
           rotation: 'Rotação'
           delete: 'Excluir'
           deleteall: 'Excluir todas as molduras'
+          empty: 'Nenhuma moldura de impressão colocada ainda. Clique no mapa para adicionar molduras.'
         confirm:
           deleteall: 'Excluir todas as %count% molduras?'
         alldeleted: 'Todas as molduras excluídas'

@@ -53,6 +53,7 @@ mb:
           rotation: 'Rotazione'
           delete: 'Elimina'
           deleteall: 'Elimina tutte le cornici'
+          empty: 'Nessuna cornice di stampa posizionata ancora. Fai clic sulla mappa per aggiungere cornici.'
         confirm:
           deleteall: 'Eliminare tutte le %count% cornici?'
         alldeleted: 'Tutte le cornici eliminate'

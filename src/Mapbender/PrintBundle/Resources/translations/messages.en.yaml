@@ -54,6 +54,7 @@ mb:
           rotation: 'Rotation'
           delete: 'Delete'
           deleteall: 'Delete All Frames'
+          empty: 'No print frames placed yet. Click on the map to add frames.'
         confirm:
           create: 'This will create %count% frames. Continue?'
           deleteall: 'Delete all %count% frames?'

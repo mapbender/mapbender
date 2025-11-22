@@ -149,6 +149,32 @@
       }
     }
 
+    // Empty state styling
+    .frame-table-empty-state {
+      padding: 12px 15px;
+      text-align: center;
+      color: #999;
+      font-size: 0.9em;
+      font-style: italic;
+      background-color: transparent;
+      border: 1px dashed #ddd;
+      border-radius: 3px;
+      display: block; // Show by default
+
+      p {
+        margin: 0;
+      }
+    }
+
+    // Table content wrapper
+    .frame-table-content {
+      max-height: 150px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: none; // Hide by default until frames are added
+    }
+
+    // Legacy selector - can be removed once fully migrated
     > div:last-of-type {
       max-height: 150px;
       overflow-y: auto;

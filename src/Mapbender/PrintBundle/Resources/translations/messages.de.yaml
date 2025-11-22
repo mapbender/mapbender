@@ -55,6 +55,7 @@ mb:
           rotation: 'Drehung'
           delete: 'Löschen'
           deleteall: 'Alle Rahmen löschen'
+          empty: 'Noch keine Druckrahmen platziert. Klicken Sie auf die Karte, um Rahmen hinzuzufügen.'
         confirm:
           create: 'Es werden %count% Rahmen erstellt. Fortfahren?'
           deleteall: 'Alle %count% Rahmen löschen?'

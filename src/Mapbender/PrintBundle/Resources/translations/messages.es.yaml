@@ -53,6 +53,7 @@ mb:
           rotation: 'Rotación'
           delete: 'Eliminar'
           deleteall: 'Eliminar todos los marcos'
+          empty: 'Aún no se han colocado marcos de impresión. Haga clic en el mapa para agregar marcos.'
         confirm:
           deleteall: '¿Eliminar todos los %count% marcos?'
         alldeleted: 'Todos los marcos eliminados'

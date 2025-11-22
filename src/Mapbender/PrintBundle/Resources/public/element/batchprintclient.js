@@ -462,12 +462,19 @@
             
             $tbody.empty();
             
-            // Show/hide delete all button based on whether there are frames
+            // Show/hide delete all button and toggle empty state based on whether there are frames
             var $deleteAllBtn = $('.-fn-delete-all-frames', this.element);
+            var $emptyState = $('.-fn-frame-table-empty', this.element);
+            var $tableContent = $('.-fn-frame-table-content', this.element);
+            
             if (this.pinnedFeatures.length > 0) {
                 $deleteAllBtn.addClass('show');
+                $emptyState.hide();
+                $tableContent.show();
             } else {
                 $deleteAllBtn.removeClass('show');
+                $emptyState.show();
+                $tableContent.hide();
             }
             
             var self = this;
