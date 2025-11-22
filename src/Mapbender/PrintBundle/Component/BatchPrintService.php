@@ -17,7 +17,7 @@ class BatchPrintService extends PrintService
      * Collected legends from all frames for merging
      * @var array
      */
-    protected $collectedLegends = [];
+    protected array $collectedLegends = [];
 
     /**
      * Executes the job (plain array), returns a binary string representation of the resulting PDF.
