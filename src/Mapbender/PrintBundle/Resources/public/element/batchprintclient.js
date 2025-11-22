@@ -416,14 +416,13 @@
             });
             
             if (frameData) {
-                var primaryColor = window.getComputedStyle(document.body).getPropertyValue('--primary');
                 var highlightStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
-                        color: primaryColor,
+                        color: '#0066cc',
                         width: 3
                     }),
                     fill: new ol.style.Fill({
-                        color: primaryColor.replace('rgb', 'rgba').replace(')', ', 0.3)')
+                        color: 'rgba(0, 102, 204, 0.3)'
                     })
                 });
                 frameData.feature.setStyle(highlightStyle);
@@ -600,10 +599,16 @@
          * Initialize the rotation overlay layer and drag interaction
          */
         _initializeRotationOverlay: function() {
-            var self = this;
+            this._createRotationOverlayLayer();
+            this._createRotationDragInteraction();
+            this._setupCursorHandlers();
+        },
+        
+        /**
+         * Create and configure the rotation overlay layer
+         */
+        _createRotationOverlayLayer: function() {
             var map = this.map.getModel().olMap;
-            
-            // Create overlay layer for rotation handles
             var source = new ol.source.Vector();
             this.rotationOverlayLayer = new ol.layer.Vector({
                 source: source,
@@ -611,159 +616,261 @@
                 zIndex: 999  // Below pinned frames but above map content
             });
             map.addLayer(this.rotationOverlayLayer);
+        },
+        
+        /**
+         * Create drag interaction for rotation handles and frame dragging
+         */
+        _createRotationDragInteraction: function() {
+            var self = this;
+            var map = this.map.getModel().olMap;
             
-            // Create drag interaction for rotation handles and frame dragging
             this.rotationDragInteraction = new ol.interaction.Pointer({
                 handleDownEvent: function(evt) {
-                    // First check if clicking on rotation handle
-                    var overlayFeature = map.forEachFeatureAtPixel(evt.pixel, function(f) {
-                        return f;
-                    }, {
-                        layerFilter: function(layer) {
-                            return layer === self.rotationOverlayLayer;
-                        }
-                    });
-                    
-                    if (overlayFeature && overlayFeature.get('type') === 'rotation-handle') {
-                        // Start rotation
-                        self.isRotating = true;
-                        self.rotatingFrameId = overlayFeature.get('frameId');
-                        self.rotationStartPixel = evt.pixel;
-                        
-                        var target = map.getTarget();
-                        var element = typeof target === 'string' ? document.getElementById(target) : target;
-                        element.style.cursor = 'grabbing';
-                        
-                        return true;
-                    }
-                    
-                    // Check if clicking on a pinned frame
-                    var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
-                    var pinnedFeature = map.forEachFeatureAtPixel(evt.pixel, function(f) {
-                        return f;
-                    }, {
-                        layerFilter: function(layer) {
-                            return layer === layerBridge.getNativeLayer();
-                        }
-                    });
-                    
-                    if (pinnedFeature) {
-                        // Start dragging frame
-                        var frameData = self.pinnedFeatures.find(function(f) {
-                            return f.feature === pinnedFeature;
-                        });
-                        
-                        if (frameData) {
-                            self.isDraggingFrame = true;
-                            self.draggedFrameId = frameData.id;
-                            self.dragStartCoordinate = evt.coordinate;
-                            
-                            // Hide the selection frame during drag
-                            if (self.feature) {
-                                self.feature.setStyle(new ol.style.Style({}));  // Make invisible
-                            }
-                            
-                            var target = map.getTarget();
-                            var element = typeof target === 'string' ? document.getElementById(target) : target;
-                            element.style.cursor = 'move';
-                            
-                            return true;
-                        }
-                    }
-                    
-                    return false;
+                    return self._handleRotationDragDown(evt);
                 },
                 handleDragEvent: function(evt) {
-                    // Handle rotation
-                    if (self.isRotating) {
-                        var frameData = self.pinnedFeatures.find(function(f) {
-                            return f.id === self.rotatingFrameId;
-                        });
-                        
-                        if (frameData) {
-                            var geometry = frameData.feature.getGeometry();
-                            var extent = geometry.getExtent();
-                            var center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
-                            
-                            var centerPixel = map.getPixelFromCoordinate(center);
-                            var dx1 = self.rotationStartPixel[0] - centerPixel[0];
-                            var dy1 = self.rotationStartPixel[1] - centerPixel[1];
-                            var dx2 = evt.pixel[0] - centerPixel[0];
-                            var dy2 = evt.pixel[1] - centerPixel[1];
-                            
-                            var angle1 = Math.atan2(dy1, dx1);
-                            var angle2 = Math.atan2(dy2, dx2);
-                            // Negate angleDelta to make rotation follow mouse direction
-                            var angleDelta = -(angle2 - angle1);
-                            
-                            geometry.rotate(angleDelta, center);
-                            
-                            var degrees = angleDelta * (180 / Math.PI);
-                            frameData.rotation = (frameData.rotation + degrees) % 360;
-                            if (frameData.rotation < 0) frameData.rotation += 360;
-                            
-                            self._updateRotationHandle(self.rotatingFrameId);
-                            self.rotationStartPixel = evt.pixel;
-                        }
-                    }
-                    
-                    // Handle frame dragging
-                    if (self.isDraggingFrame) {
-                        var frameData = self.pinnedFeatures.find(function(f) {
-                            return f.id === self.draggedFrameId;
-                        });
-                        
-                        if (frameData) {
-                            var dx = evt.coordinate[0] - self.dragStartCoordinate[0];
-                            var dy = evt.coordinate[1] - self.dragStartCoordinate[1];
-                            
-                            // Translate the feature geometry
-                            frameData.feature.getGeometry().translate(dx, dy);
-                            
-                            // Update center in frameData
-                            frameData.center = [frameData.center[0] + dx, frameData.center[1] + dy];
-                            
-                            // Update rotation handle position
-                            self._updateRotationHandle(self.draggedFrameId);
-                            
-                            self.dragStartCoordinate = evt.coordinate;
-                        }
-                    }
+                    self._handleRotationDrag(evt);
                 },
                 handleUpEvent: function(evt) {
-                    if (self.isRotating) {
-                        // Update table to reflect new rotation value
-                        self._updateFrameTable();
-                        
-                        setTimeout(function() {
-                            self.isRotating = false;
-                            self.rotatingFrameId = null;
-                        }, 50);
-                        return true;
-                    }
-                    
-                    if (self.isDraggingFrame) {
-                        // Restore selection frame visibility
-                        if (self.feature) {
-                            self.feature.setStyle(null);
-                            self._redrawSelectionFeatures();
-                        }
-                        
-                        setTimeout(function() {
-                            self.isDraggingFrame = false;
-                            self.draggedFrameId = null;
-                            self.dragStartCoordinate = null;
-                        }, 100);
-                        return true;
-                    }
-                    
-                    return false;
+                    return self._handleRotationDragUp(evt);
                 }
             });
             
             map.addInteraction(this.rotationDragInteraction);
+        },
+        
+        /**
+         * Handle mouse down event for rotation and frame dragging
+         */
+        _handleRotationDragDown: function(evt) {
+            var map = this.map.getModel().olMap;
             
-            // Change cursor when hovering over rotation handles or frames
+            // Check if clicking on rotation handle
+            var overlayFeature = this._getRotationHandleAtPixel(evt.pixel);
+            if (overlayFeature) {
+                return this._startRotation(overlayFeature, evt.pixel);
+            }
+            
+            // Check if clicking on a pinned frame
+            var frameData = this._getFrameDataAtPixel(evt.pixel);
+            if (frameData) {
+                return this._startFrameDrag(frameData, evt.coordinate);
+            }
+            
+            return false;
+        },
+        
+        /**
+         * Get rotation handle feature at given pixel
+         */
+        _getRotationHandleAtPixel: function(pixel) {
+            var self = this;
+            var map = this.map.getModel().olMap;
+            
+            var overlayFeature = map.forEachFeatureAtPixel(pixel, function(f) {
+                return f;
+            }, {
+                layerFilter: function(layer) {
+                    return layer === self.rotationOverlayLayer;
+                }
+            });
+            
+            return (overlayFeature && overlayFeature.get('type') === 'rotation-handle') ? overlayFeature : null;
+        },
+        
+        /**
+         * Get frame data for pinned frame at given pixel
+         */
+        _getFrameDataAtPixel: function(pixel) {
+            var self = this;
+            var map = this.map.getModel().olMap;
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
+            
+            var pinnedFeature = map.forEachFeatureAtPixel(pixel, function(f) {
+                return f;
+            }, {
+                layerFilter: function(layer) {
+                    return layer === layerBridge.getNativeLayer();
+                }
+            });
+            
+            if (!pinnedFeature) return null;
+            
+            return this.pinnedFeatures.find(function(f) {
+                return f.feature === pinnedFeature;
+            });
+        },
+        
+        /**
+         * Start rotation operation
+         */
+        _startRotation: function(handleFeature, pixel) {
+            this.isRotating = true;
+            this.rotatingFrameId = handleFeature.get('frameId');
+            this.rotationStartPixel = pixel;
+            
+            var map = this.map.getModel().olMap;
+            var target = map.getTarget();
+            var element = typeof target === 'string' ? document.getElementById(target) : target;
+            element.style.cursor = 'grabbing';
+            
+            return true;
+        },
+        
+        /**
+         * Start frame dragging operation
+         */
+        _startFrameDrag: function(frameData, coordinate) {
+            this.isDraggingFrame = true;
+            this.draggedFrameId = frameData.id;
+            this.dragStartCoordinate = coordinate;
+            
+            // Hide the selection frame during drag
+            if (this.feature) {
+                this.feature.setStyle(new ol.style.Style({}));  // Make invisible
+            }
+            
+            var map = this.map.getModel().olMap;
+            var target = map.getTarget();
+            var element = typeof target === 'string' ? document.getElementById(target) : target;
+            element.style.cursor = 'move';
+            
+            return true;
+        },
+        
+        /**
+         * Handle drag event for rotation and frame movement
+         */
+        _handleRotationDrag: function(evt) {
+            if (this.isRotating) {
+                this._processRotationDrag(evt);
+            } else if (this.isDraggingFrame) {
+                this._processFrameDrag(evt);
+            }
+        },
+        
+        /**
+         * Process rotation drag movement
+         */
+        _processRotationDrag: function(evt) {
+            var frameData = this.pinnedFeatures.find(function(f) {
+                return f.id === this.rotatingFrameId;
+            }.bind(this));
+            
+            if (!frameData) return;
+            
+            var map = this.map.getModel().olMap;
+            var geometry = frameData.feature.getGeometry();
+            var extent = geometry.getExtent();
+            var center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
+            
+            var centerPixel = map.getPixelFromCoordinate(center);
+            var dx1 = this.rotationStartPixel[0] - centerPixel[0];
+            var dy1 = this.rotationStartPixel[1] - centerPixel[1];
+            var dx2 = evt.pixel[0] - centerPixel[0];
+            var dy2 = evt.pixel[1] - centerPixel[1];
+            
+            var angle1 = Math.atan2(dy1, dx1);
+            var angle2 = Math.atan2(dy2, dx2);
+            // Negate angleDelta to make rotation follow mouse direction
+            var angleDelta = -(angle2 - angle1);
+            
+            geometry.rotate(angleDelta, center);
+            
+            var degrees = angleDelta * (180 / Math.PI);
+            frameData.rotation = (frameData.rotation + degrees) % 360;
+            if (frameData.rotation < 0) frameData.rotation += 360;
+            
+            this._updateRotationHandle(this.rotatingFrameId);
+            this.rotationStartPixel = evt.pixel;
+        },
+        
+        /**
+         * Process frame drag movement
+         */
+        _processFrameDrag: function(evt) {
+            var frameData = this.pinnedFeatures.find(function(f) {
+                return f.id === this.draggedFrameId;
+            }.bind(this));
+            
+            if (!frameData) return;
+            
+            var dx = evt.coordinate[0] - this.dragStartCoordinate[0];
+            var dy = evt.coordinate[1] - this.dragStartCoordinate[1];
+            
+            // Translate the feature geometry
+            frameData.feature.getGeometry().translate(dx, dy);
+            
+            // Update center in frameData
+            frameData.center = [frameData.center[0] + dx, frameData.center[1] + dy];
+            
+            // Update rotation handle position
+            this._updateRotationHandle(this.draggedFrameId);
+            
+            this.dragStartCoordinate = evt.coordinate;
+        },
+        
+        /**
+         * Handle drag end event
+         */
+        _handleRotationDragUp: function(evt) {
+            if (this.isRotating) {
+                return this._finishRotation();
+            }
+            
+            if (this.isDraggingFrame) {
+                return this._finishFrameDrag();
+            }
+            
+            return false;
+        },
+        
+        /**
+         * Finish rotation operation
+         */
+        _finishRotation: function() {
+            var self = this;
+            
+            // Update table to reflect new rotation value
+            this._updateFrameTable();
+            
+            setTimeout(function() {
+                self.isRotating = false;
+                self.rotatingFrameId = null;
+            }, 50);
+            
+            return true;
+        },
+        
+        /**
+         * Finish frame dragging operation
+         */
+        _finishFrameDrag: function() {
+            var self = this;
+            
+            // Restore selection frame visibility
+            if (this.feature) {
+                this.feature.setStyle(null);
+                this._redrawSelectionFeatures();
+            }
+            
+            setTimeout(function() {
+                self.isDraggingFrame = false;
+                self.draggedFrameId = null;
+                self.dragStartCoordinate = null;
+            }, 100);
+            
+            return true;
+        },
+        
+        /**
+         * Setup cursor handlers for hover interactions
+         */
+        _setupCursorHandlers: function() {
+            var self = this;
+            var map = this.map.getModel().olMap;
+            
             map.on('pointermove', function(evt) {
                 if (evt.dragging) return;
                 
@@ -771,6 +878,7 @@
                 var target = map.getTarget();
                 var element = typeof target === 'string' ? document.getElementById(target) : target;
                 
+                // Handle active state cursors
                 if (self.isRotating) {
                     element.style.cursor = 'grabbing';
                     return;
@@ -781,31 +889,16 @@
                     return;
                 }
                 
-                // Check for rotation handle
-                var overlayFeature = map.forEachFeatureAtPixel(pixel, function(f) {
-                    return f;
-                }, {
-                    layerFilter: function(layer) {
-                        return layer === self.rotationOverlayLayer;
-                    }
-                });
-                
-                if (overlayFeature && overlayFeature.get('type') === 'rotation-handle') {
+                // Check for rotation handle hover
+                var overlayFeature = self._getRotationHandleAtPixel(pixel);
+                if (overlayFeature) {
                     element.style.cursor = 'grab';
                     return;
                 }
                 
-                // Check for pinned frame
-                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
-                var pinnedFeature = map.forEachFeatureAtPixel(pixel, function(f) {
-                    return f;
-                }, {
-                    layerFilter: function(layer) {
-                        return layer === layerBridge.getNativeLayer();
-                    }
-                });
-                
-                if (pinnedFeature) {
+                // Check for pinned frame hover
+                var frameData = self._getFrameDataAtPixel(pixel);
+                if (frameData) {
                     element.style.cursor = 'move';
                     return;
                 }
