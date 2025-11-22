@@ -102,6 +102,10 @@ mb:
         quality: 'Качество'
       class:
         title: 'Печать'
+    batchprintclient:
+      class:
+        title: 'Пакетная печать'
+        description: 'Пакетная печать - Серийная печать с несколькими рамками'
     printclienttemplate:
       admin:
         template: 'Черновик'

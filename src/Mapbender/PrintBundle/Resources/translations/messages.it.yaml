@@ -98,6 +98,10 @@ mb:
         quality: Qualità
       class:
         title: Stampa
+    batchprintclient:
+      class:
+        title: 'Stampa in serie'
+        description: 'Stampa in serie - Stampa seriale con più cornici'
     printclienttemplate:
       admin:
         template: Template

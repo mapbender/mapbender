@@ -22,7 +22,7 @@ class BatchPrintClient extends PrintClient
      */
     public static function getClassTitle(): string
     {
-        return "Batch Print";
+        return "mb.core.batchprintclient.class.title";
     }
 
     /**
@@ -30,7 +30,7 @@ class BatchPrintClient extends PrintClient
      */
     public static function getClassDescription(): string
     {
-        return "Batch Print - Serial printing with multiple frames";
+        return "mb.core.batchprintclient.class.description";
     }
 
     /**
@@ -48,7 +48,7 @@ class BatchPrintClient extends PrintClient
      */
     public static function getType(): string
     {
-        return 'Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType';
+        return BatchPrintClient::class;
     }
 
     /**

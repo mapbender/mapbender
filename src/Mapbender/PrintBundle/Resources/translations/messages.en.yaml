@@ -100,6 +100,10 @@ mb:
         quality: Quality
       class:
         title: Print
+    batchprintclient:
+      class:
+        title: 'Batch Print'
+        description: 'Batch Print - Serial printing with multiple frames'
     printclienttemplate:
       admin:
         template: Template

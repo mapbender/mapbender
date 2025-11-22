@@ -101,6 +101,10 @@ mb:
         quality: Qualität
       class:
         title: Druck
+    batchprintclient:
+      class:
+        title: 'Seriendruck'
+        description: 'Seriendruck - Drucken mit mehreren Rahmen'
     printclienttemplate:
       admin:
         template: Vorlage

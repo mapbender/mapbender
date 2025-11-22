@@ -98,6 +98,10 @@ mb:
         quality: Calidad
       class:
         title: Imprimir
+    batchprintclient:
+      class:
+        title: 'Impresión por lotes'
+        description: 'Impresión por lotes - Impresión serial con múltiples marcos'
     printclienttemplate:
       admin:
         template: Plantillas
