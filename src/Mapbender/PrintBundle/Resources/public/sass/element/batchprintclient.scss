@@ -95,6 +95,7 @@
 
   // Frame tracking table section
   .frame-table {
+    font-size: 10px;
     display: block;
     border-top: 1px solid #ccc;
     padding-top: 10px;
@@ -175,12 +176,14 @@
         }
 
         tr {
-          transition: background-color 0.2s ease;
+          cursor: pointer;
+          transition: background-color 0.15s ease;
 
-          &:hover,
-          &.highlighted {
-            background-color: #ffeb99;
-            cursor: pointer;
+          &.highlight {
+
+            td  {
+            background-color: rgba(0, 102, 204, 0.15) !important;
+            }
           }
         }
       }

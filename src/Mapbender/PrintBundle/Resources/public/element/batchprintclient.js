@@ -517,12 +517,12 @@
                 // Add hover handlers for highlighting
                 $row.on('mouseenter', function() {
                     self._highlightFeature(frameData.id);
-                    $(this).addClass('highlighted');
+                    $(this).addClass('highlight');
                 });
                 
                 $row.on('mouseleave', function() {
                     self._unhighlightFeature(frameData.id);
-                    $(this).removeClass('highlighted');
+                    $(this).removeClass('highlight');
                 });
                 
                 $tbody.append($row);
@@ -546,7 +546,7 @@
             
             this.mapHoverHandler = function(evt) {
                 // Clear all highlights first
-                $('.-fn-frame-table tbody tr', self.element).removeClass('highlighted');
+                $('.-fn-frame-table tbody tr', self.element).removeClass('highlight');
                 self.pinnedFeatures.forEach(function(frameData) {
                     self._unhighlightFeature(frameData.id);
                 });
@@ -570,7 +570,7 @@
                 foundFrames.forEach(function(frameData) {
                     self._highlightFeature(frameData.id);
                     var $row = $('.-fn-frame-table tbody tr[data-frame-id="' + frameData.id + '"]', self.element);
-                    $row.addClass('highlighted');
+                    $row.addClass('highlight');
                 });
             };
             
