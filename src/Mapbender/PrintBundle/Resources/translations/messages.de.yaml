@@ -27,7 +27,7 @@ mb:
           submit: 'Seriendruck starten'
         track:
           upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
           load: 'Datei laden'
           clear: 'Datei löschen'
@@ -46,6 +46,8 @@ mb:
             readerror: 'Fehler beim Lesen der Datei.'
             loadfirst: 'Bitte laden Sie zuerst eine Streckendatei.'
             invalidgeometry: 'Ungültige Geometrie. LineString erwartet.'
+        overlap:
+          outofbounds: 'Überlappungswert %value%% liegt außerhalb des gültigen Bereichs (0-50%). Bitte geben Sie einen Wert zwischen 0 und 50 ein.'
         tracking:
           title: 'Druckrahmen'
           no: 'Nr.'

@@ -27,7 +27,7 @@ mb:
           submit: 'Iniciar impressão em lote'
         track:
           upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
           load: 'Carregar arquivo'
           clear: 'Limpar arquivo'
@@ -46,6 +46,8 @@ mb:
             readerror: 'Erro ao ler o arquivo.'
             loadfirst: 'Carregue primeiro um arquivo de percurso.'
             invalidgeometry: 'Geometria inválida. Esperado LineString.'
+        overlap:
+          outofbounds: 'O valor de sobreposição %value%% está fora do intervalo válido (0-50%). Por favor, insira um valor entre 0 e 50.'
         tracking:
           title: 'Molduras de impressão'
           no: 'Nº'

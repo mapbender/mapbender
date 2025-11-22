@@ -26,7 +26,7 @@ mb:
           submit: 'Start Batch Print'
         track:
           upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
           load: 'Load File'
           clear: 'Clear File'
@@ -45,6 +45,8 @@ mb:
             readerror: 'Error reading file.'
             loadfirst: 'Please load a track file first.'
             invalidgeometry: 'Invalid geometry. Expected LineString.'
+        overlap:
+          outofbounds: 'Overlap value %value%% is outside the valid range (0-50%). Please enter a value between 0 and 50.'
         tracking:
           title: 'Print Frames'
           no: 'No.'

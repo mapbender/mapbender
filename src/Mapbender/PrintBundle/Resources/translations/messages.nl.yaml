@@ -24,7 +24,7 @@ mb:
           submit: 'Start batchafdrukken'
         track:
           upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
           load: 'Bestand laden'
           clear: 'Bestand wissen'
@@ -43,6 +43,8 @@ mb:
             readerror: 'Fout bij het lezen van het bestand.'
             loadfirst: 'Laad eerst een trajectbestand.'
             invalidgeometry: 'Ongeldige geometrie. LineString verwacht.'
+        overlap:
+          outofbounds: 'Overlappingswaarde %value%% ligt buiten het geldige bereik (0-50%). Voer een waarde tussen 0 en 50 in.'
         tracking:
           title: 'Afdrukframes'
           no: 'Nr.'

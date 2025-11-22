@@ -25,7 +25,7 @@ mb:
           submit: 'Avvia stampa in serie'
         track:
           upload: 'Carica percorso (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Carica percorso (KML, GeoJSON, GPX, GML)'
           load: 'Carica file'
           clear: 'Cancella file'
@@ -44,6 +44,8 @@ mb:
             readerror: 'Errore nella lettura del file.'
             loadfirst: 'Carica prima un file di percorso.'
             invalidgeometry: 'Geometria non valida. Previsto LineString.'
+        overlap:
+          outofbounds: 'Il valore di sovrapposizione %value%% è al di fuori dell''intervallo valido (0-50%). Inserire un valore compreso tra 0 e 50.'
         tracking:
           title: 'Cornici di stampa'
           no: 'N.'

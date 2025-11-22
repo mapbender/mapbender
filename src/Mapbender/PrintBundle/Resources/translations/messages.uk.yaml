@@ -27,7 +27,7 @@ mb:
           submit: 'Почати пакетний друк'
         track:
           upload: 'Завантажити маршрут (KML, GeoJSON, GPX, GML)'
-        kml:
+        geofile:
           upload: 'Завантажити маршрут (KML, GeoJSON, GPX, GML)'
           load: 'Завантажити файл'
           clear: 'Очистити файл'
@@ -46,6 +46,8 @@ mb:
             readerror: 'Помилка читання файлу.'
             loadfirst: 'Спочатку завантажте файл маршруту.'
             invalidgeometry: 'Недійсна геометрія. Очікується LineString.'
+        overlap:
+          outofbounds: 'Значення перекриття %value%% виходить за межі допустимого діапазону (0-50%). Будь ласка, введіть значення від 0 до 50.'
         tracking:
           title: 'Рамки друку'
           no: '№'

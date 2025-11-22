@@ -1244,7 +1244,7 @@
             var file = $fileInput[0].files && $fileInput[0].files[0];
             
             if (!file) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.selectfile'));
+                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
                 return;
             }
             
@@ -1259,7 +1259,7 @@
                     try {
                         self._renderTrackFeatures(features, file);
                         $('.-fn-kml-status', self.element)
-                            .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
+                            .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.loaded') + ': ' + file.name)
                             .addClass('text-success')
                             .removeClass('text-danger');
                         $('.-fn-kml-buttons', self.element).addClass('show');
@@ -1280,9 +1280,9 @@
          * @param {File} file - The file that failed to load
          */
         _handleFileLoadError: function(error, file) {
-            alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.error') + ': ' + error.message);
+            alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.error') + ': ' + error.message);
             $('.-fn-kml-status', this.element)
-                .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
+                .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.error') + ': ' + error.message)
                 .addClass('text-danger')
                 .removeClass('text-success');
             $('.-fn-kml-buttons', this.element).removeClass('show');
@@ -1387,13 +1387,13 @@
          */
         _placeFramesAlongTrack: function() {
             if (!this.kmlFeatures || this.kmlFeatures.length === 0) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.loadfirst'));
+                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
                 return;
             }
             
             var lineString = this.kmlFeatures[0].getGeometry();
             if (!lineString || lineString.getType() !== 'LineString') {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.invalidgeometry'));
+                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
                 return;
             }
             
@@ -1401,9 +1401,17 @@
             var adjustFrames = $('.-fn-adjust-frames-checkbox', this.element).is(':checked');
             
             // Get the overlap percentage from input field (default 10%)
-            var overlapPercent = parseFloat($('.-fn-frame-overlap-input', this.element).val()) || 10;
-            // Clamp between 0 and 100
-            overlapPercent = Math.max(0, Math.min(100, overlapPercent));
+            var inputOverlap = parseFloat($('.-fn-frame-overlap-input', this.element).val()) || 10;
+            
+            // Check bounds and stop if out of range
+            if (inputOverlap < 0 || inputOverlap > 50) {
+                Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.overlap.outofbounds', {
+                    value: inputOverlap
+                }));
+                return;
+            }
+            
+            var overlapPercent = inputOverlap;
             
             // Get the current template size to determine frame spacing
             var templateWidth = this.width;
@@ -1456,7 +1464,7 @@
             }
             
             $('.-fn-kml-status', this.element)
-                .text(Mapbender.trans('mb.print.printclient.batchprint.kml.placed', {count: this.pinnedFeatures.length}))
+                .text(Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {count: this.pinnedFeatures.length}))
                 .addClass('text-success')
                 .removeClass('text-danger');
         },
