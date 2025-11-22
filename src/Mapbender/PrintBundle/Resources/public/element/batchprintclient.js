@@ -28,6 +28,9 @@
         rotationOverlayLayer: null,
         rotationDragInteraction: null,
         rotationHandles: [],  // Track {frameId, handleFeature, boxFeatures}
+        
+        // Layer constants
+        PINNED_FRAMES_LAYER: 1,  // Layer index for pinned frame features
 
         _setup: function(){
             this._super();
@@ -369,17 +372,11 @@
         },
         
         /**
-         * Add pinned feature to map with black outline and rotation interaction
+         * Get default style for pinned features
+         * @returns {ol.style.Style} Default style with black outline and white fill
          */
-        _addPinnedFeatureToMap: function(feature) {
-            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
-            var nativeLayer = layerBridge.getNativeLayer();
-            
-            // Ensure pinned frames layer has higher z-index than rotation overlay
-            nativeLayer.setZIndex(1000);
-            
-            // Create black outline style for pinned features (normal state)
-            var style = new ol.style.Style({
+        _getDefaultStyle: function() {
+            return new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: '#000000',
                     width: 2
@@ -388,6 +385,20 @@
                     color: 'rgba(255, 255, 255, 0.5)'
                 })
             });
+        },
+        
+        /**
+         * Add pinned feature to map with black outline and rotation interaction
+         */
+        _addPinnedFeatureToMap: function(feature) {
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
+            var nativeLayer = layerBridge.getNativeLayer();
+            
+            // Ensure pinned frames layer has higher z-index than rotation overlay
+            nativeLayer.setZIndex(1000);
+            
+            // Create black outline style for pinned features (normal state)
+            var style = this._getDefaultStyle();
             
             feature.setStyle(style);
             layerBridge.addNativeFeatures([feature]);
@@ -405,13 +416,14 @@
             });
             
             if (frameData) {
+                var primaryColor = window.getComputedStyle(document.body).getPropertyValue('--primary');
                 var highlightStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
-                        color: '#0066cc',
+                        color: primaryColor,
                         width: 3
                     }),
                     fill: new ol.style.Fill({
-                        color: 'rgba(0, 102, 204, 0.3)'
+                        color: primaryColor.replace('rgb', 'rgba').replace(')', ', 0.3)')
                     })
                 });
                 frameData.feature.setStyle(highlightStyle);
@@ -427,16 +439,7 @@
             });
             
             if (frameData) {
-                var normalStyle = new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: '#000000',
-                        width: 2
-                    }),
-                    fill: new ol.style.Fill({
-                        color: 'rgba(255, 255, 255, 0.5)'
-                    })
-                });
-                frameData.feature.setStyle(normalStyle);
+                frameData.feature.setStyle(this._getDefaultStyle());
             }
         },
         
@@ -582,7 +585,7 @@
                 // Remove rotation handle overlay
                 this._removeRotationHandle(frameId);
                 
-                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
+                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
                 layerBridge.removeNativeFeatures([frameData.feature]);
             }
             
@@ -635,7 +638,7 @@
                     }
                     
                     // Check if clicking on a pinned frame
-                    var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, 1);
+                    var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
                     var pinnedFeature = map.forEachFeatureAtPixel(evt.pixel, function(f) {
                         return f;
                     }, {
@@ -793,7 +796,7 @@
                 }
                 
                 // Check for pinned frame
-                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, 1);
+                var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
                 var pinnedFeature = map.forEachFeatureAtPixel(pixel, function(f) {
                     return f;
                 }, {
@@ -943,7 +946,7 @@
             this.rotationHandles = [];
             
             // Clear pinned features
-            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
             layerBridge.clear();
             this.pinnedFeatures = [];
         },
@@ -1458,7 +1461,7 @@
             }
             
             // Clear all pinned features from the map
-            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
+            var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
             layerBridge.clear();
             
             // Clear rotation handles
