@@ -705,6 +705,17 @@
         },
         
         /**
+         * Set cursor style for the map element
+         * @param {ol.Map} map - OpenLayers map instance
+         * @param {string} cursor - CSS cursor value (e.g., 'grabbing', 'move', 'grab', '')
+         */
+        _setCursorStyle: function(map, cursor) {
+            var target = map.getTarget();
+            var element = typeof target === 'string' ? document.getElementById(target) : target;
+            element.style.cursor = cursor;
+        },
+        
+        /**
          * Start rotation operation
          */
         _startRotation: function(handleFeature, pixel) {
@@ -713,9 +724,7 @@
             this.rotationStartPixel = pixel;
             
             var map = this.map.getModel().olMap;
-            var target = map.getTarget();
-            var element = typeof target === 'string' ? document.getElementById(target) : target;
-            element.style.cursor = 'grabbing';
+            this._setCursorStyle(map, 'grabbing');
             
             return true;
         },
@@ -734,9 +743,7 @@
             }
             
             var map = this.map.getModel().olMap;
-            var target = map.getTarget();
-            var element = typeof target === 'string' ? document.getElementById(target) : target;
-            element.style.cursor = 'move';
+            this._setCursorStyle(map, 'move');
             
             return true;
         },
@@ -837,6 +844,8 @@
             // Update table to reflect new rotation value
             this._updateFrameTable();
             
+            // Delay flag reset to prevent immediate re-triggering of click handlers
+            // that might fire as the drag ends
             setTimeout(function() {
                 self.isRotating = false;
                 self.rotatingFrameId = null;
@@ -857,6 +866,9 @@
                 this._redrawSelectionFeatures();
             }
             
+            // Delay flag reset to prevent immediate re-triggering of click handlers
+            // that might fire as the drag ends. Slightly longer delay (100ms) than rotation
+            // to ensure all drag-related events have fully completed
             setTimeout(function() {
                 self.isDraggingFrame = false;
                 self.draggedFrameId = null;
@@ -877,35 +889,33 @@
                 if (evt.dragging) return;
                 
                 var pixel = map.getEventPixel(evt.originalEvent);
-                var target = map.getTarget();
-                var element = typeof target === 'string' ? document.getElementById(target) : target;
                 
                 // Handle active state cursors
                 if (self.isRotating) {
-                    element.style.cursor = 'grabbing';
+                    self._setCursorStyle(map, 'grabbing');
                     return;
                 }
                 
                 if (self.isDraggingFrame) {
-                    element.style.cursor = 'move';
+                    self._setCursorStyle(map, 'move');
                     return;
                 }
                 
                 // Check for rotation handle hover
                 var overlayFeature = self._getRotationHandleAtPixel(pixel);
                 if (overlayFeature) {
-                    element.style.cursor = 'grab';
+                    self._setCursorStyle(map, 'grab');
                     return;
                 }
                 
                 // Check for pinned frame hover
                 var frameData = self._getFrameDataAtPixel(pixel);
                 if (frameData) {
-                    element.style.cursor = 'move';
+                    self._setCursorStyle(map, 'move');
                     return;
                 }
                 
-                element.style.cursor = '';
+                self._setCursorStyle(map, '');
             });
         },
         
@@ -1153,6 +1163,8 @@
                 
                 var $tabs = $('.tab-container', this.element);
                 if ($tabs.length) {
+                    // Delay tab switch to allow form submission to complete
+                    // and ensure smooth UI transition
                     window.setTimeout(function() {
                         $tabs.tabs({active: 1});
                     }, 50);
