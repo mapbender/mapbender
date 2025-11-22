@@ -344,6 +344,11 @@
             var extentWidth = extent[2] - extent[0];
             var extentHeight = extent[3] - extent[1];
             
+            // Get template value and label
+            var $templateSelect = $('select[name="template"]', this.$form);
+            var templateValue = $templateSelect.val();
+            var templateLabel = $templateSelect.find('option:selected').text();
+            
             // Store pinned feature data including current UI settings and extent
             var frameData = {
                 id: this.featureCounter,
@@ -351,7 +356,8 @@
                 rotation: totalRotationDegrees,
                 scale: this._getPrintScale(),
                 center: this.map.getModel().getFeatureCenter(pinnedFeature),
-                template: $('select[name="template"]', this.$form).val(),
+                template: templateValue,
+                templateLabel: templateLabel,
                 quality: $('select[name="quality"]', this.$form).val(),
                 extent: {
                     width: extentWidth,
@@ -486,9 +492,8 @@
                 // Scale
                 $row.append($('<td></td>').text('1:' + frameData.scale));
                 
-                // Template - extract readable name
-                var templateName = frameData.template || '';
-                var templateDisplay = templateName.split('/').pop().replace(/_/g, ' ').trim();
+                // Template - use stored label or fall back to template name formatting
+                var templateDisplay = frameData.templateLabel || frameData.template || '';
                 $row.append($('<td></td>').text(templateDisplay));
                 
                 // Quality (DPI)
