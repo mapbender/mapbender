@@ -12,8 +12,7 @@
     $.widget("mapbender.mbBatchPrintClient", $.mapbender.mbPrintClient, {
         // Multiframe printing state
         featureCounter: 0,
-        multiFrameData: [],
-        pinnedFeatures: [],
+        pinnedFeatures: [],     // Active array of frame data used for UI operations and print submission
         
         // Mouse-following state
         mouseFollowActive: false,
@@ -41,7 +40,6 @@
             
             // Initialize multiframe functionality
             this.featureCounter = 0;
-            this.multiFrameData = [];
             this.pinnedFeatures = [];
             this.kmlLayer = null;
             this.kmlFeatures = [];
@@ -152,7 +150,6 @@
             }
             
             this.featureCounter = 0;
-            this.multiFrameData = [];
             this._updateFrameTable();
             this._super();
         },
@@ -355,7 +352,6 @@
             };
             
             this.pinnedFeatures.push(frameData);
-            this.multiFrameData.push(frameData);
             
             // Add pinned feature to a separate layer with black styling
             this._addPinnedFeatureToMap(pinnedFeature);
@@ -580,10 +576,6 @@
                     return false;
                 }
                 return true;
-            });
-            
-            this.multiFrameData = this.multiFrameData.filter(function(f) {
-                return f.id !== frameId;
             });
             
             if (frameData) {
@@ -954,7 +946,6 @@
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, 1);
             layerBridge.clear();
             this.pinnedFeatures = [];
-            this.multiFrameData = [];
         },
         
         /**
@@ -1479,7 +1470,6 @@
             
             // Clear data arrays
             this.pinnedFeatures = [];
-            this.multiFrameData = [];
             this.featureCounter = 0;
             
             // Update table and UI
