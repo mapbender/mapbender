@@ -24,9 +24,9 @@ class BatchPrintClientAdminType extends PrintClientAdminType
         
         // Add batch print specific configuration alongside other checkboxes
         $builder
-            ->add('enableKmlUpload', CheckboxType::class, array(
+            ->add('enableGeofileUpload', CheckboxType::class, array(
                 'required' => false,
-                'label' => 'mb.core.admin.batchprintclient.label.enableKmlUpload',
+                'label' => 'mb.core.admin.batchprintclient.label.enableGeofileUpload',
             ))
         ;
     }

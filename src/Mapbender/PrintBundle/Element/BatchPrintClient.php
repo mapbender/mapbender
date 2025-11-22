@@ -5,6 +5,7 @@ namespace Mapbender\PrintBundle\Element;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
+use Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +50,7 @@ class BatchPrintClient extends PrintClient
      */
     public static function getType(): string
     {
-        return BatchPrintClient::class;
+        return BatchPrintClientAdminType::class;
     }
 
     /**
