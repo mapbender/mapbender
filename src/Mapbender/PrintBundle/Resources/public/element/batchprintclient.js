@@ -262,34 +262,34 @@
             var normalizedBearing = ((bearingDegrees + 180) % 360) - 180;
             
             // Calculate two possible target rotations:
-            // Option 1: Track aligned with horizontal axis
-            var option1 = normalizedBearing;
-            // Option 2: Track aligned with vertical axis (90° rotated)
-            var option2 = normalizedBearing - 90;
-            if (option2 < -180) option2 += 360;
+            // Portrait: Track aligned with horizontal axis
+            var portrait = normalizedBearing;
+            // Landscape: Track aligned with vertical axis (90° rotated)
+            var landscape = normalizedBearing - 90;
+            if (landscape < -180) landscape += 360;
             
             var targetRotation;
             
             if (previousRotation !== null) {
                 // Choose the option that is closer to the previous frame's rotation
                 // to maintain smooth transitions and avoid sudden jumps
-                var diff1 = Math.abs(option1 - previousRotation);
-                var diff2 = Math.abs(option2 - previousRotation);
+                var diff1 = Math.abs(portrait - previousRotation);
+                var diff2 = Math.abs(landscape - previousRotation);
                 
                 // Handle wraparound at -180/180 boundary
                 if (diff1 > 180) diff1 = 360 - diff1;
                 if (diff2 > 180) diff2 = 360 - diff2;
                 
-                targetRotation = (diff1 < diff2) ? option1 : option2;
+                targetRotation = (diff1 < diff2) ? portrait : landscape;
             } else {
                 // First frame: choose based on whether track is more horizontal or vertical
                 var absNormalizedBearing = Math.abs(normalizedBearing);
                 if (absNormalizedBearing <= 45 || absNormalizedBearing >= 135) {
                     // Track is more horizontal
-                    targetRotation = option1;
+                    targetRotation = portrait;
                 } else {
                     // Track is more vertical
-                    targetRotation = option2;
+                    targetRotation = landscape;
                 }
             }
             
