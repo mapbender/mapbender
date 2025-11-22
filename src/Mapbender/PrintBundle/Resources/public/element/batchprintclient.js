@@ -32,6 +32,10 @@
         // Layer constants
         PINNED_FRAMES_LAYER: 1,  // Layer index for pinned frame features
         ROTATION_ZINDEX : 999,
+        
+        // Configurable colors (can be overridden in client implementations)
+        rotationControlColor: '#0066cc',  // Blue color matching Mapbender's highlight color
+        rotationControlOpacity: 0.6,      // Opacity for rotation handle fill
 
         _setup: function(){
             this._super();
@@ -932,7 +936,7 @@
             var geometry = feature.getGeometry();
             var extent = geometry.getExtent();
             
-            // Create yellow bounding box (4 line segments)
+            // Create bounding box (4 line segments)
             var coords = [
                 [extent[0], extent[1]],  // bottom-left
                 [extent[2], extent[1]],  // bottom-right
@@ -945,7 +949,7 @@
             var boxFeature = new ol.Feature(boxLine);
             boxFeature.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: '#ffff00',
+                    color: this.rotationControlColor,
                     width: 2,
                     lineDash: [5, 5]  // Dotted line
                 })
@@ -957,10 +961,15 @@
             var handleCoord = [extent[2], extent[1]];
             var handlePoint = new ol.geom.Point(handleCoord);
             var handleFeature = new ol.Feature(handlePoint);
+            
+            // Convert color to rgba with configurable opacity
+            var rgb = Mapbender.StyleUtil.parseCssColor(this.rotationControlColor);
+            var fillColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + this.rotationControlOpacity + ')';
+            
             handleFeature.setStyle(new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 8,
-                    fill: new ol.style.Fill({ color: 'rgba(255, 255, 0, 0.6)' }),
+                    fill: new ol.style.Fill({ color: fillColor }),
                     stroke: new ol.style.Stroke({ color: '#000000', width: 1 })
                 })
             }));
