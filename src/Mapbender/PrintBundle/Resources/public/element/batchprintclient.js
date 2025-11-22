@@ -427,16 +427,39 @@
             });
             
             if (frameData) {
-                var highlightStyle = new ol.style.Style({
+                // Get the actual polygon coordinates from the rotated geometry
+                var geometry = frameData.feature.getGeometry();
+                var coordinates = geometry.getCoordinates()[0]; // Get exterior ring coordinates
+                
+                // The polygon coordinates are ordered: [bottom-left, top-left, top-right, bottom-right, bottom-left]
+                // Top edge is from index 1 (top-left) to index 2 (top-right)
+                var topLineCoords = [
+                    coordinates[1],  // top-left
+                    coordinates[2]   // top-right
+                ];
+                
+                // Base highlight style with very thin border and fill
+                var baseStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: '#0066cc',
-                        width: 3
+                        width: 0.5  // Very thin border for bottom, left, right
                     }),
                     fill: new ol.style.Fill({
                         color: 'rgba(0, 102, 204, 0.3)'
                     })
                 });
-                frameData.feature.setStyle(highlightStyle);
+                
+                // Additional style for normal top border
+                var topBorderStyle = new ol.style.Style({
+                    geometry: new ol.geom.LineString(topLineCoords),
+                    stroke: new ol.style.Stroke({
+                        color: '#0066cc',
+                        width: 2  // Normal border width for top edge
+                    })
+                });
+                
+                // Apply both styles - the array creates a multi-style rendering
+                frameData.feature.setStyle([baseStyle, topBorderStyle]);
             }
         },
         
