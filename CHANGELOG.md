@@ -1,29 +1,9 @@
 ## Unreleased
 Features:
-* **BatchPrintClient element**: New batch print functionality for serial printing with multiple frames
-  * Created: `src/Mapbender/PrintBundle/Element/BatchPrintClient.php`
-  * Created: `src/Mapbender/PrintBundle/Component/BatchPrintService.php`
-  * Created: `src/Mapbender/PrintBundle/Resources/public/element/batchprintclient.js`
-  * Created: `src/Mapbender/PrintBundle/Resources/views/Element/batchprintclient-settings.html.twig`
-  * Mouse-follow frame placement with click-to-pin
-  * Drag-to-rotate functionality with visual handles
-  * Per-frame settings (scale, template, quality, rotation)
-  * Frame management table with hover interactions
-  * Support for both queued and direct print modes
-  * Multi-template support within single batch job
-  * **KML track upload support**: Upload KML files containing LineString geometries to automatically place print frames along tracks
-    * Automatic frame placement along track with configurable spacing based on template dimensions
-    * Optional frame rotation adjustment to align frames with track gradient for optimal orientation
-    * Smooth rotation transitions between consecutive frames to avoid sudden orientation changes
-    * Auto-load KML files on selection for improved user experience
-    * Configurable KML upload feature via backend admin interface (enable/disable per element)
-  * Created: `src/Mapbender/PrintBundle/Element/Type/BatchPrintClientAdminType.php` - Admin form type for element configuration
+* **BatchPrintClient element**: New batch printing element for creating multiple print frames in a single job with individual settings per frame
+* **FileUtil.js**: New shared utility module for geospatial file handling (KML, GeoJSON, GPX, GML) used by BatchPrintClient and DataUpload elements
 
 Other:
-* `src/Mapbender/PrintBundle/Component/PrintService.php`: Removed unnecessary `require_once` statement, added PHPDoc type hints for FPDI and GdImage compatibility
-* `src/Mapbender/PrintBundle/Resources/config/elements.xml`: Registered BatchPrintClient element service
-* `src/Mapbender/PrintBundle/Resources/config/services.xml`: Registered BatchPrintClientAdminType form type service
-* `src/Mapbender/PrintBundle/Resources/views/ElementAdmin/batchprintclient.html.twig`: Created admin configuration template for BatchPrintClient element
 
 ## v4.2.2
 Features:
