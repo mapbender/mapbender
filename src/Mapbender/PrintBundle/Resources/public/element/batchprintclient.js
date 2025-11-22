@@ -259,19 +259,14 @@
             // We want to rotate the frame so this direction is parallel to one of its axes
             
             // Normalize bearing to -180 to 180 range
-            var normalizedBearing = bearingDegrees;
-            while (normalizedBearing > 180) normalizedBearing -= 360;
-            while (normalizedBearing <= -180) normalizedBearing += 360;
+            var normalizedBearing = ((bearingDegrees + 180) % 360) - 180;
             
             // Calculate two possible target rotations:
             // Option 1: Track aligned with horizontal axis
             var option1 = normalizedBearing;
             // Option 2: Track aligned with vertical axis (90° rotated)
             var option2 = normalizedBearing - 90;
-            
-            // Normalize both options to -180 to 180 range
-            while (option2 > 180) option2 -= 360;
-            while (option2 <= -180) option2 += 360;
+            if (option2 < -180) option2 += 360;
             
             var targetRotation;
             
