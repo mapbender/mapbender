@@ -36,8 +36,8 @@
             // Add unique class identifier
             this.element.addClass('mb-element-batchprintclient');
 
-            // Remove rotation control (text input with name="rotation")
-            $('input[name="rotation"]', this.element).closest('.mb-3').remove();
+            // Remove rotation control (form row containing the rotation input)
+            $('input[name="rotation"]', this.element).parent().remove();
             
             // Initialize multiframe functionality
             this.featureCounter = 0;
