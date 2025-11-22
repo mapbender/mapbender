@@ -23,9 +23,9 @@ mb:
         btn:
           submit: 'Start batchafdrukken'
         track:
-          upload: 'Traject uploaden (KML, GeoJSON)'
+          upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Traject uploaden (KML, GeoJSON)'
+          upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
           load: 'Bestand laden'
           clear: 'Bestand wissen'
           placeframes: 'Plaats frames langs het traject'
@@ -38,7 +38,7 @@ mb:
           placed: '%count% frames geplaatst langs het traject'
           alert:
             selectfile: 'Selecteer eerst een bestand.'
-            validfile: 'Selecteer een geldig bestand (KML, GeoJSON).'
+            validfile: 'Selecteer een geldig bestand (KML, GeoJSON, GPX, GML).'
             error: 'Fout bij het laden van het bestand'
             readerror: 'Fout bij het lezen van het bestand.'
             loadfirst: 'Laad eerst een trajectbestand.'

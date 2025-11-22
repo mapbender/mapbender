@@ -26,9 +26,9 @@ mb:
         btn:
           submit: 'Iniciar impressão em lote'
         track:
-          upload: 'Carregar percurso (KML, GeoJSON)'
+          upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Carregar percurso (KML, GeoJSON)'
+          upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
           load: 'Carregar arquivo'
           clear: 'Limpar arquivo'
           placeframes: 'Colocar molduras ao longo do percurso'
@@ -41,7 +41,7 @@ mb:
           placed: '%count% molduras colocadas ao longo do percurso'
           alert:
             selectfile: 'Selecione primeiro um arquivo.'
-            validfile: 'Selecione um arquivo válido (KML, GeoJSON).'
+            validfile: 'Selecione um arquivo válido (KML, GeoJSON, GPX, GML).'
             error: 'Erro ao carregar o arquivo'
             readerror: 'Erro ao ler o arquivo.'
             loadfirst: 'Carregue primeiro um arquivo de percurso.'

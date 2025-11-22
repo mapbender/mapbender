@@ -23,9 +23,9 @@ mb:
         btn:
           submit: 'Démarrer l''impression par lots'
         track:
-          upload: 'Télécharger un parcours (KML, GeoJSON)'
+          upload: 'Télécharger un parcours (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Télécharger un parcours (KML, GeoJSON)'
+          upload: 'Télécharger un parcours (KML, GeoJSON, GPX, GML)'
           load: 'Charger le fichier'
           clear: 'Effacer le fichier'
           placeframes: 'Placer des cadres le long du parcours'
@@ -38,7 +38,7 @@ mb:
           placed: '%count% cadres placés le long du parcours'
           alert:
             selectfile: 'Veuillez d''abord sélectionner un fichier.'
-            validfile: 'Veuillez sélectionner un fichier valide (KML, GeoJSON).'
+            validfile: 'Veuillez sélectionner un fichier valide (KML, GeoJSON, GPX, GML).'
             error: 'Erreur lors du chargement du fichier'
             readerror: 'Erreur de lecture du fichier.'
             loadfirst: 'Veuillez d''abord charger un fichier de parcours.'

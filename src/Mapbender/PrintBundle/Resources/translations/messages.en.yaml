@@ -25,9 +25,9 @@ mb:
         btn:
           submit: 'Start Batch Print'
         track:
-          upload: 'Upload Track (KML, GeoJSON)'
+          upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Upload Track (KML, GeoJSON)'
+          upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
           load: 'Load File'
           clear: 'Clear File'
           placeframes: 'Place Frames Along Track'
@@ -40,7 +40,7 @@ mb:
           placed: 'Placed %count% frames along track'
           alert:
             selectfile: 'Please select a file first.'
-            validfile: 'Please select a valid file (KML, GeoJSON).'
+            validfile: 'Please select a valid file (KML, GeoJSON, GPX, GML).'
             error: 'Error loading file'
             readerror: 'Error reading file.'
             loadfirst: 'Please load a track file first.'

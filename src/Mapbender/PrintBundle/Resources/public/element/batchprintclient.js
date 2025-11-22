@@ -1228,33 +1228,11 @@
          * @returns {Object} Object with format parser and readMethod ('text' or 'arraybuffer'), or null if unsupported
          */
         _getFormatParser: function(filename) {
-            var extension = filename.split('.').pop().toLowerCase();
-            
-            switch (extension) {
-                case 'kml':
-                    return {
-                        parser: new ol.format.KML({
-                            extractStyles: true,
-                            showPointNames: false
-                        }),
-                        readMethod: 'text'
-                    };
-                    
-                case 'geojson':
-                case 'json':
-                    return {
-                        parser: new ol.format.GeoJSON(),
-                        readMethod: 'text'
-                    };
-                    
-                default:
-                    // Unsupported format
-                    return null;
-            }
+            return Mapbender.FileUtil.getFormatParserByFilename(filename);
         },
         
         /**
-         * Load and display geospatial file on map (KML, GeoJSON, etc.)
+         * Load and display geospatial file on map (KML, GeoJSON, GPX, GML)
          */
         _loadGeospatialFile: function() {
             var $fileInput = $('.-fn-kml-file-input', this.element);
@@ -1265,70 +1243,54 @@
                 return;
             }
             
-            // Get format parser for file type
-            var formatInfo = this._getFormatParser(file.name);
-            if (!formatInfo) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.validfile'));
-                return;
-            }
-            
             var self = this;
-            var reader = new FileReader();
+            var map = this.map.getModel().olMap;
+            var featureProjection = map.getView().getProjection().getCode();
             
-            reader.onload = function(e) {
-                try {
-                    self._parseAndDisplayGeospatialFile(e.target.result, formatInfo.parser, file.name);
-                    $('.-fn-kml-status', self.element)
-                        .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
-                        .addClass('text-success')
-                        .removeClass('text-danger');
-                    // Show all file-related buttons (Clear, Place Frames, Adjust checkbox)
-                    $('.-fn-kml-buttons', self.element).addClass('show');
-                    $('.-fn-place-frames-button', self.element).addClass('show');
-                } catch (error) {
-                    alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.error') + ': ' + error.message);
-                    $('.-fn-kml-status', self.element)
-                        .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
-                        .addClass('text-danger')
-                        .removeClass('text-success');
-                    $('.-fn-kml-buttons', self.element).removeClass('show');
-                    $('.-fn-place-frames-button', self.element).removeClass('show');
+            Mapbender.FileUtil.readGeospatialFile(file, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: featureProjection,
+                onSuccess: function(features, file) {
+                    try {
+                        self._renderTrackFeatures(features, file);
+                        $('.-fn-kml-status', self.element)
+                            .text(Mapbender.trans('mb.print.printclient.batchprint.kml.loaded') + ': ' + file.name)
+                            .addClass('text-success')
+                            .removeClass('text-danger');
+                        $('.-fn-kml-buttons', self.element).addClass('show');
+                        $('.-fn-place-frames-button', self.element).addClass('show');
+                    } catch (error) {
+                        self._handleFileLoadError(error, file);
+                    }
+                },
+                onError: function(error, file) {
+                    self._handleFileLoadError(error, file);
                 }
-            };
-            
-            reader.onerror = function() {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.readerror'));
-                $('.-fn-kml-status', self.element)
-                    .text(Mapbender.trans('mb.print.printclient.batchprint.kml.readerror'))
-                    .addClass('text-danger')
-                    .removeClass('text-success');
-                $('.-fn-kml-buttons', self.element).removeClass('show');
-                $('.-fn-place-frames-button', self.element).removeClass('show');
-            };
-            
-            // Read file based on format requirements
-            if (formatInfo.readMethod === 'arraybuffer') {
-                reader.readAsArrayBuffer(file);
-            } else {
-                reader.readAsText(file);
-            }
+            });
         },
         
         /**
-         * Parse geospatial file content and display on map (format-agnostic)
-         * @param {string} fileContent - The file content as text
-         * @param {ol.format.Feature} format - OpenLayers format parser
-         * @param {string} filename - Original filename for error messages
+         * Handle file loading errors
+         * @param {Error} error - The error object
+         * @param {File} file - The file that failed to load
          */
-        _parseAndDisplayGeospatialFile: function(fileContent, format, filename) {
+        _handleFileLoadError: function(error, file) {
+            alert(Mapbender.trans('mb.print.printclient.batchprint.kml.alert.error') + ': ' + error.message);
+            $('.-fn-kml-status', this.element)
+                .text(Mapbender.trans('mb.print.printclient.batchprint.kml.error') + ': ' + error.message)
+                .addClass('text-danger')
+                .removeClass('text-success');
+            $('.-fn-kml-buttons', this.element).removeClass('show');
+            $('.-fn-place-frames-button', this.element).removeClass('show');
+        },
+        
+        /**
+         * Render track features from uploaded geospatial file
+         * @param {Array<ol.Feature>} features - Parsed features
+         * @param {File} file - The uploaded file object
+         */
+        _renderTrackFeatures: function(features, file) {
             var map = this.map.getModel().olMap;
-            var mapProjection = map.getView().getProjection();
-            
-            // Parse features using provided format parser
-            var features = format.readFeatures(fileContent, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: mapProjection
-            });
             
             if (!features || features.length === 0) {
                 throw new Error('No features found in file');
@@ -1350,10 +1312,12 @@
             this._clearKmlLayer();
             
             // Create new vector layer for geospatial features
+            var source = new ol.source.Vector({
+                features: features
+            });
+            
             this.kmlLayer = new ol.layer.Vector({
-                source: new ol.source.Vector({
-                    features: features
-                }),
+                source: source,
                 style: new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: '#FF0000',
@@ -1440,10 +1404,10 @@
             var templateWidth = this.width;
             var templateHeight = this.height;
             var scale = this._getPrintScale();
-            var pupm = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
+            var unitsPerMeterAtFirstCoordinate = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
             
             // Calculate frame width in map units (use the smaller dimension for overlap calculation)
-            var frameSize = Math.min(templateWidth, templateHeight) * scale * pupm.h;
+            var frameSize = Math.min(templateWidth, templateHeight) * scale * unitsPerMeterAtFirstCoordinate.h;
             
             // Get total length
             var totalLength = lineString.getLength();
@@ -1597,9 +1561,7 @@
             $('.-fn-kml-status', this.element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.alldeleted'))
                 .removeClass('success error');
-        },
-
-        __dummy__: null
+        }
     });
 
 })(jQuery);

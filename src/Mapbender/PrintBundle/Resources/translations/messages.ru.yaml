@@ -28,9 +28,9 @@ mb:
         btn:
           submit: 'Начать пакетную печать'
         track:
-          upload: 'Загрузить маршрут (KML, GeoJSON)'
+          upload: 'Загрузить маршрут (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Загрузить маршрут (KML, GeoJSON)'
+          upload: 'Загрузить маршрут (KML, GeoJSON, GPX, GML)'
           load: 'Загрузить файл'
           clear: 'Очистить файл'
           placeframes: 'Разместить рамки вдоль маршрута'
@@ -43,7 +43,7 @@ mb:
           placed: 'Размещено %count% рамок вдоль маршрута'
           alert:
             selectfile: 'Сначала выберите файл.'
-            validfile: 'Выберите действительный файл (KML, GeoJSON).'
+            validfile: 'Выберите действительный файл (KML, GeoJSON, GPX, GML).'
             error: 'Ошибка загрузки файла'
             readerror: 'Ошибка чтения файла.'
             loadfirst: 'Сначала загрузите файл маршрута.'

@@ -24,9 +24,9 @@ mb:
         btn:
           submit: 'Iniciar impresión por lotes'
         track:
-          upload: 'Cargar recorrido (KML, GeoJSON)'
+          upload: 'Cargar recorrido (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Cargar recorrido (KML, GeoJSON)'
+          upload: 'Cargar recorrido (KML, GeoJSON, GPX, GML)'
           load: 'Cargar archivo'
           clear: 'Borrar archivo'
           placeframes: 'Colocar marcos a lo largo del recorrido'
@@ -39,7 +39,7 @@ mb:
           placed: '%count% marcos colocados a lo largo del recorrido'
           alert:
             selectfile: 'Por favor, seleccione primero un archivo.'
-            validfile: 'Por favor, seleccione un archivo válido (KML, GeoJSON).'
+            validfile: 'Por favor, seleccione un archivo válido (KML, GeoJSON, GPX, GML).'
             error: 'Error al cargar el archivo'
             readerror: 'Error al leer el archivo.'
             loadfirst: 'Por favor, cargue primero un archivo de recorrido.'

@@ -26,9 +26,9 @@ mb:
         btn:
           submit: 'Seriendruck starten'
         track:
-          upload: 'Strecke hochladen (KML, GeoJSON)'
+          upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
         kml:
-          upload: 'Strecke hochladen (KML, GeoJSON)'
+          upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
           load: 'Datei laden'
           clear: 'Datei löschen'
           placeframes: 'Rahmen entlang Strecke platzieren'
@@ -41,7 +41,7 @@ mb:
           placed: '%count% Rahmen entlang der Strecke platziert'
           alert:
             selectfile: 'Bitte wählen Sie zuerst eine Datei aus.'
-            validfile: 'Bitte wählen Sie eine gültige Datei aus (KML, GeoJSON).'
+            validfile: 'Bitte wählen Sie eine gültige Datei aus (KML, GeoJSON, GPX, GML).'
             error: 'Fehler beim Laden der Datei'
             readerror: 'Fehler beim Lesen der Datei.'
             loadfirst: 'Bitte laden Sie zuerst eine Streckendatei.'
