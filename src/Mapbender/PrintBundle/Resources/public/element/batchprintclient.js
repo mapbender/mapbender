@@ -154,7 +154,9 @@
             }
             
             // Move two steps backward in the array (bigger scale = more zoomed out)
-            var targetIndex = Math.max(currentIndex - 2, 0);
+            // Using 2 steps provides a good balance between coverage and detail for batch printing
+            var SCALE_STEPS_ZOOM_OUT = 2;
+            var targetIndex = Math.max(currentIndex - SCALE_STEPS_ZOOM_OUT, 0);
             return scales[targetIndex];
         },
         
@@ -1651,7 +1653,10 @@
             
             // Calculate number of frames needed to cover the entire track
             // We need at least 2 frames (start and end), and enough to cover the distance
-            var numFrames = Math.max(2, Math.ceil(totalLength / idealSpacing) + 1);
+            // The +1 ensures we have one extra frame to guarantee full coverage at the end
+            var MIN_FRAMES = 2;  // Minimum frames to cover start and end points
+            var COVERAGE_BUFFER = 1;  // Extra frame to ensure no gaps at track end
+            var numFrames = Math.max(MIN_FRAMES, Math.ceil(totalLength / idealSpacing) + COVERAGE_BUFFER);
             
             // Recalculate actual spacing to evenly distribute frames from start to end
             var actualSpacing = totalLength / (numFrames - 1);
