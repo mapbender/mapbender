@@ -29,7 +29,8 @@ mb:
         geofile:
           upload: 'Carica percorso (KML, GeoJSON, GPX, GML)'
           load: 'Carica file'
-          clear: 'Cancella file'
+          choosefile: 'Scegli file'
+          clear: 'Rimuovi percorso'
           placeframes: 'Posiziona cornici lungo il percorso'
           adjustframes: 'Adatta rotazione cornici'
           overlap: 'Sovrapposizione cornici'

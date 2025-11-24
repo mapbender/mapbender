@@ -29,7 +29,8 @@ mb:
         geofile:
           upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
           load: 'Load File'
-          clear: 'Clear File'
+          choosefile: 'Choose File'
+          clear: 'Remove Track'
           placeframes: 'Place Frames Along Track'
           adjustframes: 'Adjust Frame Rotation'
           overlap: 'Frame Overlap'

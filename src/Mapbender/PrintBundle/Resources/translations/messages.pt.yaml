@@ -31,7 +31,8 @@ mb:
         geofile:
           upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
           load: 'Carregar arquivo'
-          clear: 'Limpar arquivo'
+          choosefile: 'Escolher arquivo'
+          clear: 'Remover percurso'
           placeframes: 'Colocar molduras ao longo do percurso'
           adjustframes: 'Ajustar rotação das molduras'
           overlap: 'Sobreposição de molduras'

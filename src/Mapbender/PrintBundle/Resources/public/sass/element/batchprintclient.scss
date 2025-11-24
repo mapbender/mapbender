@@ -12,30 +12,42 @@
     > div {
       display: block;
       width: 100%;
+    }
 
-      > div:first-child {
-        margin-bottom: 8px;
+    .geofile-upload-label {
+      margin-bottom: 10px;
+    }
+
+    .geofile-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      
+      .geofile-custom-button {
+        white-space: nowrap;
+        padding: 4px 12px;
       }
     }
 
     input[type="file"] {
-      width: 100%;
-      max-width: 100%;
+      display: none;
     }
 
-    .geofile-file-input {
-      width: 100%;
-      max-width: 100%;
+    // Container for all geofile controls (buttons, checkbox, overlap input)
+    .geofile-controls {
+      display: none;
+
+      &.show {
+        display: block !important;
+      }
     }
 
     .geofile-buttons {
-      display: none;
+      display: flex;
       gap: 8px;
       flex-wrap: wrap;
-
-      &.show {
-        display: flex !important;
-      }
+      margin-bottom: 8px;
 
       button {
         white-space: nowrap;
@@ -43,22 +55,9 @@
       }
     }
 
-    .geofile-place-frames-button {
-      display: none;
-
-      &.show {
-        display: inline-block !important;
-      }
-    }
-
-    // Adjust frames checkbox
-    .geofile-adjust-label {
-      display: inline-flex;
-      align-items: center;
-
-      .geofile-adjust-checkbox {
-        margin-right: 6px;
-      }
+    // Adjust frames checkbox - use Bootstrap form-check styling
+    .geofile-adjust-wrapper {
+      margin-bottom: 8px;
     }
 
     // Frame overlap section
@@ -87,9 +86,14 @@
     }
 
     .geofile-status {
-      display: block;
-      margin-top: 5px;
+      display: inline-block;
+      white-space: nowrap;
       color: #666;
+      font-size: 0.9em;
+      
+      &:empty {
+        display: none;
+      }
     }
   }
 

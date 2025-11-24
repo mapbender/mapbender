@@ -31,7 +31,8 @@ mb:
         geofile:
           upload: 'Завантажити маршрут (KML, GeoJSON, GPX, GML)'
           load: 'Завантажити файл'
-          clear: 'Очистити файл'
+          choosefile: 'Вибрати файл'
+          clear: 'Видалити маршрут'
           placeframes: 'Розмістити рамки вздовж маршруту'
           adjustframes: 'Налаштувати поворот рамок'
           overlap: 'Перекриття рамок'

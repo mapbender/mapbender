@@ -27,7 +27,8 @@ mb:
         geofile:
           upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
           load: 'Bestand laden'
-          clear: 'Bestand wissen'
+          choosefile: 'Bestand kiezen'
+          clear: 'Traject verwijderen'
           placeframes: 'Plaats frames langs het traject'
           adjustframes: 'Framerotatie aanpassen'
           overlap: 'Frame-overlapping'

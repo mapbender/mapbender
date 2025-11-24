@@ -27,7 +27,8 @@ mb:
         geofile:
           upload: 'Télécharger un parcours (KML, GeoJSON, GPX, GML)'
           load: 'Charger le fichier'
-          clear: 'Effacer le fichier'
+          choosefile: 'Choisir un fichier'
+          clear: 'Supprimer le parcours'
           placeframes: 'Placer des cadres le long du parcours'
           adjustframes: 'Ajuster la rotation des cadres'
           overlap: 'Chevauchement des cadres'

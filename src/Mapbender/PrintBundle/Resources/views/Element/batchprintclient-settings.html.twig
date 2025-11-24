@@ -9,41 +9,49 @@
     <div class="form-group no-gutters geofile-upload -fn-geofile-upload">
         <label class="geofile-upload-label">{{ 'mb.print.printclient.batchprint.track.upload' | trans }}</label>
         <div>
-            <div>
+            <div class="geofile-input-wrapper">
+                <button type="button" class="btn btn-light btn-sm geofile-custom-button -fn-geofile-custom-button">
+                    {{ 'mb.print.printclient.batchprint.geofile.choosefile' | trans }}
+                </button>
                 <input type="file" 
                        name="geofile" 
                        accept=".kml,.geojson,.json,.gpx,.gml,.xml,application/vnd.google-earth.kml+xml,application/geo+json,application/gpx+xml,application/gml+xml"
-                       class="form-control geofile-file-input -fn-geofile-file-input">
+                       class="geofile-file-input -fn-geofile-file-input"
+                       style="display: none;">
+                <small class="geofile-status -fn-geofile-status"></small>
             </div>
-            <div class="geofile-buttons -fn-geofile-buttons">
-                <button type="button" 
-                        class="btn -fn-clear-geofile-button">
-                    {{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}
-                </button>
-                <button type="button" 
-                        class="btn geofile-place-frames-button -fn-place-frames-button">
-                    {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
-                </button>
-                <label class="geofile-adjust-label">
-                    <input type="checkbox" class="geofile-adjust-checkbox -fn-adjust-frames-checkbox">
-                    {{ 'mb.print.printclient.batchprint.geofile.adjustframes' | trans }}
-                </label>
-            </div>
-            <div class="geofile-overlap-section">on">
-                <label class="geofile-overlap-label">
-                    {{ 'mb.print.printclient.batchprint.geofile.overlap' | trans }}
-                </label>
-                <input type="number" 
-                       name="frame_overlap" 
-                       class="form-control geofile-overlap-input -fn-frame-overlap-input"
-                       value="10"
-                       min="0"
-                       max="100"
-                       step="1">
-                <span>%</span>
+            <div class="geofile-controls -fn-geofile-controls">
+                <div class="geofile-buttons">
+                    <button type="button" 
+                            class="btn btn-light btn-sm -fn-clear-geofile-button">
+                        {{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}
+                    </button>
+                    <button type="button" 
+                            class="btn btn-light btn-sm -fn-place-frames-button">
+                        {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
+                    </button>
+                </div>
+                <div class="form-check geofile-adjust-wrapper">
+                    <input type="checkbox" class="form-check-input -fn-adjust-frames-checkbox" id="adjust-frames-checkbox">
+                    <label class="form-check-label" for="adjust-frames-checkbox">
+                        {{ 'mb.print.printclient.batchprint.geofile.adjustframes' | trans }}
+                    </label>
+                </div>
+                <div class="geofile-overlap-section">
+                    <label class="geofile-overlap-label">
+                        {{ 'mb.print.printclient.batchprint.geofile.overlap' | trans }}
+                    </label>
+                    <input type="number" 
+                           name="frame_overlap" 
+                           class="form-control geofile-overlap-input -fn-frame-overlap-input"
+                           value="10"
+                           min="0"
+                           max="100"
+                           step="1">
+                    <span>%</span>
+                </div>
             </div>
         </div>
-        <small class="geofile-status -fn-geofile-status"></small>
     </div>
     {% endif %}
     
@@ -52,7 +60,7 @@
         <div>
             <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
             <button type="button" 
-                    class="btn delete-all-frames -fn-delete-all-frames">
+                    class="btn btn-light btn-sm delete-all-frames -fn-delete-all-frames">
                 {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
             </button>
         </div>

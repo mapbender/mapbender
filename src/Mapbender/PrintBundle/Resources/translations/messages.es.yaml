@@ -29,7 +29,8 @@ mb:
         geofile:
           upload: 'Cargar recorrido (KML, GeoJSON, GPX, GML)'
           load: 'Cargar archivo'
-          clear: 'Borrar archivo'
+          choosefile: 'Seleccionar archivo'
+          clear: 'Eliminar recorrido'
           placeframes: 'Colocar marcos a lo largo del recorrido'
           adjustframes: 'Ajustar rotación de marcos'
           overlap: 'Superposición de marcos'
