@@ -24,7 +24,7 @@
                 <li class="list-item">
                     <a href="{{ app.url }}">
                         <div class="list-content">
-                            {% if app.imgUrl != false %}
+                            {% if app.imgUrl is defined and app.imgUrl != false %}
                             <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
                             {% else %}
                                 <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
