@@ -9,10 +9,11 @@ use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 
-class ApplicationSwitcher extends AbstractElementService
+class ApplicationSwitcher extends AbstractElementService implements ConfigMigrationInterface
 {
     public function __construct(protected ManagerRegistry $managerRegistry,
                                 protected ApplicationYAMLMapper $yamlAppRepository,
@@ -118,5 +119,23 @@ class ApplicationSwitcher extends AbstractElementService
             }
         }
         return $preparedAppConfig;
+    }
+
+    public static function updateEntityConfig(Element $entity)
+    {
+        $conf = $entity->getConfiguration();
+        if (!empty($conf['applications'][0]) && is_string($conf['applications'][0])) {
+            $appConfig = null;
+            foreach ($conf['applications'] as $slug) {
+                $appConfig[$slug] = [
+                    'title' => null,
+                    'url' => null,
+                    'imgUrl' => null,
+                    'group' => null,
+                ];
+            }
+            $conf['applications'] = $appConfig;
+        }
+        $entity->setConfiguration($conf);
     }
 }
