@@ -1453,15 +1453,6 @@
         },
         
         /**
-         * Get appropriate OpenLayers format parser based on file extension
-         * @param {string} filename - Name of the file
-         * @returns {Object} Object with format parser and readMethod ('text' or 'arraybuffer'), or null if unsupported
-         */
-        _getFormatParser: function(filename) {
-            return Mapbender.FileUtil.getFormatParserByFilename(filename);
-        },
-        
-        /**
          * Load and display geospatial file on map (KML, GeoJSON, GPX, GML)
          */
         _loadGeospatialFile: function() {
@@ -1671,7 +1662,7 @@
                 var distance = i * actualSpacing;
                 
                 // Get coordinate at this distance
-                var coord = this._getCoordinateAtDistance(lineString, distance);
+                var coord = Mapbender.GeometryUtil.getCoordinateAtDistance(lineString, distance);
                 if (!coord) break;
                 
                 // Move current feature to this position
@@ -1679,7 +1670,7 @@
                 
                 // If adjust frames is enabled, rotate the frame according to the track direction
                 if (adjustFrames) {
-                    var bearing = this._getBearingAtDistance(lineString, distance);
+                    var bearing = Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance);
                     this._rotateCurrentFeature(bearing, previousRotation);
                     
                     // Store the rotation for the next frame to maintain continuity
@@ -1697,77 +1688,9 @@
                 .removeClass('text-danger');
         },
         
-        /**
-         * Get coordinate at a specific distance along a LineString
-         */
-        _getCoordinateAtDistance: function(lineString, distance) {
-            var coordinates = lineString.getCoordinates();
-            var currentDistance = 0;
-            
-            for (var i = 0; i < coordinates.length - 1; i++) {
-                var segmentStart = coordinates[i];
-                var segmentEnd = coordinates[i + 1];
-                var segmentLength = Math.sqrt(
-                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
-                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
-                );
-                
-                if (currentDistance + segmentLength >= distance) {
-                    // The target distance is within this segment
-                    var ratio = (distance - currentDistance) / segmentLength;
-                    return [
-                        segmentStart[0] + ratio * (segmentEnd[0] - segmentStart[0]),
-                        segmentStart[1] + ratio * (segmentEnd[1] - segmentStart[1])
-                    ];
-                }
-                
-                currentDistance += segmentLength;
-            }
-            
-            // Return last coordinate if distance exceeds line length
-            return coordinates[coordinates.length - 1];
-        },
+
         
-        /**
-         * Get bearing (direction in degrees) at a specific distance along a LineString
-         */
-        _getBearingAtDistance: function(lineString, distance) {
-            var coordinates = lineString.getCoordinates();
-            var currentDistance = 0;
-            
-            for (var i = 0; i < coordinates.length - 1; i++) {
-                var segmentStart = coordinates[i];
-                var segmentEnd = coordinates[i + 1];
-                var segmentLength = Math.sqrt(
-                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
-                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
-                );
-                
-                if (currentDistance + segmentLength >= distance) {
-                    // Calculate bearing for this segment
-                    // atan2(dy, dx) gives angle from East (positive X-axis) in radians
-                    var dx = segmentEnd[0] - segmentStart[0];
-                    var dy = segmentEnd[1] - segmentStart[1];
-                    var angleRadians = Math.atan2(dy, dx);
-                    var angleDegrees = angleRadians * (180 / Math.PI);
-                    return angleDegrees;
-                }
-                
-                currentDistance += segmentLength;
-            }
-            
-            // Return bearing of last segment
-            var lastIdx = coordinates.length - 1;
-            if (lastIdx > 0) {
-                var dx = coordinates[lastIdx][0] - coordinates[lastIdx - 1][0];
-                var dy = coordinates[lastIdx][1] - coordinates[lastIdx - 1][1];
-                var angleRadians = Math.atan2(dy, dx);
-                var angleDegrees = angleRadians * (180 / Math.PI);
-                return angleDegrees;
-            }
-            
-            return 0;
-        },
+
         
         /**
          * Delete all frames at once
