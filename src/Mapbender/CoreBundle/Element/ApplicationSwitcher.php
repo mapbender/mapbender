@@ -74,6 +74,7 @@ class ApplicationSwitcher extends AbstractElementService
         $view->attributes['class'] = 'mb-element-applicationswitcher';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['config'] = $this->getClientConfiguration($element);
+        $view->variables['region'] = $element->getRegion();
         return $view;
     }
 

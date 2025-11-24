@@ -1,35 +1,51 @@
-{% for group, apps in config.applications %}
-    {% if group != '__nogroup__' %}
-    <h3 class="mb-3 text-center">{{ group }}</h3>
-    {% else %}
-        <hr>
-    {% endif %}
-    <ul class="list">
-        {% for slug, app in apps %}
-            <li class="list-item">
-                <a href="{{ app.url }}">
-                    <div class="list-content">
-                        {% if app.imgUrl != false %}
-                        <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
-                        {% else %}
-                            <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
-                                ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
-                                nO3TsQkCQRBF0YdBCWwAi2ACI7ACJ7ACJ7ACJ7ACJ7ACJ7ACZ+u2bWvP5u7d87Ozs7Oz
-                                s7OzszuzHdu2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
-                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
-                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
-                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
-                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
-                                bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
-                                CTaTAAAAAElFTkSuQmCC" alt="">
-                        {% endif %}
-                        <p class="text-center my-2">{{ app.title }}</p>
-                    </div>
-                </a>
-            </li>
-            {% if loop.index % 3 == 0 %}
-                </ul><ul class="list">
-            {% endif %}
-        {% endfor %}
-    </ul>
-{% endfor %}
+{% if region == 'toolbar' or region == 'footer' %}
+    <div class="dropdown">
+        <select class="hiddenDropdown -fn-application-selector">
+            {% for apps in config.applications %}
+                {% for slug, app in apps %}
+                    <option value="{{ slug }}" data-app-url="{{ app.url }}">
+                        {{ app.title }}
+                    </option>
+                {% endfor %}
+            {% endfor %}
+        </select>
+        <div class="dropdownValue iconDown"></div>
+        <ul class="dropdownList"></ul>
+    </div>
+{% else %}
+    {% for group, apps in config.applications %}
+        {% if group != '__nogroup__' %}
+        <h3 class="mb-3 text-center">{{ group }}</h3>
+        {% else %}
+            <hr>
+        {% endif %}
+        <ul class="list">
+            {% for slug, app in apps %}
+                <li class="list-item">
+                    <a href="{{ app.url }}">
+                        <div class="list-content">
+                            {% if app.imgUrl != false %}
+                            <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
+                            {% else %}
+                                <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
+                                    ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
+                                    nO3TsQkCQRBF0YdBCWwAi2ACI7ACJ7ACJ7ACJ7ACJ7ACJ7ACZ+u2bWvP5u7d87Ozs7Oz
+                                    s7OzszuzHdu2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
+                                    CTaTAAAAAElFTkSuQmCC" alt="">
+                            {% endif %}
+                            <p class="text-center my-2">{{ app.title }}</p>
+                        </div>
+                    </a>
+                </li>
+                {% if loop.index % 3 == 0 %}
+                    </ul><ul class="list">
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endif %}

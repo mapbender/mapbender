@@ -21,6 +21,11 @@
                 e.preventDefault();
                 this._switchApplication($(e.currentTarget).attr('href'));
             });
+            $('select', this.$element).on('change', (e) => {
+                const slug = $(e.target).val();
+                const url = this.$element.find('.-fn-application-selector').find('[value=' + slug + ']').attr('data-app-url');
+                this._switchApplication(url);
+            });
         }
 
         _switchApplication(url) {
