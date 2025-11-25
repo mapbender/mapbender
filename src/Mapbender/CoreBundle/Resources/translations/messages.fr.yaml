@@ -220,6 +220,11 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialog
+      admin:
+        content: Contenu
+        dontShowAgain: 'Option "Ne plus afficher"'
+        dontShowAgainLabel: 'Texte "Ne plus afficher"'
+        dontShowAgainDefaultLabel: 'Ne plus afficher'
     map:
       class:
         title: Carte

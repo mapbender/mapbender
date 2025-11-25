@@ -250,6 +250,11 @@ mb:
       tag:
         copyright: Авторське право
         dialog: діалогове вікно
+      admin:
+        content: Зміст
+        dontShowAgain: 'Опція "Більше не показувати"'
+        dontShowAgainLabel: 'Текст "Більше не показувати"'
+        dontShowAgainDefaultLabel: 'Більше не показувати'
     map:
       class:
         title: Мапа
