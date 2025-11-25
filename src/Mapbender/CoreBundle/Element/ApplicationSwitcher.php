@@ -4,19 +4,15 @@ namespace Mapbender\CoreBundle\Element;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
-use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Entity\Element;
-use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use Mapbender\CoreBundle\Component\Application\DbAndYamlApplicationResolver;
 
 class ApplicationSwitcher extends AbstractElementService implements ConfigMigrationInterface
 {
-    public function __construct(protected ManagerRegistry $managerRegistry,
-                                protected ApplicationYAMLMapper $yamlAppRepository,
+    public function __construct(protected DbAndYamlApplicationResolver $applicationResolver,
                                 protected AuthorizationCheckerInterface $authChecker,
                                 protected UrlGeneratorInterface $router,
                                 protected string $rootDir)
@@ -88,20 +84,14 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
 
     public function prepareAppConfigurations($appConfigurations)
     {
-        $dbRepository = $this->managerRegistry->getRepository(Application::class);
         $preparedAppConfig = [];
         foreach ($appConfigurations as $slug => $appConfig) {
             $group = (!empty($appConfig['group'])) ? $appConfig['group'] : '__nogroup__';
             if (!empty($preparedAppConfig[$group]) && array_key_exists($slug, $preparedAppConfig[$group])) {
                 continue;
             }
-            $application = $this->yamlAppRepository->getApplication($slug);
-            if (!$application) {
-                $application = $dbRepository->findOneBy([
-                    'slug' => $slug,
-                ]);
-            }
-            if ($application && $this->authChecker->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
+            try {
+                $application = $this->applicationResolver->getApplicationEntity($slug);
                 $appConfig['title'] = (!empty($appConfig['title'])) ? $appConfig['title'] : $application->getTitle();
                 if (empty($appConfig['url'])) {
                     $appConfig['url'] = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
@@ -109,12 +99,12 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                 if (empty($appConfig['imgUrl'])) {
                     $appConfig['imgUrl'] = false;
                     $imgPath = '/uploads/' . $slug . '/' . $application->getScreenshot();
-                    if (@\file_exists($this->rootDir . '/public' . $imgPath)) {
+                    if (@\is_file($this->rootDir . '/public' . $imgPath)) {
                         $appConfig['imgUrl'] = $this->router->getContext()->getBaseUrl() . $imgPath;
                     }
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
-            } else { // external app (neither yaml nor database app)
+            } catch (\Exception $e) { // external app (neither yaml nor database app)
                 $preparedAppConfig[$group][$slug] = $appConfig;
             }
         }
