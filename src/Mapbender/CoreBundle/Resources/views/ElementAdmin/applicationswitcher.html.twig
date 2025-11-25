@@ -1,6 +1,11 @@
 {{ form_row(form.title) }}
 <div class="mb-3 row">
-    {{ form_label(form.configuration.applications) }}
+    <label class="form-label">
+        {{ form.configuration.applications.vars.label|trans }}
+        <span class="form-text mb-0 help-text">
+            {{ form.configuration.applications.vars.help|raw }}
+        </span>
+    </label>
     {{ form_widget(form.configuration.applications) }}
 </div>
 {{ form_rest(form.configuration) }}
