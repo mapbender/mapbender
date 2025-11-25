@@ -1,6 +1,7 @@
 ## next bugfix release
 * [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
 * [DataUpload] Show message when uploading file without valid geometries ([#PR1797](https://github.com/mapbender/mapbender/pull/1797)) 
+* [Manager] Fix search did not work for elements with soft hyphens ([#PR1803](https://github.com/mapbender/mapbender/pull/1803)) 
 
 ## v4.2.3
 Bugfixes:
