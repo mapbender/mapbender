@@ -354,6 +354,9 @@ mb:
         dialog: Diálogo
       admin:
         content: Contenido
+        dontShowAgain: 'Opción "No mostrar más"'
+        dontShowAgainLabel: 'Texto "No mostrar más"'
+        dontShowAgainDefaultLabel: 'No mostrar más'
     map:
       class:
         title: Mapa

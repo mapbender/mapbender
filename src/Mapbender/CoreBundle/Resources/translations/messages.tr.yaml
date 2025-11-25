@@ -222,6 +222,11 @@ mb:
       tag:
         copyright: Telif hakkı
         dialog: İletişim
+      admin:
+        content: İçerik
+        dontShowAgain: '"Bir daha gösterme" seçeneği'
+        dontShowAgainLabel: '"Bir daha gösterme" metni'
+        dontShowAgainDefaultLabel: 'Bir daha gösterme'
     map:
       class:
         title: Harita

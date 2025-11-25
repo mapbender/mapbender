@@ -355,6 +355,9 @@ mb:
         dialog: Раздел
       admin:
         content: 'Контент'
+        dontShowAgain: 'Опция "Больше не показывать"'
+        dontShowAgainLabel: 'Текст "Больше не показывать"'
+        dontShowAgainDefaultLabel: 'Больше не показывать'
     map:
       class:
         title: Карта

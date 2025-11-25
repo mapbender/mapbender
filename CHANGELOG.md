@@ -3,6 +3,7 @@
 * [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
 * [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))
 * [Design] Redesign data upload ([#PR1775](https://github.com/mapbender/mapbender/pull/1775))
+* [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
 
 ## next bugfix release
 * [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 

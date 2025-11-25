@@ -222,6 +222,11 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialoog
+      admin:
+        content: Inhoud
+        dontShowAgain: 'Optie "Niet meer tonen"'
+        dontShowAgainLabel: 'Tekst "Niet meer tonen"'
+        dontShowAgainDefaultLabel: 'Niet meer tonen'
     map:
       class:
         title: Kaart
