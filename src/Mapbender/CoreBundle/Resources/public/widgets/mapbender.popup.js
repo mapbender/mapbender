@@ -102,8 +102,8 @@
             tagName: 'div',
             scrollable: true,
             template: [
-                '    <div class="popupHead">',
-                '      <span class="iconBig me-1"><i class="popupIcon"></i></span>',
+                '    <div class="popupHead element-title active">',
+                '      <span class="element-icon-wrapper"><i class="popupIcon"></i></span>',
                 '      <span class="popupTitle"></span>',
                 '      <span class="popupSubTitle"></span>',
                 '      <span class="popupClose right" tabindex="0"><i class="fa-solid fa-xmark"></i></span>',
