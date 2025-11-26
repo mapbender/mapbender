@@ -117,7 +117,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
     {
         $conf = $entity->getConfiguration();
         if (!empty($conf['applications'][0]) && is_string($conf['applications'][0])) {
-            $appConfig = null;
+            $appConfig = [];
             foreach ($conf['applications'] as $slug) {
                 $appConfig[$slug] = [
                     'title' => null,
