@@ -208,7 +208,7 @@
                     case 'application/vnd.google-earth.kml+xml':
                         return [new ol.format.KML(), 'EPSG:4326'];
                     case 'application/gml+xml':
-                        return [this.findGmlFormat(result), this.findProjection()];
+                        return [Mapbender.FileUtil.findGmlFormat(result), this.findProjection()];
                     case 'application/gpx+xml':
                         return [new ol.format.GPX(), 'EPSG:4326'];
                 }
@@ -225,7 +225,7 @@
                 projection = 'EPSG:4326';
             } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 || 
                        parser instanceof ol.format.GML3 || parser instanceof ol.format.GML32) {
-                parser = this.findGmlFormat(result);  // GML requires content inspection
+                parser = Mapbender.FileUtil.findGmlFormat(result);  // GML requires content inspection
                 projection = this.findProjection();
             } else {
                 projection = this.findProjection();
@@ -266,30 +266,6 @@
                 }
             }
             return 'EPSG:4326';
-        },
-
-        findGmlFormat: function (gml) {
-            var gmlFormats = {
-                gml: new ol.format.GML(),
-                gml2: new ol.format.GML2(),
-                gml3: new ol.format.GML3(),
-                gml32: new ol.format.GML32()
-            };
-
-            for (var format in gmlFormats) {
-                format = gmlFormats[format];
-                var features = format.readFeatures(gml);
-                if (features.length > 0) {
-                    var coordinates = features[0].getGeometry().getCoordinates();
-                    if (coordinates.length > 0) {
-                        return format;
-                    }
-                }
-            }
-
-            var msg = Mapbender.trans('mb.core.dataupload.error.gml');
-            Mapbender.error(msg);
-            throw new Error(msg);
         },
 
         renderTable: function (file, uploadId) {
