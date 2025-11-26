@@ -92,11 +92,11 @@
         
         var frames = this.frameManager.getFrames();
         if (frames.length > 0) {
-            $deleteAllBtn.addClass('show');
+            $deleteAllBtn.show();
             $emptyState.hide();
             $tableContent.show();
         } else {
-            $deleteAllBtn.removeClass('show');
+            $deleteAllBtn.hide();
             $emptyState.show();
             $tableContent.hide();
         }

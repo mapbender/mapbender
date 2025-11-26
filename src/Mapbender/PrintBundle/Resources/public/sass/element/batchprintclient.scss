@@ -118,12 +118,8 @@
     }
 
     .delete-all-frames {
-      padding: 4px 12px;
-      display: none;
-
-      &.show {
-        display: inline-block !important;
-      }
+      font-size: inherit; // Reset to default, not the 10px from .frame-table
+      display: none; // Hide by default until frames are added
     }
 
     // Empty state styling
