@@ -59,10 +59,12 @@
     <div class="form-group no-gutters frame-table -fn-frame-table">
         <div>
             <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
-            <button type="button" 
-                    class="btn btn-light btn-sm delete-all-frames -fn-delete-all-frames">
-                {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
-            </button>
+            <div class="frame-table-buttons">
+                <button type="button" 
+                        class="btn btn-light btn-sm -fn-delete-all-frames">
+                    {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
+                </button>
+            </div>
         </div>
         <div class="frame-table-empty-state -fn-frame-table-empty">
             <p>{{ 'mb.print.printclient.batchprint.tracking.empty' | trans }}</p>

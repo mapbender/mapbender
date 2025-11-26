@@ -48,11 +48,6 @@
       gap: 8px;
       flex-wrap: wrap;
       margin-bottom: 8px;
-
-      button {
-        white-space: nowrap;
-        padding: 4px 12px;
-      }
     }
 
     // Adjust frames checkbox - use Bootstrap form-check styling
@@ -97,6 +92,15 @@
     }
   }
 
+  // Shared button styling for all button groups
+  .geofile-buttons,
+  .frame-table .frame-table-buttons {
+    button {
+      white-space: nowrap;
+      padding: 4px 12px;
+    }
+  }
+
   // Frame tracking table section
   .frame-table {
     font-size: 10px;
@@ -117,8 +121,10 @@
       }
     }
 
-    .delete-all-frames {
-      font-size: inherit; // Reset to default, not the 10px from .frame-table
+    .frame-table-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
       display: none; // Hide by default until frames are added
     }
 

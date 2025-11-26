@@ -89,18 +89,18 @@
             
             $tbody.empty();
             
-            // Show/hide delete all button and toggle empty state based on whether there are frames
-            const $deleteAllBtn = $('.-fn-delete-all-frames', this.$element);
+            // Show/hide delete all button wrapper and toggle empty state based on whether there are frames
+            const $deleteAllBtnWrapper = $('.-fn-frame-table .frame-table-buttons', this.$element);
             const $emptyState = $('.-fn-frame-table-empty', this.$element);
             const $tableContent = $('.-fn-frame-table-content', this.$element);
             
             const frames = this.frameManager.getFrames();
             if (frames.length > 0) {
-                $deleteAllBtn.show();
+                $deleteAllBtnWrapper.show();
                 $emptyState.hide();
                 $tableContent.show();
             } else {
-                $deleteAllBtn.hide();
+                $deleteAllBtnWrapper.hide();
                 $emptyState.show();
                 $tableContent.hide();
             }
