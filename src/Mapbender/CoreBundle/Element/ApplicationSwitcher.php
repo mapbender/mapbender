@@ -4,6 +4,8 @@ namespace Mapbender\CoreBundle\Element;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -104,7 +106,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                     }
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
-            } catch (\Exception $e) { // external app (neither yaml nor database app)
+            } catch (AccessDeniedException | NotFoundHttpException $e) { // external app (neither yaml nor database app)
                 $preparedAppConfig[$group][$slug] = $appConfig;
             }
         }
