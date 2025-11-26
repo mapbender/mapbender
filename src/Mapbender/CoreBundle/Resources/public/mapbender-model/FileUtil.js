@@ -7,44 +7,32 @@ window.Mapbender.FileUtil = class {
     /**
      * Get appropriate OpenLayers format parser based on file name or extension
      * @param {string} filename - Name of the file
-     * @returns {Object|null} Object with parser (ol.format instance) and readMethod ('text' or 'arraybuffer'), or null if unsupported
+     * @returns {ol.format|null} OpenLayers format parser instance, or null if unsupported
      */
     static getFormatParserByFilename(filename) {
         var extension = filename.split('.').pop().toLowerCase();
         
         switch (extension) {
             case 'kml':
-                return {
-                    parser: new ol.format.KML({
-                        extractStyles: true,
-                        showPointNames: false
-                    }),
-                    readMethod: 'text'
-                };
+                return new ol.format.KML({
+                    extractStyles: true,
+                    showPointNames: false
+                });
                 
             case 'geojson':
             case 'json':
-                return {
-                    parser: new ol.format.GeoJSON(),
-                    readMethod: 'text'
-                };
+                return new ol.format.GeoJSON();
                 
             case 'gpx':
-                return {
-                    parser: new ol.format.GPX(),
-                    readMethod: 'text'
-                };
+                return new ol.format.GPX();
                 
             case 'gml':
             case 'xml':
                 // GML format requires content inspection - use agnostic parser
                 return {
-                    parser: {
-                        readFeatures: function(content, options) {
-                            return Mapbender.FileUtil.findGmlFormat(content).readFeatures(content, options);
-                        }
-                    },
-                    readMethod: 'text'
+                    readFeatures: function(content, options) {
+                        return Mapbender.FileUtil.findGmlFormat(content).readFeatures(content, options);
+                    }
                 };
                 
             default:
@@ -96,9 +84,9 @@ window.Mapbender.FileUtil = class {
      * @param {Function} options.onError - Callback on error: function(error, file)
      */
     static readGeospatialFile(file, options) {
-        var formatInfo = this.getFormatParserByFilename(file.name);
+        var parser = this.getFormatParserByFilename(file.name);
         
-        if (!formatInfo) {
+        if (!parser) {
             if (options.onError) {
                 options.onError(new Error('Unsupported file format'), file);
             }
@@ -109,7 +97,7 @@ window.Mapbender.FileUtil = class {
         
         reader.addEventListener('load', function() {
             try {
-                var features = formatInfo.parser.readFeatures(reader.result, {
+                var features = parser.readFeatures(reader.result, {
                     dataProjection: options.dataProjection || 'EPSG:4326',
                     featureProjection: options.featureProjection
                 });
