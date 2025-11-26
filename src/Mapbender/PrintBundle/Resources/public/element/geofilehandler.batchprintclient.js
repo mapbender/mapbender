@@ -14,7 +14,7 @@
     
     // Constants
     var MIN_OVERLAP = 0;
-    var MAX_OVERLAP = 100;
+    var MAX_OVERLAP = 50;  // Limited to 80% to prevent exponential performance degradation
     var MIN_FRAMES = 2;  // Minimum frames to cover start and end points
     var COVERAGE_BUFFER = 1;  // Extra frame to ensure no gaps at track end
     
