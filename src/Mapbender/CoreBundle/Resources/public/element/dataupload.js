@@ -196,42 +196,41 @@
          * @returns {[ol.format.*,string]} An array containing the openlayers format and the appropriate projection
          */
         findFormatByType: function(file, result) {
-            // Try to get format info from FileUtil
+            // best case: mime type is transmitted, but only works in some browsers/OS
+            switch (file.type) {
+                case 'application/geo+json':
+                case 'application/json':
+                    return [new ol.format.GeoJSON(), this.findGeoJsonProjection(result)];
+                case 'application/vnd.google-earth.kml+xml':
+                    return [new ol.format.KML(), 'EPSG:4326'];
+                case 'application/gml+xml':
+                    return [Mapbender.FileUtil.findGmlFormat(result), this.findProjection()];
+                case 'application/gpx+xml':
+                    return [new ol.format.GPX(), 'EPSG:4326'];
+            }
+
+            // fallback: use FileUtil for file extension based detection
             var formatInfo = Mapbender.FileUtil.getFormatParserByFilename(file.name);
-            
-            if (!formatInfo) {
-                // best case: mime type is transmitted, but only works in some browsers/OS
-                switch (file.type) {
-                    case 'application/geo+json':
-                    case 'application/json':
-                        return [new ol.format.GeoJSON(), this.findGeoJsonProjection(result)];
-                    case 'application/vnd.google-earth.kml+xml':
-                        return [new ol.format.KML(), 'EPSG:4326'];
-                    case 'application/gml+xml':
-                        return [Mapbender.FileUtil.findGmlFormat(result), this.findProjection()];
-                    case 'application/gpx+xml':
-                        return [new ol.format.GPX(), 'EPSG:4326'];
+            if (formatInfo) {
+                var projection;
+                var parser = formatInfo.parser;
+                
+                if (parser instanceof ol.format.GeoJSON) {
+                    projection = this.findGeoJsonProjection(result);
+                } else if (parser instanceof ol.format.KML || parser instanceof ol.format.GPX) {
+                    projection = 'EPSG:4326';
+                } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 || 
+                           parser instanceof ol.format.GML3 || parser instanceof ol.format.GML32) {
+                    parser = Mapbender.FileUtil.findGmlFormat(result);  // GML requires content inspection
+                    projection = this.findProjection();
+                } else {
+                    projection = this.findProjection();
                 }
-                return [null, null];
+                
+                return [parser, projection];
             }
-            
-            // Determine projection based on format type
-            var projection;
-            var parser = formatInfo.parser;
-            
-            if (parser instanceof ol.format.GeoJSON) {
-                projection = this.findGeoJsonProjection(result);
-            } else if (parser instanceof ol.format.KML || parser instanceof ol.format.GPX) {
-                projection = 'EPSG:4326';
-            } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 || 
-                       parser instanceof ol.format.GML3 || parser instanceof ol.format.GML32) {
-                parser = Mapbender.FileUtil.findGmlFormat(result);  // GML requires content inspection
-                projection = this.findProjection();
-            } else {
-                projection = this.findProjection();
-            }
-            
-            return [parser, projection];
+
+            return [null, null];
         },
 
         findProjection: function () {
