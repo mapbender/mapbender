@@ -73,16 +73,13 @@ window.Mapbender.FileUtil = (function() {
             }
             
             var reader = new FileReader();
-            var self = this;
             
             reader.addEventListener('load', function() {
                 try {
-                    var features = self.parseFeaturesFromContent(
-                        reader.result,
-                        formatInfo.parser,
-                        options.dataProjection || 'EPSG:4326',
-                        options.featureProjection
-                    );
+                    var features = formatInfo.parser.readFeatures(reader.result, {
+                        dataProjection: options.dataProjection || 'EPSG:4326',
+                        featureProjection: options.featureProjection
+                    });
                     
                     if (options.onSuccess) {
                         options.onSuccess(features, file);
@@ -102,21 +99,6 @@ window.Mapbender.FileUtil = (function() {
             
             // All supported formats use text
             reader.readAsText(file);
-        },
-        
-        /**
-         * Parse features from file content
-         * @param {string} content - File content as text
-         * @param {ol.format.Feature} parser - OpenLayers format parser
-         * @param {string} dataProjection - Source projection
-         * @param {string} featureProjection - Target projection
-         * @returns {Array<ol.Feature>} Parsed features
-         */
-        parseFeaturesFromContent: function(content, parser, dataProjection, featureProjection) {
-            return parser.readFeatures(content, {
-                dataProjection: dataProjection,
-                featureProjection: featureProjection
-            });
         }
     };
     
