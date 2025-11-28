@@ -118,6 +118,7 @@
 
       h4 {
         margin: 0;
+        font-size: 14px;
       }
     }
 
@@ -126,6 +127,18 @@
       gap: 8px;
       flex-wrap: wrap;
       display: none; // Hide by default until frames are added
+      margin-right: 10px; // Move trash icon slightly to the left
+      
+      .fa-trash-can {
+        cursor: pointer;
+        color: black;
+        transition: color 0.2s ease;
+        font-size: 16px;
+
+        &:hover {
+          color: #c9302c;
+        }
+      }
     }
 
     // Empty state styling

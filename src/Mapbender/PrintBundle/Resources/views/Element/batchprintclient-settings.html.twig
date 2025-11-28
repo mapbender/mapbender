@@ -60,10 +60,8 @@
         <div>
             <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
             <div class="frame-table-buttons">
-                <button type="button" 
-                        class="btn btn-light btn-sm -fn-delete-all-frames">
-                    {{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}
-                </button>
+                <i class="fa far fa-trash-can -fn-delete-all-frames" 
+                   title="{{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}"></i>
             </div>
         </div>
         <div class="frame-table-empty-state -fn-frame-table-empty">
@@ -73,7 +71,7 @@
             <table class="table table-condensed table-striped">
                 <thead>
                     <tr>
-                        <th>{{ 'mb.print.printclient.batchprint.tracking.no' | trans }}</th>
+                        <th>Id</th>
                         <th>{{ 'mb.print.printclient.batchprint.tracking.scale' | trans }}</th>
                         <th>{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
                         <th>{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>

@@ -128,7 +128,7 @@
                 if (rotation > 180) {
                     rotation = rotation - 360;
                 }
-                const rotationText = Math.round(rotation * 10) / 10 + '°';
+                const rotationText = Math.round(rotation * 10) / 10;
                 $row.append($('<td></td>').text(rotationText));
                 
                 // Delete button
