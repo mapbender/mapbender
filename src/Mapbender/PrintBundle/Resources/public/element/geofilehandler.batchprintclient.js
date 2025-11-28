@@ -186,6 +186,10 @@
             map.addLayer(this.geofileLayer);
             this.geofileFeatures = features;
             
+            // Update UI state
+            this._hideUploadButton();
+            this._updateStatus(file.name, 'success');
+            
             // Zoom to extent
             const extent = geometry.getExtent();
             if (!ol.extent.isEmpty(extent)) {
@@ -237,7 +241,7 @@
                 previousRotation = this.onFramePlaced(coord, bearing, previousRotation);
             }
             
-            this._updateStatus(
+            this._updatePlacementStatus(
                 Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {
                     count: params.numFrames
                 }),
@@ -318,7 +322,9 @@
             // Reset UI
             $('.-fn-geofile-file-input', this.$element).val('');
             this._updateStatus('');
+            this._updatePlacementStatus('');
             this._hideButtons();
+            this._showUploadButton();
         }
 
         /**
@@ -357,6 +363,25 @@
         }
 
         /**
+         * Update placement status message (for "Placed X frames" message)
+         * @param {string} message - Status message
+         * @param {string} type - Message type ('success', 'error', or empty)
+         * @private
+         */
+        _updatePlacementStatus(message, type) {
+            const $status = $('.-fn-geofile-place-status', this.$element);
+            $status.text(message);
+            
+            if (type === 'success') {
+                $status.addClass('text-success').removeClass('text-danger');
+            } else if (type === 'error') {
+                $status.addClass('text-danger').removeClass('text-success');
+            } else {
+                $status.removeClass('text-success text-danger');
+            }
+        }
+
+        /**
          * Show geofile control buttons
          * @private
          */
@@ -370,6 +395,22 @@
          */
         _hideButtons() {
             $('.-fn-geofile-controls', this.$element).removeClass('show');
+        }
+
+        /**
+         * Show upload button and hide status
+         * @private
+         */
+        _showUploadButton() {
+            $('.-fn-geofile-custom-button', this.$element).show();
+        }
+
+        /**
+         * Hide upload button
+         * @private
+         */
+        _hideUploadButton() {
+            $('.-fn-geofile-custom-button', this.$element).hide();
         }
 
         /**

@@ -15,14 +15,23 @@
     }
 
     .geofile-upload-label {
+      display: block;
       margin-bottom: 10px;
+      font-weight: normal;
+      font-size: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: default;
+      text-align: left;
     }
 
     .geofile-input-wrapper {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       
       .geofile-custom-button {
         white-space: nowrap;
@@ -34,6 +43,17 @@
       display: none;
     }
 
+    .geofile-status {
+      display: block;
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 8px;
+      
+      &:empty {
+        display: none;
+      }
+    }
+
     // Container for all geofile controls (buttons, checkbox, overlap input)
     .geofile-controls {
       display: none;
@@ -43,16 +63,48 @@
       }
     }
 
-    .geofile-buttons {
+    // Status with trash icon wrapper
+    .geofile-status-wrapper {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      .geofile-status {
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      .fa-trash-can {
+        cursor: pointer;
+        color: black;
+        transition: color 0.2s ease;
+        font-size: 16px;
+        flex-shrink: 0;
+
+        &:hover {
+          color: #c9302c;
+        }
+      }
+    }
+
+    .geofile-button-wrapper {
       margin-bottom: 8px;
+    }
+
+    .geofile-place-status {
+      display: block;
+      color: #666;
+      font-size: 0.9em;
+      
+      &:empty {
+        display: none;
+      }
     }
 
     // Adjust frames checkbox - use Bootstrap form-check styling
     .geofile-adjust-wrapper {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     // Frame overlap section
@@ -60,7 +112,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 8px;
+      margin-bottom: 12px;
 
       .geofile-overlap-label {
         margin: 0;
@@ -79,21 +131,10 @@
         margin-right: 6px;
       }
     }
-
-    .geofile-status {
-      display: inline-block;
-      white-space: nowrap;
-      color: #666;
-      font-size: 0.9em;
-      
-      &:empty {
-        display: none;
-      }
-    }
   }
 
   // Shared button styling for all button groups
-  .geofile-buttons,
+  .geofile-button-wrapper,
   .frame-table .frame-table-buttons {
     button {
       white-space: nowrap;

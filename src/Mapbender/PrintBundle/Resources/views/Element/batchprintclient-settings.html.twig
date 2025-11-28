@@ -18,18 +18,12 @@
                        accept=".kml,.geojson,.json,.gpx,.gml,.xml,application/vnd.google-earth.kml+xml,application/geo+json,application/gpx+xml,application/gml+xml"
                        class="geofile-file-input -fn-geofile-file-input"
                        style="display: none;">
-                <small class="geofile-status -fn-geofile-status"></small>
             </div>
             <div class="geofile-controls -fn-geofile-controls">
-                <div class="geofile-buttons">
-                    <button type="button" 
-                            class="btn btn-light btn-sm -fn-clear-geofile-button">
-                        {{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}
-                    </button>
-                    <button type="button" 
-                            class="btn btn-light btn-sm -fn-place-frames-button">
-                        {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
-                    </button>
+                <div class="geofile-status-wrapper">
+                    <small class="geofile-status -fn-geofile-status"></small>
+                    <i class="fa far fa-trash-can -fn-clear-geofile-button" 
+                       title="{{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}"></i>
                 </div>
                 <div class="form-check geofile-adjust-wrapper">
                     <input type="checkbox" class="form-check-input -fn-adjust-frames-checkbox" id="adjust-frames-checkbox">
@@ -50,6 +44,13 @@
                            step="1">
                     <span>%</span>
                 </div>
+                <div class="geofile-button-wrapper">
+                    <button type="button" 
+                            class="btn btn-light btn-sm -fn-place-frames-button">
+                        {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
+                    </button>
+                </div>
+                <small class="geofile-place-status -fn-geofile-place-status"></small>
             </div>
         </div>
     </div>
