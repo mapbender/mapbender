@@ -228,7 +228,7 @@ class BatchPrintClient extends PrintClient
         $pdfContent = $this->printService->dumpPrint($jobDataWrapper, true); // multiFrame = true
         
         // Return PDF response directly
-        $filename = $this->generateFilename($element) . '.pdf';
+        $filename = $this->generateFilename($element);
         return new Response($pdfContent, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
