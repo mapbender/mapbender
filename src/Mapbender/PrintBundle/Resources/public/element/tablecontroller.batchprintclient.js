@@ -133,7 +133,7 @@
                 
                 // Delete button
                 const $deleteCell = $('<td></td>');
-                const $deleteIcon = $('<i class="fa fa-trash"></i>');
+                const $deleteIcon = $('<i class="fa far fa-trash-can ms-2"></i>');
                 $deleteIcon.attr('title', 'Delete frame');
                 $deleteIcon.on('click', (e) => {
                     e.stopPropagation();
