@@ -1,6 +1,17 @@
 // BatchPrintClient specific styles
 // Only includes styles that were moved from inline CSS in JS and Twig files
 .mb-element-batchprintclient {
+  // Ensure form fields (print frame info) use standard text color
+  // when no frame is selected (default state)
+  form {
+    select,
+    input[type="text"],
+    input[type="number"] {
+      color: inherit !important;
+      opacity: 1 !important;
+    }
+  }
+
   // Geospatial file upload section
   .geofile-upload {
     display: block;
@@ -186,8 +197,8 @@
     .frame-table-empty-state {
       padding: 12px 15px;
       text-align: center;
-      color: #999;
-      font-size: 0.9em;
+      color: #333;
+      font-size: 1em;
       font-style: italic;
       background-color: transparent;
       border: 1px dashed #ddd;
