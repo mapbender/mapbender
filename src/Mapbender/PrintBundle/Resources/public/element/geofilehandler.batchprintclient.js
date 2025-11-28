@@ -92,22 +92,18 @@
          * Load and display geospatial file on map
          */
         loadFile() {
-            const $fileInput = $('.-fn-geofile-file-input', this.$element);
-            
-            if (!$fileInput.length || !$fileInput[0].files) {
-                console.error('File input element not found or not accessible');
-                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
-                return;
-            }
-            
-            const file = $fileInput[0].files[0];
-            
-            if (!file) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
-                return;
-            }
-            
-            const map = this.map.getModel().olMap;
+        const $fileInput = $('.-fn-geofile-file-input', this.$element);
+        
+        if (!$fileInput.length || !$fileInput[0].files) {
+            console.error('File input element not found or not accessible');
+            Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
+            return;
+        }        const file = $fileInput[0].files[0];
+        
+        if (!file) {
+            Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
+            return;
+        }            const map = this.map.getModel().olMap;
             const featureProjection = map.getView().getProjection().getCode();
             
             Mapbender.FileUtil.readGeospatialFile(file, {
@@ -204,19 +200,15 @@
         /**
          * Place print frames along the track
          */
-        placeFramesAlongTrack() {
-            if (!this.geofileFeatures || this.geofileFeatures.length === 0) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
-                return;
-            }
-            
-            const lineString = this.geofileFeatures[0].getGeometry();
-            if (!lineString || lineString.getType() !== 'LineString') {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
-                return;
-            }
-            
-            // Get settings
+    placeFramesAlongTrack() {
+        if (!this.geofileFeatures || this.geofileFeatures.length === 0) {
+            Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
+            return;
+        }        const lineString = this.geofileFeatures[0].getGeometry();
+        if (!lineString || lineString.getType() !== 'LineString') {
+            Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
+            return;
+        }            // Get settings
             const adjustFrames = $('.-fn-adjust-frames-checkbox', this.$element).is(':checked');
             const overlapPercent = this._getOverlapPercentage();
             
@@ -424,7 +416,7 @@
             console.error('Failed to load geospatial file:', fileName, error);
             
             const errorMessage = Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.error') + ': ' + error.message;
-            alert(errorMessage);
+            Mapbender.error(errorMessage);
             
             this._updateStatus(
                 Mapbender.trans('mb.print.printclient.batchprint.geofile.error') + ': ' + error.message,

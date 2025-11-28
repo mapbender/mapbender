@@ -654,7 +654,7 @@
             }
             
             if (this.pinnedFeatures.length === 0) {
-                alert(Mapbender.trans('mb.print.printclient.batchprint.alert.noframes'));
+                Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.alert.noframes'));
                 return false;
             }
             
@@ -817,7 +817,7 @@
             }
             
             var errorMessage = Mapbender.trans('mb.print.printclient.batchprint.alert.error') + ': ' + error.message;
-            alert(errorMessage);
+            Mapbender.error(errorMessage);
         },
         
         /**
