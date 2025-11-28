@@ -131,9 +131,16 @@
                 }
             });
             
-            // Track internal layer IDs for filtering during print
-            this._internalLayerIds = new Set();
-            this._trackInternalLayers();
+            // Mark element layers as internal for print filtering
+            var selectionLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
+            if (selectionLayer && selectionLayer.getNativeLayer()) {
+                selectionLayer.getNativeLayer().set('batchPrintClientInternal', true);
+            }
+            
+            var pinnedLayer = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
+            if (pinnedLayer && pinnedLayer.getNativeLayer()) {
+                pinnedLayer.getNativeLayer().set('batchPrintClientInternal', true);
+            }
             
             // Change submit button text
             $('input[type="submit"]', this.element).val(Mapbender.trans('mb.print.printclient.batchprint.btn.submit'));
@@ -187,61 +194,14 @@
         },
         
         /**
-         * Track internal layers for filtering during print
+         * Filter out internal BatchPrintClient layers from print output
+         * All internal layers are marked with 'batchPrintClientInternal' property
+         * @param {ol.layer.Vector} layer - OpenLayers vector layer
+         * @returns {boolean} True if layer should be included in print
          * @private
          */
-        _trackInternalLayers: function() {
-            var self = this;
-            
-            // Track element layers (selection and pinned frames)
-            var selectionLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            if (selectionLayer && selectionLayer.getNativeLayer()) {
-                var selectionOlLayer = selectionLayer.getNativeLayer();
-                this._internalLayerIds.add(selectionOlLayer.ol_uid || selectionOlLayer.get('id'));
-            }
-            
-            var pinnedLayer = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
-            if (pinnedLayer && pinnedLayer.getNativeLayer()) {
-                var pinnedOlLayer = pinnedLayer.getNativeLayer();
-                this._internalLayerIds.add(pinnedOlLayer.ol_uid || pinnedOlLayer.get('id'));
-            }
-            
-            // Track rotation controller's overlay layer
-            if (this.rotationController && this.rotationController.getOverlayLayer()) {
-                var overlayLayer = this.rotationController.getOverlayLayer();
-                this._internalLayerIds.add(overlayLayer.ol_uid || overlayLayer.get('id'));
-            }
-        },
-        
-        /**
-         * Check if a layer is an internal BatchPrintClient layer
-         * @param {Object} layer - Layer object from job data
-         * @returns {boolean} True if layer is internal
-         * @private
-         */
-        _isInternalLayer: function(layer) {
-            // Check if it's the geofile/track layer
-            var geofileLayer = this.geofileHandler ? this.geofileHandler.getLayer() : null;
-            if (geofileLayer && layer.ol_uid === geofileLayer.ol_uid) {
-                return true;
-            }
-            
-            // Check if layer ID is in our tracked internal layers
-            if (layer.ol_uid && this._internalLayerIds.has(layer.ol_uid)) {
-                return true;
-            }
-            
-            if (layer.id && this._internalLayerIds.has(layer.id)) {
-                return true;
-            }
-            
-            // Legacy fallback: check layer type for element layers
-            // Element layers are typically GeoJSON+Style type
-            if (layer.type === 'GeoJSON+Style' && layer.elementId === this.element.attr('id')) {
-                return true;
-            }
-            
-            return false;
+        _filterVectorLayer: function(layer) {
+            return layer.get('batchPrintClientInternal') !== true;
         },
         
         /**
@@ -659,21 +619,7 @@
             this._redrawSelectionFeatures();
         },
         
-        /**
-         * Filter out BatchPrintClient internal layers from job data
-         * Removes only frames, rotation controls, and track layers created by this widget
-         * while preserving other user-added layers
-         */
-        _filterFrameLayers: function(job) {
-            if (!job.layers || !Array.isArray(job.layers)) {
-                return;
-            }
-            
-            var self = this;
-            job.layers = job.layers.filter(function(layer) {
-                return !self._isInternalLayer(layer);
-            });
-        },
+
         
         /**
          * Override _onSubmit to collect and submit all pinned frames
@@ -764,7 +710,6 @@
                         };
                     }
                     
-                    this._filterFrameLayers(job);
                     jobs.push(job);
                 } catch (error) {
                     console.error('Failed to collect job data for frame ' + (i + 1) + ':', error);

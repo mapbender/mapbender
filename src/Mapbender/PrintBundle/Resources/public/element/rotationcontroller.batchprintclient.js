@@ -75,6 +75,8 @@
                 style: null,  // Features will have their own styles
                 zIndex: this.rotationZIndex
             });
+            // Mark as internal layer for print filtering
+            this.overlayLayer.set('batchPrintClientInternal', true);
             this.map.addLayer(this.overlayLayer);
         }
 
