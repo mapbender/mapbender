@@ -37,15 +37,15 @@ mb:
           selected: 'Selected'
           loaded: 'Loaded'
           error: 'Error'
-          readerror: 'Error reading file'
-          placed: 'Placed %count% frames along track'
+          readerror: 'Error reading file.'
+          placed: 'Placed %count% frames along track.'
           alert:
             selectfile: 'Please select a file first.'
             validfile: 'Please select a valid file (KML, GeoJSON, GPX, GML).'
-            error: 'Error loading file'
+            error: 'Error loading file.'
             readerror: 'Error reading file.'
             loadfirst: 'Please load a track file first.'
-            invalidgeometry: 'Invalid geometry. Expected LineString.'
+            invalidgeometry: 'Invalid geometry. LineString expected.'
         overlap:
           outofbounds: 'Overlap value %value%% is outside the valid range (0-50%). Please enter a value between 0 and 50.'
         tracking:
@@ -61,10 +61,10 @@ mb:
         confirm:
           create: 'This will create %count% frames. Continue?'
           deleteall: 'Delete all %count% frames?'
-        alldeleted: 'All frames deleted'
+        alldeleted: 'All frames deleted.'
         alert:
           noframes: 'Please place at least one print frame on the map.'
-          error: 'Error creating print job'
+          error: 'Error creating print job.'
       joblist:
         header:
           id: '#'

@@ -38,12 +38,12 @@ mb:
           selected: 'Ausgewählt'
           loaded: 'Geladen'
           error: 'Fehler'
-          readerror: 'Fehler beim Lesen der Datei'
-          placed: '%count% Rahmen entlang der Strecke platziert'
+          readerror: 'Fehler beim Lesen der Datei.'
+          placed: '%count% Rahmen entlang der Strecke platziert.'
           alert:
             selectfile: 'Bitte wählen Sie zuerst eine Datei aus.'
             validfile: 'Bitte wählen Sie eine gültige Datei aus (KML, GeoJSON, GPX, GML).'
-            error: 'Fehler beim Laden der Datei'
+            error: 'Fehler beim Laden der Datei.'
             readerror: 'Fehler beim Lesen der Datei.'
             loadfirst: 'Bitte laden Sie zuerst eine Streckendatei.'
             invalidgeometry: 'Ungültige Geometrie. LineString erwartet.'
@@ -62,10 +62,10 @@ mb:
         confirm:
           create: 'Es werden %count% Rahmen erstellt. Fortfahren?'
           deleteall: 'Alle %count% Rahmen löschen?'
-        alldeleted: 'Alle Rahmen gelöscht'
+        alldeleted: 'Alle Rahmen gelöscht.'
         alert:
           noframes: 'Bitte platzieren Sie mindestens einen Druckrahmen auf der Karte.'
-          error: 'Fehler beim Erstellen des Druckauftrags'
+          error: 'Fehler beim Erstellen des Druckauftrags.'
       joblist:
         header:
           id: '#'
