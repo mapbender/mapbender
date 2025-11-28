@@ -106,8 +106,8 @@ mb:
         title: Print
     batchprintclient:
       class:
-        title: 'Batch Print'
-        description: 'Batch Print - Serial printing with multiple frames'
+        title: 'Print Batch Mode'
+        description: 'Print Batch Mode - Placement of multiple print frames and output in one print job'
     printclienttemplate:
       admin:
         template: Template

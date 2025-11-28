@@ -108,8 +108,8 @@ mb:
         title: Impressão
     batchprintclient:
       class:
-        title: 'Impressão em lote'
-        description: 'Impressão em lote - Impressão serial com múltiplas molduras'
+        title: 'Modo de impressão em lote'
+        description: 'Modo de impressão em lote - Posicionamento de múltiplas molduras de impressão e saída em um trabalho de impressão'
     printclienttemplate:
       admin:
         template: Modelo

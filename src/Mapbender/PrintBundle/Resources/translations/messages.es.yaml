@@ -106,8 +106,8 @@ mb:
         title: Imprimir
     batchprintclient:
       class:
-        title: 'Impresión por lotes'
-        description: 'Impresión por lotes - Impresión serial con múltiples marcos'
+        title: 'Modo de impresión por lotes'
+        description: 'Modo de impresión por lotes - Colocación de múltiples marcos de impresión y salida en un trabajo de impresión'
     printclienttemplate:
       admin:
         template: Plantillas

@@ -108,7 +108,7 @@ mb:
     batchprintclient:
       class:
         title: 'Seriendruck'
-        description: 'Seriendruck - Drucken mit mehreren Rahmen'
+        description: 'Seriendruck - Platzierung mehrerer Druckrahmen und Ausgabe in einem Druckauftrag'
     printclienttemplate:
       admin:
         template: Vorlage

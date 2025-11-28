@@ -106,8 +106,8 @@ mb:
         title: Stampa
     batchprintclient:
       class:
-        title: 'Stampa in serie'
-        description: 'Stampa in serie - Stampa seriale con più cornici'
+        title: 'Modalità stampa in serie'
+        description: 'Modalità stampa in serie - Posizionamento di più cornici di stampa e output in un unico lavoro di stampa'
     printclienttemplate:
       admin:
         template: Template

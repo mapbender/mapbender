@@ -77,8 +77,8 @@ mb:
         title: Imprimer
     batchprintclient:
       class:
-        title: 'Impression par lots'
-        description: 'Impression par lots - Impression sérielle avec plusieurs cadres'
+        title: 'Mode d''impression par lots'
+        description: 'Mode d''impression par lots - Placement de plusieurs cadres d''impression et sortie dans un seul travail d''impression'
     printclienttemplate:
       admin:
         template: Modèle

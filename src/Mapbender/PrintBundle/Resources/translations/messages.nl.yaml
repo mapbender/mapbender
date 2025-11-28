@@ -77,8 +77,8 @@ mb:
         title: Afdrukken
     batchprintclient:
       class:
-        title: 'Batchafdrukken'
-        description: 'Batchafdrukken - Serieel afdrukken met meerdere frames'
+        title: 'Batchafdrukmodus'
+        description: 'Batchafdrukmodus - Plaatsing van meerdere afdrukframes en uitvoer in één afdrukopdracht'
     printclienttemplate:
       admin:
         template: Sjabloon
