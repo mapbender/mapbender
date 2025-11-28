@@ -133,4 +133,4 @@ mb:
           templates: Vorlagen
       batchprintclient:
         label:
-          enableGeofileUpload: 'Geodatei Upload aktivieren'
+          enableGeofileUpload: 'Hochladen von Geodaten aktivieren'

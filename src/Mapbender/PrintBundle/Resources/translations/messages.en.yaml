@@ -132,4 +132,4 @@ mb:
           templates: Templates
       batchprintclient:
         label:
-          enableGeofileUpload: 'Enable Geofile Upload'
+          enableGeofileUpload: 'Enable upload of track (KML, GeoJSON, GPX, GML)'
