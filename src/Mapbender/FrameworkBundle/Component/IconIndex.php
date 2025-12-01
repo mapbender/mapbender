@@ -30,11 +30,11 @@ class IconIndex implements IconPackageInterface
         return $choices;
     }
 
-    public function getIconMarkup($iconCode)
+    public function getIconMarkup($iconCode, $additionalClass = '')
     {
         foreach ($this->packages as $package) {
             if ($package->isHandled($iconCode)) {
-                $markup = $package->getIconMarkup($iconCode);
+                $markup = $package->getIconMarkup($iconCode, $additionalClass);
                 if (!$markup) {
                     throw new \LogicException("Icon package " . \get_class($package) . " produced no markup for {$iconCode}");
                 }
@@ -43,7 +43,7 @@ class IconIndex implements IconPackageInterface
         }
         // Fingers crossed
         return HtmlUtil::renderTag('span', '', array(
-            'class' => 'mb-glyphicon ' . $iconCode,
+            'class' => 'mb-glyphicon ' . $iconCode . ' ' . $additionalClass,
         ));
     }
 

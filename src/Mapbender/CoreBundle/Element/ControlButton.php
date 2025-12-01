@@ -30,7 +30,7 @@ class ControlButton extends ButtonLike
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbControlButton';
+        return 'MbControlButton';
     }
 
     public function getRequiredAssets(Element $element)
@@ -38,7 +38,7 @@ class ControlButton extends ButtonLike
         $requirements = parent::getRequiredAssets($element) + array(
             'js' => array(),
         );
-        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js';
+        $requirements['js'][] = '@MapbenderCoreBundle/Resources/public/elements/MbButton.js';
         return $requirements;
     }
 

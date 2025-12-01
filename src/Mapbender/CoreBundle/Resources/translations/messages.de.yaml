@@ -91,6 +91,7 @@ mb:
         geometry:
           missing: 'Der ausgewählte Eintrag enthält keine Geometrie.'
       admin:
+        openInline: 'Inline öffnen'
         configurations: Konfigurationen
         title: Titel
         title.help: 'Text, der im Dropdown zur Auswahl der Konfigurationen angezeigt wird'
@@ -356,6 +357,9 @@ mb:
         dialog: Dialog
       admin:
         content: Inhalt
+        dontShowAgain: '"Nicht mehr anzeigen"-Option'
+        dontShowAgainLabel: '"Nicht mehr anzeigen"-Text'
+        dontShowAgainDefaultLabel: 'Nicht mehr anzeigen'
     map:
       class:
         title: Karte
@@ -529,6 +533,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Akkordeon
+              list: 'Liste'
               unstyled: Unformatiert
       button:
         show_label: 'Beschriftung anzeigen'
@@ -557,7 +562,7 @@ mb:
         circle: Kreis
       inputs:
         label: Beschriftung
-        radius: Radius
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Entfernen der Geometrie'
@@ -629,6 +634,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Symbol
+        elementIcon: 'Element-Symbol'
     icon:
       mb:
         about: Information
@@ -665,6 +671,7 @@ mb:
         pin_alt: 'Stecknadel (Alternative)'
         help: Hilfe
         dataupload: Hochladen
+        bookmark: Lesezeichen
   template:
     toolbar_menu_tooltip: 'Menü öffnen'
     region:

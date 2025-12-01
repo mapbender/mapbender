@@ -1,9 +1,19 @@
-## Unreleased
-Features:
+## next feature release
 * **BatchPrintClient element**: New batch printing element for creating multiple print frames in a single job with individual settings per frame
 * **FileUtil.js**: New shared utility module for geospatial file handling (KML, GeoJSON, GPX, GML) used by BatchPrintClient and DataUpload elements
+* [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774))
+* [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
+* [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))
+* [Design] Redesign data upload ([#PR1775](https://github.com/mapbender/mapbender/pull/1775))
+* [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
 
-Other:
+## next bugfix release
+* [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
+
+## v4.2.3
+Bugfixes:
+* [Legend] Fix legend urls within a style were not proxified ([#PR1787](https://github.com/mapbender/mapbender/pull/1787))
+* [Print] Fix proxified legend urls were not correctly resolved ([#PR1788](https://github.com/mapbender/mapbender/pull/1788))
 
 ## v4.2.2
 Features:

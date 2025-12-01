@@ -34,7 +34,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
             'trans' => array(),
         );
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.gpsPosition.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbGpsPosition.js',
             // Uncomment to enable Geolocation API mock
             // '@MapbenderCoreBundle/Resources/public/GeolocationMock.js',
         ));
@@ -64,6 +64,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
             'follow'                => false,
             'centerOnFirstPosition' => true,
             'zoomToAccuracyOnFirstPosition' => true,
+            'element_icon' => self::getDefaultIcon(),
         ));
     }
 
@@ -72,7 +73,7 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbGpsPosition';
+        return 'MbGpsPosition';
     }
 
     public function getView(Element $element)
@@ -100,5 +101,9 @@ class GpsPosition extends ButtonLike implements ConfigMigrationInterface
         }
         unset($config['zoomToAccuracy']);
         $entity->setConfiguration($config);
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconGpsTarget';
     }
 }

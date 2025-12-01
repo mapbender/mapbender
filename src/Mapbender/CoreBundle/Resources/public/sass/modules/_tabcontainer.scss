@@ -92,17 +92,19 @@ $hoverEffects: true !default;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  min-height: 0; /* Allow flex items to be smaller than content */
 }
 .tabContainerAlt >.container > *,
 .accordionContainer > .container-accordion > .accordion-cell {
   // Extend content to fill entire accordion cell; this is a Hack helping nested absolte-positioned
   // content from overflowing natural size and creating a scrollbar (e.g. Layertree context menu)
+  padding-right: 10px;
   width: 100%;
-  height: 100%;
   .sidePane & {
     position: absolute;
     top: 0;
     bottom: 0;
+    height: 100%;
   }
 }
 
@@ -151,6 +153,7 @@ $hoverEffects: true !default;
     user-select: none;
     cursor: pointer;
     padding: 5px 0.5em;
+    font-weight: 600;
     font-size: $accordionFontSize;
     color: $accordionTextColor;
     background-color: $accordionBackgroundColor;
@@ -171,6 +174,9 @@ $hoverEffects: true !default;
   }
   // spacing between consecutive content blocks
   .container-accordion + .accordion {
-    margin-top: 2px;
+    margin-top: 15px;
+  }
+  .inline {
+      font-size: 1rem;
   }
 }

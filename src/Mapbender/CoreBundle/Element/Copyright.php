@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\StaticView;
+use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\Utils\HtmlUtil;
 use Twig;
@@ -55,7 +56,7 @@ class Copyright extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.copyright.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss',
@@ -72,8 +73,10 @@ class Copyright extends AbstractElementService
         return array(
             'autoOpen' => false,
             'content' => null,
+            'dontShowAgain' => false,
             'popupWidth'    => 300,
             'popupHeight' => null,
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -82,25 +85,25 @@ class Copyright extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbCopyright';
+        return 'MbCopyright';
     }
 
     public function getView(Element $element)
     {
         $config = $element->getConfiguration();
+
+        $view = new TemplateView('@MapbenderCore/Element/copyright.html.twig');
+        $view->attributes['class'] = 'mb-element-copyright';
+        $view->attributes['data-title'] = $element->getTitle();
+        $view->variables['content'] = $config['content'];
+        $view->variables['dontShowAgain'] = $config['dontShowAgain'];
+        $view->variables['dontShowAgainLabel'] = $config['dontShowAgainLabel'];
+
         // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
-        $content = $this->templateEngine->createTemplate($config['content'] ?: '')->render(array(
-            'configuration' => $config,
-        ));
-        $wrapped = HtmlUtil::renderTag('div', $content, array(
-            'class' => 'hidden -js-popup-content',
-        ));
-        $view = new StaticView($wrapped);
         if (!empty($config['content']) && false !== strpos($config['content'], '{')) {
             $view->cacheable = false;
         }
-        $view->attributes['class'] = 'mb-element-copyright';
-        $view->attributes['data-title'] = $element->getTitle();
+
         return $view;
     }
 
@@ -110,5 +113,10 @@ class Copyright extends AbstractElementService
     public static function getFormTemplate()
     {
         return '@MapbenderCore/ElementAdmin/copyright.html.twig';
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconCopyright';
     }
 }

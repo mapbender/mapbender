@@ -89,6 +89,7 @@ mb:
         geometry:
           missing: 'La voce selezionata non contiene una geometria.'
       admin:
+        openInline: 'Apri inline'
         configurations: Configurazione
         title: Titolo
         title.help: 'Testo visualizzato nel menu a tendina delle configurazioni'
@@ -353,6 +354,9 @@ mb:
         dialog: 'finestra di dialogo'
       admin:
         content: Contenuto
+        dontShowAgain: 'Opzione "Non mostrare più"'
+        dontShowAgainLabel: 'Testo "Non mostrare più"'
+        dontShowAgainDefaultLabel: 'Non mostrare più'
     map:
       class:
         title: Mappa
@@ -524,6 +528,7 @@ mb:
             choice:
               tabs: Buttoni
               accordion: Accordion
+              list: 'Elenco'
               unstyled: 'Senza stile'
       button:
         show_label: 'Mostra label'
@@ -552,7 +557,7 @@ mb:
         circle: Cerchio
       inputs:
         label: Label
-        radius: Raggio
+        radius: Raggio (m)
       geometry:
         action:
           remove: 'Rimuovi la geometria'
@@ -624,6 +629,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icona
+        elementIcon: 'simbolo dell''elemento'
     icon:
       mb:
         about: Info
@@ -659,6 +665,8 @@ mb:
         map: Mappa
         pin_alt: 'Pin (Alternativa)'
         help: Aiuto
+        dataupload: 'Caricamento'
+        bookmark: 'Segnalibro'
   template:
     toolbar_menu_tooltip: 'Menu a tendina'
     region:

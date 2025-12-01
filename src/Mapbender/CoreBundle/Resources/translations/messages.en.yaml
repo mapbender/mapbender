@@ -91,6 +91,7 @@ mb:
         geometry:
           missing: 'The selected entry does not contain a geometry.'
       admin:
+        openInline: 'Open inline'
         configurations: Configurations
         title: Title
         title.help: 'Text shown in the configurations dropdown'
@@ -356,6 +357,9 @@ mb:
         dialog: dialog
       admin:
         content: Content
+        dontShowAgain: "\"Don't show again\"-Option"
+        dontShowAgainLabel: "\"Don't show again\"-Label"
+        dontShowAgainDefaultLabel: "Don't show again"
     map:
       class:
         title: Map
@@ -529,6 +533,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Accordion
+              list: 'List'
               unstyled: Unstyled
       button:
         show_label: 'Show label'
@@ -557,7 +562,7 @@ mb:
         circle: Circle
       inputs:
         label: Label
-        radius: Radius
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Remove geometry'
@@ -629,6 +634,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icon
+        elementIcon: 'Element symbol'
     icon:
       mb:
         about: Information
@@ -665,6 +671,7 @@ mb:
         pin_alt: 'Pin (Alternative)'
         help: Help
         dataupload: Upload
+        bookmark: Bookmark
   template:
     toolbar_menu_tooltip: 'Toggle menu'
     region:

@@ -1,11 +1,12 @@
 <form role="search">
     <div class="autocompleteWrapper">
-        <div class="input-group ps-1">
-            <input type="text" class="form-control searchterm"
+        <div class="input-group ps-1 position-relative">
+            {% set class = (configuration_titles is defined) ? '' : ' no-dropdown' %}
+            <input type="text" class="form-control searchterm with-icon{{ class }}"
                    minlength="2"
                    required="required"
                    aria-label="{{ 'mb.core.simplesearch.input.searchterm'|trans }}"/>
-            {% set class = (configuration_titles is defined) ? ' me-6' : ' me-5' %}
+            <i class="fas fa-magnifying-glass search-icon -fn-search-icon"></i>
             <button class="button-close hover-highlight-effect -fn-reset{{ class }}" type="reset"
                     aria-label="{{ 'mb.core.simplesearch.input.clear'|trans }}">
                 <i class="fa fas fa-xmark"></i>
@@ -17,15 +18,12 @@
                             <option value="{{ loop.index - 1 }}">{{ title }}</option>
                         {% endfor %}
                     </select>
-                    <div class="dropdownValue iconDown hide-value"></div>
+                    <div class="dropdownValue iconDown hide-value">
+                        <i class="fa-solid fa-caret-down"></i>
+                    </div>
                     <ul class="dropdownList"></ul>
                 </div><!-- /btn-group -->
             {% endif %}
-            <button class="btn btn-outline-secondary -fn-search"
-                 title="{{ 'mb.core.simplesearch.input.search'|trans }}"
-                 aria-label="{{ 'mb.core.simplesearch.input.search'|trans }}">
-                <i class="fas fa-magnifying-glass"></i>
-            </button>
         </div>
     </div>
 </form>

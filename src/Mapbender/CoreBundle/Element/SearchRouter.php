@@ -59,7 +59,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSearchRouter';
+        return 'MbSearchRouter';
     }
 
     public static function getDefaultConfiguration()
@@ -121,6 +121,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 "fillOpacity" => 0.8,
                 "strokeOpacity" => 1.0,
             ),
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -144,8 +145,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.searchRouter.js',
-                '@MapbenderCoreBundle/Resources/public/element/csv-export.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSearchRouter.js',
+                '@MapbenderCoreBundle/Resources/public/elements/csv-export.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
@@ -172,7 +173,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $categoryId = $actionParts[0];
         $action = $actionParts[1];
 
-        if ('csrf' === $action) {
+        if ($action === 'csrf') {
             $generatedToken = $this->csrfTokenManager->getToken(SearchRouterFormType::class);
             return new Response($generatedToken->getValue());
         }
@@ -187,16 +188,15 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $engine = $this->container->get($engineClassName);
         $data = json_decode($request->getContent(), true);
 
-        if (in_array($action, ['autocomplete', 'search'])) {
-            $token = isset($data['properties']['_token']) ? new CsrfToken(SearchRouterFormType::class, $data['properties']['_token']) : null;
-            $isValid = $token !== null && $this->csrfTokenManager->isTokenValid($token);
+        // Validate CSRF Token
+        $token = isset($data['properties']['_token']) ? new CsrfToken(SearchRouterFormType::class, $data['properties']['_token']) : null;
+        $isValid = $token !== null && $this->csrfTokenManager->isTokenValid($token);
 
-            if (!$isValid) {
-                return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
-            }
+        if (!$isValid) {
+            return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
         }
 
-        if ('autocomplete' === $action) {
+        if ($action === 'autocomplete') {
             $results = $engine->autocomplete(
                 $categoryConf,
                 $data['key'],
@@ -205,18 +205,20 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 $data['srs'],
                 $data['extent']
             );
+            $results = $this->postProcessAutocomplete($results, $categoryConf, $data);
             return new JsonResponse(array_replace($data, array(
                 'results' => $results,
             )));
         }
 
-        if ('search' === $action) {
+        if ($action === 'search') {
             $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
             $query = array(
                 'form' => $form->getData(),
             );
             $features = $engine->search($categoryConf, $query, $data['srs'], $data['extent']);
+            $features = $this->postProcessFeatures($features, $categoryConf, $data);
             return new JsonResponse(array(
                 'type' => 'FeatureCollection',
                 'features' => $features,
@@ -296,5 +298,28 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
         $config['routes'] = \array_values($config['routes']);
         return $config;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconSearch';
+    }
+
+    /**
+     * Override this method if you want to modify the features returned by the search engine before displaying,
+     * e.g. sort them or perform a string replace on the results
+     */
+    protected function postProcessFeatures($features, array $categoryConf, array $data): array
+    {
+        return $features;
+    }
+
+    /**
+     * Override this method if you want to modify the features returned by the search engine before displaying,
+     * e.g. sort them or perform a string replace on the results
+     */
+    protected function postProcessAutocomplete($results, array $categoryConf, array $data): array
+    {
+        return $results;
     }
 }

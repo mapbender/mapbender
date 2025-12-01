@@ -42,7 +42,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     {
         return [
             'js' => [
-                '@MapbenderCoreBundle/Resources/public/element/mapbender.element.coordinatesutility.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbCoordinatesUtility.js',
             ],
             'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/coordinatesutility.scss',
@@ -62,6 +62,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
             'srsList' => array(),
             'addMapSrsList' => true,
             'zoomlevel' => 6,
+            'element_icon' => self::getDefaultIcon(),
         ];
     }
 
@@ -70,7 +71,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbCoordinatesUtility';
+        return 'MbCoordinatesUtility';
     }
 
     /**
@@ -198,5 +199,10 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
         }
 
         $entity->setConfiguration($conf);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconCoordinates';
     }
 }

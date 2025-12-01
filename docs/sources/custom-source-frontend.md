@@ -245,7 +245,7 @@ class LayerTree extends CoreLayerTree
 {
     public function getWidgetName(Element $element)
     {
-        return 'custom.layertree';
+        return 'MbCustomLayertree';
     }
 
     public static function getType()
@@ -313,14 +313,14 @@ attribute, then enabling/disabling according to the setting in the backoffice wi
 In the overridden JavaScript widget, initialise the new functionality:
 
 ```js
-(function ($) {
-    $.widget("custom.layertree", $.mapbender.mbLayertree, {
-        _setup: function (mbMap) {
-            this._super(mbMap);
+(function () {
+    class MbCustomLayertree extends Mapbender.Element.MbLayertree {        
+        _setup (mbMap) {
+            super._setup(mbMap);
             // use the following line if the menu item should always be enabled. Then you don't need to override 
             // the admin type
             this.options.menu.push('searchremove');
-        },
+        }        
         // override this if your menu item needs initialisation (not necessary for buttons)
         _initMenuAction(action, $actionElement, $layerNode, layer) {
             switch(action) {
@@ -330,15 +330,16 @@ In the overridden JavaScript widget, initialise the new functionality:
                 default:
                     return this._super(action, $actionElement, $layerNode, layer);
             }
-        },
-        _createEvents: function () {
-            this._super();
+        }        
+        _createEvents () {
+            super._createEvents();
             // add a click (or whatever you need) listener here. 
-            this.element.on('click', '[data-menu-action=new-menu-item]', () => ...);
-        },
-    });
-})(jQuery);
-
+            this.$element.on('click', '[data-menu-action=new-menu-item]', () => ...);
+        }
+    }
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbCustomLayertree = MbCustomLayertree;
+})();
 ```
 
 [↑ Back to top](#custom-sources---frontend)

@@ -89,6 +89,7 @@ mb:
         geometry:
           missing: 'A entrada selecionada não contém geometria.'
       admin:
+        openInline: 'Abrir inline'
         configurations: Configurações
         title: Título
         title.help: 'Texto exibido no menu drop-down para selecionar as configurações'
@@ -353,6 +354,9 @@ mb:
         dialog: Diálogo
       admin:
         content: Conteúdo
+        dontShowAgain: 'Opção "Não mostrar novamente"'
+        dontShowAgainLabel: 'Texto "Não mostrar novamente"'
+        dontShowAgainDefaultLabel: 'Não mostrar novamente'
     map:
       class:
         title: Mapa
@@ -524,6 +528,7 @@ mb:
             choice:
               tabs: Botões
               accordion: Acordeão
+              list: 'Lista'
               unstyled: Sem estilo
       button:
         show_label: 'Mostrar rótulo'
@@ -552,7 +557,7 @@ mb:
         circle: Círculo
       inputs:
         label: Rótulo
-        radius: Raio
+        radius: Raio (m)
       geometry:
         action:
           remove: 'Remover geometria'
@@ -604,6 +609,7 @@ mb:
       admin:
         tooltip: Ajuda
         icon: Ícone
+        elementIcon: 'símbolo do elemento'
     icon:
       mb:
         about: Informação
@@ -639,6 +645,8 @@ mb:
         map: Mapa
         pin_alt: 'Alfinete (alternativo)'
         help: Ajuda
+        dataupload: 'Carregar'
+        bookmark: 'Marcador de página'
   template:
     toolbar_menu_tooltip: 'Abrir menu'
     region:

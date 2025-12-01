@@ -143,15 +143,28 @@ class InstanceTunnelService
      * @param array|SourceInstanceItem $instanceLayer
      * @return string
      */
-    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance)
+    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance, ?string $url = null)
     {
         if (!$sourceInstance && $instanceLayer instanceof SourceInstanceItem) {
             $sourceInstance = $instanceLayer->getSourceInstance();
         }
-        return $this->router->generate($this->legendTunnelRouteName, array(
+        $parameters = [
             'instanceId' => $sourceInstance->getId(),
             'layerId' => is_array($instanceLayer) ? $instanceLayer['id'] : $instanceLayer->getId(),
-        ));
+        ];
+
+        if ($url) {
+            $queryString = parse_url($url, PHP_URL_QUERY) ?: '';
+            parse_str($queryString, $queryParams);
+            if (!is_array($queryParams)) {
+                $queryParams = [];
+            }
+            $queryParams = array_change_key_case($queryParams);
+            unset($queryParams['service'], $queryParams['request'], $queryParams['version'], $queryParams['layer']);
+            $parameters = array_merge($parameters, $queryParams);
+        }
+
+        return $this->router->generate($this->legendTunnelRouteName, $parameters);
     }
 
     /**

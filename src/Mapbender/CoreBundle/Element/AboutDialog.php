@@ -41,7 +41,7 @@ class AboutDialog extends ButtonLike
             'js' => array(),
         );
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.aboutDialog.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbAboutDialog.js',
         ));
         return $required;
     }
@@ -54,6 +54,7 @@ class AboutDialog extends ButtonLike
         $defaults = array_replace(parent::getDefaultConfiguration(), array(
             "tooltip" => "mb.core.aboutdialog.admin.tooltip",
         ));
+        $defaults['element_icon'] = self::getDefaultIcon();
         unset($defaults['icon']);
         return $defaults;
     }
@@ -71,7 +72,7 @@ class AboutDialog extends ButtonLike
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbAboutDialog';
+        return 'MbAboutDialog';
     }
 
     public function getView(Element $element)
@@ -95,5 +96,10 @@ class AboutDialog extends ButtonLike
     protected function getContentTemplateName(Element $element)
     {
         return '@MapbenderCore/Element/about_dialog_content.html.twig';
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconAbout';
     }
 }

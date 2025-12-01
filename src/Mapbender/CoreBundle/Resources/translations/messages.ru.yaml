@@ -89,6 +89,7 @@ mb:
         geometry:
           missing: 'Выбраный объект не содержит геометрии.'
       admin:
+        openInline: 'Открыть встроенный'
         configurations: 'Настройки'
         title: 'Заголовок'
         title.help: 'Текст, который показывается в выпадающем меню настроек.'
@@ -354,6 +355,9 @@ mb:
         dialog: Раздел
       admin:
         content: 'Контент'
+        dontShowAgain: 'Опция "Больше не показывать"'
+        dontShowAgainLabel: 'Текст "Больше не показывать"'
+        dontShowAgainDefaultLabel: 'Больше не показывать'
     map:
       class:
         title: Карта
@@ -525,6 +529,7 @@ mb:
             choice:
               tabs: Вкладки
               accordion: Вкладки
+              list: 'список'
               unstyled: 'Неформатированный'
     htmlelement:
       class:
@@ -546,7 +551,7 @@ mb:
         circle: Круг
       inputs:
         label: 'Надпись'
-        radius: 'Радиус'
+        radius: 'Радиус (м)'
       geometry:
         action:
           remove: 'Удалить геометрию'
@@ -618,6 +623,7 @@ mb:
       admin:
         tooltip: 'Всплывающая подсказка'
         icon: 'Символ'
+        elementIcon: 'символ элемента'
     icon:
       mb:
         about: 'Информация'
@@ -653,6 +659,8 @@ mb:
         map: 'Карта'
         pin_alt: 'Маркер достопримечательности (альтернатива)'
         help: 'Помощь'
+        dataupload: 'загрузка'
+        bookmark: 'закладка'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:

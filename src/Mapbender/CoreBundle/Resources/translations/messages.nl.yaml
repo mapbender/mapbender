@@ -66,6 +66,8 @@ mb:
       error:
         geometry:
           missing: Geselecteerde entiteit bevat geen geometrie.
+      admin:
+        openInline: Open inline
     searchrouter:
       no_results: Geen resultaten gevonden.
       result_counter: 'Resultaten: %count%'
@@ -220,6 +222,11 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialoog
+      admin:
+        content: Inhoud
+        dontShowAgain: 'Optie "Niet meer tonen"'
+        dontShowAgainLabel: 'Tekst "Niet meer tonen"'
+        dontShowAgainDefaultLabel: 'Niet meer tonen'
     map:
       class:
         title: Kaart
@@ -303,6 +310,15 @@ mb:
           hidenottoggleable: Verberg niet-schakelbaar
           hideinfo: Verberg info
           filter: 'Filters weergeven'
+      template:
+        sidepane:
+          type:
+            label: Typ
+            choice:
+              tabs: Buttons
+              accordion: Accordeon
+              list: Lijst
+              unstyled: Ongeformatteerd
     htmlelement:
       class:
         title: null
@@ -318,6 +334,9 @@ mb:
         polygon: Polygoon
         rectangle: Rechthoek
         circle: Cirkel
+      inputs:
+        label: Belettering
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Verwijder geometrie'
@@ -334,6 +353,46 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Sleep om opnieuw te ordenen'
+    basebutton:
+      admin:
+        elementIcon: 'element-symbool'
+    icon:
+      mb:
+        about: 'Informatie'
+        layer_tree: 'Niveauboom'
+        feature_info: 'Feature-informatie'
+        area_ruler: 'Oppervlakte meten'
+        polygon: 'Veelhoek'
+        line_ruler: 'Afstand meten'
+        image_export: 'Beeldexport'
+        legend: 'Legenda'
+      fa:
+        about: 'Groep'
+        accessibility: 'Toegankelijkheid'
+        info: 'Informatie'
+        pin: 'Marker'
+        home: 'Startpagina'
+        legend: 'Lijst'
+        print: 'Afdrukken'
+        search: 'Zoeken'
+        layer_tree: 'Hiërarchie'
+        logout: 'Afmelden'
+        wms: 'Globus'
+        edit: 'Bewerken'
+        wmc: 'Map'
+        coordinates: 'Coördinaten'
+        poi: 'Speld'
+        camera: 'Camera'
+        copyright: 'Copyright'
+        share: 'Delen'
+        forward: 'Doorsturen'
+        refresh: 'Herladen'
+        earth: 'Aardbol'
+        map: 'Kaart'
+        pin_alt: 'Marker (Alternatief)'
+        help: 'Help'
+        dataupload: 'Uploaden'
+        bookmark: 'Bladwijzer'
 'Bad credentials.': 'Ongeldige inloggegevens.'
 'User account is locked.': 'Gebruikers account is geblokkeerd.'
 'User account is disabled.': 'Gebruikers account is uitgeschakeld.'

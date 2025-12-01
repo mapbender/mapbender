@@ -1,6 +1,8 @@
 $panelBorderColor: #888 !default;
 $darkFontColor: #3f3f3f !default;
 $textColor: $darkFontColor !default;
+$menuBackgroundColor: #ebefef !default;
+$menuBackgroundOpacity: 0.5 !default;
 
 .mb-element-layertree{
   user-select: none;
@@ -9,7 +11,7 @@ $textColor: $darkFontColor !default;
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: 0.6em;
+    margin-left: 1.6em;
   }
   .disabled {
     opacity: 0.4;
@@ -51,9 +53,6 @@ $textColor: $darkFontColor !default;
   .error-icon-wrapper, .leave.state-error .layer-title {
     color: $errorColor;
   }
-  .layer-menu-btn, .error-icon-wrapper, .loading-icon-wrapper {
-    margin-left: 4px;
-  }
 
   .disabled-placeholder {
     pointer-events: none;
@@ -68,46 +67,121 @@ $textColor: $darkFontColor !default;
 
 $layer-slider-bar-height: 5px;
 .layer-menu {
-  color: #222;
-  position: absolute;
-  right: 0;
-  top: 1.5em;
-  background-color: white;
-  padding: $space / 4;
-
-  z-index: 45;
-  // NEED constant width, otherwise the DragDealer will get confused when resizing Popup
-  width: auto;
-  min-width: 140px;
-  border: solid 1px $panelBorderColor;
+  color: var(--primary);
+  position: static;
   border-radius: $radius;
-  // arrow icon
-  &:before {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-bottom: 5px solid $panelBorderColor;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    position: absolute;
-    right: 0;
-    top: -5px;
+
+  .text-end {
+    font-size: 1.2rem;
   }
-  &:after {
-    display: none;
-  }
+
   .layer-slider-bar {
-    font-size: 85%;
-    background: rgba($textColor, 0.4);
-    border-color: transparent;
-    .layer-slider-handle {
-      // enforce minimum width so opacity handle (with text) doesn't
-      // look weird vs dimensions handle (no text)
-      min-width: 2.5em;
+    font-size: 0.85rem;
+    flex: 1;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    height: 4px;
+  }
+
+  .layer-opacity-title {
+    color: $textColor;
+  }
+
+  .layer-opacity-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .layer-opacity-value {
+    color: $textColor;
+    font-size: 0.9rem;
+    font-family: inherit;
+    min-width: 35px;
+    text-align: left;
+    position: relative;
+    top: -5px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1px;
+    width: 35px;
+  }
+
+  .layer-slider-handle,
+  .layer-opacity-handle,
+  .layer-dimension-handle {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 50% !important; // circle
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    text-indent: -9999px; // hide text
+    top: -1px;
+    
+    // Focus styling for accessibility
+    &:focus {
+      outline: 2px solid var(--focus-color, #007bff);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     }
   }
 }
 .layer-dimension-textfield {
     max-width: 120px;
 }
+
+.layer-menu-btn {
+  color: #626161;
+}
+
+.-fn-toggle-selected, .-fn-toggle-dimension {
+  color: var(--checkbox-unchecked);
+
+    &.active {
+        color: var(--checkbox-checked);
+    }
+  font-size: 1.4em;
+  display: flex;
+  align-items: center;
+
+  i {
+    font-size: inherit;
+    line-height: 1;
+  }
+}
+
+.-fn-toggle-info {
+  color: var(--primary);
+}
+
+.layer-styles {
+    color: $textColor;
+    .form-select{
+        font-size: 0.85em;
+    }
+}
+
+.layer-dimension-title {
+    padding-left: 6px;
+}
+
+.dimension-checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
+.menuBackground {
+    position: relative;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: -0.5rem;
+        left: -100vw; // Extends to the sideContent margin
+        right: -2rem;
+        bottom: var(--menu-background-bottom, 1rem); // Dynamic value
+        background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
+        z-index: -1;
+        pointer-events: none;
+    }
+}
+

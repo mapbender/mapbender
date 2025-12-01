@@ -66,6 +66,8 @@ mb:
       error:
         geometry:
           missing: L'entrée sélectionnée ne contient aucune géométrie.
+      admin:
+        openInline: 'Ouvrir inline'
     searchrouter:
       no_results: Aucun résultat.
       result_counter: 'Résultats: %count%'
@@ -220,6 +222,11 @@ mb:
       tag:
         copyright: Copyright
         dialog: dialog
+      admin:
+        content: Contenu
+        dontShowAgain: 'Option "Ne plus afficher"'
+        dontShowAgainLabel: 'Texte "Ne plus afficher"'
+        dontShowAgainDefaultLabel: 'Ne plus afficher'
     map:
       class:
         title: Carte
@@ -310,6 +317,8 @@ mb:
             choice:
               tabs: Onglets
               accordion: Accordéon
+              list: 'Liste'
+              unstyled: Non formaté
     htmlelement:
       class:
         title: HTML
@@ -325,6 +334,9 @@ mb:
         polygon: Polygone
         rectangle: Rectangle
         circle: Cercle
+      inputs:
+        label: Inscription
+        radius: Rayon (m)
       geometry:
         action:
           remove: Supprimer la géométrie
@@ -341,6 +353,46 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Faites glisser pour réorganiser'
+    basebutton:
+      admin:
+        elementIcon: 'symbole élémentaire'
+    icon:
+      mb:
+        about: 'Information'
+        layer_tree: 'Arbre à niveaux'
+        feature_info: 'Informations sur la fonctionnalité'
+        area_ruler: 'Mesurer une surface'
+        polygon: 'Polygone'
+        line_ruler: 'Mesurer la distance'
+        image_export: 'Exportation d''images'
+        legend: 'Légende'
+      fa:
+        about: 'Groupe'
+        accessibility: 'Accessibilité'
+        info: 'Information'
+        pin: 'Marqueur'
+        home: 'Page d''accueil'
+        legend: 'Légende'
+        print: 'Imprimer'
+        search: 'Recherche'
+        layer_tree: 'Hiérarchie'
+        logout: 'Déconnexion'
+        wms: 'Globe terrestre'
+        edit: 'Modifier'
+        wmc: 'Dossier'
+        coordinates: 'Coordonnées'
+        poi: 'Épingle'
+        camera: 'Caméra'
+        copyright: 'Droit d''auteur'
+        share: 'Partager'
+        forward: 'Transférer'
+        refresh: 'Recharger'
+        earth: 'Globe terrestre'
+        map: 'Carte géographique'
+        pin_alt: 'Marqueur (alternative)'
+        help: 'Aide'
+        dataupload: 'Téléchargement'
+        bookmark: 'Signet'
 'Bad credentials.': 'Le mot de passe ou le nom d''utilisateur est invalide'
 Search: __Search
 FeatureInfo: Données caractéristiques

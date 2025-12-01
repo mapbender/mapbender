@@ -120,7 +120,7 @@ You can also render form_rows manually and add custom content (see [Symfony Docs
 
 ## JavaScript Widgets
 
-Element widgets are build using the [jQuery UI widget factory](https://wiki.jqueryui.com/w/page/12138135/Widget%20factory). This ensures a common pattern for widget development and offers
+Elements are build using native Javascript classes. This ensures a common pattern for element development and offers
 
 * default options
 * constructors and (optional) destructors
@@ -129,56 +129,42 @@ Element widgets are build using the [jQuery UI widget factory](https://wiki.jque
 The basic skeleton looks like this:
 
 ```javascript
-    (function($) {
+    (function() {
 
-    // This is the widget factory. It will create an widget class "mbMyClass" in the jQuery object as well as an
-    // "mbMyClass" object in the "mapbender" namespace in the jQuery object (they are used differently). Be sure
-    // to use the "mb" prefix for your widget name as not to overwrite existing jQuery functions.
-    $.widget('mapbender.mbMyClass', {
-        // This sets up the default options which can be overriden in the Mapbender configuration.
-        // The final options object can be accessed as "this.options".
-        options: {
-            foo:    'bar',
-            answer: 42
-        },
-
-        // This attribute is private for your widget.
-        var1: null,
-
-        // Constructor, gets called on widget initialization.
-        _create: function() {
+    // This is an example element class. It will create an element class "MbMyClass" as well as an
+    // "MbMyClass" object in the "Mapbender" namespace. Be sure
+    // to use the "Mb" prefix for your element name to keep naming conventions.
+    class MbMyClass extends MapbenderElement {
+        // Constructor, gets called on element initialization.
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            
+            // This attribute is private for your widget.
+            this.var1 = null;
             // Do everything needed for set up here, for example event handling
             this.element.bind('mbmyclassmagicdone', $.proxy(this._onMagicDone, this));
             this.element.bind('click', $.proxy(this._clickCallback, this));
-        },
-
-        // Destructore, here set to the jQuery empty function
-        destroy: $.noop,
-
-        // Public function, callable like "$('#element-13').mbMyClass('methodA', parameterA, parameterB)"
-        methodA: function(parameterA, parameterB) {
-            this._methodB(parameterA);
-        },
-
-        // Private function, only callable from within this widget
-        _methodB: function(parameterA) {
-            // The triggered signal will be named "mbmyclassmagicdone" (all lowercase)
-            this._trigger('magicdone');
-        },
-
-        _onMagicDone: function() {
-            alert("Oh, magic!");
-        },
-
-        _clickCallback: function(event) {
-            var target = $(event.target);
-            var id = target.attr('id');
-            // ...
         }
 
-    });
+        // Public function
+        methodA(parameterA, parameterB) {
+            this._methodB(parameterA);
+        }
 
-    })(jQuery);
+        // Private function, only callable from within this widget
+        _methodB(parameterA) {
+            alert('Called private function!');
+        }
+
+        _clickCallback(event) {
+            const target = $(event.target);
+            const id = target.attr('id');
+            // ...
+        }
+    }
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbMyClass = MbMyClass;
+})();
 ```
 
 Watch out for JavaScript's default behaviour to modify the `this` context when using events. Use lambdas or the `bind` function.

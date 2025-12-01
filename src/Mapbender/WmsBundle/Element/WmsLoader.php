@@ -79,6 +79,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
             "splitLayers" => false,
+            "element_icon" => self::getDefaultIcon(),
         );
     }
 
@@ -87,7 +88,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbWmsloader';
+        return 'MbWmsLoader';
     }
 
 
@@ -95,7 +96,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     {
         return array(
             'js' => array(
-                '@MapbenderWmsBundle/Resources/public/mapbender.element.wmsloader.js',
+                '@MapbenderWmsBundle/Resources/public/MbWmsLoader.js',
             ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
@@ -234,5 +235,10 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     protected function getConfigGenerator(SourceInstance $instance): SourceInstanceConfigGenerator
     {
         return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconWms';
     }
 }

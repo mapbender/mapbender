@@ -66,6 +66,8 @@ mb:
       error:
         geometry:
           missing: Seçilen giriş geometri içermiyor
+      admin:
+        openInline: 'Açık inline'
     searchrouter:
       no_results: Sonuç bulunamadı
       result_counter: 'Sonuçlar: %count%'
@@ -220,6 +222,11 @@ mb:
       tag:
         copyright: Telif hakkı
         dialog: İletişim
+      admin:
+        content: İçerik
+        dontShowAgain: '"Bir daha gösterme" seçeneği'
+        dontShowAgainLabel: '"Bir daha gösterme" metni'
+        dontShowAgainDefaultLabel: 'Bir daha gösterme'
     map:
       class:
         title: Harita
@@ -301,6 +308,8 @@ mb:
             choice:
               tabs: Sekmeler
               accordion: Akordiyon
+              list: Liste
+              unstyled: Biçimlendirilmemiş
     htmlelement:
       class:
         title: HTML
@@ -316,6 +325,9 @@ mb:
         polygon: Çokgen
         rectangle: Dikdörtgen
         circle: Çember
+      inputs:
+        label: Etiketleme
+        radius: Yarıçap (m)
       geometry:
         action:
           remove: Geometriyi kaldır
@@ -332,3 +344,43 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Yeniden sıralamak için sürükleyin'
+    basebutton:
+      admin:
+        elementIcon: 'element sembolü'
+    icon:
+      mb:
+        about: 'Bilgi'
+        layer_tree: 'Düzlem ağacı'
+        feature_info: 'Özellik Bilgisi'
+        area_ruler: 'Alan ölçümü'
+        polygon: 'Poligon'
+        line_ruler: 'Mesafeyi ölçmek'
+        image_export: 'Görüntü aktarımı'
+        legend: 'Efsane'
+      fa:
+        about: 'Grup'
+        accessibility: 'Erişilebilirlik'
+        info: 'Bilgi'
+        pin: 'İşaretleyici'
+        home: 'Ana Sayfa'
+        legend: 'Liste'
+        print: 'Yazdır'
+        search: 'Arama'
+        layer_tree: 'Hiyerarşi'
+        logout: 'Çıkış'
+        wms: 'Küre'
+        edit: 'Düzenle'
+        wmc: 'Klasör'
+        coordinates: 'Koordinatlar'
+        poi: 'Iğne'
+        camera: 'Kamera'
+        copyright: 'Copyright'
+        share: 'Paylaş'
+        forward: 'Yönlendir'
+        refresh: 'Yeniden yükle'
+        earth: 'Dünya'
+        map: 'Harita'
+        pin_alt: 'İşaretleyici (Alternatif)'
+        help: 'Yardım'
+        dataupload: 'Yükleme'
+        bookmark: 'Yer imi'
