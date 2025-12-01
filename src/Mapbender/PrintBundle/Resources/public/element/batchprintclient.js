@@ -828,12 +828,6 @@
                 return;
             }
             
-            var frameCount = this.frameManager.getCount();
-            
-            if (!confirm(Mapbender.trans('mb.print.printclient.batchprint.confirm.deleteall', {count: frameCount}))) {
-                return;
-            }
-            
             // Clear all pinned features from the map
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
             layerBridge.clear();
