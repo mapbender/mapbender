@@ -5,11 +5,15 @@ $popupBackgroundColor: $backgroundColor !default;
 $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be adjusted in mapbender.popup.js
 
 .popupHead {
-  .popupTitle {
-    font-size: 1.1rem;
-    color: var(--primary);
-      font-weight: 600;
+  &.element-title {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+
+    @media(min-width: $mobileBreakpoint) {
+        padding-left: 0 !important;
+    }
   }
+
   &.draggable{cursor:move;}
   margin:0 $space $space $space;
   padding: $space 0 $space/2 0;
