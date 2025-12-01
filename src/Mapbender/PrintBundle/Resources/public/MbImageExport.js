@@ -251,7 +251,20 @@
             };
         }
 
+        /**
+         * Hook method to filter vector layers before including them in export.
+         * Override this in subclasses to exclude specific layers.
+         * 
+         * @param {ol.layer.Vector} layer - The vector layer to check
+         * @returns {boolean} True if layer should be included in export
+         * @private
+         */
+        _filterVectorLayer(layer) {
+            return true;
+        }
+
         _collectGeometryLayers() {
+            var self = this;
             var vectorLayers = [];
             // For (nested) group layers, visibility must be checked at
             // each level.
@@ -262,7 +275,9 @@
                             processLayer(layer);
                         });
                     } else if (layer instanceof ol.layer.Vector) {
-                        vectorLayers.push(layer);
+                        if (self._filterVectorLayer(layer)) {
+                            vectorLayers.push(layer);
+                        }
                     }
                 }
             }

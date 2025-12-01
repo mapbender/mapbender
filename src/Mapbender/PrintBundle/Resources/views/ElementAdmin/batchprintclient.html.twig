@@ -1,0 +1,20 @@
+<div class="elementFormPrintClient">
+    {{ form_row(form.title) }}
+    {{ form_row(form.configuration.scales) }}
+    {{ form_row(form.configuration.rotatable) }}
+    {{ form_row(form.configuration.legend) }}
+    {{ form_row(form.configuration.legend_default_behaviour) }}
+    {{ form_row(form.configuration.enableGeofileUpload) }}
+    {{ form_row(form.configuration.file_prefix) }}
+    {% if form.configuration.renderMode is defined %}
+        {{ form_row(form.configuration.renderMode) }}
+    {% endif %}
+    {% if form.configuration.queueAccess is defined %}
+        {{ form_row(form.configuration.queueAccess) }}
+    {% endif %}
+    {{ form_row(form.configuration.quality_levels) }}
+    <hr>
+    {{ form_row(form.configuration.templates) }}
+    <hr>
+    {{ form_rest(form.configuration) }}
+</div>

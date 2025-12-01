@@ -156,6 +156,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $mapImage = $this->buildExportImage($exportJob);
 
         // dump to file system immediately to recoup some memory before building PDF
+        /** @var \GdImage $mapImage */
         $mapImageName = $this->makeTempFile('mb_print_final');
         imagepng($mapImage, $mapImageName);
         imagedestroy($mapImage);
@@ -170,8 +171,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function makeBlankPdf($templateData, $templateName)
     {
-        require_once('PDF_Extensions.php');
-
         /** @var PDF_Extensions|\FPDF $pdf */
         $pdf = new PDF_Extensions();
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
@@ -199,6 +198,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     {
         // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
+        // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
+        /** @var \setasign\Fpdi\Fpdi $pdf */
         $tplidx = $pdf->importPage(1);
 
         $hasTransparentBg = $this->checkPdfBackground($jobData['template']);
@@ -278,6 +279,24 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function afterMainMap($pdf, $template, $jobData)
     {
+        $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
+
+        $legends = $this->legendHandler->collectLegends($jobData);
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
+
+    /**
+     * Process template regions, text fields, and coordinates.
+     * Extracted to avoid code duplication between single and batch printing.
+     *
+     * @param \FPDF|PDF_Extensions $pdf
+     * @param Template $template
+     * @param array $jobData
+     */
+    protected function processTemplateRegionsAndFields($pdf, $template, $jobData)
+    {
         $regionBlacklist = $this->getFirstPageSpecialRegionNames($jobData);
         foreach ($template->getRegions() as $region) {
             if (!in_array($region->getName(), $regionBlacklist)) {
@@ -290,12 +309,8 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         if (!empty($template['fields'])) {
             $this->addTextFields($pdf, $template, $jobData);
         }
-        $this->addCoordinates($pdf, $template, $jobData);
 
-        $legends = $this->legendHandler->collectLegends($jobData);
-        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
-        $this->finishMainPage($pdf, $template, $jobData);
-        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+        $this->addCoordinates($pdf, $template, $jobData);
     }
 
     /**
@@ -517,6 +532,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         ));
 
         $ovTransform = FeatureTransform::boxToBox($ovExtent, $ovPixelBox, 1.0);
+        /** @var \GdImage $image */
         $red = imagecolorallocate($image, 255, 0, 0);
         // GD imagepolygon expects a flat, numerically indexed, 1d list of concatenated coordinates,
         // and we have 2D sub-arrays with 'x' and 'y' keys. Convert.

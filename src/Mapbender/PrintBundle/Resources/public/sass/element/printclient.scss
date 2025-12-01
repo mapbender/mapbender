@@ -51,4 +51,34 @@
   .btn-secondary {
     --bs-btn-bg: lighten(#6c757d, 10);
   }
+
+  // BatchPrintClient frame table styling
+  .frame-table {
+    padding-bottom: 15px;
+
+    // Trash icon outside the table (delete all button)
+    .-fn-delete-all-frames {
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    // Trash icons inside the table (individual delete buttons)
+    table .fa-trash-can {
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    // Reduce row height
+    table {
+      td, th {
+        padding: 2px 8px;
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      thead th {
+        padding-bottom: 8px;
+      }
+    }
+  }
 }

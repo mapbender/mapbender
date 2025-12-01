@@ -16,3 +16,91 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    printclient:
+      btn:
+        batchprint: 'Démarrer l''impression par lots'
+      batchprint:
+        btn:
+          submit: 'Démarrer l''impression par lots'
+        track:
+          upload: 'Télécharger un parcours (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Télécharger un parcours (KML, GeoJSON, GPX, GML)'
+          load: 'Charger le fichier'
+          choosefile: 'Choisir un fichier'
+          clear: 'Supprimer le parcours'
+          placeframes: 'Placer des cadres le long du parcours'
+          adjustframes: 'Ajuster la rotation des cadres'
+          overlap: 'Chevauchement des cadres'
+          selected: 'Sélectionné'
+          loaded: 'Chargé'
+          error: 'Erreur'
+          readerror: 'Erreur de lecture du fichier'
+          placed: '%count% cadres placés le long du parcours'
+          alert:
+            selectfile: 'Veuillez d''abord sélectionner un fichier.'
+            validfile: 'Veuillez sélectionner un fichier valide (KML, GeoJSON, GPX, GML).'
+            error: 'Erreur lors du chargement du fichier'
+            readerror: 'Erreur de lecture du fichier.'
+            loadfirst: 'Veuillez d''abord charger un fichier de parcours.'
+            invalidgeometry: 'Géométrie invalide. LineString attendu.'
+        overlap:
+          outofbounds: 'La valeur de chevauchement %value%% est en dehors de la plage valide (0-50%). Veuillez saisir une valeur entre 0 et 50.'
+        tracking:
+          title: 'Cadres d''impression'
+          no: 'N°'
+          scale: 'Échelle'
+          template: 'Modèle'
+          quality: 'Qualité'
+          rotation: 'Rotation'
+          delete: 'Supprimer'
+          deleteall: 'Supprimer tous les cadres'
+          empty: 'Aucun cadre d''impression disponible. Cliquez sur la carte pour ajouter des cadres d''impression.'
+        confirm:
+          deleteall: 'Supprimer tous les %count% cadres?'
+        alldeleted: 'Tous les cadres supprimés'
+        alert:
+          noframes: 'Veuillez placer au moins un cadre d''impression sur la carte.'
+          error: 'Erreur lors de la création de la tâche d''impression'
+  core:
+    printclient:
+      admin:
+        scales: 'Échelles (séparées par des virgules)'
+        fileprefix: 'Préfixe du fichier'
+        optionalfields: 'Champs optionnels'
+        replacepattern: 'Remplacer le modèle'
+        templates: Modèles
+        qualitylevels: 'Niveaux de qualité'
+      label:
+        quality: Qualité
+      class:
+        title: Imprimer
+    batchprintclient:
+      class:
+        title: 'Mode d''impression par lots'
+        description: 'Mode d''impression par lots - Placement de plusieurs cadres d''impression et sortie dans un seul travail d''impression'
+    printclienttemplate:
+      admin:
+        template: Modèle
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        renderMode:
+          label: 'Mode'
+          choice:
+            direct: 'Direct'
+            queued: 'En file d''attente'
+        queueAccess:
+          label: 'File d''attente'
+          choice:
+            global: 'global'
+            private: 'privé'
+        label:
+          qualitylevels: 'Niveaux de qualité'
+          templates: Modèles
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Activer le téléchargement de géofichiers'
