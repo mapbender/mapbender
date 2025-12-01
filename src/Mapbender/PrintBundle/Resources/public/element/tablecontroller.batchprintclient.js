@@ -71,6 +71,7 @@
             const frameData = this.frameManager.getFrame(frameId);
             
             if (frameData) {
+                // Reset to default style (thin black border)
                 const defaultStyle = this.getDefaultStyle ? this.getDefaultStyle() : null;
                 frameData.feature.setStyle(defaultStyle);
             }

@@ -551,7 +551,7 @@
         },
         
         /**
-         * Add pinned feature to map with black outline and rotation interaction
+         * Add pinned feature to map with thin black border
          */
         _addPinnedFeatureToMap: function(feature) {
             var layerBridge = Mapbender.vectorLayerPool.getElementLayer(this, this.PINNED_FRAMES_LAYER);
@@ -560,9 +560,8 @@
             // Ensure pinned frames layer has higher z-index than rotation overlay
             nativeLayer.setZIndex(this.PINNED_FRAMES_ZINDEX);
             
-            // Create black outline style for pinned features (normal state)
+            // Set custom style with thin black border
             var style = this._getDefaultStyle();
-            
             feature.setStyle(style);
             layerBridge.addNativeFeatures([feature]);
             

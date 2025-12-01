@@ -23,7 +23,7 @@
         constructor(overrides) {
             // Colors
             this.highlightColor = '#0066cc';        // Blue color matching Mapbender's highlight color
-            this.frameStrokeColor = '#000000';
+            this.frameStrokeColor = '#000000';      // Same as normal print frame
             this.frameFillColor = 'rgba(255, 255, 255, 0.5)';
             this.trackColor = '#FF0000';
             
@@ -35,7 +35,7 @@
             // Stroke widths
             this.highlightStrokeWidthThin = 0.5;
             this.highlightStrokeWidthNormal = 2;
-            this.frameStrokeWidth = 2;
+            this.frameStrokeWidth = 1;
             this.rotationBoxStrokeWidth = 2;
             this.rotationHandleStrokeWidth = 1;
             this.trackStrokeWidth = 3;
