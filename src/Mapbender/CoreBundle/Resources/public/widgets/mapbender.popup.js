@@ -45,12 +45,14 @@
         }
 
         var self = this;
+        let hasIcon = false;
         Object.keys(this.options).forEach((optionName) => {
             if (this.staticOptions_.indexOf(optionName) >= 0) return;
 
             var value = self.options[optionName];
             switch(optionName) {
                 case 'icon':
+                    hasIcon = true;
                     self.icon(value);
                     break;
                 case 'title':
@@ -79,6 +81,9 @@
             console.warn("Ignoring unknown options", unusedOptions);
         }
         this.registerEvents_(this.$element);
+        if (!hasIcon) {
+            this.$element.find('.element-icon-wrapper').remove();
+        }
         this.open();
     };
 
