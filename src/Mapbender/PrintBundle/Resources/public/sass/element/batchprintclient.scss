@@ -88,14 +88,8 @@
 
       .fa-trash-can {
         cursor: pointer;
-        color: black;
-        transition: color 0.2s ease;
         font-size: 16px;
         flex-shrink: 0;
-
-        &:hover {
-          color: #c9302c;
-        }
       }
     }
 
@@ -183,13 +177,7 @@
       
       .fa-trash-can {
         cursor: pointer;
-        color: black;
-        transition: color 0.2s ease;
         font-size: 16px;
-
-        &:hover {
-          color: #c9302c;
-        }
       }
     }
 
@@ -235,14 +223,8 @@
 
           // Delete icon styling
           .fa-trash-can {
-            padding: 6px 16px;
             cursor: pointer;
-            color: black;
-            transition: color 0.2s ease;
-
-            &:hover {
-              color: #c9302c;
-            }
+            font-size: 12px;
           }
         }
 
