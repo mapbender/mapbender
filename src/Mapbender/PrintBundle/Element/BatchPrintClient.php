@@ -66,7 +66,7 @@ class BatchPrintClient extends PrintClient
      */
     public function getWidgetName(Element $element): string
     {
-        return 'mapbender.mbBatchPrintClient';
+        return 'MbBatchPrintClient';
     }
 
     public function getRequiredAssets(Element $element): array
@@ -80,7 +80,7 @@ class BatchPrintClient extends PrintClient
                 '@MapbenderPrintBundle/Resources/public/element/rotationcontroller.batchprintclient.js',
                 '@MapbenderPrintBundle/Resources/public/element/tablecontroller.batchprintclient.js',
                 '@MapbenderPrintBundle/Resources/public/element/geofilehandler.batchprintclient.js',
-                '@MapbenderPrintBundle/Resources/public/element/batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/MbBatchPrintClient.js',
             ]),
             'css' => array_merge($upstream['css'], [
                 '@MapbenderPrintBundle/Resources/public/sass/element/batchprintclient.scss',

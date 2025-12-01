@@ -2,14 +2,14 @@
     /**
      * Batch Print Client Widget
      * 
-     * Extends mbPrintClient with multiframe/serial printing support:
+     * Extends MbPrint with multiframe/serial printing support:
      * - Multiple print frame selection with mouse-following
      * - Click to pin frames to map
      * - Frame table management
      * - Drag-to-rotate functionality with visual handles
      * - Batch print submission (both queued and direct)
      */
-    class MbBatchPrintClient extends Mapbender.Element.MbPrintClient {
+    class MbBatchPrintClient extends Mapbender.Element.MbPrint {
         // Frame management (initialized in constructor)
         frameManager = null;
         
@@ -50,11 +50,24 @@
         constructor(configuration, $element) {
             super(configuration, $element);
             
+            // Defer initialization until parent setup is complete
+            var self = this;
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+                self._setupBatchPrint(mbMap);
+            });
+        }
+        
+        /**
+         * Setup batch print functionality after map is ready
+         * @private
+         */
+        _setupBatchPrint(mbMap) {
+            var self = this;
+            
             // Initialize style configuration
             this.styleConfig = new Mapbender.BatchPrintStyleConfig();
             
             // Initialize frame manager
-            var self = this;
             this.frameManager = new Mapbender.BatchPrintFrameManager({
                 styleConfig: this.styleConfig,
                 onFrameAdded: function(frameData) {
@@ -210,7 +223,7 @@
          */
         _pickScale(closestToMapScale) {
             // Get the scale that the parent would choose (current map scale or smallest that fits)
-            const parentScale = this._super(closestToMapScale);
+            const parentScale = super._pickScale(closestToMapScale);
             
             // Get available scales from options
             var scales = this.options.scales;
@@ -693,7 +706,7 @@
                     
                     // Collect job data using parent's method
                     this.feature = frameData.feature;
-                    var job = await $.mapbender.mbPrintClient.prototype._collectJobData.call(this);
+                    var job = await Mapbender.Element.MbPrint.prototype._collectJobData.call(this);
                     
                     // Apply frame-specific adjustments
                     job.rotation = -frameData.rotation;  // CRITICAL: Negate for backend
