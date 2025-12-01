@@ -4,6 +4,7 @@
 * [DataUpload] Show message when uploading file without valid geometries ([#PR1797](https://github.com/mapbender/mapbender/pull/1797)) 
 * [Manager] Fix search did not work for elements with soft hyphens ([#PR1803](https://github.com/mapbender/mapbender/pull/1803)) 
 * [Routing] Restrict sorting of intermediate points to y axis ([#PR1802](https://github.com/mapbender/mapbender/pull/1802)) 
+* [LayerTree] Fix layerfilter highlighting after toggling layers via checkbox ([#PR1804](https://github.com/mapbender/mapbender/pull/1804)) 
 
 ## v4.2.3
 Bugfixes:
