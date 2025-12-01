@@ -75,11 +75,11 @@ class BatchPrintClient extends PrintClient
         return [
             'js' => array_merge($upstream['js'], [
                 '@MapbenderCoreBundle/Resources/public/mapbender-model/GeometryUtil.js',
-                '@MapbenderPrintBundle/Resources/public/element/styleconfig.batchprintclient.js',
-                '@MapbenderPrintBundle/Resources/public/element/framemanager.batchprintclient.js',
-                '@MapbenderPrintBundle/Resources/public/element/rotationcontroller.batchprintclient.js',
-                '@MapbenderPrintBundle/Resources/public/element/tablecontroller.batchprintclient.js',
-                '@MapbenderPrintBundle/Resources/public/element/geofilehandler.batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/batchprintclient/styleconfig.batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/batchprintclient/framemanager.batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/batchprintclient/rotationcontroller.batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/batchprintclient/tablecontroller.batchprintclient.js',
+                '@MapbenderPrintBundle/Resources/public/element/batchprintclient/geofilehandler.batchprintclient.js',
                 '@MapbenderPrintBundle/Resources/public/element/MbBatchPrintClient.js',
             ]),
             'css' => array_merge($upstream['css'], [

@@ -100,7 +100,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 '@MapbenderPrintBundle/Resources/public/element/MbPrint.js',
             ),
             'css' => array(
-                '@MapbenderPrintBundle/Resources/public/element/printclient.scss',
+                '@MapbenderPrintBundle/Resources/public/sass/element/printclient.scss',
             ),
             'trans' => array(
                 'mb.core.printclient.btn.*',
