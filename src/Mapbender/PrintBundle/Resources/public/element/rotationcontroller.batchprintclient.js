@@ -108,6 +108,12 @@
                     return;
                 }
                 
+                // Handle active frame dragging cursor
+                if (this.isDraggingFrame) {
+                    this._setCursor('move');
+                    return;
+                }
+                
                 // Check for rotation handle hover
                 const handle = this._getHandleAtPixel(evt.pixel);
                 if (handle) {
@@ -115,7 +121,14 @@
                     return;
                 }
                 
-                // Reset cursor if not over rotation controls
+                // Check for frame hover (draggable)
+                const frameData = this._getFrameAtPixel(evt.pixel);
+                if (frameData) {
+                    this._setCursor('move');
+                    return;
+                }
+                
+                // Reset cursor if not over rotation controls or frames
                 this._setCursor('');
             });
         }
