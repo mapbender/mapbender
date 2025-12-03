@@ -593,6 +593,7 @@ mb:
       admin:
         open_in_new_tab: 'Open in new tab'
         drag_to_reorder: 'Drag to reorder'
+        help: 'See <a href="https://doc.mapbender.org/en/elements/misc/applicationswitcher.html" target="_blank" class="text-primary">docs</a> on how to configure YAML syntax'
     coordinesdisplay:
       admin:
         numdigits: 'Number of decimal places'
