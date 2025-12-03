@@ -15,10 +15,9 @@
 {% else %}
     {% for group, apps in config.applications %}
         {% if group != '__nogroup__' %}
-        <h3 class="my-3 text-center">{{ group }}</h3>
-        {% else %}
-            <hr>
+        <h6 class="my-2 fw-semibold">{{ group }}</h6>
         {% endif %}
+        <hr class="my-1">
         <ul class="list">
             {% for slug, app in apps %}
                 <li class="list-item">
@@ -38,13 +37,10 @@
                                     bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
                                     CTaTAAAAAElFTkSuQmCC" alt="">
                             {% endif %}
-                            <p class="text-center my-2">{{ app.title }}</p>
+                            <p class="text-center text-break my-2">{{ app.title }}</p>
                         </div>
                     </a>
                 </li>
-                {% if loop.index % 3 == 0 %}
-                    </ul><ul class="list">
-                {% endif %}
             {% endfor %}
         </ul>
     {% endfor %}

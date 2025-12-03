@@ -106,8 +106,11 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                     }
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
-            } catch (AccessDeniedException | NotFoundHttpException $e) { // external app (neither yaml nor database app)
-                $preparedAppConfig[$group][$slug] = $appConfig;
+            } catch (AccessDeniedException | NotFoundHttpException $e) {
+                // external app (neither yaml nor database app)
+                if (get_class($e) === 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException') {
+                    $preparedAppConfig[$group][$slug] = $appConfig;
+                }
             }
         }
         return $preparedAppConfig;
