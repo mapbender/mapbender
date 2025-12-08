@@ -1,4 +1,49 @@
 .mb-element-applicationswitcher {
+    ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    img {
+        width: 100%;
+    }
+    .list {
+        container-type: inline-size;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .list-item {
+        display: flex;
+        flex-direction: column;
+        margin: 0.5em;
+        padding: 0.5em;
+        width: calc(33.3% - 1em);
+        max-width: 120px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        min-height: 150px;
+    }
+    @container (max-width: 275px) {
+        .list-item {
+            width: calc(50% - 1em);
+        }
+    }
+    @container (max-width: 150px) {
+        .list-item {
+            width: calc(100% - 1em);
+        }
+    }
+    .list-content {
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex: 1 1 auto;
+    }
+    .list-content p {
+        margin-top: auto;
+        font-size: 10px;
+    }
     .dropdown {
         min-width: 9em;
     }

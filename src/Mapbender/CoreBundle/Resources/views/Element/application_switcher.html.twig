@@ -1,1 +1,47 @@
-{{ form_widget(form) }}
+{% if region == 'toolbar' or region == 'footer' %}
+    <div class="dropdown">
+        <select class="hiddenDropdown -fn-application-selector">
+            {% for apps in config.applications %}
+                {% for slug, app in apps %}
+                    <option value="{{ slug }}" data-app-url="{{ app.url }}">
+                        {{ app.title }}
+                    </option>
+                {% endfor %}
+            {% endfor %}
+        </select>
+        <div class="dropdownValue iconDown"></div>
+        <ul class="dropdownList"></ul>
+    </div>
+{% else %}
+    {% for group, apps in config.applications %}
+        {% if group != '__nogroup__' %}
+        <h6 class="my-2 fw-semibold">{{ group }}</h6>
+        {% endif %}
+        <hr class="my-1">
+        <ul class="list">
+            {% for slug, app in apps %}
+                <li class="list-item">
+                    <a href="{{ app.url }}">
+                        <div class="list-content">
+                            {% if app.imgUrl is defined and app.imgUrl != false %}
+                            <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
+                            {% else %}
+                                <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
+                                    ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
+                                    nO3TsQkCQRBF0YdBCWwAi2ACI7ACJ7ACJ7ACJ7ACJ7ACJ7ACZ+u2bWvP5u7d87Ozs7Oz
+                                    s7OzszuzHdu2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2
+                                    bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
+                                    CTaTAAAAAElFTkSuQmCC" alt="">
+                            {% endif %}
+                            <p class="text-center text-break my-2">{{ app.title }}</p>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endif %}
