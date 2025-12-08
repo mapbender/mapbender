@@ -17,6 +17,8 @@
             {%- set _visible = _visible | merge([{element: element, content: element_content}]) -%}
         {%- endif -%}
     {%- endfor -%}
+
+
     {%- if region_props.name == 'tabs' -%}
       <div class="tabContainerAlt">
         <ul class="tabs">
@@ -38,27 +40,29 @@
         </div>
         {%- endfor -%}
       </div>
+
+
     {% elseif region_props.name == 'accordion' %}
-      <div class="accordionContainer">
+      <div class="accordionContainer list-group">
           {%- for element_info in _visible -%}
               {%- set element = element_info.element -%}
               {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
-                  <li class="ps-1 pe-0 mt-2 mb-3 accordion inline">
+                  <div class="sidePane__inline-element">
                       <div>
                           {{ element_info.content | raw }}
                       </div>
-                  </li>
+                  </div>
               {% endif %}
           {%- endfor -%}
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
           {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-              {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
-              <div id="accordion{{loop.index}}" class="mt-3 {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
-                  <div>
-                     {{element_icon | raw }}
-                     {{ element.title | trans }}
-                  </div>
+              {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+              <div id="accordion{{loop.index}}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+                  {% if element_icon %}
+                    <span class="element-icon-wrapper">{{element_icon | raw }}</span>
+                  {% endif %}
+                   {{ element.title | trans }}
               </div>
               <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
                   <div class="accordion-cell">
@@ -68,49 +72,53 @@
             {% endif %}
         {%- endfor -%}
       </div>
+
+
     {% elseif region_props.name == 'list' %}
         <div class="listContainer">
-            <ul class="list-group">
               {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
                     {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
-                      <li class="ps-1 pe-0 mt-2 pt-0 pb-3 list-group-item inline">
+                      <div class="sidePane__inline-element">
                           <div>
                               {{ element_info.content | raw }}
                           </div>
-                      </li>
+                      </div>
                     {% endif %}
                 {%- endfor -%}
                 {%- for element_info in _visible -%}
                     {%- set element = element_info.element -%}
                     {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-                      {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
-                      <li id="list_group_item{{loop.index}}" class="ps-2 mt-2 list-group-item">
-                          <div>
-                              {{element_icon | raw }}
-                              {{ element.title | trans }}
-                          </div>
-                      </li>
+                      {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+                      <div id="list_group_item{{loop.index}}" class="element-title list-group-item {{ element_visibility_class(element) | trim }}">
+                          {% if element_icon %}
+                              <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                          {% endif %}
+                          {{ element.title | trans }}
+                      </div>
                     {% endif %}
                 {%- endfor -%}
-            </ul>
         </div>
         {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
-            {%- set element_icon = find_icon(element, 'me-2 js-mb-icon') -%}
+            {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
             <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
-                <div class="list-group-item-header pb-3">
-                    <button class="list-back-btn pt-3 ps-3 pe-3 {% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
-                        <i class="fa-solid fa-angle-left me-3 iconBig"></i>
+                <div class="list-group-item-header">
+                    <button class="list-back-btn{% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
+                        <i class="fa-solid fa-angle-left iconBig"></i>
                         <span>{{ return_text | trans}}</span>
                     </button>
                 </div>
-                <div class="list-group-item-cell pt-3 pe-3 ps-3">
-                    <div class="list-group-item-title pb-4">
-                        {{ element_icon | raw }}
+                <div class="list-group-item-cell">
+                    <div class="list-group-item-title active element-title">
+                        {% if element_icon %}
+                            <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                        {% endif %}
                         {{ element.title | trans }}
                     </div>
-                    {{ element_info.content | raw }}
+                    <div class="list-group-item-content">
+                        {{ element_info.content | raw }}
+                    </div>
                 </div>
             </div>
         {%- endfor -%}
@@ -121,8 +129,8 @@
         </div>
   {% endif %}
   </div>
-  <span class="toggleSideBar collapse-toggle">
-    <i class="fa-solid fa-xmark pt-3 pe-2 ps-2" tabindex="0"></i>
-    <div class="element-icons hidden"></div>
-  </span>
+  <div class="sidePane--collapsed toggleSideBar collapse-toggle">
+    <i class="fa-solid fa-xmark sidePane__toggle" tabindex="0" role="button"></i>
+    <div class="sidePane--collapsed__icons element-icons hidden"></div>
+  </div>
 </div>

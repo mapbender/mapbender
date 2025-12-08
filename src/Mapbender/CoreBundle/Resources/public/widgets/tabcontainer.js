@@ -62,7 +62,7 @@ var initTabContainer = function ($context) {
             }
             var $group = $(this).closest('.listContainer');
             var $sideContent = $group.closest('.sideContent');
-            var $previous = $('.list-group .list-group-item.active', $group);
+            var $previous = $('.list-group-item.active', $group);
 
             $previous.removeClass('active');
 

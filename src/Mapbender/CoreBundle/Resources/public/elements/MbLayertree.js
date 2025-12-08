@@ -45,7 +45,6 @@
             }
             this._createEvents();
             Mapbender.elementRegistry.markReady(this);
-            Mapbender.ElementUtil.adjustScrollbarsIfNecessary(this.$element);
         }
 
         _createTree() {
