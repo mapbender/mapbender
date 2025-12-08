@@ -4,6 +4,7 @@
 * [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))
 * [Design] Redesign data upload ([#PR1775](https://github.com/mapbender/mapbender/pull/1775))
 * [Design] Redesign popup and optimise for mobile devices ([#PR1782](https://github.com/mapbender/mapbender/pull/1782))
+* [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 
