@@ -432,7 +432,9 @@
         },
         _apply: function(settings) {
             const layertreeElement = $('.mb-element-layertree');
-            layertreeElement.find('ul.layers:first').empty();
+            if (layertreeElement.length > 0) {
+                layertreeElement.find('ul.layers:first').empty();
+            }
             this.mbMap.getModel().sourceTree = [];
             this.mbMap.map.olMap.getAllLayers().forEach(layer => {
                 this.mbMap.map.olMap.removeLayer(layer);
@@ -457,7 +459,9 @@
 
             this.mbMap.getModel().initializeSourceLayers(sources);
 
-            layertreeElement.data('mapbenderMbLayertree')._createTree();
+            if (layertreeElement.length > 0) {
+                layertreeElement.data('mapbenderMbLayertree')._createTree();
+            }
             wmsloaderSources.forEach(source => {
                 this.mbMap.getModel().addSourceFromConfig(source);
             });
