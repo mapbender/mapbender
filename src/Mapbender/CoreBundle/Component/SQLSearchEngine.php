@@ -108,7 +108,7 @@ class SQLSearchEngine
         $qb->from($config['class_options']['relation'], 't');
 
         foreach ($data['form'] as $key => $value) {
-            if (!$value) {
+            if (!$value && !is_numeric($value)) {
                 continue;
             }
             $fieldConfig = $this->getFormFieldConfig($config, $key);
