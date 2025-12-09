@@ -103,7 +103,10 @@
         if (!file) {
             Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
             return;
-        }            const map = this.map.getModel().olMap;
+        }            // Show spinner during file load
+            this._showSpinner();
+            
+            const map = this.map.getModel().olMap;
             const featureProjection = map.getView().getProjection().getCode();
             
             Mapbender.FileUtil.readGeospatialFile(file, {
@@ -119,10 +122,13 @@
                         this._showButtons();
                     } catch (error) {
                         this._handleError(error, file);
+                    } finally {
+                        this._hideSpinner();
                     }
                 },
                 onError: (error, file) => {
                     this._handleError(error, file);
+                    this._hideSpinner();
                 }
             });
         }
@@ -208,37 +214,49 @@
         if (!lineString || lineString.getType() !== 'LineString') {
             Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
             return;
-        }            // Get settings
-            const adjustFrames = $('.-fn-adjust-frames-checkbox', this.$element).is(':checked');
-            const overlapPercent = this._getOverlapPercentage();
+        }            // Show spinner during frame placement
+            this._showSpinner();
+            this._disablePlaceButton();
             
-            if (overlapPercent === null) {
-                return; // Validation failed
-            }
-            
-            // Calculate frame placement parameters
-            const params = this._calculateFramePlacement(lineString, overlapPercent);
-            
-            // Place frames
-            let previousRotation = null;
-            for (let i = 0; i < params.numFrames; i++) {
-                const distance = i * params.spacing;
-                const coord = Mapbender.GeometryUtil.getCoordinateAtDistance(lineString, distance);
-                
-                if (!coord) break;
-                
-                const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
-                
-                // Callback to widget to place frame
-                previousRotation = this.onFramePlaced(coord, bearing, previousRotation);
-            }
-            
-            this._updatePlacementStatus(
-                Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {
-                    count: params.numFrames
-                }),
-                'success'
-            );
+            // Use setTimeout to allow UI to update before processing
+            setTimeout(() => {
+                try {
+                    // Get settings
+                    const adjustFrames = $('.-fn-adjust-frames-checkbox', this.$element).is(':checked');
+                    const overlapPercent = this._getOverlapPercentage();
+                    
+                    if (overlapPercent === null) {
+                        return; // Validation failed
+                    }
+                    
+                    // Calculate frame placement parameters
+                    const params = this._calculateFramePlacement(lineString, overlapPercent);
+                    
+                    // Place frames
+                    let previousRotation = null;
+                    for (let i = 0; i < params.numFrames; i++) {
+                        const distance = i * params.spacing;
+                        const coord = Mapbender.GeometryUtil.getCoordinateAtDistance(lineString, distance);
+                        
+                        if (!coord) break;
+                        
+                        const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
+                        
+                        // Callback to widget to place frame
+                        previousRotation = this.onFramePlaced(coord, bearing, previousRotation);
+                    }
+                    
+                    this._updatePlacementStatus(
+                        Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {
+                            count: params.numFrames
+                        }),
+                        'success'
+                    );
+                } finally {
+                    this._hideSpinner();
+                    this._enablePlaceButton();
+                }
+            }, 100);
         }
 
         /**
@@ -403,6 +421,38 @@
          */
         _hideUploadButton() {
             $('.-fn-geofile-custom-button', this.$element).hide();
+        }
+
+        /**
+         * Show spinner
+         * @private
+         */
+        _showSpinner() {
+            $('.-fn-geofile-spinner', this.$element).show();
+        }
+
+        /**
+         * Hide spinner
+         * @private
+         */
+        _hideSpinner() {
+            $('.-fn-geofile-spinner', this.$element).hide();
+        }
+
+        /**
+         * Disable place frames button
+         * @private
+         */
+        _disablePlaceButton() {
+            $('.-fn-place-frames-button', this.$element).prop('disabled', true);
+        }
+
+        /**
+         * Enable place frames button
+         * @private
+         */
+        _enablePlaceButton() {
+            $('.-fn-place-frames-button', this.$element).prop('disabled', false);
         }
 
         /**
