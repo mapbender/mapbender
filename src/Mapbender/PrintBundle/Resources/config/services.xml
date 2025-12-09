@@ -18,7 +18,6 @@
         <parameter key="mapbender.imageexport.renderer.geojson.class">Mapbender\PrintBundle\Component\LayerRendererGeoJson</parameter>
         <parameter key="mapbender.imageexport.renderer.markers.class">Mapbender\PrintBundle\Component\LayerRendererMarkers</parameter>
         <parameter key="mapbender.print.service.class">Mapbender\PrintBundle\Component\PrintService</parameter>
-        <parameter key="mapbender.batch_print.service.class">Mapbender\PrintBundle\Component\BatchPrintService</parameter>
         <!-- print resource / temp dirs are by default == imageexport dirs, but can be changed independently -->
         <parameter key="mapbender.print.resource_dir">%mapbender.imageexport.resource_dir%</parameter>
         <parameter key="mapbender.print.temp_dir">%mapbender.imageexport.temp_dir%</parameter>
@@ -73,21 +72,6 @@
             <argument type="service" id="mapbender.imageexport.renderer.markers" />
         </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
-            <argument type="collection"><!-- layer renderers -->
-                <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
-                <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />
-            </argument>
-            <argument type="service" id="mapbender.imageexport.image_transport.service" />
-            <argument type="service" id="mapbender.print.legend_handler.service" />
-            <argument type="service" id="mapbender.print.template_parser.service" />
-            <argument type="service" id="mapbender.print_plugin_host.service" />
-            <argument type="service" id="mapbender.source.typedirectory.service" />
-            <argument type="service" id="logger" />
-            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
-            <argument>%mapbender.print.resource_dir%</argument>
-            <argument>%mapbender.print.temp_dir%</argument>
-        </service>
-        <service id="mapbender.batch_print.service" class="%mapbender.batch_print.service.class%">
             <argument type="collection"><!-- layer renderers -->
                 <argument key="GeoJSON+Style" type="service" id="mapbender.imageexport.renderer.geojson" />
                 <argument key="markers" type="service" id="mapbender.imageexport.renderer.markers" />

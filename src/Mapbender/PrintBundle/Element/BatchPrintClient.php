@@ -174,7 +174,7 @@ class BatchPrintClient extends PrintClient
         // Prepare multiframe data
         $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $configuration);
         
-        // Create wrapper structure
+        // Create wrapper structure - PrintService will detect multiFrame flag
         $jobDataWrapper = [
             'frames' => $multiFrameJobDataArr,
             'multiFrame' => true,

@@ -8,12 +8,14 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\PrintBundle\Component\Export\Box;
 use Mapbender\PrintBundle\Component\Export\FeatureTransform;
 use Mapbender\PrintBundle\Component\Legend\LegendBlockContainer;
+use Mapbender\PrintBundle\Component\Legend\LegendBlockGroup;
 use Mapbender\PrintBundle\Component\Pdf\PdfUtil;
 use Mapbender\PrintBundle\Component\Region\NullRegion;
 use Mapbender\PrintBundle\Component\Service\PrintPluginHost;
 use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * Merges map image exports and various other regions, steered by a template,
@@ -32,6 +34,12 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected array $data;
 
     protected PdfUtil $pdfUtil;
+
+    /**
+     * Collected legends from all frames for multiframe printing
+     * @var array
+     */
+    protected array $collectedLegends = [];
 
     /**
      * @param LayerRenderer[] $layerRenderers
@@ -79,6 +87,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * Executes the job (plain array), returns a binary string representation of the resulting PDF.
+     * Supports both single frame and multiframe print jobs.
      *
      * @param array $jobData
      * @return string
@@ -86,7 +95,15 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     public function dumpPrint(array $jobData)
     {
-        return $this->doPrint($jobData);
+        // Handle multiframe structure: {frames: [...], multiFrame: true, ...}
+        if (isset($jobData['multiFrame']) && $jobData['multiFrame'] === true) {
+            if (!isset($jobData['frames']) || !is_array($jobData['frames'])) {
+                throw new RuntimeException("Invalid multiframe structure: missing 'frames' array");
+            }
+            return $this->doMultiFramePrint($jobData['frames']);
+        } else {
+            return $this->doPrint($jobData);
+        }
     }
 
     /**
@@ -100,7 +117,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     {
         // NOTE: FPDI's 'direct' file output mode isn't any more efficient than its string output mode
         //       (uses the same amount of memory). This may be more worthwhile with a different PDF lib...
-        if (!file_put_contents($fileName, $this->doPrint($jobData))) {
+        if (!file_put_contents($fileName, $this->dumpPrint($jobData))) {
             throw new \RuntimeException("Failed to store printout at {$fileName}");
         }
     }
@@ -775,5 +792,125 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function makeTempFile($prefix)
     {
         return $this->pdfUtil->makeTempFile($prefix);
+    }
+
+    /**
+     * Process multiframe print job
+     * 
+     * @param array $jobData Array of frame data
+     * @return string PDF binary content
+     * @throws \Exception
+     */
+    protected function doMultiFramePrint(array $jobData): string
+    {
+        $mapImageNames = [];
+
+        // Create all map images and store filesystem paths
+        foreach ($jobData as $index => $data) {
+            $templateData = $this->getTemplateData($data);
+            
+            // CRITICAL: Call setup() to initialize template dimensions before creating map image
+            // Each template (A4 quer, A4 hoch, etc.) has different dimensions that must be set
+            $this->setup($templateData, $data);
+            
+            $mapImageNames[] = $this->createMapImage($templateData, $data);
+        }
+
+        $pdf = null;
+        // Build PDFs for each item
+        foreach ($jobData as $index => $data) {
+            $templateData = $this->getTemplateData($data);
+            $this->setup($templateData, $data);
+            
+            $pdf = $this->buildMultiFramePdf($mapImageNames[$index], $templateData, $data, $pdf);
+        }
+
+        $this->afterMainMapMulti($pdf, $this->getTemplateData($jobData[0]), $jobData[0]);
+
+        return $this->dumpPdf($pdf);
+    }
+
+    /**
+     * Build PDF for a single frame in multiframe print
+     * 
+     * @param string $mapImageName Path to map image file
+     * @param Template|array $template Template data
+     * @param array $jobData Job data for this frame
+     * @param PDF_Extensions|\FPDF|null $pdf Existing PDF object or null for first frame
+     * @return PDF_Extensions|\FPDF PDF object with added page
+     * @throws \Exception
+     */
+    protected function buildMultiFramePdf(string $mapImageName, Template|array $template, array $jobData, PDF_Extensions|\FPDF|null $pdf = null): PDF_Extensions|\FPDF
+    {
+        if (!$pdf) {
+            $pdf = $this->makeBlankPdf($template, $jobData['template']);
+        } else {
+            if ($template['orientation'] == 'portrait') {
+                $format = [$template['pageSize']['width'], $template['pageSize']['height']];
+                $orientation = 'P';
+            } else {
+                $format = [$template['pageSize']['height'], $template['pageSize']['width']];
+                $orientation = 'L';
+            }
+            $pdf->addPage($orientation, $format);
+            
+            // CRITICAL: Set the source file for this template before importing
+            // Each template (A4 quer, A4 hoch, etc.) has its own PDF file
+            $pdfPath = $this->templateParser->getTemplateFilePath($jobData['template'], 'pdf');
+            $pdf->setSourceFile($pdfPath);
+        }
+        // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
+        /** @var \setasign\Fpdi\Fpdi $pdf */
+        $tplidx = $pdf->importPage(1);
+        $pdf->useTemplate($tplidx);
+
+        $this->addMapImage($pdf, $mapImageName, $template);
+        unlink($mapImageName);
+        
+        $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
+
+        $this->collectedLegends[] = $this->legendHandler->collectLegends($jobData);
+
+        return $pdf;
+    }
+
+    /**
+     * Process after main map for multiframe print
+     * Handles legends and finalization without duplicating textfields/regions
+     * 
+     * @param PDF_Extensions|\FPDF $pdf PDF object
+     * @param Template|array $template Template data
+     * @param array $jobData Job data
+     */
+    protected function afterMainMapMulti(PDF_Extensions|\FPDF $pdf, Template|array $template, array $jobData): void
+    {
+        $legends = $this->mergeCollectedLegends();
+
+        $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
+        $this->finishMainPage($pdf, $template, $jobData);
+        $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+    }
+
+    /**
+     * Merge collected legends from all frames
+     * Deduplicates legend blocks by title across all frames
+     * 
+     * @return array Merged legend block groups
+     */
+    protected function mergeCollectedLegends(): array
+    {
+        // Collect all unique legend blocks by title
+        $uniqueBlocks = [];
+        
+        foreach ($this->collectedLegends as $collectedLegend) {
+            foreach ($collectedLegend as $legendBlockGroup) {
+                foreach ($legendBlockGroup->iterateBlocks() as $block) {
+                    $uniqueBlocks[$block->getTitle()] = $block;
+                }
+            }
+        }
+
+        // Return as a single merged legend group
+        return [new LegendBlockGroup($uniqueBlocks)];
     }
 }
