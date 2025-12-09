@@ -58,6 +58,22 @@
         }
         
         /**
+         * Override _setup to handle geofile section visibility
+         * @private
+         */
+        _setup() {
+            super._setup();
+            
+            // In dialog mode, show geofile upload section
+            // In sidepane mode, hide it until frame is activated
+            if (this.useDialog_) {
+                $('.-fn-geofile-upload', this.$element).show();
+            } else {
+                $('.-fn-geofile-upload', this.$element).hide();
+            }
+        }
+        
+        /**
          * Setup batch print functionality after map is ready
          * @private
          */
@@ -254,6 +270,11 @@
             Mapbender.vectorLayerPool.raiseElementLayers(this);
             Mapbender.vectorLayerPool.showElementLayers(this);
             
+            // Show geofile upload section when frame is activated (only in sidepane mode)
+            if (!this.useDialog_) {
+                $('.-fn-geofile-upload', this.$element).show();
+            }
+            
             var self = this;
             this._getTemplateSize().then(function() {
                 self.selectionActive = true;
@@ -278,6 +299,11 @@
         _deactivateSelection() {
             this._stopMouseFollow();
             this._clearPinnedFeatures();
+            
+            // Hide geofile upload section when frame is deactivated (only in sidepane mode)
+            if (!this.useDialog_) {
+                $('.-fn-geofile-upload', this.$element).hide();
+            }
             
             // Cleanup geofile handler
             if (this.geofileHandler) {
