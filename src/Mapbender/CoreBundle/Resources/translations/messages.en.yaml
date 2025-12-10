@@ -673,6 +673,8 @@ mb:
         help: Help
         dataupload: Upload
         bookmark: Bookmark
+        chartcolumn: Diagram
+        bookopen: Book
   template:
     toolbar_menu_tooltip: 'Toggle menu'
     region:

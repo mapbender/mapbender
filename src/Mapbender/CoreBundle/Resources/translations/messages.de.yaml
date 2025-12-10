@@ -673,6 +673,8 @@ mb:
         help: Hilfe
         dataupload: Hochladen
         bookmark: Lesezeichen
+        chartcolumn: Diagramm
+        bookopen: Buch
   template:
     toolbar_menu_tooltip: 'Menü öffnen'
     region:
