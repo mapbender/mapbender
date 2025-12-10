@@ -168,7 +168,7 @@ class FeatureInfo extends AbstractElementService
 
     public static function getDefaultIcon()
     {
-        return 'icon-feature-info';
+        return 'iconInfoActive';
     }
 
 }

@@ -68,6 +68,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             "width" => 700,
             "height" => 500,
             "routes" => array(),
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -120,8 +121,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 "fillColor" => "#ee8800",
                 "fillOpacity" => 0.8,
                 "strokeOpacity" => 1.0,
-            ),
-            'element_icon' => self::getDefaultIcon(),
+            )
         );
     }
 
