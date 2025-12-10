@@ -112,7 +112,12 @@ class Routing extends AbstractElementService
                     'geom_proj' => 'EPSG:4326',
                 ],
             ],
+            'element_icon' => self::getDefaultIcon(),
         ];
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconRouting';
     }
 
     public static function getFormTemplate(): string

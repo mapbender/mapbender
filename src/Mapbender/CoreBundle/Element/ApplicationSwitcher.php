@@ -37,7 +37,12 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
         return array(
             'open_in_new_tab' => false,
             'applications' => array(),
+            'element_icon' => self::getDefaultIcon(),
         );
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconMap';
     }
 
     public static function getType()
