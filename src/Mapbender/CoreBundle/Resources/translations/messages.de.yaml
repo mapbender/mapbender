@@ -695,6 +695,20 @@ mb:
         instancelayerform:
           label:
             title: Titel
+  interactivehelp:
+    intro:
+      title:  'Willkommen bei der interactiven Hilfe'
+      description: 'Lernen Sie in ein paar Schritten Mapbender kennen.'
+      dontShowAgainLabel: 'Nicht wieder anzeigen.'
+    chapters:
+      -
+        title: 'Suche'
+        description: 'Finden Sie Orte mit dem Such-Element.'
+        element:
+          id: 231
+          title: Suche
+          type: Mapbender\CoreBundle\Element\Searchrouter
+        selector: mb-element-searchrouter
 'Bad credentials.': 'Authentifizierung fehlgeschlagen.'
 'User account is locked.': 'Benutzerkonto ist gesperrt.'
 'User account is disabled.': 'Benutzerkonto ist deaktiviert.'
