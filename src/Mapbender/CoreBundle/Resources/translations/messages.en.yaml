@@ -702,15 +702,9 @@ mb:
       title:  'Welcome to our interactive Help'
       description: 'In a few steps you will learn the basic functionality of Mapbender.'
       dontShowAgainLabel: 'Do not show again.'
-    chapters:
-      -
-        title: 'Search'
-        description: 'Use the search element to find locations on the map.'
-        element:
-          id: 231
-          title: Search
-          type: Mapbender\CoreBundle\Element\Searchrouter
-        selector: mb-element-searchrouter
+    searchrouter:
+      title: 'Search'
+      description: 'Use the search element to find locations on the map.'
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
 'User account is disabled.': 'User account is disabled.'
