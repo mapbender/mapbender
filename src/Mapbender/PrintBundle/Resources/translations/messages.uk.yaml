@@ -20,6 +20,53 @@ mb:
       tab:
         settings: Налаштування завдання
         joblist: Останні завдання
+      btn:
+        batchprint: 'Почати пакетний друк'
+      batchprint:
+        title: 'Назва'
+        btn:
+          submit: 'Почати пакетний друк'
+        track:
+          upload: 'Завантажити маршрут (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Завантажити маршрут (KML, GeoJSON, GPX, GML)'
+          load: 'Завантажити файл'
+          choosefile: 'Вибрати файл'
+          clear: 'Видалити маршрут'
+          placeframes: 'Розмістити рамки вздовж маршруту'
+          adjustframes: 'Налаштувати поворот рамок'
+          overlap: 'Перекриття рамок'
+          selected: 'Вибрано'
+          loaded: 'Завантажено'
+          error: 'Помилка'
+          readerror: 'Помилка читання файлу'
+          placed: 'Розміщено %count% рамок вздовж маршруту'
+          alert:
+            selectfile: 'Спочатку виберіть файл.'
+            validfile: 'Виберіть дійсний файл (KML, GeoJSON, GPX, GML).'
+            error: 'Помилка завантаження файлу'
+            readerror: 'Помилка читання файлу.'
+            loadfirst: 'Спочатку завантажте файл маршруту.'
+            invalidgeometry: 'Недійсна геометрія. Очікується LineString.'
+        overlap:
+          outofbounds: 'Значення перекриття %value%% виходить за межі допустимого діапазону (0-50%). Будь ласка, введіть значення від 0 до 50.'
+        tracking:
+          title: 'Рамки друку'
+          no: '№'
+          scale: 'Масштаб'
+          template: 'Шаблон'
+          quality: 'Якість'
+          rotation: 'Обертання'
+          delete: 'Видалити'
+          deleteall: 'Видалити всі рамки'
+          empty: 'Немає доступних рамок друку. Натисніть на карту, щоб додати рамки друку.'
+        confirm:
+          create: 'Це створить %count% рамок. Продовжити?'
+          deleteall: 'Видалити всі %count% рамок?'
+        alldeleted: 'Всі рамки видалено'
+        alert:
+          noframes: 'Будь ласка, розмістіть принаймні одну рамку друку на карті.'
+          error: 'Помилка створення завдання друку'
       joblist:
         header:
           id: '#'
@@ -46,3 +93,33 @@ mb:
           choice:
             global: глобальний
             private: приватний
+        label:
+          qualitylevels: Рівні якості
+          templates: Шаблони
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Увімкнути завантаження геофайлів'
+  core:
+    printclient:
+      admin:
+        scales: 'Масштаби (розділені комами)'
+        fileprefix: 'Префікс файлу'
+        optionalfields: 'Необов''язкові поля'
+        replacepattern: 'Замінити шаблон'
+        templates: Шаблони
+        qualitylevels: 'Рівні якості'
+      label:
+        quality: 'Якість'
+      class:
+        title: Друк
+    batchprintclient:
+      class:
+        title: 'Режим пакетного друку'
+        description: 'Режим пакетного друку - Розміщення декількох рамок друку та виведення в одному завданні друку'
+    printclienttemplate:
+      admin:
+        template: Шаблон
+        label: Мітка
+    printclientquality:
+      admin:
+        label: Мітка

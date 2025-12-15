@@ -1,4 +1,6 @@
 ## next feature release
+* **BatchPrintClient element**: New batch printing element for creating multiple print frames in a single job with individual settings per frame
+* **FileUtil.js**: New shared utility module for geospatial file handling (KML, GeoJSON, GPX, GML) used by BatchPrintClient and DataUpload elements
 * [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774))
 * [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
 * [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))

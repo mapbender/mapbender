@@ -20,6 +20,51 @@ mb:
       tab:
         settings: 'Job settings'
         joblist: 'Recent jobs'
+      batchprint:
+        title: 'Title'
+        btn:
+          submit: 'Start Batch Print'
+        track:
+          upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Upload Track (KML, GeoJSON, GPX, GML)'
+          load: 'Load File'
+          choosefile: 'Choose File'
+          clear: 'Remove Track'
+          placeframes: 'Place Frames Along Track'
+          adjustframes: 'Adjust Frame Rotation'
+          overlap: 'Frame Overlap'
+          selected: 'Selected'
+          loaded: 'Loaded'
+          error: 'Error'
+          readerror: 'Error reading file.'
+          placed: 'Placed %count% frames along track.'
+          alert:
+            selectfile: 'Please select a file first.'
+            validfile: 'Please select a valid file (KML, GeoJSON, GPX, GML).'
+            error: 'Error loading file.'
+            readerror: 'Error reading file.'
+            loadfirst: 'Please load a track file first.'
+            invalidgeometry: 'Invalid geometry. LineString expected.'
+        overlap:
+          outofbounds: 'Overlap value %value%% is outside the valid range (0-50%). Please enter a value between 0 and 50.'
+        tracking:
+          title: 'Print Frames'
+          no: 'No.'
+          scale: 'Scale'
+          template: 'Template'
+          quality: 'Quality'
+          rotation: 'Rotation'
+          delete: 'Delete'
+          deleteall: 'Delete All Frames'
+          empty: 'No print frames available. Click on the map to add print frames.'
+        confirm:
+          create: 'This will create %count% frames. Continue?'
+          deleteall: 'Delete all %count% frames?'
+        alldeleted: 'All frames deleted.'
+        alert:
+          noframes: 'Please place at least one print frame on the map.'
+          error: 'Error creating print job.'
       joblist:
         header:
           id: '#'
@@ -59,6 +104,10 @@ mb:
         quality: Quality
       class:
         title: Print
+    batchprintclient:
+      class:
+        title: 'Print Batch Mode'
+        description: 'Print Batch Mode - Placement of multiple print frames and output in one print job'
     printclienttemplate:
       admin:
         template: Template
@@ -68,6 +117,19 @@ mb:
         label: Label
     admin:
       printclient:
+        renderMode:
+          label: 'Mode'
+          choice:
+            direct: 'Direct'
+            queued: 'Queued'
+        queueAccess:
+          label: 'Queue'
+          choice:
+            global: 'global'
+            private: 'private'
         label:
           qualitylevels: 'Quality levels'
           templates: Templates
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Enable upload of track (KML, GeoJSON, GPX, GML)'
