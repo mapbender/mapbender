@@ -698,6 +698,14 @@ mb:
           label:
             title: Titel
   interactivehelp:
+    element:
+      class:
+        title: Interaktive Hilfe
+        description: 'Die interaktive Hilfe zeigt direkt an den einzelnen Elementen Hinweise an.'
+    admin:
+      config: Konfiguration
+      help: 'Siehe <a href="https://doc.mapbender.org/de/elements/misc/interactivehelp.html" target="_blank" class="text-primary">Dokumentation</a> zur Konfiguration der YAML-Syntax'
+      showOnStart: 'Beim Start direkt anzeigen'
     intro:
       title:  'Willkommen bei der interaktiven Hilfe'
       description: 'Lernen Sie in ein paar Schritten Mapbender kennen.'

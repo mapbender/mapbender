@@ -122,5 +122,8 @@
         <service id="mapbender.element.dataupload" class="Mapbender\CoreBundle\Element\DataUpload">
             <tag name="mapbender.element" />
         </service>
+        <service id="mapbender.element.interactivehelp" class="Mapbender\CoreBundle\Element\InteractiveHelp">
+            <tag name="mapbender.element" />
+        </service>
     </services>
 </container>
