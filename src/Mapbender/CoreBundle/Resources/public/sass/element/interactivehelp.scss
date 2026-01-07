@@ -1,0 +1,37 @@
+
+.popover {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+}
+
+.popover-toolbar {
+    margin-left: -20px !important;
+    opacity: 1 !important;
+}
+
+/* Caret */
+.popover::before,
+.popover::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    border: 8px solid transparent;
+}
+
+/* Outer caret (border) */
+.popover::before {
+    bottom: 100%;
+    border-bottom-color: #ccc;
+}
+
+/* Inner caret (background) */
+.popover::after {
+    bottom: 100%;
+    margin-bottom: -1px;
+    border-bottom-color: #fff;
+}

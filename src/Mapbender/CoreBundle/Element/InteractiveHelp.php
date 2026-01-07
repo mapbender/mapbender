@@ -2,12 +2,18 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 
 class InteractiveHelp extends AbstractElementService
 {
+    public function __construct(protected ManagerRegistry $doctrine)
+    {
+
+    }
+
     public static function getClassTitle()
     {
         return 'mb.interactivehelp.element.class.title';
@@ -32,6 +38,9 @@ class InteractiveHelp extends AbstractElementService
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/interactivehelp.scss',
             ),
+            'trans' => array(
+                'mb.interactivehelp.*',
+            ),
        );
     }
 
@@ -41,29 +50,25 @@ class InteractiveHelp extends AbstractElementService
             'autoOpen' => false,
             'helptexts' => array(
                 'intro' => array(
-                    'title' => 'mb.core.interactivehelp.intro.title',
-                    'description' => 'mb.core.interactivehelp.intro.description',
+                    'title' => 'mb.interactivehelp.intro.title',
+                    'description' => 'mb.interactivehelp.intro.description',
                 ),
                 'chapters' => array(
                     array(
-                        'title' => 'mb.core.interactivehelp.wmsloader.title',
-                        'description' => 'mb.core.interactivehelp.wmsloader.description',
+                        'title' => 'mb.interactivehelp.wmsloader.title',
+                        'description' => 'mb.interactivehelp.wmsloader.description',
                         'element' => array(
-                            'id' => '',
-                            'title' => 'mb.core.interactivehelp.wmsloader.title',
-                            'type' => 'Mapbender\WmsBundle\Element\WmsLoader',
+                            'jsClassName' => 'MbWmsLoader',
+                            'classSelector' => 'mb-element-wmsloader',
                         ),
-                        'selector' => 'mb-element-wmsloader',
                     ),
                     array(
-                        'title' => 'mb.core.interactivehelp.sketch.title',
-                        'description' => 'mb.core.interactivehelp.sketch.description',
+                        'title' => 'mb.interactivehelp.sketch.title',
+                        'description' => 'mb.interactivehelp.sketch.description',
                         'element' => array(
-                            'id' => '',
-                            'title' => 'mb.core.interactivehelp.sketch.title',
-                            'type' => 'Mapbender\CoreBundle\Element\Sketch',
+                            'jsClassName' => 'MbSketch',
+                            'classSelector' => 'mb-element-sketch',
                         ),
-                        'selector' => 'mb-element-sketch',
                     ),
                 ),
             ),
@@ -85,5 +90,21 @@ class InteractiveHelp extends AbstractElementService
         $view = new TemplateView('@MapbenderCore/Element/interactivehelp.html.twig');
         $view->attributes['class'] = 'mb-element-interactivehelp';
         return $view;
+    }
+
+    public function getClientConfiguration(Element $element)
+    {
+        $config = $element->getConfiguration() ?: [];
+        $appId = $element->getApplication()->getId();
+        $elementRepo = $this->doctrine->getManager()->getRepository(Element::class);
+        foreach ($config['helptexts']['chapters'] as $key => $chapter) {
+            $e = $elementRepo->findOneBy([
+                'application' => $appId,
+                'class' => $chapter['element']['type'],
+                'enabled' => true,
+            ]);
+            $config['helptexts']['chapters'][$key]['element']['region'] = ($e->getRegion() === 'content') ? 'toolbar' : $e->getRegion();
+        }
+        return $config;
     }
 }
