@@ -114,12 +114,35 @@ window.Mapbender.MapModelBase = (function() {
         },
         /**
          * engine-agnostic
+         * @param targetScale {int} the scale (1:x) to pick the zoom level for
+         * @param [pickHigh] {boolean} if true, picks the higher scale if targetScale is between two scales (default: lower scale)
+         * @param [fractional] {boolean} if true, returns fractional zoom levels. (default: false) If set, pickHigh is ignored
+         * @return {number} the calculated zoom level, integer unless fractional is set to true
          */
-        pickZoomForScale: function(targetScale, pickHigh) {
-            // @todo: fractional zoom: use exact targetScale (TBD: method should not be called?)
-            var scales = this._getScales();
-            var scale = this._pickScale(scales, targetScale, pickHigh);
-            return scales.indexOf(scale);
+        pickZoomForScale: function(targetScale, pickHigh, fractional) {
+            const scales = this._getScales();
+
+            if (targetScale >= scales[0]) {
+                return 0;
+            }
+            for (let i = 0; i < scales.length - 1; ++i) {
+                const scaleHigh = scales[i];
+                const scaleLow = scales[i + 1];
+                if (targetScale <= scaleHigh && targetScale >= scaleLow) {
+                    if (fractional) {
+                        // the scale to zoom calculation in OpenLayers follows an exponential progression
+                        // scale = c * (scaleLow / scaleHigh)^zoom
+                        // the constant c can be determined using scaleHigh (or scaleLow)
+                        const c = scaleHigh / Math.pow(scaleLow / scaleHigh, i);
+                        return (Math.log(targetScale) - Math.log(c)) / Math.log(scaleLow / scaleHigh);
+                    }
+                    if (targetScale > scaleLow && pickHigh) {
+                        return i;
+                    }
+                    return i+1;
+                }
+            }
+            return scales.length - 1;
         },
         /**
          * BC convenience getter. Commonly used only to determine number of decimals for rounding
@@ -338,32 +361,6 @@ window.Mapbender.MapModelBase = (function() {
         getMaxExtentArray: function(srsName) {
             var x = this.getMaxExtent(srsName);
             return [x.left, x.bottom, x.right, x.top];
-        },
-        /**
-         *
-         * @param scales
-         * @param targetScale
-         * @param pickHigh
-         * @return {*}
-         * @private
-         * engine-agnostic
-         */
-        _pickScale: function(scales, targetScale, pickHigh) {
-            if (targetScale >= scales[0]) {
-                return scales[0];
-            }
-            for (var i = 0, nScales = scales.length; i < nScales - 1; ++i) {
-                var scaleHigh = scales[i];
-                var scaleLow = scales[i + 1];
-                if (targetScale <= scaleHigh && targetScale >= scaleLow) {
-                    if (targetScale > scaleLow && pickHigh) {
-                        return scaleHigh;
-                    } else {
-                        return scaleLow;
-                    }
-                }
-            }
-            return scales[nScales - 1];
         },
         /**
          * engine-agnostic
