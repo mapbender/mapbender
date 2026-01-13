@@ -108,6 +108,7 @@ mb:
         max_input_vars_exceeded: 'PHP setting max_input_vars too low for the number of layers in this instance.'
         update_successful: 'Your instance has been updated.'
         converted_to_shared: 'The instance has been converted to a shared instance.'
+        security: 'Edit access rights. If no rights are set (gray icon), everyone with access to the application can also see the data source. If rights are set (red icon), only the configured roles can see the data source.'
       template: Template
       application:
         view: View

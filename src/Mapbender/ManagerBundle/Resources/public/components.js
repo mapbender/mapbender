@@ -268,7 +268,7 @@ $(function() {
 
 
     // Element security
-    function initElementSecurity(response, url) {
+    function initElementSecurity(response, url, title) {
         const $content = $(response);
         // submit back to same url (would be automatic outside of popup scope)
         $content.filter('form').attr('action', url);
@@ -278,7 +278,7 @@ $(function() {
         var $permissionsTable;
         var isModified = false;
         var popupOptions = {
-            title: Mapbender.trans('mb.actions.secureelement'),
+            title: Mapbender.trans(title || 'mb.actions.secureelement'),
             buttons: [
                 {
                     label: Mapbender.trans('mb.actions.reset'),
@@ -391,11 +391,12 @@ $(function() {
     }
 
     $(".secureElement").on("click", function() {
-        var url = $(this).attr('data-url');
+        const url = $(this).attr('data-url');
+        const title = $(this).attr('data-title');
         $.ajax({
             url: url
         }).then(function(response) {
-            initElementSecurity(response, url);
+            initElementSecurity(response, url, title);
         });
         return false;
     });

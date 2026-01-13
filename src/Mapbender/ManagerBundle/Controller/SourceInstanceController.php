@@ -8,12 +8,15 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use FOM\ManagerBundle\Configuration\Route;
+use FOM\UserBundle\Form\Type\PermissionListType;
+use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
+use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -29,7 +32,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
-    public function __construct(protected TypeDirectoryService $typeDirectory, protected TranslatorInterface $trans, EntityManagerInterface $em)    {
+    public function __construct(
+        protected TypeDirectoryService $typeDirectory,
+        protected TranslatorInterface $trans,
+        EntityManagerInterface $em,
+        protected PermissionManager $permissionManager,
+    )    {
         parent::__construct($em);
     }
 
@@ -263,6 +271,82 @@ class SourceInstanceController extends ApplicationControllerBase
         }
         $layerset = $assignment->getLayerset();
         return $this->toggleEnabledCommon($request, $layerset, $assignment);
+    }
+
+    #[Route('/application/layerset/{layersetId}/instance/{instanceId}/security', name: 'mapbender_manager_instance_security', requirements: ['layersetId' => '\d+', 'instanceId' => '\d+'], methods: ['GET', 'POST'])]
+    public function securitySourceInstance(Request $request, int $layersetId, int $instanceId)
+    {
+        /** @var ?SourceInstance $instance */
+        $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
+        if (!$instance) {
+            throw $this->createNotFoundException("The source instance with the id \"$instanceId\" does not exist.");
+        }
+
+        if ($instance->getLayerset()->getId() != $layersetId) {
+            throw $this->createNotFoundException("The source instance with the id \"$instanceId\" is not part of the layerset with the id \"$layersetId\".");
+        }
+
+        return $this->security($request, $instance, $layersetId);
+    }
+
+    #[Route('/application/layerset/{layersetId}/sharedinstance/{assignmentId}/security', name: 'mapbender_manager_sharedinstance_security', requirements: ['layersetId' => '\d+', 'assignmentId' => '\d+'], methods: ['GET', 'POST'])]
+    public function securitySharedInstance(Request $request, int $layersetId, int $assignmentId)
+    {
+        /** @var ?ReusableSourceInstanceAssignment $instance */
+        $instance = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);
+        if (!$instance) {
+            throw $this->createNotFoundException("The source instance with the id \"$assignmentId\" does not exist.");
+        }
+
+        return $this->security($request, $instance, $layersetId);
+    }
+
+    private function security(Request $request, SourceInstance|ReusableSourceInstanceAssignment $instance, int $layersetId)
+    {
+        if ($instance->getLayerset()->getId() != $layersetId) {
+            throw $this->createNotFoundException("The source instance with the id \"{$instance->getId()}\" is not part of the layerset with the id \"$layersetId\".");
+        }
+
+        $application = $instance->getLayerset()->getApplication();
+        $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+
+        $form = $this->createForm(FormType::class, null, array(
+            'label' => false,
+        ));
+        $resourceDomain = $this->permissionManager->findResourceDomainFor($instance, throwIfNotFound: true);
+        $form->add('security', PermissionListType::class, [
+            'resource_domain' => $resourceDomain,
+            'resource' => $instance,
+            'entry_options' => [
+                'resource_domain' => $resourceDomain,
+            ],
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->beginTransaction();
+            try {
+                $application->setUpdated(new \DateTime('now'));
+                $this->em->persist($application);
+                if ($form->has('security')) {
+                    $this->permissionManager->savePermissions($instance, $form->get('security')->getData());
+                }
+                $this->em->flush();
+                $this->em->commit();
+                $this->addFlash('success', "Your element's access has been changed.");
+            } catch (\Exception $e) {
+                $this->addFlash('error', "There was an error trying to change your element's access.");
+                $this->em->rollback();
+                $this->em->close();
+            }
+            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                'slug' => $application->getSlug(),
+                '_fragment' => 'tabLayers',
+            ));
+        }
+        return $this->render('@MapbenderManager/Element/security.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
 

@@ -106,6 +106,7 @@ mb:
         max_input_vars_exceeded: 'La configuración setting max_input_vars de PHP es demasiado baja para el número de capas en esta instancia.'
         update_successful: 'Tu instancia ha sido actualizada'
         converted_to_shared: 'La instancia se ha convertido en una instancia libre'
+        security: 'Editar derechos de acceso. Si no hay derechos establecidos (icono gris), todos los que tengan acceso a la aplicación también verán la fuente de datos. Si hay derechos establecidos (icono rojo), solo los roles configurados verán la fuente de datos.'
       template: Plantilla
       application:
         view: Mostrar
