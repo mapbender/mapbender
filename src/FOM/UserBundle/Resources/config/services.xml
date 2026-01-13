@@ -84,6 +84,10 @@
                  class="FOM\UserBundle\Security\Permission\ResourceDomainElement">
             <tag name="fom.security.resource_domain" priority="1" />
         </service>
+        <service id="fom.security.resource_domain.source_instance"
+                 class="FOM\UserBundle\Security\Permission\ResourceDomainSourceInstance">
+            <tag name="fom.security.resource_domain" priority="1" />
+        </service>
         <service id="fom.security.resource_domain.installation"
                  class="FOM\UserBundle\Security\Permission\ResourceDomainInstallation">
             <tag name="fom.security.resource_domain" priority="1" />

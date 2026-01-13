@@ -116,7 +116,8 @@ class PermissionManager extends Voter
         }
 
         if ($throwIfNotFound) {
-            throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
+            $resourceString = (is_string($resource) || $resource instanceof \Stringable) ? $resource : '';
+            throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resourceString' (type " . $resource::class . ")");
         }
         return null;
     }
