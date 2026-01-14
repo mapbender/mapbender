@@ -156,3 +156,4 @@ mb:
             error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
   actions:
     secureelement: 'Öğeye erişimi kısıtla'
+    securesourceinstance: 'Veri kaynağına erişimi kısıtla '

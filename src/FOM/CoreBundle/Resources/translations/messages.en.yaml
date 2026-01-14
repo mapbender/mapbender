@@ -51,3 +51,5 @@ fom:
         manage_permissions_help: "Allows managing permissions for this application (the current page)."
       element:
         view: "View"
+      source_instance:
+        view: "View"

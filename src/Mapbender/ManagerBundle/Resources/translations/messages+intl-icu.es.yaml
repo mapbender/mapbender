@@ -294,3 +294,4 @@ mb:
         importfile: 'Importar archivo'
   actions:
     secureelement: 'Restringir el acceso al elemento'
+    securesourceinstance: 'Restringir el acceso a la fuente de datos'

@@ -215,3 +215,4 @@ mb:
             error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
   actions:
     secureelement: 'Restreindre l''accès à l''élément'
+    securesourceinstance: 'Restreindre l''accès à la source de données'

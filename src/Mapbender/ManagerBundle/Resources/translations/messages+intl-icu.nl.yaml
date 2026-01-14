@@ -215,3 +215,4 @@ mb:
             error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
   actions:
     secureelement: 'Toegang tot het element beperken'
+    securesourceinstance: 'Toegang tot de gegevensbron beperken'

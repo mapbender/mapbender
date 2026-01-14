@@ -49,4 +49,6 @@ fom:
         manage_permissions_help: "Permet de gérer les permissions pour cette application (la page actuelle)."
       element:
         view: "Voir"
+      source_instance:
+        view: "Voir"
 

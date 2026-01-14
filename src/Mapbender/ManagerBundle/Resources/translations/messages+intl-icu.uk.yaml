@@ -271,3 +271,4 @@ mb:
             error: 'Можна вибрати лише файли зображень із %screenshotHeight% х %screenshotWidth% пікселів або більше. Завантажене Вами зображення відповідає розміру %uploadWidth% х %uploadHeighth%.'
   actions:
     secureelement: 'Обмежити доступ до цього елементу'
+    securesourceinstance: 'Обмежити доступ до джерела даних'
