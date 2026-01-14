@@ -12,6 +12,7 @@ use FOM\UserBundle\Entity\User;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -62,6 +63,20 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
             case 'csrf':
                 $generatedToken = $this->csrfTokenManager->getToken('view_manager');
                 return new Response($generatedToken->getValue());
+            case 'getView':
+                $viewId = $request->query->get('viewId');
+                $config = $element->getConfiguration();
+                $records = $this->loadListing($element->getApplication(), $config, $viewId);
+                $response = [];
+                if (!empty($records) && count($records) === 1) {
+                    $record = $records[0];
+                    $response = [
+                        'viewParams' => $record->getViewParams(),
+                        'layersets' => $record->getLayersetStates(),
+                        'sources' => $record->getSourceStates(),
+                    ];
+                }
+                return new JsonResponse($response);
         }
     }
 
@@ -87,14 +102,17 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     /**
      * @param Entity\Application $application
      * @param array $config
+     * @param int|null $viewId
      * @return ViewManagerState[]
      */
-    protected function loadListing(Entity\Application $application, array $config)
+    protected function loadListing(Entity\Application $application, array $config, $viewId = null)
     {
         $showPublic = !!$config['publicEntries'];
         $showPrivate = !!$config['privateEntries'] && !$this->isCurrentUserAnonymous();
         $criteria = Criteria::create()->where(Criteria::expr()->eq('applicationSlug', $application->getSlug()));
-
+        if (!empty($viewId)) {
+            $criteria->andWhere(Criteria::expr()->eq('id', $viewId));
+        }
         if ($showPublic && !$showPrivate) {
             $criteria->andWhere(Criteria::expr()->isNull('userId'));
         } else {

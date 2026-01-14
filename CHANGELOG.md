@@ -1,3 +1,7 @@
+## v4.2.5
+Other:
+* [ViewManager] Load Views on demand with Ajax
+
 ## v4.2.4
 Bugfixes:
 * [ViewManager] Fix invalid csrf token in production mode ([#PR1798](https://github.com/mapbender/mapbender/pull/1798)) 

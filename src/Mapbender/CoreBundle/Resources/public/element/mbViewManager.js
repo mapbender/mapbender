@@ -110,12 +110,16 @@
             });
             this.element.on('click', '.-fn-apply', function(evt) {
                 evt.preventDefault();
-                var settings = self._extractLinkSettings(this);
-                self._apply(settings);
-                var $marker = $('.recall-marker', $(this).closest('tr'));
-                $('.recall-marker', self.element).not($marker).css({opacity: ''});
-                $marker.css({opacity: '1'});
-                $(this).closest('tr').find('.-js-loadingspinner i').addClass('opacity-0');
+                const $tr = $(evt.target).closest('tr');
+                const viewId = $tr.attr('data-id');
+                $.ajax([[self.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then(function(settings) {
+                    settings.viewParams = self.mbMap.getModel().decodeViewParams(settings.viewParams);
+                    self._apply(settings);
+                    var $marker = $('.recall-marker', $tr);
+                    $('.recall-marker', self.element).not($marker).css({opacity: ''});
+                    $marker.css({opacity: '1'});
+                    $tr.find('.-js-loadingspinner i').addClass('opacity-0');
+                });
             });
             this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
@@ -149,7 +153,6 @@
                     const viewid = params.hasOwnProperty('viewid') ? params.viewid : false;
                     let loadViewButton = false;
                     $('a.-fn-apply', $content).each(function() {
-                        self._updateLinkUrl(this);
                         if (parseInt(viewid) === parseInt($(this).closest('tr').attr('data-id'))) {
                             loadViewButton = $(this);
                         }
@@ -160,16 +163,9 @@
                         loadViewButton.trigger('click');
                     }
                 }, function() {
-                    $loadingPlaceholder.hide()
+                    $loadingPlaceholder.hide();
                 })
             ;
-        },
-        _updateLinkUrl: function(link) {
-            var settings = this._extractLinkSettings(link);
-            var params = this.mbMap.getModel().encodeSettingsDiff(settings);
-            var hash = this.mbMap.getModel().encodeViewParams(settings.viewParams);
-            var url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/?\?$/, ''), hash].join('#');
-            $(link).attr('href', url);
         },
         _replace: function($row, $form, id) {
             if (!id) {
@@ -185,9 +181,6 @@
                 data: data
             }).then(function(response) {
                 var newRow = $.parseHTML(response);
-                $('a.-fn-apply', $(newRow)).each(function() {
-                    self._updateLinkUrl(this);
-                });
                 $row.replaceWith(newRow);
                 self._flash($(newRow), '#88ff88');
             });
@@ -215,9 +208,6 @@
                 data: data
             }).then(function(response) {
                 var newRow = $.parseHTML(response);
-                $('a.-fn-apply', $(newRow)).each(function() {
-                    self._updateLinkUrl(this);
-                });
                 var insertAfter = !data.savePublic && $('tr[data-visibility-group="public"]', $tbody).get(-1);
                 if (insertAfter) {
                     $(insertAfter).after(newRow);
@@ -395,25 +385,6 @@
             var $plch = $rows.filter('.placeholder-row');
             var $dataRows = $rows.not($plch);
             $plch.toggleClass('hidden', !!$dataRows.length);
-        },
-        /**
-         * @param {Element} node
-         * @return {}
-         */
-        _extractLinkSettings: function(node) {
-            var raw = JSON.parse($(node).attr('data-diff'));
-            return this._normalizeSettingsDiff(this._decodeLinkSettingsDiff(raw));
-        },
-        /**
-         * @param {Object} raw
-         * @return {mmMapSettingsDiff}
-         */
-        _decodeLinkSettingsDiff: function(raw) {
-            return {
-                viewParams: this.mbMap.getModel().decodeViewParams(raw.viewParams),
-                sources: raw.sources || [],
-                layersets: raw.layersets || []
-            };
         },
         /**
          * @param {mmMapSettingsDiff} diff
