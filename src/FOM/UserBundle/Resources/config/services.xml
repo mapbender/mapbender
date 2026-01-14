@@ -27,6 +27,7 @@
         <parameter key="fom.user_entity">null</parameter>
         <parameter key="fom.security.voter.yaml_application.class">FOM\UserBundle\Security\Permission\YamlApplicationVoter</parameter>
         <parameter key="fom.security.voter.yaml_application_element.class">FOM\UserBundle\Security\Permission\YamlApplicationElementVoter</parameter>
+        <parameter key="fom.security.voter.yaml_application_source_instance.class">FOM\UserBundle\Security\Permission\YamlApplicationSourceInstanceVoter</parameter>
     </parameters>
     <services>
         <service id="fom.user_helper.service" class="%fom.user_helper.service.class%">
@@ -130,6 +131,9 @@
             <tag name="security.voter" priority="255" />
         </service>
         <service id="fom.security.voter.yaml_application_element" class="%fom.security.voter.yaml_application_element.class%">
+            <tag name="security.voter" />
+        </service>
+        <service id="fom.security.voter.yaml_application_source_instance" class="%fom.security.voter.yaml_application_source_instance.class%">
             <tag name="security.voter" />
         </service>
 

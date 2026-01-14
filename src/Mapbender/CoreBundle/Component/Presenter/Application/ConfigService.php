@@ -112,7 +112,7 @@ class ConfigService
                 'instances' => $this->getSourceInstanceConfigs($layerSet),
             );
         }
-        return array_filter($configs, fn($config) => !empty($config['instances']));
+        return array_values(array_filter($configs, fn($config) => !empty($config['instances'])));
     }
 
     /**
@@ -163,14 +163,6 @@ class ConfigService
         return $elementConfig;
     }
 
-    protected function isSourceInstanceViewGranted(SourceInstance|ReusableSourceInstanceAssignment $instance): bool
-    {
-        // if no permissions are defined for the instance, everyone with access to the application can access the source
-        if (!$this->permissionManager->hasPermissionsDefined($instance)) return true;
-
-        return $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $instance);
-    }
-
     /**
      * Extracts active and source instances from given Layerset entity where the current used has permission to view.
      * @return SourceInstanceAssignment[]
@@ -181,7 +173,10 @@ class ConfigService
         $active = [];
 
         foreach ($entity->getCombinedInstanceAssignments() as $assignment) {
-            if (($isYamlApp || $assignment->getEnabled()) && $this->isSourceInstanceViewGranted($assignment)) {
+            if (
+                ($isYamlApp || $assignment->getEnabled()) &&
+                $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $assignment)
+            ) {
                 $active[] = $assignment;
             }
         }

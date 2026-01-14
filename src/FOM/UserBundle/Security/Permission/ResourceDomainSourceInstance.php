@@ -4,8 +4,10 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\Permission;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ResourceDomainSourceInstance extends AbstractResourceDomain
 {
@@ -29,6 +31,7 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
     public function supports(mixed $resource, ?string $action = null): bool
     {
         return ($resource instanceof SourceInstance || $resource instanceof ReusableSourceInstanceAssignment)
+            && $resource->getLayerset()?->getApplication() === Application::SOURCE_DB
             && ($action === null || in_array($action, $this->getActions()));
     }
 
@@ -75,6 +78,13 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
             $resource instanceof SourceInstance => $permission->setSourceInstance($resource),
             $resource instanceof ReusableSourceInstanceAssignment => $permission->setSharedInstanceAssignment($resource),
         };
+    }
+
+    public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
+    {
+        // if no permission is defined for an element, everyone with access to the application can access the source instance
+        if (!$manager->hasPermissionsDefined($resource)) return true;
+        return null;
     }
 
     function getTranslationPrefix(): string
