@@ -63,6 +63,7 @@
             <argument type="collection" />
             <argument type="service" id="fom.security.subject_domain.public" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="form.factory" />
         </service>
 
         <service id="FOM\UserBundle\Security\Permission\PermissionManager" alias="fom.security.permission_manager" />

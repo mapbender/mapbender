@@ -8,6 +8,10 @@ use Doctrine\Persistence\Proxy;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Form\Type\PermissionListType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,6 +32,7 @@ class PermissionManager extends Voter
         private array                  $subjectDomains,
         private ?SubjectDomainPublic   $publicAccessDomain,
         private EntityManagerInterface $em,
+        private FormFactory            $formFactory,
     )
     {
     }
@@ -317,6 +322,35 @@ class PermissionManager extends Voter
         }
         $this->em->flush();
     }
+
+    /**
+     * Creates a new symfony form for editing permissions for a given resource
+     * to extend existing forms @see self::addFormType()
+     */
+    public function createPermissionForm(mixed $resource, array $options = []): FormInterface
+    {
+        $form = $this->formFactory->create(FormType::class, null, array(
+            'label' => false,
+        ));
+        $this->addFormType($form, $resource, $options);
+        return $form;
+    }
+
+    /**
+     * Adds a new form child to an existing Symfony form for editing permissions for a given resource
+     */
+    public function addFormType(FormInterface $form, mixed $resource, array $options = []): void
+    {
+        $resourceDomain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
+        $form->add('security', PermissionListType::class, array_merge_recursive([
+            'resource_domain' => $resourceDomain,
+            'resource' => $resource,
+            'entry_options' => [
+                'resource_domain' => $resourceDomain,
+            ],
+        ], $options));
+    }
+
 
     private function isEntity(string|object $class): bool
     {

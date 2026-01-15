@@ -493,15 +493,7 @@ class ApplicationController extends ApplicationControllerBase
     {
         $form = $this->createForm(ApplicationType::class, $application);
         if ($this->allowPermissionEditing($application)) {
-            $resourceDomain = $this->permissionManager->findResourceDomainFor($application, throwIfNotFound: true);
-            $form->add('security', PermissionListType::class, [
-                'resource_domain' => $resourceDomain,
-                'resource' => $application,
-                'entry_options' => [
-                    'resource_domain' => $resourceDomain,
-                ],
-                'show_public_access' => true,
-            ]);
+            $this->permissionManager->addFormType($form, $application, ['show_public_access' => true]);
         }
         return $form;
     }

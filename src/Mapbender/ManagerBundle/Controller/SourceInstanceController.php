@@ -282,10 +282,6 @@ class SourceInstanceController extends ApplicationControllerBase
             throw $this->createNotFoundException("The source instance with the id \"$instanceId\" does not exist.");
         }
 
-        if ($instance->getLayerset()->getId() != $layersetId) {
-            throw $this->createNotFoundException("The source instance with the id \"$instanceId\" is not part of the layerset with the id \"$layersetId\".");
-        }
-
         return $this->security($request, $instance, $layersetId);
     }
 
@@ -295,7 +291,7 @@ class SourceInstanceController extends ApplicationControllerBase
         /** @var ?ReusableSourceInstanceAssignment $instance */
         $instance = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);
         if (!$instance) {
-            throw $this->createNotFoundException("The source instance with the id \"$assignmentId\" does not exist.");
+            throw $this->createNotFoundException("The shared instance with the id \"$assignmentId\" does not exist.");
         }
 
         return $this->security($request, $instance, $layersetId);
@@ -310,18 +306,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $application = $instance->getLayerset()->getApplication();
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
-        $form = $this->createForm(FormType::class, null, array(
-            'label' => false,
-        ));
-        $resourceDomain = $this->permissionManager->findResourceDomainFor($instance, throwIfNotFound: true);
-        $form->add('security', PermissionListType::class, [
-            'resource_domain' => $resourceDomain,
-            'resource' => $instance,
-            'entry_options' => [
-                'resource_domain' => $resourceDomain,
-            ],
-        ]);
-
+        $form = $this->permissionManager->createPermissionForm($instance);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->beginTransaction();
@@ -333,9 +318,9 @@ class SourceInstanceController extends ApplicationControllerBase
                 }
                 $this->em->flush();
                 $this->em->commit();
-                $this->addFlash('success', "Your element's access has been changed.");
+                $this->addFlash('success', "Your source instance's access has been changed.");
             } catch (\Exception $e) {
-                $this->addFlash('error', "There was an error trying to change your element's access.");
+                $this->addFlash('error', "There was an error trying to change your source instance's access.");
                 $this->em->rollback();
                 $this->em->close();
             }
@@ -344,7 +329,7 @@ class SourceInstanceController extends ApplicationControllerBase
                 '_fragment' => 'tabLayers',
             ));
         }
-        return $this->render('@MapbenderManager/Element/security.html.twig', array(
+        return $this->render('@MapbenderManager/fragments/security.html.twig', array(
             'form' => $form->createView(),
         ));
     }

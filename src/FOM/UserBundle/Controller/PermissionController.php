@@ -35,18 +35,8 @@ class PermissionController extends AbstractController
             throw $this->createNotFoundException("Invalid category $category");
         }
 
-        $form = $this->createForm(FormType::class, null, array(
-            'label' => false,
-        ));
-
-        $resourceDomain = $this->permissionManager->findResourceDomainFor(null, throwIfNotFound: true);
-        $form->add('security', PermissionListType::class, [
-            'resource_domain' => $resourceDomain,
-            'action_filter' => $actions,
-            'entry_options' => [
-                'action_filter' => $actions,
-                'resource_domain' => $resourceDomain,
-            ],
+        $form = $this->permissionManager->createPermissionForm(null, [
+            'entry_options' => ['action_filter' => $actions],
             'show_public_access' => true,
         ]);
 

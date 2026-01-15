@@ -46,23 +46,28 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
         return parent::matchesPermission($permission, $action, $resource)
             && (
                 (
-                    $permission->getSourceInstance()?->getId() === $resource->getId() &&
-                    $resource instanceof SourceInstance
+                    $resource instanceof SourceInstance &&
+                    $permission->getSourceInstance()?->getId() === $resource->getId()
                 ) || (
-                    $permission->getSharedInstanceAssignment()?->getId() === $resource->getId() &&
-                    $resource instanceof ReusableSourceInstanceAssignment
+                    $resource instanceof ReusableSourceInstanceAssignment &&
+                    $permission->getSharedInstanceAssignment()?->getId() === $resource->getId()
                 )
             );
     }
 
     public function buildWhereClause(QueryBuilder $q, mixed $resource): void
     {
-        match (true) {
-            $resource instanceof SourceInstance => $q->orWhere("(p.sourceInstance = :sourceInstance AND p.resourceDomain = '" . self::SLUG . "')")
-                ->setParameter('sourceInstance', $resource),
-            $resource instanceof ReusableSourceInstanceAssignment => $q->orWhere("(p.sharedInstanceAssignment = :sharedInstanceAssignment AND p.resourceDomain = '" . self::SLUG . "')")
-                ->setParameter('sharedInstanceAssignment', $resource),
-        };
+        if ($resource instanceof SourceInstance) {
+            $q->orWhere("(p.sourceInstance = :sourceInstance AND p.resourceDomain = '" . self::SLUG . "')")
+                ->setParameter('sourceInstance', $resource)
+            ;
+        }
+
+        if ($resource instanceof ReusableSourceInstanceAssignment) {
+            $q->orWhere("(p.sharedInstanceAssignment = :sharedInstanceAssignment AND p.resourceDomain = '" . self::SLUG . "')")
+                ->setParameter('sharedInstanceAssignment', $resource)
+            ;
+        }
     }
 
     public function getCssClassForAction(string $action): string
@@ -74,6 +79,7 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
     {
         /** @var SourceInstance|ReusableSourceInstanceAssignment $resource */
         parent::populatePermission($permission, $resource);
+
         match (true) {
             $resource instanceof SourceInstance => $permission->setSourceInstance($resource),
             $resource instanceof ReusableSourceInstanceAssignment => $permission->setSharedInstanceAssignment($resource),
@@ -82,7 +88,7 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
 
     public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
     {
-        // if no permission is defined for an element, everyone with access to the application can access the source instance
+        // if no permission is defined for a source instance or assignment, everyone with access to the application can access the source instance
         if (!$manager->hasPermissionsDefined($resource)) return true;
         return null;
     }
