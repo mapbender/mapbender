@@ -54,7 +54,7 @@ mb:
           confirm: null
         no_instance_added: 'Örnek oluşturlamadı'
         no_layer_added: 'Katman eklenmedi'
-        security: 'Erişim haklarını düzenle. Eğer hiçbir hak belirlenmemişse (gri simge), uygulamaya erişimi olan herkes veri kaynağını da görebilir. Eğer haklar belirlenmişse (kırmızı simge), yalnızca yapılandırılmış roller veri kaynağını görebilir.'
+        security: 'Erişim haklarını düzenleyin. Herhangi bir hak ayarlanmamışsa (gri simge), uygulamaya erişimi olan herkes veri kaynağını görebilir. Haklar ayarlanmışsa (kırmızı simge), yalnızca yapılandırılmış roller veri kaynağını görebilir.'
       template: 'Şablon(Kalıp)'
       application:
         view: Görünüm

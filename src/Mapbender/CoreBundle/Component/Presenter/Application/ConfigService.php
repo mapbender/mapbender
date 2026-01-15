@@ -164,7 +164,7 @@ class ConfigService
     }
 
     /**
-     * Extracts active and source instances from given Layerset entity where the current used has permission to view.
+     * Extracts active and source instances from given Layerset entity where the current user has permission to view.
      * @return SourceInstanceAssignment[]
      */
     protected function filterActiveSourceInstanceAssignments(Layerset $entity): array
