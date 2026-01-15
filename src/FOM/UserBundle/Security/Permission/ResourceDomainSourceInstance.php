@@ -31,7 +31,7 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
     public function supports(mixed $resource, ?string $action = null): bool
     {
         return ($resource instanceof SourceInstance || $resource instanceof ReusableSourceInstanceAssignment)
-            && $resource->getLayerset()?->getApplication() === Application::SOURCE_DB
+            && $resource->getLayerset()?->getApplication()?->getSource() === Application::SOURCE_DB
             && ($action === null || in_array($action, $this->getActions()));
     }
 
