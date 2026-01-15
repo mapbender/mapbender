@@ -616,6 +616,7 @@ mb:
         filetype: 'Unsupported file type:'
         gml: 'GML format could not be identified!'
         projection: 'Projection could not be identified'
+        nogeometry: 'The uploaded file does not contain valid geometries.'
       admin:
         maxFileSize: 'Max. filesize (MB)'
         helpLabel: 'Help text'

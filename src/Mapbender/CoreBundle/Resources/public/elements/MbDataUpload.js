@@ -132,6 +132,11 @@
                             padding: [75, 75, 75, 75],
                         });
 
+                        if (!extent || extent.some(n => !Number.isFinite(n))) {
+                            Mapbender.info(Mapbender.trans('mb.core.dataupload.error.nogeometry'));
+                            return;
+                        }
+
                         self.renderTable(file, uploadId);
                     } catch (error) {
                         Mapbender.error(error.message);
@@ -189,19 +194,19 @@
             if (formatInfo) {
                 var projection;
                 var parser = formatInfo.parser;
-                
+
                 if (parser instanceof ol.format.GeoJSON) {
                     projection = this.findGeoJsonProjection(result);
                 } else if (parser instanceof ol.format.KML || parser instanceof ol.format.GPX) {
                     projection = 'EPSG:4326';
-                } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 || 
+                } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 ||
                            parser instanceof ol.format.GML3 || parser instanceof ol.format.GML32) {
                     parser = Mapbender.FileUtil.findGmlFormat(result);  // GML requires content inspection
                     projection = this.findProjection();
                 } else {
                     projection = this.findProjection();
                 }
-                
+
                 return [parser, projection];
             }
 

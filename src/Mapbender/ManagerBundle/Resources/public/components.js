@@ -66,46 +66,46 @@ $(function() {
         }
         var items = $(">li, >tr, >tbody>tr", filterScope);
 
-        if(val.length > 0){
-            $.each(items, function() {
-                var $item = $(this);
-                if (filterScope.hasClass('listFilterBoxes')) {
-                    var containsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                    $item.toggle(containsInput);
-                } else {
-                    var $allItemRows = $item.find('tr');
-                    var $filterItemRows = $allItemRows.not('.doNotFilter');
-                    if ($filterItemRows.length > 0) {
-                        let itemContainsInput = -1;
-                        $.each($filterItemRows, function () {
-                            var $row = $(this);
-                            var $filterText = $row.find('td').not('.doNotFilter');
-                            var rowContainsInput = $filterText.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                            if (rowContainsInput) {
-                                $row.find('td').addClass('filter-matches');
-                                itemContainsInput = 1;
-                            } else {
-                                $row.find('td').removeClass('filter-matches');
-                            }
-                        });
-                        if (itemContainsInput === 1) {
-                            $item.show();
-                        } else {
-                            $item.hide();
-                        }
-                    } else if ($allItemRows.length > 0) {
-                        $item.hide();
-                    } else {
-                        //
-                        var itemContainsInput = $item.text().toUpperCase().indexOf(val.toUpperCase()) !== -1;
-                        $item.toggle(itemContainsInput);
-                    }
-                }
-            });
-        } else {
+        if (val.length <= 0) {
             items.show();
             items.find('tr').find('td').removeClass('filter-matches');
+            return;
         }
+
+        // check if a jQuery item contains the input text, ignoring case and soft hyphens
+        const containsInput = ($item, text) => $item.text().replace('­', '').toUpperCase().indexOf(text.toUpperCase()) !== -1;
+
+        $.each(items, function () {
+            var $item = $(this);
+            if (filterScope.hasClass('listFilterBoxes')) {
+                $item.toggle(containsInput($item, val));
+            } else {
+                var $allItemRows = $item.find('tr');
+                var $filterItemRows = $allItemRows.not('.doNotFilter');
+                if ($filterItemRows.length > 0) {
+                    let itemContainsInput = -1;
+                    $.each($filterItemRows, function () {
+                        var $row = $(this);
+                        var $filterText = $row.find('td').not('.doNotFilter');
+                        if (containsInput($filterText, val)) {
+                            $row.find('td').addClass('filter-matches');
+                            itemContainsInput = 1;
+                        } else {
+                            $row.find('td').removeClass('filter-matches');
+                        }
+                    });
+                    if (itemContainsInput === 1) {
+                        $item.show();
+                    } else {
+                        $item.hide();
+                    }
+                } else if ($allItemRows.length > 0) {
+                    $item.hide();
+                } else {
+                    $item.toggle(containsInput($item, val));
+                }
+            }
+        });
     });
 
     var flashboxes = $(".flashBox").addClass("kill");

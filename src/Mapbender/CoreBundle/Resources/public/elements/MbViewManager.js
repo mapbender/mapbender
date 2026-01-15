@@ -28,7 +28,7 @@
                 e.preventDefault();
                 this._saveNew();
             });
-            this.csrfToken = $form.attr('data-token');
+            this._setupCsrf();
         }
 
         _setup(mbMap) {
@@ -76,12 +76,16 @@
             });
             this.$element.on('click', '.-fn-apply', (evt) => {
                 evt.preventDefault();
-                const settings = this._extractLinkSettings(evt.currentTarget);
-                this._apply(settings);
-                const $marker = $('.recall-marker', $(evt.currentTarget).closest('tr'));
-                $('.recall-marker', this.$element).not($marker).css({opacity: ''});
-                $marker.css({opacity: '1'});
-                $(evt.currentTarget).closest('tr').find('.-js-loadingspinner i').addClass('opacity-0');
+                const $tr = $(evt.target).closest('tr');
+                const viewId = $tr.attr('data-id');
+                $.ajax([[this.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then((settings) => {
+                    settings.viewParams = this.mbMap.getModel().decodeViewParams(settings.viewParams);
+                    this._apply(settings);
+                    const $marker = $('.recall-marker', $tr);
+                    $('.recall-marker', this.$element).not($marker).css({opacity: ''});
+                    $marker.css({opacity: '1'});
+                    $tr.find('.-js-loadingspinner i').addClass('opacity-0');
+                });
             });
             this.$element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
@@ -115,7 +119,6 @@
                     const viewid = params.hasOwnProperty('viewid') ? params.viewid : false;
                     let loadViewButton = false;
                     $('a.-fn-apply', $content).each((i, el) => {
-                        this._updateLinkUrl(el);
                         if (parseInt(viewid) === parseInt($(el).closest('tr').attr('data-id'))) {
                             loadViewButton = $(el);
                         }
@@ -128,14 +131,6 @@
                 }, () => {
                     $loadingPlaceholder.hide();
                 });
-        }
-
-        _updateLinkUrl(link) {
-            const settings = this._extractLinkSettings(link);
-            const params = this.mbMap.getModel().encodeSettingsDiff(settings);
-            const hash = this.mbMap.getModel().encodeViewParams(settings.viewParams);
-            const url = [Mapbender.Util.addUrlParams(this.baseUrl, params).replace(/\/??\?$/, ''), hash].join('#');
-            $(link).attr('href', url);
         }
 
         _replace($row, $form, id) {
@@ -151,9 +146,6 @@
                 data: data
             }).then((response) => {
                 const newRow = $.parseHTML(response);
-                $('a.-fn-apply', $(newRow)).each((i, el) => {
-                    this._updateLinkUrl(el);
-                });
                 $row.replaceWith(newRow);
                 this._flash($(newRow), '#88ff88');
             });
@@ -181,9 +173,6 @@
                 data: data
             }).then((response) => {
                 const newRow = $.parseHTML(response);
-                $('a.-fn-apply', $(newRow)).each((i, el) => {
-                    this._updateLinkUrl(el);
-                });
                 const insertAfter = !data.savePublic && $('tr[data-visibility-group="public"]', $tbody).get(-1);
                 if (insertAfter) {
                     $(insertAfter).after(newRow);
@@ -365,19 +354,6 @@
             $plch.toggleClass('hidden', !!$dataRows.length);
         }
 
-        _extractLinkSettings(node) {
-            const raw = JSON.parse($(node).attr('data-diff'));
-            return this._normalizeSettingsDiff(this._decodeLinkSettingsDiff(raw));
-        }
-
-        _decodeLinkSettingsDiff(raw) {
-            return {
-                viewParams: this.mbMap.getModel().decodeViewParams(raw.viewParams),
-                sources: raw.sources || [],
-                layersets: raw.layersets || []
-            };
-        }
-
         _normalizeSettingsDiff(diff) {
             diff.sources = diff.sources.map(function(entry) {
                 if (typeof (entry.opacity) === 'string') {
@@ -390,7 +366,9 @@
 
         _apply(settings) {
             const layertreeElement = $('.mb-element-layertree');
-            layertreeElement.find('ul.layers:first').empty();
+            if (layertreeElement.length > 0) {
+                layertreeElement.find('ul.layers:first').empty();
+            }
             this.mbMap.getModel().sourceTree = [];
             this.mbMap.map.olMap.getAllLayers().forEach(layer => {
                 this.mbMap.map.olMap.removeLayer(layer);
@@ -415,7 +393,9 @@
 
             this.mbMap.getModel().initializeSourceLayers(sources);
 
-            layertreeElement.data('MbLayertree')._createTree();
+            if (layertreeElement.length > 0) {
+                layertreeElement.data('MbLayertree')._createTree();
+            }
             wmsloaderSources.forEach(source => {
                 this.mbMap.getModel().addSourceFromConfig(source);
             });
@@ -441,6 +421,17 @@
             window.localStorage.removeItem('viewManagerSettings');
             const settings = JSON.stringify(this._getCommonSaveData());
             window.localStorage.setItem('viewManagerSettings', settings);
+        }
+
+        _setupCsrf() {
+            $.ajax({
+                url: this.elementUrl + '/csrf',
+                method: 'POST'
+            }).fail(function (err) {
+                Mapbender.error(Mapbender.trans(err.responseText));
+            }).then(function (response) {
+                this.csrfToken = response;
+            }.bind(this));
         }
     }
 

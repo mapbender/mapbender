@@ -10,8 +10,19 @@
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 
-## next bugfix release
+## v4.2.5
+Other:
+* [ViewManager] Load Views on demand with Ajax
+
+## v4.2.4
+Bugfixes:
+* [ViewManager] Fix invalid csrf token in production mode ([#PR1798](https://github.com/mapbender/mapbender/pull/1798)) 
 * [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
+* [DataUpload] Show message when uploading file without valid geometries ([#PR1797](https://github.com/mapbender/mapbender/pull/1797)) 
+* [Manager] Fix search did not work for elements with soft hyphens ([#PR1803](https://github.com/mapbender/mapbender/pull/1803)) 
+* [Routing] Restrict sorting of intermediate points to y axis ([#PR1802](https://github.com/mapbender/mapbender/pull/1802)) 
+* [LayerTree] Fix layerfilter highlighting after toggling layers via checkbox ([#PR1804](https://github.com/mapbender/mapbender/pull/1804)) 
+
 
 ## v4.2.3
 Bugfixes:

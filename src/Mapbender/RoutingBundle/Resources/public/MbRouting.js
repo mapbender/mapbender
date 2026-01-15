@@ -143,6 +143,7 @@
             }
 
             $('.mb-routing-location-points', this.$element).sortable({
+                axis: 'y',
                 start: (e, ui) => {
                     $(e.target).attr('data-previndex', ui.item.index());
                 },
