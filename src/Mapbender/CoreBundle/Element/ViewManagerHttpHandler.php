@@ -9,9 +9,13 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Security\Permission\ResourceDomainSourceInstance;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Entity;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,20 +31,14 @@ use Twig;
 
 class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 {
-    /** @var Twig\Environment */
-    protected $templating;
-    /** @var EntityManagerInterface */
-    protected $em;
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-    protected CsrfTokenManagerInterface $csrfTokenManager;
-
-    public function __construct(Twig\Environment $templating, EntityManagerInterface $em, TokenStorageInterface $tokenStorage, CsrfTokenManagerInterface  $csrfTokenManager)
+    public function __construct(
+        protected Twig\Environment          $templating,
+        protected EntityManagerInterface    $em,
+        protected TokenStorageInterface     $tokenStorage,
+        protected CsrfTokenManagerInterface $csrfTokenManager,
+        protected Security                  $security,
+    )
     {
-        $this->templating = $templating;
-        $this->em = $em;
-        $this->tokenStorage = $tokenStorage;
-        $this->csrfTokenManager = $csrfTokenManager;
     }
 
     /**
@@ -70,10 +68,11 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
                 $response = [];
                 if (!empty($records) && count($records) === 1) {
                     $record = $records[0];
+                    $idMap = $this->getInstanceIdToSourceInstanceOrAssigmnentMap($element->getApplication());
                     $response = [
                         'viewParams' => $record->getViewParams(),
-                        'layersets' => $record->getLayersetStates(),
-                        'sources' => $record->getSourceStates(),
+                        'layersets' => $this->filterPermittedLayersets($record->getLayersetStates(), $idMap),
+                        'sources' => $this->filterPermittedSourceStates($record->getSourceStates(), $idMap),
                     ];
                 }
                 return new JsonResponse($response);
@@ -270,9 +269,9 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $saveDefault = $isAnon ? $config['allowAnonymousSave'] : true;
         return array(
             'savePublic' => $config['publicEntries'] && ($isAdmin || ($saveDefault && \in_array($config['publicEntries'], array(
-                ViewManager::ACCESS_READWRITE,
-                ViewManager::ACCESS_READWRITEDELETE,
-            )))),
+                            ViewManager::ACCESS_READWRITE,
+                            ViewManager::ACCESS_READWRITEDELETE,
+                        )))),
             'savePrivate' => !$isAnon && $config['privateEntries'],
             'deletePublic' => $isAdmin || !$isAnon && ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
         );
@@ -297,4 +296,44 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     {
         return '@MapbenderCore/Element/view_manager-listing-row.html.twig';
     }
+
+    /**
+     * @return array<string|int, SourceInstance|Entity\ReusableSourceInstanceAssignment>
+     */
+    protected function getInstanceIdToSourceInstanceOrAssigmnentMap(Application $application): array
+    {
+        $idMap = [];
+        foreach ($application->getSourceInstances(false) as $instance) {
+            $idMap[$instance->getId()] = $instance;
+        }
+        // for shared instances, the actual source instance's id is saved in the viewManagerState, but we need the
+        // assignment to check for access permissions
+        foreach ($application->getSharedInstanceAssignments() as $assignment) {
+            $idMap[$assignment->getInstance()->getId()] = $assignment;
+        }
+        return $idMap;
+    }
+
+    protected function filterPermittedLayersets(array $layersets, array $idMap): array
+    {
+        for ($layersetIndex = 0; $layersetIndex < count($layersets); $layersetIndex++) {
+            $layersets[$layersetIndex]['children'] = array_values(array_filter($layersets[$layersetIndex]['children'], function ($instanceAsArray) use ($idMap) {
+                $instanceOrAssignment = $idMap[$instanceAsArray['id']] ?? null;
+                return $instanceOrAssignment !== null && $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $instanceOrAssignment);
+            }));
+        }
+
+        // remove layersets that are empty after filtering out those without access
+        $nonEmptyLayersets = array_filter($layersets, fn($layerset) => count($layerset['children']) > 0);
+        return array_values($nonEmptyLayersets);
+    }
+
+    protected function filterPermittedSourceStates(array $sources, array $idMap): array
+    {
+        return array_values(array_filter($sources, function ($instanceAsArray) use ($idMap) {
+            $instanceOrAssignment = $idMap[$instanceAsArray['id']] ?? null;
+            return $instanceOrAssignment !== null && $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $instanceOrAssignment);
+        }));
+    }
+
 }

@@ -365,6 +365,20 @@ class Application implements YamlDefinedPermissionEntity
     }
 
     /**
+     * @return ReusableSourceInstanceAssignment[]
+     */
+    public function getSharedInstanceAssignments(): array
+    {
+        $instances = [];
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getReusableInstanceAssignments() as $instance) {
+                $instances[] = $instance;
+            }
+        }
+        return $instances;
+    }
+
+    /**
      * Read-only informative pseudo-relation
      *
      * @param Source $source to filter by specific Source
