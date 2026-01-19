@@ -272,6 +272,17 @@ class Layerset
     }
 
     /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getAssignedReusableInstanceAssignmentsOf(Source $source)
+    {
+        return $this->getReusableInstanceAssignments()->filter(function($assignment) use ($source) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getInstance()->getSource() === $source;
+        });
+    }
+
+    /**
      * @return string Layerset ID
      */
     public function __toString()

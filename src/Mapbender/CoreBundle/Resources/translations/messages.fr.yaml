@@ -35,6 +35,9 @@ mb:
   states:
     active: actif
     inactive: inactif
+    public: public
+    not_public: 'non public'
+    permissions_defined: 'Des droits d''accès individuels ont été définis pour cette instance'
   core:
     featureinfo:
       error:
