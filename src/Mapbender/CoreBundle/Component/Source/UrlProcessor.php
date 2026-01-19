@@ -7,9 +7,12 @@ namespace Mapbender\CoreBundle\Component\Source;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -17,30 +20,13 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class UrlProcessor
 {
-    /** @var RouterInterface */
-    protected $router;
-    /** @var Signer */
-    protected $signer;
-    /** @var InstanceTunnelService */
-    protected $tunnelService;
-    /** @var string */
-    protected $proxyRouteName;
-
-    /**
-     * @param RouterInterface $router
-     * @param Signer $signer
-     * @param InstanceTunnelService $tunnelService
-     * @param string $proxyRouteName
-     */
-    public function __construct(RouterInterface $router,
-                                Signer $signer,
-                                InstanceTunnelService $tunnelService,
-                                $proxyRouteName = 'owsproxy3_core_owsproxy_entrypoint')
+    public function __construct(
+        protected RouterInterface       $router,
+        protected Signer                $signer,
+        protected InstanceTunnelService $tunnelService,
+        protected RequestStack          $requestStack,
+        protected string                $proxyRouteName = 'owsproxy3_core_owsproxy_entrypoint')
     {
-        $this->router = $router;
-        $this->signer = $signer;
-        $this->tunnelService = $tunnelService;
-        $this->proxyRouteName = $proxyRouteName;
     }
 
     /**
@@ -62,6 +48,30 @@ class UrlProcessor
         return $this->getProxyUrl(array(), RouterInterface::ABSOLUTE_PATH);
     }
 
+    public function proxyUrlForInstance(WmsInstance $sourceInstance, Application $application = null): string
+    {
+        $slug = $application?->getSlug();
+
+        if (!$application && $sourceInstance->getLayerset()) {
+            $slug = $sourceInstance->getLayerset()->getApplication()->getSlug();
+        } elseif (!$application) {
+            // for shared instances, the layerset is not bound to the instance. Try to get slug from request
+            $routeParams = $this->requestStack->getCurrentRequest()->get('_route_params');
+            if (isset($routeParams['slug'])) {
+                $slug = $routeParams['slug'];
+            }
+        }
+
+        if (!$slug) {
+            throw new \Exception("Could not determine application while trying to proxyify instance '".$sourceInstance->getId()."'");
+        }
+
+        return $this->router->generate('owsproxy_sourceinstance', [
+            'instance' => $sourceInstance->getId(),
+            'slug' => $slug,
+        ]);
+    }
+
     /**
      * Modify url to pass over Owsproxy controller action.
      *
@@ -74,21 +84,6 @@ class UrlProcessor
             'url' => $this->signer->signUrl($url),
         );
         return $this->getProxyUrl($params, RouterInterface::ABSOLUTE_PATH);
-    }
-
-    /**
-     * Tunnelify a fully-formed service request url.
-     * This will add non-hidden vendor specifics and potentially other implicit parameters.
-     *
-     * @param SourceInstance $instance
-     * @param string $url with additional GET params (every other part of the url is ignored).
-     *        NOTE: AT least the 'request=...' paramter is required!
-     * @return string
-     * @throws \RuntimeException if
-     */
-    public function tunnelifyUrl(SourceInstance $instance, $url='')
-    {
-        return $this->tunnelService->getEndpoint($instance)->generatePublicUrl($url);
     }
 
     /**

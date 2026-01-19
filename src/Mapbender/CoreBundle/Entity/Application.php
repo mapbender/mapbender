@@ -363,6 +363,17 @@ class Application
         return $instances;
     }
 
+    public function getSourceInstanceById(string|int $instanceId, bool $includeUnowned = false): ?SourceInstance
+    {
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances($includeUnowned) as $instance) {
+                // using type-unsafe comparison, get parameters might be a string in  a yaml application or an id in a db application
+                if ($instance->getId() == $instanceId) return $instance;
+            }
+        }
+        return null;
+    }
+
     /**
      * Read-only informative pseudo-relation
      *

@@ -19,6 +19,11 @@
         <service id="OwsProxy3\CoreBundle\Controller\OwsProxyController" class="OwsProxy3\CoreBundle\Controller\OwsProxyController" public="true">
             <argument type="service" id="owsproxy.http_foundation_client" />
             <argument type="service" id="signer" />
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
+            <argument type="service" id="mapbender.source.instancetunnel.service" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
         </service>
     </services>
 </container>

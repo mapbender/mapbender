@@ -213,6 +213,7 @@
             <argument type="service" id="router" />
             <argument type="service" id="signer" />
             <argument type="service" id="mapbender.source.instancetunnel.service" />
+            <argument type="service" id="request_stack" />
             <argument>%owsproxy.baseroute%</argument>
         </service>
         <service id="mapbender.uploads_manager.service" class="%mapbender.uploads_manager.service.class%">

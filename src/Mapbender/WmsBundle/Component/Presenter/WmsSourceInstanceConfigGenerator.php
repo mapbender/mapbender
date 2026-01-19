@@ -225,7 +225,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             $configuration['options']['tunnel'] = true;
         } else {
             if ($this->useProxy($sourceInstance)) {
-                $configuration['options']['url'] = $this->urlProcessor->proxifyUrl($configuration['options']['url']);
+                $configuration['options']['url'] = $this->urlProcessor->proxyUrlForInstance($sourceInstance);
                 $configuration['children'][0] = $this->proxifyLayerUrls($configuration['children'][0], $sourceInstance);
             } else {
                 // Don't proxify, but do provide signature to allow OpenLayers to bypass CORB
