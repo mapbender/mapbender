@@ -228,7 +228,6 @@ class SourceInstanceController extends ApplicationControllerBase
         $instance->setEnabled(true);
         $assignment->setWeight($instance->getWeight());
         $layerset->getInstances(false)->removeElement($instance);
-        $instance->setLayerset(null);
         $assignment->setLayerset($layerset);
         $layerset->getReusableInstanceAssignments()->add($assignment);
         WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
@@ -237,6 +236,11 @@ class SourceInstanceController extends ApplicationControllerBase
         $layerset->getApplication()->setUpdated(new \DateTime('now'));
         $this->em->persist($layerset->getApplication());
         $this->em->flush();
+
+        $this->permissionManager->movePermissions($instance, $assignment);
+        $instance->setLayerset(null);
+        $this->em->flush();
+
         $this->addFlash('success', $this->trans->trans('mb.manager.admin.instance.converted_to_shared'));
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             'instanceId' => $instance->getId(),

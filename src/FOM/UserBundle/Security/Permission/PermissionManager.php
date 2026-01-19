@@ -302,9 +302,9 @@ class PermissionManager extends Voter
     /**
      * clones all permissions set for the source resource to the target resource
      */
-    public function copyPermissions(mixed $sourceResource, mixed $targetResource): void
+    public function copyPermissions(mixed $sourceResource, mixed $targetResource, bool $allowClassMismatch = false): void
     {
-        if (ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
+        if (!$allowClassMismatch && ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
             throw new \InvalidArgumentException("source and target resource must be of the same type");
         }
         $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
@@ -319,6 +319,24 @@ class PermissionManager extends Voter
             );
             $resourceDomain->populatePermission($newPermission, $targetResource);
             $this->em->persist($newPermission);
+        }
+        $this->em->flush();
+    }
+
+    /**
+     * moves all permissions set for the source resource to the target resource
+     * @param bool $allowClassMismatch use this cautiously, this just calls populatePermission on the target resource's
+     * resource domain, which may not clear existing references
+     */
+    public function movePermissions(mixed $sourceResource, mixed $targetResource, bool $allowClassMismatch = false): void
+    {
+        if (!$allowClassMismatch && ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
+            throw new \InvalidArgumentException("source and target resource must be of the same type");
+        }
+        $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
+        $permissions = $this->findPermissions($resourceDomain, $sourceResource, group: false);
+        foreach ($permissions as $permission) {
+            $resourceDomain->populatePermission($permission, $targetResource);
         }
         $this->em->flush();
     }

@@ -80,10 +80,13 @@ class ResourceDomainSourceInstance extends AbstractResourceDomain
         /** @var SourceInstance|ReusableSourceInstanceAssignment $resource */
         parent::populatePermission($permission, $resource);
 
-        match (true) {
-            $resource instanceof SourceInstance => $permission->setSourceInstance($resource),
-            $resource instanceof ReusableSourceInstanceAssignment => $permission->setSharedInstanceAssignment($resource),
-        };
+        if ($resource instanceof SourceInstance) {
+            $permission->setSourceInstance($resource);
+            $permission->setSharedInstanceAssignment(null);
+        } elseif ($resource instanceof ReusableSourceInstanceAssignment) {
+            $permission->setSharedInstanceAssignment($resource);
+            $permission->setSourceInstance(null);
+        }
     }
 
     public function overrideDecision(mixed $resource, string $action, ?UserInterface $user, PermissionManager $manager): bool|null
