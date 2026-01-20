@@ -221,7 +221,6 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         if ($this->useTunnel($sourceInstance)) {
             $url = $this->urlProcessor->getPublicTunnelBaseUrl($sourceInstance);
             $configuration['options']['url'] = $url;
-            // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
         } else {
             if ($this->useProxy($sourceInstance)) {
@@ -446,31 +445,25 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     public function useTunnel(SourceInstance $sourceInstance): bool
     {
-        if ($sourceInstance->getId()) {
-            /** @var WmsInstance $sourceInstance */
-            $vsHandler = new VendorSpecificHandler();
-            return (!!$sourceInstance->getSource()->getUsername()) || $vsHandler->hasHiddenParams($sourceInstance);
-        } else {
-            // dynamically added (~WmsLoader)
+        if (!$sourceInstance->getId()) {
+            // Cannot use tunnel for dynamically added sources (~WmsLoader)
             return false;
         }
+
+        /** @var WmsInstance $sourceInstance */
+        $vsHandler = new VendorSpecificHandler();
+        return
+            (!!$sourceInstance->getSource()->getUsername()) ||
+            $vsHandler->hasHiddenParams($sourceInstance) ||
+            $sourceInstance->getProxy();
     }
 
     public function useProxy(WmsInstance $sourceInstance): bool
     {
-        if ($this->useTunnel($sourceInstance)) {
-            return false;
-        } else {
-            if ($sourceInstance->isProtectedDynamicWms()) {
-                // WmsLoader special: proxify url with embedded credentials to bypass browser
-                // filtering of basic auth in img tags.
-                // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
-                return true;
-            } else {
-                /** @var WmsInstance $sourceInstance */
-                return $sourceInstance->getProxy();
-            }
-        }
+        // WmsLoader special: proxify url with embedded credentials to bypass browser
+        // filtering of basic auth in img tags.
+        // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
+        return !$this->useTunnel($sourceInstance) && $sourceInstance->isProtectedDynamicWms();
     }
 
     /**
