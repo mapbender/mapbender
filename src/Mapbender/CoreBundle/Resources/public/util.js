@@ -628,31 +628,54 @@ Mapbender.ElementUtil = {
     },
 
     _csrfTokenCache: {},
-    _csrfTokenOngoingCache: {},
+    _requestQueue: [],
+    _requestRunning: false,
 
-    getCsrfToken: async function(element, url) {
+    /**
+     * Get a csrf token from the server for the given element type.
+     * The requests are queued. Requests for the same element type are only made once.
+     * Requests cannot be simultaneous, as we cannot be sure a PHP Session has already been created.
+     * If there is no session yet and there are simultaneous requests, the CSRF tokens will be stored
+     * on the server for independent sessions which results in (randomly) only one of the tokens being valid.
+     */
+    getCsrfToken: async function (element, url) {
         const elementType = Object.getPrototypeOf(element).widgetFullName;
         if (this._csrfTokenCache[elementType]) {
             return this._csrfTokenCache[elementType];
         }
 
-        if (this._csrfTokenOngoingCache[elementType]) {
-            return await this._csrfTokenOngoingCache[elementType];
+        return await new Promise((resolve, reject) => {
+            this._requestQueue.push({resolve, reject, elementType, url});
+            this._tryGetNextToken();
+        });
+    },
+
+    _tryGetNextToken: async function () {
+        if (this._requestQueue.length === 0 || this._requestRunning) {
+            return;
+        }
+
+        let {resolve, reject, elementType, url} = this._requestQueue.shift();
+        // check the cache again, maybe another request already fetched the token
+        if (this._csrfTokenCache[elementType]) {
+            resolve(this._csrfTokenCache[elementType]);
+            this._tryGetNextToken();
+            return;
         }
 
         try {
-            this._csrfTokenOngoingCache[elementType] = fetch(url, {
-                method: 'POST'
-            }).then((response) => response.text());
-
-            const token = await this._csrfTokenOngoingCache[elementType];
+            this._requestRunning = true;
+            const response = await fetch(url, {method: 'POST'})
+            const token = await response.text();
             this._csrfTokenCache[elementType] = token;
-            return token;
-        } catch(err) {
+            resolve(token);
+            this._requestRunning = false;
+            this._tryGetNextToken();
+        } catch (err) {
+            this._requestRunning = false;
             Mapbender.error(Mapbender.trans(err.responseText));
+            reject(null);
             return null;
-        } finally {
-            delete this._csrfTokenOngoingCache[elementType];
         }
     },
 
