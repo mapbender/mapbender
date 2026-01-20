@@ -457,15 +457,8 @@
             let settings = JSON.stringify(this._getCommonSaveData());
             window.localStorage.setItem('viewManagerSettings', settings);
         },
-        _setupCsrf: function () {
-            $.ajax({
-                url: this.elementUrl + '/csrf',
-                method: 'POST'
-            }).fail(function (err) {
-                Mapbender.error(Mapbender.trans(err.responseText));
-            }).then(function (response) {
-                this.csrfToken = response;
-            }.bind(this));
+        _setupCsrf: async function () {
+            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf');
         },
         __dummy__: null
     });

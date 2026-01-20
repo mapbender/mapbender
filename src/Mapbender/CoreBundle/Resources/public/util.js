@@ -625,5 +625,35 @@ Mapbender.ElementUtil = {
             $element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
             $element.closest('.accordion-cell').css('padding-right', '15px');
         }
-    }
+    },
+
+    _csrfTokenCache: {},
+    _csrfTokenOngoingCache: {},
+
+    getCsrfToken: async function(element, url) {
+        const elementType = Object.getPrototypeOf(element).widgetFullName;
+        if (this._csrfTokenCache[elementType]) {
+            return this._csrfTokenCache[elementType];
+        }
+
+        if (this._csrfTokenOngoingCache[elementType]) {
+            return await this._csrfTokenOngoingCache[elementType];
+        }
+
+        try {
+            this._csrfTokenOngoingCache[elementType] = fetch(url, {
+                method: 'POST'
+            }).then((response) => response.text());
+
+            const token = await this._csrfTokenOngoingCache[elementType];
+            this._csrfTokenCache[elementType] = token;
+            return token;
+        } catch(err) {
+            Mapbender.error(Mapbender.trans(err.responseText));
+            return null;
+        } finally {
+            delete this._csrfTokenOngoingCache[elementType];
+        }
+    },
+
 };
