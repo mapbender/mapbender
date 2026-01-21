@@ -654,28 +654,28 @@ Mapbender.ElementUtil = {
         if (this._requestQueue.length === 0 || this._requestRunning) {
             return;
         }
+        this._requestRunning = true;
 
         let {resolve, reject, elementType, url} = this._requestQueue.shift();
-        // check the cache again, maybe another request already fetched the token
+        // check the cache again, maybe another request already fetched the token in the meantime
         if (this._csrfTokenCache[elementType]) {
             resolve(this._csrfTokenCache[elementType]);
+            this._requestRunning = false;
             this._tryGetNextToken();
             return;
         }
 
         try {
-            this._requestRunning = true;
             const response = await fetch(url, {method: 'POST'})
             const token = await response.text();
             this._csrfTokenCache[elementType] = token;
             resolve(token);
-            this._requestRunning = false;
-            this._tryGetNextToken();
         } catch (err) {
-            this._requestRunning = false;
             Mapbender.error(Mapbender.trans(err.responseText));
             reject(null);
-            return null;
+        } finally {
+            this._requestRunning = false;
+            this._tryGetNextToken();
         }
     },
 
