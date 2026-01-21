@@ -108,6 +108,7 @@ mb:
         max_input_vars_exceeded: 'PHP ha impostato max_input_vars troppo basso per il numero di layer in questa istanza.'
         update_successful: 'La tua istanza è stata aggiornata.'
         converted_to_shared: 'L''istanza è stata convertita in istanza condivisa.'
+        security: 'Modifica diritti di accesso. Se non sono impostati diritti (icona grigia), tutti coloro che hanno accesso all''applicazione vedranno anche la fonte di dati. Se sono impostati diritti (icona rossa), solo i ruoli configurati vedranno la fonte di dati.'
       template: Template
       application:
         view: Vedi
@@ -295,3 +296,4 @@ mb:
         importfile: 'Importazione del file'
   actions:
     secureelement: 'Limitare l''accesso all''elemento'
+    securesourceinstance: 'Limitare l''accesso all''origine dati'

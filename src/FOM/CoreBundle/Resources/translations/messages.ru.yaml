@@ -49,4 +49,6 @@ fom:
       manage_permissions_help: "Позволяет управлять разрешениями для этого приложения (текущей страницы)."
     element:
       view: "Просмотреть"
+    source_instance:
+      view: "Просмотреть"
 

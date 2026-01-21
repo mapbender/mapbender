@@ -35,6 +35,9 @@ mb:
   states:
     active: aktif
     inactive: etkisiz
+    public: genel
+    not_public: 'genel değil'
+    permissions_defined: 'Bu örnek için bireysel erişim hakları tanımlanmıştır'
   core:
     featureinfo:
       error:

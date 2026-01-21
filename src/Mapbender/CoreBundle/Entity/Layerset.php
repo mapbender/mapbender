@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -234,13 +235,13 @@ class Layerset
      *
      * @return SourceInstanceAssignment[]|ArrayCollection
      */
-    public function getCombinedInstanceAssignments()
+    public function getCombinedInstanceAssignments(): Collection|array
     {
         $owned = $this->instances->getValues();
         $unowned = $this->getReusableInstanceAssignments()->getValues();
         $combined = new ArrayCollection(array_merge($owned, $unowned));
         return $combined->matching(Criteria::create()->orderBy(array(
-            'weight' => Criteria::ASC
+            'weight' => Order::Ascending
         )));
     }
 
@@ -267,6 +268,17 @@ class Layerset
         return $this->getReusableInstanceAssignments()->map(function($assignment) {
             /** @var ReusableSourceInstanceAssignment $assignment */
             return $assignment->getInstance();
+        });
+    }
+
+    /**
+     * @return ArrayCollection|SourceInstance[]
+     */
+    public function getAssignedReusableInstanceAssignmentsOf(Source $source)
+    {
+        return $this->getReusableInstanceAssignments()->filter(function($assignment) use ($source) {
+            /** @var ReusableSourceInstanceAssignment $assignment */
+            return $assignment->getInstance()->getSource() === $source;
         });
     }
 

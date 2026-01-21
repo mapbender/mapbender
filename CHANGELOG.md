@@ -1,14 +1,20 @@
 ## next feature release
-* **BatchPrintClient element**: New batch printing element for creating multiple print frames in a single job with individual settings per frame
-* **FileUtil.js**: New shared utility module for geospatial file handling (KML, GeoJSON, GPX, GML) used by BatchPrintClient and DataUpload elements
-* [Design] Redesign Layertree ([#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774))
-* [Design] Redesign Simple Search ([#PR1767](https://github.com/mapbender/mapbender/pull/1767)) 
-* [Design] Redesign Sketch element ([#PR1768](https://github.com/mapbender/mapbender/pull/1768))
-* [Design] Redesign data upload ([#PR1775](https://github.com/mapbender/mapbender/pull/1775))
-* [Design] Redesign popup and optimise for mobile devices ([#PR1782](https://github.com/mapbender/mapbender/pull/1782))
+Security:
+* Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+
+Features:
+* [Design] Comprehensive frontend redesign, including several optimisations mobile screens (Layertree: [#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774); Simple Search: [#PR1767](https://github.com/mapbender/mapbender/pull/1767); Sketch: [#PR1768](https://github.com/mapbender/mapbender/pull/1768); Data Upload: [#PR1775](https://github.com/mapbender/mapbender/pull/1775); Popup and mobile optimisations: [#PR1782](https://github.com/mapbender/mapbender/pull/1782))
+* [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
+
+Bugfixes:
+* When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+
+Other:
+* [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
+* In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 
 ## v4.2.5
 Other:

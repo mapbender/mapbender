@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Component\Presenter\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOM\UserBundle\Security\Permission\PermissionManager;
+use FOM\UserBundle\Security\Permission\ResourceDomainSourceInstance;
 use Mapbender\Component\Event\ApplicationConfigEvent;
 use Mapbender\Component\Event\ApplicationEvent;
 use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
@@ -17,6 +19,7 @@ use Mapbender\CoreBundle\Entity\ReusableSourceInstanceAssignment;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceAssignment;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -26,12 +29,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Service that generates the frontend-facing configuration for a Mapbender application.
  *
  *
- * Instance registerd in container as mapbender.presenter.application.config.service, see services.xml
+ * Instance registered in container as mapbender.presenter.application.config.service, see services.xml
  */
 class ConfigService
 {
-    /** @var string */
-    protected $assetBaseUrl;
+    protected string $assetBaseUrl;
 
 
     public function __construct(protected EventDispatcherInterface $eventDispatcher,
@@ -42,16 +44,14 @@ class ConfigService
                                 protected UrlGeneratorInterface    $router,
                                 protected PackageInterface         $baseUrlPackage,
                                 protected TranslatorInterface      $translator,
+                                protected PermissionManager        $permissionManager,
+                                protected Security                 $security,
                                 protected bool                     $debug)
     {
         $this->assetBaseUrl = $baseUrlPackage->getUrl('');
     }
 
-    /**
-     * @param Application $entity
-     * @return mixed[]
-     */
-    public function getConfiguration(Application $entity)
+    public function getConfiguration(Application $entity): array
     {
         $activeElements = $this->elementFilter->prepareFrontend($entity->getElements(), true, false);
 
@@ -59,19 +59,17 @@ class ConfigService
 
         $configuration = array(
             'application' => $this->getBaseConfiguration($entity),
-            'elements'    => $this->getElementConfiguration($activeElements),
+            'elements' => $this->getElementConfiguration($activeElements),
         );
         $this->preloadSources($entity);
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
 
         $evt = new ApplicationConfigEvent($entity, $configuration);
         $this->eventDispatcher->dispatch($evt, ApplicationConfigEvent::EVTNAME_AFTER_CONFIG);
-        $configuration = $evt->getConfiguration();
-
-        return $configuration;
+        return $evt->getConfiguration();
     }
 
-    public function getBaseConfiguration(Application $entity)
+    public function getBaseConfiguration(Application $entity): array
     {
         return array(
             'title' => $entity->getTitle(),
@@ -86,32 +84,24 @@ class ConfigService
 
     /**
      * Get runtime URLs
-     *
-     * @param Application $entity
-     * @return array
      */
-    public function getUrls(Application $entity)
+    public function getUrls(Application $entity): array
     {
         $config = array('slug' => $entity->getSlug());
 
-        $urls = array(
+        return array(
             'base' => $this->router->getContext()->getBaseUrl(),
             'asset' => $this->assetBaseUrl,
             'element' => $this->router->generate('mapbender_core_application_element', $config),
             'proxy' => $this->urlProcessor->getProxyBaseUrl(),
             'config' => $this->router->generate('mapbender_core_application_configuration', $config),
         );
-
-        return $urls;
     }
 
     /**
-     * Returns layerset configs.
-     *
-     * @param Application $entity
      * @return array[]
      */
-    public function getLayerSetConfigs(Application $entity)
+    public function getLayerSetConfigs(Application $entity): array
     {
         $configs = array();
         foreach ($entity->getLayersets() as $layerSet) {
@@ -122,7 +112,7 @@ class ConfigService
                 'instances' => $this->getSourceInstanceConfigs($layerSet),
             );
         }
-        return $configs;
+        return array_values(array_filter($configs, fn($config) => !empty($config['instances'])));
     }
 
     /**
@@ -143,9 +133,8 @@ class ConfigService
 
     /**
      * @param Entity\Element[] $elements
-     * @return mixed[]
      */
-    protected function getElementConfiguration($elements)
+    protected function getElementConfiguration(array $elements): array
     {
         $elementConfig = array();
         foreach ($elements as $element) {
@@ -163,7 +152,7 @@ class ConfigService
                             $values['errors'] = [$e->getMessage()];
                         }
                     }
-                } catch (ElementErrorException $e) {
+                } catch (ElementErrorException) {
                     // for frontend presentation, incomplete / invalid elements are silently suppressed
                     // => do nothing
                     continue;
@@ -175,20 +164,23 @@ class ConfigService
     }
 
     /**
-     * Extracts active source instances from given Layerset entity.
-     *
-     * @param Layerset $entity
+     * Extracts active and source instances from given Layerset entity where the current user has permission to view.
      * @return SourceInstanceAssignment[]
      */
-    protected static function filterActiveSourceInstanceAssignments(Layerset $entity)
+    protected function filterActiveSourceInstanceAssignments(Layerset $entity): array
     {
         $isYamlApp = $entity->getApplication()->isYamlBased();
-        $active = array();
+        $active = [];
+
         foreach ($entity->getCombinedInstanceAssignments() as $assignment) {
-            if ($isYamlApp || $assignment->getEnabled()) {
+            if (
+                ($isYamlApp || $assignment->getEnabled()) &&
+                $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $assignment)
+            ) {
                 $active[] = $assignment;
             }
         }
+
         return $active;
     }
 

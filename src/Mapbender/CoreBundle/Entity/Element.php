@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use FOM\UserBundle\Security\Permission\YamlDefinedPermissionEntity;
 use Mapbender\Component\Collections\WeightSortedCollectionMember;
 use Mapbender\Component\Enumeration\ScreenTypes;
 
@@ -14,7 +15,7 @@ use Mapbender\Component\Enumeration\ScreenTypes;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_core_element')]
-class Element implements WeightSortedCollectionMember
+class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEntity
 {
     /**
      * @var integer
@@ -225,7 +226,7 @@ class Element implements WeightSortedCollectionMember
     /**
      * @return string[]|null
      */
-    public function getYamlRoles()
+    public function getYamlRoles(): ?array
     {
         return $this->yamlRoles;
     }
@@ -233,7 +234,7 @@ class Element implements WeightSortedCollectionMember
     /**
      * @param string[]|null $yamlRoles
      */
-    public function setYamlRoles($yamlRoles)
+    public function setYamlRoles(?array $yamlRoles): void
     {
         $this->yamlRoles = $yamlRoles;
     }

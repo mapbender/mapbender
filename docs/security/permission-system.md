@@ -76,6 +76,13 @@ and tag it using `fom.security.resource_domain`. Then, overwrite the following m
 To create a form to modify the permissions to your custom resource, inject the PermissionManager and add the following in the edit/create-Method of your controller when setting up your form (after checking if the user has permissions to edit security):
 
 ```php
+// if you don't have an existing form and want a new form just to edit permissions:
+$this->permissionManager->createPermissionForm($myEntity);
+
+// if you have an existing form and want to add the permission list to it:
+$this->permissionManager->addFormType($form, $application);
+
+// alternatively, manually:
 $resourceDomain = $this->permissionManager->findResourceDomainFor($myEntity, throwIfNotFound: true);
 $form->add('security', PermissionListType::class, [
     'resource_domain' => $resourceDomain,
@@ -86,7 +93,15 @@ $form->add('security', PermissionListType::class, [
 ]);
 ```
 
-And further down after checking if the form is submitted and valid:
+Both `addFormType` and `createPermissionForm` accept additional options as an optional parameter that are passed to the PermissionListType. The following options exist:
+
+- `show_public_access` (bool, default: false): If set, the "public access" permission will always be shown even if no rule has been defined
+- `allow_add` (bool, default: true): If set to false, no permissions can be added
+- `allow_delete` (bool, default: true): If set to false, no permissions can be deleted
+- `entry_options.action_filter` (array of strings, default: all actions defined for the resource domain): If set, only the given actions will be shown in the permission list
+
+
+To persist the permissions, call the following after checking if the form is submitted and valid:
 
 ```php
 $this->permissionManager->savePermissions($myEntity, $form->get('security')->getData());

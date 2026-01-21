@@ -108,6 +108,7 @@ mb:
         max_input_vars_exceeded: 'PHP-Einstellung max_input_vars zu niedrig für die Anzahl an Layern in dieser Instanz.'
         update_successful: 'Die Instanz wurde aktualisiert'
         converted_to_shared: 'Die Instanz wurde zu einer freien Instanz umgewandelt'
+        security: 'Zugriffsrechte bearbeiten. Falls keine Rechte gesetzt (graues Icon), sehen alle mit Zugang zur Anwendung auch die Datenquelle. Falls Rechte gesetzt (rotes Icon), sehen ausschließlich die konfigurierten Rollen die Datenquelle.'
       template: Vorlage
       application:
         view: Anzeigen
@@ -295,3 +296,4 @@ mb:
         importfile: 'Datei importieren'
   actions:
     secureelement: 'Zugriff auf das Element einschränken'
+    securesourceinstance: 'Zugriff auf die Datenquelle einschränken'

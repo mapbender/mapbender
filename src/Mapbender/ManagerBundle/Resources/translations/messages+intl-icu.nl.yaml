@@ -57,6 +57,7 @@ mb:
           confirm: 'Wilt u werkelijk de instantie getiteld "{instance_title}" verwijderen'
         no_instance_added: 'Geen instantie toegevoegd'
         no_layer_added: 'Geen laag toegevoegd'
+        security: 'Toegangsrechten bewerken. Als er geen rechten zijn ingesteld (grijs pictogram), zien alle gebruikers met toegang tot de applicatie ook de gegevensbron. Als er rechten zijn ingesteld (rood pictogram), zien alleen de geconfigureerde rollen de gegevensbron.'
       template: Sjabloon
       application:
         view: Toon
@@ -214,3 +215,4 @@ mb:
             error: 'Alleen afbeeldingen van %screenshotHeight% x %screenshotWidth% pixels or hoger zijn mogelijk. Uw bestand is %uploadWidth% x %uploadHeighth% pixels.'
   actions:
     secureelement: 'Toegang tot het element beperken'
+    securesourceinstance: 'Toegang tot de gegevensbron beperken'

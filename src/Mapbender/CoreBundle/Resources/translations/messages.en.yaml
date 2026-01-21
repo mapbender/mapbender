@@ -46,6 +46,9 @@ mb:
   states:
     active: active
     inactive: inactive
+    public: public
+    not_public: 'not public'
+    permissions_defined: 'Individual access rights have been defined for this instance'
   core:
     featureinfo:
       error:

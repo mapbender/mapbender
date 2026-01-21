@@ -46,6 +46,9 @@ mb:
   states:
     active: активный
     inactive: неактивный
+    public: публичный
+    not_public: 'не публичный'
+    permissions_defined: 'Для этого экземпляра определены индивидуальные права доступа'
   core:
     featureinfo:
       error:

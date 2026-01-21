@@ -35,6 +35,9 @@ mb:
   states:
     active: actief
     inactive: inactief
+    public: openbaar
+    not_public: 'niet openbaar'
+    permissions_defined: 'Voor deze instantie zijn individuele toegangsrechten gedefinieerd'
   core:
     featureinfo:
       error:

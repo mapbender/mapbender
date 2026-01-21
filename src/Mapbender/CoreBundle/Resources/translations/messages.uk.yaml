@@ -44,6 +44,9 @@ mb:
   states:
     active: активний
     inactive: неактивний
+    public: публічний
+    not_public: 'не публічний'
+    permissions_defined: 'Для цієї інстанції були визначені індивідуальні права доступу'
   core:
     featureinfo:
       error:

@@ -91,6 +91,7 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.csrf.token_manager" />
+            <argument type="service" id="security.helper" />
         </service>
         <service id="mapbender.element.ApplicationSwitcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
             <tag name="mapbender.element" />
