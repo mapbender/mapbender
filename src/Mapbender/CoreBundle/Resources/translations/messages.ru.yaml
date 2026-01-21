@@ -676,6 +676,8 @@ mb:
         instancelayerform:
           label:
             title: 'Заголовок'
+  error:
+    csrf_failed: 'Ошибка при подключении к сети'
 'Bad credentials.': 'Ошибка аутентификации'
 'User account is locked.': 'Учетная запись заблокирована.'
 'User account is disabled.': 'Учетная запись деактивирована.'

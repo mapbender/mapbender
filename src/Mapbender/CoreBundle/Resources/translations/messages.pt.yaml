@@ -661,6 +661,8 @@ mb:
         instancelayerform:
           label:
             title: Título
+  error:
+    csrf_failed: 'Erro ao ligar à rede'
 'Bad credentials.': 'Credenciais inválidas.'
 'User account is locked.': 'Conta de usuário bloqueada.'
 'User account is disabled.': 'Conta de usuário desativada.'

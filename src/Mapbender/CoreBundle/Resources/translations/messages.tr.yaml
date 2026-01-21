@@ -332,3 +332,5 @@ mb:
     applicationSwitcher:
       admin:
         drag_to_reorder: 'Yeniden sıralamak için sürükleyin'
+  error:
+    csrf_failed: 'Ağa bağlanırken hata oluştu'

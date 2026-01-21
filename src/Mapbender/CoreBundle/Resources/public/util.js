@@ -667,11 +667,14 @@ Mapbender.ElementUtil = {
 
         try {
             const response = await fetch(url, {method: 'POST'})
+            if (response.status >= 300) {
+                throw new Error("mb.error.csrf_failed");
+            }
             const token = await response.text();
             this._csrfTokenCache[elementType] = token;
             resolve(token);
         } catch (err) {
-            Mapbender.error(Mapbender.trans(err.responseText));
+            Mapbender.error(Mapbender.trans(err.message));
             reject(null);
         } finally {
             this._requestRunning = false;

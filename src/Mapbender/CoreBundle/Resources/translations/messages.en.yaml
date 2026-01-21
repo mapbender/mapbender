@@ -688,6 +688,8 @@ mb:
         instancelayerform:
           label:
             title: Title
+  error:
+    csrf_failed: 'Error connecting to the network'
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
 'User account is disabled.': 'User account is disabled.'
