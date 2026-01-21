@@ -83,6 +83,8 @@ class PermissionManager extends Voter
             'group' => $permission->getGroup(),
             'subject' => $permission->getSubject(),
             'resourceDomain' => $permission->getResourceDomain(),
+            'sharedInstanceAssignment' => $permission->getSharedInstanceAssignment(),
+            'sourceInstance' => $permission->getSourceInstance(),
             'element' => $permission->getElement(),
             'application' => $permission->getApplication(),
             'resource' => $permission->getResource(),

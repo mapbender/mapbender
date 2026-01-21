@@ -477,7 +477,7 @@ class ImportHandler extends ExchangeHandler
     }
 
     protected function addUserRightsFromYaml(
-        YamlDefinedPermissionEntity $application,
+        YamlDefinedPermissionEntity $resource,
         string                      $key,
         array                       $children,
         string                      $action = ResourceDomainApplication::ACTION_VIEW
@@ -486,14 +486,14 @@ class ImportHandler extends ExchangeHandler
         if ($key === YamlBaseVoter::USERS) {
             $users = $this->em->getRepository(User::class)->findBy(['username' => $children]);
             foreach ($users as $user) {
-                $this->permissionManager->grant($user, $application, $action);
+                $this->permissionManager->grant($user, $resource, $action);
             }
         }
 
         if ($key === YamlBaseVoter::GROUPS) {
             $groups = $this->em->getRepository(Group::class)->findBy(['title' => $children]);
             foreach ($groups as $group) {
-                $this->permissionManager->grant($group, $application, $action);
+                $this->permissionManager->grant($group, $resource, $action);
             }
         }
     }
