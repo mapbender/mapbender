@@ -1,6 +1,10 @@
 ## v4.2.5
+Bugfixes:
+* [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
+
 Other:
 * [ViewManager] Load Views on demand with Ajax
+
 
 ## v4.2.4
 Bugfixes:
