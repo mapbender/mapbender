@@ -699,9 +699,13 @@ mb:
             title: Titel
   interactivehelp:
     element:
-      class:
-        title: Interaktive Hilfe
-        description: 'Die interaktive Hilfe zeigt direkt an den einzelnen Elementen Hinweise an.'
+      title: Interaktive Hilfe
+      description: 'Die interaktive Hilfe zeigt direkt an den einzelnen Elementen Hinweise an.'
+      dismissPermanently: 'Nicht mehr anzeigen'
+      startTourBtn: 'Tour starten'
+      next: 'weiter'
+      back: 'zurück'
+      end: 'Ende'
     admin:
       config: Konfiguration
       help: 'Siehe <a href="https://doc.mapbender.org/de/elements/misc/interactivehelp.html" target="_blank" class="text-primary">Dokumentation</a> zur Konfiguration der YAML-Syntax'
@@ -709,7 +713,7 @@ mb:
     intro:
       title:  'Willkommen bei der interaktiven Hilfe'
       description: 'Lernen Sie in ein paar Schritten Mapbender kennen.'
-      dontShowAgainLabel: 'Nicht wieder anzeigen.'
+      dismissPermanentlyLabel: 'Nicht wieder anzeigen.'
     aboutdialog:
       title: 'Über'
       description: 'Erstellt eine Schaltfläche, die die Version Ihrer Mapbender-Installation anzeigt.'

@@ -699,9 +699,13 @@ mb:
             title: Title
   interactivehelp:
     element:
-      class:
-        title: Interactive Help
-        description: 'The interactive help displays tips directly on the individual elements.'
+      title: Interactive Help
+      description: 'The interactive help displays tips directly on the individual elements.'
+      dismissPermanently: "Don't show again"
+      startTourBtn: 'Start tour'
+      next: 'next'
+      back: 'back'
+      end: 'End'
     admin:
       config: Configuration
       help: 'See <a href="https://doc.mapbender.org/en/elements/misc/interactivehelp.html" target="_blank" class="text-primary">docs</a> on how to configure YAML syntax'
@@ -709,7 +713,7 @@ mb:
     intro:
       title:  'Welcome to our interactive Help'
       description: 'In a few steps you will learn the basic functionality of Mapbender.'
-      dontShowAgainLabel: 'Do not show again.'
+      dismissPermanentlyLabel: 'Do not show again.'
     aboutdialog:
       title: 'About'
       description: 'Creates a button that shows the version of your Mapbender installation.'
@@ -808,7 +812,7 @@ mb:
       description: 'Load WMS services from external sources.'
     zoombar:
       title: 'Navigation Toolbar'
-      description: 'Navigate the map with zoom and pan controls.'  
+      description: 'Navigate the map with zoom and pan controls.'
 
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
