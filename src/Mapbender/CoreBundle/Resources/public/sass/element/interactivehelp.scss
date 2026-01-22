@@ -1,6 +1,22 @@
+.popover-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.popover-close:hover {
+    color: #333;
+}
 
 .popover {
-    position: absolute;
+    position: fixed;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -9,29 +25,63 @@
     margin-top: 10px;
 }
 
-.popover-toolbar {
-    margin-left: -20px !important;
-    opacity: 1 !important;
-}
-
 /* Caret */
 .popover::before,
 .popover::after {
     content: '';
     position: absolute;
-    left: 20px;
     border: 8px solid transparent;
+}
+.popover-bottom::before,
+.popover-bottom::after,
+.popover-top::before,
+.popover-top::after {
+    right: 20px;
+    left: auto;
+}
+.popover-right::before,
+.popover-right::after,
+.popover-left::before,
+.popover-left::after {
+    top: 40%;
 }
 
 /* Outer caret (border) */
-.popover::before {
+.popover-bottom::before {
     bottom: 100%;
     border-bottom-color: #ccc;
 }
+.popover-right::before {
+     right: 100%;
+     border-right-color: #ccc;
+}
+.popover-left::before {
+    left: 100%;
+    border-left-color: #ccc;
+}
+.popover-top::before {
+    top: 100%;
+    border-top-color: #ccc;
+}
 
 /* Inner caret (background) */
-.popover::after {
+.popover-bottom::after {
     bottom: 100%;
     margin-bottom: -1px;
     border-bottom-color: #fff;
+}
+.popover-right::after {
+    right: 100%;
+    margin-right: -1px;
+    border-right-color: #fff;
+}
+.popover-left::after {
+    left: 100%;
+    margin-left: -1px;
+    border-left-color: #fff;
+}
+.popover-top::after {
+    top: 100%;
+    margin-top: -1px;
+    border-top-color: #fff;
 }
