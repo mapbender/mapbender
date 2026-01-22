@@ -24,7 +24,7 @@ class InteractiveHelpAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('helptexts', YAMLConfigurationType::class, $this->createInlineHelpText([
+            ->add('tour', YAMLConfigurationType::class, $this->createInlineHelpText([
                 'label' => 'mb.interactivehelp.admin.config',
                 'required' => false,
                 'attr' => [

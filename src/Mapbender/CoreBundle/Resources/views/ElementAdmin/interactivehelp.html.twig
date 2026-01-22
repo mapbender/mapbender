@@ -1,17 +1,17 @@
 {{ form_row(form.title) }}
 <div class="mb-3 row">
     <label class="form-label">
-        {{ form.configuration.helptexts.vars.label|trans }}
+        {{ form.configuration.tour.vars.label|trans }}
         <span class="form-text mb-0 help-text">
-            {{ form.configuration.helptexts.vars.help|raw }}
+            {{ form.configuration.tour.vars.help|raw }}
         </span>
     </label>
-    {{ form_widget(form.configuration.helptexts) }}
+    {{ form_widget(form.configuration.tour) }}
 </div>
 {{ form_rest(form.configuration) }}
 <script type="text/javascript">
     $(function(){
-        var textarea = document.getElementById({{ form.configuration.helptexts.vars.id | json_encode | raw }});
+        var textarea = document.getElementById({{ form.configuration.tour.vars.id | json_encode | raw }});
         var yamlEditor = CodeMirror.fromTextArea(textarea, {
             mode: 'text/x-yaml',
             styleActiveLine: true,
@@ -27,7 +27,7 @@
             $(textarea).val(value);
         });
         // Resize, but only if rendered in popup
-        var $form = $(document.getElementById({{ form.configuration.helptexts.vars.id | json_encode | raw }})).closest('form');
+        var $form = $(document.getElementById({{ form.configuration.tour.vars.id | json_encode | raw }})).closest('form');
         var popupContainer = $form.closest('.popup,.modal-dialog');
         popupContainer.css({
             width: '90%',
