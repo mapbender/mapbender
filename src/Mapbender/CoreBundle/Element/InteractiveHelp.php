@@ -6,22 +6,24 @@ use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\ElementInventoryService;
 
 class InteractiveHelp extends AbstractElementService
 {
-    public function __construct(protected ManagerRegistry $doctrine)
-    {
-
+    public function __construct(
+        protected ManagerRegistry $doctrine,
+        protected ElementInventoryService $elementInventory
+    ) {
     }
 
     public static function getClassTitle()
     {
-        return 'mb.interactivehelp.element.class.title';
+        return 'mb.interactivehelp.element.title';
     }
 
     public static function getClassDescription()
     {
-        return 'mb.interactivehelp.element.class.description';
+        return 'mb.interactivehelp.element.description';
     }
 
     public function getWidgetName(Element $element)
@@ -97,13 +99,21 @@ class InteractiveHelp extends AbstractElementService
         $config = $element->getConfiguration() ?: [];
         $appId = $element->getApplication()->getId();
         $elementRepo = $this->doctrine->getManager()->getRepository(Element::class);
-        foreach ($config['helptexts']['chapters'] as $key => $chapter) {
+        foreach ($config['tour']['chapters'] as $key => $chapter) {
             $e = $elementRepo->findOneBy([
                 'application' => $appId,
-                'class' => $chapter['element']['type'],
+                'class' => $chapter['type'],
                 'enabled' => true,
             ]);
-            $config['helptexts']['chapters'][$key]['element']['region'] = ($e->getRegion() === 'content') ? 'toolbar' : $e->getRegion();
+            if ($e) {
+                $handler = $this->elementInventory->getHandlerService($e);
+                $config['tour']['chapters'][$key]['class'] = $handler->getWidgetName($e);
+                $classAttr = $handler->getView($e)->attributes['class'] ?? '';
+                if (preg_match('/mb-element-([a-z]+)/i', $classAttr, $matches)) {
+                    $config['tour']['chapters'][$key]['selector'] = $matches[0];
+                }
+                $config['tour']['chapters'][$key]['region'] = $e->getRegion();
+            }
         }
         return $config;
     }

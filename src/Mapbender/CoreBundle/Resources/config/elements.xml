@@ -125,6 +125,7 @@
         <service id="mapbender.element.interactivehelp" class="Mapbender\CoreBundle\Element\InteractiveHelp">
             <tag name="mapbender.element" />
             <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
     </services>
 </container>
