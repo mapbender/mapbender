@@ -50,27 +50,106 @@ class InteractiveHelp extends AbstractElementService
     {
         return array(
             'autoOpen' => false,
-            'helptexts' => array(
+            'tour' => array(
                 'intro' => array(
                     'title' => 'mb.interactivehelp.intro.title',
                     'description' => 'mb.interactivehelp.intro.description',
                 ),
                 'chapters' => array(
                     array(
-                        'title' => 'mb.interactivehelp.wmsloader.title',
-                        'description' => 'mb.interactivehelp.wmsloader.description',
-                        'element' => array(
-                            'jsClassName' => 'MbWmsLoader',
-                            'classSelector' => 'mb-element-wmsloader',
-                        ),
+                        'title' => 'mb.interactivehelp.aboutdialog.title',
+                        'description' => 'mb.interactivehelp.aboutdialog.description',
+                        'type' => 'Mapbender\CoreBundle\Element\AboutDialog',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.applicationswitcher.title',
+                        'description' => 'mb.interactivehelp.applicationswitcher.description',
+                        'type' => 'Mapbender\CoreBundle\Element\ApplicationSwitcher',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.basesourceswitcher.title',
+                        'description' => 'mb.interactivehelp.basesourceswitcher.description',
+                        'type' => 'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.coordinatesdisplay.title',
+                        'description' => 'mb.interactivehelp.coordinatesdisplay.description',
+                        'type' => 'Mapbender\CoreBundle\Element\CoordinatesDisplay',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.coordinatesutility.title',
+                        'description' => 'mb.interactivehelp.coordinatesutility.description',
+                        'type' => 'Mapbender\CoreBundle\Element\CoordinatesUtility',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.dataupload.title',
+                        'description' => 'mb.interactivehelp.dataupload.description',
+                        'type' => 'Mapbender\CoreBundle\Element\DataUpload',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.featureinfo.title',
+                        'description' => 'mb.interactivehelp.featureinfo.description',
+                        'type' => 'Mapbender\CoreBundle\Element\FeatureInfo',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.gpsposition.title',
+                        'description' => 'mb.interactivehelp.gpsposition.description',
+                        'type' => 'Mapbender\CoreBundle\Element\GpsPosition',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.layertree.title',
+                        'description' => 'mb.interactivehelp.layertree.description',
+                        'type' => 'Mapbender\CoreBundle\Element\LayerTree',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.legend.title',
+                        'description' => 'mb.interactivehelp.legend.description',
+                        'type' => 'Mapbender\CoreBundle\Element\Legend',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.overview.title',
+                        'description' => 'mb.interactivehelp.overview.description',
+                        'type' => 'Mapbender\CoreBundle\Element\Overview',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.poi.title',
+                        'description' => 'mb.interactivehelp.poi.description',
+                        'type' => 'Mapbender\CoreBundle\Element\Poi',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.printclient.title',
+                        'description' => 'mb.interactivehelp.printclient.description',
+                        'type' => 'Mapbender\PrintBundle\Element\PrintClient',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.ruler.title',
+                        'description' => 'mb.interactivehelp.ruler.description',
+                        'type' => 'Mapbender\CoreBundle\Element\Ruler',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.scaledisplay.title',
+                        'description' => 'mb.interactivehelp.scaledisplay.description',
+                        'type' => 'Mapbender\CoreBundle\Element\ScaleDisplay',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.scaleselector.title',
+                        'description' => 'mb.interactivehelp.scaleselector.description',
+                        'type' => 'Mapbender\CoreBundle\Element\ScaleSelector',
                     ),
                     array(
                         'title' => 'mb.interactivehelp.sketch.title',
                         'description' => 'mb.interactivehelp.sketch.description',
-                        'element' => array(
-                            'jsClassName' => 'MbSketch',
-                            'classSelector' => 'mb-element-sketch',
-                        ),
+                        'type' => 'Mapbender\CoreBundle\Element\Sketch',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.srsselector.title',
+                        'description' => 'mb.interactivehelp.srsselector.description',
+                        'type' => 'Mapbender\CoreBundle\Element\SrsSelector',
+                    ),
+                    array(
+                        'title' => 'mb.interactivehelp.wmsloader.title',
+                        'description' => 'mb.interactivehelp.wmsloader.description',
+                        'type' => 'Mapbender\WmsBundle\Element\WmsLoader',
                     ),
                 ),
             ),
@@ -91,6 +170,8 @@ class InteractiveHelp extends AbstractElementService
     {
         $view = new TemplateView('@MapbenderCore/Element/interactivehelp.html.twig');
         $view->attributes['class'] = 'mb-element-interactivehelp';
+        $view->attributes['data-title'] = $element->getTitle();
+        $view->variables['config'] = $element->getConfiguration();
         return $view;
     }
 
