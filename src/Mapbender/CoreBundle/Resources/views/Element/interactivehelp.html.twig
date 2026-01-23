@@ -11,22 +11,22 @@
     </label>
 </div>
 <p class="text-center">
-    <button class="btn btn-primary btn-lg runShowBtn">
+    <button class="btn btn-primary btn-lg runShowBtn" tabindex="0">
         {{ 'mb.interactivehelp.element.startTourBtn' | trans }}
     </button>
 </p>
 
 <template id="interactiveHelpPopover">
     <div class="popover">
-        <button class="popover-close closeShowBtn" aria-label="Close">&times;</button>
+        <button class="popover-close closeShowBtn" aria-label="Close" tabindex="0">&times;</button>
         <div class="popover-content">
             <h6></h6>
             <p></p>
             <div class="text-end">
-                <a class="link-secondary me-2 stepBackBtn" href="#">
+                <a class="link-secondary me-2 stepBackBtn" href="#" tabindex="0">
                     {{ 'mb.interactivehelp.element.back' | trans }}
                 </a>
-                <button class="btn btn-primary btn-sm runShowBtn">
+                <button class="btn btn-primary btn-sm runShowBtn" tabindex="0">
                     {{ 'mb.interactivehelp.element.next' | trans }}
                 </button>
             </div>
