@@ -54,6 +54,7 @@ mb:
           confirm: null
         no_instance_added: 'Örnek oluşturlamadı'
         no_layer_added: 'Katman eklenmedi'
+        security: 'Erişim haklarını düzenleyin. Herhangi bir hak ayarlanmamışsa (gri simge), uygulamaya erişimi olan herkes veri kaynağını görebilir. Haklar ayarlanmışsa (kırmızı simge), yalnızca yapılandırılmış roller veri kaynağını görebilir.'
       template: 'Şablon(Kalıp)'
       application:
         view: Görünüm
@@ -155,3 +156,4 @@ mb:
             error: 'Sadece çözünürlüğü %screenshotHeight% x %screenshotWidth% piksel veya daha yüksek olan görüntü verileri seçilebilir. Görüntülemek istediğiniz veri %uploadWidth% x %uploadHeighth% piksel.'
   actions:
     secureelement: 'Öğeye erişimi kısıtla'
+    securesourceinstance: 'Veri kaynağına erişimi kısıtla '

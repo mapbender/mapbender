@@ -12,7 +12,7 @@
     <td class="text-nowrap">{{ record.mtime | date(dateFormat) }}</td>
     {%- endif -%}
     <td class="text-nowrap text-end">
-        <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}" data-diff="{{ record.encode() | json_encode }}">
+        <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}">
             <i class="fas fa-magnifying-glass-plus"></i>
         </a>
         <span class="static-popover-wrap -js-update-content-anchor">

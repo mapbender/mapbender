@@ -218,18 +218,7 @@ class ElementController extends ApplicationControllerBase
         $application = $this->requireDbApplication($slug);
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
-        $form = $this->createForm(FormType::class, null, array(
-            'label' => false,
-        ));
-        $resourceDomain = $this->permissionManager->findResourceDomainFor($element, throwIfNotFound: true);
-        $form->add('security', PermissionListType::class, [
-            'resource_domain' => $resourceDomain,
-            'resource' => $element,
-            'entry_options' => [
-                'resource_domain' => $resourceDomain,
-            ],
-        ]);
-
+        $form = $this->permissionManager->createPermissionForm($element);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->beginTransaction();
@@ -252,7 +241,7 @@ class ElementController extends ApplicationControllerBase
                 '_fragment' => 'tabLayout',
             ));
         }
-        return $this->render('@MapbenderManager/Element/security.html.twig', array(
+        return $this->render('@MapbenderManager/fragments/security.html.twig', array(
             'form' => $form->createView(),
         ));
     }

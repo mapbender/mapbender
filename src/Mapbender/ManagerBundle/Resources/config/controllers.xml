@@ -80,6 +80,7 @@
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument type="service" id="translator" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="fom.security.permission_manager" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />

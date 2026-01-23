@@ -8,6 +8,10 @@ use Doctrine\Persistence\Proxy;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Form\Type\PermissionListType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,6 +32,7 @@ class PermissionManager extends Voter
         private array                  $subjectDomains,
         private ?SubjectDomainPublic   $publicAccessDomain,
         private EntityManagerInterface $em,
+        private FormFactory            $formFactory,
     )
     {
     }
@@ -78,6 +83,8 @@ class PermissionManager extends Voter
             'group' => $permission->getGroup(),
             'subject' => $permission->getSubject(),
             'resourceDomain' => $permission->getResourceDomain(),
+            'sharedInstanceAssignment' => $permission->getSharedInstanceAssignment(),
+            'sourceInstance' => $permission->getSourceInstance(),
             'element' => $permission->getElement(),
             'application' => $permission->getApplication(),
             'resource' => $permission->getResource(),
@@ -116,7 +123,8 @@ class PermissionManager extends Voter
         }
 
         if ($throwIfNotFound) {
-            throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resource' (type " . $resource::class . ")");
+            $resourceString = (is_string($resource) || $resource instanceof \Stringable) ? $resource : '';
+            throw new \InvalidArgumentException("No resource domain registered that can handle resource '$resourceString' (type " . $resource::class . ")");
         }
         return null;
     }
@@ -296,9 +304,9 @@ class PermissionManager extends Voter
     /**
      * clones all permissions set for the source resource to the target resource
      */
-    public function copyPermissions(mixed $sourceResource, mixed $targetResource): void
+    public function copyPermissions(mixed $sourceResource, mixed $targetResource, bool $allowClassMismatch = false): void
     {
-        if (ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
+        if (!$allowClassMismatch && ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
             throw new \InvalidArgumentException("source and target resource must be of the same type");
         }
         $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
@@ -316,6 +324,53 @@ class PermissionManager extends Voter
         }
         $this->em->flush();
     }
+
+    /**
+     * moves all permissions set for the source resource to the target resource
+     * @param bool $allowClassMismatch use this cautiously, this just calls populatePermission on the target resource's
+     * resource domain, which may not clear existing references
+     */
+    public function movePermissions(mixed $sourceResource, mixed $targetResource, bool $allowClassMismatch = false): void
+    {
+        if (!$allowClassMismatch && ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
+            throw new \InvalidArgumentException("source and target resource must be of the same type");
+        }
+        $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);
+        $permissions = $this->findPermissions($resourceDomain, $sourceResource, group: false);
+        foreach ($permissions as $permission) {
+            $resourceDomain->populatePermission($permission, $targetResource);
+        }
+        $this->em->flush();
+    }
+
+    /**
+     * Creates a new symfony form for editing permissions for a given resource
+     * to extend existing forms @see self::addFormType()
+     */
+    public function createPermissionForm(mixed $resource, array $options = []): FormInterface
+    {
+        $form = $this->formFactory->create(FormType::class, null, array(
+            'label' => false,
+        ));
+        $this->addFormType($form, $resource, $options);
+        return $form;
+    }
+
+    /**
+     * Adds a new form child to an existing Symfony form for editing permissions for a given resource
+     */
+    public function addFormType(FormInterface $form, mixed $resource, array $options = []): void
+    {
+        $resourceDomain = $this->findResourceDomainFor($resource, throwIfNotFound: true);
+        $form->add('security', PermissionListType::class, array_merge_recursive([
+            'resource_domain' => $resourceDomain,
+            'resource' => $resource,
+            'entry_options' => [
+                'resource_domain' => $resourceDomain,
+            ],
+        ], $options));
+    }
+
 
     private function isEntity(string|object $class): bool
     {

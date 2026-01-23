@@ -46,6 +46,9 @@ mb:
   states:
     active: attivo
     inactive: inattivo
+    public: pubblico
+    not_public: 'non pubblico'
+    permissions_defined: 'Sono stati definiti diritti di accesso individuali per questa istanza'
   core:
     featureinfo:
       error:
@@ -610,6 +613,7 @@ mb:
         filetype: 'Tipo di file non supportato:'
         gml: 'Formato GML non può essere estratto!'
         projection: 'Proiezione non può essere determinata'
+        nogeometry: 'Il file caricato non contiene geometrie valide.'
       admin:
         maxFileSize: 'Dimensione massima del file (MB)'
         helpLabel: 'Testo di aiuto'

@@ -20,6 +20,51 @@ mb:
       tab:
         settings: Configuración
         joblist: 'Tareas de impresión recientes'
+      batchprint:
+        title: 'Título'
+        btn:
+          submit: 'Iniciar impresión por lotes'
+        track:
+          upload: 'Cargar recorrido (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Cargar recorrido (KML, GeoJSON, GPX, GML)'
+          load: 'Cargar archivo'
+          choosefile: 'Seleccionar archivo'
+          clear: 'Eliminar recorrido'
+          placeframes: 'Colocar marcos a lo largo del recorrido'
+          adjustframes: 'Ajustar rotación de marcos'
+          overlap: 'Superposición de marcos'
+          selected: 'Seleccionado'
+          loaded: 'Cargado'
+          error: 'Error'
+          readerror: 'Error al leer el archivo'
+          placed: '%count% marcos colocados a lo largo del recorrido'
+          alert:
+            selectfile: 'Por favor, seleccione primero un archivo.'
+            validfile: 'Por favor, seleccione un archivo válido (KML, GeoJSON, GPX, GML).'
+            error: 'Error al cargar el archivo'
+            readerror: 'Error al leer el archivo.'
+            loadfirst: 'Por favor, cargue primero un archivo de recorrido.'
+            invalidgeometry: 'Geometría inválida. Se esperaba LineString.'
+        overlap:
+          outofbounds: 'El valor de superposición %value%% está fuera del rango válido (0-50%). Por favor, introduzca un valor entre 0 y 50.'
+        tracking:
+          title: 'Marcos de impresión'
+          no: 'No.'
+          scale: 'Escala'
+          template: 'Plantilla'
+          quality: 'Calidad'
+          rotation: 'Rotación'
+          delete: 'Eliminar'
+          deleteall: 'Eliminar todos los marcos'
+          empty: 'No hay marcos de impresión disponibles. Haga clic en el mapa para agregar marcos de impresión.'
+        confirm:
+          create: 'Esto creará %count% marcos. ¿Continuar?'
+          deleteall: '¿Eliminar todos los %count% marcos?'
+        alldeleted: 'Todos los marcos eliminados'
+        alert:
+          noframes: 'Por favor, coloque al menos un marco de impresión en el mapa.'
+          error: 'Error al crear la tarea de impresión'
       joblist:
         header:
           id: '#'
@@ -59,6 +104,10 @@ mb:
         quality: Calidad
       class:
         title: Imprimir
+    batchprintclient:
+      class:
+        title: 'Modo de impresión por lotes'
+        description: 'Modo de impresión por lotes - Colocación de múltiples marcos de impresión y salida en un trabajo de impresión'
     printclienttemplate:
       admin:
         template: Plantillas
@@ -68,6 +117,19 @@ mb:
         label: Etiqueta
     admin:
       printclient:
+        renderMode:
+          label: 'Modo'
+          choice:
+            direct: 'Directo'
+            queued: 'En cola'
+        queueAccess:
+          label: 'Cola'
+          choice:
+            global: 'global'
+            private: 'privado'
         label:
           qualitylevels: 'Niveles de calidad'
           templates: Plantillas
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Habilitar carga de geodatos'

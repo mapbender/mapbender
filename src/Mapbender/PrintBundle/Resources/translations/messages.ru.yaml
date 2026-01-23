@@ -22,6 +22,51 @@ mb:
       tab:
         settings: 'Настройки'
         joblist: 'На печать'
+      btn:
+        batchprint: 'Начать пакетную печать'
+      batchprint:
+        btn:
+          submit: 'Начать пакетную печать'
+        track:
+          upload: 'Загрузить маршрут (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Загрузить маршрут (KML, GeoJSON, GPX, GML)'
+          load: 'Загрузить файл'
+          choosefile: 'Выбрать файл'
+          clear: 'Удалить маршрут'
+          placeframes: 'Разместить рамки вдоль маршрута'
+          adjustframes: 'Настроить поворот рамок'
+          overlap: 'Перекрытие рамок'
+          selected: 'Выбран'
+          loaded: 'Загружен'
+          error: 'Ошибка'
+          readerror: 'Ошибка чтения файла'
+          placed: 'Размещено %count% рамок вдоль маршрута'
+          alert:
+            selectfile: 'Сначала выберите файл.'
+            validfile: 'Выберите действительный файл (KML, GeoJSON, GPX, GML).'
+            error: 'Ошибка загрузки файла'
+            readerror: 'Ошибка чтения файла.'
+            loadfirst: 'Сначала загрузите файл маршрута.'
+            invalidgeometry: 'Недопустимая геометрия. Ожидается LineString.'
+        overlap:
+          outofbounds: 'Значение перекрытия %value%% выходит за пределы допустимого диапазона (0-50%). Пожалуйста, введите значение от 0 до 50.'
+        tracking:
+          title: 'Рамки печати'
+          no: '№'
+          scale: 'Масштаб'
+          template: 'Шаблон'
+          quality: 'Качество'
+          rotation: 'Поворот'
+          delete: 'Удалить'
+          deleteall: 'Удалить все рамки'
+          empty: 'Нет доступных рамок печати. Щелкните по карте, чтобы добавить рамки печати.'
+        confirm:
+          deleteall: 'Удалить все %count% рамки?'
+        alldeleted: 'Все рамки удалены'
+        alert:
+          noframes: 'Пожалуйста, разместите хотя бы одну рамку печати на карте.'
+          error: 'Ошибка создания задания печати'
       joblist:
         header:
           id: '#'
@@ -48,6 +93,12 @@ mb:
           choice:
             global: 'глобально'
             private: 'приватно'
+        label:
+          qualitylevels: 'Уровни качества'
+          templates: 'Черновики'
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Включить загрузку геофайлов'
   core:
     printclient:
       admin:
@@ -61,6 +112,10 @@ mb:
         quality: 'Качество'
       class:
         title: 'Печать'
+    batchprintclient:
+      class:
+        title: 'Режим пакетной печати'
+        description: 'Режим пакетной печати - Размещение нескольких рамок печати и вывод в одном задании печати'
     printclienttemplate:
       admin:
         template: 'Черновик'

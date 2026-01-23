@@ -1,0 +1,262 @@
+// BatchPrintClient specific styles
+// Only includes styles that were moved from inline CSS in JS and Twig files
+.mb-element-batchprintclient {
+  // Ensure form fields (print frame info) use standard text color
+  // when no frame is selected (default state)
+  form {
+    select,
+    input[type="text"],
+    input[type="number"] {
+      color: inherit !important;
+      opacity: 1 !important;
+    }
+  }
+
+  // Geospatial file upload section
+  .geofile-upload {
+    display: block;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    > div {
+      display: block;
+      width: 100%;
+    }
+
+    .geofile-upload-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: normal;
+      font-size: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: default;
+      text-align: left;
+    }
+
+    .geofile-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      
+      .geofile-custom-button {
+        white-space: nowrap;
+        padding: 4px 12px;
+      }
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .geofile-status {
+      display: block;
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 8px;
+      
+      &:empty {
+        display: none;
+      }
+    }
+
+    // Container for all geofile controls (buttons, checkbox, overlap input)
+    .geofile-controls {
+      display: none;
+
+      &.show {
+        display: block !important;
+      }
+    }
+
+    // Status with trash icon wrapper
+    .geofile-status-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      .geofile-status {
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      .fa-trash-can {
+        cursor: pointer;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+    }
+
+    .geofile-button-wrapper {
+      margin-bottom: 8px;
+    }
+
+    .geofile-place-status {
+      display: block;
+      color: #666;
+      font-size: 0.9em;
+      
+      &:empty {
+        display: none;
+      }
+    }
+
+    // Adjust frames checkbox - use Bootstrap form-check styling
+    .geofile-adjust-wrapper {
+      margin-bottom: 10px;
+    }
+
+    // Frame overlap section
+    .geofile-overlap-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .geofile-overlap-label {
+        margin: 0;
+      }
+
+      .geofile-overlap-input {
+        width: 60px;
+      }
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+
+      input[type="checkbox"] {
+        margin-right: 6px;
+      }
+    }
+  }
+
+  // Shared button styling for all button groups
+  .geofile-button-wrapper,
+  .frame-table .frame-table-buttons {
+    button {
+      white-space: nowrap;
+      padding: 4px 12px;
+    }
+  }
+
+  // Frame tracking table section
+  .frame-table {
+    font-size: 10px;
+    display: block;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+
+    > div:first-of-type {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+
+      h4 {
+        margin: 0;
+        font-size: 13px;
+      }
+    }
+
+    .frame-table-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      display: none; // Hide by default until frames are added
+      margin-right: 10px; // Move trash icon slightly to the left
+      
+      .fa-trash-can {
+        cursor: pointer;
+        font-size: 16px;
+      }
+    }
+
+    // Empty state styling
+    .frame-table-empty-state {
+      padding: 12px 15px;
+      text-align: center;
+      color: #333;
+      font-size: 1em;
+      font-style: italic;
+      background-color: transparent;
+      border: 1px dashed #ddd;
+      border-radius: 3px;
+      display: block; // Show by default
+
+      p {
+        margin: 0;
+      }
+    }
+
+    // Table content wrapper
+    .frame-table-content {
+      max-height: 150px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: none; // Hide by default until frames are added
+    }
+
+    table {
+      width: 100%;
+
+      thead th {
+        text-align: left;
+
+        &:last-child {
+          text-align: right;
+        }
+      }
+
+      tbody {
+        td:last-child {
+          text-align: right;
+
+          // Delete icon styling
+          .fa-trash-can {
+            cursor: pointer;
+            font-size: 12px;
+          }
+        }
+
+        tr {
+          cursor: move;
+          transition: background-color 0.15s ease;
+
+          &.highlight {
+            td  {
+              background-color: rgba(0, 102, 204, 0.15) !important;
+            }
+          }
+
+          &.dragging {
+            opacity: 0.5;
+          }
+
+          &.ui-sortable-helper {
+            display: table;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0.9;
+          }
+        }
+
+        // Placeholder styling during drag
+        .ui-sortable-placeholder {
+          visibility: visible !important;
+          background-color: rgba(0, 102, 204, 0.1);
+          border: 1px dashed #0066cc;
+        }
+      }
+    }
+  }
+}

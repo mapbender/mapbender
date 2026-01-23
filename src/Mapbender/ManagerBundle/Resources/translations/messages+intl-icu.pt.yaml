@@ -108,6 +108,7 @@ mb:
         max_input_vars_exceeded: 'A configuração max_input_vars do PHP é muito baixa para o número de layers nesta instância.'
         update_successful: 'Sua instância foi atualizada.'
         converted_to_shared: 'A instância foi convertida em uma instância compartilhada.'
+        security: 'Editar direitos de acesso. Se nenhum direito estiver definido (ícone cinza), todos com acesso à aplicação também verão a fonte de dados. Se os direitos estiverem definidos (ícone vermelho), apenas as funções configuradas verão a fonte de dados.'
       template: Padrão
       application:
         view: Visualizar
@@ -295,3 +296,4 @@ mb:
         importfile: 'Importar arquivo'
   actions:
     secureelement: 'Elemento seguro'
+    securesourceinstance: 'Restringir o acesso à fonte de dados'

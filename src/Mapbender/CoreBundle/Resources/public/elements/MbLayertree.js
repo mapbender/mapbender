@@ -80,6 +80,9 @@
             if (this.options.allowReorder) {
                 this._createSortable();
             }
+            if (this.options.showFilter) {
+                this._filterLayer();
+            }
         }
 
         _createEvents() {

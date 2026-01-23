@@ -1,5 +1,4 @@
 {{- form_start(form) -}}
-{#- @todo: introductory / descriptive text? (variable "instance" is available here) -#}
-{%- include '@MapbenderManager/SourceInstance/applications.html.twig'
+{%- include '@MapbenderManager/Repository/source/applications.html.twig'
     with {'layerset_groups': layerset_groups } -%}
 {{- form_end(form) -}}

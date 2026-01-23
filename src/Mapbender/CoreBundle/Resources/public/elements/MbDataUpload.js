@@ -120,18 +120,27 @@
                     }
                     var uploadId = Date.now() + '_' + idx;
 
-                    // zoom to the bounding box of all recently uploaded files
-                    const createdSource = self.renderFeatures(file, uploadId, reader.result);
-                    if (extent) {
-                        ol.extent.extend(extent, createdSource.getExtent());
-                    } else {
-                        extent = createdSource.getExtent();
-                    }
-                    self.map.getView().fit(extent, {
-                        padding: [75, 75, 75, 75],
-                    });
+                    try {
+                        // zoom to the bounding box of all recently uploaded files
+                        const createdSource = self.renderFeatures(file, uploadId, reader.result);
+                        if (extent) {
+                            ol.extent.extend(extent, createdSource.getExtent());
+                        } else {
+                            extent = createdSource.getExtent();
+                        }
+                        self.map.getView().fit(extent, {
+                            padding: [75, 75, 75, 75],
+                        });
 
-                    self.renderTable(file, uploadId);
+                        if (!extent || extent.some(n => !Number.isFinite(n))) {
+                            Mapbender.info(Mapbender.trans('mb.core.dataupload.error.nogeometry'));
+                            return;
+                        }
+
+                        self.renderTable(file, uploadId);
+                    } catch (error) {
+                        Mapbender.error(error.message);
+                    }
                 });
                 reader.readAsText(file);
             });
@@ -175,26 +184,30 @@
                 case 'application/vnd.google-earth.kml+xml':
                     return [new ol.format.KML(), 'EPSG:4326'];
                 case 'application/gml+xml':
-                    return [this.findGmlFormat(result), this.findProjection()];
+                    return [Mapbender.FileUtil.findGmlFormat(result), this.findProjection()];
                 case 'application/gpx+xml':
                     return [new ol.format.GPX(), 'EPSG:4326'];
             }
 
-            // fallback: use file extensions
-            const parts = file.name.split('.');
-            const extension = parts.length > 1 ? parts[parts.length - 1] : '';
+            // fallback: use FileUtil for file extension based detection
+            var formatInfo = Mapbender.FileUtil.getFormatParserByFilename(file.name);
+            if (formatInfo) {
+                var projection;
+                var parser = formatInfo.parser;
 
-            switch (extension) {
-                case 'geojson':
-                case 'json':
-                    return [new ol.format.GeoJSON(), this.findGeoJsonProjection(result)];
-                case 'kml':
-                    return [new ol.format.KML(), 'EPSG:4326'];
-                case 'gml':
-                case 'xml':
-                    return [this.findGmlFormat(result), this.findProjection()];
-                case 'gpx':
-                    return [new ol.format.GPX(), 'EPSG:4326'];
+                if (parser instanceof ol.format.GeoJSON) {
+                    projection = this.findGeoJsonProjection(result);
+                } else if (parser instanceof ol.format.KML || parser instanceof ol.format.GPX) {
+                    projection = 'EPSG:4326';
+                } else if (parser instanceof ol.format.GML || parser instanceof ol.format.GML2 ||
+                           parser instanceof ol.format.GML3 || parser instanceof ol.format.GML32) {
+                    parser = Mapbender.FileUtil.findGmlFormat(result);  // GML requires content inspection
+                    projection = this.findProjection();
+                } else {
+                    projection = this.findProjection();
+                }
+
+                return [parser, projection];
             }
 
             return [null, null];

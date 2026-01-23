@@ -214,6 +214,8 @@
             <argument type="service" id="router" />
             <argument type="service" id="assets._default_package" />
             <argument type="service" id="translator" />
+            <argument type="service" id="fom.security.permission_manager" />
+            <argument type="service" id="security.helper" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">

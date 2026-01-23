@@ -46,6 +46,9 @@ mb:
   states:
     active: активный
     inactive: неактивный
+    public: публичный
+    not_public: 'не публичный'
+    permissions_defined: 'Для этого экземпляра определены индивидуальные права доступа'
   core:
     featureinfo:
       error:
@@ -604,6 +607,7 @@ mb:
         filetype: 'Неподдерживаемый тип файла:'
         gml: 'Формат GML не может быть определен!'
         projection: 'Не удалось определить проекцию'
+        nogeometry: 'Загруженный файл не содержит допустимых геометрий.'
       admin:
         maxFileSize: 'Максимальный размер файла (MB)'
         helpLabel: 'Подсказка'
