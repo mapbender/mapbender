@@ -153,6 +153,7 @@ class InteractiveHelp extends AbstractElementService
                     ),
                 ),
             ),
+            "element_icon" => self::getDefaultIcon(),
         );
     }
 
@@ -197,5 +198,9 @@ class InteractiveHelp extends AbstractElementService
             }
         }
         return $config;
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconBookOpen';
     }
 }
