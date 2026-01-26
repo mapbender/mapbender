@@ -58,9 +58,22 @@
         }
 
         initEventHandlers() {
-            $(document).on('click', '.runShowBtn', () => {
+            // Mouse / touch
+            $(document).on('click', '.runShowBtn', (e) => {
+                // Keyboard-generated clicks often have detail === 0; those are handled in keydown below
+                if (typeof e.detail === 'number' && e.detail === 0) {
+                    return;
+                }
                 this.runShow();
             });
+            // Keyboard (avoid keyup->focus-change->second activation)
+            $(document).on('keydown', '.runShowBtn', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                this.runShow();
+            });
+
             $(document).on('click', '.stepBackBtn', (e) => {
                 e.preventDefault();
                 this.oneStepBack();
@@ -164,6 +177,7 @@
             this.popover.removeClass('popover-bottom popover-top popover-left popover-right');
             this.popover.find('h6').text(Mapbender.trans(currentChapter.title));
             this.popover.find('p').text(Mapbender.trans(currentChapter.description));
+            this.focusPopover();
             // rename next button when last chapter is reached:
             if ((this.tourLength - 1) === this.currentChapter) {
                 $('.runShowBtn').text(Mapbender.trans('mb.interactivehelp.element.end'));
@@ -287,6 +301,46 @@
 
         isMobile() {
             return window.screen.width < 1200;
+        }
+
+        focusPopover() {
+            const $p = this.popover;
+            $p.attr({ tabindex: '-1', role: 'dialog' });
+            const getFocusables = () => $p
+                .find('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
+                .filter(':visible');
+            // If focus is already inside, don't move it
+            if ($p[0].contains(document.activeElement)) {
+                return;
+            }
+            // Defer focus so Enter-activation on .runShowBtn won't "transfer" to the close button
+            window.requestAnimationFrame(() => {
+                const $preferred = $p.find('.runShowBtn:visible').first();
+                const $first = getFocusables().first();
+                ($preferred.length ? $preferred : ($first.length ? $first : $p)).trigger('focus');
+            });
+            // Trap Tab navigation inside the popover (bind once)
+            if (!$p.data('mbFocusTrapBound')) {
+                $p.data('mbFocusTrapBound', true);
+                $p.on('keydown.mbInteractiveHelp', (e) => {
+                    if (e.key !== 'Tab') return;
+                    const $f = getFocusables();
+                    if (!$f.length) {
+                        e.preventDefault();
+                        $p.trigger('focus');
+                        return;
+                    }
+                    const first = $f[0];
+                    const last = $f[$f.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                });
+            }
         }
     }
 
