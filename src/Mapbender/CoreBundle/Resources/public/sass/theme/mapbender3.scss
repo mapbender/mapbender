@@ -420,13 +420,14 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     padding: 5px var(--sidepane-padding-x) !important;
     font-weight: 600;
     font-size: 1.3rem;
-    color: var(--sidepane-inactive-text-color);
+    color: var(--sidepane-text-color);
 
     &:hover {
-        color: var(--sidepane-text-color);
+        background: var(--sidepane-hover-color);
     }
 
     &.active {
         color: var(--primary);
+        background: var(--sidepane-active-background-color);
     }
 }
