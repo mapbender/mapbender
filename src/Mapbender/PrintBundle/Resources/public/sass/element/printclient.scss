@@ -26,6 +26,10 @@
     max-height: 400px;
   }
 
+    &-icon-wrapper i {
+        padding: 4px;
+    }
+
   // jquery-ui tab styling
   // @todo: We really should use the original jquery-ui css (+ potentially customizable theme for colors, sizes etc) globally.
   //        This isn't immediately feasible because fragments of ui-tabs styling in certain scopes are scattered through

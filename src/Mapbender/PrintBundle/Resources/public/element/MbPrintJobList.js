@@ -155,13 +155,14 @@ class MbPrintJobList {
 
         var buttonsEmpty = true;
         var $group = $(document.createElement('div'))
-            .addClass('btn-group btn-group-xs')
-        ;
+            .addClass('mb-element-printclient-icon-wrapper');
         if (row.downloadUrl) {
             var $a = $('<a />')
-                .addClass('btn btn-light')
+                .addClass('hover-highlight-effect')
                 .attr('href', row.downloadUrl)
                 .attr('target', '_blank')
+                .attr('tabindex', '0')
+                .attr('role', 'button')
                 .attr('title', Mapbender.trans('mb.print.printclient.joblist.open'))
             ;
             $icon = $('<i/>').addClass('far fa-file-pdf fa-lg');
@@ -169,7 +170,7 @@ class MbPrintJobList {
             $group.append($a);
             buttonsEmpty = false;
         } else {
-            const loaderHtml = '<span class="loading btn btn-light"><i class="fas fa-gear fa-spin fa-lg"></i></span>';
+            const loaderHtml = '<span class="loading"><i class="fas fa-gear fa-spin fa-lg"></i></span>';
             $group.append(loaderHtml);
         }
         if (row.deleteUrl) {
@@ -178,8 +179,9 @@ class MbPrintJobList {
                 : 'mb.print.printclient.joblist.cancel'
             ;
             var $deleteSpan = $('<span />')
-                .addClass('-fn-delete')
-                .addClass('btn btn-light')
+                .addClass('-fn-delete hover-highlight-effect')
+                .attr('tabindex', '0')
+                .attr('role', 'button')
                 .attr('data-url', row.deleteUrl)
                 .attr('data-id', row.id)
                 .attr('title', Mapbender.trans(deleteTitle))
