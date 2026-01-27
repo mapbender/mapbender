@@ -36,7 +36,9 @@
         if (!this.options.closeButton) {
             $('.popupHead .popupClose', this.$element).remove();
         }
-        this.addButtons(this.options.buttons || []);
+        if (!this.addButtons(this.options.buttons || [])) {
+            this.$element.find('.footer').remove();
+        }
 
         var unusedOptions = {};
         if (this.options.content) {
@@ -326,10 +328,9 @@
             });
         },
         addButtons: function(buttons) {
-            var self = this;
-            var buttonset = $('.popupButtons', this.$element);
-            var buttons_ = Array.isArray(buttons) && buttons || Object.values(buttons || {});
-            for (var i = 0; i < buttons_.length; ++i) {
+            const buttonset = $('.popupButtons', this.$element);
+            const buttons_ = Array.isArray(buttons) && buttons || Object.values(buttons || {});
+            for (let i = 0; i < buttons_.length; ++i) {
                 var confOrNode = buttons_[i];
                 var $btn;
                 if (typeof confOrNode.nodeType !== 'undefined') {
@@ -346,7 +347,7 @@
                         $btn.attr('title', confOrNode.title);
                     }
                     if (confOrNode.callback) {
-                        $btn.on('click', confOrNode.callback.bind(self));
+                        $btn.on('click', confOrNode.callback.bind(this));
                     }
                     if(confOrNode.iconClass !== undefined) {
                         var $icon = $('<i>').addClass(confOrNode.iconClass);
@@ -355,6 +356,7 @@
                 }
                 buttonset.append($btn);
             }
+            return buttons_.length > 1;
         },
         setContent: function(content) {
             $('.popupContent', this.$element).html(content);
