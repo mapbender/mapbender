@@ -56,7 +56,11 @@
 
         initEventHandlers() {
             // Mouse / touch
-            $(document).on('click', '.runShowBtn', (e) => {
+            $(document).on('click', '.mb-element-interactivehelp .startTourBtn', () => {
+                this.runShow();
+            });
+            // Mouse / touch
+            $(document).on('click', '.popover-interactive-help .runShowBtn', (e) => {
                 // Keyboard-generated clicks often have detail === 0; those are handled in keydown below
                 if (typeof e.detail === 'number' && e.detail === 0) {
                     return;
@@ -64,18 +68,18 @@
                 this.runShow();
             });
             // Keyboard (avoid keyup->focus-change->second activation)
-            $(document).on('keydown', '.runShowBtn', (e) => {
+            $(document).on('keydown', '.popover-interactive-help .runShowBtn', (e) => {
                 if (e.key !== 'Enter' && e.key !== ' ') return;
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 this.runShow();
             });
 
-            $(document).on('click', '.stepBackBtn', (e) => {
+            $(document).on('click', '.popover-interactive-help .stepBackBtn', (e) => {
                 e.preventDefault();
                 this.oneStepBack();
             });
-            $(document).on('click', '.closeShowBtn', () => {
+            $(document).on('click', '.popover-interactive-help .closeShowBtn', () => {
                 this.stopShow();
             });
             $('.dismiss-permanently input').on('change', (e) => {

@@ -15,19 +15,21 @@
     color: #333;
 }
 
-.popover {
+.popover-interactive-help {
     position: fixed;
+    z-index: 1000;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 8px 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     margin-top: 10px;
+    max-width: 275px;
 }
 
 /* Caret */
-.popover::before,
-.popover::after {
+.popover-interactive-help::before,
+.popover-interactive-help::after {
     content: '';
     position: absolute;
     border: 8px solid transparent;
