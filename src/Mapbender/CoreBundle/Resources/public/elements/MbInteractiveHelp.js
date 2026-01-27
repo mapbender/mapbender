@@ -107,7 +107,7 @@
                 chapter.id = element.$element.attr('id');
                 if (element.checkDialogMode(element.$element)) {
                     for (let id in allElements) {
-                        if (allElements[id].init === 'MbControlButton' && allElements[id].configuration.target === parseInt(chapter.id)) {
+                        if (allElements[id].init === 'MbControlButton' && allElements[id].configuration.target == chapter.id) {
                             chapter.id = id;
                             chapter.region = 'toolbar';
                             break;
