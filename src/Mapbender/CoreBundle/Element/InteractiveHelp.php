@@ -179,26 +179,26 @@ class InteractiveHelp extends AbstractElementService
     public function getClientConfiguration(Element $element)
     {
         $config = $element->getConfiguration() ?: [];
-        $appId = $element->getApplication()->getId();
-        $elementRepo = $this->doctrine->getManager()->getRepository(Element::class);
+        $allElements = $element->getApplication()->getElements();
         foreach ($config['tour']['chapters'] as $key => $chapter) {
-            $e = $elementRepo->findOneBy([
-                'application' => $appId,
-                'class' => $chapter['type'],
-                'enabled' => true,
-            ]);
-            if ($e) {
-                $handler = $this->elementInventory->getHandlerService($e);
-                $config['tour']['chapters'][$key]['class'] = $handler->getWidgetName($e);
-                $classAttr = $handler->getView($e)->attributes['class'] ?? '';
-                if (preg_match('/mb-element-([a-z]+)/i', $classAttr, $matches)) {
-                    $config['tour']['chapters'][$key]['selector'] = $matches[0];
+            $filteredElements = $allElements->filter(function (Element $element) use ($chapter) {
+                return $element->getClass() === $chapter['type'];
+            });
+            foreach ($filteredElements as $e) {
+                if ($e) {
+                    $handler = $this->elementInventory->getHandlerService($e);
+                    $config['tour']['chapters'][$key]['class'] = $handler->getWidgetName($e);
+                    $classAttr = $handler->getView($e)->attributes['class'] ?? '';
+                    if (preg_match('/mb-element-([a-z]+)/i', $classAttr, $matches)) {
+                        $config['tour']['chapters'][$key]['selector'] = $matches[0];
+                    }
+                    $config['tour']['chapters'][$key]['region'] = $e->getRegion();
                 }
-                $config['tour']['chapters'][$key]['region'] = $e->getRegion();
             }
         }
         return $config;
     }
+
     public static function getDefaultIcon()
     {
         return 'iconBookOpen';
