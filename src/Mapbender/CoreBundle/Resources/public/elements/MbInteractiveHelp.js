@@ -7,6 +7,7 @@
             this.prevChapter = false;
             this.tourLength = 0;
             this.popover = $($('#interactiveHelpPopover').html());
+            this.localStorageId = 'dismiss-permanently-help-' + Mapbender.configuration.application.slug + '-' + this.$element.attr('id');
 
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(() => {
                 this._setup();
@@ -18,7 +19,7 @@
         _setup() {
             this.completeTourChapterConfiguration();
             this.initEventHandlers();
-            const dismissPermanently = !!localStorage.getItem('dismiss-permanently-' + Mapbender.configuration.application.slug);
+            const dismissPermanently = !!localStorage.getItem(this.localStorageId);
             if (this.checkAutoOpen() && dismissPermanently !== true) {
                 this.activateByButton();
             }
@@ -82,11 +83,10 @@
                 this.stopShow();
             });
             $('.dismiss-permanently input').on('change', (e) => {
-                const key = 'dismiss-permanently-' + Mapbender.configuration.application.slug;
                 if (e.target.checked) {
-                    localStorage.setItem(key, true);
+                    localStorage.setItem(this.localStorageId, true);
                 } else {
-                    localStorage.removeItem(key);
+                    localStorage.removeItem(this.localStorageId);
                 }
             });
         }
