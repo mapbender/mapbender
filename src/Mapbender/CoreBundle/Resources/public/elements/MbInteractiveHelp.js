@@ -267,7 +267,6 @@
         }
 
         openSidePane() {
-            // $('.toggleSideBar').click();
             return new Promise((resolve) => {
                 const sidePane = $('.sidePane')[0];
                 if (!this.sidePaneIsClosed()) {
