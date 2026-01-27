@@ -296,7 +296,7 @@
         }
 
         isMobile() {
-            return window.screen.width < 1200;
+            return window.innerWidth < 1200;
         }
 
         focusPopover() {
