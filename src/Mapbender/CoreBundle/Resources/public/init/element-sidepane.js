@@ -464,21 +464,22 @@
         $elementIcons.empty(); // Clear existing icons first
 
         // Get all tab/accordion/list-item elements that are visible (excluding inline elements)
-        var $tabButtons = $sidePane.find('.tabs > .tab:visible:not(.inline)');
-        var $accordionButtons = $sidePane.find('.accordionContainer > .accordion:visible:not(.inline)');
+        var $tabTitles = $sidePane.find('.tabs > .tab:visible:not(.inline)');
+        var $accordionTitles = $sidePane.find('.accordionContainer > .accordion:visible:not(.inline)');
         var $listItems = $sidePane.find('.list-group-item:visible:not(.inline)');
 
-        var $allButtons = $tabButtons.add($accordionButtons).add($listItems);
+        var $allTitles = $tabTitles.add($accordionTitles).add($listItems);
 
-        $allButtons.each(function(index) {
-            var $button = $(this);
-            var $icon = $button.find('.js-mb-icon').first().clone();
+        $allTitles.each(function() {
+            const $title = $(this);
+            const $icon = $title.find('.js-mb-icon').first().clone();
 
-            var $iconWrapper = $('<span class="sidePane--collapsed__element-icon"></span>');
-            var buttonId = $button.attr('id');
-            $iconWrapper.data('button-id', buttonId);
-            $iconWrapper.attr('tabindex', '0'); // Make icon focusable
-            $iconWrapper.attr('role', 'button'); // Semantic role
+            const buttonId = $title.attr('id');
+            const $iconWrapper = $('<span class="sidePane--collapsed__element-icon"></span>')
+                .data('button-id', buttonId)
+                .attr('tabindex', '0')
+                .attr('role', 'button')
+                .attr('title', $title.text().trim());
             if ($icon.length) $iconWrapper.append($icon);
             $elementIcons.append($iconWrapper);
         });
@@ -518,7 +519,7 @@
         // Add Tab navigation within the icon list when sidepane is closed
         // (This is now handled by the global keydown handler below)
         // // If there are accordions or tabs, set the first one as active by default
-        if($accordionButtons.length || $tabButtons.length > 0) {
+        if($accordionTitles.length || $tabTitles.length > 0) {
             updateActiveIcon($('.sidePane'), 0);
         }
     }
