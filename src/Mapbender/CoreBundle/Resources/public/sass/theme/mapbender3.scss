@@ -422,12 +422,15 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     font-size: 1.3rem;
     color: var(--sidepane-text-color);
 
-    &:hover {
+    .sidePane &:hover {
         background: var(--sidepane-hover-color);
     }
 
     &.active {
         color: var(--primary);
-        background: var(--sidepane-active-background-color);
+
+        .sidePane & {
+            background: var(--sidepane-active-background-color);
+        }
     }
 }

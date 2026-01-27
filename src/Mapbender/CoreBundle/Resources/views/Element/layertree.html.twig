@@ -32,7 +32,7 @@
           <span class="loading-icon-wrapper"><i class="fas fa-spinner fa-spin layertree-spinner"></i></span>
           {% if configuration.menu is defined and configuration.menu %}
             {% block layertree_menu %}
-              <span class="layer-menu-btn" tabindex="0"><i class="fa-solid fa-ellipsis-vertical ps-2 pe-2"></i></span>
+              <span class="layer-menu-btn hover-highlight-effect" tabindex="0" role="button"><i class="fa-solid fa-ellipsis-vertical"></i></span>
               <div class="layer-menu hidden ms-4">
                 {% block layertree_menu_opacity %}
                 {% if 'opacity' in configuration.menu %}

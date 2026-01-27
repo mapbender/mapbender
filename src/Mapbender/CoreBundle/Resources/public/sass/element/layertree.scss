@@ -116,10 +116,10 @@ $layer-slider-bar-height: 5px;
     min-width: 14px !important;
     text-indent: -9999px; // hide text
     top: -1px;
-    
+
     // Focus styling for accessibility
     &:focus {
-      outline: 2px solid var(--focus-color, #007bff);
+      outline: 2px solid var(--focus-color);
       outline-offset: 2px;
       box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     }
@@ -130,7 +130,8 @@ $layer-slider-bar-height: 5px;
 }
 
 .layer-menu-btn {
-  color: #626161;
+    color: var(--text-color);
+    padding: 0 5px;
 }
 
 .-fn-toggle-selected, .-fn-toggle-dimension {
@@ -171,7 +172,7 @@ $layer-slider-bar-height: 5px;
 
 .menuBackground {
     position: relative;
-    
+
     &::before {
         content: "";
         position: absolute;
