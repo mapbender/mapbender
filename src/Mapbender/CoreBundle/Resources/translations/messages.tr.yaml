@@ -69,8 +69,6 @@ mb:
       error:
         geometry:
           missing: Seçilen giriş geometri içermiyor
-      admin:
-        openInline: 'Açık inline'
     searchrouter:
       no_results: Sonuç bulunamadı
       result_counter: 'Sonuçlar: %count%'

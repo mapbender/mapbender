@@ -54,14 +54,14 @@ class Copyright extends AbstractElementService
      */
     public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
-                '@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js',
-            ),
-            'css' => array(
-                '@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss',
-            ),
-        );
+        return ['js' => ['@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js']];
+    }
+
+    public function getClientConfiguration(Element $element): array
+    {
+        $config = parent::getClientConfiguration($element);
+        $config['modal'] = true;
+        return $config;
     }
 
     /**

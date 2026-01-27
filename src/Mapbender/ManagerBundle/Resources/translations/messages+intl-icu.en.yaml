@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Show on mobile screens'
         desktop: 'Show on desktop screens'
+      openInline: 'Open inline'
+      openInlineHelp: 'For inline elements, the content is displayed directly in the side pane or map area without a heading.'
     sidepane:
       width: Width
       resizable: Resizable

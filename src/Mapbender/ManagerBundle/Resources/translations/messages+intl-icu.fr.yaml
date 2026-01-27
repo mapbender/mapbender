@@ -200,6 +200,9 @@ mb:
         failed: 'Impossible d''importer l''application'
     xml_invalid: 'Le document est invalide'
     xml_malformed: 'Le document est invalide'
+    element:
+      openInline: 'Ouvrir en ligne'
+      openInlineHelp: 'Pour les éléments en ligne, le contenu s''affiche directement dans le volet latéral ou dans la zone de carte, sans titre.'
   core:
     admin:
       button:
