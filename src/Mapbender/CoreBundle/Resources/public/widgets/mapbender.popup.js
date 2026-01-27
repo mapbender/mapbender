@@ -356,7 +356,7 @@
                 }
                 buttonset.append($btn);
             }
-            return buttons_.length > 1;
+            return buttons_.length > 0;
         },
         setContent: function(content) {
             $('.popupContent', this.$element).html(content);
