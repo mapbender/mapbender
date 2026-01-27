@@ -92,7 +92,6 @@ mb:
         geometry:
           missing: 'La voce selezionata non contiene una geometria.'
       admin:
-        openInline: 'Apri inline'
         configurations: Configurazione
         title: Titolo
         title.help: 'Testo visualizzato nel menu a tendina delle configurazioni'

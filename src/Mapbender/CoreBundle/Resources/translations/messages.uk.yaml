@@ -79,7 +79,6 @@ mb:
         geometry:
           missing: Обраний об''єкт не містить геометрії.
       admin:
-        openInline: 'Відкрити вбудований'
         placeholder: Заповнювач
         sourceSrs: Джерело SRS
     searchrouter:

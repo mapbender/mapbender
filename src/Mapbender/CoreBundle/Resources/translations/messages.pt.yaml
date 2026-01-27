@@ -92,7 +92,6 @@ mb:
         geometry:
           missing: 'A entrada selecionada não contém geometria.'
       admin:
-        openInline: 'Abrir inline'
         configurations: Configurações
         title: Título
         title.help: 'Texto exibido no menu drop-down para selecionar as configurações'

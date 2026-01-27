@@ -141,6 +141,9 @@ mb:
     import:
       application:
         failed: 'Uygulama içeri aktarıllamıyor (Import)'
+    element:
+      openInline: 'Satır içi aç'
+      openInlineHelp: 'Satır içi öğelerde içerik, kenar çubuğunda veya kart alanında doğrudan ve başlık olmadan görüntülenir.'
   core:
     admin:
       button:

@@ -26,9 +26,10 @@
         getPopupOptions() {
             return {
                 title: this.$element.attr('data-title'),
-                modal: true,
-                detachOnClose: false,
+                modal: this.options.modal,
+                draggable: !this.options.modal,
                 closeOnOutsideClick: true,
+                detachOnClose: false,
                 content: this.content_,
                 width: this.options.popupWidth || 350,
                 height: this.options.popupHeight || null,
