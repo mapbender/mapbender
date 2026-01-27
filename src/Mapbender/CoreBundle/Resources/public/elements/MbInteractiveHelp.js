@@ -33,16 +33,12 @@
             }
             super.activateByButton(callback, mbButton);
             this.popup.open();
-            if (this.notifyWidgetActivated) {
-                this.notifyWidgetActivated();
-            }
+            this.notifyWidgetActivated();
         }
 
         closeByButton() {
             super.closeByButton();
-            if (this.notifyWidgetDeactivated) {
-                this.notifyWidgetDeactivated();
-            }
+            this.notifyWidgetDeactivated();
         }
 
         getPopupOptions() {
