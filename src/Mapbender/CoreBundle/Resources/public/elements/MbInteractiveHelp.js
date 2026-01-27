@@ -20,7 +20,7 @@
             this.completeTourChapterConfiguration();
             this.initEventHandlers();
             const dismissPermanently = !!localStorage.getItem(this.localStorageId);
-            if (this.checkAutoOpen() && dismissPermanently !== true) {
+            if (this.options.autoOpen && dismissPermanently !== true) {
                 this.activateByButton();
             }
         }
