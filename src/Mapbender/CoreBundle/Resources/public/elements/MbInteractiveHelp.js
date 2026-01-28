@@ -177,8 +177,8 @@
                 $('body').append(this.popover);
             }
             this.popover.removeClass('popover-bottom popover-top popover-left popover-right');
-            this.popover.find('h6').text(Mapbender.trans(currentChapter.title));
-            this.popover.find('p').text(Mapbender.trans(currentChapter.description));
+            this.popover.find('.help-popover-title').text(Mapbender.trans(currentChapter.title));
+            this.popover.find('.help-popover-text').text(Mapbender.trans(currentChapter.description));
             this.focusPopover();
             // rename next button when last chapter is reached:
             if ((this.tourLength - 1) === this.currentChapter) {
