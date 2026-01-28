@@ -100,8 +100,8 @@
             chapters = chapters.filter(chapter => {
                 const $el = $('.' + chapter.selector);
                 if ($el.length > 0) {
-                    const hideOnMobile = $el.hasClass('hide-screentype-mobile') && this.isMobile();
-                    const hideOnDesktop = $el.hasClass('hide-screentype-desktop') && !this.isMobile();
+                    const hideOnMobile = ($el.hasClass('hide-screentype-mobile') || $el.closest('.element-wrapper').hasClass('hide-screentype-mobile')) && this.isMobile();
+                    const hideOnDesktop = ($el.hasClass('hide-screentype-desktop') || $el.closest('.element-wrapper').hasClass('hide-screentype-desktop')) && !this.isMobile();
                     return !hideOnMobile && !hideOnDesktop;
                 }
                 return false;
