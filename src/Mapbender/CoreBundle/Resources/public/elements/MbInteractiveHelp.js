@@ -144,15 +144,15 @@
                 const sidePaneType = this.sidePaneType();
                 switch (sidePaneType) {
                     case 'tabs':
-                        id = $currentElement.parent().attr('id').replace('container', '');
+                        id = $currentElement.closest('.container').attr('id').replace('container', '');
                         $('.sidePane #tab' + id).click();
                         break;
                     case 'list':
-                        id = $currentElement.parent().parent().parent().attr('id').replace('list_group_item_container', '');
+                        id = $currentElement.closest('.container-list-group-item').attr('id').replace('list_group_item_container', '');
                         $('.sidePane #list_group_item' + id).click();
                         break;
                     default:
-                        $currentElement.parent().parent().prev().click();
+                        $currentElement.closest('.container-accordion').prev().click();
                 }
             }
             if (currentChapter.region === 'toolbar') {
