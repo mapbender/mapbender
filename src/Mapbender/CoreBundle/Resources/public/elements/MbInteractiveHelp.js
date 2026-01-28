@@ -200,9 +200,19 @@
                 await this.openSidePane();
             }
             const anchor = currentChapter.element.options.anchor;
-            currentChapter.region = (currentChapter.region === 'content' && anchor.startsWith('left')) ? currentChapter.region + '-left' : currentChapter.region;
-            currentChapter.region = (currentChapter.region === 'sidepane' && this.sidePanePosition() === 'right') ? currentChapter.region + '-right' : currentChapter.region;
-            currentChapter.region = (currentChapter.region === 'sidepane' && this.isMobile()) ? currentChapter.region + '-mobile' : currentChapter.region;
+            switch (true) {
+                case currentChapter.region === 'content' && anchor.startsWith('left'):
+                    currentChapter.region = currentChapter.region + '-left';
+                    break;
+                case currentChapter.region === 'sidepane' && this.sidePanePosition() === 'right':
+                    currentChapter.region = currentChapter.region + '-right';
+                    break;
+                case currentChapter.region === 'sidepane' && this.isMobile():
+                    currentChapter.region = currentChapter.region + '-mobile';
+                    break;
+                default:
+                    // do nothing
+            }
             // calculate popover position:
             const rect = document.getElementById(currentChapter.id).getBoundingClientRect();
             let top, left, position;
