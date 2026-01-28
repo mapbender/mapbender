@@ -6,8 +6,10 @@
             this.currentChapter = 0;
             this.prevChapter = false;
             this.tourLength = 0;
-            this.popover = $($('#interactiveHelpPopover').html());
-            this.localStorageId = 'dismiss-permanently-help-' + Mapbender.configuration.application.slug + '-' + this.$element.attr('id');
+            this.elementId = this.$element.attr('id');
+            this.popover = $($('#interactiveHelpPopover-' + this.elementId).html());
+            this.localStorageId = 'dismiss-permanently-help-' + Mapbender.configuration.application.slug + '-' + this.elementId;
+            this.popoverClass = '.popover-interactive-help-' + this.elementId;
 
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(() => {
                 this._setup();
@@ -56,11 +58,11 @@
 
         initEventHandlers() {
             // Mouse / touch
-            $(document).on('click', '.mb-element-interactivehelp .startTourBtn', () => {
+            $(document).on('click', '#' + this.elementId + ' .startTourBtn', () => {
                 this.runShow();
             });
             // Mouse / touch
-            $(document).on('click', '.popover-interactive-help .runShowBtn', (e) => {
+            $(document).on('click', this.popoverClass + ' .runShowBtn', (e) => {
                 // Keyboard-generated clicks often have detail === 0; those are handled in keydown below
                 if (typeof e.detail === 'number' && e.detail === 0) {
                     return;
@@ -68,18 +70,18 @@
                 this.runShow();
             });
             // Keyboard (avoid keyup->focus-change->second activation)
-            $(document).on('keydown', '.popover-interactive-help .runShowBtn', (e) => {
+            $(document).on('keydown', this.popoverClass + ' .runShowBtn', (e) => {
                 if (e.key !== 'Enter' && e.key !== ' ') return;
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 this.runShow();
             });
 
-            $(document).on('click', '.popover-interactive-help .stepBackBtn', (e) => {
+            $(document).on('click', this.popoverClass + ' .stepBackBtn', (e) => {
                 e.preventDefault();
                 this.oneStepBack();
             });
-            $(document).on('click', '.popover-interactive-help .closeShowBtn', () => {
+            $(document).on('click', this.popoverClass + ' .closeShowBtn', () => {
                 this.stopShow();
             });
             $('.dismiss-permanently input').on('change', (e) => {
@@ -94,7 +96,7 @@
         completeTourChapterConfiguration() {
             const allElements = Mapbender.configuration.elements;
             let chapters = this.options.tour.chapters;
-            // filter out all elements that are not configured in the application or hidden for mobile:
+            // filter out all elements that are not configured in the application or hidden for mobile/desktop:
             chapters = chapters.filter(chapter => {
                 const $el = $('.' + chapter.selector);
                 if ($el.length > 0) {

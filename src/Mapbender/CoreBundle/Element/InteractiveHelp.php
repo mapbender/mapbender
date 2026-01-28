@@ -173,6 +173,7 @@ class InteractiveHelp extends AbstractElementService
         $view->attributes['class'] = 'mb-element-interactivehelp';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['config'] = $element->getConfiguration();
+        $view->variables['id'] = $element->getId();
         return $view;
     }
 
