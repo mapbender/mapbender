@@ -19,7 +19,7 @@
         }
 
         _setup() {
-            this.completeTourChapterConfiguration();
+            this.prepareTourChapterConfiguration();
             this.initEventHandlers();
             const dismissPermanently = !!localStorage.getItem(this.localStorageId);
             if (this.options.autoOpen && dismissPermanently !== true) {
@@ -91,9 +91,14 @@
                     localStorage.removeItem(this.localStorageId);
                 }
             });
+            $(window).on('resize', () => {
+                this.prepareTourChapterConfiguration();
+                const currentChapter = this.options.tour.chapters[this.currentChapter];
+                this.updatePopover(currentChapter);
+            });
         }
 
-        completeTourChapterConfiguration() {
+        prepareTourChapterConfiguration() {
             const allElements = Mapbender.configuration.elements;
             let chapters = this.options.tour.chapters;
             // filter out all elements that are not configured in the application or hidden for mobile/desktop:
@@ -213,7 +218,10 @@
                 default:
                     // do nothing
             }
-            // calculate popover position:
+            this.calculatePopoverPosition(currentChapter);
+        }
+
+        calculatePopoverPosition(currentChapter) {
             const rect = document.getElementById(currentChapter.id).getBoundingClientRect();
             let top, left, position;
             switch (currentChapter.region) {
