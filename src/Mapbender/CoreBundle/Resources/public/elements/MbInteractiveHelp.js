@@ -72,30 +72,30 @@
                         mbControlBtn.reset();
                     }
                 });
-                this.runShow();
+                this.runTour();
             });
             // Mouse / touch
-            $(document).on('click', this.popoverClass + ' .runShowBtn', (e) => {
+            $(document).on('click', this.popoverClass + ' .runTourBtn', (e) => {
                 // Keyboard-generated clicks often have detail === 0; those are handled in keydown below
                 if (typeof e.detail === 'number' && e.detail === 0) {
                     return;
                 }
-                this.runShow();
+                this.runTour();
             });
             // Keyboard (avoid keyup->focus-change->second activation)
-            $(document).on('keydown', this.popoverClass + ' .runShowBtn', (e) => {
+            $(document).on('keydown', this.popoverClass + ' .runTourBtn', (e) => {
                 if (e.key !== 'Enter' && e.key !== ' ') return;
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                this.runShow();
+                this.runTour();
             });
 
             $(document).on('click', this.popoverClass + ' .stepBackBtn', (e) => {
                 e.preventDefault();
                 this.oneStepBack();
             });
-            $(document).on('click', this.popoverClass + ' .closeShowBtn', () => {
-                this.stopShow();
+            $(document).on('click', this.popoverClass + ' .closeTourBtn', () => {
+                this.stopTour();
             });
             $('.dismiss-permanently input').on('change', (e) => {
                 if (e.target.checked) {
@@ -150,9 +150,9 @@
             this.tourLength = this.options.tour.chapters.length;
         }
 
-        runShow() {
+        runTour() {
             if (this.tourLength === this.currentChapter) {
-                this.stopShow();
+                this.stopTour();
                 return;
             }
             if (this.prevChapter !== false && this.prevChapter.region === 'toolbar') {
@@ -191,7 +191,7 @@
             }
             this.currentChapter -= 2;
             this.prevChapter = chapters[this.currentChapter];
-            this.runShow();
+            this.runTour();
         }
 
         async updatePopover(currentChapter) {
@@ -204,9 +204,9 @@
             this.focusPopover();
             // rename next button when last chapter is reached:
             if ((this.tourLength - 1) === this.currentChapter) {
-                $('.runShowBtn').text(Mapbender.trans('mb.interactivehelp.element.end'));
+                $('.runTourBtn').text(Mapbender.trans('mb.interactivehelp.element.end'));
             } else {
-                $('.runShowBtn').text(Mapbender.trans('mb.interactivehelp.element.next'));
+                $('.runTourBtn').text(Mapbender.trans('mb.interactivehelp.element.next'));
             }
             // don't show step-back link on first chapter:
             if (this.currentChapter === 0) {
@@ -277,7 +277,7 @@
             });
         }
 
-        stopShow() {
+        stopTour() {
             const chapters = this.options.tour.chapters;
             if (chapters[this.currentChapter - 1].region === 'toolbar') {
                 chapters[this.currentChapter - 1].element.closeByButton();
@@ -350,9 +350,9 @@
             if ($p[0].contains(document.activeElement)) {
                 return;
             }
-            // Defer focus so Enter-activation on .runShowBtn won't "transfer" to the close button
+            // Defer focus so Enter-activation on .runTourBtn won't "transfer" to the close button
             window.requestAnimationFrame(() => {
-                const $preferred = $p.find('.runShowBtn:visible').first();
+                const $preferred = $p.find('.runTourBtn:visible').first();
                 const $first = getFocusables().first();
                 ($preferred.length ? $preferred : ($first.length ? $first : $p)).trigger('focus');
             });
