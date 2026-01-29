@@ -399,7 +399,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-bottom: 4px !important;
     user-select: none;
     cursor: pointer;
-    padding: 5px var(--sidepane-padding-x) !important;
+    padding: 5px var(--sidepane-padding-right) 5px var(--sidepane-padding-left) !important;
     font-weight: 600;
     font-size: 1.3rem;
     color: var(--sidepane-text-color);

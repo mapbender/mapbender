@@ -7,7 +7,8 @@
     --sidepane-hover-color: rgba(0, 0, 0, 0.05);
     --sidepane-active-background-color: rgba(0, 0, 0, 0.02);
     --sidepane-collapsed-width: 3rem;
-    --sidepane-padding-x: 1rem;
+    --sidepane-padding-left: 1rem;
+    --sidepane-padding-right: 1rem;
     --sidepane-padding-y: 1rem;
 }
 
@@ -105,7 +106,7 @@
 
     &__inline-element {
         font-size: 1rem;
-        padding: 0 var(--sidepane-padding-x);
+        padding: 0 var(--sidepane-padding-right) 0 var(--sidepane-padding-left);
         margin-bottom: 0.5rem;
 
         .sidePane.left & {
@@ -118,7 +119,7 @@
     }
 
     .accordion-cell, .list-group-item-content {
-        padding: 5px var(--sidepane-padding-x) !important;
+        padding: 5px var(--sidepane-padding-right) 5px var(--sidepane-padding-left) !important;
     }
 }
 
@@ -197,7 +198,7 @@
     .list-group-item-header {
 
         .list-back-btn {
-            padding: var(--sidepane-padding-y) var(--sidepane-padding-x);
+            padding: var(--sidepane-padding-y) var(--sidepane-padding-right) var(--sidepane-padding-y) var(--sidepane-padding-left);
             background: none;
             border: none;
             color: var(--sidepane-inactive-text-color);
