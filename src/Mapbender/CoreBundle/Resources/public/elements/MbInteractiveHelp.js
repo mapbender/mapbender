@@ -10,6 +10,7 @@
             this.popover = $($('#interactiveHelpPopover-' + this.elementId).html());
             this.localStorageId = 'dismiss-permanently-help-' + Mapbender.configuration.application.slug + '-' + this.elementId;
             this.popoverClass = '.popover-interactive-help-' + this.elementId;
+            this.isActive = false;
 
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(() => {
                 this._setup();
@@ -59,6 +60,7 @@
         initEventHandlers() {
             // Mouse / touch
             $(document).on('click', '#' + this.elementId + ' .startTourBtn', () => {
+                this.isActive = true;
                 this.runShow();
             });
             // Mouse / touch
@@ -92,9 +94,16 @@
                 }
             });
             $(window).on('resize', () => {
-                this.prepareTourChapterConfiguration();
-                const currentChapter = this.options.tour.chapters[this.currentChapter];
-                this.updatePopover(currentChapter);
+                if (this.isActive) {
+                    this.prepareTourChapterConfiguration();
+                    const chapters = this.options.tour.chapters;
+                    // when switch between mobile / desktop:
+                    // reset to first chapter, if element does not exist in mobile / desktop view
+                    if (!chapters.hasOwnProperty(this.currentChapter)) {
+                        this.currentChapter = 0;
+                    }
+                    this.updatePopover(chapters[this.currentChapter]);
+                }
             });
         }
 
@@ -267,6 +276,7 @@
             }
             this.currentChapter = 0;
             this.popover.detach();
+            this.isActive = false;
         }
 
         sidePanePosition() {
