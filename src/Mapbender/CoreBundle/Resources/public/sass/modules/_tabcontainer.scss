@@ -111,7 +111,11 @@ $hoverEffects: true !default;
 .tabContainerAlt{
   > .tabs {
     list-style: none;
-    border-bottom: 1px solid #d6d3d3;
+
+    // show border only if there's at least one tab
+    &:has(li) {
+      border-bottom: 1px solid #d6d3d3;
+    }
   }
   .tab {
     @extend .buttonCore;

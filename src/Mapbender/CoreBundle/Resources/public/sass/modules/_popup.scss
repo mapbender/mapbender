@@ -51,7 +51,7 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
     &.popupScroll {
         // min-height: 200px;  // avoid squishing scrollable content too far vertically
       .popupContent {
-        max-width: calc(100% - 20px);
+        max-width: calc(100vw - 20px);
       }
     }
     .popupContent {
