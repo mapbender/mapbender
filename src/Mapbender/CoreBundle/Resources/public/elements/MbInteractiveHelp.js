@@ -198,7 +198,7 @@
             if (!document.body.contains(this.popover[0])) {
                 $('body').append(this.popover);
             }
-            this.popover.removeClass('popover-bottom popover-top popover-left popover-right');
+            this.popover.removeClass('popover-bottom popover-top popover-left popover-right popover-top-far-left popover-bottom-far-left');
             this.popover.find('.help-popover-title').text(Mapbender.trans(currentChapter.title));
             this.popover.find('.help-popover-text').text(Mapbender.trans(currentChapter.description));
             this.focusPopover();
@@ -246,11 +246,19 @@
                     position = 'top';
                     top = rect.top - this.popover.height() - 30;
                     left = rect.left - this.popover.width() + (rect.width / 2) + 10;
+                    if (rect.left < this.popover.width()) {
+                        position = 'top-far-left';
+                        left = rect.left + (rect.width / 2);
+                    }
                     break;
                 case 'toolbar':
                     position = 'bottom';
                     top = rect.bottom + 8;
                     left = rect.left - this.popover.width() + 20;
+                    if (rect.left < this.popover.width()) {
+                        position = 'bottom-far-left';
+                        left = rect.left + (rect.width / 2) - 10;
+                    }
                     break;
                 case 'content':
                 case 'sidepane-right':
