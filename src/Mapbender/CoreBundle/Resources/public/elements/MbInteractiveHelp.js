@@ -61,6 +61,17 @@
             // Mouse / touch
             $(document).on('click', '#' + this.elementId + ' .startTourBtn', () => {
                 this.isActive = true;
+                if (this.popup && this.popup.$element) {
+                    this.popup.close();
+                }
+                // get corresponding button for interactive help
+                // and deactivate the button if necessary:
+                $('.toolBarItemActive').each((idx, el) => {
+                    let mbControlBtn = $(el).data('MbControlButton');
+                    if (mbControlBtn.options.target == this.elementId && mbControlBtn.$element.hasClass('toolBarItemActive')) {
+                        mbControlBtn.reset();
+                    }
+                });
                 this.runShow();
             });
             // Mouse / touch
@@ -143,9 +154,6 @@
             if (this.tourLength === this.currentChapter) {
                 this.stopShow();
                 return;
-            }
-            if (this.popup && this.popup.$element) {
-                this.popup.close();
             }
             if (this.prevChapter !== false && this.prevChapter.region === 'toolbar') {
                 this.prevChapter.element.closeByButton();
