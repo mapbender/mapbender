@@ -201,7 +201,9 @@
         function focusFirstFocusableElement(container) {
             if (!container) return;
             var $focusable = getFocusableElements(container).first();
-            if ($focusable.length) {
+            // Skip if interactive help tour is active
+            var isInteractiveHelpActive = $('.popover-interactive-help:visible').length > 0;
+            if ($focusable.length && !isInteractiveHelpActive) {
                 $focusable.focus();
             }
         }
