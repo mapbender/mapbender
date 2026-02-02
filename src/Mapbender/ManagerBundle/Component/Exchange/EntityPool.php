@@ -31,7 +31,16 @@ class EntityPool extends ObjectIdentityPool implements Mapper
      *
      * @inheritdoc
      */
-    public function getIdentFromMapper($className, $id, $isSuperClass = false)
+    public function getIdentFromMapper($className, $id, $isSuperClass = false): null|int|string
+    {
+        $entity = $this->getMappedEntity($className, $id, $isSuperClass);
+        if ($entity && method_exists($entity, 'getId')) {
+            return $entity->getId();
+        }
+        return null;
+
+    }
+    public function getMappedEntity($className, $id, $isSuperClass = false): ?object
     {
         $identValues = array(
             'id' => $id,
@@ -47,9 +56,6 @@ class EntityPool extends ObjectIdentityPool implements Mapper
                 }
             }
         }
-        if ($entity && method_exists($entity, 'getId')) {
-            return $entity->getId();
-        }
-        return null;
+        return $entity;
     }
 }
