@@ -69,8 +69,6 @@ mb:
       error:
         geometry:
           missing: Geselecteerde entiteit bevat geen geometrie.
-      admin:
-        openInline: Open inline
     searchrouter:
       no_results: Geen resultaten gevonden.
       result_counter: 'Resultaten: %count%'

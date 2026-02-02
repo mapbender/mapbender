@@ -111,24 +111,31 @@ $hoverEffects: true !default;
 .tabContainerAlt{
   > .tabs {
     list-style: none;
-    border-bottom: dashed 1px $panelBorderColor;
-    padding-bottom: $space;
-    margin-bottom: $space;
+
+    // show border only if there's at least one tab
+    &:has(li) {
+      border-bottom: 1px solid #d6d3d3;
+    }
   }
   .tab {
     @extend .buttonCore;
     display: inline-block;
     font-size: $sidepaneButtonFontSize;
     padding: 0.25em 10px;
-    margin: 0 0.25em 0.25em 0;
+    margin: 0 0.25em 0.1em 0;
     color: $sidepaneButtonTextColor;
     background-color: $sidepaneButtonBackgroundColor;
-    border: 1px solid $sidepaneButtonBorderColor;
 
     &.active{
       cursor:default;
       color: $sidepaneButtonActiveTextColor;
-      background-color: $sidepaneButtonActiveBackgroundColor;
+      border-bottom: 3px solid var(--primary);
+      margin-bottom: -2px;
+    }
+
+    &:focus-visible{
+      outline: 2px solid var(--focus-color);
+      outline-offset: -2px;
     }
     @if $hoverEffects {
       &:hover:not(.active) {

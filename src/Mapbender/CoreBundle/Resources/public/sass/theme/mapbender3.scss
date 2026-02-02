@@ -224,24 +224,6 @@ ul.toolBar, .toolBar > ul {
   .popupHead{
     border-bottom: none;
   }
-  .tabContainerAlt{
-
-    > .tabs {
-      border: transparent;
-      border-bottom: 1px solid #d6d3d3;
-    }
-    .tab {
-      border: transparent;
-      margin: 0 0.25em 0.1em 0;
-    }
-    .tab.active {
-      border-bottom: 3px solid;
-      border-bottom-color: var(--primary);
-      background-color: transparent;
-      margin-bottom: -2px;
-    }
-  }
-
   .container {
     margin-top: 2em;
   }
@@ -417,16 +399,20 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-bottom: 4px !important;
     user-select: none;
     cursor: pointer;
-    padding: 5px var(--sidepane-padding-x) !important;
+    padding: 5px var(--sidepane-padding-right) 5px var(--sidepane-padding-left) !important;
     font-weight: 600;
     font-size: 1.3rem;
-    color: var(--sidepane-inactive-text-color);
+    color: var(--sidepane-text-color);
 
-    &:hover {
-        color: var(--sidepane-text-color);
+    .sidePane &:hover {
+        background: var(--sidepane-hover-color);
     }
 
     &.active {
         color: var(--primary);
+
+        .sidePane & {
+            background: var(--sidepane-active-background-color);
+        }
     }
 }

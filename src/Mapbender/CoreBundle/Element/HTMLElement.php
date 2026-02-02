@@ -4,12 +4,15 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
+use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Element\Type\HTMLElementAdminType;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Entity\RegionProperties;
 
 /**
  * HTMLElement.
  */
-class HTMLElement extends AbstractElementService
+class HTMLElement extends AbstractElementService implements FloatableElement
 {
     public static function getClassTitle()
     {
@@ -23,21 +26,25 @@ class HTMLElement extends AbstractElementService
 
     public function getWidgetName(Element $element)
     {
-        // no script constructor
-        return false;
+        // no widget constructor, except for non-inline content. For those, reuse MbCopyright widget.
+        return $this->isPopup($element) ? 'MbCopyright' : false;
+    }
+
+    private function isPopup(Element $element): bool
+    {
+        return $element->getRegion() === 'content' && !$element->getConfiguration()['openInline'];
     }
 
     public function getRequiredAssets(Element $element)
     {
-        return array();
+        return $this->isPopup($element)
+            ? ['js' => ['@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js']]
+            : [];
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\HTMLElementAdminType';
+        return HTMLElementAdminType::class;
     }
 
     /**
@@ -46,7 +53,7 @@ class HTMLElement extends AbstractElementService
     public static function getDefaultConfiguration()
     {
         return array(
-            'classes' => 'html-element-inline',
+            'classes' => '',
             'content' => ''
         );
     }
@@ -61,7 +68,10 @@ class HTMLElement extends AbstractElementService
         if (!empty($config['classes'])) {
             $view->attributes['class'] .= rtrim(' ' . $config['classes']);
         }
-        $view->variables['content'] = $config['content'];
+        $view->variables['content'] = $this->isPopup($element)
+            ? '<div class="-js-popup-content">' . $config['content'] . '</div>'
+            : $config['content'];
+
         /** @see https://doc.mapbender.org/en/functions/misc/html.html for twig variable expectations */
         $view->variables['application'] = $element->getApplication();
         $view->variables['entity'] = $element;
@@ -82,4 +92,5 @@ class HTMLElement extends AbstractElementService
     {
         return '@MapbenderCore/ElementAdmin/htmlelement.html.twig';
     }
+
 }

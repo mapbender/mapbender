@@ -623,7 +623,7 @@ Mapbender.ElementUtil = {
         const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
         if (hasNonPersistentScrollbars && $element.closest('.sideContent').length) {
             $element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
-            $element.closest('.accordion-cell').css('padding-right', '15px');
+            $element.closest('.accordion-cell').css('--sidepane-padding-right', 'calc(1rem + 15px)');
         }
     }
 };

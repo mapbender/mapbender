@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Mostrar em dispositivos móveis'
         desktop: 'Mostrar em telas de desktop'
+      openInline: 'Abrir em linha'
+      openInlineHelp: 'Nos elementos inline, o conteúdo é apresentado diretamente no painel lateral ou na área do cartão, sem título.'
     sidepane:
       width: Largura
       resizable: Redimensionável
