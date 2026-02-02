@@ -1,4 +1,8 @@
 ## v4.2.5
+Security:
+* Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+
 Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 
