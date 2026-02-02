@@ -69,8 +69,8 @@
         "wheregroup/doctrine-dbal-shims": "^1.2",
 
         "components/jquery": "^3.7.1",
-        "jquery/jquery-ui": "^1.13.2",
-        "datatables/datatables": "^1.10.16",
+        "jquery/jquery-ui": "^1.14.1",
+        "datatables.net/datatables.net-bs5": "^2.3",
         "twbs/bootstrap": "^5.0",
 
         "mapbender/openlayers6-es5": "^10"
@@ -97,28 +97,16 @@
         "mapbender/wmts": "*",
         "symfony/symfony": "*"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-release/3.0.5": "3.0.5.x-dev",
-            "dev-release/3.0.6": "3.0.6.x-dev",
-            "dev-release/3.0.7": "3.0.8.x-dev",
-            "dev-release/3.2": "3.2.x-dev",
-            "dev-master": "3.3.x-dev"
-        },
-        "installer-paths":{
-            "web/components/bootstrap/": ["twbs/bootstrap"]
-        }
-    },
     "repositories": [
         {
             "type": "package",
             "package": {
                 "name": "jquery/jquery-ui",
-                "version": "1.13.2",
+                "version": "1.14.1",
                 "source": {
                     "url": "https://github.com/jquery/jquery-ui",
                     "type": "git",
-                    "reference": "1.13.2"
+                    "reference": "1.14.1"
                 }
             }
         }
