@@ -20,7 +20,12 @@
         }
 
         _setup() {
-            this.prepareTourChapterConfiguration();
+            // wrap prepareTourChapterConfiguration() in setTimeout()
+            // to make sure that all Elements are fully loaded
+            // before tour chapters are finally configured
+            setTimeout(() => {
+                this.prepareTourChapterConfiguration();
+            }, 0);
             this.initEventHandlers();
             const dismissPermanently = !!localStorage.getItem(this.localStorageId);
             if (this.options.autoOpen && dismissPermanently !== true) {

@@ -190,8 +190,18 @@ class InteractiveHelp extends AbstractElementService
                     $handler = $this->elementInventory->getHandlerService($e);
                     $config['tour']['chapters'][$key]['class'] = $handler->getWidgetName($e);
                     $classAttr = $handler->getView($e)->attributes['class'] ?? '';
-                    if (preg_match('/mb-element-([a-z]+)/i', $classAttr, $matches)) {
-                        $config['tour']['chapters'][$key]['selector'] = $matches[0];
+                    switch (true) {
+                        case preg_match('/mb-element-([a-z]+)/i', $classAttr, $matches):
+                            $config['tour']['chapters'][$key]['selector'] = $matches[0];
+                            break;
+                        case str_contains($classAttr, 'mb-gpsButton'):
+                            $config['tour']['chapters'][$key]['selector'] = 'mb-gpsButton';
+                            break;
+                        case str_contains($classAttr, 'mb-aboutButton'):
+                            $config['tour']['chapters'][$key]['selector'] = 'mb-aboutButton';
+                            break;
+                        default:
+                            $config['tour']['chapters'][$key]['selector'] = '';
                     }
                     $config['tour']['chapters'][$key]['region'] = $e->getRegion();
                 }
