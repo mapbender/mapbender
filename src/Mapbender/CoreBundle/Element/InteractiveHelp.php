@@ -57,11 +57,6 @@ class InteractiveHelp extends AbstractElementService
                 ),
                 'chapters' => array(
                     array(
-                        'title' => 'mb.interactivehelp.aboutdialog.title',
-                        'description' => 'mb.interactivehelp.aboutdialog.description',
-                        'type' => 'Mapbender\CoreBundle\Element\AboutDialog',
-                    ),
-                    array(
                         'title' => 'mb.interactivehelp.applicationswitcher.title',
                         'description' => 'mb.interactivehelp.applicationswitcher.description',
                         'type' => 'Mapbender\CoreBundle\Element\ApplicationSwitcher',
