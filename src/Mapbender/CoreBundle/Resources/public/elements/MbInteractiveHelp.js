@@ -20,12 +20,7 @@
         }
 
         _setup() {
-            // wrap prepareTourChapterConfiguration() in setTimeout()
-            // to make sure that all Elements are fully loaded
-            // before tour chapters are finally configured
-            setTimeout(() => {
-                this.prepareTourChapterConfiguration();
-            }, 0);
+            this.prepareTourChapterConfiguration();
             this.initEventHandlers();
             const dismissPermanently = !!localStorage.getItem(this.localStorageId);
             if (this.options.autoOpen && dismissPermanently !== true) {
@@ -129,7 +124,7 @@
             // filter out all elements that are not configured in the application or hidden for mobile/desktop:
             chapters = chapters.filter(chapter => {
                 const $el = $('.' + chapter.selector);
-                if ($el.length > 0) {
+                if ($el.length > 0 && $el.data().hasOwnProperty(chapter.class)) {
                     const hideOnMobile = ($el.hasClass('hide-screentype-mobile') || $el.closest('.element-wrapper').hasClass('hide-screentype-mobile')) && this.isMobile();
                     const hideOnDesktop = ($el.hasClass('hide-screentype-desktop') || $el.closest('.element-wrapper').hasClass('hide-screentype-desktop')) && !this.isMobile();
                     return !hideOnMobile && !hideOnDesktop;
