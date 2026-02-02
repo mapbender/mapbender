@@ -237,7 +237,7 @@ class SourceInstanceController extends ApplicationControllerBase
         $this->em->persist($layerset->getApplication());
         $this->em->flush();
 
-        $this->permissionManager->movePermissions($instance, $assignment);
+        $this->permissionManager->movePermissions($instance, $assignment, true);
         $instance->setLayerset(null);
         $this->em->flush();
 
