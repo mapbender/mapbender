@@ -22,12 +22,11 @@ class Endpoint
     /** @var HttpParsedSource */
     protected Source $source;
 
-    /**
-     * @todo: needs application binding for reusable source instances
-     */
     public function __construct(
         protected InstanceTunnelService $service,
-        protected SourceInstance $instance)
+        protected Application $application,
+        protected SourceInstance $instance
+    )
     {
         $this->source = $instance->getSource();
     }
@@ -57,12 +56,9 @@ class Endpoint
         return $this->service->generatePublicUrl($this, $url);
     }
 
-    /**
-     * @todo: application should already be bound to Endpoint instance for reusable source instances
-     */
     public function getApplicationEntity(): Application
     {
-        return $this->instance->getLayerset()->getApplication();
+        return $this->application;
     }
 
     public function getSourceInstance(): SourceInstance
@@ -125,7 +121,11 @@ class Endpoint
         /** @var WmsInstance $wmsInstance */
         $wmsInstance = $this->instance;
 
-        $layerCriteria = Criteria::create()->where(Criteria::expr()->eq('id', intval($instanceLayerId)));
+        if ($this->application->isDbBased()) {
+            // for db based application, layerId is always an int, layerId must be cast to int for matching
+            $instanceLayerId = intval($instanceLayerId);
+        }
+        $layerCriteria = Criteria::create()->where(Criteria::expr()->eq('id', $instanceLayerId));
         /** @var SourceInstanceItem|false $layer */
         $layer = $wmsInstance->getLayers()->matching($layerCriteria)->first();
         if (!$layer || $layer->getSourceInstance()->getId() != $this->instance->getId()) {

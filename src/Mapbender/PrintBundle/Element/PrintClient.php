@@ -316,7 +316,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         switch ($action) {
             case 'print':
                 $rawData = $this->extractRequestData($request);
-                $jobData = $this->preparePrintData($rawData, $configuration);
+                $jobData = $this->preparePrintData($rawData, $element);
                 $jobData['application'] = $element->getApplication();
 
                 $this->checkMemoryLimit();
@@ -342,7 +342,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 if (!empty($configuration['renderMode']) && $configuration['renderMode'] === 'queued') {
                     $queuePlugin = $this->pluginRegistry->getPlugin('print-queue');
                     $rawData = $this->extractRequestData($request);
-                    $jobData = $this->preparePrintData($rawData, $configuration);
+                    $jobData = $this->preparePrintData($rawData, $element);
                     $jobData['application'] = $element->getApplication()->getSlug();
                     $queuePlugin->putJob($jobData, $this->generateFilename($element));
                     return new Response('', Response::HTTP_NO_CONTENT);
@@ -384,16 +384,13 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      * Preprocesses / amends job data so it can be safely executed by print service, but also
      * safely persisted to db for execution at a later time. I.e. information pertinent to
      * current user and current element configuration needs to be fully resolved.
-     *
-     * @param array $data
-     * @param mixed[] $configuration
-     * @return mixed[]
      */
-    protected function preparePrintData($data, $configuration)
+    protected function preparePrintData(array $data, Element $element): array
     {
+        $configuration = $element->getConfiguration();
         foreach ($data['layers'] as $ix => $layerDef) {
             if (!empty($layerDef['url'])) {
-                $updatedUrl = $this->sourceUrlProcessor->getInternalUrl($layerDef['url']);
+                $updatedUrl = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $layerDef['url']);
                 if (!empty($configuration['replace_pattern'])) {
                     $updatedUrl = $this->addReplacePattern($updatedUrl, $configuration['replace_pattern'], $data['quality']);
                 }
@@ -402,22 +399,22 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         }
 
         if (isset($data['overview'])) {
-            $data['overview'] = $this->prepareOverview($data['overview']);
+            $data['overview'] = $this->prepareOverview($data['overview'], $element);
         }
 
         if (isset($data['legends'])) {
-            $data['legends'] = $this->prepareLegends($data['legends']);
+            $data['legends'] = $this->prepareLegends($data['legends'], $element);
         }
         $data = $data + $this->getUserSpecifics();
         return $data;
     }
 
-    protected function prepareOverview($overviewDef)
+    protected function prepareOverview(array $overviewDef, Element $element): array
     {
         if (!empty($overviewDef['layers'])) {
             foreach ($overviewDef['layers'] as $index => $layer) {
                 if (isset($layer['url'])) {
-                    $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($layer['url']);
+                    $overviewDef['layers'][$index]['url'] = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $layer['url']);
                 }
             }
         }
@@ -453,21 +450,21 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         return $url;
     }
 
-    protected function prepareLegends(array $legendDefs): array
+    protected function prepareLegends(array $legendDefs, Element $element): array
     {
         for ($ix = 0; $ix < count($legendDefs); $ix++) {
             foreach ($legendDefs[$ix] as $imageListKey => $sourceLegendData) {
                 if (is_string($sourceLegendData)) {
                     // Old style title => url mapping. May go out of order depending on browser's and PHP's
                     // JSON processing
-                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($sourceLegendData);
+                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $sourceLegendData);
                     $legendDefs[$ix][$imageListKey] = [
                         'url' => $internalUrl,
                         'type' => 'url',
                         'layerName' => $imageListKey,
                     ];
                 } elseif (is_array($sourceLegendData) && array_key_exists('url', $sourceLegendData)) {
-                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($sourceLegendData['url']);
+                    $internalUrl = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $sourceLegendData['url']);
                     $legendDefs[$ix][$imageListKey]['url'] = $internalUrl;
 
                     if (!array_key_exists('type', $sourceLegendData)) {

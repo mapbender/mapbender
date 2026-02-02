@@ -27,13 +27,13 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         };
     }
 
-    public function getConfiguration(SourceInstance $sourceInstance): array
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance): array
     {
         /** @var VectorTileInstance $sourceInstance */
         /** @var VectorTileSource $source */
         $source = $sourceInstance->getSource();
 
-        $config = parent::getConfiguration($sourceInstance);
+        $config = parent::getConfiguration($application, $sourceInstance);
         json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
         $hasFIPropertyMap = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
 

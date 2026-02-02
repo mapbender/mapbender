@@ -145,7 +145,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
         // resolve tunnel requests
         foreach (ArrayUtil::getDefault($data, 'layers', array()) as $ix => $layerData) {
             if (!empty($layerData['url'])) {
-                $data['layers'][$ix]['url'] = $this->sourceUrlProcessor->getInternalUrl($layerData['url']);
+                $data['layers'][$ix]['url'] = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $layerData['url']);
             }
         }
         return $data;

@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Component\Source;
 use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,18 +61,18 @@ class UrlProcessor
      *        NOTE: AT least the 'request=...' paramter is required!
      * @throws \RuntimeException if no REQUEST=... in given $url
      */
-    public function tunnelifyUrl(SourceInstance $instance, string $url = ''): string
+    public function tunnelifyUrl(Application $application, SourceInstance $instance, string $url = ''): string
     {
-        return $this->tunnelService->getEndpoint($instance)->generatePublicUrl($url);
+        return $this->tunnelService->getEndpoint($application, $instance)->generatePublicUrl($url);
     }
 
     /**
      * Get the public base url of the instance tunnel action corresponding to given $instance.
      * This will include non-hidden vendor specifics and potentially other implicit parameters.
      */
-    public function getPublicTunnelBaseUrl(SourceInstance $instance): string
+    public function getPublicTunnelBaseUrl(Application $application, SourceInstance $instance): string
     {
-        return $this->tunnelService->getEndpoint($instance)->getPublicBaseUrl();
+        return $this->tunnelService->getEndpoint($application, $instance)->getPublicBaseUrl();
     }
 
     /**
@@ -83,7 +84,7 @@ class UrlProcessor
      *             NOTE: enabling this will cause conflicts on subdomain load-balancing
      * @throws SourceNotFoundException on tunnel match to deleted instance
      */
-    public function getInternalUrl(string $url, bool $localOnly = false): string
+    public function getInternalUrl(Application $application, string $url, bool $localOnly = false): string
     {
         $routerMatch = UrlUtil::routeParamsFromUrl($this->router, $url, !$localOnly);
         if ($routerMatch) {
@@ -96,7 +97,7 @@ class UrlProcessor
                 $baseUrl = $this->stripProxySignature($urlParam);
                 return UrlUtil::validateUrl($baseUrl, $otherParams);
             } else {
-                $tunnelInternalUrl = $this->tunnelService->getInternalUrl(Request::create($url), true);
+                $tunnelInternalUrl = $this->tunnelService->getInternalUrl($application, Request::create($url), true);
                 if ($tunnelInternalUrl) {
                     return $tunnelInternalUrl;
                 }

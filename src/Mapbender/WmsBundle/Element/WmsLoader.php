@@ -144,7 +144,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             case 'getInstances':
                 $instanceIds = array_filter(explode(',', $request->get('instances', '')));
                 return new JsonResponse(array(
-                    'success' => $this->getDatabaseInstanceConfigs($instanceIds),
+                    'success' => $this->getDatabaseInstanceConfigs($element, $instanceIds),
                 ));
             case 'loadWms':
                 return $this->loadWms($element, $request);
@@ -169,7 +169,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $infoFormat = $request->get('infoFormat');
 
         $configGenerator = $this->getConfigGenerator($instance);
-        $layerConfiguration = $configGenerator->getConfiguration($instance);
+        $layerConfiguration = $configGenerator->getConfiguration($element->getApplication(), $instance);
         $config = array_replace($this->getDefaultConfiguration(), $element->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
@@ -211,16 +211,15 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
 
     /**
      * @param string[] $instanceIds
-     * @return array
      */
-    protected function getDatabaseInstanceConfigs(array $instanceIds)
+    protected function getDatabaseInstanceConfigs(Element $element, array $instanceIds): array
     {
         $instanceConfigs = array();
         foreach ($instanceIds as $instanceId) {
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
             if ($instance && $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
-                $instanceConfigs[] = $this->getConfigGenerator($instance)->getConfiguration($instance);
+                $instanceConfigs[] = $this->getConfigGenerator($instance)->getConfiguration($element->getApplication(), $instance);
             }
         }
         return $instanceConfigs;

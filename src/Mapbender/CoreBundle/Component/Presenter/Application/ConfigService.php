@@ -136,7 +136,7 @@ class ConfigService
             if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configs[] = $configGenerator->getConfiguration($assignment->getInstance());
+            $configs[] = $configGenerator->getConfiguration($layerset->getApplication(), $assignment->getInstance());
         }
         return $configs;
     }
