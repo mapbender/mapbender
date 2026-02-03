@@ -110,10 +110,10 @@
                     const chapters = this.options.tour.chapters;
                     // when switch between mobile / desktop:
                     // reset to first chapter, if element does not exist in mobile / desktop view
-                    if (!chapters.hasOwnProperty(this.currentChapter)) {
+                    if (!chapters.hasOwnProperty((this.currentChapter - 1))) {
                         this.currentChapter = 0;
                     }
-                    this.updatePopover(chapters[this.currentChapter]);
+                    this.updatePopover(chapters[(this.currentChapter - 1)]);
                 }
             });
         }
