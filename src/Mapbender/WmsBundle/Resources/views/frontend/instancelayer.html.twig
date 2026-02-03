@@ -22,7 +22,32 @@
           <th>{{ 'mb.wms.wmsloader.repo.layer.label.boundingbox' | trans }}:</th>
           <td>{{ _bbox.srs }} {{ _bbox.minx }}, {{ _bbox.miny }}, {{ _bbox.maxx }}, {{ _bbox.maxy }}</td>
         </tr>
-      {%- endif -%}
+        {%- endif -%}
+        {%- if layer.sourceitem.metadataUrl[0] is defined
+            and layer.sourceitem.metadataUrl[0].onlineResource is defined
+            and layer.sourceitem.metadataUrl[0].onlineResource.href is defined
+            and layer.sourceitem.metadataUrl[0].onlineResource.href is not empty -%}
+            <tr>
+                <th>{{ 'mb.wms.wmsloader.repo.layer.label.metadataurl' | trans }}:</th>
+                <td>
+                    <a href="{{ layer.sourceitem.metadataUrl[0].onlineResource.href }}" target="_blank">
+                        {{ layer.sourceitem.metadataUrl[0].onlineResource.href }}
+                    </a>
+                </td>
+            </tr>
+        {%- endif -%}
+        {%- if layer.sourceitem.dataUrl[0] is defined
+            and layer.sourceitem.metadataUrl[0].href is defined
+            and layer.sourceitem.metadataUrl[0].href is not empty -%}
+            <tr>
+                <th>{{ 'mb.wms.wmsloader.repo.layer.label.dataurl' | trans }}:</th>
+                <td>
+                    <a href="{{ layer.sourceitem.dataUrl[0].href }}" target="_blank">
+                        {{ layer.sourceitem.dataUrl[0].href }}
+                    </a>
+                </td>
+            </tr>
+        {%- endif -%}
       </tbody>
     </table>
     <div class="indent">
