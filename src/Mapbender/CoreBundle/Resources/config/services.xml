@@ -139,6 +139,11 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.interactivehelp" class="Mapbender\CoreBundle\Element\Type\InteractiveHelpAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="form.type.order_aware_multi_choice" class="Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType">
             <tag name="form.type"/>
             <!-- arguments 1:1 for ChoiceType parent class constructor -->

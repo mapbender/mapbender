@@ -1,0 +1,104 @@
+.popover-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.popover-close:hover {
+    color: #333;
+}
+
+.popover-interactive-help {
+    position: fixed;
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+    max-width: 275px;
+}
+
+/* Caret */
+.popover-interactive-help::before,
+.popover-interactive-help::after {
+    content: '';
+    position: absolute;
+    border: 8px solid transparent;
+}
+.popover-bottom::before,
+.popover-bottom::after,
+.popover-top::before,
+.popover-top::after {
+    right: 20px;
+    left: auto;
+}
+.popover-right::before,
+.popover-right::after,
+.popover-left::before,
+.popover-left::after {
+    top: 40%;
+}
+.popover-top-far-left::before,
+.popover-top-far-left::after {
+    right: auto;
+    left: 12px;
+}
+.popover-bottom-far-left::before,
+.popover-bottom-far-left::after {
+    right: auto;
+    left: 12px;
+}
+
+
+/* Outer caret (border) */
+.popover-bottom::before,
+.popover-bottom-far-left::before {
+    bottom: 100%;
+    border-bottom-color: #ccc;
+}
+.popover-right::before {
+     right: 100%;
+     border-right-color: #ccc;
+}
+.popover-left::before {
+    left: 100%;
+    border-left-color: #ccc;
+}
+.popover-top::before,
+.popover-top-far-left::before {
+    top: 100%;
+    border-top-color: #ccc;
+}
+
+/* Inner caret (background) */
+.popover-bottom::after,
+.popover-bottom-far-left::after {
+    bottom: 100%;
+    margin-bottom: -1px;
+    border-bottom-color: #fff;
+}
+.popover-right::after {
+    right: 100%;
+    margin-right: -1px;
+    border-right-color: #fff;
+}
+.popover-left::after {
+    left: 100%;
+    margin-left: -1px;
+    border-left-color: #fff;
+}
+.popover-top::after,
+.popover-top-far-left::after {
+    top: 100%;
+    margin-top: -1px;
+    border-top-color: #fff;
+}

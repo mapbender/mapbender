@@ -676,6 +676,8 @@ mb:
         help: Help
         dataupload: Upload
         bookmark: Bookmark
+        chartcolumn: Diagram
+        bookopen: Book
   template:
     toolbar_menu_tooltip: 'Toggle menu'
     region:
@@ -698,6 +700,123 @@ mb:
         instancelayerform:
           label:
             title: Title
+  interactivehelp:
+    element:
+      title: Interactive Help
+      description: 'The interactive help displays tips directly on the individual elements.'
+      dismissPermanently: "Don't show again"
+      startTourBtn: 'Start tour'
+      next: 'next'
+      back: 'back'
+      end: 'End'
+    admin:
+      config: Configuration
+      help: 'See <a href="https://doc.mapbender.org/en/elements/misc/interactivehelp.html" target="_blank" class="text-primary">docs</a> on how to configure YAML syntax'
+      showOnStart: 'Show immediately at startup'
+    intro:
+      title:  'Welcome to our interactive Help'
+      description: 'In a few steps you will learn the basic functionality of Mapbender.'
+      dismissPermanentlyLabel: 'Do not show again.'
+    aboutdialog:
+      title: 'About'
+      description: 'Creates a button that shows the version of your Mapbender installation.'
+    activityindicator:
+      title: 'Activity Indicator'
+      description: 'The activity indicator element provides a simple widget showing background activity.'
+    applicationswitcher:
+      title: 'Application Switcher'
+      description: 'Switch to another application while maintaining current map position.'
+    basesourceswitcher:
+      title: 'Background Switcher'
+      description: 'Switch between different, predefined background map sources.'
+    button:
+      title: 'Button'
+      description: 'Perform actions with customizable buttons.'
+    coordinatesdisplay:
+      title: 'Coordinates Display'
+      description: 'Show mouse position in map coordinates.'
+    coordinatesutility:
+      title: 'Coordinates Utility'
+      description: 'Zoom to a given point coordinate or show the clicked point of the map.'
+    copyright:
+      title: 'Copyright'
+      description: 'Copyright element can be used to show simple text or HTML in a window dialog.'
+    datamanager:
+      title: 'Data Manager'
+      description: 'Manage and edit nonspatial data.'
+    dataupload:
+      title: 'Data Upload'
+      description: 'Upload and display files in GeoJSON, KML, GML or GPX format.'
+    digitizer:
+      title: 'Digitizer'
+      description: 'Create and edit of points, lines and areas on a map.'
+    featureinfo:
+      title: 'Feature Info'
+      description: 'Click on the map to get information about map features.'
+    gpsposition:
+      title: 'GPS Position'
+      description: 'Show your current GPS location on the map.'
+    htmlelement:
+      title: 'HTML Element'
+      description: 'Display custom HTML content.'
+    layertree:
+      title: 'Layer Tree'
+      description: 'Control visibility and settings of map layers.'
+    legend:
+      title: 'Legend'
+      description: 'Display the legend for active map layers.'
+    map:
+      title: 'Map'
+      description: 'The main map display showing geographic data.'
+    overview:
+      title: 'Overview'
+      description: 'Small overview map showing the current map extent.'
+    poi:
+      title: 'POI'
+      description: 'Create and share points of interest.'
+    printclient:
+      title: 'Print'
+      description: 'Print the current map view with customizable settings.'
+    routing:
+      title: 'Routing'
+      description: 'Calculate routes between locations.'
+    ruler:
+      title: 'Measurement'
+      description: 'Measure distances and areas on the map.'
+    scalebar:
+      title: 'Scale Bar'
+      description: 'Display a scale bar showing map distances.'
+    scaledisplay:
+      title: 'Scale Display'
+      description: 'Show the current map scale as text.'
+    scaleselector:
+      title: 'Scale Selector'
+      description: 'Select predefined map scales from a dropdown.'
+    searchrouter:
+      title: 'Search'
+      description: 'Use the search element to find locations on the map.'
+    shareurl:
+      title: 'Share URL'
+      description: 'Share the current map view via URL.'
+    simplesearch:
+      title: 'Simple Search'
+      description: 'Search for locations using a simple text input.'
+    sketch:
+      title: 'Sketch'
+      description: 'Draw and annotate on the map.'
+    srsselector:
+      title: 'SRS Selector'
+      description: 'Change the spatial reference system of the map.'
+    viewmanager:
+      title: 'View Manager'
+      description: 'Save and restore map views and layer states.'
+    wmsloader:
+      title: 'WMS Loader'
+      description: 'Load WMS services from external sources.'
+    zoombar:
+      title: 'Navigation Toolbar'
+      description: 'Navigate the map with zoom and pan controls.'
+
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
 'User account is disabled.': 'User account is disabled.'

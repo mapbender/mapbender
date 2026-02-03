@@ -1,0 +1,37 @@
+{{ form_row(form.title) }}
+<div class="mb-3 row">
+    <label class="form-label">
+        {{ form.configuration.tour.vars.label|trans }}
+        <span class="form-text mb-0 help-text">
+            {{ form.configuration.tour.vars.help|raw }}
+        </span>
+    </label>
+    {{ form_widget(form.configuration.tour) }}
+</div>
+{{ form_rest(form.configuration) }}
+<script type="text/javascript">
+    $(function(){
+        var textarea = document.getElementById({{ form.configuration.tour.vars.id | json_encode | raw }});
+        var yamlEditor = CodeMirror.fromTextArea(textarea, {
+            mode: 'text/x-yaml',
+            styleActiveLine: true,
+            viewportMargin: Infinity,
+            lineNumbers: true,
+            indentUnit: 2,
+            tabSize: 2,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+        yamlEditor.on('change',function(obj, changedObject){
+            var value = obj.getValue().replace(/\t/g,'  ');
+            $(textarea).val(value);
+        });
+        // Resize, but only if rendered in popup
+        var $form = $(document.getElementById({{ form.configuration.tour.vars.id | json_encode | raw }})).closest('form');
+        var popupContainer = $form.closest('.popup,.modal-dialog');
+        popupContainer.css({
+            width: '90%',
+            'min-height': '90vh'
+        });
+    })
+</script>
