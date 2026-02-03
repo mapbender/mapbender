@@ -22,6 +22,14 @@ Mapbender.confirm = function (message) {
     return res;
 };
 
+/**
+ * @param error
+ * @param retry
+ */
+Mapbender.handleAjaxError= function(error, retry) {
+
+};
+
 Mapbender.restrictPopupPositioning = function($dialogElement) {
     $dialogElement.on('dragstop', function (event, ui) {
         let forcedX = null;

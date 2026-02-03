@@ -288,9 +288,7 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             })
-                .fail((err) => {
-                    Mapbender.error(Mapbender.trans(err.responseText));
-                })
+                .fail((err) => Mapbender.handleAjaxError(err, this._search))
                 .then((response) => {
                     const features = this._createFeaturesFromResponse(response);
                     this._searchResults(features);
