@@ -200,6 +200,9 @@ mb:
         failed: 'Applicatie kan niet geimporteerd'
     xml_invalid: 'Ongeldig document'
     xml_malformed: 'Ongeldig document'
+    element:
+      openInline: 'Inline openen'
+      openInlineHelp: 'Bij inline-elementen wordt de inhoud direct en zonder koptekst weergegeven in het zijpaneel of in het kaartgedeelte.'
   core:
     admin:
       button:

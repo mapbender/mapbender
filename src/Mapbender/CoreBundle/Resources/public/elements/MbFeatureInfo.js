@@ -222,7 +222,7 @@
             $('[data-source-id="' + source.id + '"]', this.$element).remove();
             $('.js-content-content[data-source-id="' + source.id + '"]', this.$element).remove();
             this._removeFeaturesBySourceId(source.id);
-            const $container = this.$element.find('.tabContainer,.accordionContainer');
+            const $container = this.$element.find('.tabContainerAlt,.accordionContainer');
             if (!$container.find('.active').not('.hidden').length) {
                 $container.find('>.tabs .tab, >.accordion').not('hidden').first().click();
             }
@@ -234,8 +234,8 @@
             }
             if (this.isPopup) {
                 $('>.accordionContainer', this.$element).empty();
-                $('>.tabContainer > .tabs', this.$element).empty();
-                $('>.tabContainer > :not(.tabs)', this.$element).remove();
+                $('>.tabContainerAlt > .tabs', this.$element).empty();
+                $('>.tabContainerAlt > :not(.tabs)', this.$element).remove();
                 this.showingSources.splice(0);
             }
         }
@@ -275,7 +275,7 @@
                 $header.append($(document.createElement('a'))
                     .attr('href', url)
                     .attr('target', '_blank')
-                    .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link'))
+                    .append($(document.createElement('i')).addClass('fa fas fa-fw fa-external-link hover-highlight-effect'))
                 );
                 $content.attr('data-url', url);
             }
@@ -288,7 +288,7 @@
 
             const headerId = this._getHeaderId(source);
             const $header = $('#' + headerId, this.$element);
-            if (!$('>.active', $header.closest('.tabContainer,.accordionContainer')).not('.hidden').length) {
+            if (!$('>.active', $header.closest('.tabContainerAlt,.accordionContainer')).not('.hidden').length) {
                 $header.addClass('active');
                 if (this.options.printResult) {
                     setTimeout(() => { this._checkPrintVisibility(); });
@@ -477,7 +477,7 @@
                 sourcesOrderMap[source.id] = index++;
             }
 
-            const $container = $('.tabContainer > .tabs, .accordionContainer', this.$element);
+            const $container = $('.tabContainerAlt > .tabs, .accordionContainer', this.$element);
             const $tabs = $container.children();
             const $sortedTabs = $tabs.sort(function(a, b) {
                 const orderA = sourcesOrderMap[$(a).data('source-id')] ?? Number.MAX_SAFE_INTEGER;

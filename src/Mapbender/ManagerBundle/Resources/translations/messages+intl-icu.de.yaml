@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Auf Mobilgeräten anzeigen'
         desktop: 'Auf großen Bildschirmen anzeigen'
+      openInline: 'Inline öffnen'
+      openInlineHelp: 'Bei Inline-Elementen wird der Inhalt in der Sidepane oder im Kartenbereich direkt und ohne Überschrift angezeigt.'
     sidepane:
       width: Breite
       resizable: 'Größe veränderbar'

@@ -33,10 +33,10 @@
 
         _setup() {
             const self = this;
-            const $jobList = $('.job-list', this.$element);
+            this.$jobList = $('.job-list', this.$element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/';
-            if ($jobList.length) {
-                this._initJobList($jobList);
+            if (this.$jobList.length) {
+                this._initJobList(this.$jobList);
             }
 
             $('select[name="scale_select"]', this.$form).on('change', function() {
@@ -81,10 +81,13 @@
 
         getPopupOptions() {
             const options = super.getPopupOptions();
+            const resizable = !!this.$jobList.length;
             return Object.assign(options, {
                 width: 400,
                 cssClass: (options.cssClass && [options.cssClass] || [])
-                    .concat('customPrintDialog').join(' ')
+                    .concat('customPrintDialog').join(' '),
+                resizable: resizable,
+                scrollable: resizable,
             });
         }
 

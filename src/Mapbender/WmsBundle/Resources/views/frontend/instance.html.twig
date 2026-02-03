@@ -1,9 +1,9 @@
     <div class="tabContainerAlt">
-        <ul class="tabs mb-0 pb-0">
-            <li id="tab-general" class="tab active">{{ 'mb.wms.metadata.section.common.title' | trans }}</li>
-            <li id="tab-usage" class="tab">{{ 'mb.wms.metadata.section.useconditions.title' | trans }}</li>
-            <li id="tab-contact" class="tab">{{ 'mb.wms.metadata.section.contact.title' | trans }}</li>
-            <li id="tab-layers" class="tab">{{ 'mb.wms.metadata.section.items.title' | trans }}</li>
+        <ul class="tabs">
+            <li tabindex="0" role="tab" id="tab-general" class="tab active">{{ 'mb.wms.metadata.section.common.title' | trans }}</li>
+            <li tabindex="0" role="tab" id="tab-usage" class="tab">{{ 'mb.wms.metadata.section.useconditions.title' | trans }}</li>
+            <li tabindex="0" role="tab" id="tab-contact" class="tab">{{ 'mb.wms.metadata.section.contact.title' | trans }}</li>
+            <li tabindex="0" role="tab" id="tab-layers" class="tab">{{ 'mb.wms.metadata.section.items.title' | trans }}</li>
         </ul>
         <div id="container-general" class="container active ps-4">
             {%- include '@MapbenderWms/Repository/source/view-metadata.html.twig' with {'show_constraints': false} -%}

@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Mostra su schermi mobili'
         desktop: 'Mostra su schermi desktop'
+      openInline: 'Apri in linea'
+      openInlineHelp: 'Nel caso degli elementi inline, il contenuto viene visualizzato direttamente nel riquadro laterale o nell''area della scheda, senza intestazione.'
     sidepane:
       width: Larghezza
       resizable: Ridimensionabile

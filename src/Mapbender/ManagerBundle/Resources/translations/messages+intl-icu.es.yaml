@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Visualización en pantallas de móviles'
         desktop: 'Visualización en pantallas grandes'
+      openInline: 'Abrir en línea'
+      openInlineHelp: 'En los elementos en línea, el contenido se muestra directamente en el panel lateral o en el área de tarjetas, sin título.'
     sidepane:
       width: Anchura
       closed: 'Inicialmente cerrado'
