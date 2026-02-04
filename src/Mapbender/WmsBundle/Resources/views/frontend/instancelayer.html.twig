@@ -33,8 +33,8 @@
             </tr>
         {%- endif -%}
         {%- if layer.sourceitem.dataUrl[0] is defined
-            and layer.sourceitem.metadataUrl[0].href is defined
-            and layer.sourceitem.metadataUrl[0].href is not empty -%}
+            and layer.sourceitem.dataUrl[0].href is defined
+            and layer.sourceitem.dataUrl[0].href is not empty -%}
             <tr>
                 <th>{{ 'mb.wms.wmsloader.repo.layer.label.dataurl' | trans }}:</th>
                 <td>{{ layer.sourceitem.dataUrl[0].href | linkify }}</td>
