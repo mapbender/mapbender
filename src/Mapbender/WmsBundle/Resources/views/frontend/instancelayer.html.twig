@@ -29,23 +29,15 @@
             and layer.sourceitem.metadataUrl[0].onlineResource.href is not empty -%}
             <tr>
                 <th>{{ 'mb.wms.wmsloader.repo.layer.label.metadataurl' | trans }}:</th>
-                <td>
-                    <a href="{{ layer.sourceitem.metadataUrl[0].onlineResource.href }}" target="_blank">
-                        {{ layer.sourceitem.metadataUrl[0].onlineResource.href }}
-                    </a>
-                </td>
+                <td>{{ layer.sourceitem.metadataUrl[0].onlineResource.href | linkify }}</td>
             </tr>
         {%- endif -%}
         {%- if layer.sourceitem.dataUrl[0] is defined
-            and layer.sourceitem.metadataUrl[0].href is defined
-            and layer.sourceitem.metadataUrl[0].href is not empty -%}
+            and layer.sourceitem.dataUrl[0].href is defined
+            and layer.sourceitem.dataUrl[0].href is not empty -%}
             <tr>
                 <th>{{ 'mb.wms.wmsloader.repo.layer.label.dataurl' | trans }}:</th>
-                <td>
-                    <a href="{{ layer.sourceitem.dataUrl[0].href }}" target="_blank">
-                        {{ layer.sourceitem.dataUrl[0].href }}
-                    </a>
-                </td>
+                <td>{{ layer.sourceitem.dataUrl[0].href | linkify }}</td>
             </tr>
         {%- endif -%}
       </tbody>

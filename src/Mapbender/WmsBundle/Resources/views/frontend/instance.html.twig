@@ -9,8 +9,8 @@
         <div id="container-usage" class="container-accordion">
             <div class="accordion-cell">
                 <table class="table table-borderless table-condensed">
-                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees }}</td></tr>
-                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints }}</td></tr>
+                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees | linkify }}</td></tr>
+                    <tr><th>{{ "mb.wms.wmsloader.repo.view.label.accessconstraints" | trans }}:</th><td>{{ source.accessConstraints | linkify }}</td></tr>
                 </table>
             </div>
         </div>
