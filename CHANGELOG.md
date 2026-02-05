@@ -2,6 +2,7 @@
 Bugfixes:
 * [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
 * When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
+* [Layertree] Improve performance of layertree-actions in layertrees with many WMS
 
 Other:
 * [ViewManager] Load Views on demand with Ajax
