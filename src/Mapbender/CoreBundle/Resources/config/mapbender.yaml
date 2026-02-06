@@ -30,3 +30,5 @@ parameters:
     mapbender.icons.disable_default_fa: false
     mapbender.icons.custom: ~
 
+    mapbender.show_proxied_metadata_urls: false
+
