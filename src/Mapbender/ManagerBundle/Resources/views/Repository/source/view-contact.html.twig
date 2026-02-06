@@ -1,7 +1,7 @@
 <table>
   <tbody>
     <tr><th>{{ "mb.manager.contact.person" | trans }}:</th><td>{{ contact.person }}</td></tr>
-    <tr><th>{{ "mb.manager.contact.organization" | trans }}:</th><td>{{ contact.organization }}</td></tr>
+    <tr><th>{{ "mb.manager.contact.organization" | trans }}:</th><td>{{ contact.organization | linkify }}</td></tr>
     <tr><th>{{ "mb.manager.contact.position" | trans }}:</th><td>{{ contact.position }}</td></tr>
     <tr><th>{{ "mb.manager.contact.telephone" | trans }}:</th><td>{{ contact.voiceTelephone }}</td></tr>
     <tr><th>{{ "mb.manager.contact.facsimile" | trans }}:</th><td>{{ contact.facsimileTelephone }}</td></tr>
