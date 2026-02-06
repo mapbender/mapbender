@@ -136,10 +136,8 @@ class ConfigService
             if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configuration = $configGenerator->getConfiguration($assignment->getInstance());
-            if (isset($configuration['id'])) {
-                $configuration['id'] = $layerset->getId()."_".$configuration['id'];
-            }
+            $idPrefix = $assignment instanceof ReusableSourceInstanceAssignment ? $assignment->getId().'_' : null;
+            $configuration = $configGenerator->getConfiguration($assignment->getInstance(), $idPrefix);
             $configs[] = $configuration;
         }
         return $configs;

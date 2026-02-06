@@ -59,7 +59,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstance $sourceInstance
      * @return array
      */
-    public function getConfiguration(SourceInstance $sourceInstance): array
+    public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         $config = parent::getConfiguration($sourceInstance);
 
@@ -72,7 +72,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'title' => $root['title'] ?: $root['lsTitle'] ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array(
-                $this->getLayerConfiguration($sourceInstance, $root),
+                $this->getLayerConfiguration($sourceInstance, $root, $idPrefix),
             ),
         ]);
 
@@ -109,10 +109,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getLayerConfiguration(WmsInstance $instance, array $instanceLayer): array
+    protected function getLayerConfiguration(WmsInstance $instance, array $instanceLayer, ?string $idPrefix): array
     {
         $configuration = array(
-            "options" => $this->getLayerOptionsConfiguration($instance, $instanceLayer),
+            "options" => $this->getLayerOptionsConfiguration($instance, $instanceLayer, $idPrefix),
             "state" => array(
                 "visibility" => null,
                 "info" => null,
@@ -123,7 +123,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $children = array();
         foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
             if ($childLayer['active']) {
-                $children[] = $this->getLayerConfiguration($instance, $childLayer);
+                $children[] = $this->getLayerConfiguration($instance, $childLayer, $idPrefix);
             }
         }
         if ($children) {
@@ -142,7 +142,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstanceLayerArray $layer
      * @return array
      */
-    protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
+    protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer, ?string $idPrefix): array
     {
         $styles = $this->getAvailableStyles($instance, $layer);
         if ($layer['legendEnabled'] === false) {
@@ -152,7 +152,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             }
         }
         $configuration = array(
-            "id" => strval($layer['id']),
+            "id" => ($idPrefix ?? '') . $layer['id'],
             "priority" => $layer['priority'],
             "name" => strval($layer['lsName']),
             "title" => $layer['title'] ?: $layer['lsTitle'],

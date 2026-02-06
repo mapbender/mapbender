@@ -26,7 +26,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
     abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer);
 
 
-    public function getConfiguration(SourceInstance $sourceInstance): array
+    public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         /** @var WmtsInstance $sourceInstance */
         return array_merge(parent::getConfiguration($sourceInstance), [

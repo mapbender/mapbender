@@ -27,7 +27,7 @@ class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator
         };
     }
 
-    public function getConfiguration(SourceInstance $sourceInstance): array
+    public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         /** @var VectorTileInstance $sourceInstance */
         /** @var VectorTileSource $source */
