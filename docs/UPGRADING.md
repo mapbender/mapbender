@@ -2,6 +2,13 @@
 
 ## next feature release
 
+### Update database
+Update your entities to the latest version by executing the following command
+```bash
+bin/console doctrine:schema:update --complete --force
+```
+:warning: If you update from Mapbender 3, read the upgrading guide for version 4.0 first!
+
 ### Design
 Migrate sass variables to css variables.
 
@@ -9,7 +16,9 @@ $sidepaneBorderColor => sidepane-border-color
 $sidepaneTextColor => sidepane-text-color
 $sidepaneBackgroundColor => sidepane-background-color
 
-
+### Migration: jQuery UI Widget -> Native JavaScript Class
+Read the step by step guide to migrate Mapbender jQuery UI widget into a native ES6 JavaScript class.
+https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_classes.md
 
 ## 4.2.0
 
