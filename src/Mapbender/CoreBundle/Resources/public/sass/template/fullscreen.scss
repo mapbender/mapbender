@@ -178,3 +178,12 @@ body {
 .mb-element-zoombar .rotation{
    background-color: $backgroundColor;
 }
+
+.notifyjs-wrapper .buttons {
+    margin-left: -.75rem;
+
+    .btn {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+}

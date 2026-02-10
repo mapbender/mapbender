@@ -18,16 +18,42 @@ Mapbender.info = function (infoObject, delayTimeout) {
     console.log("Mapbender Info: ", infoObject);
 };
 Mapbender.confirm = function (message) {
-    var res = confirm(message);
-    return res;
+    return confirm(message);
 };
 
+Mapbender.ajaxErrorTemplateAdded = false;
 /**
  * @param error
  * @param retry
  */
 Mapbender.handleAjaxError= function(error, retry) {
+    if (!Mapbender.ajaxErrorTemplateAdded) {
+        Mapbender.ajaxErrorTemplateAdded = true;
 
+        $.notify.addStyle('single-button', {
+          html:
+            "<div>" +
+              "<div class='clearfix notifyjs-bootstrap-base notifyjs-bootstrap-error'>" +
+                "<span data-notify-html=''></span>" +
+                "<div class='buttons'>" +
+                  "<button class='btn notifyjs--reload'>"+Mapbender.trans("reload")+"</button>" +
+                  "<button class='btn notifyjs--retry'>"+Mapbender.trans("retry")+"</button>" +
+                "</div>" +
+              "</div>" +
+            "</div>"
+        });
+
+        //listen for click events from this style
+        $(document).on('click', '.notifyjs--reload', function() {
+          location.reload();
+        });
+    }
+
+    const noify = $.notify("Sie sind nicht angemeldet oder Ihre Sitzung ist abgelaufen.<br>Bitte melden Sie sich erneut an.", {
+        style: 'single-button',
+        autoHide: false,
+    });
+    console.log(noify);
 };
 
 Mapbender.restrictPopupPositioning = function($dialogElement) {
