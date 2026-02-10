@@ -350,8 +350,8 @@
                     'points': points,
                     'srs': mapProj
                 }
-            }).fail(() => {
-                Mapbender.error('route service is not available');
+            }).fail((e) => {
+                Mapbender.handleAjaxError(e, () => this._getRoute(), 'route service is not available');
                 this.setSpinnerVisible(false);
             }).done((response) => {
                 if (response.error) {

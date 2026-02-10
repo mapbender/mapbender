@@ -24,12 +24,13 @@ Mapbender.confirm = function (message) {
 /**
  * @param {object} error - The error object from the failed AJAX request
  * @param {Function} [retry] - Optional. Callback function triggered when clicking "retry". Make sure to use the () => syntax or .bind(this) to preserve the correct "this" context if needed.
+ * @param {string} [errorMessage] - Optional. Message shown to the user for non 403/404 errors.
  */
-Mapbender.handleAjaxError = function (error, retry) {
+Mapbender.handleAjaxError = function (error, retry, errorMessage) {
     if (error.status !== 403 && error.status !== 404) {
         // For 403 and 404 errors, offer a reload and retry button, as these may be caused by session expiration.
         // For other errors, just show the error message.
-        return Mapbender.error(error.responseText || error.statusText || '');
+        return Mapbender.error(errorMessage || error.responseText || error.statusText || '');
     }
 
     if (!$.notify.getStyle('error-with-buttons')) {
