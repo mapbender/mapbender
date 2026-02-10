@@ -334,3 +334,8 @@ mb:
         drag_to_reorder: 'Yeniden sıralamak için sürükleyin'
   error:
     csrf_failed: 'Ağa bağlanırken hata oluştu'
+    session_expired: 'Giriş yapmadınız veya oturumunuzun süresi doldu.'
+    relogin: 'Lütfen tekrar giriş yapın.'
+    reload: 'Sayfayı yeniden yükle'
+    retry: 'Tekrar dene'
+    not_found: 'Öğe bulunamadı.'

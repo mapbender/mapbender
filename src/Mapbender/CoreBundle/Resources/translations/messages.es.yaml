@@ -663,6 +663,11 @@ mb:
             title: Título
   error:
     csrf_failed: 'Error al conectarse a la red'
+    session_expired: 'No has iniciado sesión o tu sesión ha caducado.'
+    relogin: 'Por favor, inicia sesión de nuevo.'
+    reload: 'Recargar página'
+    retry: 'Reintentar'
+    not_found: 'No se encontró el elemento.'
 'Bad credentials.': 'Credenciales incorrectas.'
 'User account is locked.': 'La cuenta de usuario está bloqueada.'
 'User account is disabled.': 'La cuenta de usuario está deshabilitada.'

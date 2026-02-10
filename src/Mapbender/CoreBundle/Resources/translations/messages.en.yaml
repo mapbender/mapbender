@@ -690,6 +690,11 @@ mb:
             title: Title
   error:
     csrf_failed: 'Error connecting to the network'
+    session_expired: 'You are not logged in or your session has expired.'
+    relogin: 'Please log in again.'
+    reload: 'Reload page'
+    retry: 'Retry'
+    not_found: 'The element was not found.'
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
 'User account is disabled.': 'User account is disabled.'

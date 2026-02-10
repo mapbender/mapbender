@@ -21,42 +21,64 @@ Mapbender.confirm = function (message) {
     return confirm(message);
 };
 
-Mapbender.ajaxErrorTemplateAdded = false;
 /**
- * @param error
- * @param retry
+ * @param {object} error - The error object from the failed AJAX request
+ * @param {Function} [retry] - Optional. Callback function triggered when clicking "retry"
  */
-Mapbender.handleAjaxError= function(error, retry) {
-    if (!Mapbender.ajaxErrorTemplateAdded) {
-        Mapbender.ajaxErrorTemplateAdded = true;
+Mapbender.handleAjaxError = function (error, retry) {
+    if (error.status !== 403 && error.status !== 404) {
+        // For 403 and 404 errors, offer a reload and retry button, as these may be caused by session expiration.
+        // For other errors, just show the error message.
+        return Mapbender.error(error.responseText || error.statusText);
+    }
 
-        $.notify.addStyle('single-button', {
+    if (!$.notify.getStyle('error-with-buttons')) {
+        // @formatter:off
+        $.notify.addStyle('error-with-buttons', {
           html:
             "<div>" +
               "<div class='clearfix notifyjs-bootstrap-base notifyjs-bootstrap-error'>" +
                 "<span data-notify-html=''></span>" +
                 "<div class='buttons'>" +
-                  "<button class='btn notifyjs--reload'>"+Mapbender.trans("reload")+"</button>" +
-                  "<button class='btn notifyjs--retry'>"+Mapbender.trans("retry")+"</button>" +
+                  "<button class='btn notifyjs--reload'>" + Mapbender.trans("mb.error.reload") + "</button>" +
+                  "<button class='btn notifyjs--retry'>" + Mapbender.trans("mb.error.retry") + "</button>" +
                 "</div>" +
               "</div>" +
             "</div>"
         });
+        // @formatter:on
 
         //listen for click events from this style
-        $(document).on('click', '.notifyjs--reload', function() {
-          location.reload();
+        $(document).on('click', '.notifyjs--reload', function () {
+            location.reload();
         });
     }
 
-    const noify = $.notify("Sie sind nicht angemeldet oder Ihre Sitzung ist abgelaufen.<br>Bitte melden Sie sich erneut an.", {
-        style: 'single-button',
+    const message = error.status === 403
+        ? Mapbender.trans("mb.error.session_expired") + "<br>" + Mapbender.trans("mb.error.relogin")
+        : error.responseText || Mapbender.trans("mb.error.not_found");
+
+    $.notify(message, {
+        style: 'error-with-buttons',
         autoHide: false,
     });
-    console.log(noify);
+
+    const $wrapper = $('.notifyjs-error-with-buttons-base').eq(0);
+    const $retryButton = $wrapper.find('.notifyjs--retry');
+    console.log(retry, $retryButton);
+    if (retry) {
+        $retryButton.one('click', function () {
+            retry();
+            // dismiss the notification by triggering a click on the wrapper
+            $wrapper.trigger('click');
+        });
+    } else {
+        $retryButton.remove();
+    }
+
 };
 
-Mapbender.restrictPopupPositioning = function($dialogElement) {
+Mapbender.restrictPopupPositioning = function ($dialogElement) {
     $dialogElement.on('dragstop', function (event, ui) {
         let forcedX = null;
         let forcedY = null;
@@ -521,7 +543,7 @@ Mapbender.Util.array_unique = function (array) {
  * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
  * @param {{}} obj
  * @param {(value: *, key: string) => boolean} predicate
-* @returns {*[]}
+ * @returns {*[]}
  */
 Mapbender.Util.object_filter = function (obj, predicate) {
     let results = {};
@@ -535,7 +557,7 @@ Mapbender.Util.object_filter = function (obj, predicate) {
  * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
  * @param {*[]} array
  * @param {(value: *, index: number) => boolean} predicate
-* @returns {*[]}
+ * @returns {*[]}
  */
 Mapbender.Util.array_filter = function (array, predicate) {
     let results = [];
@@ -672,8 +694,12 @@ Mapbender.ElementUtil = {
      * If there is no session yet and there are simultaneous requests, the CSRF tokens will be stored
      * on the server for independent sessions which results in (randomly) only one of the tokens being valid.
      */
-    getCsrfToken: async function (element, url) {
+    getCsrfToken: async function (element, url, forceRefresh = false) {
         const elementType = Object.getPrototypeOf(element).widgetFullName;
+        if (forceRefresh && this._csrfTokenCache[elementType]) {
+            delete this._csrfTokenCache[elementType];
+        }
+
         if (this._csrfTokenCache[elementType]) {
             return this._csrfTokenCache[elementType];
         }

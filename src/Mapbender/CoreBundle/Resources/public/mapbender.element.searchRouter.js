@@ -78,8 +78,8 @@
             routeSelect.trigger('change');
         },
 
-        _setupCsrf: async function () {
-            const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf");
+        _setupCsrf: async function (forceRefresh = false) {
+            const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf", forceRefresh);
             this.element.find('input[name*="_token"]').attr('value', token);
         },
 
@@ -288,7 +288,10 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             })
-                .fail((err) => Mapbender.handleAjaxError(err, this._search))
+                .fail((err) => Mapbender.handleAjaxError(err, async () => {
+                    await this._setupCsrf(true);
+                    this._search();
+                }))
                 .then((response) => {
                     const features = this._createFeaturesFromResponse(response);
                     this._searchResults(features);
