@@ -66,7 +66,6 @@ Mapbender.handleAjaxError = function (error, retry, errorMessage) {
 
     const $wrapper = $('.notifyjs-error-with-buttons-base').eq(0);
     const $retryButton = $wrapper.find('.notifyjs--retry');
-    console.log(retry, $retryButton);
     if (retry && typeof retry === 'function') {
         $retryButton.one('click', function () {
             retry();
