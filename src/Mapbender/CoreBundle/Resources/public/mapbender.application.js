@@ -380,7 +380,7 @@ $.extend(Mapbender, (function($) {
                     var id = uncacheableIds[i];
                     _initElement(id, uncacheable[id]);
                 }
-            });
+            }).fail(Mapbender.handleAjaxError)
         }
     }
     function _initElement(id, elementData) {

@@ -23,13 +23,13 @@ Mapbender.confirm = function (message) {
 
 /**
  * @param {object} error - The error object from the failed AJAX request
- * @param {Function} [retry] - Optional. Callback function triggered when clicking "retry"
+ * @param {Function} [retry] - Optional. Callback function triggered when clicking "retry". Make sure to use the () => syntax or .bind(this) to preserve the correct "this" context if needed.
  */
 Mapbender.handleAjaxError = function (error, retry) {
     if (error.status !== 403 && error.status !== 404) {
         // For 403 and 404 errors, offer a reload and retry button, as these may be caused by session expiration.
         // For other errors, just show the error message.
-        return Mapbender.error(error.responseText || error.statusText);
+        return Mapbender.error(error.responseText || error.statusText || '');
     }
 
     if (!$.notify.getStyle('error-with-buttons')) {
@@ -66,7 +66,7 @@ Mapbender.handleAjaxError = function (error, retry) {
     const $wrapper = $('.notifyjs-error-with-buttons-base').eq(0);
     const $retryButton = $wrapper.find('.notifyjs--retry');
     console.log(retry, $retryButton);
-    if (retry) {
+    if (retry && typeof retry === 'function') {
         $retryButton.one('click', function () {
             retry();
             // dismiss the notification by triggering a click on the wrapper
@@ -734,8 +734,7 @@ Mapbender.ElementUtil = {
             this._csrfTokenCache[elementType] = token;
             resolve(token);
         } catch (err) {
-            Mapbender.error(Mapbender.trans(err.message));
-            reject(null);
+            reject(err);
         } finally {
             this._requestRunning = false;
             this._tryGetNextToken();
