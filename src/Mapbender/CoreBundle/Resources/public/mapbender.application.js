@@ -381,7 +381,7 @@ $.extend(Mapbender, (function($) {
                         var id = uncacheableIds[i];
                         _initElement(id, uncacheable[id]);
                     }
-                }).fail((e) => Mapbender.handleAjaxError(e), () => loadUrls(reloadUrl));
+                }).fail((e) => Mapbender.handleAjaxError(e, () => loadUrls(reloadUrl)));
             }
             loadUrls(reloadUrl);
         }

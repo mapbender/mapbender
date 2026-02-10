@@ -158,7 +158,6 @@
 
             if (!term || term.length < this.autocompleteMinLength) {
                 responseCallback([]);
-                this.element
                 return;
             }
             $.getJSON(url, {term: term, selectedConfiguration: this.selectedConfiguration})

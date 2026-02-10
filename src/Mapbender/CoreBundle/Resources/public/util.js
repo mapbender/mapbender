@@ -28,8 +28,7 @@ Mapbender.confirm = function (message) {
  */
 Mapbender.handleAjaxError = function (error, retry, errorMessage) {
     if (error.status !== 403 && error.status !== 404) {
-        // For 403 and 404 errors, offer a reload and retry button, as these may be caused by session expiration.
-        // For other errors, just show the error message.
+        // For non-403 and 404 errors don't offer a reload and retry button, just forward to Mapbender.error
         return Mapbender.error(errorMessage || error.responseText || error.statusText || '');
     }
 
@@ -39,7 +38,7 @@ Mapbender.handleAjaxError = function (error, retry, errorMessage) {
           html:
             "<div>" +
               "<div class='clearfix notifyjs-bootstrap-base notifyjs-bootstrap-error'>" +
-                "<span data-notify-html=''></span>" +
+                "<span data-notify-text=''></span>" +
                 "<div class='buttons'>" +
                   "<button class='btn notifyjs--reload'>" + Mapbender.trans("mb.error.reload") + "</button>" +
                   "<button class='btn notifyjs--retry'>" + Mapbender.trans("mb.error.retry") + "</button>" +
@@ -56,7 +55,7 @@ Mapbender.handleAjaxError = function (error, retry, errorMessage) {
     }
 
     const message = error.status === 403
-        ? Mapbender.trans("mb.error.session_expired") + "<br>" + Mapbender.trans("mb.error.relogin")
+        ? Mapbender.trans("mb.error.session_expired") + "\n" + Mapbender.trans("mb.error.relogin")
         : error.responseText || Mapbender.trans("mb.error.not_found");
 
     $.notify(message, {
