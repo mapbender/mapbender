@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * SearchRouter element.
@@ -97,6 +98,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
+            "regex_pattern" => "^[a-zA-Z0-9_\-\s]*$",
         );
     }
 
@@ -195,6 +197,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
         }
 
+        $this->validateInputData($data['properties'], $categoryConf);
+
         if ($action === 'autocomplete') {
             $results = $engine->autocomplete(
                 $categoryConf,
@@ -225,6 +229,18 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
 
         throw new NotFoundHttpException();
+    }
+
+    protected function validateInputData($inputData, $categoryConf)
+    {
+        $config = $this->getDefaultRouteConfiguration();
+        $regexPattern = $config['regex_pattern'];
+        foreach ($categoryConf['form'] as $key => $formField) {
+            $regexPattern = (!empty($formField['options']['attr']['pattern'])) ? $formField['options']['attr']['pattern'] : $regexPattern;
+            if (!preg_match('/' . $regexPattern . '/', $inputData[$key])) {
+                throw new BadRequestHttpException('Invalid input');
+            }
+        }
     }
 
     /**
