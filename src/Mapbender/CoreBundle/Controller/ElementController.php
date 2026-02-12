@@ -29,9 +29,13 @@ class ElementController extends AbstractController
      * Element action controller.
      * Passes the request to the element's handleHttpRequest.
      **/
-    #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['action' => null])]
-    public function element(Request $request, string $slug, string $id, ?string $action): Response
+    #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['id' => null, 'action' => null])]
+    public function element(Request $request, string $slug, ?string $id, ?string $action): Response
     {
+        if ($id === null) {
+            return new Response(null, Response::HTTP_BAD_REQUEST);
+        }
+
         try {
             $application = $this->applicationResolver->getApplicationEntity($slug);
         } catch(AccessDeniedException) {
