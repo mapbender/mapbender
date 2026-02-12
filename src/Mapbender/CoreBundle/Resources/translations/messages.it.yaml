@@ -133,6 +133,7 @@ mb:
       no_results: 'Nessun risultato trovato.'
       result_counter: 'Risultati: %count%'
       exportcsv: 'Esportare i risultati in CSV.'
+      invalid_input_data: 'Caratteri di input non validi'
       class:
         title: 'Cerca router'
         description: 'Ricerca configurabile su elemento routing'

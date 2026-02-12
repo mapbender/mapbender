@@ -135,6 +135,7 @@ mb:
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
       exportcsv: 'Export der Trefferliste als CSV.'
+      invalid_input_data: 'Ungültige Zeichen in der Eingabe'
       class:
         title: Suchen
         description: 'Ermöglicht die Konfiguration von individuellen Suchen'

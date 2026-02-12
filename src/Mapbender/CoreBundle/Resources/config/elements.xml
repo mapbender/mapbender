@@ -65,6 +65,7 @@
             <argument type="service" id="security.csrf.token_manager" />
             <argument type="service" id="service_container" />
             <argument type="service" id="logger" on-invalid="null" />
+            <argument type="service" id="translator" />
         </service>
         <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
             <tag name="mapbender.element" />

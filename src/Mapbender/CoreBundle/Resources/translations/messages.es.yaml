@@ -133,6 +133,7 @@ mb:
       no_results: 'No hay resultados'
       result_counter: 'Resultados: %count%'
       exportcsv: 'Exportar los resultados a CSV.'
+      invalid_input_data: 'Caracteres de entrada no válidos'
       class:
         title: Búsqueda
         description: 'Permite configurar búsquedas personalizadas'

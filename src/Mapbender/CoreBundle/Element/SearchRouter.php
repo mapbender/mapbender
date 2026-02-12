@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * SearchRouter element.
@@ -34,7 +35,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                                 protected FormFactoryInterface      $formFactory,
                                 protected CsrfTokenManagerInterface $csrfTokenManager,
                                 protected ContainerInterface        $container,
-                                protected ?LoggerInterface          $logger = null)
+                                protected ?LoggerInterface          $logger = null,
+                                protected TranslatorInterface       $translator,)
     {
     }
 
@@ -240,9 +242,10 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $config = $this->getDefaultRouteConfiguration();
         $regexPattern = $config['regex_pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
-            $regexPattern = (!empty($formField['options']['attr']['pattern'])) ? $formField['options']['attr']['pattern'] : $regexPattern;
+            $regexPattern = $formField['regex_pattern'] ?? $regexPattern;
             if (!preg_match('/' . $regexPattern . '/u', $inputData[$key])) {
-                throw new BadRequestHttpException('Invalid input');
+                $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
+                throw new BadRequestHttpException($message);
             }
         }
     }
