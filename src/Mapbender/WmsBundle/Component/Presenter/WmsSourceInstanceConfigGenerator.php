@@ -61,7 +61,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
-        $config = parent::getConfiguration($sourceInstance);
+        $config = parent::getConfiguration($sourceInstance, $idPrefix);
 
         $root = $this->getRootLayerFromCache($sourceInstance);
         if (!$root) {

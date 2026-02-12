@@ -29,7 +29,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
     public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         /** @var WmtsInstance $sourceInstance */
-        return array_merge(parent::getConfiguration($sourceInstance), [
+        return array_merge(parent::getConfiguration($sourceInstance, $idPrefix), [
             'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => $this->getRootLayerConfig($sourceInstance),
