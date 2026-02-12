@@ -98,7 +98,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
-            "regex_pattern" => "^[a-zA-Z0-9_\-\s]*$",
+            "regex_pattern" => "^[\p{L}0-9_\-\s]*$",
         );
     }
 
@@ -237,7 +237,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $regexPattern = $config['regex_pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
             $regexPattern = (!empty($formField['options']['attr']['pattern'])) ? $formField['options']['attr']['pattern'] : $regexPattern;
-            if (!preg_match('/' . $regexPattern . '/', $inputData[$key])) {
+            if (!preg_match('/' . $regexPattern . '/u', $inputData[$key])) {
                 throw new BadRequestHttpException('Invalid input');
             }
         }
