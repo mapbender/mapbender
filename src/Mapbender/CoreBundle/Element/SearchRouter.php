@@ -197,7 +197,11 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
         }
 
-        $this->validateInputData($data['properties'], $categoryConf);
+        try {
+            $this->validateInputData($data['properties'], $categoryConf);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
 
         if ($action === 'autocomplete') {
             $results = $engine->autocomplete(
