@@ -86,10 +86,10 @@ abstract class DataSource
     /**
      * If true, Mapbender will not show URLs in the metadata output to
      * prevent leaking internal urls to end users. Will only be called
-     * if the parameter `mapbender.show_proxied_metadata_urls` is false
+     * if the parameter `mapbender.show_proxied_service_urls` is false
      * (default value), otherwise URLs will always be shown.
      */
-    public function areMetadataUrlsInternal(SourceInstance $instance): bool
+    public function areServiceUrlsInternal(SourceInstance $instance): bool
     {
         return false;
     }

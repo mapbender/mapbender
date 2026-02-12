@@ -72,7 +72,7 @@ class WmsDataSource extends DataSource
         return '@MapbenderWms/Repository/view.html.twig';
     }
 
-    public function areMetadataUrlsInternal(SourceInstance $instance): bool
+    public function areServiceUrlsInternal(SourceInstance $instance): bool
     {
         return $this->configGenerator->useTunnel($instance);
     }

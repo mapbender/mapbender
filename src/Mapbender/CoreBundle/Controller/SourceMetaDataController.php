@@ -26,7 +26,7 @@ class SourceMetaDataController
     public function __construct(
         protected Environment $templateEngine,
         protected TypeDirectoryService $typeDirectoryService,
-        protected bool $showProxiedMetadataUrls
+        protected bool $showProxiedServiceUrls
     )
     {
     }
@@ -50,7 +50,7 @@ class SourceMetaDataController
             'instance' => $instance,
             'source' => $source,
             'startLayerInstance' => $startLayerInstance,
-            'secureUrls' => !$this->showProxiedMetadataUrls && $dataSource->areMetadataUrlsInternal($instance)
+            'secureUrls' => !$this->showProxiedServiceUrls && $dataSource->areServiceUrlsInternal($instance)
         ));
         return new Response($content);
     }
