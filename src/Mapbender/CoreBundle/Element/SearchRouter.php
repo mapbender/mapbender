@@ -100,7 +100,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
-            "regex_pattern" => "^[\p{L}0-9_\-\s]*$",
+            "pattern" => "^[\p{L}0-9_\-\s]*$",
         );
     }
 
@@ -240,10 +240,10 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     protected function validateInputData($inputData, $categoryConf)
     {
         $config = $this->getDefaultRouteConfiguration();
-        $regexPattern = $config['regex_pattern'];
+        $pattern = $config['pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
-            $regexPattern = $formField['regex_pattern'] ?? $regexPattern;
-            if (!preg_match('/' . $regexPattern . '/u', $inputData[$key])) {
+            $pattern = $formField['pattern'] ?? $pattern;
+            if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
                 $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
                 throw new BadRequestHttpException($message);
             }
