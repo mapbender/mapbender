@@ -70,6 +70,7 @@ mb:
       no_results: Geen resultaten gevonden.
       result_counter: 'Resultaten: %count%'
       exportcsv: Exporteer de resultaten naar CSV.
+      invalid_input_data: 'Ongeldige invoerteken'
       class:
         title: Zoek route
         description: Configureer de zoek-route opdracht

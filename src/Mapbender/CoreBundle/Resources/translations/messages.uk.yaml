@@ -82,6 +82,7 @@ mb:
       no_results: Не знайдено результатів.
       result_counter: 'Результати: %count%'
       exportcsv: Експортуйте результати в CSV.
+      invalid_input_data: 'Неправильні символи введення'
       class:
         title: Пошук маршрутизатора
         description: 'Налаштовуваний елемент маршрутизації пошуку '
