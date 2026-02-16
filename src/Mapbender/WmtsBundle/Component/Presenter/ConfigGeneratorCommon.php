@@ -6,6 +6,7 @@ namespace Mapbender\WmtsBundle\Component\Presenter;
 
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Component\Source\UrlProcessor;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\WmtsBundle\Component\TileMatrix;
@@ -26,10 +27,10 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
     abstract protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer);
 
 
-    public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         /** @var WmtsInstance $sourceInstance */
-        return array_merge(parent::getConfiguration($sourceInstance, $idPrefix), [
+        return array_merge(parent::getConfiguration($application, $sourceInstance, $idPrefix), [
             'version' => $sourceInstance->getSource()->getVersion(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => $this->getRootLayerConfig($sourceInstance),

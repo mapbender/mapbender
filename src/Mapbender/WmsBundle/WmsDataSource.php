@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Source\DataSource;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\SourceLoader;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\WmsBundle\Component\LayerRendererWms;
 use Mapbender\WmsBundle\Component\Presenter\WmsSourceInstanceConfigGenerator;
@@ -69,5 +70,10 @@ class WmsDataSource extends DataSource
     public function getMetadataBackendTemplate(): ?string
     {
         return '@MapbenderWms/Repository/view.html.twig';
+    }
+
+    public function areServiceUrlsInternal(SourceInstance $instance): bool
+    {
+        return $this->configGenerator->useTunnel($instance);
     }
 }

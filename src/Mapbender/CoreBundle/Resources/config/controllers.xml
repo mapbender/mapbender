@@ -48,6 +48,7 @@
             <argument type="service" id="mapbender.source.instancetunnel.service" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument>%kernel.debug%</argument>
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />
@@ -104,6 +105,7 @@
                  public="true" lazy="true">
             <argument type="service" id="twig" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument>%mapbender.show_proxied_service_urls%</argument>
         </service>
         <service id="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"
                  class="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"

@@ -1,7 +1,9 @@
 {% extends '@MapbenderManager/Repository/source/view-metadata-common.html.twig' %}
 {%- block source_meta_rows -%}
 {{- parent() -}}
+{% if not secureUrls %}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.onlineresource" | trans }}:</th><td>{{ source.onlineResource | linkify }}</td></tr>
+{% endif %}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.exceptionformats" | trans }}:</th><td>{{ source.exceptionFormats | join(', ') }}</td></tr>
 {%- if show_constraints -%}
 <tr><th>{{ "mb.wms.wmsloader.repo.view.label.fees" | trans }}:</th><td>{{ source.fees }}</td></tr>

@@ -363,6 +363,17 @@ class Application
         return $instances;
     }
 
+    public function getSourceInstanceById(int|string $instanceId): ?SourceInstance
+    {
+        foreach ($this->getSourceInstances(true) as $instance) {
+            /** @var SourceInstance $instance */
+            if ($instance->getId() == $instanceId) {
+                return $instance;
+            }
+        }
+        return null;
+    }
+
     /**
      * Read-only informative pseudo-relation
      *

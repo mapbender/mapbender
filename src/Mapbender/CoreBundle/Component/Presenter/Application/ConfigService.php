@@ -137,7 +137,7 @@ class ConfigService
                 continue;
             }
             $idPrefix = $assignment instanceof ReusableSourceInstanceAssignment ? $assignment->getId().'_' : null;
-            $configuration = $configGenerator->getConfiguration($assignment->getInstance(), $idPrefix);
+            $configuration = $configGenerator->getConfiguration($layerset->getApplication(), $assignment->getInstance(), $idPrefix);
             $configs[] = $configuration;
         }
         return $configs;

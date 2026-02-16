@@ -5,7 +5,7 @@
     {% if source.version is defined %}
     <tr><th>{{ "mb.manager.source.metadata.version" | trans }}:</th><td>{{ source.version }}</td></tr>
     {% endif %}
-    {% if source.displayUrl %}
+    {% if source.displayUrl and not secureUrls %}
     <tr><th>{{ "mb.manager.source.metadata.originurl" | trans }}:</th><td>{{ source.displayUrl | linkify }}</td></tr>
     {% endif %}
     <tr><th>{{ "mb.manager.source.metadata.abstract" | trans }}:</th><td>{{ source.description | linkify }}</td></tr>

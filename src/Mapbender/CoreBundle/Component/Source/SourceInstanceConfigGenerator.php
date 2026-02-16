@@ -23,7 +23,7 @@ abstract class SourceInstanceConfigGenerator implements SourceInstanceInformatio
     /**
      * Produces serializable frontend configuration.
      */
-    public function getConfiguration(SourceInstance $sourceInstance, ?string $idPrefix = null): array
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
         return [
             'id' => ($idPrefix ?? '') . $sourceInstance->getId(),
