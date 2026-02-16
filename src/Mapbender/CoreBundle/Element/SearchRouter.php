@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * SearchRouter element.
@@ -33,7 +35,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                                 protected FormFactoryInterface      $formFactory,
                                 protected CsrfTokenManagerInterface $csrfTokenManager,
                                 protected ContainerInterface        $container,
-                                protected ?LoggerInterface          $logger = null)
+                                protected ?LoggerInterface          $logger = null,
+                                protected TranslatorInterface       $translator,)
     {
     }
 
@@ -97,6 +100,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
+            "pattern" => "^[\p{L}0-9_\-\s]*$",
         );
     }
 
@@ -195,6 +199,12 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
         }
 
+        try {
+            $this->validateInputData($data['properties'], $categoryConf);
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
         if ($action === 'autocomplete') {
             $results = $engine->autocomplete(
                 $categoryConf,
@@ -225,6 +235,19 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         }
 
         throw new NotFoundHttpException();
+    }
+
+    protected function validateInputData($inputData, $categoryConf)
+    {
+        $config = $this->getDefaultRouteConfiguration();
+        $pattern = $config['pattern'];
+        foreach ($categoryConf['form'] as $key => $formField) {
+            $pattern = $formField['pattern'] ?? $pattern;
+            if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
+                $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
+                throw new BadRequestHttpException($message);
+            }
+        }
     }
 
     /**

@@ -135,6 +135,7 @@ mb:
       no_results: 'No results found.'
       result_counter: 'Results: %count%'
       exportcsv: 'Export results to CSV.'
+      invalid_input_data: 'Invalid input characters'
       class:
         title: 'Search router'
         description: 'Configurable search routing element'

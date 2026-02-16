@@ -70,6 +70,7 @@ mb:
       no_results: Sonuç bulunamadı
       result_counter: 'Sonuçlar: %count%'
       exportcsv: Sonuçları CSV'ye aktarma.
+      invalid_input_data: 'Geçersiz giriş karakterleri'
       class:
         title: Arama yönlendiricisi
         description: Yapılandırılabilir arama yönlendirme

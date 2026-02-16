@@ -59,9 +59,9 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstance $sourceInstance
      * @return array
      */
-    public function getConfiguration(Application $application, SourceInstance $sourceInstance): array
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
-        $config = parent::getConfiguration($application, $sourceInstance);
+        $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
 
         $root = $this->getRootLayerFromCache($sourceInstance);
         if (!$root) {
@@ -72,7 +72,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'title' => $root['title'] ?: $root['lsTitle'] ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array(
-                $this->getLayerConfiguration($application, $sourceInstance, $root),
+                $this->getLayerConfiguration($application, $sourceInstance, $root, $idPrefix),
             ),
         ]);
 
@@ -109,10 +109,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getLayerConfiguration(Application $application, WmsInstance $instance, array $instanceLayer): array
+    protected function getLayerConfiguration(Application $application, WmsInstance $instance, array $instanceLayer, ?string $idPrefix): array
     {
         $configuration = array(
-            "options" => $this->getLayerOptionsConfiguration($application, $instance, $instanceLayer),
+            "options" => $this->getLayerOptionsConfiguration($application, $instance, $instanceLayer, $idPrefix),
             "state" => array(
                 "visibility" => null,
                 "info" => null,
@@ -123,7 +123,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $children = array();
         foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
             if ($childLayer['active']) {
-                $children[] = $this->getLayerConfiguration($application, $instance, $childLayer);
+                $children[] = $this->getLayerConfiguration($application, $instance, $childLayer, $idPrefix);
             }
         }
         if ($children) {
@@ -138,7 +138,8 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return $configuration;
     }
 
-    protected function getLayerOptionsConfiguration(Application $application, WmsInstance $instance, array $layer): array
+
+    protected function getLayerOptionsConfiguration(Application $application, WmsInstance $instance, array $layer, ?string $idPrefix): array
     {
         $styles = $this->getAvailableStyles($application, $instance, $layer);
         if ($layer['legendEnabled'] === false) {
@@ -148,7 +149,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             }
         }
         $configuration = array(
-            "id" => strval($layer['id']),
+            "id" => ($idPrefix ?? '') . $layer['id'],
             "priority" => $layer['priority'],
             "name" => strval($layer['lsName']),
             "title" => $layer['title'] ?: $layer['lsTitle'],
