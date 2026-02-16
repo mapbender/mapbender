@@ -136,6 +136,7 @@ mb:
       no_results: 'Nessun risultato trovato.'
       result_counter: 'Risultati: %count%'
       exportcsv: 'Esportare i risultati in CSV.'
+      invalid_input_data: 'Caratteri di input non validi'
       class:
         title: 'Cerca router'
         description: 'Ricerca configurabile su elemento routing'
@@ -692,6 +693,8 @@ mb:
         instancelayerform:
           label:
             title: Titolo
+  error:
+    csrf_failed: 'Errore durante la connessione alla rete'
 'Bad credentials.': 'Credentiali errate.'
 'User account is locked.': 'L''account utente è bloccato.'
 'User account is disabled.': 'L''account dell''utente è disabilitato.'

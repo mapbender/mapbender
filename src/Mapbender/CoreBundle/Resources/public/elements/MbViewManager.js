@@ -423,15 +423,8 @@
             window.localStorage.setItem('viewManagerSettings', settings);
         }
 
-        _setupCsrf() {
-            $.ajax({
-                url: this.elementUrl + '/csrf',
-                method: 'POST'
-            }).fail(function (err) {
-                Mapbender.error(Mapbender.trans(err.responseText));
-            }).then(function (response) {
-                this.csrfToken = response;
-            }.bind(this));
+        async _setupCsrf() {
+            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf');
         }
     }
 

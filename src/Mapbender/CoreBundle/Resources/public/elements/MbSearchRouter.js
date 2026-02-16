@@ -72,17 +72,9 @@
             routeSelect.trigger('change');
         }
 
-        _setupCsrf() {
-            $.ajax({
-                url: this.callbackUrl + "0/csrf",
-                method: 'POST'
-            })
-                .fail(function(err) {
-                    Mapbender.error(Mapbender.trans(err.responseText));
-                })
-                .then(function(response) {
-                    this.$element.find('input[name*="_token"]').attr('value', response);
-                }.bind(this));
+        async _setupCsrf() {
+            const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf");
+            this.$element.find('input[name*="_token"]').attr('value', token);
         }
 
         activate() {

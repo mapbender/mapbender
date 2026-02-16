@@ -20,8 +20,22 @@ Other:
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 
 ## v4.2.5
+Security:
+* [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* [WMS] Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+
+Features:
+* [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
+
+Bugfixes:
+* [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
+* When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
+* [Layertree] Improve performance of layertree-actions in layertrees with many WMS
+* Support adding the same shared instance more than once in an application ([#PR1821](https://github.com/mapbender/mapbender/pull/1821))
+
 Other:
 * [ViewManager] Load Views on demand with Ajax
+
 
 ## v4.2.4
 Bugfixes:

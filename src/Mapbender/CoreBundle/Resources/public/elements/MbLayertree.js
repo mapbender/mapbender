@@ -77,8 +77,9 @@
         }
 
         _reset() {
-            if (this.options.allowReorder) {
+            if (this.options.allowReorder && !this._sortableInitialized) {
                 this._createSortable();
+                this._sortableInitialized = true;
             }
             if (this.options.showFilter) {
                 this._filterLayer();

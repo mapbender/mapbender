@@ -138,6 +138,7 @@ mb:
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
       exportcsv: 'Export der Trefferliste als CSV.'
+      invalid_input_data: 'Ungültige Zeichen in der Eingabe'
       class:
         title: Suchen
         description: 'Ermöglicht die Konfiguration von individuellen Suchen'
@@ -816,6 +817,8 @@ mb:
     zoombar:
       title: 'Navigationswerkzeug'
       description: 'Navigiert in der Karte mit Zoom- und Schwenk-Steuerelementen.'
+  error:
+    csrf_failed: 'Fehler bei Verbindung mit dem Netzwerk'
 'Bad credentials.': 'Authentifizierung fehlgeschlagen.'
 'User account is locked.': 'Benutzerkonto ist gesperrt.'
 'User account is disabled.': 'Benutzerkonto ist deaktiviert.'

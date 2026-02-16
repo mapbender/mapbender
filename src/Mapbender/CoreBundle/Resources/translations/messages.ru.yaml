@@ -136,6 +136,7 @@ mb:
       no_results: 'Не найдено результатов.'
       result_counter: 'Результаты: %count%'
       exportcsv: 'Экспортировать результаты в CSV.'
+      invalid_input_data: 'Недопустимые символы ввода'
       class:
         title: Поиск
         description: 'Настраиваемый элемент поиска '
@@ -686,6 +687,8 @@ mb:
         instancelayerform:
           label:
             title: 'Заголовок'
+  error:
+    csrf_failed: 'Ошибка при подключении к сети'
 'Bad credentials.': 'Ошибка аутентификации'
 'User account is locked.': 'Учетная запись заблокирована.'
 'User account is disabled.': 'Учетная запись деактивирована.'

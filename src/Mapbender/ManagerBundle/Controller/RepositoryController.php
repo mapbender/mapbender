@@ -154,6 +154,8 @@ class RepositoryController extends ApplicationControllerBase
             'applications' => $related,
             'title' => $dataSource->getLabel(true) . ' ' . $source->getTitle(),
             'grants' => $grants,
+            // in backend, show all urls
+            'secureUrls' => false,
         ));
     }
 

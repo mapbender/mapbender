@@ -136,6 +136,7 @@ mb:
       no_results: 'No hay resultados'
       result_counter: 'Resultados: %count%'
       exportcsv: 'Exportar los resultados a CSV.'
+      invalid_input_data: 'Caracteres de entrada no válidos'
       class:
         title: Búsqueda
         description: 'Permite configurar búsquedas personalizadas'
@@ -670,9 +671,10 @@ mb:
         instancelayerform:
           label:
             title: Título
+  error:
+    csrf_failed: 'Error al conectarse a la red'
 'Bad credentials.': 'Credenciales incorrectas.'
 'User account is locked.': 'La cuenta de usuario está bloqueada.'
 'User account is disabled.': 'La cuenta de usuario está deshabilitada.'
 'User account has expired.': 'La cuenta de usuario ha caducado.'
 'User credentials have expired.': 'Las credenciales del usuario han caducado.'
-

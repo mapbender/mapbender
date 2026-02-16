@@ -511,6 +511,7 @@ class ImportHandler extends ExchangeHandler
             $targetEntity = $importState->getEntityPool()->getMappedEntity($sourceEntity::class, $sourceEntity->getId(), false);
             if (!$targetEntity) continue;
             if ($app->getSource() === Application::SOURCE_YAML) {
+                /** @noinspection PhpParamsInspection if the source entity is a valid YAML defined permission, the target is too */
                 $this->setupPermissionsFromYaml($sourceEntity, $targetEntity);
             } elseif ($app->getSource() === Application::SOURCE_DB) {
                 $this->permissionManager->copyPermissions($sourceEntity, $targetEntity);

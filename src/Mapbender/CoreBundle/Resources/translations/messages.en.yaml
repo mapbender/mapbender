@@ -138,6 +138,7 @@ mb:
       no_results: 'No results found.'
       result_counter: 'Results: %count%'
       exportcsv: 'Export results to CSV.'
+      invalid_input_data: 'Invalid input characters'
       class:
         title: 'Search router'
         description: 'Configurable search routing element'
@@ -816,7 +817,8 @@ mb:
     zoombar:
       title: 'Navigation Toolbar'
       description: 'Navigate the map with zoom and pan controls.'
-
+  error:
+    csrf_failed: 'Error connecting to the network'
 'Bad credentials.': 'Bad credentials.'
 'User account is locked.': 'User account is locked.'
 'User account is disabled.': 'User account is disabled.'

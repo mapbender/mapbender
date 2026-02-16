@@ -59,9 +59,9 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstance $sourceInstance
      * @return array
      */
-    public function getConfiguration(SourceInstance $sourceInstance): array
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance, ?string $idPrefix = null): array
     {
-        $config = parent::getConfiguration($sourceInstance);
+        $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
 
         $root = $this->getRootLayerFromCache($sourceInstance);
         if (!$root) {
@@ -72,11 +72,11 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'title' => $root['title'] ?: $root['lsTitle'] ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
             'children' => array(
-                $this->getLayerConfiguration($sourceInstance, $root),
+                $this->getLayerConfiguration($application, $sourceInstance, $root, $idPrefix),
             ),
         ]);
 
-        return $this->postProcessUrls($sourceInstance, $config);
+        return $this->postProcessUrls($application, $sourceInstance, $config);
     }
 
     public function getOptionsConfiguration(WmsInstance $sourceInstance): array
@@ -109,10 +109,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getLayerConfiguration(WmsInstance $instance, array $instanceLayer): array
+    protected function getLayerConfiguration(Application $application, WmsInstance $instance, array $instanceLayer, ?string $idPrefix): array
     {
         $configuration = array(
-            "options" => $this->getLayerOptionsConfiguration($instance, $instanceLayer),
+            "options" => $this->getLayerOptionsConfiguration($application, $instance, $instanceLayer, $idPrefix),
             "state" => array(
                 "visibility" => null,
                 "info" => null,
@@ -123,7 +123,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $children = array();
         foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
             if ($childLayer['active']) {
-                $children[] = $this->getLayerConfiguration($instance, $childLayer);
+                $children[] = $this->getLayerConfiguration($application, $instance, $childLayer, $idPrefix);
             }
         }
         if ($children) {
@@ -138,13 +138,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return $configuration;
     }
 
-    /**
-     * @param WmsInstanceLayerArray $layer
-     * @return array
-     */
-    protected function getLayerOptionsConfiguration(WmsInstance $instance, array $layer): array
+
+    protected function getLayerOptionsConfiguration(Application $application, WmsInstance $instance, array $layer, ?string $idPrefix): array
     {
-        $styles = $this->getAvailableStyles($instance, $layer);
+        $styles = $this->getAvailableStyles($application, $instance, $layer);
         if ($layer['legendEnabled'] === false) {
             foreach ($styles as $style) {
                 /** @var Style $style */
@@ -152,7 +149,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             }
         }
         $configuration = array(
-            "id" => strval($layer['id']),
+            "id" => ($idPrefix ?? '') . $layer['id'],
             "priority" => $layer['priority'],
             "name" => strval($layer['lsName']),
             "title" => $layer['title'] ?: $layer['lsTitle'],
@@ -166,7 +163,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "availableStyles" => $styles,
         );
         $configuration += array_filter(array(
-            'legend' => $this->getLegendConfig($instance, $layer),
+            'legend' => $this->getLegendConfig($application, $instance, $layer),
         ));
         return $configuration;
     }
@@ -214,14 +211,12 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param mixed[] $configuration
      * @return mixed[] modified configuration
      * @todo: tunnel vs no-tunnel based on "sensitive" VendorSpecifics may not be cachable, investigate
-     *
      */
-    public function postProcessUrls(WmsInstance $sourceInstance, $configuration)
+    public function postProcessUrls(Application $application, WmsInstance $sourceInstance, array $configuration): array
     {
         if ($this->useTunnel($sourceInstance)) {
-            $url = $this->urlProcessor->getPublicTunnelBaseUrl($sourceInstance);
+            $url = $this->urlProcessor->getPublicTunnelBaseUrl($application, $sourceInstance);
             $configuration['options']['url'] = $url;
-            // remove ows proxy for a tunnel connection
             $configuration['options']['tunnel'] = true;
         } else {
             if ($this->useProxy($sourceInstance)) {
@@ -317,7 +312,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * partial reimplementation of WmsLayerSource::getStyles() since we don't have the object here for performance reasons
      * @see WmsLayerSource::getStyles()
      */
-    protected function getAvailableStyles(WmsInstance $instance, array $layer): array
+    protected function getAvailableStyles(Application $application, WmsInstance $instance, array $layer): array
     {
         $styles = [];
         // store "hash" of style by using name and title
@@ -325,7 +320,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             /** @var Style $style */
             $legendHref = $style->getLegendUrl()?->getOnlineResource()?->getHref();
             if ($legendHref) {
-                $proxifiedUrl = $this->proxifyLegendUrl($instance, $layer, $legendHref);
+                $proxifiedUrl = $this->proxifyLegendUrl($application, $instance, $layer, $legendHref);
                 $style->getLegendUrl()->getOnlineResource()->setHref($proxifiedUrl);
             }
             $styles[$style->getName() . "|" . $style->getTitle()] = $style;
@@ -383,7 +378,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    public function getLegendConfig(WmsInstance $instance, array $instanceLayer): array
+    public function getLegendConfig(Application $application, WmsInstance $instance, array $instanceLayer): array
     {
         if (!$instanceLayer['legendEnabled']) {
             return array();
@@ -394,7 +389,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
         // @todo: implement legend url generation for reusable instances
         if ($legendUrl) {
-            $publicLegendUrl = $this->proxifyLegendUrl($instance, $instanceLayer, $legendUrl);
+            $publicLegendUrl = $this->proxifyLegendUrl($application, $instance, $instanceLayer, $legendUrl);
             return array(
                 "url" => $publicLegendUrl,
             );
@@ -402,12 +397,12 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         return array();
     }
 
-    private function proxifyLegendUrl(WmsInstance $instance, array $instanceLayer, string $legendUrl): string
+    private function proxifyLegendUrl(Application $application, WmsInstance $instance, array $instanceLayer, string $legendUrl): string
     {
         if ($this->useTunnel($instance)) {
             // request via tunnel, see ApplicationController::instanceTunnelLegendAction
             $tunnelService = $this->urlProcessor->getTunnelService();
-            $publicLegendUrl = $tunnelService->generatePublicLegendUrl($instanceLayer, $instance, $legendUrl);
+            $publicLegendUrl = $tunnelService->generatePublicLegendUrl($application, $instanceLayer, $instance, $legendUrl);
         } else {
             $publicLegendUrl = $legendUrl;
         }
@@ -446,31 +441,25 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     public function useTunnel(SourceInstance $sourceInstance): bool
     {
-        if ($sourceInstance->getId()) {
-            /** @var WmsInstance $sourceInstance */
-            $vsHandler = new VendorSpecificHandler();
-            return (!!$sourceInstance->getSource()->getUsername()) || $vsHandler->hasHiddenParams($sourceInstance);
-        } else {
-            // dynamically added (~WmsLoader)
+        if (!$sourceInstance->getId()) {
+            // Cannot use tunnel for dynamically added sources (~WmsLoader)
             return false;
         }
+
+        /** @var WmsInstance $sourceInstance */
+        $vsHandler = new VendorSpecificHandler();
+        return
+            (!!$sourceInstance->getSource()->getUsername()) ||
+            $vsHandler->hasHiddenParams($sourceInstance) ||
+            $sourceInstance->getProxy();
     }
 
     public function useProxy(WmsInstance $sourceInstance): bool
     {
-        if ($this->useTunnel($sourceInstance)) {
-            return false;
-        } else {
-            if ($sourceInstance->isProtectedDynamicWms()) {
-                // WmsLoader special: proxify url with embedded credentials to bypass browser
-                // filtering of basic auth in img tags.
-                // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
-                return true;
-            } else {
-                /** @var WmsInstance $sourceInstance */
-                return $sourceInstance->getProxy();
-            }
-        }
+        // WmsLoader special: proxify url with embedded credentials to bypass browser
+        // filtering of basic auth in img tags.
+        // see https://stackoverflow.com/questions/3823357/how-to-set-the-img-tag-with-basic-authentication
+        return !$this->useTunnel($sourceInstance) && $sourceInstance->isProtectedDynamicWms();
     }
 
     /**

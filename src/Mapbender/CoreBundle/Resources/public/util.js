@@ -625,5 +625,61 @@ Mapbender.ElementUtil = {
             $element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
             $element.closest('.accordion-cell').css('--sidepane-padding-right', 'calc(1rem + 15px)');
         }
-    }
+    },
+
+    _csrfTokenCache: {},
+    _requestQueue: [],
+    _requestRunning: false,
+
+    /**
+     * Get a csrf token from the server for the given element type.
+     * The requests are queued. Requests for the same element type are only made once.
+     * Requests cannot be simultaneous, as we cannot be sure a PHP Session has already been created.
+     * If there is no session yet and there are simultaneous requests, the CSRF tokens will be stored
+     * on the server for independent sessions which results in (randomly) only one of the tokens being valid.
+     */
+    getCsrfToken: async function (element, url) {
+        const elementType = Object.getPrototypeOf(element).widgetFullName;
+        if (this._csrfTokenCache[elementType]) {
+            return this._csrfTokenCache[elementType];
+        }
+
+        return await new Promise((resolve, reject) => {
+            this._requestQueue.push({resolve, reject, elementType, url});
+            this._tryGetNextToken();
+        });
+    },
+
+    _tryGetNextToken: async function () {
+        if (this._requestQueue.length === 0 || this._requestRunning) {
+            return;
+        }
+        this._requestRunning = true;
+
+        let {resolve, reject, elementType, url} = this._requestQueue.shift();
+        // check the cache again, maybe another request already fetched the token in the meantime
+        if (this._csrfTokenCache[elementType]) {
+            resolve(this._csrfTokenCache[elementType]);
+            this._requestRunning = false;
+            this._tryGetNextToken();
+            return;
+        }
+
+        try {
+            const response = await fetch(url, {method: 'POST'})
+            if (response.status >= 300) {
+                throw new Error("mb.error.csrf_failed");
+            }
+            const token = await response.text();
+            this._csrfTokenCache[elementType] = token;
+            resolve(token);
+        } catch (err) {
+            Mapbender.error(Mapbender.trans(err.message));
+            reject(null);
+        } finally {
+            this._requestRunning = false;
+            this._tryGetNextToken();
+        }
+    },
+
 };

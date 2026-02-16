@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,12 +26,13 @@ class SourceMetaDataController
     public function __construct(
         protected Environment $templateEngine,
         protected TypeDirectoryService $typeDirectoryService,
+        protected bool $showProxiedServiceUrls
     )
     {
     }
 
     #[Route(path: '/application/metadata/{instance}/{layerId}', name: 'mapbender_core_application_metadata', methods: ['GET'])]
-    public function metadataAction(SourceInstance $instance, $layerId): Response
+    public function metadataAction(SourceInstance $instance, int|string $layerId,): Response
     {
         $layerCriteria = Criteria::create()
             ->where(Criteria::expr()->eq('id', $layerId))
@@ -48,6 +50,7 @@ class SourceMetaDataController
             'instance' => $instance,
             'source' => $source,
             'startLayerInstance' => $startLayerInstance,
+            'secureUrls' => !$this->showProxiedServiceUrls && $dataSource->areServiceUrlsInternal($instance)
         ));
         return new Response($content);
     }

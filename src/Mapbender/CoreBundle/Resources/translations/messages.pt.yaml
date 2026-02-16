@@ -136,6 +136,7 @@ mb:
       no_results: 'Nenhum resultado encontrado.'
       result_counter: 'Resultados: %count%'
       exportcsv: 'Exportar lista de resultados como CSV.'
+      invalid_input_data: 'Caracteres de entrada inválidos'
       class:
         title: Buscar
         description: 'Permite configurar buscas individuais'
@@ -671,6 +672,8 @@ mb:
         instancelayerform:
           label:
             title: Título
+  error:
+    csrf_failed: 'Erro ao ligar à rede'
 'Bad credentials.': 'Credenciais inválidas.'
 'User account is locked.': 'Conta de usuário bloqueada.'
 'User account is disabled.': 'Conta de usuário desativada.'

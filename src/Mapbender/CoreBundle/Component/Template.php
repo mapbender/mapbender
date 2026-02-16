@@ -33,7 +33,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
             case 'js':
             case 'css':
             case 'trans':
-                return [];
+                return ['mb.error.*'];
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }

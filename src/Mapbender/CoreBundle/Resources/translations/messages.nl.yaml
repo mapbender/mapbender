@@ -73,6 +73,7 @@ mb:
       no_results: Geen resultaten gevonden.
       result_counter: 'Resultaten: %count%'
       exportcsv: Exporteer de resultaten naar CSV.
+      invalid_input_data: 'Ongeldige invoerteken'
       class:
         title: Zoek route
         description: Configureer de zoek-route opdracht
@@ -394,6 +395,8 @@ mb:
         help: 'Help'
         dataupload: 'Uploaden'
         bookmark: 'Bladwijzer'
+  error:
+    csrf_failed: 'Fout bij verbinding met het netwerk'
 'Bad credentials.': 'Ongeldige inloggegevens.'
 'User account is locked.': 'Gebruikers account is geblokkeerd.'
 'User account is disabled.': 'Gebruikers account is uitgeschakeld.'

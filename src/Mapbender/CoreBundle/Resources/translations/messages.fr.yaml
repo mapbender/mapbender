@@ -73,6 +73,7 @@ mb:
       no_results: Aucun résultat.
       result_counter: 'Résultats: %count%'
       exportcsv: Exporter les résultats vers un fichier CSV.
+      invalid_input_data: 'Caractères de saisie non valides'
       class:
         title: Routeur de recherche
         description: Élément de routeur de recherche configurable
@@ -394,6 +395,8 @@ mb:
         help: 'Aide'
         dataupload: 'Téléchargement'
         bookmark: 'Signet'
+  error:
+    csrf_failed: 'Erreur lors de la connexion au réseau'
 'Bad credentials.': 'Le mot de passe ou le nom d''utilisateur est invalide'
 Search: __Search
 FeatureInfo: Données caractéristiques
