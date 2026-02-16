@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Persistence\Event\PreUpdateEventArgs;
 use FOM\UserBundle\Security\Permission\YamlDefinedPermissionEntity;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -115,8 +114,8 @@ class Application implements YamlDefinedPermissionEntity
 
     public function __construct()
     {
-        $this->elements         = new ArrayCollection();
-        $this->layersets        = new ArrayCollection();
+        $this->elements = new ArrayCollection();
+        $this->layersets = new ArrayCollection();
         $this->regionProperties = new ArrayCollection();
         $this->map_engine_code = self::MAP_ENGINE_CURRENT;
     }
@@ -346,15 +345,10 @@ class Application implements YamlDefinedPermissionEntity
     }
 
     /**
-     * Read-only informative pseudo-relation
-     *
-     * @param bool $includeUnowned
-     * @return ArrayCollection|SourceInstance[]
+     * @return ArrayCollection<SourceInstance>
      */
-    public function getSourceInstances($includeUnowned = false)
+    public function getSourceInstances(bool $includeUnowned = false): ArrayCollection
     {
-        // @todo: figure out if there's an appropriate ORM annotation that can do this without
-        //        writing code
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
             foreach ($layerset->getInstances($includeUnowned) as $instance) {
@@ -364,12 +358,39 @@ class Application implements YamlDefinedPermissionEntity
         return $instances;
     }
 
-    public function getSourceInstanceById(int|string $instanceId): ?SourceInstance
+    public function getSourceInstanceById(int|string $instanceId, bool $includeUnowned = true): ?SourceInstance
     {
-        foreach ($this->getSourceInstances(true) as $instance) {
-            /** @var SourceInstance $instance */
-            if ($instance->getId() == $instanceId) {
-                return $instance;
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances($includeUnowned) as $instance) {
+                if ($instance->getId() == $instanceId) {
+                    return $instance;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return ArrayCollection<SourceInstanceAssignment|ReusableSourceInstanceAssignment>
+     */
+    public function getSourceInstanceAssignments(): ArrayCollection
+    {
+        $assignments = new ArrayCollection();
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getCombinedInstanceAssignments() as $instance) {
+                $assignments->add($instance);
+            }
+        }
+        return $assignments;
+    }
+
+    public function getSourceInstanceAssignmentById(int|string $instanceId): SourceInstanceAssignment|ReusableSourceInstanceAssignment|null
+    {
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getCombinedInstanceAssignments() as $assignment) {
+                if ($assignment->getInstance()->getId() == $instanceId) {
+                    return $assignment;
+                }
             }
         }
         return null;
@@ -408,7 +429,7 @@ class Application implements YamlDefinedPermissionEntity
 
     public function getLayersetsWithInstancesOf(Source $source)
     {
-        return $this->getLayersets()->filter(function($layerset) use ($source) {
+        return $this->getLayersets()->filter(function ($layerset) use ($source) {
             /** @var Layerset $layerset */
             return !!$layerset->getInstancesOf($source)->count();
         });
@@ -530,7 +551,7 @@ class Application implements YamlDefinedPermissionEntity
      */
     public function __toString()
     {
-        return (string) $this->getId();
+        return (string)$this->getId();
     }
 
     /**
