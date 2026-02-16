@@ -192,7 +192,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $isValid = $token !== null && $this->csrfTokenManager->isTokenValid($token);
 
         if (!$isValid) {
-            return new Response('Invalid CSRF token.', Response::HTTP_BAD_REQUEST);
+            return new Response('Invalid CSRF token.', Response::HTTP_FORBIDDEN);
         }
 
         if ($action === 'autocomplete') {
