@@ -136,7 +136,9 @@ class ConfigService
             if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
                 continue;
             }
-            $configs[] = $configGenerator->getConfiguration($assignment->getInstance());
+            $idPrefix = $assignment instanceof ReusableSourceInstanceAssignment ? $assignment->getId().'_' : null;
+            $configuration = $configGenerator->getConfiguration($assignment->getInstance(), $idPrefix);
+            $configs[] = $configuration;
         }
         return $configs;
     }
