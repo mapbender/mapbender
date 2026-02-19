@@ -22,6 +22,7 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 
 ### Removed deprecated methods and properties
 - MapbenderYamlCompilerPass: Removed property applicationPaths. Use parameter "mapbender.yaml_application_dirs" instead.
+- MapbenderContainerInfo.js: Removed; use methods of MapbenderElement instead
 
 ### Warnings that got promoted to Errors
 - RegistrationController: Throw error if a group configured via the parameter "fom_user.self_registration_groups" does not exist
