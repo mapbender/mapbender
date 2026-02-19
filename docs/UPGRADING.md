@@ -23,8 +23,12 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 ### Removed deprecated methods and properties
 - MapbenderYamlCompilerPass: Removed property applicationPaths. Use parameter "mapbender.yaml_application_dirs" instead.
 
+### Warnings that got promoted to Errors
+- RegistrationController: Throw error if a group configured via the parameter "fom_user.self_registration_groups" does not exist
+
 ### YAML Definitions
 - Source definitions must now use the key "type" instead of "class" to define its type. See [the documentation](sources/sources.md) for details.
+
 ## 4.2.0
 
 ### Update database
