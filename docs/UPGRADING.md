@@ -28,10 +28,10 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 - MapbenderYamlCompilerPass: Removed property applicationPaths. Use parameter "mapbender.yaml_application_dirs" instead.
 - ArrayUtil: Removed methods hasSet, getValueFromArray, isAssoc
 - FormTypeUtil: Removed entire class. Update your search router configuration (see [docs](https://doc.mapbender.org/en/elements/search/search_router.html))
-- VendorSpecific: Removed getConfiguration. Use the get*-methods independantly.
+- VendorSpecific: Removed getConfiguration. Use the get*-methods independently.
 - [DataSource] Removed Mapbender\DataSourceBundle\Component\FeatureTypeService and DataStoreService. Use DI to inject `mbds.default_datastore_factory`.
 - [DataSource]: In Mapbender\DataSourceBundle\Component\RepositoryRegistry: Removed `featureTypeFactory` (use `dataStoreFactory`), `getFeatureTypeByName` (use `getDataStoreByName`), `getFeatureTypeDeclarations` (use `getDataStoreDeclarations`)
-- [DataSource]: In Mapbender\ÐataSourceBundle\Entity\DataItem: Removed `hasId` (use `getId() !== null`)
+- [DataSource]: In Mapbender\DataSourceBundle\Entity\DataItem: Removed `hasId` (use `getId() !== null`)
 
 ### Removed deprecated methods and properties (Frontend)
 - MapbenderContainerInfo: Removed; use methods of MapbenderElement instead
