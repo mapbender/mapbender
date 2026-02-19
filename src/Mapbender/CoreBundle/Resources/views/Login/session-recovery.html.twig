@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session Recovery</title>
+</head>
+<body>
+    <script type="text/javascript">
+        const bcChannel = new BroadcastChannel('mb-session-recovery');
+        bcChannel.postMessage('relogin-success');
+        window.close();
+    </script>
+</body>
+</html>

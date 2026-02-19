@@ -692,6 +692,7 @@ mb:
     csrf_failed: 'Fehler bei Verbindung mit dem Netzwerk'
     session_expired: 'Sie sind nicht angemeldet oder Ihre Sitzung ist abgelaufen.'
     relogin: 'Bitte melden Sie sich erneut an.'
+    relogin_link: 'Zur Anmeldung'
     reload: 'Seite neu laden'
     retry: 'Erneut versuchen'
     not_found: 'Das Element wurde nicht gefunden.'

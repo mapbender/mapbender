@@ -336,6 +336,7 @@ mb:
     csrf_failed: 'Ağa bağlanırken hata oluştu'
     session_expired: 'Giriş yapmadınız veya oturumunuzun süresi doldu.'
     relogin: 'Lütfen tekrar giriş yapın.'
+    relogin_link: 'Girişe git'
     reload: 'Sayfayı yeniden yükle'
     retry: 'Tekrar dene'
     not_found: 'Öğe bulunamadı.'

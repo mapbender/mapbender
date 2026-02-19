@@ -40,18 +40,13 @@ Mapbender.handleAjaxError = function (error, retry, errorMessage) {
               "<div class='clearfix notifyjs-bootstrap-base notifyjs-bootstrap-error'>" +
                 "<span data-notify-text=''></span>" +
                 "<div class='buttons'>" +
-                  "<button class='btn notifyjs--reload'>" + Mapbender.trans("mb.error.reload") + "</button>" +
+                  "<button class='btn notifyjs--relogin'>" + Mapbender.trans("mb.error.relogin_link") + "</button>" +
                   "<button class='btn notifyjs--retry'>" + Mapbender.trans("mb.error.retry") + "</button>" +
                 "</div>" +
               "</div>" +
             "</div>"
         });
         // @formatter:on
-
-        //listen for click events from this style
-        $(document).on('click', '.notifyjs--reload', function () {
-            location.reload();
-        });
     }
 
     const message = error.status === 403
@@ -75,6 +70,22 @@ Mapbender.handleAjaxError = function (error, retry, errorMessage) {
         $retryButton.remove();
     }
 
+    $wrapper.find('.notifyjs--relogin').one('click', function () {
+        window.open(Mapbender.configuration.application.urls.base + "/user/login/recover", "Login",'height=600,width=400');
+        // dismiss the notification by triggering a click on the wrapper
+        $wrapper.trigger('click');
+
+        if (retry && typeof retry === 'function') {
+            const bcChannel = new BroadcastChannel('mb-session-recovery');
+            bcChannel.addEventListener('message', (event) => {
+                if (event.data === 'relogin-success') {
+                    // Session has been recovered, retry the failed request automatically
+                    retry();
+                    bcChannel.close();
+                }
+            });
+        }
+    });
 };
 
 Mapbender.restrictPopupPositioning = function ($dialogElement) {

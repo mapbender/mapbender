@@ -665,6 +665,7 @@ mb:
     csrf_failed: 'Error al conectarse a la red'
     session_expired: 'No has iniciado sesión o tu sesión ha caducado.'
     relogin: 'Por favor, inicia sesión de nuevo.'
+    relogin_link: 'Ir al inicio de sesión'
     reload: 'Recargar página'
     retry: 'Reintentar'
     not_found: 'No se encontró el elemento.'
