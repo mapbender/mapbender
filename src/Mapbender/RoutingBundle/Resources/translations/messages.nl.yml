@@ -6,6 +6,9 @@ mb:
         noResult: Er kon geen route worden gevonden.
         format: Formaat niet ondersteund.
         icon: Geen pictogram geconfigureerd.
+        invalidCoordinates: Ongeldige coördinaten opgegeven!
+        noValidPoints: Geen geldige punten voor routering.
+        serviceUnavailable: Routeservice is niet beschikbaar
       graphhopper:
         400: Er is iets mis met uw verzoek (te weinig of te veel punten)
         401: Authenticatie vereist! Registreer en verkrijg een geldige API-sleutel op https://www.graphhopper.com/developers/.

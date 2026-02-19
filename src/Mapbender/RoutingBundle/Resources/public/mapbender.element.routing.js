@@ -258,7 +258,7 @@
                         });
                     }
                 } else {
-                    Mapbender.error('Invalid coordinates provided!')
+                    Mapbender.error(Mapbender.trans('mb.routing.exception.main.invalidCoordinates'));
                 }
             }
         },
@@ -331,7 +331,7 @@
             let points = this._getRoutingPoints();
 
             if (!points) {
-                console.warn('No valid points for routing.');
+                console.warn(Mapbender.trans('mb.routing.exception.main.noValidPoints'));
                 return false;
             }
 
@@ -350,8 +350,8 @@
                     'points': points,
                     'srs': mapProj
                 }
-            }).fail(() => {
-                Mapbender.error('route service is not available');
+            }).fail((e) => {
+                Mapbender.handleAjaxError(e, () => this._getRoute(), Mapbender.trans('mb.routing.exception.main.serviceUnavailable'));
                 this.setSpinnerVisible(false);
             }).done((response) => {
                 if (response.error) {
@@ -388,7 +388,7 @@
                         };
                     }));
                 }
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._handleAutocompleteSource(request, _response)));
         },
 
         _extractAttribute: function(obj, path) {

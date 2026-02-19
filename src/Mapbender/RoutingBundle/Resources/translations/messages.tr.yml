@@ -6,6 +6,9 @@ mb:
         noResult: Rota bulunamadı.
         format: Format desteklenmiyor.
         icon: Simge yapılandırılmadı.
+        invalidCoordinates: Geçersiz koordinatlar sağlandı!
+        noValidPoints: Rotalama için geçerli nokta yok.
+        serviceUnavailable: Rota hizmeti kullanılamıyor
       graphhopper:
         400: İsteğinizde bir hata var (çok az veya çok fazla nokta)
         401: "Kimlik doğrulama gerekli! Kaydolun ve geçerli bir API anahtarı alın: https://www.graphhopper.com/developers/."

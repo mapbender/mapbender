@@ -15,15 +15,18 @@
             Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
                 self._setup(mbMap);
             });
-            $.ajax([this.elementUrl, 'granted'].join('/')).then(function(response) {
-                var slugs = response.concat([Mapbender.configuration.application.slug]);
-                self._filterGranted(slugs);
-            });
+            this._loadGrants();
             this._updateDropoutDirection();
         },
         _setup: function(mbMap) {
             this.mbMap = mbMap;
             this._initEvents();
+        },
+        _loadGrants: function() {
+            $.ajax([this.elementUrl, 'granted'].join('/')).then((response) => {
+                var slugs = response.concat([Mapbender.configuration.application.slug]);
+                this._filterGranted(slugs);
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._loadGrants()));
         },
         _initEvents: function() {
             var self = this;

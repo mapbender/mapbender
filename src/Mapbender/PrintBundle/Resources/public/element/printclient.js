@@ -119,7 +119,7 @@
             Mapbender.vectorLayerPool.raiseElementLayers(this);
             Mapbender.vectorLayerPool.showElementLayers(this);
             var self = this;
-            this._getTemplateSize().then(function() {
+            this._getTemplateSize(() => {
                 self.selectionActive = true;
                 self._setScale();
                 self._resetSelectionFeature();
@@ -563,13 +563,13 @@
         },
         _onTemplateChange: function() {
             var self = this;
-            this._getTemplateSize().then(function() {
+            this._getTemplateSize(() => {
                 if (self.selectionActive) {
                     self._resetSelectionFeature();
                 }
             });
         },
-        _getTemplateSize: function() {
+        _getTemplateSize: function(callback) {
             var self = this;
             var template = $('select[name="template"]', this.$form).val();
             var cached = this._templateSizeCache[template];
@@ -592,8 +592,9 @@
                             height: heightMeters
                         };
                     },
-                    error: function() {
+                    error: (e) => {
                         console.error("getTemplateSize request failed: - template "+template+" might not be available");
+                        Mapbender.handleAjaxError(e, () => self._getTemplateSize(callback));
                     }
                 });
             } else {
@@ -603,6 +604,7 @@
                 promise = $.Deferred();
                 promise.resolve();
             }
+            if (callback) promise.then(callback);
             return promise;
         },
         /**

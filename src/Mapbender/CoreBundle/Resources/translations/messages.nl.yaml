@@ -337,6 +337,12 @@ mb:
         drag_to_reorder: 'Sleep om opnieuw te ordenen'
   error:
     csrf_failed: 'Fout bij verbinding met het netwerk'
+    session_expired: 'U bent niet aangemeld of uw sessie is verlopen.'
+    relogin: 'Meld u opnieuw aan.'
+    relogin_link: 'Naar de aanmelding'
+    reload: 'Pagina opnieuw laden'
+    retry: 'Opnieuw proberen'
+    not_found: 'Het element is niet gevonden.'
 'Bad credentials.': 'Ongeldige inloggegevens.'
 'User account is locked.': 'Gebruikers account is geblokkeerd.'
 'User account is disabled.': 'Gebruikers account is uitgeschakeld.'

@@ -170,7 +170,7 @@
                 }
             }).then(function(data) {
                 return self._addSources(data, options || {});
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this.loadWms(url, options), Mapbender.trans('mb.wms.wmsloader.error.load')));
         },
         _getInstances: function(scvIds) {
             var self = this;
@@ -187,11 +187,8 @@
                             self.mbMap.model.addSourceFromConfig(sourceDef);
                         }
                     });
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
                 }
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._getInstances(scvIds), Mapbender.trans('mb.wms.wmsloader.error.load')));
         },
         /**
          * @param {Array<Object>} sourceDefs
@@ -314,9 +311,6 @@
                 }
             });
             return customParams;
-        },
-        _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
-            Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
         },
         _destroy: $.noop
     });

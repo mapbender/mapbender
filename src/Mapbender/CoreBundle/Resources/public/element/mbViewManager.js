@@ -108,18 +108,10 @@
             this.element.on('mousedown', '.-fn-apply, .-js-forward-to-apply', function() {
                 $(this).closest('tr').find('.-js-loadingspinner i').removeClass('opacity-0');
             });
-            this.element.on('click', '.-fn-apply', function(evt) {
+            this.element.on('click', '.-fn-apply', (evt) => {
                 evt.preventDefault();
                 const $tr = $(evt.target).closest('tr');
-                const viewId = $tr.attr('data-id');
-                $.ajax([[self.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then(function(settings) {
-                    settings.viewParams = self.mbMap.getModel().decodeViewParams(settings.viewParams);
-                    self._apply(settings);
-                    var $marker = $('.recall-marker', $tr);
-                    $('.recall-marker', self.element).not($marker).css({opacity: ''});
-                    $marker.css({opacity: '1'});
-                    $tr.find('.-js-loadingspinner i').addClass('opacity-0');
-                });
+                this._onRowClick($tr);
             });
             this.element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
@@ -128,7 +120,7 @@
                 var $row = $(this).closest('tr');
                 var rowId = $row.attr('data-id');
                 self._confirm($row, self.deleteConfirmationContent).then(function() {
-                    self._delete(rowId, self.csrfToken).then(function() {
+                    self._delete(rowId, self.csrfToken, () => {
                         $row.remove();
                         self._updatePlaceholder();
                     });
@@ -141,6 +133,17 @@
                 self._openUpdateOrInfo($row, recordId);
                 return false;   // Avoid re-focusing dialog
             });
+        },
+        _onRowClick: function($tr) {
+            const viewId = $tr.attr('data-id');
+            $.ajax([[this.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then((settings) => {
+                settings.viewParams = this.mbMap.getModel().decodeViewParams(settings.viewParams);
+                this._apply(settings);
+                var $marker = $('.recall-marker', $tr);
+                $('.recall-marker', this.element).not($marker).css({opacity: ''});
+                $marker.css({opacity: '1'});
+                $tr.find('.-js-loadingspinner i').addClass('opacity-0');
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._onRowClick($tr)));
         },
         _load: function() {
             var $loadingPlaceholder = $('.-fn-loading-placeholder', this.element)
@@ -162,9 +165,9 @@
                     if (loadViewButton !== false) {
                         loadViewButton.trigger('click');
                     }
-                }, function() {
+                }).always(function() {
                     $loadingPlaceholder.hide();
-                })
+                }).fail((e) => Mapbender.handleAjaxError(e, () => this._load()))
             ;
         },
         _replace: function($row, $form, id) {
@@ -183,7 +186,7 @@
                 var newRow = $.parseHTML(response);
                 $row.replaceWith(newRow);
                 self._flash($(newRow), '#88ff88');
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => self._replace($row, $form, id)));
         },
         _saveNew: function() {
             var $titleInput = $('input[name="title"]', this.element);
@@ -216,14 +219,19 @@
                 }
                 self._flash($(newRow), '#88ff88');
                 self._updatePlaceholder();
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._saveNew()));
         },
-        _delete: function(id, csrfToken) {
+        _delete: function(id, csrfToken, callback) {
             var params = {id: id};
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE',
                 data: {token: csrfToken}
-            });
+            }).then(callback).fail((e) => Mapbender.handleAjaxError(e, async () => {
+                try {
+                    await this._setupCsrf(true);
+                } catch {}
+                this._delete(id, this.csrfToken, callback);
+            }));
         },
         _getSavePublic: function() {
             var $savePublicCb = $('input[name="save-as-public"]', this.element);
@@ -457,8 +465,8 @@
             let settings = JSON.stringify(this._getCommonSaveData());
             window.localStorage.setItem('viewManagerSettings', settings);
         },
-        _setupCsrf: async function () {
-            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf');
+        _setupCsrf: async function (forceRefresh = false) {
+            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf', forceRefresh);
         },
         __dummy__: null
     });

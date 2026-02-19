@@ -368,19 +368,22 @@ $.extend(Mapbender, (function($) {
         var uncacheableIds = Object.keys(uncacheable);
         if (uncacheableIds.length) {
             var reloadUrl = ['.', Mapbender.configuration.application.slug, 'elements'].join('/');
-            $.getJSON(reloadUrl, {
-                ids: uncacheableIds.join(',')
-            }).then(function(response) {
-                var selectors = Object.keys(response);
-                for (var s = 0; s < selectors.length; ++s) {
-                    var selector = selectors[s];
-                    $(selectors[s]).replaceWith(response[selector]);
-                }
-                for (i = 0; i < uncacheableIds.length; ++i) {
-                    var id = uncacheableIds[i];
-                    _initElement(id, uncacheable[id]);
-                }
-            });
+            const loadUrls = (reloadUrl) => {
+                $.getJSON(reloadUrl, {
+                    ids: uncacheableIds.join(',')
+                }).then(function (response) {
+                    var selectors = Object.keys(response);
+                    for (var s = 0; s < selectors.length; ++s) {
+                        var selector = selectors[s];
+                        $(selectors[s]).replaceWith(response[selector]);
+                    }
+                    for (i = 0; i < uncacheableIds.length; ++i) {
+                        var id = uncacheableIds[i];
+                        _initElement(id, uncacheable[id]);
+                    }
+                }).fail((e) => Mapbender.handleAjaxError(e, () => loadUrls(reloadUrl)));
+            }
+            loadUrls(reloadUrl);
         }
     }
     function _initElement(id, elementData) {

@@ -23,7 +23,6 @@
         },
 
 
-
         /**
          * Remove last search results
          */
@@ -78,9 +77,13 @@
             routeSelect.trigger('change');
         },
 
-        _setupCsrf: async function () {
-            const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf");
-            this.element.find('input[name*="_token"]').attr('value', token);
+        _setupCsrf: async function (forceRefresh = false) {
+            try {
+                const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf", forceRefresh);
+                this.element.find('input[name*="_token"]').attr('value', token);
+            } catch (e) {
+                if (!forceRefresh) Mapbender.error(Mapbender.trans(e.message));
+            }
         },
 
         defaultAction: function (callback) {
@@ -207,11 +210,11 @@
         /**
          * Set up autocpmplete provided by custom widget (data-autcomplete="custom:<widget>")
          *
-         * @param  integer      idx   Running index
-         * @param  HTMLDomNode  input Input element
+         * @param  {integer}      idx   Running index
+         * @param  {HTMLElement}  input Input element
          */
         _setupCustomAutocomplete: function (idx, input) {
-            var plugin = $(input).data('autocomplete').substr(7);
+            var plugin = $(input).data('autocomplete').substring(7);
             $(input)[plugin]();
         },
 
@@ -233,8 +236,14 @@
             return $.getJSON({
                 url: url,
                 data: JSON.stringify(data),
-                method: 'POST'
-            });
+                method: 'POST',
+            }).fail((err) => Mapbender.handleAjaxError(err, async () => {
+                try {
+                    await this._setupCsrf(true);
+                } catch {
+                }
+                this._autocompleteSource($input);
+            }));
         },
 
         /**
@@ -288,9 +297,13 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             })
-                .fail((err) => {
-                    Mapbender.error(Mapbender.trans(err.responseText));
-                })
+                .fail((err) => Mapbender.handleAjaxError(err, async () => {
+                    try {
+                        await this._setupCsrf(true);
+                    } catch {
+                    }
+                    this._search();
+                }))
                 .then((response) => {
                     const features = this._createFeaturesFromResponse(response);
                     this._searchResults(features);
@@ -496,7 +509,7 @@
             return this._labelReplaceRegex(labelWithRegex, feature);
         },
 
-        _labelReplaceRegex: function(labelWithRegex, feature) {
+        _labelReplaceRegex: function (labelWithRegex, feature) {
             let regex = /\${([^}]+)}/g;
             let match = [];
             let label = labelWithRegex;
@@ -508,10 +521,10 @@
             return label;
         },
 
-        _createTextStyle: function(options) {
-            const fontweight = options.fontWeight  || 'normal';
-            const fontsize = options.fontSize  || '18px';
-            const fontfamily = options.fontFamily  || 'arial';
+        _createTextStyle: function (options) {
+            const fontweight = options.fontWeight || 'normal';
+            const fontsize = options.fontSize || '18px';
+            const fontfamily = options.fontFamily || 'arial';
 
             const textfill = new ol.style.Fill({
                 color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fontColor', '1')
@@ -532,7 +545,7 @@
             });
         },
 
-        _createSingleStyle: function(options) {
+        _createSingleStyle: function (options) {
             const fill = new ol.style.Fill({
                 color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fillColor', 'fillOpacity')
             });
@@ -621,7 +634,7 @@
         },
         _getFormValues: function (form) {
             var values = {};
-            $(':input', form).each(function(index, input) {
+            $(':input', form).each(function (index, input) {
                 var $input = $(input);
                 var name = $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, '');
                 values[name] = $input.val();

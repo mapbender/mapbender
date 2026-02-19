@@ -685,6 +685,12 @@ mb:
             title: Titolo
   error:
     csrf_failed: 'Errore durante la connessione alla rete'
+    session_expired: 'Non hai effettuato l''accesso o la tua sessione è scaduta.'
+    relogin: 'Effettua nuovamente l''accesso.'
+    relogin_link: 'Vai al login'
+    reload: 'Ricarica pagina'
+    retry: 'Riprova'
+    not_found: 'L''elemento non è stato trovato.'
 'Bad credentials.': 'Credentiali errate.'
 'User account is locked.': 'L''account utente è bloccato.'
 'User account is disabled.': 'L''account dell''utente è disabilitato.'

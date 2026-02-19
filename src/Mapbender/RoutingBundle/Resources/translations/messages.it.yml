@@ -6,6 +6,9 @@ mb:
         noResult: Nessun percorso trovato.
         format: Formato non supportato.
         icon: Nessuna icona configurata.
+        invalidCoordinates: Coordinate non valide fornite!
+        noValidPoints: Nessun punto valido per il routing.
+        serviceUnavailable: Il servizio di percorso non è disponibile
       graphhopper:
         400: Qualcosa non va nella tua richiesta (troppi o troppo pochi punti)
         401: Autenticazione necessaria! Registrati e ottieni una chiave API valida su https://www.graphhopper.com/developers/.
