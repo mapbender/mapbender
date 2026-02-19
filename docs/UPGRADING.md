@@ -20,6 +20,11 @@ $sidepaneBackgroundColor => sidepane-background-color
 Read the step by step guide to migrate Mapbender jQuery UI widget into a native ES6 JavaScript class.
 https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_classes.md
 
+### Removed deprecated methods and properties
+- MapbenderYamlCompilerPass: Removed property applicationPaths. Use parameter "mapbender.yaml_application_dirs" instead.
+
+### YAML Definitions
+- Source definitions must now use the key "type" instead of "class" to define its type. See [the documentation](sources/sources.md) for details.
 ## 4.2.0
 
 ### Update database

@@ -1,11 +1,15 @@
-# Custom data sources
+# Data sources
 
-A data source describes the content that is displayed on a map. The core mapbender supports the following data sources:
-- Web Map Service (WMS)
-- Web Map Tile Service (WMTS)
-- Tile Map Service (TMS)
-- Web Map Service Time (WMS-T)
-- (tbe)
+A data source describes the content that is displayed on a map. The core mapbender supports the following data sources 
+(where the "YAML key" should be used as "type" when defining a YAML-based application):
+
+| source type                                      | YAML key     |
+|--------------------------------------------------|--------------|
+| Web Map Service (WMS)                            | wms          |
+| Web Map Tile Service (WMTS)                      | wmts         |
+| Tile Map Service (TMS)                           | tms          |
+| Web Map Service Time (WMS-T)                     | wms          |
+| Vector Tiles using the Mapbox Vector Tile format | vector_tiles |
 
 This tutorial describes how to create a new source that can be configured in the backoffice and displayed in the frontend.
 
