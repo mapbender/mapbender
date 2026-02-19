@@ -1,7 +1,7 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Mapbender\CoreBundle\Utils\FormTypeUtil;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,9 +29,11 @@ class SearchRouterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['fields']['form'] as $name => $conf) {
-            $type = FormTypeUtil::migrateFormType($conf['type']);
-            $options = FormTypeUtil::migrateFormTypeOptions($conf['type'], $conf['options']);
-            $builder->add($this->escapeName($name), $type, $options);
+            $type = $conf['type'];
+            if (!class_exists($type)) {
+                throw new \RuntimeException("Invalid form type " . $type . " in search configuration");
+            }
+            $builder->add($this->escapeName($name), $type, $conf['options'] ?? []);
         }
     }
 }
