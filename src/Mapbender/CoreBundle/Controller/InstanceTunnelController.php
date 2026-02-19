@@ -5,12 +5,11 @@ namespace Mapbender\CoreBundle\Controller;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainSourceInstance;
 use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Source\Tunnel\Endpoint;
 use Mapbender\CoreBundle\Component\Source\Tunnel\InstanceTunnelService;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\RequestUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,10 +77,11 @@ class InstanceTunnelController extends AbstractController
 
     protected function getGrantedTunnelEndpoint(Application $application, string|int $instanceId): Endpoint
     {
-        $instance = $application->getSourceInstanceById($instanceId);
-        if (!$instance) {
+        $assignment = $application->getSourceInstanceAssignmentById($instanceId);
+        if (!$assignment) {
             throw new NotFoundHttpException("No such instance");
         }
-        return $this->tunnelService->makeEndpoint($application, $instance);
+        $this->denyAccessUnlessGranted(ResourceDomainSourceInstance::ACTION_VIEW, $assignment);
+        return $this->tunnelService->makeEndpoint($application, $assignment->getInstance());
     }
 }

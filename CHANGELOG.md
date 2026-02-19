@@ -1,6 +1,6 @@
 ## next feature release
 Security:
-* Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+* Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812), [#PR1825](https://github.com/mapbender/mapbender/pull/1825))
 
 Features:
 * [Design] Comprehensive frontend redesign, including several optimisations mobile screens (Layertree: [#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774); Simple Search: [#PR1767](https://github.com/mapbender/mapbender/pull/1767); Sketch: [#PR1768](https://github.com/mapbender/mapbender/pull/1768); Data Upload: [#PR1775](https://github.com/mapbender/mapbender/pull/1775); Popup and mobile optimisations: [#PR1782](https://github.com/mapbender/mapbender/pull/1782))
