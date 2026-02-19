@@ -41,7 +41,13 @@ class BaseSourceSwitcher extends AbstractElementService
             'tooltip' => static::getClassTitle(),
             'instancesets' => array(),
             'anchor' => 'right-bottom',
+            'element_icon' => self::getDefaultIcon(),
         );
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconMap';
     }
 
     /**
