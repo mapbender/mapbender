@@ -8,6 +8,7 @@
             this.mbMap = null;
             this.iconUrl_ = null;
             this.selectedConfiguration = 0;
+            this.autocompleteMinLength = 2;
 
             // Former _create body
             this._setSelectedConfiguration(this._getSavedConfiguration());
@@ -123,7 +124,6 @@
                 this._setSelectedConfiguration(selectedVal)
             }.bind(this));
             const form = this.$element.find('form').get(0);
-            var url = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/search';
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (this.iconUrl_) {
                 var offset = (configuration.result_icon_offset || '').split(new RegExp('[, ;]')).map(function(x) {
@@ -132,41 +132,12 @@
                 this.layer.addCustomIconMarkerStyle('simplesearch', this.iconUrl_, offset[0], offset[1]);
             }
 
-            // @todo: this has never been customizable. Always used FOM Autcomplete default 2.
-            var minLength = 2;
-
             this.searchInput.autocomplete({
                 appendTo: this.searchInput.closest('.autocompleteWrapper').get(0),
                 delay: configuration.delay || 300,
-                minLength: minLength,
+                minLength: this.autocompleteMinLength,
                 /** @see https://api.jqueryui.com/autocomplete/#option-source */
-                source: function(request, responseCallback) {
-                    var term = self._tokenize(request.term);
-                    if (!term || term.length < minLength) {
-                        responseCallback([]);
-                        self.$element;
-                        return;
-                    }
-                    $.getJSON(url, {term: term, selectedConfiguration: self.selectedConfiguration})
-                        .then(function(response) {
-                            var formatted =  (response || []).map(function(item) {
-                                return Object.assign(item, {
-                                    label: self._formatLabel(item)
-                                });
-                            }).filter(function(item) {
-                                var geomEmpty = !item[self.options['configurations'][self.selectedConfiguration].geom_attribute];
-                                if (geomEmpty) {
-                                    console.warn("Missing geometry in SimpleSearch item", item);
-                                }
-                                return item.label && !geomEmpty;
-                            });
-                            responseCallback(formatted);
-
-                        }, function() {
-                            responseCallback([]);
-                        })
-                    ;
-                },
+                source: this._queryAutocomplete.bind(this),
                 position: {
                     of: false
                 },
@@ -188,6 +159,35 @@
             });
             this.initialised = true;
             Mapbender.elementRegistry.markReady(this);
+        }
+
+        _queryAutocomplete(request, responseCallback) {
+            const term = this._tokenize(request.term);
+            const url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+
+            if (!term || term.length < this.autocompleteMinLength) {
+                responseCallback([]);
+                return;
+            }
+            $.getJSON(url, {term: term, selectedConfiguration: this.selectedConfiguration})
+                .then((response) => {
+                    const formatted = (response || [])
+                        .map((item) => Object.assign(item, {
+                            label: this._formatLabel(item)
+                        }))
+                        .filter((item) => {
+                            const geomEmpty = !item[this.options['configurations'][this.selectedConfiguration].geom_attribute];
+                            if (geomEmpty) {
+                                console.warn("Missing geometry in SimpleSearch item", item);
+                            }
+                            return item.label && !geomEmpty;
+                        });
+                    responseCallback(formatted);
+                })
+                .fail((err) => {
+                    Mapbender.handleAjaxError(err, () => this._queryAutocomplete(request, responseCallback));
+                })
+            ;
         }
 
         _updateSearchAndClearIconState() {

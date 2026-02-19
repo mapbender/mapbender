@@ -397,6 +397,12 @@ mb:
         bookmark: 'Signet'
   error:
     csrf_failed: 'Erreur lors de la connexion au réseau'
+    session_expired: 'Vous n''êtes pas connecté ou votre session a expiré.'
+    relogin: 'Veuillez vous reconnecter.'
+    relogin_link: 'Aller à la connexion'
+    reload: 'Recharger la page'
+    retry: 'Réessayer'
+    not_found: 'L''élément n''a pas été trouvé.'
 'Bad credentials.': 'Le mot de passe ou le nom d''utilisateur est invalide'
 Search: __Search
 FeatureInfo: Données caractéristiques

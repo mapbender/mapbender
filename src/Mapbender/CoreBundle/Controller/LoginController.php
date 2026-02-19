@@ -33,6 +33,13 @@ class LoginController extends AbstractController
         ));
     }
 
+    #[Route(path: '/user/login/recover', methods: ['GET'])]
+    public function recoverSession(): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+        return $this->render('@MapbenderCore/Login/session-recovery.html.twig');
+    }
+
     /**
      * Handled entirely by Symfony form_login / logout extensions.
      * Action is never called. Only here to define urls, so the

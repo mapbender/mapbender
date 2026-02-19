@@ -153,12 +153,9 @@
                     infoFormat: options?.infoFormat
                 },
                 dataType: 'json',
-                error: function(jqXHR, textStatus, errorThrown){
-                    self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
-                }
             }).then(function(data) {
                 return self._addSources(data, options || {});
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this.loadWms(url, options), Mapbender.trans('mb.wms.wmsloader.error.load')));
         }
 
         _getInstances(scvIds) {
@@ -180,7 +177,7 @@
                 error: function(jqXHR, textStatus, errorThrown) {
                     Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
                 }
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._getInstances(scvIds), Mapbender.trans('mb.wms.wmsloader.error.load')));
         }
 
         /**
@@ -308,10 +305,6 @@
                 }
             });
             return customParams;
-        }
-
-        _getCapabilitiesUrlError(xml, textStatus, jqXHR){
-            Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
         }
     }
 

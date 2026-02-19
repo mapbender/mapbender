@@ -26,6 +26,7 @@ Security:
 
 Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
+* Show message after asynchronous requests for expired sessions with option to log in in a new window and retry ([#PR1823](https://github.com/mapbender/mapbender/pull/1823))
 
 Bugfixes:
 * [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))

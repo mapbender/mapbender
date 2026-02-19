@@ -114,7 +114,7 @@
             Mapbender.vectorLayerPool.getElementLayer(this, 0).clear();
             Mapbender.vectorLayerPool.raiseElementLayers(this);
             Mapbender.vectorLayerPool.showElementLayers(this);
-            this._getTemplateSize().then(() => {
+            this._getTemplateSize(() => {
                 this.selectionActive = true;
                 this._setScale();
                 this._resetSelectionFeature();
@@ -559,14 +559,14 @@
         }
 
         _onTemplateChange() {
-            this._getTemplateSize().then(() => {
+            this._getTemplateSize(() => {
                 if (this.selectionActive) {
                     this._resetSelectionFeature();
                 }
             });
         }
 
-        _getTemplateSize() {
+        _getTemplateSize(callback) {
             const template = $('select[name="template"]', this.$form).val();
             const cached = this._templateSizeCache[template];
             let promise;
@@ -588,7 +588,10 @@
                             height: heightMeters
                         };
                     },
-                    error: () => { console.error('getTemplateSize request failed: - template ' + template + ' might not be available'); }
+                    error: (e) => {
+                        console.error('getTemplateSize request failed: - template ' + template + ' might not be available');
+                        Mapbender.handleAjaxError(e, () => self._getTemplateSize(callback));
+                    }
                 });
             } else {
                 this.width = cached.width;
@@ -597,6 +600,7 @@
                 promise = $.Deferred();
                 promise.resolve();
             }
+            if (callback) promise.then(callback);
             return promise;
         }
 

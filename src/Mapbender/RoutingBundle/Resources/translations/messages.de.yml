@@ -6,6 +6,9 @@ mb:
         noResult: Es konnte keine Route gefunden werden.
         format: Format wird nicht unterstützt.
         icon: Es ist kein Icon konfiguriert.
+        invalidCoordinates: Ungültige Koordinaten angegeben!
+        noValidPoints: Keine gültigen Punkte für die Routenberechnung.
+        serviceUnavailable: Routendienst ist nicht verfügbar
       graphhopper:
         400: Bei der Anfrage ist ein Fehler aufgetreten (zu wenige oder zu viele Punkte).
         401: Authentifizierung ist erforderlich! Registrieren Sie sich und erhalten Sie einen gültigen API-Schlüssel unter https://www.graphhopper.com/developers/.

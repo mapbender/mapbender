@@ -1008,9 +1008,8 @@
                     if (initTabContainer) {
                         initTabContainer(metadataPopup.$element);
                     }
-                }, function (jqXHR, textStatus, errorThrown) {
-                    Mapbender.error(errorThrown);
                 })
+                .fail((errorEvent) => Mapbender.handleAjaxError(errorEvent, () => this._showMetadata(e)))
             ;
         }
 

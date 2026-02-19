@@ -6,6 +6,9 @@ mb:
         noResult: Aucun itinéraire trouvé.
         format: Format non pris en charge.
         icon: Aucun icône configuré.
+        invalidCoordinates: Coordonnées non valides fournies !
+        noValidPoints: Aucun point valide pour le routage.
+        serviceUnavailable: Le service d'itinéraire n'est pas disponible
       graphhopper:
         400: Une erreur s'est produite dans votre demande (trop ou trop peu de points)
         401: Authentification requise ! Inscrivez-vous et obtenez une clé API valide sur https://www.graphhopper.com/developers/.

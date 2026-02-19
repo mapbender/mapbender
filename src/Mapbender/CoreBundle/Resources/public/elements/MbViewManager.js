@@ -77,15 +77,7 @@
             this.$element.on('click', '.-fn-apply', (evt) => {
                 evt.preventDefault();
                 const $tr = $(evt.target).closest('tr');
-                const viewId = $tr.attr('data-id');
-                $.ajax([[this.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then((settings) => {
-                    settings.viewParams = this.mbMap.getModel().decodeViewParams(settings.viewParams);
-                    this._apply(settings);
-                    const $marker = $('.recall-marker', $tr);
-                    $('.recall-marker', this.$element).not($marker).css({opacity: ''});
-                    $marker.css({opacity: '1'});
-                    $tr.find('.-js-loadingspinner i').addClass('opacity-0');
-                });
+                this._onRowClick($tr);
             });
             this.$element.on('click', 'tr .-js-forward-to-apply', function() {
                 $('.-fn-apply', $(this).closest('tr')).trigger('click');
@@ -94,7 +86,7 @@
                 const $row = $(e.currentTarget).closest('tr');
                 const rowId = $row.attr('data-id');
                 this._confirm($row, this.deleteConfirmationContent).then(() => {
-                    this._delete(rowId, this.csrfToken).then(() => {
+                    this._delete(rowId, this.csrfToken, () => {
                         $row.remove();
                         this._updatePlaceholder();
                     });
@@ -107,6 +99,18 @@
                 this._openUpdateOrInfo($row, recordId);
                 return false;   // Avoid re-focusing dialog
             });
+        }
+
+        _onRowClick($tr) {
+            const viewId = $tr.attr('data-id');
+            $.ajax([[this.elementUrl, 'getView'].join('/'), $.param({viewId: viewId})].join('?')).then((settings) => {
+                settings.viewParams = this.mbMap.getModel().decodeViewParams(settings.viewParams);
+                this._apply(settings);
+                var $marker = $('.recall-marker', $tr);
+                $('.recall-marker', this.element).not($marker).css({opacity: ''});
+                $marker.css({opacity: '1'});
+                $tr.find('.-js-loadingspinner i').addClass('opacity-0');
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._onRowClick($tr)));
         }
 
         _load() {
@@ -128,9 +132,10 @@
                     if (loadViewButton !== false) {
                         loadViewButton.trigger('click');
                     }
-                }, () => {
+                }).always(() => {
                     $loadingPlaceholder.hide();
-                });
+                }).fail((e) => Mapbender.handleAjaxError(e, () => this._load()))
+            ;
         }
 
         _replace($row, $form, id) {
@@ -148,7 +153,7 @@
                 const newRow = $.parseHTML(response);
                 $row.replaceWith(newRow);
                 this._flash($(newRow), '#88ff88');
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._replace($row, $form, id)));
         }
 
         _saveNew() {
@@ -181,15 +186,20 @@
                 }
                 this._flash($(newRow), '#88ff88');
                 this._updatePlaceholder();
-            });
+            }).fail((e) => Mapbender.handleAjaxError(e, () => this._saveNew()));
         }
 
-        _delete(id, csrfToken) {
+        _delete(id, csrfToken, callback) {
             const params = {id: id};
             return $.ajax([[this.elementUrl, 'delete'].join('/'), $.param(params)].join('?'), {
                 method: 'DELETE',
                 data: {token: csrfToken}
-            });
+            }).then(callback).fail((e) => Mapbender.handleAjaxError(e, async () => {
+                try {
+                    await this._setupCsrf(true);
+                } catch {}
+                this._delete(id, this.csrfToken, callback);
+            }));
         }
 
         _getSavePublic() {
@@ -423,8 +433,8 @@
             window.localStorage.setItem('viewManagerSettings', settings);
         }
 
-        async _setupCsrf() {
-            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf');
+        async _setupCsrf(forceRefresh = false) {
+            this.csrfToken = await Mapbender.ElementUtil.getCsrfToken(this, this.elementUrl + '/csrf', forceRefresh);
         }
     }
 

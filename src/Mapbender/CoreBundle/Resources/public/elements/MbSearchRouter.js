@@ -72,9 +72,13 @@
             routeSelect.trigger('change');
         }
 
-        async _setupCsrf() {
-            const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf");
-            this.$element.find('input[name*="_token"]').attr('value', token);
+        async _setupCsrf(forceRefresh = false) {
+            try {
+                const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf", forceRefresh);
+                this.element.find('input[name*="_token"]').attr('value', token);
+            } catch (e) {
+                if (!forceRefresh) Mapbender.error(Mapbender.trans(e.message));
+            }
         }
 
         activate() {
@@ -185,11 +189,11 @@
         /**
          * Set up autocpmplete provided by custom widget (data-autcomplete="custom:<widget>")
          *
-         * @param  integer      idx   Running index
-         * @param  HTMLDomNode  input Input element
+         * @param  {integer}      idx   Running index
+         * @param  {HTMLElement}  input Input element
          */
         _setupCustomAutocomplete(idx, input) {
-            const plugin = $(input).data('autocomplete').substr(7);
+            const plugin = $(input).data('autocomplete').substring(7);
             $(input)[plugin]();
         }
 
@@ -211,8 +215,14 @@
             return $.getJSON({
                 url: url,
                 data: JSON.stringify(data),
-                method: 'POST'
-            });
+                method: 'POST',
+            }).fail((err) => Mapbender.handleAjaxError(err, async () => {
+                try {
+                    await this._setupCsrf(true);
+                } catch {
+                }
+                this._autocompleteSource($input);
+            }));
         }
 
         /**
@@ -266,9 +276,13 @@
                 data: JSON.stringify(data),
                 method: 'POST'
             })
-                .fail((err) => {
-                    Mapbender.error(Mapbender.trans(err.responseText));
-                })
+                .fail((err) => Mapbender.handleAjaxError(err, async () => {
+                    try {
+                        await this._setupCsrf(true);
+                    } catch {
+                    }
+                    this._search();
+                }))
                 .then((response) => {
                     const features = this._createFeaturesFromResponse(response);
                     this._searchResults(features);

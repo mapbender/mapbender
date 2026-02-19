@@ -6,6 +6,9 @@ mb:
         noResult: No se pudo encontrar ninguna ruta.
         format: Formato no soportado.
         icon: No hay ningún icono configurado.
+        invalidCoordinates: ¡Coordenadas no válidas proporcionadas!
+        noValidPoints: No hay puntos válidos para el enrutamiento.
+        serviceUnavailable: El servicio de rutas no está disponible
       graphhopper:
         400: Algo falló en tu solicitud (demasiados o muy pocos puntos)
         401: ¡Acreditación necesaria! Regístrate y obtén una clave API válida en https://www.graphhopper.com/developers/.
