@@ -142,8 +142,8 @@ The basic skeleton looks like this:
             // This attribute is private for your widget.
             this.var1 = null;
             // Do everything needed for set up here, for example event handling
-            this.element.bind('mbmyclassmagicdone', $.proxy(this._onMagicDone, this));
-            this.element.bind('click', $.proxy(this._clickCallback, this));
+            this.$element.bind('mbmyclassmagicdone', $.proxy(this._onMagicDone, this));
+            this.$element.bind('click', $.proxy(this._clickCallback, this));
         }
 
         // Public function
@@ -170,8 +170,8 @@ The basic skeleton looks like this:
 Watch out for JavaScript's default behaviour to modify the `this` context when using events. Use lambdas or the `bind` function.
 
 ```javascript
-this.element.click(this._clickCallback.bind(this));
-this.element.click((e) => this._clickCallback(e));
+this.$element.click(this._clickCallback.bind(this));
+this.$element.click((e) => this._clickCallback(e));
 ```
 
 ### Predefined Methods

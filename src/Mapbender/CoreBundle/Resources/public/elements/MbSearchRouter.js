@@ -75,7 +75,7 @@
         async _setupCsrf(forceRefresh = false) {
             try {
                 const token = await Mapbender.ElementUtil.getCsrfToken(this, this.callbackUrl + "0/csrf", forceRefresh);
-                this.element.find('input[name*="_token"]').attr('value', token);
+                this.$element.find('input[name*="_token"]').attr('value', token);
             } catch (e) {
                 if (!forceRefresh) Mapbender.error(Mapbender.trans(e.message));
             }

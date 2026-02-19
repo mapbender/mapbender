@@ -163,7 +163,7 @@
 
         _queryAutocomplete(request, responseCallback) {
             const term = this._tokenize(request.term);
-            const url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/search';
+            const url = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/search';
 
             if (!term || term.length < this.autocompleteMinLength) {
                 responseCallback([]);

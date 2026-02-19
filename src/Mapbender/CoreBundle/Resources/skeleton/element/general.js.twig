@@ -2,7 +2,7 @@
     class Mb{{ widgetName }} extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.$element.attr('id') + '/';
         }
     }
     window.Mapbender.Element = window.Mapbender.Element || {};
