@@ -124,17 +124,6 @@
         }
 
         /**
-         * Injects data AND submits form
-         * @param {Object} jobData
-         * @private
-         * @deprecated distinctly use _injectJobData and regular form submit events
-         */
-        _submitJob(jobData) {
-            this._injectJobData(jobData);
-            $('input[type="submit"]', this.$form).click();
-        }
-
-        /**
          * Should return true if the given layer needs to be included in export
          *
          * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
@@ -254,7 +243,7 @@
         /**
          * Hook method to filter vector layers before including them in export.
          * Override this in subclasses to exclude specific layers.
-         * 
+         *
          * @param {ol.layer.Vector} layer - The vector layer to check
          * @returns {boolean} True if layer should be included in export
          * @private

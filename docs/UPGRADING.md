@@ -20,6 +20,33 @@ $sidepaneBackgroundColor => sidepane-background-color
 Read the step by step guide to migrate Mapbender jQuery UI widget into a native ES6 JavaScript class.
 https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_classes.md
 
+### Removed composer commands
+- `bin/composer run version`: Use `bin/console mapbender:version` instead
+- `bin/composer run project-name`: Just look into the composer.json file
+
+### Removed deprecated methods and properties (Backend)
+- MapbenderYamlCompilerPass: Removed property applicationPaths. Use parameter "mapbender.yaml_application_dirs" instead.
+- ArrayUtil: Removed methods hasSet, getValueFromArray, isAssoc
+- FormTypeUtil: Removed entire class. Update your search router configuration (see [docs](https://doc.mapbender.org/en/elements/search/search_router.html))
+- VendorSpecific: Removed getConfiguration. Use the get*-methods independently.
+- [DataSource] Removed Mapbender\DataSourceBundle\Component\FeatureTypeService and DataStoreService. Use DI to inject `mbds.default_datastore_factory`.
+- [DataSource]: In Mapbender\DataSourceBundle\Component\RepositoryRegistry: Removed `featureTypeFactory` (use `dataStoreFactory`), `getFeatureTypeByName` (use `getDataStoreByName`), `getFeatureTypeDeclarations` (use `getDataStoreDeclarations`)
+- [DataSource]: In Mapbender\DataSourceBundle\Entity\DataItem: Removed `hasId` (use `getId() !== null`)
+
+### Removed deprecated methods and properties (Frontend)
+- MapbenderContainerInfo: Removed; use methods of MapbenderElement instead
+- Mapbender.urlParam: use `Mapbender.Util.Url().getParameter(key)` instead
+- Mapbender.UUID: use `Mapbender.Util.UUID` instead
+- MbImageExport: removed _submitJob. Distinctly use _injectJobData and regular form submit events
+- MbDigitizer: Removed getSchemaLayer. Use getSchemaLayers instead.
+
+### Warnings that got promoted to Errors
+- RegistrationController: Throw error if a group configured via the parameter "fom_user.self_registration_groups" does not exist
+
+### YAML Definitions
+- Source definitions must now use the key "type" instead of "class" to define its type. See [the documentation](sources/sources.md) for details.
+- [SearchRouter] Shorthand form types are now longer allowed. Check [the documentation](https://doc.mapbender.org/en/installation/migration.html#searchrouter) for details and an SQL update command
+
 ## 4.2.0
 
 ### Update database

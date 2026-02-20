@@ -6,7 +6,6 @@ use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\MapbenderCoreBundle;
 use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 use Symfony\Component\Config\Resource\DirectoryResource;
@@ -25,17 +24,11 @@ use Symfony\Component\Yaml\Yaml;
  */
 class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerPassInterface
 {
-    /** @var string Applications directory path where YAML files are */
-    protected $applicationDir;
     /** @var boolean to throw exceptions instead of logging warnings if loaded definitions are outdated */
-    protected $strictElementConfigs = false;
+    protected bool $strictElementConfigs = false;
 
-    /**
-     * @param string|null $applicationDir Optional: explicit path to scan; default directories are configured
-     */
-    public function __construct($applicationDir = null)
+    public function __construct()
     {
-        $this->applicationDir = $applicationDir;
     }
 
     /**
@@ -44,10 +37,6 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     public function process(ContainerBuilder $container): void
     {
         $sourcePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
-        if ($this->applicationDir) {
-            @trigger_error("DEPRECATED: explicit path passed to MapbenderYamlCompilerPass constructor. Use mapbender.yaml_application_dirs parameter collection to customize Yaml application load paths", E_USER_DEPRECATED);
-            $sourcePaths = array($this->applicationDir);
-        }
         $this->setStrictElementConfigs($container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%'));
         foreach ($sourcePaths as $path) {
             if (\is_dir($path)) {
@@ -90,7 +79,8 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         $finder
             ->in($path)
             ->files()
-            ->name(['*.yml', '*.yaml']);
+            ->name(['*.yml', '*.yaml'])
+        ;
         $applications = array();
 
         foreach ($finder as $file) {
@@ -127,8 +117,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     {
         if (!isset($definition['layersets'])) {
             if (isset($definition['layerset'])) {
-                // @todo: add strict mode support and throw if enabled
-                @trigger_error("Deprecated: your YAML application {$slug} defines legacy 'layerset' (single item), should define 'layersets' (array)", E_USER_DEPRECATED);
+                $this->handleException("Deprecated: your YAML application {$slug} defines legacy 'layerset' (single item), should define 'layersets' (array)");
                 $definition['layersets'] = array($definition['layerset']);
             } else {
                 $definition['layersets'] = array();
@@ -147,23 +136,9 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         } else {
             unset($definition['elements']);
         }
-        $layersetProps = array(
-            'selected',
-        );
-        foreach ($definition['layersets'] as $lsIndex => $instanceConfigs) {
-            foreach ($instanceConfigs as $instanceId => $instanceConfig) {
-                if (\in_array($instanceId, $layersetProps)) {
-                    continue;
-                }
-                $definition['layersets'][$lsIndex][$instanceId] = $this->processSourceInstanceDefinition($instanceConfig, $instanceId, $lsIndex);
-            }
-        }
         if (isset($definition['published'])) {
             // force to boolean
             $definition['published'] = !!$definition['published'];
-        } else {
-            // strip null value
-            unset($definition['published']);
         }
         return $definition;
     }
@@ -188,14 +163,10 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
 
         $handlingClass = $this->getHandlingClassName($element);
         if (!$handlingClass) {
-            if ($this->strictElementConfigs) {
-                throw new \RuntimeException('Missing reuired Yaml Element definition value for "class"');
-            }
-            // @todo: warn?
+            $this->handleException('Missing required Yaml Element definition value for "class"');
             return null;
         } elseif (!ClassUtil::exists($handlingClass)) {
-            $msg = "Your Yaml application contains an undefined / unhandled element class {$definition['class']}";
-            @trigger_error("WARNING: {$msg}", E_USER_DEPRECATED);
+            $this->handleException("Your Yaml application contains an undefined / unhandled element class {$definition['class']}");
         }
 
         $definition['class'] = $handlingClass;
@@ -250,12 +221,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             ));
         }
         if ($messageParts) {
-            $messageCommon = "outdated {$className} configuration: " . implode('; ', $messageParts);
-            if ($this->strictElementConfigs) {
-                throw new \RuntimeException("Yaml application contains {$messageCommon}");
-            } else {
-                @trigger_error("WARNING: had to perform adjustments on {$messageCommon}. Update your Yaml application definition accordingly");
-            }
+            $this->handleException("Yaml application contains outdated {$className} configuration: " . implode('; ', $messageParts));
         }
     }
 
@@ -272,34 +238,8 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
         $defaults = $className::getDefaultConfiguration();
         $keysWithoutDefaults = array_diff(array_keys($config), array_keys($defaults));
         if ($keysWithoutDefaults) {
-            $messageCommon = "configuration for {$className} with invalid keys " . implode(',', $keysWithoutDefaults);
-            if ($this->strictElementConfigs) {
-                throw new \RuntimeException("Yaml application contains {$messageCommon}");
-            } else {
-                @trigger_error("WARNING: had to perform adjustments on {$messageCommon}. Update your Yaml application definition accordingly");
-            }
+            $this->handleException("Yaml application contains configuration for {$className} with invalid keys " . implode(',', $keysWithoutDefaults));
         }
-    }
-
-    /**
-     * @TODO: remove this in version 5.
-     */
-    protected function processSourceInstanceDefinition($definition, $instanceId, $lsIndex)
-    {
-        if (!empty($definition['class'])) {
-            trigger_deprecation('mapbender/mapbender', '4.2.0', "Yaml application $instanceId defined using 'class' key, should define 'type' instead. Fallback will be removed in Mapbender 5.0");
-            // only WmsInstance was using 'class' key
-            if (empty($definition['type']) && $definition['class'] === 'Mapbender\WmsBundle\Entity\WmsInstance') {
-                $definition['type'] = "WMS";
-            }
-            unset($definition['class']);
-        }
-        if (empty($definition['type'])) {
-            throw new \RuntimeException("Missing instance type in yaml application layerset {$lsIndex}, instance id {$instanceId}");
-        }
-        unset($definition['class']);
-
-        return $definition;
     }
 
     /**
@@ -313,5 +253,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             'class',
             'screenType',
         );
+    }
+
+    private function handleException(string $message): void
+    {
+        if ($this->strictElementConfigs) {
+            throw new \RuntimeException($message);
+        } else {
+            @trigger_error("[MapbenderYamlCompilerPass] WARNING: " . $message, E_USER_DEPRECATED);
+        }
     }
 }
