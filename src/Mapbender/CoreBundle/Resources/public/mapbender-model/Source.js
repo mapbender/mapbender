@@ -139,6 +139,16 @@
             this.nativeLayers = [];
         }
 
+        /**
+         * Returns the source id. This is by default just the id given in the source definition,
+         * but can be overridden by subclasses if needed, e.g. for WMS shared instances. There,
+         * include the instance id also contains the assignment id.
+         * @return {string|null}
+         */
+        getSourceId() {
+            return this.id;
+        }
+
         getSettings() {
             return {
                 opacity: this.options.opacity

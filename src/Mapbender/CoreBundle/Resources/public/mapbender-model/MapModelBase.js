@@ -249,7 +249,9 @@ window.Mapbender.MapModelBase = (function() {
          * engine-agnostic
          */
         getSourceById: function(id) {
-            return Mapbender.Util.findFirst(this.sourceTree, (value) => value.id === '' + id);
+            return Mapbender.Util.findFirst(this.sourceTree, (value) =>
+                value.getSourceId() === '' + id
+            );
         },
         /**
          * @param {Number|String} id
