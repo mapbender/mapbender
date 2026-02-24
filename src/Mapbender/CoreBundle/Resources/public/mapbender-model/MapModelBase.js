@@ -246,9 +246,20 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
-         * engine-agnostic
+         * lookup a source by their complete id, this includes the assignment id prefix for shared instances
          */
         getSourceById: function(id) {
+            console.log("Looking up source by id", id);
+            return Mapbender.Util.findFirst(this.sourceTree, (value) =>
+                value.id === '' + id
+            );
+        },
+        /**
+         * @param {Number|String} id
+         * @return {Mapbender.Source|null}
+         * lookup a source by their source id without the assignment id prefix for shared instances
+         */
+        getSourceBySourceId: function(id) {
             return Mapbender.Util.findFirst(this.sourceTree, (value) =>
                 value.getSourceId() === '' + id
             );
