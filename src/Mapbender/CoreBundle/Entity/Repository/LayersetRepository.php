@@ -33,7 +33,6 @@ class LayersetRepository extends EntityRepository
     {
         $layersets = array();
         foreach ($this->findBy($criteria ?: array(), $orderBy) as $layerset) {
-            /** @todo: extend getInstancesOf method to support immediate inclusion of reusable instances */
             if ($layerset->getInstancesOf($source)->count()) {
                 $layersets[] = $layerset;
             } else {

@@ -91,11 +91,9 @@ class BaseSourceSwitcher extends AbstractElementService
         $rawConf = $element->getConfiguration();
         $itemsOut = array();
         if (empty($rawConf['instancesets']) || !is_array($rawConf['instancesets'])) {
-            // @todo: throw config error if wrong type
-            $itemConfigs = array();
-        } else {
-            $itemConfigs = $rawConf['instancesets'];
+            throw new \RuntimeException("[BaseSourceSwitcher] Invalid configuration: 'instancesets' must be an array");
         }
+        $itemConfigs = $rawConf['instancesets'];
         foreach ($itemConfigs as $itemIn) {
             $itemOut = array(
                 'type'    => 'item',
