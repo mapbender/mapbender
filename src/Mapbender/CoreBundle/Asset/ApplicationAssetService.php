@@ -184,7 +184,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
-                    '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerGroup.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerSet.js',
@@ -261,7 +260,6 @@ class ApplicationAssetService
                 return array();
             }
             assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
-            /** @todo: update ElementFilter to clarify shim usage */
             $shimService = $this->inventory->getFrontendHandler($element);
             $fullElementRefs = $shimService->getRequiredAssets($element);
         }

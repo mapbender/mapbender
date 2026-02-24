@@ -150,7 +150,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     protected function processElementDefinition($definition)
     {
         if (empty($definition['class'])) {
-            // @todo: warn? throw?
+            $this->handleException("Yaml element is missing required 'class' definition.");
             return null;
         }
 

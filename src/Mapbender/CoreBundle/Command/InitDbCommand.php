@@ -11,11 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @todo: absorb EPSG importing / updating
- * @todo: fix invalid database content artifacts (e.g. WMS sources with multiple root layers)
- * DO NOT absorb irreversible config pruning from mapbender:database:upgrade, keep that separate
- *
- * @since v3.0.8.5
+ * This command emits the event 'mapbender.init.db' that can be subscribed on to perform required database
+ * (re-)initializations and cleanups. Known mapbender core subscribers are in the Mapbender\CoreBundle\EventHandler\InitDb namespace.
  */
 class InitDbCommand extends Command
 {

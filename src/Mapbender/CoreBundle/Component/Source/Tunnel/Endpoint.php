@@ -99,40 +99,23 @@ class Endpoint
 
     protected function getInternalBaseUrl(Request $request): ?string
     {
-        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
-        switch (strtolower($requestType)) {
-            case 'getmap':
-                // TODO: this is WMS specific
-                return $this->source->getGetMap()->getHttpGet();
-            case 'getfeatureinfo':
-                // TODO: this is WMS specific
-                return $this->source->getGetFeatureInfo()->getHttpGet();
-            default:
-                return null;
-        }
+        return $this->source->getInternalUrl($request);
     }
 
     protected function getInternalLegendBaseUrl(string $instanceLayerId): ?string
     {
-        // @todo: integrate WMTS and WMTS legends properly; atm only WmsInstance has a defined 'getLayers' method
-        if (!method_exists($this->instance, 'getLayers')) {
-            return null;
-        }
-        /** @var WmsInstance $wmsInstance */
-        $wmsInstance = $this->instance;
-
         if ($this->application->isDbBased()) {
             // for db based application, layerId is always an int, layerId must be cast to int for matching
             $instanceLayerId = intval($instanceLayerId);
         }
         $layerCriteria = Criteria::create()->where(Criteria::expr()->eq('id', $instanceLayerId));
         /** @var SourceInstanceItem|false $layer */
-        $layer = $wmsInstance->getLayers()->matching($layerCriteria)->first();
+        $layer = $this->instance->getLayers()->matching($layerCriteria)->first();
         if (!$layer || $layer->getSourceInstance()->getId() != $this->instance->getId()) {
             // instance layer is not connected to the source instance
             return null;
         }
-        $configGenerator = $this->service->getSourceTypeDirectory()->getConfigGenerator($wmsInstance);
+        $configGenerator = $this->service->getSourceTypeDirectory()->getConfigGenerator($this->instance);
         return $configGenerator->getInternalLegendUrl($layer);
     }
 

@@ -80,8 +80,8 @@ class ApplicationDataService
             }
             $response = new Response($content, Response::HTTP_OK, array(
                 'Content-Type' => $mimeType,
+                'Etag' => '"' . md5($content) . '"',
             ));
-            // @todo: add etag etc
             return $response;
         } catch (NotCachable $e) {
             return false;
