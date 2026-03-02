@@ -487,10 +487,10 @@ window.Mapbender.MapModelBase = (function() {
                     layerId = sourceAndLayerId.layerId;
                 }
                 console.log("Activating", sourceId, layerId);
-                const source = self.getSourceById(sourceId);
+                const source = self.getSourceBySourceId(sourceId);
                 if (!source) return;
 
-                let layer = layerId ? source.getLayerById(layerId) : source.getRootLayer();
+                let layer = layerId ? source.getLayerById(layerId, true) : source.getRootLayer();
                 if (layer) {
                     layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
                 }
