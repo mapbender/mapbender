@@ -36,9 +36,6 @@ class ArrayUtil
         // NOTE: if multiple keys exist in the input array that differ only in case, they will fold to a single mapped
         //       value post-strtolower. Due to array_combine behaviour, the value mapped to the LAST such input key
         //       will be used.
-        // @todo: evaluate if this is a problem / if we require first-key behavior
-        //        (solutions: A. replace getDefault delegation with loop
-        //                    B. array_reverse both keys and values before array_combine)
         $lcKeys = array_map('strtolower', array_keys($arr));
         $arrWithLcKeys = array_combine($lcKeys, array_values($arr));
         return static::getDefault($arrWithLcKeys, strtolower($key), $default);

@@ -12,8 +12,6 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  * for an editable list of values.
  * Operates on strings. For a version fit for integer numbers
  * @see IntArrayToCsvScalarTransformer
- *
- * @todo: optional empty value filtering
  */
 class ArrayToCsvScalarTransformer implements DataTransformerInterface
 {

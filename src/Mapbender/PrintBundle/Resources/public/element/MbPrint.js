@@ -98,6 +98,13 @@
             }
         }
 
+        /**
+         * do not show print extent preview in actual print
+         */
+        filterFeatures(features) {
+            return features.filter(f => f !== this.feature);
+        }
+
         closeByButton() {
             this.deactivate();
             if (this.popup) {
@@ -439,10 +446,6 @@
                                 // remove all empty values
                                 return !!x;
                             });
-                            // @todo: deduplicate same legend urls, picking a reasonably shared (parent / source) title
-                            // NOTE that this can only safely be done server-side, post urlProcessor->getInternalUrl()
-                            //      because sources going through the instance tunnel will always have distinct legend
-                            //      urls per layer, no matter how unique the internal urls are.
                             const legendInfo = {
                                 layerName: legendLayer.options.title || '',
                                 parentNames: parentNames,

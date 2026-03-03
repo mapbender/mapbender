@@ -184,6 +184,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
+                    '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
                     $proj4js,
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerGroup.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/LayerSet.js',

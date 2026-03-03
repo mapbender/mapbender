@@ -202,7 +202,6 @@ abstract class RoutingDriver {
                 : round($nativeInstruction['distance'] / 1000, 3) . 'km';
 
             $minutesOnLeg = $this->calculateDuration($nativeInstruction);
-            // TODO check if & why this is necessary
             if (!$minutesOnLeg) {
                 continue;
             }

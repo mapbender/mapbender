@@ -39,6 +39,7 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 - Mapbender.UUID: use `Mapbender.Util.UUID` instead
 - MbImageExport: removed _submitJob. Distinctly use _injectJobData and regular form submit events
 - MbDigitizer: Removed getSchemaLayer. Use getSchemaLayers instead.
+- MapPopup: Removed `openPopupOnXYWithCustomContent`. Use `openPopupOnXY([x,y], callback)` instead.
 
 ### Warnings that got promoted to Errors
 - RegistrationController: Throw error if a group configured via the parameter "fom_user.self_registration_groups" does not exist

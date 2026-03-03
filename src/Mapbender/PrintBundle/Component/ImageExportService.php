@@ -152,7 +152,6 @@ class ImageExportService
     /**
      * @param $jobData
      * @return FeatureTransform
-     * @todo: do this without using an instance attribute
      */
     protected function initializeFeatureTransform($jobData)
     {

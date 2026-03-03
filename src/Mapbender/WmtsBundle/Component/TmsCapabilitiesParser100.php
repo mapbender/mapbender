@@ -41,7 +41,6 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
     {
         $vers = $doc->documentElement->getAttribute("version");
         if ('1.0.0' !== $vers) {
-            // @todo: Show the user the incompatible version number
             throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
 

@@ -386,8 +386,6 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
-        // HACK for reusable source instances: suppress / skip url generation if instance is not owned by a Layerset
-        // @todo: implement legend url generation for reusable instances
         if ($legendUrl) {
             $publicLegendUrl = $this->proxifyLegendUrl($application, $instance, $instanceLayer, $legendUrl);
             return array(
@@ -418,7 +416,6 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         // scan styles for legend url entries backwards
         // some WMS services may not populate every style with a legend, so just checking the last
         // style for a legend is not enough
-        // @todo: style node selection should follow configured style
         if (is_array($instanceLayer)) {
             $styles = $instanceLayer['lsStyles'] ?? [];
         } else {

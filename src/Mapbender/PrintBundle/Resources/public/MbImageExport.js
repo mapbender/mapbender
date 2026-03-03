@@ -275,17 +275,9 @@
             var dataOut = [];
             for (var li = 0; li < vectorLayers.length; ++li) {
                 var layer = vectorLayers[li];
-                var features = layer.getSource().getFeatures();
+                var features = this.filterFeatures(layer.getSource().getFeatures());
                 if (!features.length) {
                     continue;
-                }
-                // printclient support HACK
-                // @todo: implement filterFeature properly for dual-engine support
-                if (this.feature) {
-                    var skipFeature = this.feature;
-                    features = features.filter(function (f) {
-                        return f !== skipFeature;
-                    });
                 }
                 var layerFeatureData = this._dumpFeatureGeometries(layer, features);
                 dataOut.push({
@@ -297,6 +289,14 @@
             return dataOut;
         }
 
+        /**
+         * Filters a set of features for export. Override this in subclasses to exclude specific features.
+         * @param {ol.Feature[]} features
+         * @return {ol.Feature[]}
+         */
+        filterFeatures(features) {
+            return features;
+        }
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
          * to have passsed through the _filterGeometryLayer check positively.
