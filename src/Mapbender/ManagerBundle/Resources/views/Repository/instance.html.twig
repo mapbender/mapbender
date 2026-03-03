@@ -14,7 +14,6 @@
             {{- form_widget(form, {'label': false}) -}}
         </{{ _tagName }}>
     {% else %}
-        {# @todo: figure out how to use original block declaration #}
         <div class="{% if not valid %} has-error{% endif %} mb-3">
           {{- block('checkbox_widget') -}}
           {{- form_errors(form) -}}

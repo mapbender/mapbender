@@ -40,7 +40,6 @@ $(function() {
     function confirmDiscard(e) {
         var $form = $('form', $(this).closest('.popup, .modal-dialog'));
         if ($form.data('dirty') && !$form.data('discard')) {
-            // @todo: translate
             if (!confirm(Mapbender.trans('mb.manager.confirm_form_discard'))) {
                 e.stopPropagation();
                 return false;

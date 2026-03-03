@@ -88,7 +88,6 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     public function getView(Element $element)
     {
         $view = new TemplateView('@MapbenderCore/Element/scalebar.html.twig');
-        // @todo: fix template to include a text display area that doesn't require CSS positioning / sizing hacks
         $view->attributes['class'] = 'mb-element-scaleline smallText';
         $config = $element->getConfiguration() ?: array();
         $maxWidth = \intval(ArrayUtil::getDefault($config, 'maxWidth', null) ?: $this->getDefaultConfiguration()['maxWidth']);

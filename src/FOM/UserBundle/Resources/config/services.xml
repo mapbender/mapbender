@@ -9,7 +9,6 @@
         <parameter key="fom.permission.assignment.show_users">true</parameter>
         <parameter key="fom.permission.assignment.show_groups">true</parameter>
         <parameter key="fom.permission.assignment.show_authenticated">true</parameter>
-        <parameter key="fom.permission.assignment.show_anonymous">false</parameter>
         <!-- LDAP parameters used in fom.ldap_client, and (indirectly) fom.identities_provider and ACE transformation -->
         <!-- any emptyish value for ldap_host will effectively disable ldap integration -->
         <parameter key="ldap_host">null</parameter>

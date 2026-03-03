@@ -49,16 +49,3 @@ Mapbender.Model.MapPopup.prototype.openPopupOnXY = function openPopupOnXY(coord,
     this.$markup.find('.popup-content')[0].innerHTML = content(coord);
     this.overlay.setPosition(coord);
 };
-
-/**
- * Open popup on given coordinates with provided content
- *
- * @TODO May be it needs to merge this function and openPopupOnXY([x,y], callback)
- *
- * @param [x,y] coordinates
- * @param {string} content
- */
-Mapbender.Model.MapPopup.prototype.openPopupOnXYWithCustomContent = function openPopupOnXY(coordinates, content) {
-    this.$markup.find('.popup-content')[0].innerHTML = content;
-    this.overlay.setPosition(coordinates);
-};

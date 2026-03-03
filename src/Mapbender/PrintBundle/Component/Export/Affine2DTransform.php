@@ -9,9 +9,9 @@ namespace Mapbender\PrintBundle\Component\Export;
  *
  * Currently only exposes box-to-box (translate and scale) construction.
  *
- * @todo: Export / print quality might benefit if we offer rotation here
- *        but the current code does not rotate geometry. Features are
- *        rotated after rasterization, along with the other raster layers.
+ * Note: Export / print quality might benefit if we offer rotation here
+ *       but the current code does not rotate geometry. Features are
+ *       rotated after rasterization, along with the other raster layers.
  */
 class Affine2DTransform
 {

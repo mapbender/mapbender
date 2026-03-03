@@ -244,7 +244,6 @@ window.Mapbender.StyleUtil = (function() {
     _svgStyleDefaults = {
         /** @see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants */
         /** @see https://github.com/openlayers/ol2/blob/release-2.13.1/lib/OpenLayers/Feature/Vector.js#L373 */
-        // @todo: separate hoverFillColor etc?
         fill: true,
         fillColor: '#ee9900',
         fillOpacity: 0.4,

@@ -6,6 +6,8 @@ use Mapbender\CoreBundle\Element\Overview;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
 
 class OverviewAdminType extends AbstractType
 {
@@ -24,7 +26,6 @@ class OverviewAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // @todo: add missing field labels
         $builder
             ->add('layerset', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
                 'application' => $options['application'],
@@ -44,10 +45,26 @@ class OverviewAdminType extends AbstractType
                     'mb.core.overview.admin.visibility.open_permanent' => Overview::VISIBILITY_OPEN_PERMANENT,
                 ),
             ))
-            // @todo: this should be a positive integer
-            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-            // @todo: this should be a positive integer
-            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'label' => 'mb.manager.popup_width',
+                'attr' => array(
+                    'placeholder' => 'mb.manager.automatic',
+                ),
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ],
+            ))
+            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'label' => 'mb.manager.popup_height',
+                'attr' => array(
+                    'placeholder' => 'mb.manager.automatic',
+                ),
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ],
+            ))
         ;
     }
 }

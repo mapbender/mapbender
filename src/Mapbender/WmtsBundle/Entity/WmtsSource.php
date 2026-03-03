@@ -11,7 +11,6 @@ use Mapbender\Component\Transformer\OneWayTransformer;
 class WmtsSource extends HttpTileSource
 {
     /**
-     * @todo: figure out how to configure Doctrine mapping to diverge
      * WmtsSource vs TmsSource classes properly vs inheritance type
      * SINGLE_TABLE in Source base class.
      *

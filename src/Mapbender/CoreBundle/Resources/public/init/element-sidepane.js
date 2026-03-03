@@ -31,15 +31,6 @@
                 promise = Mapbender.elementRegistry.waitCreated(this.id);
             }
             promise.then(function(elementWidget) {
-                var mci = $(elementWidget.element).data('MapbenderContainerInfo');
-                if (mci) {
-                    console.warn("Delegating sidepane element mangling to old-style MapbenderContainerInfo", mci, elementWidget);
-                    var mciMethod = state ? mci.options.onactive : mci.options.oninactive;
-                    if (mciMethod) {
-                        (mciMethod)();
-                        return;
-                    }
-                }
                 var method = state ? elementWidget.reveal : elementWidget.hide;
                 if (typeof method === 'function') {
                     method.call(elementWidget);

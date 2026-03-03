@@ -292,7 +292,6 @@
 
             if (feature.getGeometry().getType() === 'Point') {
                 var layer = this.layer;
-                // @todo: add feature center / centroid api
                 var bounds = Mapbender.mapEngine.getFeatureBounds(feature);
                 var center = {
                     lon: .5 * (bounds.left + bounds.right),

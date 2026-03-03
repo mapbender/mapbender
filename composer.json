@@ -92,9 +92,6 @@
     },
     "conflict": {
         "mapbender/digitizer": "<2.0.0",
-        "wheregroup/jquerydialogextendjs": "<2.1",
-        "mapbender/vis-ui.js": "<0.1.80",
-        "mapbender/wmts": "*",
         "symfony/symfony": "*"
     },
     "repositories": [

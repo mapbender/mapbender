@@ -78,7 +78,7 @@ class RegistrationController extends AbstractEmailProcessController
                 if ($group) {
                     $user->addGroup($group);
                 } else {
-                    @trigger_error("WARNING: Self-registration group '{$groupTitle}' not found for user '{$user->getUserIdentifier()}'", E_USER_DEPRECATED);
+                    throw new \RuntimeException("Self-registration group '{$groupTitle}' not found for user '{$user->getUserIdentifier()}'");
                 }
             }
 

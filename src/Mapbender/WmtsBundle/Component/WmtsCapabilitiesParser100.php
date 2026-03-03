@@ -26,7 +26,6 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
     {
         $version = $doc->documentElement->getAttribute("version");
         if ('1.0.0' !== $version) {
-            // @todo: Show the user the incompatible version number
             throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
 

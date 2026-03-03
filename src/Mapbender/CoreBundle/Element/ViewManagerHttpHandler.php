@@ -16,6 +16,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -222,7 +223,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected function getDateFormat(Request $request)
     {
         // @todo: locale-dependent format
-        return 'Y-m-d'; // . ' H:m:i';
+        return 'Y-m-d';
     }
 
     /**

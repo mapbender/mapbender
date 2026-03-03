@@ -71,7 +71,7 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         },
         customizeStyle: function(styles) {
             var svgWithDefaults = Mapbender.StyleUtil.addSvgDefaults(styles);
-            var defaultFn = ol.style.Style.defaultFunction;
+            var defaultFn = ol.style.Style.createDefaultStyle;
             // default style function ignores feature + resolution arguments, fortunately
             var defaultStyle = (defaultFn())[0].clone();
             var callables = this.detectCallables_(svgWithDefaults);

@@ -25,6 +25,9 @@ class YamlSourceInstanceCollection extends AbstractLazyCollection
         $this->collection = new ArrayCollection();
         $weight = 0;
         foreach ($this->data as $instanceId => $instanceDefinition) {
+            if (!isset($instanceDefinition['type'])) {
+                throw new \InvalidArgumentException("Source definition is missing required 'type' key");
+            }
             $factory = $this->directoryService->getInstanceFactoryByType($instanceDefinition['type']);
             $instance = $factory->fromConfig($instanceDefinition, $instanceId);
             $instance->setLayerset($this->layerset);

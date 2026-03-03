@@ -353,8 +353,6 @@ class Application implements YamlDefinedPermissionEntity
      */
     public function getSourceInstances($includeUnowned = false)
     {
-        // @todo: figure out if there's an appropriate ORM annotation that can do this without
-        //        writing code
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
             foreach ($layerset->getInstances($includeUnowned) as $instance) {

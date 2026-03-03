@@ -54,7 +54,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                                 TokenStorageInterface $tokenStorage,
                                 UrlProcessor          $sourceUrlProcessor,
                                 OdgParser             $odgParser,
-        /** @todo: elminate bridge service */
                                 PrintServiceInterface $printService,
                                 PrintPluginHost       $pluginRegistry,
                                                       $memoryLimit,
@@ -245,7 +244,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         if ($queueMode) {
             /**
              * Generate an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
-             * @todo: this would be more convenient to have on the template level, so all Elements could share a single
              */
             $submitFrameName = "submit-frame-{$element->getId()}";
             $view->variables += array(
@@ -371,7 +369,6 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      */
     protected function extractRequestData(Request $request)
     {
-        // @todo: define what data we support; do not simply process and forward everything
         $data = $request->request->all();
         if (isset($data['data'])) {
             $d0 = $data['data'];

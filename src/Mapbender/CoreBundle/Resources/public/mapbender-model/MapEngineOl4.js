@@ -12,16 +12,10 @@ window.Mapbender.MapEngineOl4 = (function() {
             return new Mapbender.MapModelOl4(mbMap);
         },
         patchGlobals: function(mapOptions) {
-            var _tileSize = mapOptions && mapOptions.tileSize && parseInt(mapOptions.tileSize);
-            var _dpi = mapOptions && mapOptions.dpi && parseInt(mapOptions.dpi);
+            const _tileSize = mapOptions && mapOptions.tileSize && parseInt(mapOptions.tileSize);
             if (_tileSize) {
                 ol.DEFAULT_TILE_SIZE = _tileSize;
             }
-            if (_dpi) {
-                // todo: apply dpi globally?
-            }
-            // todo: fix drag pan
-            // OpenLayers.Control.Navigation.prototype.documentDrag = true;
             Mapbender.MapEngine.prototype.patchGlobals.apply(this, arguments);
         },
         getLayerVisibility: function(olLayer) {
@@ -112,8 +106,6 @@ window.Mapbender.MapEngineOl4 = (function() {
                 opacity: source.options.opacity,
                 source: olSource
             };
-            // todo: transparent
-            // todo: exception format
             return new (olLayerClass)(layerOptions);
         },
         /**
@@ -121,7 +113,6 @@ window.Mapbender.MapEngineOl4 = (function() {
          * @param {Object} params
          */
         applyWmsParams: function(olLayer, params) {
-            // @todo: backbuffer interaction?
             olLayer.getSource().updateParams(params);
         },
         /**

@@ -138,15 +138,6 @@ class ElementFormFactory
         }
     }
 
-    protected function deprecated($message)
-    {
-        if ($this->strict) {
-            throw new \RuntimeException($message);
-        } else {
-            @trigger_error("Deprecated: {$message}", E_USER_DEPRECATED);
-        }
-    }
-
     /**
      * @param Element $element
      * @return string|null

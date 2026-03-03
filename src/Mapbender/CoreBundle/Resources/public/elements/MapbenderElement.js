@@ -77,31 +77,6 @@ class MapbenderElement {
     }
 
     /**
-     * Destroy callback
-     *
-     * @private
-     */
-    destroy() {
-        this.functionIsDeprecated();
-    }
-
-    /**
-     * Private destroy
-     *
-     * @private
-     */
-    _destroy() {
-        this.functionIsDeprecated();
-    }
-
-    /**
-     * Notification that function is deprecated
-     */
-    functionIsDeprecated() {
-        console.warn(new Error('Function marked as deprecated'));
-    }
-
-    /**
      * Checks if element should open a popup immediately on application
      * initialization.
      *

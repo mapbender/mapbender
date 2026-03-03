@@ -125,22 +125,9 @@ Mapbender.Util.UUID = function () {
     });
     return uuid;
 };
-/* deprecated */
-Mapbender.urlParam = function (key) {
-    window.console && console.warn(
-        'The function "Mapbender.urlParam" is deprecated, use instead it the "new Mapbender.Util.Url().getParameter(key)"');
-    return new Mapbender.Util.Url(window.location.href).getParameter(key);
-};
-
-/* deprecated */
-Mapbender.UUID = function () {
-    window.console && console.warn(
-        'The function "Mapbender.UUID" is deprecated, use instead it the "Mapbender.Util.UUID"');
-    return Mapbender.Util.UUID();
-}
 
 /**
- * Creates an url object from a giving url string
+ * Creates a url object from a giving url string
  * @param {String} urlString
  */
 Mapbender.Util.Url = function (urlString) {

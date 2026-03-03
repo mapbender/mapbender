@@ -233,8 +233,19 @@ EOF
         if (stripos($contextUrl, 'file:') === 0) {
             throw new \RuntimeException("Context url is a file: " . var_export($contextUrl, true));
         }
-        // @todo: support "//different-host/..." form for same protocol
-        // @todo: support "/absolute/path" form for same host and protocol
+        // Support "//different-host/..." form: inherit protocol from context URL
+        if (str_starts_with($path, '//')) {
+            $contextScheme = parse_url($contextUrl, PHP_URL_SCHEME);
+            return $contextScheme . ':' . $path;
+        }
+        // Support "/absolute/path" form: inherit protocol and host from context URL
+        if (str_starts_with($path, '/')) {
+            $contextScheme = parse_url($contextUrl, PHP_URL_SCHEME);
+            $contextHost = parse_url($contextUrl, PHP_URL_HOST);
+            $contextPort = parse_url($contextUrl, PHP_URL_PORT);
+            $hostPart = $contextHost . ($contextPort ? (':' . $contextPort) : '');
+            return $contextScheme . '://' . $hostPart . $path;
+        }
         $contextParts = explode('/', $contextUrl);
         $pathParts = explode('/', $path);
         foreach ($pathParts as $i => $part) {
@@ -244,9 +255,7 @@ EOF
                 $contextParts[] = $part;
             }
         }
-        $reconstructed = implode('/', $contextParts);
-
-        return $reconstructed;
+        return implode('/', $contextParts);
     }
 
     /**

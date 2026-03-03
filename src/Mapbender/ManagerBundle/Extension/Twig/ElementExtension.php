@@ -3,6 +3,7 @@
 
 namespace Mapbender\ManagerBundle\Extension\Twig;
 
+use Mapbender\Component\Element\MainMapElementInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -31,8 +32,7 @@ class ElementExtension extends AbstractExtension
     public function is_map_element(Element $element)
     {
         try {
-            // @todo: Map class should be final
-            return \is_a($element->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true);
+            return \is_a($element->getClass(), MainMapElementInterface::class, true);
         } catch (\ErrorException $e) {
             // thrown by debug mode class loader on Symfony 3.4+
             return false;

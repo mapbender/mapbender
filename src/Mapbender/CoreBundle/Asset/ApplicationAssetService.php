@@ -261,7 +261,6 @@ class ApplicationAssetService
                 return array();
             }
             assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
-            /** @todo: update ElementFilter to clarify shim usage */
             $shimService = $this->inventory->getFrontendHandler($element);
             $fullElementRefs = $shimService->getRequiredAssets($element);
         }
