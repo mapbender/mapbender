@@ -49,9 +49,12 @@ const html = `
 
     const olJs = fs.readFileSync('vendor/mapbender/openlayers6-es5/dist/ol.js', 'utf8');
 
+    const noSandbox = process.env.MB_PUPPETEER_NO_SANDBOX === 'true';
+
     const browser = await puppeteer.launch({
         defaultViewport: {width: Math.round(printConfig.width / scale), height: Math.round(printConfig.height / scale), deviceScaleFactor: scale},
         headless: headless,
+        ...(noSandbox ? { args: ['--no-sandbox'] } : {}),
     });
     const page = await browser.newPage();
     if (printConfig.referer) {
