@@ -32,6 +32,9 @@ class CurlClientCommon extends BaseClient
         }
         if (isset($config['checkssl'])) {
             $options[CURLOPT_SSL_VERIFYPEER] = !!$config['checkssl'];
+            // Security: also enforce hostname verification (VERIFYHOST=2) when SSL checking is enabled;
+            // previously only VERIFYPEER was set, leaving hostname spoofing possible
+            $options[CURLOPT_SSL_VERIFYHOST] = $config['checkssl'] ? 2 : 0;
         }
         if (isset($config['host']) && (empty($config['noproxy']) || !in_array($hostName, $config['noproxy']))) {
             $proxyOptions = array(

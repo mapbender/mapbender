@@ -36,7 +36,8 @@ class XmlValidatorService
     public function validateXmlString($xml, $staticSchemaPath = null)
     {
         $doc = new \DOMDocument();
-        $doc->loadXML($xml);
+        // Security: LIBXML_NONET disables network access during XML parsing to prevent XXE attacks
+        $doc->loadXML($xml, LIBXML_NONET);
         $this->validateDocument($doc, $staticSchemaPath);
     }
 
