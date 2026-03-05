@@ -201,7 +201,8 @@ class PasswordController extends AbstractEmailProcessController
      */
     protected function setResetToken($user)
     {
-        $user->setResetToken(hash("sha1", rand()));
+        // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
+        $user->setResetToken(bin2hex(random_bytes(20)));
         $user->setResetTime(new \DateTime());
     }
 

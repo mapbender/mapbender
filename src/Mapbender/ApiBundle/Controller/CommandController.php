@@ -465,9 +465,10 @@ class CommandController extends AbstractController
                 );
             }
         } catch (\Exception $e) {
+            // Security: return generic message to avoid leaking internal exception details to the client
             return new JsonResponse([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Internal server error',
             ], 500);
         }
     }

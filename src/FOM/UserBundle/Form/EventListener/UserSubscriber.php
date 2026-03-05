@@ -56,7 +56,8 @@ class UserSubscriber implements EventSubscriberInterface
             if ($activated) {
                 $user->setRegistrationToken(null);
             } elseif (!$user->getRegistrationToken()) {
-                $user->setRegistrationToken(hash("sha1",rand()));
+                // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
+                $user->setRegistrationToken(bin2hex(random_bytes(20)));
             }
         }
     }

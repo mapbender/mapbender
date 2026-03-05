@@ -139,7 +139,8 @@ class SourceInstanceController extends ApplicationControllerBase
                 $this->addFlash('success', $this->trans->trans('mb.layerset.remove.success'));
             }
 
-            if ($returnUrl = $request->query->get('return')) {
+            // Security: restrict redirect to relative paths only to prevent open redirect attacks
+            if (($returnUrl = $request->query->get('return')) && str_starts_with($returnUrl, '/') && !str_starts_with($returnUrl, '//')) {
                 return $this->redirect($returnUrl);
             } else {
                 return $this->redirectToRoute('mapbender_manager_repository_index', array(

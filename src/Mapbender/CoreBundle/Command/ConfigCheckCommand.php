@@ -45,6 +45,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\Process;
 
 class ConfigCheckCommand extends Command
 {
@@ -188,8 +189,11 @@ class ConfigCheckCommand extends Command
     {
         $output->title('Check FastCGI');
         if ($this->isLinux()) {
-            $outputCmd = shell_exec('a2query -m| grep fcgi');
-            if (isset($outputCmd)) {
+            // Security: use Symfony Process with argument array instead of shell_exec() to prevent command injection
+            $process = new Process(['a2query', '-m']);
+            $process->run();
+            $outputCmd = $process->isSuccessful() ? $process->getOutput() : null;
+            if ($outputCmd !== null && str_contains($outputCmd, 'fcgi')) {
                 $output->writeln($outputCmd);
             } else {
                 $output->writeln('FastCGI not Found');
@@ -205,8 +209,11 @@ class ConfigCheckCommand extends Command
     {
         $output->title('Check Apache mod_rewrite');
         if ($this->isLinux()) {
-            $outputCmd = shell_exec('a2query -m rewrite');
-            if (isset($outputCmd)) {
+            // Security: use Symfony Process with argument array instead of shell_exec() to prevent command injection
+            $process = new Process(['a2query', '-m', 'rewrite']);
+            $process->run();
+            $outputCmd = $process->isSuccessful() ? $process->getOutput() : null;
+            if ($outputCmd !== null) {
                 $output->writeln($outputCmd);
             } else {
                 $output->writeln('mod_rewrite not Found');

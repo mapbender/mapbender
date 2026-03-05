@@ -66,7 +66,8 @@ class RegistrationController extends AbstractEmailProcessController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setRegistrationToken(hash("sha1",rand()));
+            // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
+            $user->setRegistrationToken(bin2hex(random_bytes(20)));
             $user->setRegistrationTime(new \DateTime());
 
             $groupRepository = $this->getEntityManager()->getRepository(Group::class);
@@ -147,7 +148,8 @@ class RegistrationController extends AbstractEmailProcessController
             ));
         }
 
-        $user->setRegistrationToken(hash("sha1",rand()));
+        // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
+        $user->setRegistrationToken(bin2hex(random_bytes(20)));
         $user->setRegistrationTime(new \DateTime());
 
         $this->sendRegistrationMail($user);

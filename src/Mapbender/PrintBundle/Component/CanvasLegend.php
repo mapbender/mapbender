@@ -181,7 +181,13 @@ class CanvasLegend
     private function drawExternalImage(array $style)
     {
         if (!isset($this->imageCache[$style['image']])) {
-            $this->imageCache[$style['image']] = @file_get_contents($style['image']);
+            $url = $style['image'];
+            // Security: restrict to http/https schemes to prevent SSRF via file://, ftp://, etc.
+            $scheme = parse_url($url, PHP_URL_SCHEME);
+            if ($scheme && !in_array($scheme, ['http', 'https'], true)) {
+                return;
+            }
+            $this->imageCache[$url] = @file_get_contents($url);
         }
         $externalImage = @imagecreatefromstring($this->imageCache[$style['image']]);
         if (!$externalImage) {
