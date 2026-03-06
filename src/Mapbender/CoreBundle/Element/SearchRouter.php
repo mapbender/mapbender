@@ -244,9 +244,21 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         $pattern = $config['pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
             $pattern = $formField['pattern'] ?? $pattern;
-            if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
-                $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
-                throw new BadRequestHttpException($message);
+            $multiValue = $formField['multi_value'] ?? false;
+            if ($multiValue) {
+                $separator = $formField['multi_value_separator'] ?? ',';
+                $values = array_map('trim', explode($separator, $inputData[$key]));
+                foreach ($values as $singleValue) {
+                    if (!preg_match('/' . $pattern . '/u', $singleValue)) {
+                        $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
+                        throw new BadRequestHttpException($message);
+                    }
+                }
+            } else {
+                if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
+                    $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
+                    throw new BadRequestHttpException($message);
+                }
             }
         }
     }
