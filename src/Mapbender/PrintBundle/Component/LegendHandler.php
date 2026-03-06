@@ -243,7 +243,7 @@ class LegendHandler
         $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
         return $fontStyle->getSize();
     }
-    
+
     public function getLegendPageFont(): string
     {
         return $this->legendPageFontName;
@@ -274,7 +274,7 @@ class LegendHandler
         $lineHeightMm = $titleFontSize * .353;
         $titleHeightMm = $lineHeightMm * $nLines;
         if (array_key_exists('title_to_image', $margins)) {
-            $titleHeightMm += $margins['title_to_image'];
+            $titleHeightMm += floatval($margins['title_to_image']);
         }
 
         // calculate scale factor for image

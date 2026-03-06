@@ -46,6 +46,9 @@ mb:
   states:
     active: activo
     inactive: inactivo
+    public: público
+    not_public: 'no público'
+    permissions_defined: 'Se han definido derechos de acceso individuales para esta instancia'
   core:
     featureinfo:
       error:
@@ -133,6 +136,7 @@ mb:
       no_results: 'No hay resultados'
       result_counter: 'Resultados: %count%'
       exportcsv: 'Exportar los resultados a CSV.'
+      invalid_input_data: 'Caracteres de entrada no válidos'
       class:
         title: Búsqueda
         description: 'Permite configurar búsquedas personalizadas'
@@ -353,6 +357,9 @@ mb:
         dialog: Diálogo
       admin:
         content: Contenido
+        dontShowAgain: 'Opción "No mostrar más"'
+        dontShowAgainLabel: 'Texto "No mostrar más"'
+        dontShowAgainDefaultLabel: 'No mostrar más'
     map:
       class:
         title: Mapa
@@ -524,6 +531,7 @@ mb:
             choice:
               tabs: Botones
               accordion: Acordeón
+              list: 'Lista'
               unstyled: 'Sin estilo'
       button:
         show_label: 'Mostrar etiqueta'
@@ -552,7 +560,7 @@ mb:
         circle: Círculo
       inputs:
         label: Etiqueta
-        radius: Radio
+        radius: Radio (m)
       geometry:
         action:
           remove: 'Eliminar la geometría'
@@ -604,6 +612,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Icono
+        elementIcon: 'Símbolo del elemento'
     icon:
       mb:
         about: Información
@@ -639,6 +648,7 @@ mb:
         map: Mapa
         pin_alt: 'Pin (Alternativo)'
         help: Ayuda
+        bookmark: 'marcador de página'
   template:
     toolbar_menu_tooltip: 'Abrir menú'
     region:
@@ -661,9 +671,16 @@ mb:
         instancelayerform:
           label:
             title: Título
+  error:
+    csrf_failed: 'Error al conectarse a la red'
+    session_expired: 'No has iniciado sesión o tu sesión ha caducado.'
+    relogin: 'Por favor, inicia sesión de nuevo.'
+    relogin_link: 'Ir al inicio de sesión'
+    reload: 'Recargar página'
+    retry: 'Reintentar'
+    not_found: 'No se encontró el elemento.'
 'Bad credentials.': 'Credenciales incorrectas.'
 'User account is locked.': 'La cuenta de usuario está bloqueada.'
 'User account is disabled.': 'La cuenta de usuario está deshabilitada.'
 'User account has expired.': 'La cuenta de usuario ha caducado.'
 'User credentials have expired.': 'Las credenciales del usuario han caducado.'
-

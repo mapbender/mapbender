@@ -1,0 +1,88 @@
+.mb-element-printclient {
+  overflow: visible;
+  // Reduce vertical size of potentially very long form
+  font-size: 0.9rem;
+
+  .button.active {
+    background-color: #538e24;
+  }
+  .job-list {
+    display: none;  // Will be overruled by inline style once jQueryUI tab widget takes over
+    overflow-y: auto;
+    table {
+      td.interface {
+        text-align: right;
+        white-space: nowrap;
+        .btn-group {
+          vertical-align: baseline;
+          .btn {
+            float: none;
+          }
+        }
+      }
+    }
+  }
+  .popup & .job-list {
+    max-height: 400px;
+  }
+
+    &-icon-wrapper i {
+        padding: 4px;
+    }
+
+  // jquery-ui tab styling
+  // @todo: We really should use the original jquery-ui css (+ potentially customizable theme for colors, sizes etc) globally.
+  //        This isn't immediately feasible because fragments of ui-tabs styling in certain scopes are scattered through
+  //        Mapbender built-in widgets and Elements.
+  // @import '/components/jquery-ui/themes/base/tabs.css';
+  /*!
+   * jQuery UI Tabs 1.12.1
+   * http://jqueryui.com
+   *
+   * Copyright jQuery Foundation and other contributors
+   * Released under the MIT license.
+   * http://jquery.org/license
+   *
+   * http://api.jqueryui.com/tabs/#theming
+   */
+  .btn-group {
+    margin-bottom: $space / 2;
+  }
+  .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    text-decoration: none;
+    outline: none;
+  }
+  .btn-secondary {
+    --bs-btn-bg: lighten(#6c757d, 10);
+  }
+
+  // BatchPrintClient frame table styling
+  .frame-table {
+    padding-bottom: 15px;
+
+    // Trash icon outside the table (delete all button)
+    .-fn-delete-all-frames {
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    // Trash icons inside the table (individual delete buttons)
+    table .fa-trash-can {
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    // Reduce row height
+    table {
+      td, th {
+        padding: 2px 8px;
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      thead th {
+        padding-bottom: 8px;
+      }
+    }
+  }
+}

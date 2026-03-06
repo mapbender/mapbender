@@ -58,7 +58,7 @@ class SimpleSearch extends AbstractElementService
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbSimpleSearch';
+        return 'MbSimpleSearch';
     }
 
     public static function getDefaultConfiguration()
@@ -66,7 +66,8 @@ class SimpleSearch extends AbstractElementService
         return [
             'configurations' => [
                 self::getDefaultChildConfiguration()
-            ]
+            ],
+            'element_icon' => self::getDefaultIcon(),
         ];
     }
 
@@ -129,7 +130,7 @@ class SimpleSearch extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.simplesearch.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbSimpleSearch.js',
             ),
             'css' => array(
                 "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
@@ -244,6 +245,11 @@ class SimpleSearch extends AbstractElementService
         }
 
         $entity->setConfiguration($config);
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconSearch';
     }
 
 }

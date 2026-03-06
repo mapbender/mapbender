@@ -57,6 +57,7 @@ mb:
           confirm: 'Voulez-vous vraiment supprimer l''instance "{instance_title}"'
         no_instance_added: 'Aucune instance ajoutée'
         no_layer_added: 'Aucun ensemble de couches ajouté'
+        security: 'Modifier les droits d''accès. Si aucun droit n''est défini (icône grise), tous ceux qui ont accès à l''application verront également la source de données. Si des droits sont définis (icône rouge), seuls les rôles configurés verront la source de données.'
       template: Modèle
       application:
         view: Visualiser
@@ -199,6 +200,9 @@ mb:
         failed: 'Impossible d''importer l''application'
     xml_invalid: 'Le document est invalide'
     xml_malformed: 'Le document est invalide'
+    element:
+      openInline: 'Ouvrir en ligne'
+      openInlineHelp: 'Pour les éléments en ligne, le contenu s''affiche directement dans le volet latéral ou dans la zone de carte, sans titre.'
   core:
     admin:
       button:
@@ -214,3 +218,4 @@ mb:
             error: 'Seulement les images de dimension %screenshotHeight% x %screenshotWidth% pixel ou plus peuvent être sélectionnées. Le fichier sélectionné est de %uploadWidth% x %uploadHeighth% pixel.'
   actions:
     secureelement: 'Restreindre l''accès à l''élément'
+    securesourceinstance: 'Restreindre l''accès à la source de données'

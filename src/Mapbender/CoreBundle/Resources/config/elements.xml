@@ -65,6 +65,7 @@
             <argument type="service" id="security.csrf.token_manager" />
             <argument type="service" id="service_container" />
             <argument type="service" id="logger" on-invalid="null" />
+            <argument type="service" id="translator" />
         </service>
         <service id="mapbender.element.SimpleSearch" class="Mapbender\CoreBundle\Element\SimpleSearch">
             <tag name="mapbender.element" />
@@ -91,18 +92,14 @@
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.csrf.token_manager" />
+            <argument type="service" id="security.helper" />
         </service>
         <service id="mapbender.element.ApplicationSwitcher" class="Mapbender\CoreBundle\Element\ApplicationSwitcher">
             <tag name="mapbender.element" />
-            <argument type="service" id="form.factory" />
-            <argument type="service" id="doctrine" />
-            <argument type="service" id="mapbender.element.ApplicationSwitcher.http_handler" />
-            <argument type="service" id="mapbender.application.yaml_entity_repository" />
-        </service>
-        <service id="mapbender.element.ApplicationSwitcher.http_handler" class="%mapbender.element.ApplicationSwitcher.http_handler.class%">
+            <argument type="service" id="mapbender.application.resolver" />
             <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <argument type="service" id="mapbender.application.yaml_entity_repository" />
+            <argument type="service" id="router" />
+            <argument>%kernel.project_dir%</argument>
         </service>
         <service id="mapbender.element.AboutDialog" class="Mapbender\CoreBundle\Element\AboutDialog">
             <tag name="mapbender.element" />
@@ -126,6 +123,11 @@
         </service>
         <service id="mapbender.element.dataupload" class="Mapbender\CoreBundle\Element\DataUpload">
             <tag name="mapbender.element" />
+        </service>
+        <service id="mapbender.element.interactivehelp" class="Mapbender\CoreBundle\Element\InteractiveHelp">
+            <tag name="mapbender.element" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="mapbender.element_inventory.service" />
         </service>
     </services>
 </container>

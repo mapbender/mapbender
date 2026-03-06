@@ -308,6 +308,8 @@ class ApplicationController extends ApplicationControllerBase
         $instanceCopy->setLayerset($layerset);
         $instanceCopy->setWeight(-1);
         $layerset->addInstance($instanceCopy);
+        $this->em->flush();
+
         /**
          * remove original shared instance from layerset
          * @todo: finding the right assignment requires more information than is currently passed on by
@@ -320,6 +322,7 @@ class ApplicationController extends ApplicationControllerBase
         foreach ($reusablePartitions[1] as $removableAssignment) {
             /** @var SourceInstanceAssignment $removableAssignment */
             $instanceCopy->setEnabled($removableAssignment->getEnabled());
+            $this->permissionManager->movePermissions($removableAssignment, $instanceCopy, true);
             $this->em->remove($removableAssignment);
             $assignmentWeight = $removableAssignment->getWeight();
             if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
@@ -493,15 +496,7 @@ class ApplicationController extends ApplicationControllerBase
     {
         $form = $this->createForm(ApplicationType::class, $application);
         if ($this->allowPermissionEditing($application)) {
-            $resourceDomain = $this->permissionManager->findResourceDomainFor($application, throwIfNotFound: true);
-            $form->add('security', PermissionListType::class, [
-                'resource_domain' => $resourceDomain,
-                'resource' => $application,
-                'entry_options' => [
-                    'resource_domain' => $resourceDomain,
-                ],
-                'show_public_access' => true,
-            ]);
+            $this->permissionManager->addFormType($form, $application, ['show_public_access' => true]);
         }
         return $form;
     }

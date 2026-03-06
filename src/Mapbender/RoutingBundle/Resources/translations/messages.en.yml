@@ -6,6 +6,9 @@ mb:
         noResult: No route could be found.
         format: Format not supported.
         icon: No Icon configured.
+        invalidCoordinates: Invalid coordinates provided!
+        noValidPoints: No valid points for routing.
+        serviceUnavailable: Route service is not available
       graphhopper:
         400: Something was wrong in your request (too few or too many points)
         401: Authentication necessary! Register and get a valid API key at https://www.graphhopper.com/developers/.

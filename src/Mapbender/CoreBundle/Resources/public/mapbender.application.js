@@ -238,9 +238,12 @@ Mapbender.ElementRegistry = (function($){
         bundle.created.resolveWith(null, [instance]);
     };
     /**
-     * @param {string|int} ident can be id or .class-name, but must be unique in the DOM.
+     * @param {string|int|object} ident can be id or .class-name, but must be unique in the DOM. Can also be an MbElement-Class
      */
     ElementRegistry.prototype.markReady = function(ident) {
+        if (typeof ident === 'object') {
+            ident = ident.$element.attr('id');
+        }
         var bundle = this.matchSingle_(ident);
         bundle.readyEvent.resolve();
     };
@@ -288,6 +291,10 @@ $.extend(Mapbender, (function($) {
         var methodNamespace, innerName;
 
         if (initParts.length > 0) {
+            // handle new JS-Native-Classes
+            if (initParts.length === 1) {
+                return initName;
+            }
             methodNamespace = $[initParts[0]] || null;
             innerName = initParts[1];
         } else {
@@ -316,6 +323,12 @@ $.extend(Mapbender, (function($) {
         }
         if (data.init) {
             var initInfo = _getElementInitInfo(data.init);
+            // handle new JS-Native-Classes
+            if (typeof initInfo === 'string') {
+                instance = new Mapbender.Element[initInfo](data.configuration, $node);
+                Mapbender.elementRegistry.markCreated(id, instance);
+                return;
+            }
             if (!initInfo.initMethod) {
                 Mapbender.elementRegistry.markFailed(id);
                 throw new Error("No such widget " + data.init);
@@ -368,19 +381,22 @@ $.extend(Mapbender, (function($) {
         var uncacheableIds = Object.keys(uncacheable);
         if (uncacheableIds.length) {
             var reloadUrl = ['.', Mapbender.configuration.application.slug, 'elements'].join('/');
-            $.getJSON(reloadUrl, {
-                ids: uncacheableIds.join(',')
-            }).then(function(response) {
-                var selectors = Object.keys(response);
-                for (var s = 0; s < selectors.length; ++s) {
-                    var selector = selectors[s];
-                    $(selectors[s]).replaceWith(response[selector]);
-                }
-                for (i = 0; i < uncacheableIds.length; ++i) {
-                    var id = uncacheableIds[i];
-                    _initElement(id, uncacheable[id]);
-                }
-            });
+            const loadUrls = (reloadUrl) => {
+                $.getJSON(reloadUrl, {
+                    ids: uncacheableIds.join(',')
+                }).then(function (response) {
+                    var selectors = Object.keys(response);
+                    for (var s = 0; s < selectors.length; ++s) {
+                        var selector = selectors[s];
+                        $(selectors[s]).replaceWith(response[selector]);
+                    }
+                    for (i = 0; i < uncacheableIds.length; ++i) {
+                        var id = uncacheableIds[i];
+                        _initElement(id, uncacheable[id]);
+                    }
+                }).fail((e) => Mapbender.handleAjaxError(e, () => loadUrls(reloadUrl)));
+            }
+            loadUrls(reloadUrl);
         }
     }
     function _initElement(id, elementData) {

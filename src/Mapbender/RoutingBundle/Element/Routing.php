@@ -47,7 +47,7 @@ class Routing extends AbstractElementService
     {
         return [
             'js' => [
-                '@MapbenderRoutingBundle/Resources/public/mapbender.element.routing.js',
+                '@MapbenderRoutingBundle/Resources/public/MbRouting.js',
             ],
             'css' => [
                 '@MapbenderRoutingBundle/Resources/public/sass/routing-icons.scss',
@@ -61,7 +61,7 @@ class Routing extends AbstractElementService
 
     public function getWidgetName( Element $element ): string
     {
-        return 'mapbender.mbRouting';
+        return 'MbRouting';
     }
 
     public static function getDefaultConfiguration(): array
@@ -112,7 +112,12 @@ class Routing extends AbstractElementService
                     'geom_proj' => 'EPSG:4326',
                 ],
             ],
+            'element_icon' => self::getDefaultIcon(),
         ];
+    }
+    public static function getDefaultIcon()
+    {
+        return 'iconRouting';
     }
 
     public static function getFormTemplate(): string

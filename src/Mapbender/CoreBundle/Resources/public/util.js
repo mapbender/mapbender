@@ -18,11 +18,77 @@ Mapbender.info = function (infoObject, delayTimeout) {
     console.log("Mapbender Info: ", infoObject);
 };
 Mapbender.confirm = function (message) {
-    var res = confirm(message);
-    return res;
+    return confirm(message);
 };
 
-Mapbender.restrictPopupPositioning = function($dialogElement) {
+/**
+ * @param {object} error - The error object from the failed AJAX request
+ * @param {Function} [retry] - Optional. Callback function triggered when clicking "retry". Make sure to use the () => syntax or .bind(this) to preserve the correct "this" context if needed.
+ * @param {string} [errorMessage] - Optional. Message shown to the user for non 403/404 errors.
+ */
+Mapbender.handleAjaxError = function (error, retry, errorMessage) {
+    if (error.status !== 403 && error.status !== 404) {
+        // For non-403 and 404 errors don't offer a reload and retry button, just forward to Mapbender.error
+        return Mapbender.error(errorMessage || error.responseText || error.statusText || '');
+    }
+
+    if (!$.notify.getStyle('error-with-buttons')) {
+        // @formatter:off
+        $.notify.addStyle('error-with-buttons', {
+          html:
+            "<div>" +
+              "<div class='clearfix notifyjs-bootstrap-base notifyjs-bootstrap-error'>" +
+                "<span data-notify-text=''></span>" +
+                "<div class='buttons'>" +
+                  "<button class='btn notifyjs--relogin'>" + Mapbender.trans("mb.error.relogin_link") + "</button>" +
+                  "<button class='btn notifyjs--retry'>" + Mapbender.trans("mb.error.retry") + "</button>" +
+                "</div>" +
+              "</div>" +
+            "</div>"
+        });
+        // @formatter:on
+    }
+
+    const message = error.status === 403
+        ? Mapbender.trans("mb.error.session_expired") + "\n" + Mapbender.trans("mb.error.relogin")
+        : error.responseText || Mapbender.trans("mb.error.not_found");
+
+    $.notify(message, {
+        style: 'error-with-buttons',
+        autoHide: false,
+    });
+
+    const $wrapper = $('.notifyjs-error-with-buttons-base').eq(0);
+    const $retryButton = $wrapper.find('.notifyjs--retry');
+    if (retry && typeof retry === 'function') {
+        $retryButton.one('click', function () {
+            retry();
+            // dismiss the notification by triggering a click on the wrapper
+            $wrapper.trigger('click');
+        });
+    } else {
+        $retryButton.remove();
+    }
+
+    $wrapper.find('.notifyjs--relogin').one('click', function () {
+        window.open(Mapbender.configuration.application.urls.base + "/user/login/recover", "Login",'height=600,width=400');
+        // dismiss the notification by triggering a click on the wrapper
+        $wrapper.trigger('click');
+
+        if (retry && typeof retry === 'function') {
+            const bcChannel = new BroadcastChannel('mb-session-recovery');
+            bcChannel.addEventListener('message', (event) => {
+                if (event.data === 'relogin-success') {
+                    // Session has been recovered, retry the failed request automatically
+                    retry();
+                    bcChannel.close();
+                }
+            });
+        }
+    });
+};
+
+Mapbender.restrictPopupPositioning = function ($dialogElement) {
     $dialogElement.on('dragstop', function (event, ui) {
         let forcedX = null;
         let forcedY = null;
@@ -487,7 +553,7 @@ Mapbender.Util.array_unique = function (array) {
  * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
  * @param {{}} obj
  * @param {(value: *, key: string) => boolean} predicate
-* @returns {*[]}
+ * @returns {*[]}
  */
 Mapbender.Util.object_filter = function (obj, predicate) {
     let results = {};
@@ -501,7 +567,7 @@ Mapbender.Util.object_filter = function (obj, predicate) {
  * Returns a copy of the array containing only those elements where the predicate function returns a truthy value (e.g true, 1)
  * @param {*[]} array
  * @param {(value: *, index: number) => boolean} predicate
-* @returns {*[]}
+ * @returns {*[]}
  */
 Mapbender.Util.array_filter = function (array, predicate) {
     let results = [];
@@ -623,7 +689,66 @@ Mapbender.ElementUtil = {
         const hasNonPersistentScrollbars = navigator.userAgent.indexOf('Mac') >= 0 || navigator.userAgent.indexOf('Firefox') >= 0;
         if (hasNonPersistentScrollbars && $element.closest('.sideContent').length) {
             $element.closest('.container-accordion').css('width', 'calc(100% + 15px)');
-            $element.closest('.accordion-cell').css('padding-right', '15px');
+            $element.closest('.accordion-cell').css('--sidepane-padding-right', 'calc(1rem + 15px)');
         }
-    }
+    },
+
+    _csrfTokenCache: {},
+    _requestQueue: [],
+    _requestRunning: false,
+
+    /**
+     * Get a csrf token from the server for the given element type.
+     * The requests are queued. Requests for the same element type are only made once.
+     * Requests cannot be simultaneous, as we cannot be sure a PHP Session has already been created.
+     * If there is no session yet and there are simultaneous requests, the CSRF tokens will be stored
+     * on the server for independent sessions which results in (randomly) only one of the tokens being valid.
+     */
+    getCsrfToken: async function (element, url, forceRefresh = false) {
+        const elementType = Object.getPrototypeOf(element).widgetFullName;
+        if (forceRefresh && this._csrfTokenCache[elementType]) {
+            delete this._csrfTokenCache[elementType];
+        }
+
+        if (this._csrfTokenCache[elementType]) {
+            return this._csrfTokenCache[elementType];
+        }
+
+        return await new Promise((resolve, reject) => {
+            this._requestQueue.push({resolve, reject, elementType, url});
+            this._tryGetNextToken();
+        });
+    },
+
+    _tryGetNextToken: async function () {
+        if (this._requestQueue.length === 0 || this._requestRunning) {
+            return;
+        }
+        this._requestRunning = true;
+
+        let {resolve, reject, elementType, url} = this._requestQueue.shift();
+        // check the cache again, maybe another request already fetched the token in the meantime
+        if (this._csrfTokenCache[elementType]) {
+            resolve(this._csrfTokenCache[elementType]);
+            this._requestRunning = false;
+            this._tryGetNextToken();
+            return;
+        }
+
+        try {
+            const response = await fetch(url, {method: 'POST'})
+            if (response.status >= 300) {
+                throw new Error("mb.error.csrf_failed");
+            }
+            const token = await response.text();
+            this._csrfTokenCache[elementType] = token;
+            resolve(token);
+        } catch (err) {
+            reject(err);
+        } finally {
+            this._requestRunning = false;
+            this._tryGetNextToken();
+        }
+    },
+
 };

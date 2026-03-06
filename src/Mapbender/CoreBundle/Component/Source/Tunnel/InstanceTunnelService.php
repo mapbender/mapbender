@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Component\Exception\SourceNotFoundException;
 use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Controller\ApplicationController;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 use Mapbender\CoreBundle\Utils\UrlUtil;
@@ -74,27 +75,24 @@ class InstanceTunnelService
      *
      * @param SourceInstance $instance
      * @return Endpoint
-     * @todo: needs application binding for reusable source instances
      */
-    public function getEndpoint(SourceInstance $instance)
+    public function getEndpoint(Application $application, SourceInstance $instance)
     {
         $id = spl_object_hash($instance);
         if (!array_key_exists($id, $this->bufferedEndPoints)) {
-            $this->bufferedEndPoints[$id] = $this->makeEndpoint($instance);
+            $this->bufferedEndPoints[$id] = $this->makeEndpoint($application, $instance);
         }
         return $this->bufferedEndPoints[$id];
     }
 
     /**
      * Makes a new Endpoint, no reuse.
-     *
      * @param SourceInstance $instance
      * @return Endpoint
-     * @todo: needs application binding for reusable source instances
      */
-    public function makeEndpoint(SourceInstance $instance)
+    public function makeEndpoint(Application $application, SourceInstance $instance)
     {
-        return new Endpoint($this, $instance);
+        return new Endpoint($this, $application,$instance);
     }
 
     /**
@@ -108,6 +106,7 @@ class InstanceTunnelService
         $vsHandler = new VendorSpecificHandler();
         $vsParams = $vsHandler->getPublicParams($endpoint->getSourceInstance(), $this->tokenStorage->getToken());
         $params = array_replace($vsParams, array(
+            'slug' => $endpoint->getApplicationEntity()->getSlug(),
             'instanceId' => $endpoint->getSourceInstance()->getId(),
         ));
 
@@ -139,35 +138,42 @@ class InstanceTunnelService
         throw new \RuntimeException('Failed to tunnelify url, no `request` param found: ' . var_export($url, true));
     }
 
-    /**
-     * @param array|SourceInstanceItem $instanceLayer
-     * @return string
-     */
-    public function generatePublicLegendUrl(SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance)
+    public function generatePublicLegendUrl(Application $application, SourceInstanceItem|array $instanceLayer, ?SourceInstance $sourceInstance, ?string $url = null): string
     {
         if (!$sourceInstance && $instanceLayer instanceof SourceInstanceItem) {
             $sourceInstance = $instanceLayer->getSourceInstance();
         }
-        return $this->router->generate($this->legendTunnelRouteName, array(
+        $parameters = [
+            'slug' => $application->getSlug(),
             'instanceId' => $sourceInstance->getId(),
             'layerId' => is_array($instanceLayer) ? $instanceLayer['id'] : $instanceLayer->getId(),
-        ));
+        ];
+
+        if ($url) {
+            $queryString = parse_url($url, PHP_URL_QUERY) ?: '';
+            parse_str($queryString, $queryParams);
+            if (!is_array($queryParams)) {
+                $queryParams = [];
+            }
+            $queryParams = array_change_key_case($queryParams);
+            unset($queryParams['service'], $queryParams['request'], $queryParams['version'], $queryParams['layer']);
+            $parameters = array_merge($parameters, $queryParams);
+        }
+
+        return $this->router->generate($this->legendTunnelRouteName, $parameters);
     }
 
     /**
      * Returns the internal url associated with the given public url.
      *
-     * @param Request $request
-     * @param bool $includeCredentials
      * @param bool $localOnly default false; to also include the host name in matching
      *             NOTE: enabling this will cause conflicts on subdomain load-balancing
-     * @return string|null
      */
-    public function getInternalUrl(Request $request, $includeCredentials, $localOnly = false)
+    public function getInternalUrl(Application $application, Request $request, bool $includeCredentials, bool $localOnly = false): ?string
     {
         $routerMatch = UrlUtil::routeParamsFromUrl($this->router, $request->getUri(), !$localOnly);
         if ($routerMatch) {
-            $endPoint = $this->matchRouteParams($routerMatch);
+            $endPoint = $this->matchRouteParams($application, $routerMatch);
             if ($endPoint) {
                 switch ($routerMatch['_route']) {
                     case $this->tunnelRouteName:
@@ -193,20 +199,16 @@ class InstanceTunnelService
     }
 
     /**
-     * @param mixed[] $routerMatch return value from UrlMatcherInterface::match
-     * @return Endpoint|null
+     * @param array $routerMatch return value from UrlMatcherInterface::match
      * @throws SourceNotFoundException if route matched but entity missing from db repository
      */
-    protected function matchRouteParams($routerMatch)
+    protected function matchRouteParams(Application $application, array $routerMatch): ?Endpoint
     {
         $matchedRouteName = $routerMatch['_route'];
         if ($matchedRouteName === $this->tunnelRouteName || $matchedRouteName === $this->legendTunnelRouteName) {
-            $instanceId = $routerMatch['instanceId'];
-            $repository = $this->entityManager->getRepository(SourceInstance::class);
-            /** @var SourceInstance|null $entity */
-            $entity = $repository->find($instanceId);
+            $entity = $application->getSourceInstanceById($routerMatch['instanceId']);
             if ($entity) {
-                return $this->getEndpoint($entity);
+                return $this->getEndpoint($application, $entity);
             } else {
                 throw new SourceNotFoundException();
             }

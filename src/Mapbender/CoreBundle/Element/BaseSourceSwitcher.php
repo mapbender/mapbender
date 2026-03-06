@@ -49,7 +49,7 @@ class BaseSourceSwitcher extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbBaseSourceSwitcher';
+        return 'MbBaseSourceSwitcher';
     }
 
     /**
@@ -75,7 +75,7 @@ class BaseSourceSwitcher extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.basesourceswitcher.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbBaseSourceSwitcher.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss',

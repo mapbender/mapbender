@@ -176,14 +176,12 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mb-action.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.element.base.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
-                    '/components/datatables/media/js/jquery.dataTables.min.js',
-                    '/components/datatables/media/js/dataTables.bootstrap4.min.js',
+                    '/components/datatables/core/js/dataTables.min.js',
+                    '/components/datatables/bootstrap5/js/dataTables.bootstrap5.min.js',
                     '@MapbenderCoreBundle/Resources/public/init/frontend.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
-                    '@MapbenderCoreBundle/Resources/public/element/mbDialogElement.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
                     $openlayers,
                     '@MapbenderCoreBundle/Resources/public/ol6-ol4-compat.js',
@@ -195,6 +193,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/GetFeatureInfoSource.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/sourcetree-util.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/StyleUtil.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender-model/FileUtil.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.element.map.mapaxisorder.js',
                     '@MapbenderCoreBundle/Resources/public/init/projection.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapEngine.js',
@@ -205,11 +204,12 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridge.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
+                    '@MapbenderCoreBundle/Resources/public/elements/MapbenderElement.js',
                 ];
             case 'css':
                 return [
                     "@MapbenderCoreBundle/Resources/public/sass/modules/mapPopup.scss",
-                    '/components/datatables/media/css/dataTables.bootstrap4.min.css',
+                    '/components/datatables/bootstrap5/css/dataTables.bootstrap5.css',
                 ];
         }
         return [];

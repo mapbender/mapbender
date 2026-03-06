@@ -51,3 +51,5 @@ fom:
         manage_permissions_help: "Erlaubt das Verwalten von Rechten für diese Anwendung (die aktuelle Seite)"
       element:
         view: "Anzeige"
+      source_instance:
+        view: "Anzeige"

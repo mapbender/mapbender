@@ -25,6 +25,7 @@
             <argument type="service" id="mapbender.element_inventory.service" />
             <argument>%mapbender.responsive.elements%</argument>
             <argument>%kernel.debug%</argument>
+            <argument type="service" id="mapbender.icon_index" />
         </service>
         <service id="mapbender.renderer.application_markup"
                  class="Mapbender\FrameworkBundle\Component\Renderer\ApplicationMarkupRenderer"

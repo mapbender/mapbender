@@ -1,3 +1,4 @@
+{%- set return_text = 'mb.actions.back' -%}
 <div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}{% if region_props.resizable %} resizable{% endif %}"
      {%- if region_props.width | default('') -%}
          {%- if region_props.closed | default(false) -%}
@@ -8,7 +9,7 @@
      {%- endif -%}
 >
   <div class="sideContent">
-  {%- if region_props.name in ['tabs', 'accordion'] -%}
+  {%- if region_props.name in ['tabs', 'accordion', 'list'] -%}
       {%- set _visible = [] -%}
       {%- for element in elements -%}
         {%- set element_content = element_markup(element) -%}
@@ -16,12 +17,20 @@
             {%- set _visible = _visible | merge([{element: element, content: element_content}]) -%}
         {%- endif -%}
     {%- endfor -%}
+
+
     {%- if region_props.name == 'tabs' -%}
       <div class="tabContainerAlt">
         <ul class="tabs">
           {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
-            <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">{{ element.title | trans }}</li>
+            {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+            <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+              <div class="hidden">
+                {{element_icon | raw }}
+              </div>
+              {{ element.title | trans }}
+            </li>
           {%- endfor -%}
         </ul>
         {%- for element_info in _visible -%}
@@ -31,18 +40,88 @@
         </div>
         {%- endfor -%}
       </div>
+
+
     {% elseif region_props.name == 'accordion' %}
-      <div class="accordionContainer">
+      <div class="accordionContainer list-group">
+          {%- for element_info in _visible -%}
+              {%- set element = element_info.element -%}
+              {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                  <div class="sidePane__inline-element">
+                      <div>
+                          {{ element_info.content | raw }}
+                      </div>
+                  </div>
+              {% endif %}
+          {%- endfor -%}
         {%- for element_info in _visible -%}
           {%- set element = element_info.element -%}
-          <div id="accordion{{loop.index}}" class="{{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}"><div>{{ element.title | trans }}</div></div>
-          <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
-              <div class="accordion-cell">
-                  {{ element_info.content | raw }}
+          {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
+              {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+              <div id="accordion{{loop.index}}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+                  {% if element_icon %}
+                    <span class="element-icon-wrapper">{{element_icon | raw }}</span>
+                  {% endif %}
+                   {{ element.title | trans }}
               </div>
-          </div>
+              <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
+                  <div class="accordion-cell">
+                      {{ element_info.content | raw }}
+                  </div>
+              </div>
+            {% endif %}
         {%- endfor -%}
       </div>
+
+
+    {% elseif region_props.name == 'list' %}
+        <div class="listContainer">
+              {%- for element_info in _visible -%}
+                    {%- set element = element_info.element -%}
+                    {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                      <div class="sidePane__inline-element">
+                          <div>
+                              {{ element_info.content | raw }}
+                          </div>
+                      </div>
+                    {% endif %}
+                {%- endfor -%}
+                {%- for element_info in _visible -%}
+                    {%- set element = element_info.element -%}
+                    {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
+                      {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+                      <div id="list_group_item{{loop.index}}" class="element-title list-group-item {{ element_visibility_class(element) | trim }}">
+                          {% if element_icon %}
+                              <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                          {% endif %}
+                          {{ element.title | trans }}
+                      </div>
+                    {% endif %}
+                {%- endfor -%}
+        </div>
+        {%- for element_info in _visible -%}
+            {%- set element = element_info.element -%}
+            {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+            <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
+                <div class="list-group-item-header">
+                    <button class="list-back-btn{% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
+                        <i class="fa-solid fa-angle-left iconBig"></i>
+                        <span>{{ return_text | trans}}</span>
+                    </button>
+                </div>
+                <div class="list-group-item-cell">
+                    <div class="list-group-item-title active element-title">
+                        {% if element_icon %}
+                            <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                        {% endif %}
+                        {{ element.title | trans }}
+                    </div>
+                    <div class="list-group-item-content">
+                        {{ element_info.content | raw }}
+                    </div>
+                </div>
+            </div>
+        {%- endfor -%}
     {%- endif -%}
   {%- else -%}
         <div class="auto-scroll-v">
@@ -50,5 +129,8 @@
         </div>
   {% endif %}
   </div>
-  <span class="toggleSideBar collapse-toggle"><i class="fas fa-fw fa-bars"></i></span>
+  <div class="sidePane--collapsed toggleSideBar collapse-toggle">
+    <i class="fa-solid fa-xmark sidePane__toggle" tabindex="0" role="button"></i>
+    <div class="sidePane--collapsed__icons element-icons hidden"></div>
+  </div>
 </div>

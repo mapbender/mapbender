@@ -21,5 +21,17 @@
             <argument>%mapbender.print.memory_limit%</argument>
             <argument>%mapbender.print.queueable%</argument>
         </service>
+        <service id="mapbender.element.BatchPrintClient" class="Mapbender\PrintBundle\Element\BatchPrintClient">
+            <tag name="mapbender.element" />
+            <argument type="service" id="router" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="mapbender.source.url_processor.service" />
+            <argument type="service" id="mapbender.print.template_parser.service" />
+            <argument type="service" id="mapbender.print.service" />
+            <argument type="service" id="mapbender.print_plugin_host.service" />
+            <argument>%mapbender.print.memory_limit%</argument>
+            <argument>%mapbender.print.queueable%</argument>
+        </service>
     </services>
 </container>

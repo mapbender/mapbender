@@ -29,7 +29,7 @@ class DataUpload extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbDataUpload';
+        return 'MbDataUpload';
     }
 
     /**
@@ -39,10 +39,10 @@ class DataUpload extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/element/dataupload.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbDataUpload.js',
             ),
             'css' => array(
-                '@MapbenderCoreBundle/Resources/public/element/dataupload.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/dataupload.scss',
             ),
             'trans' => array(
                 'mb.core.dataupload.*',
@@ -58,6 +58,7 @@ class DataUpload extends AbstractElementService
         return array(
             'maxFileSize' => 10,
             'helpText' => 'mb.core.dataupload.admin.helpText',
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -90,5 +91,10 @@ class DataUpload extends AbstractElementService
         $view->attributes['class'] = 'mb-element-dataupload me-3';
         $view->attributes['data-title'] = $element->getTitle();
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconDataUpload';
     }
 }

@@ -22,7 +22,7 @@ class ShareUrl extends ButtonLike
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbShareUrl';
+        return 'MbShareUrl';
     }
 
     public static function getType()
@@ -42,10 +42,10 @@ class ShareUrl extends ButtonLike
         );
         // Remove / replace base button script
         $required['js'] = array_merge($required['js'], array(
-            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbShareUrl.js',
         ));
         $required['css'] = array_merge($required['css'], array(
-            '@MapbenderCoreBundle/Resources/public/element/mbShareUrl.scss',
+            '@MapbenderCoreBundle/Resources/public/sass/element/mbShareUrl.scss',
         ));
         $required['trans'] = array_merge($required['trans'], array(
             'mb.core.ShareUrl.*',
@@ -56,6 +56,7 @@ class ShareUrl extends ButtonLike
     public static function getDefaultConfiguration()
     {
         $defaults = parent::getDefaultConfiguration();
+        $defaults['element_icon'] = self::getDefaultIcon();
         // icon is hard-coded (see twig template)
         unset($defaults['icon']);
         return $defaults;
@@ -67,5 +68,10 @@ class ShareUrl extends ButtonLike
         parent::initializeView($view, $element);
         $view->attributes['class'] = 'mb-button mb-element-shareurl';
         return $view;
+    }
+
+    public static function getDefaultIcon()
+    {
+        return 'iconShare';
     }
 }

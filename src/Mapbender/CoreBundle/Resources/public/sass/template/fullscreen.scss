@@ -117,10 +117,6 @@ body {
 .logo {
   max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
-.collapse-toggle {
-  color: #444;
-  background: #ccc;
-}
 
 .accordionContainer .accordion {
   padding-top: 0;
@@ -128,7 +124,7 @@ body {
 }
 
 .sidePane {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .autocompleteWrapper {
@@ -177,4 +173,13 @@ body {
 
 .mb-element-zoombar .rotation{
    background-color: $backgroundColor;
+}
+
+.notifyjs-wrapper .buttons {
+    margin-left: -.75rem;
+
+    .btn {
+        text-decoration: underline;
+        font-weight: bold;
+    }
 }

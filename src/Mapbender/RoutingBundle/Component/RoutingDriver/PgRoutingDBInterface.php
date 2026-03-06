@@ -3,7 +3,6 @@
 namespace Mapbender\RoutingBundle\Component\RoutingDriver;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception;
 
 class PgRoutingDBInterface {
@@ -25,7 +24,7 @@ class PgRoutingDBInterface {
      * @param $waysTable
      * @param $verticesTable
      * @param $viewSrid
-     * @throws DBALException
+     * @throws Exception
      */
 
     private $temptableerouting = "temptablerouting";
@@ -53,7 +52,7 @@ class PgRoutingDBInterface {
      * @param string $origin
      * @param string $temp
      * @return string
-     * @throws DBALException
+     * @throws Exception
      */
     protected function createTempTable(string $origin,string $temp)
     {
@@ -96,7 +95,7 @@ class PgRoutingDBInterface {
      * Get the geometry name as a string from the geometry table
      * @param string $tableName
      * @return string
-     * @throws DBALException
+     * @throws Exception
      */
     protected function getGeomField(string $tableName)
     {
@@ -111,7 +110,7 @@ class PgRoutingDBInterface {
 
     /**
      * drop temporary used routing and node table
-     * @throws DBALException
+     * @throws Exception
      */
     public function dropTempTables()
     {
@@ -130,7 +129,7 @@ class PgRoutingDBInterface {
      * @param $table
      * @param $withEPSG
      * @return string
-     * @throws DBALException
+     * @throws Exception
      */
     protected function getSrid(string $table, bool $withEPSG = false)
     {
@@ -145,7 +144,7 @@ class PgRoutingDBInterface {
      * create serial node Id of added waypoint
      * @param null $table
      * @return mixed
-     * @throws DBALException
+     * @throws Exception
      */
     public function getMaxId( $table = null)
     {
@@ -249,7 +248,7 @@ class PgRoutingDBInterface {
      * @param array $nodeIdList
      * @param string $routeCostRow
      * @return array
-     * @throws DBALException
+     * @throws Exception
      */
     public function routeBetweenNodes(array $nodeIdList, string $routeCostRow) : array
     {

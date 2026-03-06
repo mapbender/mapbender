@@ -48,7 +48,7 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbScalebar';
+        return 'MbScalebar';
     }
 
     /**
@@ -74,7 +74,7 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.scalebar.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbScalebar.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/scalebar.scss',

@@ -49,4 +49,6 @@ fom:
         manage_permissions_help: "Sta toe om de rechten van deze applicatie (de huidige pagina) te beheren."
       element:
         view: "Bekijken"
+      source_instance:
+        view: "Bekijken"
 

@@ -46,6 +46,9 @@ mb:
   states:
     active: aktiv
     inactive: inaktiv
+    public: öffentlich
+    not_public: 'nicht öffentlich'
+    permissions_defined: 'Für diese Instanz wurden individuelle Zugriffsrechte definiert'
   core:
     featureinfo:
       error:
@@ -135,6 +138,7 @@ mb:
       no_results: 'Keine Ergebnisse gefunden.'
       result_counter: 'Ergebnisse: %count%'
       exportcsv: 'Export der Trefferliste als CSV.'
+      invalid_input_data: 'Ungültige Zeichen in der Eingabe'
       class:
         title: Suchen
         description: 'Ermöglicht die Konfiguration von individuellen Suchen'
@@ -356,6 +360,9 @@ mb:
         dialog: Dialog
       admin:
         content: Inhalt
+        dontShowAgain: '"Nicht mehr anzeigen"-Option'
+        dontShowAgainLabel: '"Nicht mehr anzeigen"-Text'
+        dontShowAgainDefaultLabel: 'Nicht mehr anzeigen'
     map:
       class:
         title: Karte
@@ -529,6 +536,7 @@ mb:
             choice:
               tabs: Buttons
               accordion: Akkordeon
+              list: 'Liste'
               unstyled: Unformatiert
       button:
         show_label: 'Beschriftung anzeigen'
@@ -557,7 +565,7 @@ mb:
         circle: Kreis
       inputs:
         label: Beschriftung
-        radius: Radius
+        radius: Radius (m)
       geometry:
         action:
           remove: 'Entfernen der Geometrie'
@@ -588,6 +596,7 @@ mb:
       admin:
         open_in_new_tab: 'In neuem Tab öffnen'
         drag_to_reorder: 'Reihenfolge kann mit der Maus festgelegt werden'
+        help: 'Siehe <a href="https://doc.mapbender.org/de/elements/misc/applicationswitcher.html" target="_blank" class="text-primary">Dokumentation</a> zur Konfiguration der YAML-Syntax'
     coordinesdisplay:
       admin:
         numdigits: 'Anzahl der Nachkommastellen'
@@ -610,6 +619,7 @@ mb:
         filetype: 'Nicht unterstützter Dateityp:'
         gml: 'GML-Format konnte nicht ermittelt werden!'
         projection: 'Projektion konnte nicht ermittelt werden'
+        nogeometry: 'Die hochgeladene Datei enthält keine gültigen Geometrien.'
       admin:
         maxFileSize: 'Max. Dateigröße (MB)'
         helpLabel: Hilfetext
@@ -629,6 +639,7 @@ mb:
       admin:
         tooltip: Tooltip
         icon: Symbol
+        elementIcon: 'Element-Symbol'
     icon:
       mb:
         about: Information
@@ -665,6 +676,9 @@ mb:
         pin_alt: 'Stecknadel (Alternative)'
         help: Hilfe
         dataupload: Hochladen
+        bookmark: Lesezeichen
+        chartcolumn: Diagramm
+        bookopen: Buch
   template:
     toolbar_menu_tooltip: 'Menü öffnen'
     region:
@@ -687,6 +701,130 @@ mb:
         instancelayerform:
           label:
             title: Titel
+  interactivehelp:
+    element:
+      title: Interaktive Hilfe
+      description: 'Die interaktive Hilfe zeigt direkt an den einzelnen Elementen Hinweise an.'
+      dismissPermanently: 'Nicht mehr anzeigen'
+      startTourBtn: 'Tour starten'
+      next: 'weiter'
+      back: 'zurück'
+      end: 'Ende'
+    admin:
+      config: Konfiguration
+      help: 'Siehe <a href="https://doc.mapbender.org/de/elements/misc/interactivehelp.html" target="_blank" class="text-primary">Dokumentation</a> zur Konfiguration der YAML-Syntax'
+      showOnStart: 'Beim Start direkt anzeigen'
+    intro:
+      title:  'Willkommen bei der interaktiven Hilfe'
+      description: 'Lernen Sie in ein paar Schritten Mapbender kennen.'
+      dismissPermanentlyLabel: 'Nicht wieder anzeigen.'
+    aboutdialog:
+      title: 'Über'
+      description: 'Erstellt eine Schaltfläche, die die Version Ihrer Mapbender-Installation anzeigt.'
+    activityindicator:
+      title: 'Aktivitätsanzeige'
+      description: 'Das Aktivitätsanzeige-Element bietet ein einfaches Widget zur Anzeige von Hintergrundaktivitäten.'
+    applicationswitcher:
+      title: 'Anwendung wechseln'
+      description: 'Wechselt unter Beibehaltung der aktuellen Kartenposition zu einer anderen Anwendung.'
+    basesourceswitcher:
+      title: 'Hintergrund wechseln'
+      description: 'Wechselt zwischen verschiedenen, vordefinierten Hintergrundkartenquellen.'
+    button:
+      title: 'Button'
+      description: 'Führt Aktionen mit anpassbaren Schaltflächen aus.'
+    coordinatesdisplay:
+      title: 'Koordinatenanzeige'
+      description: 'Zeigt die Mausposition in Kartenkoordinaten an.'
+    coordinatesutility:
+      title: 'Koordinaten-Werkzeug'
+      description: 'Zoomen zu einer gegebenen Punktkoordinate oder Anzeige des angeklickten Punktes der Karte.'
+    copyright:
+      title: 'Copyright'
+      description: 'Das Copyright-Element kann verwendet werden, um einfachen Text oder HTML in einem Dialogfenster anzuzeigen.'
+    datamanager:
+      title: 'Datenmanager'
+      description: 'Verwalten und Bearbeiten von nicht-räumlichen Daten.'
+    dataupload:
+      title: 'Daten laden'
+      description: 'Lädt Dateien in den Formaten GeoJSON, KML, GML oder GPX hoch und zeigt sie an.'
+    digitizer:
+      title: 'Digitizer'
+      description: 'Erstellen und Bearbeiten von Punkten, Linien und Flächen auf einer Karte.'
+    featureinfo:
+      title: 'Information'
+      description: 'Klicken Sie auf die Karte, um Informationen über Kartenobjekte zu erhalten.'
+    gpsposition:
+      title: 'GPS-Position'
+      description: 'Zeigt Ihre aktuelle GPS-Position auf der Karte an.'
+    htmlelement:
+      title: 'HTML-Element'
+      description: 'Zeigt benutzerdefinierten HTML-Inhalt an.'
+    layertree:
+      title: 'Ebenenbaum'
+      description: 'Steuert Sichtbarkeit und Einstellungen der Kartenebenen.'
+    legend:
+      title: 'Legende'
+      description: 'Zeigt die Legende für aktive Kartenebenen an.'
+    map:
+      title: 'Karte'
+      description: 'Die Hauptkartenanzeige mit geografischen Daten.'
+    overview:
+      title: 'Übersicht'
+      description: 'Kleine Übersichtskarte, die die aktuelle Kartenausdehnung zeigt.'
+    poi:
+      title: 'Treffpunkt'
+      description: 'Erstellt und teilt Interessenspunkte.'
+    printclient:
+      title: 'Druck'
+      description: 'Druckt die aktuelle Kartenansicht mit anpassbaren Einstellungen.'
+    routing:
+      title: 'Routing'
+      description: 'Berechnet Routen zwischen Standorten.'
+    ruler:
+      title: 'Messung'
+      description: 'Misst Entfernungen und Flächen auf der Karte.'
+    scalebar:
+      title: 'Maßstabsleiste'
+      description: 'Zeigt eine Maßstabsleiste mit Kartenentfernungen an.'
+    scaledisplay:
+      title: 'Maßstabsanzeige'
+      description: 'Zeigt den aktuellen Kartenmaßstab als Text an.'
+    scaleselector:
+      title: 'Maßstabsauswahl'
+      description: 'Wählt vordefinierte Kartenmaßstäbe aus einem Dropdown aus.'
+    searchrouter:
+      title: 'Suche'
+      description: 'Verwenden Sie das Suchelement, um Orte auf der Karte zu finden.'
+    shareurl:
+      title: 'URL teilen'
+      description: 'Teilt die aktuelle Kartenansicht über eine URL.'
+    simplesearch:
+      title: 'Einfache Suche'
+      description: 'Sucht nach Orten über eine einfache Texteingabe.'
+    sketch:
+      title: 'Skizze'
+      description: 'Zeichnet und kommentiert auf der Karte.'
+    srsselector:
+      title: 'SRS-Auswahl'
+      description: 'Ändert das räumliche Referenzsystem der Karte.'
+    viewmanager:
+      title: 'Ansichtsverwaltung'
+      description: 'Speichert und stellt Kartenansichten und Ebenenzustände wieder her.'
+    wmsloader:
+      title: 'WMS laden'
+      description: 'Lädt WMS-Dienste aus externen Quellen.'
+    zoombar:
+      title: 'Navigationswerkzeug'
+      description: 'Navigiert in der Karte mit Zoom- und Schwenk-Steuerelementen.'
+  error:
+    csrf_failed: 'Fehler bei Verbindung mit dem Netzwerk'
+    session_expired: 'Sie sind nicht angemeldet oder Ihre Sitzung ist abgelaufen.'
+    relogin: 'Bitte melden Sie sich erneut an.'
+    relogin_link: 'Zur Anmeldung'
+    reload: 'Seite neu laden'
+    retry: 'Erneut versuchen'
+    not_found: 'Das Element wurde nicht gefunden.'
 'Bad credentials.': 'Authentifizierung fehlgeschlagen.'
 'User account is locked.': 'Benutzerkonto ist gesperrt.'
 'User account is disabled.': 'Benutzerkonto ist deaktiviert.'

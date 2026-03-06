@@ -1,0 +1,47 @@
+.mb-element-dataupload {
+    .dropFileArea {
+        border: 2px dashed #333;
+        width: 100%;
+        height: 105px;
+        border-radius: 15px;
+    }
+    .highlight {
+        border: 2px dashed black;
+        color: black;
+    }
+    .unhighlight {
+        border: 2px dashed #333;
+        color: #333;
+    }
+    .filesTable {
+        table-layout: fixed;
+        width: 100%;
+    }
+    
+    table .overflow {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    // Ensure action column maintains fixed width and doesn't get cut off
+    table .text-end {
+        width: 100px;
+        white-space: nowrap;
+    }
+    
+    // Make filename column flexible
+    table td:first-child {
+        width: calc(100% - 100px);
+    }
+    table .text-end i {
+        cursor: pointer;
+        opacity: 0.65;
+    }
+    table .text-end i:hover {
+        opacity: 1;
+    }
+    .form-select {
+        font-size: 0.85rem;
+    }
+}

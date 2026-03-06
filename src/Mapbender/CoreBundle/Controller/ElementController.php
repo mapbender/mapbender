@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ElementController extends AbstractController
 {
@@ -26,33 +27,34 @@ class ElementController extends AbstractController
 
     /**
      * Element action controller.
-     *
-     * Passes the request to
-     * the element's handleHttpRequest.
-     * @param Request $request
-     * @param string $slug
-     * @param string $id
-     * @param string $action
-     * @return Response
-     */
+     * Passes the request to the element's handleHttpRequest.
+     **/
     #[Route(path: '/application/{slug}/element/{id}/{action}', name: 'mapbender_core_application_element', requirements: ['action' => '.+'], defaults: ['id' => null, 'action' => null])]
-    public function element(Request $request, $slug, $id, string $action)
+    public function element(Request $request, string $slug, ?string $id, ?string $action): Response
     {
-        $application = $this->applicationResolver->getApplicationEntity($slug);
+        if ($id === null) {
+            return new Response(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $application = $this->applicationResolver->getApplicationEntity($slug);
+        } catch(AccessDeniedException) {
+            return new Response(null, Response::HTTP_FORBIDDEN);
+        }
         $id = is_numeric($id) ? intval($id) : $id;
         $element = $application->getElements()->matching(Criteria::create()->where(Criteria::expr()->eq('id', $id)))->first();
         if (!$element) {
-            throw new NotFoundHttpException();
+            return new Response(null, Response::HTTP_NOT_FOUND);
         }
 
         if (!$this->filter->prepareFrontend(array($element), true, false)) {
-            throw new NotFoundHttpException();
+            return new Response(null, Response::HTTP_FORBIDDEN);
         }
         $handler = $this->filter->getInventory()->getHttpHandler($element);
         if ($handler) {
             return $handler->handleRequest($element, $request);
         } else {
-            throw new NotFoundHttpException();
+            return new Response(null, Response::HTTP_NOT_FOUND);
         }
     }
 

@@ -20,6 +20,53 @@ mb:
       tab:
         settings: Configurações
         joblist: Trabalhos de impressão
+      btn:
+        batchprint: 'Iniciar impressão em lote'
+      batchprint:
+        title: 'Título'
+        btn:
+          submit: 'Iniciar impressão em lote'
+        track:
+          upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Carregar percurso (KML, GeoJSON, GPX, GML)'
+          load: 'Carregar arquivo'
+          choosefile: 'Escolher arquivo'
+          clear: 'Remover percurso'
+          placeframes: 'Colocar molduras ao longo do percurso'
+          adjustframes: 'Ajustar rotação das molduras'
+          overlap: 'Sobreposição de molduras'
+          selected: 'Selecionado'
+          loaded: 'Carregado'
+          error: 'Erro'
+          readerror: 'Erro ao ler o arquivo'
+          placed: '%count% molduras colocadas ao longo do percurso'
+          alert:
+            selectfile: 'Selecione primeiro um arquivo.'
+            validfile: 'Selecione um arquivo válido (KML, GeoJSON, GPX, GML).'
+            error: 'Erro ao carregar o arquivo'
+            readerror: 'Erro ao ler o arquivo.'
+            loadfirst: 'Carregue primeiro um arquivo de percurso.'
+            invalidgeometry: 'Geometria inválida. Esperado LineString.'
+        overlap:
+          outofbounds: 'O valor de sobreposição %value%% está fora do intervalo válido (0-50%). Por favor, insira um valor entre 0 e 50.'
+        tracking:
+          title: 'Molduras de impressão'
+          no: 'Nº'
+          scale: 'Escala'
+          template: 'Modelo'
+          quality: 'Qualidade'
+          rotation: 'Rotação'
+          delete: 'Excluir'
+          deleteall: 'Excluir todas as molduras'
+          empty: 'Nenhuma moldura de impressão disponível. Clique no mapa para adicionar molduras de impressão.'
+        confirm:
+          create: 'Isto criará %count% molduras. Continuar?'
+          deleteall: 'Excluir todas as %count% molduras?'
+        alldeleted: 'Todas as molduras excluídas'
+        alert:
+          noframes: 'Por favor, coloque pelo menos uma moldura de impressão no mapa.'
+          error: 'Erro ao criar o trabalho de impressão'
       joblist:
         header:
           id: #
@@ -59,6 +106,10 @@ mb:
         quality: Qualidade
       class:
         title: Impressão
+    batchprintclient:
+      class:
+        title: 'Modo de impressão em lote'
+        description: 'Modo de impressão em lote - Posicionamento de múltiplas molduras de impressão e saída em um trabalho de impressão'
     printclienttemplate:
       admin:
         template: Modelo
@@ -68,6 +119,19 @@ mb:
         label: Rótulo
     admin:
       printclient:
+        renderMode:
+          label: 'Modo'
+          choice:
+            direct: 'Direto'
+            queued: 'Enfileirado'
+        queueAccess:
+          label: 'Fila'
+          choice:
+            global: 'global'
+            private: 'privada'
         label:
           qualitylevels: Níveis de Qualidade
           templates: Modelos
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Ativar carregamento de geodados'

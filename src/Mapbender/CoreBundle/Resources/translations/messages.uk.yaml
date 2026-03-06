@@ -44,6 +44,9 @@ mb:
   states:
     active: активний
     inactive: неактивний
+    public: публічний
+    not_public: 'не публічний'
+    permissions_defined: 'Для цієї інстанції були визначені індивідуальні права доступу'
   core:
     featureinfo:
       error:
@@ -82,6 +85,7 @@ mb:
       no_results: Не знайдено результатів.
       result_counter: 'Результати: %count%'
       exportcsv: Експортуйте результати в CSV.
+      invalid_input_data: 'Неправильні символи введення'
       class:
         title: Пошук маршрутизатора
         description: 'Налаштовуваний елемент маршрутизації пошуку '
@@ -250,6 +254,11 @@ mb:
       tag:
         copyright: Авторське право
         dialog: діалогове вікно
+      admin:
+        content: Зміст
+        dontShowAgain: 'Опція "Більше не показувати"'
+        dontShowAgainLabel: 'Текст "Більше не показувати"'
+        dontShowAgainDefaultLabel: 'Більше не показувати'
     map:
       class:
         title: Мапа
@@ -379,6 +388,7 @@ mb:
             choice:
               tabs: Кнопки
               accordion: Гармошка
+              list: 'Список'
               unstyled: Без стилю
     htmlelement:
       class:
@@ -397,7 +407,7 @@ mb:
         circle: Коло
       inputs:
         label: Мітка
-        radius: Радіус
+        radius: Радіус (м)
       geometry:
         action:
           remove: Видалити геометрію
@@ -428,6 +438,46 @@ mb:
       admin:
         open_in_new_tab: 'Відкрити в новій вкладці'
         drag_to_reorder: 'Перетягніть, щоб змінити порядок'
+    basebutton:
+      admin:
+        elementIcon: 'символ елемента'
+    icon:
+      mb:
+        about: 'Інформація'
+        layer_tree: 'Дерево рівнів'
+        feature_info: 'Інформація про функцію'
+        area_ruler: 'Вимірювання площі'
+        polygon: 'Полігон'
+        line_ruler: 'Виміряти відстань'
+        image_export: 'Експорт зображень'
+        legend: 'Легенда'
+      fa:
+        about: 'Група'
+        accessibility: 'Безбар''єрність'
+        info: 'Інформація'
+        pin: 'маркер'
+        home: 'Головна сторінка'
+        legend: 'Список'
+        print: 'Друк'
+        search: 'Пошук'
+        layer_tree: 'ієрархія'
+        logout: 'Вийти'
+        wms: 'глобус'
+        edit: 'Редагувати'
+        wmc: 'папка'
+        coordinates: 'координати'
+        poi: 'шпилька'
+        camera: 'Камера'
+        copyright: 'Авторське право'
+        share: 'Поділитися'
+        forward: 'Переслати'
+        refresh: 'Перезавантажити'
+        earth: 'земна куля'
+        map: 'Карта країни'
+        pin_alt: 'маркер (альтернатива)'
+        help: 'Допомога'
+        dataupload: 'Завантажити'
+        bookmark: 'Завантажити'
   template:
     toolbar_menu_tooltip: Перемкнути меню
     region:
@@ -435,3 +485,11 @@ mb:
       footer: Нижня панель
       sidepane: Бокова панель
       content: Мапа області
+  error:
+    csrf_failed: 'Помилка під час підключення до мережі'
+    session_expired: 'Ви не увійшли в систему або ваш сеанс закінчився.'
+    relogin: 'Будь ласка, увійдіть знову.'
+    relogin_link: 'Перейти до входу'
+    reload: 'Перезавантажити сторінку'
+    retry: 'Повторити спробу'
+    not_found: 'Елемент не знайдено.'

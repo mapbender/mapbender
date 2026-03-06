@@ -20,6 +20,51 @@ mb:
       tab:
         settings: 'Impostazioni del lavoro'
         joblist: 'Lavori recenti'
+      batchprint:
+        title: 'Titolo'
+        btn:
+          submit: 'Avvia stampa in serie'
+        track:
+          upload: 'Carica percorso (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Carica percorso (KML, GeoJSON, GPX, GML)'
+          load: 'Carica file'
+          choosefile: 'Scegli file'
+          clear: 'Rimuovi percorso'
+          placeframes: 'Posiziona cornici lungo il percorso'
+          adjustframes: 'Adatta rotazione cornici'
+          overlap: 'Sovrapposizione cornici'
+          selected: 'Selezionato'
+          loaded: 'Caricato'
+          error: 'Errore'
+          readerror: 'Errore nella lettura del file'
+          placed: '%count% cornici posizionate lungo il percorso'
+          alert:
+            selectfile: 'Seleziona prima un file.'
+            validfile: 'Seleziona un file valido (KML, GeoJSON, GPX, GML).'
+            error: 'Errore nel caricamento del file'
+            readerror: 'Errore nella lettura del file.'
+            loadfirst: 'Carica prima un file di percorso.'
+            invalidgeometry: 'Geometria non valida. Previsto LineString.'
+        overlap:
+          outofbounds: 'Il valore di sovrapposizione %value%% è al di fuori dell''intervallo valido (0-50%). Inserire un valore compreso tra 0 e 50.'
+        tracking:
+          title: 'Cornici di stampa'
+          no: 'N.'
+          scale: 'Scala'
+          template: 'Modello'
+          quality: 'Qualità'
+          rotation: 'Rotazione'
+          delete: 'Elimina'
+          deleteall: 'Elimina tutte le cornici'
+          empty: 'Nessuna cornice di stampa disponibile. Fai clic sulla mappa per aggiungere cornici di stampa.'
+        confirm:
+          create: 'Questo creerà %count% cornici. Continuare?'
+          deleteall: 'Eliminare tutte le %count% cornici?'
+        alldeleted: 'Tutte le cornici eliminate'
+        alert:
+          noframes: 'Si prega di posizionare almeno una cornice di stampa sulla mappa.'
+          error: 'Errore nella creazione del lavoro di stampa'
       joblist:
         header:
           id: '#'
@@ -59,6 +104,10 @@ mb:
         quality: Qualità
       class:
         title: Stampa
+    batchprintclient:
+      class:
+        title: 'Modalità stampa in serie'
+        description: 'Modalità stampa in serie - Posizionamento di più cornici di stampa e output in un unico lavoro di stampa'
     printclienttemplate:
       admin:
         template: Template
@@ -68,6 +117,19 @@ mb:
         label: Label
     admin:
       printclient:
+        renderMode:
+          label: 'Modo'
+          choice:
+            direct: 'diretto'
+            queued: 'in coda'
+        queueAccess:
+          label: 'Coda'
+          choice:
+            global: 'globale'
+            private: 'privato'
         label:
           qualitylevels: 'Livelli di qualità'
           templates: Templates
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Abilita caricamento geodati'

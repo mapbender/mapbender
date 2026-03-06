@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\Event\PreUpdateEventArgs;
+use FOM\UserBundle\Security\Permission\YamlDefinedPermissionEntity;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\ApplicationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_application')]
-class Application
+class Application implements YamlDefinedPermissionEntity
 {
     /** YAML based application type */
     const SOURCE_YAML = 1;
@@ -363,6 +364,31 @@ class Application
         return $instances;
     }
 
+    public function getSourceInstanceById(int|string $instanceId): ?SourceInstance
+    {
+        foreach ($this->getSourceInstances(true) as $instance) {
+            /** @var SourceInstance $instance */
+            if ($instance->getId() == $instanceId) {
+                return $instance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return ReusableSourceInstanceAssignment[]
+     */
+    public function getSharedInstanceAssignments(): array
+    {
+        $instances = [];
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->getReusableInstanceAssignments() as $instance) {
+                $instances[] = $instance;
+            }
+        }
+        return $instances;
+    }
+
     /**
      * Read-only informative pseudo-relation
      *
@@ -555,18 +581,12 @@ class Application
         $this->publicOptions = $publicOptions;
     }
 
-    /**
-     * @return array
-     */
-    public function getYamlRoles()
+    public function getYamlRoles(): ?array
     {
         return $this->yamlRoles;
     }
 
-    /**
-     * @param array $yamlRoles
-     */
-    public function setYamlRoles($yamlRoles)
+    public function setYamlRoles(?array $yamlRoles): void
     {
         $this->yamlRoles = $yamlRoles;
     }

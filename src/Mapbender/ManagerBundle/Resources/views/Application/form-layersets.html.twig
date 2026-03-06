@@ -81,6 +81,10 @@
                   ? (edit_shared_instances ? path("mapbender_manager_repository_unowned_instance_scoped", {"instanceId": instance.id, "layerset": layerset }) : null)
                   : path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})
                   ,
+              '_security_url': _is_reusable
+                  ? path("mapbender_manager_sharedinstance_security", {"assignmentId": assignment.id, "layersetId": layerset.id })
+                  : path("mapbender_manager_instance_security",{'layersetId': layerset.id, "instanceId": instance.id})
+                  ,
               '_delete_url': _is_reusable
                   ? path("mapbender_manager_application_detachinstance", {'layerset': layerset, 'assignmentId': assignment.id})
                   : path("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id})
@@ -105,6 +109,8 @@
                     {%- if _edit_url -%}
                       <a href="{{ _edit_url }}" class="hover-highlight-effect" title="{{"mb.manager.admin.instance.edit"|trans}} {{instance.title}}"><i class="fas fa-pencil"></i></a>
                     {%- endif -%}
+                  {% set _has_permissions = mapbender_has_permissions(_is_reusable ? assignment : instance) %}
+                  <span data-url="{{ _security_url }}" data-title="mb.actions.securesourceinstance" class="hover-highlight-effect secureElement {% if _has_permissions %}text-danger{% endif %}" title="{{"mb.manager.admin.instance.security"|trans}} {{instance.title}}"><i class="fas fa-key"></i></span>
                   <a href="#" class="-fn-toggle-flag {{ assignment.enabled ? '-js-on' : '-js-off' }} -ft-toggle-active hover-highlight-effect"
                        title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}"
                        data-toggle-flag-icons="fa-eye-slash:fa-eye"

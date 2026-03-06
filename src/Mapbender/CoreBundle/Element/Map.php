@@ -76,7 +76,7 @@ class Map extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbMap';
+        return 'MbMap';
     }
 
     public function getView(Element $element)
@@ -91,7 +91,7 @@ class Map extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.map.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbMap.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/map.scss',

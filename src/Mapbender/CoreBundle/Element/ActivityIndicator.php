@@ -48,7 +48,7 @@ class ActivityIndicator extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbActivityIndicator';
+        return 'MbActivityIndicator';
     }
 
     /**
@@ -66,7 +66,7 @@ class ActivityIndicator extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.activityindicator.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbActivityIndicator.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/activityindicator.scss',

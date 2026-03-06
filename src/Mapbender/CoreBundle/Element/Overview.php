@@ -58,7 +58,7 @@ class Overview extends AbstractElementService
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbOverview';
+        return 'MbOverview';
     }
 
     /**
@@ -76,7 +76,7 @@ class Overview extends AbstractElementService
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.overview.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbOverview.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/overview.scss',

@@ -49,4 +49,6 @@ fom:
         manage_permissions_help: "Дозволяє керувати дозволами для цього додатку (поточна сторінка)."
       element:
         view: "Переглянути"
+      source_instance:
+        view: "Переглянути"
 

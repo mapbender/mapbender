@@ -16,7 +16,6 @@ class ConfigController extends AbstractController
 {
     /** @var ApplicationDataService|null */
     protected $cacheService;
-    protected $enableCache;
 
     public function __construct(protected ApplicationResolver $applicationResolver,
                                 protected ConfigService       $configService,
@@ -45,9 +44,7 @@ class ConfigController extends AbstractController
         if (!$response) {
             $freshConfig = $this->configService->getConfiguration($applicationEntity);
             $response = new JsonResponse($freshConfig);
-            if ($this->cacheService) {
-                $this->cacheService->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
-            }
+            $this->cacheService?->putValue($applicationEntity, $cacheKeyPath, $response->getContent());
         }
         return $response;
     }

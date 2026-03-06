@@ -26,6 +26,7 @@ class SidepaneTypeType extends AbstractType
             'choices' => array(
                 'mb.core.admin.template.sidepane.type.choice.tabs' => 'tabs',
                 'mb.core.admin.template.sidepane.type.choice.accordion' => 'accordion',
+                'mb.core.admin.template.sidepane.type.choice.list' => 'list',
                 'mb.core.admin.template.sidepane.type.choice.unstyled' => '',
             ),
         ));

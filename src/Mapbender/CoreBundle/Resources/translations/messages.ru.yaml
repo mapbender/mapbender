@@ -46,6 +46,9 @@ mb:
   states:
     active: активный
     inactive: неактивный
+    public: публичный
+    not_public: 'не публичный'
+    permissions_defined: 'Для этого экземпляра определены индивидуальные права доступа'
   core:
     featureinfo:
       error:
@@ -133,6 +136,7 @@ mb:
       no_results: 'Не найдено результатов.'
       result_counter: 'Результаты: %count%'
       exportcsv: 'Экспортировать результаты в CSV.'
+      invalid_input_data: 'Недопустимые символы ввода'
       class:
         title: Поиск
         description: 'Настраиваемый элемент поиска '
@@ -354,6 +358,9 @@ mb:
         dialog: Раздел
       admin:
         content: 'Контент'
+        dontShowAgain: 'Опция "Больше не показывать"'
+        dontShowAgainLabel: 'Текст "Больше не показывать"'
+        dontShowAgainDefaultLabel: 'Больше не показывать'
     map:
       class:
         title: Карта
@@ -525,6 +532,7 @@ mb:
             choice:
               tabs: Вкладки
               accordion: Вкладки
+              list: 'список'
               unstyled: 'Неформатированный'
     htmlelement:
       class:
@@ -546,7 +554,7 @@ mb:
         circle: Круг
       inputs:
         label: 'Надпись'
-        radius: 'Радиус'
+        radius: 'Радиус (м)'
       geometry:
         action:
           remove: 'Удалить геометрию'
@@ -599,6 +607,7 @@ mb:
         filetype: 'Неподдерживаемый тип файла:'
         gml: 'Формат GML не может быть определен!'
         projection: 'Не удалось определить проекцию'
+        nogeometry: 'Загруженный файл не содержит допустимых геометрий.'
       admin:
         maxFileSize: 'Максимальный размер файла (MB)'
         helpLabel: 'Подсказка'
@@ -618,6 +627,7 @@ mb:
       admin:
         tooltip: 'Всплывающая подсказка'
         icon: 'Символ'
+        elementIcon: 'символ элемента'
     icon:
       mb:
         about: 'Информация'
@@ -653,6 +663,8 @@ mb:
         map: 'Карта'
         pin_alt: 'Маркер достопримечательности (альтернатива)'
         help: 'Помощь'
+        dataupload: 'загрузка'
+        bookmark: 'закладка'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:
@@ -675,6 +687,14 @@ mb:
         instancelayerform:
           label:
             title: 'Заголовок'
+  error:
+    csrf_failed: 'Ошибка при подключении к сети'
+    session_expired: 'Вы не вошли в систему или ваш сеанс истёк.'
+    relogin: 'Пожалуйста, войдите снова.'
+    relogin_link: 'Перейти к входу'
+    reload: 'Перезагрузить страницу'
+    retry: 'Повторить попытку'
+    not_found: 'Элемент не найден.'
 'Bad credentials.': 'Ошибка аутентификации'
 'User account is locked.': 'Учетная запись заблокирована.'
 'User account is disabled.': 'Учетная запись деактивирована.'

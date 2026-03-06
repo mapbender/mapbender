@@ -1,5 +1,5 @@
-;!(function($) {
-    var configUrl = (function(location) {
+;!(function ($) {
+    var configUrl = (function (location) {
         var search = location.search;
         // Forward query params to config url, but exclude all params handled purely client-side
         var handledParams = Mapbender.MapModelBase.prototype.getHandledUrlParams.call(null);
@@ -24,17 +24,22 @@
         return window.applicationConfigUrl + search;
     })(window.location);
 
-    $.ajax({
-        url: configUrl,
-        contentType: 'application/json'
-    }).done(function (data, textStatus, jqXHR) {
-        Mapbender.configuration = data;
-        $(Mapbender.setup);
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        Mapbender.info("Load application's configuration: " + errorThrown);
-    });
+    const loadConfig = (configUrl) => {
+        $.ajax({
+            url: configUrl,
+            contentType: 'application/json'
+        }).done(function (data, textStatus, jqXHR) {
+            Mapbender.configuration = data;
+            $(Mapbender.setup);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            Mapbender.handleAjaxError(jqXHR, () => loadConfig(configUrl));
+            Mapbender.info("Load application's configuration: " + errorThrown);
+        });
+    }
+    loadConfig(configUrl);
 
-    $(document).one('click', '.js-splashscreen', function(e){
+
+    $(document).one('click', '.js-splashscreen', function (e) {
         $(e.target).closest('.js-splashscreen').remove();
     });
 

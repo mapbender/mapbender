@@ -99,6 +99,16 @@
             <argument type="service" id="translator" />
         </service>
 
+        <service id="mapbender.form_type.simplesearch_admin" class="Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.html_admin" class="Mapbender\CoreBundle\Element\Type\HTMLElementAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
         <service id="mapbender.form_type.scale_display_admin" class="Mapbender\CoreBundle\Element\Type\ScaleDisplayAdminType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
@@ -120,6 +130,16 @@
         </service>
 
         <service id="mapbender.form_type.activity_indicator" class="Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.application_switcher" class="Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType">
+            <tag name="form.type" />
+            <argument type="service" id="translator" />
+        </service>
+
+        <service id="mapbender.form_type.interactivehelp" class="Mapbender\CoreBundle\Element\Type\InteractiveHelpAdminType">
             <tag name="form.type" />
             <argument type="service" id="translator" />
         </service>
@@ -204,6 +224,8 @@
             <argument type="service" id="router" />
             <argument type="service" id="assets._default_package" />
             <argument type="service" id="translator" />
+            <argument type="service" id="fom.security.permission_manager" />
+            <argument type="service" id="security.helper" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="mapbender.source.typedirectory.service" class="%mapbender.source.typedirectory.service.class%">

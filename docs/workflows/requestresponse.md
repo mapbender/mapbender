@@ -85,22 +85,22 @@ Element widgets can construct the callback URL for use in their Ajax calls
 by using their element id and the path provided in the Mapbender variable:
 
 ```javascript
-    (function($) {
-        $.widget('mapbender.mbDemo', {
-            elementUrl: null,
-
-            _create: function() {
-                this.elementUrl = Mapbender.configuration.elementPath + this.element.attr('id') + '/';
-            },
-
-            _doMagic: function() {
-                $.ajax({
-                    url: this.elementUrl + 'myAction',
-                    data: { foo: 'bar' }
-                });
-            }
-        });
-    })(jQuery);
+(function() {
+    class MbDemo extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            this.elementUrl = Mapbender.configuration.elementPath + this.$element.attr('id') + '/';
+        }
+        _doMagic () {
+            $.ajax({
+                url: this.elementUrl + 'myAction',
+                data: { foo: 'bar' }
+            });
+        }
+    }
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.MbDemo = MbDemo;
+})();
 ```
 
 ## Manager Workflow

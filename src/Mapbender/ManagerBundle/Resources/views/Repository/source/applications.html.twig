@@ -1,35 +1,89 @@
-{% set _count = applications | length %}
-<p>{{ 'mb.manager.source.embedded_in_applications' | trans({count: _count}) }}{{ _count ? ':' : '.' }}</p>
+{# This template is used both in the application tab of the source details and in the confirm
+delete popup of both sources and free instances. For the latter case, we don't get a list of applications
+but an array layerset_group (see SourceInstanceController::getApplicationRelationViewData #}
+
+{% if layerset_groups is defined %}
+    {% set _iterator_var = layerset_groups %}
+    {% set _shared_instance_mode = true %}
+{% else %}
+    {% set _iterator_var = applications %}
+    {% set _shared_instance_mode = false %}
+{% endif %}
+
+{% set _count = _iterator_var | length %}
+
+<p>{{ (_shared_instance_mode ? 'mb.manager.source.instance.embedded_in_applications' : 'mb.manager.source.embedded_in_applications') | trans({count: _count}) }}{{ _count ? ':' : '.' }}</p>
 <ul class="list-default">
-{% for application in applications %}
+{% for _application_or_lsg in _iterator_var %}
+    {# in shared instance mode we iterato over layersetgroups, which have the application in a property #}
+    {% if _shared_instance_mode %}
+        {%- set application = _application_or_lsg.application -%}
+    {% else %}
+        {%- set application = _application_or_lsg -%}
+    {% endif %}
+
     <li>{%- set _linkToApp = is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainApplication::ACTION_EDIT'), application) -%}
         {%- if _linkToApp -%}
         <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) ~ '#tabLayers' }}">
         {%- endif -%}
+            {% set ispublic = has_public_access(application) %}&nbsp;
+            <span title="{{ (ispublic ? 'mb.states.public' : 'mb.states.not_public') | trans }}"><i class="fas {{ ispublic ? 'fa-eye' : 'fa-eye-slash' }}"></i></span>&nbsp;&nbsp;
             {{- application.title -}}
-            {%- if not has_public_access(application) -%}&nbsp;<span class="badge bg-info">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
         {%- if _linkToApp -%}
         </a>
         {%- endif -%}
         <ul class="list-default">
-        {%- for layerset in application.getLayersetsWithInstancesOf(source) -%}
-        {%- for instance in layerset.getInstancesOf(source) %}
-        <li>{%- if _linkToApp -%}
-            <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : instance.id}) }}">
-            {%- endif -%}
-                {%- if instance.layerset -%}
-                <span title="{{ 'mb.terms.sourceinstance.bound.singular' | trans }}"><i class="fas fa-anchor"></i></span>&nbsp;
-                {%- else -%}
-                <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ instance.id }}"><i class="fas fa-wifi"></i></span>&nbsp;#{{ instance.id }}:&nbsp;
-                {%- endif -%}
-                {{ instance.title | default('#' ~ instance.id) }}
-                ({{ "mb.terms.layerset.singular" | trans }} {{ layerset.title | default(layerset.id) }})
-                {%- if not instance.enabled -%}&nbsp;<span class="badge">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
-            {%- if _linkToApp -%}
-                </a>
-            {%- endif -%}
-        </li>
-        {%- endfor -%}
+
+        {# for "normal mode", show first the regular instances, then the shared instances #}
+        {% if not _shared_instance_mode %}
+            {%- for layerset in application.getLayersetsWithInstancesOf(source) -%}
+            {%- for instance in layerset.getInstancesOf(source, false) %}
+                <li>{%- if _linkToApp -%}
+                    <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : instance.id}) }}">
+                    {%- endif -%}
+                        <span title="{{ 'mb.terms.sourceinstance.bound.singular' | trans }}"><i class="fas fa-anchor"></i></span>&nbsp;
+                        {% if mapbender_has_permissions(instance) %}
+                            <span title="{{ 'mb.states.permissions_defined' | trans }}"><i class="fas fa-key"></i></span>&nbsp;
+                        {% endif %}
+
+                        {{ instance.title | default('#' ~ instance.id) }}
+                        ({{ "mb.terms.layerset.singular" | trans }} {{ layerset.title | default(layerset.id) }})
+                        {%- if not instance.enabled -%}&nbsp;<span class="badge">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
+                    {%- if _linkToApp -%}
+                        </a>
+                    {%- endif -%}
+                </li>
+            {%- endfor -%}
+            {%- endfor -%}
+        {% endif %}
+
+        {%- for _layerset_or_ig in _shared_instance_mode ? _application_or_lsg.instance_groups : application.getLayersetsWithInstancesOf(source) -%}
+            {% if _shared_instance_mode %}
+                {%- set layerset = _layerset_or_ig.layerset -%}
+            {% else %}
+                {%- set layerset = _layerset_or_ig -%}
+            {% endif %}
+
+            {%- for assignment in _shared_instance_mode ? _layerset_or_ig.instance_assignments : layerset.getAssignedReusableInstanceAssignmentsOf(source) %}
+                <li>{%- if _linkToApp -%}
+                    <a href="{{ path('mapbender_manager_repository_instance', {'slug': application.slug, 'instanceId' : assignment.instance.id}) }}">
+                    {%- endif -%}
+                        <span title="{{ 'mb.terms.sourceinstance.reusable.singular' | trans }} #{{ assignment.instance.id }}">
+                            <i class="fas fa-wifi"></i>
+                        </span>&nbsp;{% if not _shared_instance_mode %}#{{ assignment.instance.id }}:&nbsp;{% endif %}
+
+                        {% if mapbender_has_permissions(assignment) %}
+                            <span title="{{ 'mb.states.permissions_defined' | trans }}"><i class="fas fa-key"></i></span>&nbsp;
+                        {% endif %}
+
+                        {{ assignment.instance.title | default('#' ~ assignment.instance.id) }}
+                        ({{ "mb.terms.layerset.singular" | trans }} {{ layerset.title | default(layerset.id) }})
+                        {%- if not assignment.enabled -%}&nbsp;<span class="badge bg-info">{{ "mb.states.inactive" | trans }}</span>{%- endif -%}
+                    {%- if _linkToApp -%}
+                        </a>
+                    {%- endif -%}
+                </li>
+            {%- endfor -%}
         {%- endfor -%}
         </ul>
     </li>

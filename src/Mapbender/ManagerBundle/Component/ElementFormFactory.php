@@ -6,6 +6,7 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
+use Mapbender\CoreBundle\Element\Type\IconClassType;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType;
@@ -128,6 +129,12 @@ class ElementFormFactory
             } else {
                 $form->get('configuration')->add('anchor', HiddenType::class);
             }
+        }
+        if ($regionName && str_contains($regionName, 'sidepane')) {
+            $form->get('configuration')->add('element_icon', IconClassType::class, array(
+                'required' => false,
+                'label' => 'mb.core.basebutton.admin.elementIcon',
+            ));
         }
     }
 

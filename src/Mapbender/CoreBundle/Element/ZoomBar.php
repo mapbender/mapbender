@@ -41,7 +41,7 @@ class ZoomBar extends AbstractElementService implements FloatingElement
     {
         return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.zoombar.js',
+                '@MapbenderCoreBundle/Resources/public/elements/MbZoombar.js',
             ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/zoombar.scss',
@@ -73,7 +73,7 @@ class ZoomBar extends AbstractElementService implements FloatingElement
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbZoomBar';
+        return 'MbZoombar';
     }
 
     public function getView(Element $element)

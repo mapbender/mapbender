@@ -6,6 +6,9 @@ mb:
         noResult: Nenhuma rota pôde ser encontrada.
         format: Formato não suportado.
         icon: Nenhum ícone configurado.
+        invalidCoordinates: Coordenadas inválidas fornecidas!
+        noValidPoints: Nenhum ponto válido para roteamento.
+        serviceUnavailable: O serviço de roteamento não está disponível
       graphhopper:
         400: Algo estava errado na sua solicitação (muito poucos ou muitos pontos)
         401: Autenticação necessária! Registre-se e obtenha uma chave de API válida em https://www.graphhopper.com/developers/.

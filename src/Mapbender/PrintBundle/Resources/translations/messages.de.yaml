@@ -21,6 +21,51 @@ mb:
       tab:
         settings: Einstellungen
         joblist: Druckaufträge
+      batchprint:
+        title: 'Titel'
+        btn:
+          submit: 'Seriendruck starten'
+        track:
+          upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Strecke hochladen (KML, GeoJSON, GPX, GML)'
+          load: 'Datei laden'
+          choosefile: 'Datei auswählen'
+          clear: 'Strecke entfernen'
+          placeframes: 'Rahmen entlang Strecke platzieren'
+          adjustframes: 'Rahmendrehung anpassen'
+          overlap: 'Rahmenüberlappung'
+          selected: 'Ausgewählt'
+          loaded: 'Geladen'
+          error: 'Fehler'
+          readerror: 'Fehler beim Lesen der Datei.'
+          placed: '%count% Rahmen entlang der Strecke platziert.'
+          alert:
+            selectfile: 'Bitte wählen Sie zuerst eine Datei aus.'
+            validfile: 'Bitte wählen Sie eine gültige Datei aus (KML, GeoJSON, GPX, GML).'
+            error: 'Fehler beim Laden der Datei.'
+            readerror: 'Fehler beim Lesen der Datei.'
+            loadfirst: 'Bitte laden Sie zuerst eine Streckendatei.'
+            invalidgeometry: 'Ungültige Geometrie. LineString erwartet.'
+        overlap:
+          outofbounds: 'Überlappungswert %value%% liegt außerhalb des gültigen Bereichs (0-50%). Bitte geben Sie einen Wert zwischen 0 und 50 ein.'
+        tracking:
+          title: 'Druckrahmen'
+          no: 'Nr.'
+          scale: 'Maßstab'
+          template: 'Vorlage'
+          quality: 'Qualität'
+          rotation: 'Drehung'
+          delete: 'Löschen'
+          deleteall: 'Alle Rahmen löschen'
+          empty: 'Keine Druckrahmen vorhanden. Klicken Sie in die Karte, um Druckrahmen hinzuzufügen.'
+        confirm:
+          create: 'Es werden %count% Rahmen erstellt. Fortfahren?'
+          deleteall: 'Alle %count% Rahmen löschen?'
+        alldeleted: 'Alle Rahmen gelöscht.'
+        alert:
+          noframes: 'Bitte platzieren Sie mindestens einen Druckrahmen auf der Karte.'
+          error: 'Fehler beim Erstellen des Druckauftrags.'
       joblist:
         header:
           id: '#'
@@ -60,6 +105,10 @@ mb:
         quality: Qualität
       class:
         title: Druck
+    batchprintclient:
+      class:
+        title: 'Seriendruck'
+        description: 'Seriendruck - Platzierung mehrerer Druckrahmen und Ausgabe in einem Druckauftrag'
     printclienttemplate:
       admin:
         template: Vorlage
@@ -69,6 +118,19 @@ mb:
         label: Bezeichnung
     admin:
       printclient:
+        renderMode:
+          label: 'Modus'
+          choice:
+            direct: 'Direkt'
+            queued: 'Warteschlange'
+        queueAccess:
+          label: 'Warteschlange'
+          choice:
+            global: 'global'
+            private: 'privat'
         label:
           qualitylevels: Qualitätsstufen
           templates: Vorlagen
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Hochladen von Geodaten aktivieren'

@@ -53,4 +53,6 @@ interface ElementServiceFrontendInterface extends MinimalInterface
      * @return array
      */
     public function getClientConfiguration(Element $element);
+
+    public static function getDefaultIcon();
 }

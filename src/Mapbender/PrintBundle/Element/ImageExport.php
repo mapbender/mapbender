@@ -56,7 +56,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
      */
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.mbImageExport';
+        return 'MbImageExport';
     }
 
     /**
@@ -66,7 +66,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     {
         return array(
             'js' => array(
-                '@MapbenderPrintBundle/Resources/public/mapbender.element.imageExport.js',
+                '@MapbenderPrintBundle/Resources/public/MbImageExport.js',
             ),
             'css' => array(
                 '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',
@@ -84,6 +84,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     public static function getDefaultConfiguration()
     {
         return array(
+            'element_icon' => self::getDefaultIcon(),
         );
     }
 
@@ -145,7 +146,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
         // resolve tunnel requests
         foreach (ArrayUtil::getDefault($data, 'layers', array()) as $ix => $layerData) {
             if (!empty($layerData['url'])) {
-                $data['layers'][$ix]['url'] = $this->sourceUrlProcessor->getInternalUrl($layerData['url']);
+                $data['layers'][$ix]['url'] = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $layerData['url']);
             }
         }
         return $data;
@@ -167,4 +168,9 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
                 throw new \InvalidArgumentException("Unsupported format $format");
         }
     }
+    public static function getDefaultIcon()
+    {
+        return 'icon-image-export';
+    }
+
 }

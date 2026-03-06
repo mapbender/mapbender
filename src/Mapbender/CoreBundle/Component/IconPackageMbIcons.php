@@ -40,10 +40,10 @@ class IconPackageMbIcons implements IconPackageInterface
         return ['components/mapbender-icons/style.css'];
     }
 
-    public function getIconMarkup($iconCode)
+    public function getIconMarkup($iconCode, $additionalClass = '')
     {
         return HtmlUtil::renderTag('span', '', array(
-            'class' => 'mb-glyphicon ' . $iconCode,
+            'class' => 'mb-glyphicon ' . $iconCode . ' ' . $additionalClass
         ));
     }
 

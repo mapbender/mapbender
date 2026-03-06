@@ -13,7 +13,7 @@ use Mapbender\CoreBundle\Entity\SupportsProxy;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wmts_wmtsinstance')]
-class WmtsInstance extends SourceInstance implements SupportsProxy, SupportsOpacity
+class WmtsInstance extends SourceInstance implements SupportsOpacity
 {
 
     #[ORM\ManyToOne(targetEntity: WmtsSource::class, cascade: ['refresh'], inversedBy: 'instances')]

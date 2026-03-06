@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CopyrightAdminType extends AbstractType
 {
+
     /**
      * @inheritdoc
      */
@@ -42,6 +43,15 @@ class CopyrightAdminType extends AbstractType
                     new NotBlank(),
                     new HtmlTwigConstraint(),
                 ),
+            ))
+            ->add('dontShowAgain', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                'required' => false,
+                'label' => 'mb.core.copyright.admin.dontShowAgain',
+            ))
+            ->add('dontShowAgainLabel', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                'required' => false,
+                'label' => 'mb.core.copyright.admin.dontShowAgainLabel',
+                'data' => 'mb.core.copyright.admin.dontShowAgainDefaultLabel',
             ))
         ;
     }

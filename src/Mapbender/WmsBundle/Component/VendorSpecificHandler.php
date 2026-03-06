@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * VendorSpecificHandler class for handling of VendorSpecific.
  *
  * @author Paul Schmidt
- * @deprecated
  * @internal
  *
  * Used by InstanceTunnelService and WmsInstanceConfigGenerator
@@ -55,7 +54,7 @@ class VendorSpecificHandler
 
     public function isValuePublic(VendorSpecific $vendorspec)
     {
-        return $vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE || !$vendorspec->getHidden();
+        return !$vendorspec->getHidden();
     }
 
     /**

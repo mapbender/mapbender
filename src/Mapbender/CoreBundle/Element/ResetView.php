@@ -22,7 +22,7 @@ class ResetView extends ButtonLike
 
     public function getWidgetName(Element $element)
     {
-        return 'mapbender.resetView';
+        return 'MbResetView';
     }
 
     public static function getType()
@@ -39,8 +39,8 @@ class ResetView extends ButtonLike
             'js' => array(),
         );
         $requirements['js'] = \array_merge($requirements['js'], array(
-            '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
-            '@MapbenderCoreBundle/Resources/public/element/resetView.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbButton.js',
+            '@MapbenderCoreBundle/Resources/public/elements/MbResetView.js',
         ));
         return $requirements;
     }

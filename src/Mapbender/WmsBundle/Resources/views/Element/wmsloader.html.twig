@@ -1,22 +1,16 @@
 <p>{{ "mb.wms.wmsloader.dialog.label.example"|trans }}: {{ example_url }}</p>
 <form action="#">
-    <div class="row mb-3">
-        <label class="col-form-label col-4 col-xs-4 required" for="loadWmsUrl">{{ "mb.wms.wmsloader.dialog.label.wmsurl"|trans}}:</label>
-        <div class="col-8 col-xs-8">
-            <input name="loadWmsUrl" class="form-control" type="text" required="required" />
-        </div>
+    <div class="mb-3">
+        <label class="form-label required" for="loadWmsUrl">{{ "mb.wms.wmsloader.dialog.label.wmsurl"|trans}}:</label>
+        <input name="loadWmsUrl" class="form-control" type="text" required="required" />
     </div>
-    <div class="row mb-3">
-        <label class="col-form-label col-4 col-xs-4" for="loadWmsUser">{{ "mb.wms.wmsloader.dialog.label.wmsuser"|trans}}:</label>
-        <div class="col-8 col-xs-8">
-            <input name="loadWmsUser" class="form-control" type="text" autocomplete="false" />
-        </div>
+    <div class="mb-3">
+        <label class="form-label" for="loadWmsUser">{{ "mb.wms.wmsloader.dialog.label.wmsuser"|trans}}:</label>
+        <input name="loadWmsUser" class="form-control" type="text" autocomplete="false" />
     </div>
-    <div class="row mb-3">
-        <label class="col-form-label col-4 col-xs-4" for="loadWmsPass">{{ "mb.wms.wmsloader.dialog.label.wmspass"|trans}}:</label>
-        <div class="col-8 col-xs-8">
-            <input name="loadWmsPass" class="form-control" type="password" autocomplete="new-password" />
-        </div>
+    <div class="mb-3">
+        <label class="form-label" for="loadWmsPass">{{ "mb.wms.wmsloader.dialog.label.wmspass"|trans}}:</label>
+        <input name="loadWmsPass" class="form-control" type="password" autocomplete="new-password" />
     </div>
     <div class="wmsloader-action-buttons">
         <button type="submit" class="btn btn-sm btn-primary -js-submit">{{ 'mb.actions.add' | trans }}</button>

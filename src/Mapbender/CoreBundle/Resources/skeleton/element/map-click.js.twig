@@ -1,18 +1,18 @@
-(function($) {
-
-$.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbBaseButton, {
-    _create: function() {
-        var self = this;
-        $(document).on('mbmapclick', function(event, data) {
-            if (self.isActive()) {
-                alert([
-                    "You clicked on",
-                    data.coordinate.join(" / ") + ' (projected)',
-                    data.pixel.join(" / ") + ' (pixel)'
-                ].join("\n"));
-            }
-        });
+(function() {
+    class Mb{{ widgetName }} extends MapbenderElement {
+        constructor(configuration, $element) {
+            super(configuration, $element);
+            $(document).on('mbmapclick', (event, data) => {
+                if (this.isActive()) {
+                    alert([
+                        'You clicked on',
+                        data.coordinate.join(' / ') + ' (projected)',
+                        data.pixel.join(' / ') + ' (pixel)'
+                    ].join("\n"));
+                }
+            });
+        }
     }
-});
-
-})(jQuery);
+    window.Mapbender.Element = window.Mapbender.Element || {};
+    window.Mapbender.Element.Mb{{ widgetName }} = Mb{{ widgetName }};
+})();

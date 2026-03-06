@@ -1,3 +1,58 @@
+## next feature release
+Security:
+* Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+
+Features:
+* [Design] Comprehensive frontend redesign, including several optimisations mobile screens (Layertree: [#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774); Simple Search: [#PR1767](https://github.com/mapbender/mapbender/pull/1767); Sketch: [#PR1768](https://github.com/mapbender/mapbender/pull/1768); Data Upload: [#PR1775](https://github.com/mapbender/mapbender/pull/1775); Popup and mobile optimisations: [#PR1782](https://github.com/mapbender/mapbender/pull/1782))
+* [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
+* [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
+* [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
+* [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
+* [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
+* [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
+* [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
+
+Bugfixes:
+* When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+
+Other:
+* [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
+* In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
+
+## v4.2.5
+Security:
+* [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* [WMS] Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+
+Features:
+* [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
+* Show message after asynchronous requests for expired sessions with option to log in in a new window and retry ([#PR1823](https://github.com/mapbender/mapbender/pull/1823))
+
+Bugfixes:
+* [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
+* When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
+* [Layertree] Improve performance of layertree-actions in layertrees with many WMS
+* Support adding the same shared instance more than once in an application ([#PR1821](https://github.com/mapbender/mapbender/pull/1821))
+
+Other:
+* [ViewManager] Load Views on demand with Ajax
+
+
+## v4.2.4
+Bugfixes:
+* [ViewManager] Fix invalid csrf token in production mode ([#PR1798](https://github.com/mapbender/mapbender/pull/1798)) 
+* [Print] Fix print when a file with an empty geometry was uploaded earlier ([#PR1795](https://github.com/mapbender/mapbender/pull/1795)) 
+* [DataUpload] Show message when uploading file without valid geometries ([#PR1797](https://github.com/mapbender/mapbender/pull/1797)) 
+* [Manager] Fix search did not work for elements with soft hyphens ([#PR1803](https://github.com/mapbender/mapbender/pull/1803)) 
+* [Routing] Restrict sorting of intermediate points to y axis ([#PR1802](https://github.com/mapbender/mapbender/pull/1802)) 
+* [LayerTree] Fix layerfilter highlighting after toggling layers via checkbox ([#PR1804](https://github.com/mapbender/mapbender/pull/1804)) 
+
+
+## v4.2.3
+Bugfixes:
+* [Legend] Fix legend urls within a style were not proxified ([#PR1787](https://github.com/mapbender/mapbender/pull/1787))
+* [Print] Fix proxified legend urls were not correctly resolved ([#PR1788](https://github.com/mapbender/mapbender/pull/1788))
+
 ## v4.2.3
 Security:
 * [Password/Registration] Replace weak `hash('sha1', rand())` token generation with `bin2hex(random_bytes(20))` in `PasswordController`, `RegistrationController` and `UserSubscriber`

@@ -1,0 +1,9 @@
+<div class="hidden -js-popup-content">
+    {{- content | raw -}}
+    {% if dontShowAgain %}
+        <div class="form-check mt-5">
+            <input type="checkbox" class="form-check-input copyright-dont-show-again">
+            <label class="form-check-label">{{ dontShowAgainLabel | trans }}</label>
+        </div>
+    {% endif %}
+</div>

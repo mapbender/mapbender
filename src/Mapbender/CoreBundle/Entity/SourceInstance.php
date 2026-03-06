@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use FOM\UserBundle\Security\Permission\YamlDefinedPermissionEntity;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 
 /**
@@ -13,7 +14,7 @@ use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\Table(name: 'mb_core_sourceinstance')]
-abstract class SourceInstance extends SourceInstanceAssignment
+abstract class SourceInstance extends SourceInstanceAssignment implements YamlDefinedPermissionEntity
 {
     /**
      * @var integer $id
@@ -34,6 +35,10 @@ abstract class SourceInstance extends SourceInstanceAssignment
      */
     #[ORM\OneToMany(mappedBy: 'instance', targetEntity: ReusableSourceInstanceAssignment::class, cascade: ['remove'], orphanRemoval: true)]
     protected $reusableassignments;
+
+
+    /** @var string[]|null */
+    protected ?array $yamlRoles = null;
 
     final public function getInstance()
     {
@@ -125,6 +130,22 @@ abstract class SourceInstance extends SourceInstanceAssignment
     public function isBasesource()
     {
         return $this->basesource;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getYamlRoles(): ?array
+    {
+        return $this->yamlRoles;
+    }
+
+    /**
+     * @param string[]|null $yamlRoles
+     */
+    public function setYamlRoles(?array $yamlRoles): void
+    {
+        $this->yamlRoles = $yamlRoles;
     }
 
     /**

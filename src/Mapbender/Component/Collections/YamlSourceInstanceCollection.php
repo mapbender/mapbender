@@ -29,6 +29,7 @@ class YamlSourceInstanceCollection extends AbstractLazyCollection
             $instance = $factory->fromConfig($instanceDefinition, $instanceId);
             $instance->setLayerset($this->layerset);
             $instance->setWeight($weight++);
+            $instance->setYamlRoles(array_key_exists('roles', $instanceDefinition) ? $instanceDefinition['roles'] : array());
             $this->collection->add($instance);
         }
     }

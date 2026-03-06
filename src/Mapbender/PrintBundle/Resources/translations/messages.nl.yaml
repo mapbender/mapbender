@@ -16,3 +16,91 @@ mb:
         export: export
         jpeg: jpeg
         png: png
+    printclient:
+      btn:
+        batchprint: 'Start batchafdrukken'
+      batchprint:
+        btn:
+          submit: 'Start batchafdrukken'
+        track:
+          upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Traject uploaden (KML, GeoJSON, GPX, GML)'
+          load: 'Bestand laden'
+          choosefile: 'Bestand kiezen'
+          clear: 'Traject verwijderen'
+          placeframes: 'Plaats frames langs het traject'
+          adjustframes: 'Framerotatie aanpassen'
+          overlap: 'Frame-overlapping'
+          selected: 'Geselecteerd'
+          loaded: 'Geladen'
+          error: 'Fout'
+          readerror: 'Fout bij het lezen van het bestand'
+          placed: '%count% frames geplaatst langs het traject'
+          alert:
+            selectfile: 'Selecteer eerst een bestand.'
+            validfile: 'Selecteer een geldig bestand (KML, GeoJSON, GPX, GML).'
+            error: 'Fout bij het laden van het bestand'
+            readerror: 'Fout bij het lezen van het bestand.'
+            loadfirst: 'Laad eerst een trajectbestand.'
+            invalidgeometry: 'Ongeldige geometrie. LineString verwacht.'
+        overlap:
+          outofbounds: 'Overlappingswaarde %value%% ligt buiten het geldige bereik (0-50%). Voer een waarde tussen 0 en 50 in.'
+        tracking:
+          title: 'Afdrukframes'
+          no: 'Nr.'
+          scale: 'Schaal'
+          template: 'Sjabloon'
+          quality: 'Kwaliteit'
+          rotation: 'Rotatie'
+          delete: 'Verwijderen'
+          deleteall: 'Alle frames verwijderen'
+          empty: 'Geen afdrukframes beschikbaar. Klik op de kaart om afdrukframes toe te voegen.'
+        confirm:
+          deleteall: 'Alle %count% frames verwijderen?'
+        alldeleted: 'Alle frames verwijderd'
+        alert:
+          noframes: 'Plaats ten minste één afdrukframe op de kaart.'
+          error: 'Fout bij het aanmaken van de afdrukopdracht'
+  core:
+    printclient:
+      admin:
+        scales: 'Schalen (kommagescheiden)'
+        fileprefix: Bestandsprefix
+        optionalfields: 'Optionele velden'
+        replacepattern: 'Patroon vervangen'
+        templates: Sjablonen
+        qualitylevels: Kwaliteitsniveaus
+      label:
+        quality: Kwaliteit
+      class:
+        title: Afdrukken
+    batchprintclient:
+      class:
+        title: 'Batchafdrukmodus'
+        description: 'Batchafdrukmodus - Plaatsing van meerdere afdrukframes en uitvoer in één afdrukopdracht'
+    printclienttemplate:
+      admin:
+        template: Sjabloon
+        label: Label
+    printclientquality:
+      admin:
+        label: Label
+    admin:
+      printclient:
+        renderMode:
+          label: 'Modus'
+          choice:
+            direct: 'Direct'
+            queued: 'In wachtrij'
+        queueAccess:
+          label: 'Wachtrij'
+          choice:
+            global: 'globaal'
+            private: 'privé'
+        label:
+          qualitylevels: Kwaliteitsniveaus
+          templates: Sjablonen
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Geobestand-upload inschakelen'

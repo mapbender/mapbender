@@ -111,5 +111,9 @@
             <argument>%mapbender.print.queueable%</argument>
             <tag name="form.type" />
         </service>
+        <service id="mapbender.form_type.element.batchprintclient" class="Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType">
+            <argument>%mapbender.print.queueable%</argument>
+            <tag name="form.type" />
+        </service>
     </services>
 </container>

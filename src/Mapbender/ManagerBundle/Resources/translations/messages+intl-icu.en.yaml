@@ -46,6 +46,8 @@ mb:
       screentype:
         mobile: 'Show on mobile screens'
         desktop: 'Show on desktop screens'
+      openInline: 'Open inline'
+      openInlineHelp: 'For inline elements, the content is displayed directly in the side pane or map area without a heading.'
     sidepane:
       width: Width
       resizable: Resizable
@@ -108,6 +110,7 @@ mb:
         max_input_vars_exceeded: 'PHP setting max_input_vars too low for the number of layers in this instance.'
         update_successful: 'Your instance has been updated.'
         converted_to_shared: 'The instance has been converted to a shared instance.'
+        security: 'Edit access rights. If no rights are set (gray icon), everyone with access to the application can also see the data source. If rights are set (red icon), only the configured roles can see the data source.'
       template: Template
       application:
         view: View
@@ -297,3 +300,4 @@ mb:
         importfile: 'Import file'
   actions:
     secureelement: 'Restrict element access'
+    securesourceinstance: 'Restrict access to the data source'

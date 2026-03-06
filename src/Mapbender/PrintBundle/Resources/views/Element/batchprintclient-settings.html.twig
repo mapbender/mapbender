@@ -1,0 +1,90 @@
+{% extends '@MapbenderPrint/Element/printclient-settings.html.twig' %}
+
+{# Override the form bottom to add batch print specific elements #}
+{% block printclient_form_bottom %}
+    {{ parent() }}
+    
+    {% if enableGeofileUpload %}
+    {# Geospatial File Upload (KML, GeoJSON) #}
+    <div class="form-group no-gutters geofile-upload -fn-geofile-upload">
+        <label class="geofile-upload-label">{{ 'mb.print.printclient.batchprint.track.upload' | trans }}</label>
+        <div>
+            <div class="geofile-input-wrapper">
+                <button type="button" class="btn btn-light btn-sm geofile-custom-button -fn-geofile-custom-button">
+                    {{ 'mb.print.printclient.batchprint.geofile.choosefile' | trans }}
+                </button>
+                <input type="file" 
+                       name="geofile" 
+                       accept=".kml,.geojson,.json,.gpx,.gml,.xml,application/vnd.google-earth.kml+xml,application/geo+json,application/gpx+xml,application/gml+xml"
+                       class="geofile-file-input -fn-geofile-file-input"
+                       style="display: none;">
+            </div>
+            <div class="geofile-controls -fn-geofile-controls">
+                <div class="geofile-status-wrapper">
+                    <small class="geofile-status -fn-geofile-status"></small>
+                    <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-clear-geofile-button" 
+                       title="{{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}"></i>
+                </div>
+                <div class="form-check geofile-adjust-wrapper">
+                    <input type="checkbox" class="form-check-input -fn-adjust-frames-checkbox" id="adjust-frames-checkbox">
+                    <label class="form-check-label" for="adjust-frames-checkbox">
+                        {{ 'mb.print.printclient.batchprint.geofile.adjustframes' | trans }}
+                    </label>
+                </div>
+                <div class="geofile-overlap-section">
+                    <label class="geofile-overlap-label">
+                        {{ 'mb.print.printclient.batchprint.geofile.overlap' | trans }}
+                    </label>
+                    <input type="number" 
+                           name="frame_overlap" 
+                           class="form-control geofile-overlap-input -fn-frame-overlap-input"
+                           value="10"
+                           min="0"
+                           max="50"
+                           step="1">
+                    <span>%</span>
+                </div>
+                <div class="geofile-button-wrapper">
+                    <button type="button" 
+                            class="btn btn-light btn-sm -fn-place-frames-button">
+                        {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
+                    </button>
+                    <i class="fa fa-spinner fa-spin -fn-geofile-spinner" style="display: none; margin-left: 8px;"></i>
+                </div>
+                <small class="geofile-place-status -fn-geofile-place-status"></small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {# Frame tracking table #}
+    <div class="form-group no-gutters frame-table -fn-frame-table">
+        <div>
+            <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
+            <div class="frame-table-buttons">
+                <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-delete-all-frames" 
+                   title="{{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}"></i>
+            </div>
+        </div>
+        <div class="frame-table-empty-state -fn-frame-table-empty">
+            <p>{{ 'mb.print.printclient.batchprint.tracking.empty' | trans }}</p>
+        </div>
+        <div class="frame-table-content -fn-frame-table-content">
+            <table class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.scale' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.rotation' | trans }}</th>
+                        <th>{{ 'mb.print.printclient.batchprint.tracking.delete' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Rows will be added dynamically by JavaScript #}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

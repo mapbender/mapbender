@@ -1,7 +1,5 @@
 $backgroundColor: #fff !default;
-$sidepaneBackground: $backgroundColor !default;
 $sidepaneBorderColor: #ccc !default;
-$sidepaneTextColor: inherit !default;
 
 $toolBarBackgroundColor: #eee !default;
 $toolBarButtonActiveBackgroundColor: $ciColor !default;
@@ -23,6 +21,7 @@ $hoverEffects: true !default;
 @import "modules/checkbox";
 @import "modules/dropdown";
 @import "modules/dateselector";
+@import "modules/sidepane";
 
 /* ------------------------------------------------------------- MISC */
 .olControlZoom {
@@ -128,6 +127,15 @@ ul.toolBar, .toolBar > ul {
     margin-bottom: 0;
   }
   .menu-wrapper {
+    .btn {
+        color: var(--bs-secondary-color);
+        border: none;
+        .iconBig {
+          width: 1.25em;
+          text-align: center;
+          display: inline-block;
+        }
+    }
     .dropdown-menu {
       font-size: inherit;
       line-height: 1.25;
@@ -157,10 +165,24 @@ ul.toolBar, .toolBar > ul {
       }
     }
   }
+  .menu-wrapper {
+    position: relative;
+  }
+
   .menu-wrapper.open {
     .dropdown-menu {
       display: block;
+      border: none;
+      background: $toolBarTopBackground;
+      position: fixed;
       right: 0;
+      left: auto;
+      min-width: 200px;
+      z-index: 1000;
+      top: var(--dropdown-top, 50px);
+      max-height: var(--dropdown-menu-max-height, 600px);
+      overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 }
@@ -178,82 +200,6 @@ ul.toolBar, .toolBar > ul {
     width: auto;
     vertical-align: inherit;
   }
-}
-
-
-
-/* --------------------------------------------------------- SIDEPANE */
-.sidePane {
-  &.left, &.right {
-    // undo historical float classes
-    float: none;
-  }
-  color: $sidepaneTextColor;
-  background: $sidepaneBackground;
-  height: 100%;
-  overflow: visible;
-  width: 350px;
-  position: absolute;
-  z-index: 3;
-
-  border-bottom: 1px solid $sidepaneBorderColor;
-  .toggleSideBar {
-    font-size: 1.5rem;
-    padding: 5px;
-    position: absolute;
-    top: 0;
-    border-radius: $radius;
-  }
-
-  &.left {
-    left: 0;
-    border-right: 1px solid $sidepaneBorderColor;
-    .toggleSideBar {
-      left: 0;
-      margin-left: 100%;
-    }
-  }
-
-  // style for the right side pane
-  &.right {
-    right: 0;
-    border-left: 1px solid $sidepaneBorderColor;
-    .toggleSideBar {
-      right: 0;
-      margin-right: 100%;
-    }
-  }
-  .sideContent{
-    padding:$space;
-    height: 100%;
-    > .auto-scroll-v {
-      // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
-      height: 100%;
-    }
-  }
-}
-
-.sidePane.resizable {
-    touch-action: pan-y;
-}
-
-.sidePane.resizable::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 3px;
-    height: 100%;
-    cursor: ew-resize;
-}
-
-.sidePane.left.resizable::after {
-    border-left: 1px solid #ccc;
-    right: 0;
-}
-
-.sidePane.right.resizable::after {
-    border-right: 1px solid #ccc;
-    left: 0;
 }
 
 .metadataDialog{
@@ -274,6 +220,12 @@ ul.toolBar, .toolBar > ul {
     >.content-toggle i {
       line-height: inherit;
     }
+  }
+  .popupHead{
+    border-bottom: none;
+  }
+  .container {
+    margin-top: 2em;
   }
 
   table {
@@ -317,7 +269,7 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
   }
 }
 
-.collapse-toggle {
+.toggleOverview.collapse-toggle {
   $buttonTextColor: $lightFontColor !default;
   background: $buttonFirstColor;
   color: $buttonTextColor;
@@ -434,3 +386,33 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
    background-color: $backgroundColor;
 }
 
+.element-icon-wrapper {
+    display: inline-block;
+    width: 2rem;
+    margin-right: 5px;
+    text-align: center;
+    font-size: 1.5rem;
+    transform: translateY(1px);
+}
+
+.element-title {
+    margin-bottom: 4px !important;
+    user-select: none;
+    cursor: pointer;
+    padding: 5px var(--sidepane-padding-right) 5px var(--sidepane-padding-left) !important;
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--sidepane-text-color);
+
+    .sidePane &:hover {
+        background: var(--sidepane-hover-color);
+    }
+
+    &.active {
+        color: var(--primary);
+
+        .sidePane & {
+            background: var(--sidepane-active-background-color);
+        }
+    }
+}
