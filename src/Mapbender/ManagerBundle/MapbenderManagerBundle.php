@@ -37,8 +37,13 @@ class MapbenderManagerBundle extends Bundle
             ->setWeight(20)
         ;
 
+        $styleMenu = MenuItem::create('Styles', 'mapbender_manager_style_index')
+            ->setWeight(25)
+        ;
+
         $container->addCompilerPass(new RegisterMenuRoutesPass($appMenu));
         $container->addCompilerPass(new RegisterMenuRoutesPass($sourceMenu));
+        $container->addCompilerPass(new RegisterMenuRoutesPass($styleMenu));
 
         // NOTE: TYPE_AFTER_REMOVING is the final phase of the container build.
         // The default TYPE_BEFORE_OPTIMIZATION is the very first phase where passes can be

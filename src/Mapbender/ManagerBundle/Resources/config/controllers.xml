@@ -86,5 +86,14 @@
                 <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
         </service>
+        <service id="Mapbender\ManagerBundle\Controller\StyleController"
+                 class="Mapbender\ManagerBundle\Controller\StyleController"
+                 public="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <tag name="container.service_subscriber" />
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+        </service>
     </services>
 </container>

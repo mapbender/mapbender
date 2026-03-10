@@ -1,0 +1,31 @@
+{% extends '@MapbenderManager/manager.html.twig' %}
+{%- set title = 'Styles' -%}
+
+{% block manager_content %}
+    <div class="list-head">
+        <div class="row">
+            <div class="col-sm-5 col-xs-12 col-12">
+                <a class="btn btn-outline-primary content-box content-box-md" href="{{ path('mapbender_manager_style_new') }}">
+                    <i class="fas fa-plus fa-lg"></i>
+                    <span>New Style</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <ul class="list-group mt-3">
+        {% for style in styles %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ style.name ?? 'Style #' ~ style.id }} {% if style.sourceType %}({{ style.sourceType }}{% if style.sourceId %} #{{ style.sourceId }}{% endif %}){% endif %}</span>
+                <span>
+                    <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
+                    <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this style?');">
+                        <button type="submit" class="btn btn-light btn-sm" title="Delete"><i class="far fa-trash-can"></i></button>
+                    </form>
+                </span>
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">No styles configured yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

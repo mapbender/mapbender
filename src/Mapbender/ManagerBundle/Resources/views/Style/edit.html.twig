@@ -1,0 +1,17 @@
+{% extends '@MapbenderManager/manager.html.twig' %}
+{%- set title = style.id ? 'Edit Style #' ~ style.id : 'New Style' -%}
+
+{% block manager_content %}
+    <form method="post" action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ style.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="style" class="form-label">Mapbox Style (JSON)</label>
+            <textarea class="form-control" id="style" name="style" rows="20" style="font-family: monospace;">{{ style.style }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}
