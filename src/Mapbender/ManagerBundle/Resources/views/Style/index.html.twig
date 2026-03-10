@@ -17,9 +17,16 @@
         {% for style in styles %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>{{ style.name ?? 'Style #' ~ style.id }} {% if style.sourceType %}({{ style.sourceType }}{% if style.sourceId %} #{{ style.sourceId }}{% endif %}){% endif %}</span>
-                <span>
-                    <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
-                    <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this style?');">
+                <span class="d-flex flex-nowrap gap-1">
+                    {% if style.sourceType == 'manual' %}
+                        <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
+                    {% else %}
+                        <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="View"><i class="fas fa-eye"></i></a>
+                    {% endif %}
+                    <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
+                        <button type="submit" class="btn btn-light btn-sm" title="Copy"><i class="fas fa-copy"></i></button>
+                    </form>
+                    <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('Delete this style?');">
                         <button type="submit" class="btn btn-light btn-sm" title="Delete"><i class="far fa-trash-can"></i></button>
                     </form>
                 </span>

@@ -57,6 +57,10 @@ class StyleController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
+        if ($style->getSourceType() !== 'manual') {
+            return $this->redirectToRoute('mapbender_manager_style_view', ['id' => $id]);
+        }
+
         if ($request->isMethod('POST')) {
             $style->setName($request->request->get('name'));
             $style->setStyle($request->request->get('style'));
@@ -71,6 +75,42 @@ class StyleController extends ApplicationControllerBase
             'style' => $style,
             '_visual' => $this->extractVisualProps($style),
         ]);
+    }
+
+    #[ManagerRoute('/{id}/view', name: 'mapbender_manager_style_view', methods: ['GET'])]
+    public function view(int $id): Response
+    {
+        $style = $this->em->getRepository(Style::class)->find($id);
+        if (!$style) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('@MapbenderManager/Style/edit.html.twig', [
+            'style' => $style,
+            '_visual' => $this->extractVisualProps($style),
+            'readonly' => true,
+        ]);
+    }
+
+    #[ManagerRoute('/{id}/copy', name: 'mapbender_manager_style_copy', methods: ['POST'])]
+    public function copy(int $id): Response
+    {
+        $style = $this->em->getRepository(Style::class)->find($id);
+        if (!$style) {
+            throw $this->createNotFoundException();
+        }
+
+        $copy = new Style();
+        $copy->setName($style->getName() . ' (Copy)');
+        $copy->setStyle($style->getStyle());
+        $copy->setSourceType('manual');
+        $copy->setSourceId(null);
+
+        $this->em->persist($copy);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Style copied.');
+        return $this->redirectToRoute('mapbender_manager_style_edit', ['id' => $copy->getId()]);
     }
 
     #[ManagerRoute('/{id}/delete', name: 'mapbender_manager_style_delete', methods: ['POST'])]

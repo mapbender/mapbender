@@ -1,5 +1,5 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
-{%- set title = style.id ? 'Edit Style #' ~ style.id : 'New Style' -%}
+{%- set title = (readonly|default(false)) ? 'View Style #' ~ style.id : (style.id ? 'Edit Style #' ~ style.id : 'New Style') -%}
 
 {% block css %}
     {{ parent() }}
@@ -74,6 +74,7 @@
 
 {% block manager_content %}
     <form method="post" action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
+        {% if readonly|default(false) %}<fieldset disabled>{% endif %}
         <div class="mb-4">
             <label for="name" class="form-label fw-bold">Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ style.name }}" required placeholder="Enter style name...">
@@ -268,9 +269,12 @@
             </div>
         </div>
 
+        {% if readonly|default(false) %}</fieldset>{% endif %}
         <div class="mt-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
-            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">Cancel</a>
+            {% if not readonly|default(false) %}
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+            {% endif %}
+            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'Back' : 'Cancel' }}</a>
         </div>
     </form>
 
