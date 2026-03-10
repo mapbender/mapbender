@@ -116,75 +116,10 @@
 
 {% block js %}
     {{ parent() }}
+    <script src="{{ asset('bundles/mapbendermanager/js/style-drawing-utils.js') }}"></script>
     <script>
         (function() {
             var styleMap = {};
-
-            function hexToRgba(hex, opacity) {
-                hex = (hex || '#000000').replace('#', '');
-                if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-                var r = parseInt(hex.substring(0,2),16);
-                var g = parseInt(hex.substring(2,4),16);
-                var b = parseInt(hex.substring(4,6),16);
-                return 'rgba('+r+','+g+','+b+','+(parseFloat(opacity)||1)+')';
-            }
-
-            function extractMapboxPaint(s, collectionId) {
-                if (!s || !s.version || !s.layers) return null;
-                var fillLayer = null, lineLayer = null;
-                for (var i = 0; i < s.layers.length; i++) {
-                    var l = s.layers[i];
-                    if (collectionId && l['source-layer'] && l['source-layer'] !== collectionId) continue;
-                    if (!fillLayer && l.type === 'fill' && l.paint) fillLayer = l;
-                    if (!lineLayer && l.type === 'line' && l.paint) lineLayer = l;
-                }
-                if (!fillLayer && !lineLayer) return null;
-                var p = {};
-                if (fillLayer) {
-                    p.fc = fillLayer.paint['fill-color'] || '#000000';
-                    p.fo = fillLayer.paint['fill-opacity'] !== undefined ? fillLayer.paint['fill-opacity'] : 1;
-                } else { p.fc = 'transparent'; p.fo = 0; }
-                if (lineLayer) {
-                    p.sc = lineLayer.paint['line-color'] || '#000000';
-                    p.so = lineLayer.paint['line-opacity'] !== undefined ? lineLayer.paint['line-opacity'] : 1;
-                    var lw = lineLayer.paint['line-width'];
-                    p.sw = typeof lw === 'object' ? (lw.stops ? lw.stops[0][1] : 2) : (lw || 2);
-                } else { p.sc = 'transparent'; p.so = 0; p.sw = 0; }
-                return p;
-            }
-
-            function drawCanvas(canvas, s, collectionId) {
-                var ctx = canvas.getContext('2d');
-                var w = canvas.width, h = canvas.height;
-                ctx.clearRect(0,0,w,h);
-                if (!s) return;
-                var mb = extractMapboxPaint(s, collectionId);
-                var fc, sc, sw, pr;
-                if (mb) {
-                    fc = hexToRgba(mb.fc, mb.fo);
-                    sc = hexToRgba(mb.sc, mb.so);
-                    sw = mb.sw;
-                    pr = 5;
-                } else {
-                    fc = hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);
-                    sc = hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
-                    sw = parseFloat(s.strokeWidth) || 1;
-                    pr = Math.min(parseFloat(s.pointRadius) || 5, w/2 - 2);
-                }
-                ctx.fillStyle = fc;
-                ctx.strokeStyle = sc;
-                ctx.lineWidth = sw;
-                ctx.lineJoin = 'round';
-                ctx.lineCap = 'round';
-                var geom = canvas.getAttribute('data-geom');
-                if (geom === 'point') {
-                    ctx.beginPath(); ctx.arc(w/2,h/2,pr,0,2*Math.PI); ctx.fill(); if(sw>0) ctx.stroke();
-                } else if (geom === 'line') {
-                    ctx.beginPath(); ctx.moveTo(3,h-3); ctx.lineTo(w*0.4,4); ctx.lineTo(w*0.6,h-4); ctx.lineTo(w-3,3); ctx.stroke();
-                } else {
-                    ctx.beginPath(); ctx.moveTo(w/2,3); ctx.lineTo(w-3,h*0.4); ctx.lineTo(w-4,h-3); ctx.lineTo(4,h-3); ctx.lineTo(3,h*0.35); ctx.closePath(); ctx.fill(); if(sw>0) ctx.stroke();
-                }
-            }
 
             function updatePreview(popoverBody) {
                 var select = popoverBody.querySelector('select[id$="_styleId"]');
@@ -199,7 +134,7 @@
                     try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
                 }
                 popoverBody.querySelectorAll('.layer-preview canvas').forEach(function(c) {
-                    drawCanvas(c, s, collectionId);
+                    Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId: collectionId});
                 });
             }
 

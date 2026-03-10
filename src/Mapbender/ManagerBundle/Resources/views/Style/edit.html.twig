@@ -281,11 +281,19 @@
 
 {% block js %}
     {{ parent() }}
+    <script src="{{ asset('bundles/mapbendermanager/js/style-drawing-utils.js') }}"></script>
     <script>
     (function() {
+        var SU = Mapbender.StyleUtils;
+        var collectionId = {{ style.collectionId ? ("'" ~ style.collectionId ~ "'") : 'null' }};
         var styleTextarea = document.getElementById('style');
         var visualPane = document.getElementById('pane-visual');
         var visualInputs = visualPane.querySelectorAll('[data-prop]');
+
+        var dashMap = {
+            solid: [], dot: [1,5], dash: [10,10], longdash: [20,10],
+            dashdot: [10,10,1,10], longdashdot: [20,10,1,10]
+        };
 
         function getJsonFromTextarea() {
             try { return JSON.parse(styleTextarea.value); } catch(e) { return {}; }
@@ -320,20 +328,6 @@
             reinitColorpickers();
         }
 
-        var dashMap = {
-            solid: [], dot: [1,5], dash: [10,10], longdash: [20,10],
-            dashdot: [10,10,1,10], longdashdot: [20,10,1,10]
-        };
-
-        function hexToRgba(hex, opacity) {
-            hex = (hex || '#000000').replace('#', '');
-            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-            var r = parseInt(hex.substring(0,2),16);
-            var g = parseInt(hex.substring(2,4),16);
-            var b = parseInt(hex.substring(4,6),16);
-            return 'rgba(' + r + ',' + g + ',' + b + ',' + (parseFloat(opacity) || 1) + ')';
-        }
-
         function getVisualStyle() {
             var s = {};
             visualInputs.forEach(function(el) {
@@ -342,62 +336,25 @@
             return s;
         }
 
-        function extractMapboxPaint(json) {
-            if (!json || !json.version || !json.layers) return null;
-            var collectionId = {{ style.collectionId ? ("'" ~ style.collectionId ~ "'") : 'null' }};
-            var fillLayer = null, lineLayer = null;
-            for (var i = 0; i < json.layers.length; i++) {
-                var l = json.layers[i];
-                if (collectionId && l['source-layer'] && l['source-layer'] !== collectionId) continue;
-                if (!fillLayer && l.type === 'fill' && l.paint) fillLayer = l;
-                if (!lineLayer && l.type === 'line' && l.paint) lineLayer = l;
-            }
-            if (!fillLayer && !lineLayer) return null;
-            var p = {};
-            if (fillLayer) {
-                p.fillColor = fillLayer.paint['fill-color'] || '#000000';
-                p.fillOpacity = fillLayer.paint['fill-opacity'] !== undefined ? fillLayer.paint['fill-opacity'] : 1;
-            } else {
-                p.fillColor = 'transparent';
-                p.fillOpacity = 0;
-            }
-            if (lineLayer) {
-                p.strokeColor = lineLayer.paint['line-color'] || '#000000';
-                p.strokeOpacity = lineLayer.paint['line-opacity'] !== undefined ? lineLayer.paint['line-opacity'] : 1;
-                var lw = lineLayer.paint['line-width'];
-                p.strokeWidth = typeof lw === 'object' ? (lw.stops ? lw.stops[0][1] : 2) : (lw || 2);
-            } else {
-                p.strokeColor = 'transparent';
-                p.strokeOpacity = 0;
-                p.strokeWidth = 0;
-            }
-            return p;
-        }
-
         function drawPreview() {
-            var s = getVisualStyle();
             var json = getJsonFromTextarea();
-            var mb = extractMapboxPaint(json);
-            var fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, pointRadius, dashes, linecap;
+            var mb = SU.extractMapboxPaint(json, collectionId);
             if (mb) {
-                fillColor = mb.fillColor;
-                fillOpacity = mb.fillOpacity;
-                strokeColor = mb.strokeColor;
-                strokeOpacity = mb.strokeOpacity;
-                strokeWidth = mb.strokeWidth;
-                pointRadius = 6;
-                dashes = [];
-                linecap = 'round';
-            } else {
-                fillColor     = s.fillColor   || '#ff0000';
-                fillOpacity   = parseFloat(s.fillOpacity) || 1;
-                strokeColor   = s.strokeColor   || '#ffffff';
-                strokeOpacity = parseFloat(s.strokeOpacity) || 1;
-                strokeWidth   = parseFloat(s.strokeWidth)   || 1;
-                pointRadius   = parseFloat(s.pointRadius)   || 6;
-                dashes = dashMap[s.strokeDashstyle] || [];
-                linecap = s.strokeLinecap || 'round';
+                // Mapbox style: use shared canvas drawing for all 3 previews
+                ['preview-point', 'preview-line', 'preview-polygon'].forEach(function(id) {
+                    var c = document.getElementById(id);
+                    if (c) SU.drawStyleCanvas(c, json, {collectionId: collectionId});
+                });
+                return;
             }
+            // Simple style: use visual editor values with label, dash, linecap support
+            var s = getVisualStyle();
+            var fillStyle   = SU.hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);
+            var strokeStyle = SU.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+            var strokeWidth = parseFloat(s.strokeWidth) || 1;
+            var pointRadius = parseFloat(s.pointRadius) || 6;
+            var dashes = dashMap[s.strokeDashstyle] || [];
+            var linecap = s.strokeLinecap || 'round';
 
             // ── Point ──
             (function() {
@@ -405,17 +362,13 @@
                 if (!c) return;
                 var ctx = c.getContext('2d'), w = c.width, h = c.height;
                 ctx.clearRect(0,0,w,h);
-                ctx.setLineDash(dashes);
-                ctx.lineCap = linecap;
-                ctx.lineJoin = 'round';
+                ctx.setLineDash(dashes); ctx.lineCap = linecap; ctx.lineJoin = 'round';
                 ctx.lineWidth = strokeWidth;
-                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.fillStyle = fillStyle; ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
                 ctx.arc(w/2, h/2, Math.max(pointRadius, 3), 0, 2*Math.PI);
-                ctx.fill();
-                if (strokeWidth > 0) ctx.stroke();
-                if (!mb) drawLabel(ctx, s, w/2, h/2 + Math.max(pointRadius,3) + 4);
+                ctx.fill(); if (strokeWidth > 0) ctx.stroke();
+                drawLabel(ctx, s, w/2, h/2 + Math.max(pointRadius,3) + 4);
             })();
 
             // ── Line ──
@@ -424,18 +377,12 @@
                 if (!c) return;
                 var ctx = c.getContext('2d'), w = c.width, h = c.height;
                 ctx.clearRect(0,0,w,h);
-                ctx.setLineDash(dashes);
-                ctx.lineCap = linecap;
-                ctx.lineJoin = 'round';
-                ctx.lineWidth = strokeWidth;
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.setLineDash(dashes); ctx.lineCap = linecap; ctx.lineJoin = 'round';
+                ctx.lineWidth = strokeWidth; ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
-                ctx.moveTo(20, h-20);
-                ctx.lineTo(w*0.35, 25);
-                ctx.lineTo(w*0.65, h-25);
-                ctx.lineTo(w-20, 20);
+                ctx.moveTo(20, h-20); ctx.lineTo(w*0.35, 25); ctx.lineTo(w*0.65, h-25); ctx.lineTo(w-20, 20);
                 ctx.stroke();
-                if (!mb) drawLabel(ctx, s, w/2, h/2 + 10);
+                drawLabel(ctx, s, w/2, h/2 + 10);
             })();
 
             // ── Polygon ──
@@ -444,36 +391,24 @@
                 if (!c) return;
                 var ctx = c.getContext('2d'), w = c.width, h = c.height;
                 ctx.clearRect(0,0,w,h);
-                ctx.setLineDash(dashes);
-                ctx.lineCap = linecap;
-                ctx.lineJoin = 'round';
+                ctx.setLineDash(dashes); ctx.lineCap = linecap; ctx.lineJoin = 'round';
                 ctx.lineWidth = strokeWidth;
-                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.fillStyle = fillStyle; ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
-                ctx.moveTo(w*0.5, 15);
-                ctx.lineTo(w-20, h*0.4);
-                ctx.lineTo(w-30, h-15);
-                ctx.lineTo(25, h-15);
-                ctx.lineTo(15, h*0.35);
-                ctx.closePath();
-                ctx.fill();
-                if (strokeWidth > 0) ctx.stroke();
-                if (!mb) drawLabel(ctx, s, w/2, h-10);
+                ctx.moveTo(w*0.5, 15); ctx.lineTo(w-20, h*0.4); ctx.lineTo(w-30, h-15);
+                ctx.lineTo(25, h-15); ctx.lineTo(15, h*0.35);
+                ctx.closePath(); ctx.fill(); if (strokeWidth > 0) ctx.stroke();
+                drawLabel(ctx, s, w/2, h-10);
             })();
         }
 
         function drawLabel(ctx, s, x, y) {
             var text = s.label || '';
             if (!text) return;
-            var fontColor   = s.fontColor   || '#000000';
-            var fontOpacity = parseFloat(s.fontOpacity) || 1;
-            var fontSize    = parseInt(s.fontSize) || 11;
-            var fontFamily  = s.fontFamily || 'Arial, Helvetica, sans-serif';
             var fw = s.fontWeight || 'regular';
             var style = (fw === 'bold' ? 'bold ' : (fw === 'italic' ? 'italic ' : ''));
-            ctx.font = style + fontSize + 'px ' + fontFamily;
-            ctx.fillStyle = hexToRgba(fontColor, fontOpacity);
+            ctx.font = style + (parseInt(s.fontSize) || 11) + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif');
+            ctx.fillStyle = SU.hexToRgba(s.fontColor || '#000000', parseFloat(s.fontOpacity) || 1);
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillText(text, x, y);
