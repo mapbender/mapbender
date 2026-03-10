@@ -19,15 +19,172 @@ class OgcApiSource extends Mapbender.Source {
                 }
             });
             this._vectorSources[collectionId] = vectorSource;
-            const vectorLayer = new ol.layer.Vector({
+            const layerOptions = {
                 source: vectorSource,
-                // Set per-collection styles here:
-                // style: this._getStyleForCollection(collectionId),
-            });
+            };
+            const olStyle = this._createOlStyle(child.options.style);
+            if (olStyle) {
+                layerOptions.style = olStyle;
+            }
+            const vectorLayer = new ol.layer.Vector(layerOptions);
             this.nativeLayers.push(vectorLayer);
         });
         this.setOpacity(this.options.opacity);
         return this.nativeLayers;
+    }
+
+    _hexToRgba(hex, opacity) {
+        hex = (hex || '#000000').replace('#', '');
+        if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        const r = parseInt(hex.substring(0,2), 16);
+        const g = parseInt(hex.substring(2,4), 16);
+        const b = parseInt(hex.substring(4,6), 16);
+        return [r, g, b, parseFloat(opacity) || 1];
+    }
+
+    _getDashArray(dashStyle) {
+        const map = {
+            'dash': [10, 5],
+            'dot': [2, 5],
+            'dashdot': [10, 5, 2, 5],
+            'longdash': [20, 5],
+            'longdashdot': [20, 5, 2, 5],
+        };
+        return map[dashStyle] || undefined;
+    }
+
+    _createOlStyle(styleDef) {
+        if (!styleDef) return null;
+        // Simple/manual style format
+        if (styleDef.fillColor !== undefined || styleDef.strokeColor !== undefined) {
+            return this._createSimpleOlStyle(styleDef);
+        }
+        // Mapbox style format
+        if (styleDef.version && styleDef.layers) {
+            return this._createMapboxOlStyle(styleDef);
+        }
+        return null;
+    }
+
+    _createSimpleOlStyle(s) {
+        const fillColor = this._hexToRgba(s.fillColor || '#ff0000', s.fillOpacity ?? 1);
+        const strokeColor = this._hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity ?? 1);
+        const strokeWidth = parseFloat(s.strokeWidth) || 1;
+        const pointRadius = parseFloat(s.pointRadius) || 5;
+        const lineDash = this._getDashArray(s.strokeDashstyle);
+
+        const fill = new ol.style.Fill({ color: fillColor });
+        const stroke = new ol.style.Stroke({
+            color: strokeColor,
+            width: strokeWidth,
+            lineCap: s.strokeLinecap || 'round',
+            lineJoin: 'round',
+        });
+        if (lineDash) {
+            stroke.setLineDash(lineDash);
+        }
+
+        const styles = {
+            Point: new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: pointRadius,
+                    fill: fill,
+                    stroke: stroke,
+                }),
+            }),
+            LineString: new ol.style.Style({
+                stroke: stroke,
+            }),
+            Polygon: new ol.style.Style({
+                fill: fill,
+                stroke: stroke,
+            }),
+        };
+        // Add label if defined
+        if (s.label) {
+            const text = new ol.style.Text({
+                text: s.label,
+                font: (s.fontSize || '12') + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif'),
+                fill: new ol.style.Fill({ color: s.fontColor || '#000000' }),
+            });
+            Object.values(styles).forEach(st => st.setText(text));
+        }
+
+        styles.MultiPoint = styles.Point;
+        styles.MultiLineString = styles.LineString;
+        styles.MultiPolygon = styles.Polygon;
+        styles.GeometryCollection = styles.Polygon;
+
+        return (feature) => {
+            const geomType = feature.getGeometry()?.getType();
+            return styles[geomType] || styles.Polygon;
+        };
+    }
+
+    _createMapboxOlStyle(mbStyle) {
+        // Extract paint properties from first relevant layer
+        const paintLayer = mbStyle.layers?.find(l =>
+            l.type === 'fill' || l.type === 'line' || l.type === 'circle'
+        );
+        if (!paintLayer) return null;
+
+        const paint = paintLayer.paint || {};
+        const type = paintLayer.type;
+
+        let fill, stroke, image;
+
+        if (type === 'fill') {
+            const fc = paint['fill-color'] || '#ff0000';
+            const fo = paint['fill-opacity'] ?? 1;
+            const oc = paint['fill-outline-color'];
+            fill = new ol.style.Fill({ color: this._parseMbColor(fc, fo) });
+            stroke = oc ? new ol.style.Stroke({ color: this._parseMbColor(oc, 1), width: 1 }) : undefined;
+        } else if (type === 'line') {
+            const lc = paint['line-color'] || '#000000';
+            const lo = paint['line-opacity'] ?? 1;
+            const lw = paint['line-width'] || 1;
+            stroke = new ol.style.Stroke({
+                color: this._parseMbColor(lc, lo),
+                width: typeof lw === 'number' ? lw : 1,
+            });
+        } else if (type === 'circle') {
+            const cr = paint['circle-radius'] || 5;
+            const cc = paint['circle-color'] || '#ff0000';
+            const co = paint['circle-opacity'] ?? 1;
+            const sc = paint['circle-stroke-color'];
+            const sw = paint['circle-stroke-width'] || 0;
+            image = new ol.style.Circle({
+                radius: typeof cr === 'number' ? cr : 5,
+                fill: new ol.style.Fill({ color: this._parseMbColor(cc, co) }),
+                stroke: sc ? new ol.style.Stroke({ color: this._parseMbColor(sc, 1), width: sw }) : undefined,
+            });
+        }
+
+        return new ol.style.Style({ fill, stroke, image });
+    }
+
+    _parseMbColor(color, opacity) {
+        if (typeof color === 'string') {
+            if (color.startsWith('#')) {
+                return this._hexToRgba(color, opacity);
+            }
+            // Try to parse rgba/rgb
+            const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (rgbaMatch) {
+                return [
+                    parseInt(rgbaMatch[1]),
+                    parseInt(rgbaMatch[2]),
+                    parseInt(rgbaMatch[3]),
+                    rgbaMatch[4] !== undefined ? parseFloat(rgbaMatch[4]) * opacity : opacity,
+                ];
+            }
+            return color; // CSS named color, let OL handle it
+        }
+        if (Array.isArray(color)) {
+            // Mapbox expression - just use a default
+            return this._hexToRgba('#ff0000', opacity);
+        }
+        return this._hexToRgba('#ff0000', opacity);
     }
 
     _loadCollection(collectionId, extent, resolution, projection, source) {

@@ -25,6 +25,9 @@ class Style
     #[ORM\Column(name: 'source_id', type: 'integer', nullable: true)]
     private ?int $sourceId = null;
 
+    #[ORM\Column(name: 'collection_id', type: 'string', length: 255, nullable: true)]
+    private ?string $collectionId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +74,17 @@ class Style
     public function setSourceId(?int $sourceId): self
     {
         $this->sourceId = $sourceId;
+        return $this;
+    }
+
+    public function getCollectionId(): ?string
+    {
+        return $this->collectionId;
+    }
+
+    public function setCollectionId(?string $collectionId): self
+    {
+        $this->collectionId = $collectionId;
         return $this;
     }
 }

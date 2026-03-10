@@ -16,6 +16,7 @@
         </service>
         <service id="mapbender.source.ogc_api.config_generator"
                  class="Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesConfigGenerator">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
         <service id="mapbender.source.ogc_api.instance_factory"
                  class="Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesInstanceFactory"

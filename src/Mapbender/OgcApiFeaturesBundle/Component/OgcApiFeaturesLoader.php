@@ -155,6 +155,7 @@ class OgcApiFeaturesLoader extends SourceLoader
             $style->setStyle($mbsContent);
             $style->setSourceType('ogc_api');
             $style->setSourceId($source->getId());
+            $style->setCollectionId($collectionId);
 
             $this->em->persist($style);
         } catch (\Throwable $e) {

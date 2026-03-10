@@ -2,14 +2,21 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 
 class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 {
+    public function __construct(
+        protected EntityManagerInterface $em,
+    ) {
+    }
+
     public function getAssets(Application $application, string $type): array
     {
         return match ($type) {
@@ -56,7 +63,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 
         foreach (array_reverse($sourceInstance->getLayers()->toArray()) as $layer) {
             if ($layer->getActive()) {
-                $config['children'][] = [
+                $childConfig = [
                     'options' => [
                         'id' => $layer->getId() . '_',
                         'priority' => $layer->getPriority(),
@@ -77,6 +84,16 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         ],
                     ],
                 ];
+                if ($layer->getStyleId()) {
+                    $styleEntity = $this->em->find(Style::class, $layer->getStyleId());
+                    if ($styleEntity && $styleEntity->getStyle()) {
+                        $decoded = json_decode($styleEntity->getStyle(), true);
+                        if (is_array($decoded)) {
+                            $childConfig['options']['style'] = $decoded;
+                        }
+                    }
+                }
+                $config['children'][] = $childConfig;
             }
         }
 
