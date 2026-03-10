@@ -1,0 +1,84 @@
+{% extends "@MapbenderManager/Repository/instance.html.twig" %}
+
+{% block form_main1 %}
+    {{ parent() }}
+    {{ form_row(form.featureLimit) }}
+    {{ form_row(form.minScale) }}
+    {{ form_row(form.maxScale) }}
+{% endblock %}
+
+{% block form_main2 %}
+    {{ parent() }}
+    <div class="row g-3 mb-3">
+        <div class="col">
+            {{ form_widget(form.selected) }}
+            {{ form_widget(form.toggle) }}
+        </div>
+        <div class="col">
+            {{ form_widget(form.allowSelected) }}
+            {{ form_widget(form.allowToggle) }}
+        </div>
+    </div>
+    <h4 class="mt-4">{{ 'mb.vectortiles.admin.featureinfo.heading' | trans }}</h4>
+    {{ form_row(form.featureInfoPropertyMap) }}
+{% endblock %}
+
+{% block form_layers %}
+    <hr>
+    <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
+    <table class="table collectionTable">
+        <thead>
+        <tr>
+            <th></th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.title' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.min_scale' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.max_scale' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.feature_limit' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.active' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.allow_selected' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for layer in form.layers %}
+            <tr class="text-center">
+                <td>
+                    <i class="fa-solid fa-grip-vertical" style="cursor:pointer"></i>
+                    {{ form_widget(layer.priority) }}
+                </td>
+                <td>{{ form_widget(layer.title) }}</td>
+                <td>{{ form_widget(layer.minScale) }}</td>
+                <td>{{ form_widget(layer.maxScale) }}</td>
+                <td>{{ form_widget(layer.featureLimit) }}</td>
+                <td>{{ form_widget(layer.active) }}</td>
+                <td>{{ form_widget(layer.allowSelected) }}</td>
+                <td>{{ form_widget(layer.selected) }}</td>
+                <td>{{ form_widget(layer.allowInfo) }}</td>
+                <td>{{ form_widget(layer.info) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        $('.collectionTable').each(function() {
+            $('tbody', this).sortable({
+                cursor: 'move',
+                axis: 'y',
+                items: 'tr',
+                distance: 6,
+                containment: 'parent',
+                stop: (event, ui) => {
+                    $('input[type="hidden"]', $('.collectionTable tbody tr')).each(function(idx, item) {
+                        $(item).val(idx);
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
