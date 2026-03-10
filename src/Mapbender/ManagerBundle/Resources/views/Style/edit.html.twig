@@ -1,17 +1,478 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
 {%- set title = style.id ? 'Edit Style #' ~ style.id : 'New Style' -%}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        .style-editor-tabs .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 0;
+        }
+        .style-editor-tabs .nav-tabs .nav-link {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 24px;
+            color: #6c757d;
+            border: 2px solid transparent;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: -2px;
+            background: #f8f9fa;
+            transition: all 0.15s ease;
+        }
+        .style-editor-tabs .nav-tabs .nav-link:hover {
+            color: #495057;
+            background: #e9ecef;
+            border-color: #dee2e6 #dee2e6 transparent;
+        }
+        .style-editor-tabs .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            background: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        .style-editor-tabs .nav-tabs .nav-link .tab-icon {
+            margin-right: 6px;
+        }
+        .style-editor-tabs .tab-content {
+            border: 2px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            padding: 20px;
+            background: #fff;
+        }
+        .style-editor-tabs fieldset {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 16px 20px 8px;
+            margin-bottom: 16px;
+            background: #fafbfc;
+        }
+        .style-editor-tabs fieldset legend {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            width: auto;
+            padding: 0 8px;
+            float: none;
+            margin-bottom: 8px;
+        }
+        #pane-json textarea {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        #pane-json textarea:focus {
+            background: #fff;
+        }
+    </style>
+{% endblock %}
+
 {% block manager_content %}
     <form method="post" action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ style.name }}" required>
+        <div class="mb-4">
+            <label for="name" class="form-label fw-bold">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ style.name }}" required placeholder="Enter style name...">
         </div>
-        <div class="mb-3">
-            <label for="style" class="form-label">Mapbox Style (JSON)</label>
-            <textarea class="form-control" id="style" name="style" rows="20" style="font-family: monospace;">{{ style.style }}</textarea>
+
+        <div class="style-editor-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="tab-visual" data-bs-toggle="tab" data-bs-target="#pane-visual" role="tab">
+                        <i class="fas fa-palette tab-icon"></i>Visual Editor
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tab-json" data-bs-toggle="tab" data-bs-target="#pane-json" role="tab">
+                        <i class="fas fa-code tab-icon"></i>Mapbox JSON
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                {# ── Visual Editor Tab ── #}
+                <div class="tab-pane fade show active" id="pane-visual" role="tabpanel">
+                    <fieldset>
+                        <legend><i class="fas fa-fill-drip me-1"></i>Fill</legend>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Color</label>
+                                    <div class="input-group -js-colorpicker">
+                                        <input data-prop="fillColor" class="form-control" type="text" value="{{ _visual.fillColor ?? '#ff0000' }}">
+                                        <span class="input-group-text input-group-addon"><i></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold w-100">Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <input data-prop="fillOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fillOpacity ?? 1 }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Point Radius</label>
+                                    <input data-prop="pointRadius" type="number" min="0" max="30" step="1" class="form-control" value="{{ _visual.pointRadius ?? 5 }}">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend><i class="fas fa-pen me-1"></i>Stroke</legend>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Color</label>
+                                    <div class="input-group -js-colorpicker">
+                                        <input data-prop="strokeColor" class="form-control" type="text" value="{{ _visual.strokeColor ?? '#ffffff' }}">
+                                        <span class="input-group-text input-group-addon"><i></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold w-100">Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <input data-prop="strokeOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.strokeOpacity ?? 1 }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Width</label>
+                                    <input data-prop="strokeWidth" type="number" min="0" max="10" step="1" class="form-control" value="{{ _visual.strokeWidth ?? 1 }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Line Cap</label>
+                                    <select data-prop="strokeLinecap" class="form-select">
+                                        <option value="round"{{ _visual.strokeLinecap == 'round' ? ' selected' : '' }}>Round</option>
+                                        <option value="square"{{ _visual.strokeLinecap == 'square' ? ' selected' : '' }}>Square</option>
+                                        <option value="butt"{{ _visual.strokeLinecap == 'butt' ? ' selected' : '' }}>Butt</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Dash Style</label>
+                                    <select data-prop="strokeDashstyle" class="form-select">
+                                        <option value="solid"{{ _visual.strokeDashstyle == 'solid' ? ' selected' : '' }}>Solid</option>
+                                        <option value="dot"{{ _visual.strokeDashstyle == 'dot' ? ' selected' : '' }}>Dot</option>
+                                        <option value="dash"{{ _visual.strokeDashstyle == 'dash' ? ' selected' : '' }}>Dash</option>
+                                        <option value="longdash"{{ _visual.strokeDashstyle == 'longdash' ? ' selected' : '' }}>Long Dash</option>
+                                        <option value="dashdot"{{ _visual.strokeDashstyle == 'dashdot' ? ' selected' : '' }}>Dash Dot</option>
+                                        <option value="longdashdot"{{ _visual.strokeDashstyle == 'longdashdot' ? ' selected' : '' }}>Long Dash Dot</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend><i class="fas fa-font me-1"></i>Label</legend>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Text</label>
+                            <input data-prop="label" type="text" class="form-control" value="{{ _visual.label ?? '' }}" placeholder="e.g. ${name}">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Font Family</label>
+                                    <select data-prop="fontFamily" class="form-select">
+                                        {% set families = {
+                                            'Arial, Helvetica, sans-serif': 'Arial',
+                                            'Arial Black, Gadget, sans-serif': 'Arial Black',
+                                            'Comic Sans MS, cursive, sans-serif': 'Comic Sans',
+                                            'Georgia, serif': 'Georgia',
+                                            'Impact, Charcoal, sans-serif': 'Impact',
+                                            'Lucida Sans Unicode, Lucida Grande, sans-serif': 'Lucida',
+                                            'Palatino Linotype, Book Antiqua, Palatino, serif': 'Palatino',
+                                            'Tahoma, Geneva, sans-serif': 'Tahoma',
+                                            'Times New Roman, Times, serif': 'Times New Roman',
+                                            'Trebuchet MS, Helvetica, sans-serif': 'Trebuchet',
+                                            'Verdana, Geneva, sans-serif': 'Verdana'
+                                        } %}
+                                        {% for val, lbl in families %}
+                                            <option value="{{ val }}"{{ _visual.fontFamily == val ? ' selected' : '' }}>{{ lbl }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Size</label>
+                                    <input data-prop="fontSize" type="number" min="5" max="30" class="form-control" value="{{ _visual.fontSize ?? 11 }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Weight</label>
+                                    <select data-prop="fontWeight" class="form-select">
+                                        <option value="regular"{{ _visual.fontWeight == 'regular' ? ' selected' : '' }}>Regular</option>
+                                        <option value="bold"{{ _visual.fontWeight == 'bold' ? ' selected' : '' }}>Bold</option>
+                                        <option value="italic"{{ _visual.fontWeight == 'italic' ? ' selected' : '' }}>Italic</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Font Color</label>
+                                    <div class="input-group -js-colorpicker">
+                                        <input data-prop="fontColor" class="form-control" type="text" value="{{ _visual.fontColor ?? '#000000' }}">
+                                        <span class="input-group-text input-group-addon"><i></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold w-100">Font Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <input data-prop="fontOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fontOpacity ?? 1 }}">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    {# ── Preview ── #}
+                    <fieldset>
+                        <legend><i class="fas fa-eye me-1"></i>Preview</legend>
+                        <div class="row text-center">
+                            <div class="col-sm-4">
+                                <label class="form-label fw-bold d-block">Point</label>
+                                <canvas id="preview-point" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label fw-bold d-block">Line</label>
+                                <canvas id="preview-line" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label fw-bold d-block">Polygon</label>
+                                <canvas id="preview-polygon" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                {# ── Mapbox JSON Tab ── #}
+                <div class="tab-pane fade" id="pane-json" role="tabpanel">
+                    <div class="mb-3">
+                        <label for="style" class="form-label fw-bold">Mapbox Style (JSON)</label>
+                        <textarea class="form-control" id="style" name="style" rows="24">{{ style.style }}</textarea>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">Cancel</a>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
     </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var styleTextarea = document.getElementById('style');
+        var visualPane = document.getElementById('pane-visual');
+        var visualInputs = visualPane.querySelectorAll('[data-prop]');
+
+        function getJsonFromTextarea() {
+            try { return JSON.parse(styleTextarea.value); } catch(e) { return {}; }
+        }
+
+        function setJsonToTextarea(obj) {
+            styleTextarea.value = JSON.stringify(obj, null, 2);
+        }
+
+        function syncVisualToJson() {
+            var obj = getJsonFromTextarea();
+            visualInputs.forEach(function(el) {
+                var key = el.getAttribute('data-prop');
+                var val = el.value;
+                if (el.type === 'number' || el.type === 'range') {
+                    val = val === '' ? null : parseFloat(val);
+                }
+                obj[key] = val;
+            });
+            setJsonToTextarea(obj);
+        }
+
+        function syncJsonToVisual() {
+            var obj = getJsonFromTextarea();
+            visualInputs.forEach(function(el) {
+                var key = el.getAttribute('data-prop');
+                if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
+                    el.value = obj[key];
+                }
+            });
+            updateRangePreviews();
+            reinitColorpickers();
+        }
+
+        var dashMap = {
+            solid: [], dot: [1,5], dash: [10,10], longdash: [20,10],
+            dashdot: [10,10,1,10], longdashdot: [20,10,1,10]
+        };
+
+        function hexToRgba(hex, opacity) {
+            hex = (hex || '#000000').replace('#', '');
+            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            var r = parseInt(hex.substring(0,2),16);
+            var g = parseInt(hex.substring(2,4),16);
+            var b = parseInt(hex.substring(4,6),16);
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + (parseFloat(opacity) || 1) + ')';
+        }
+
+        function getVisualStyle() {
+            var s = {};
+            visualInputs.forEach(function(el) {
+                s[el.getAttribute('data-prop')] = el.value;
+            });
+            return s;
+        }
+
+        function drawPreview() {
+            var s = getVisualStyle();
+            var fillColor   = s.fillColor   || '#ff0000';
+            var fillOpacity = parseFloat(s.fillOpacity) || 1;
+            var strokeColor   = s.strokeColor   || '#ffffff';
+            var strokeOpacity = parseFloat(s.strokeOpacity) || 1;
+            var strokeWidth   = parseFloat(s.strokeWidth)   || 1;
+            var pointRadius   = parseFloat(s.pointRadius)   || 6;
+            var dashes = dashMap[s.strokeDashstyle] || [];
+            var linecap = s.strokeLinecap || 'round';
+
+            // ── Point ──
+            (function() {
+                var c = document.getElementById('preview-point');
+                if (!c) return;
+                var ctx = c.getContext('2d'), w = c.width, h = c.height;
+                ctx.clearRect(0,0,w,h);
+                ctx.setLineDash(dashes);
+                ctx.lineCap = linecap;
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = strokeWidth;
+                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
+                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.beginPath();
+                ctx.arc(w/2, h/2, Math.max(pointRadius, 3), 0, 2*Math.PI);
+                ctx.fill();
+                if (strokeWidth > 0) ctx.stroke();
+                drawLabel(ctx, s, w/2, h/2 + Math.max(pointRadius,3) + 4);
+            })();
+
+            // ── Line ──
+            (function() {
+                var c = document.getElementById('preview-line');
+                if (!c) return;
+                var ctx = c.getContext('2d'), w = c.width, h = c.height;
+                ctx.clearRect(0,0,w,h);
+                ctx.setLineDash(dashes);
+                ctx.lineCap = linecap;
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = strokeWidth;
+                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.beginPath();
+                ctx.moveTo(20, h-20);
+                ctx.lineTo(w*0.35, 25);
+                ctx.lineTo(w*0.65, h-25);
+                ctx.lineTo(w-20, 20);
+                ctx.stroke();
+                drawLabel(ctx, s, w/2, h/2 + 10);
+            })();
+
+            // ── Polygon ──
+            (function() {
+                var c = document.getElementById('preview-polygon');
+                if (!c) return;
+                var ctx = c.getContext('2d'), w = c.width, h = c.height;
+                ctx.clearRect(0,0,w,h);
+                ctx.setLineDash(dashes);
+                ctx.lineCap = linecap;
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = strokeWidth;
+                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
+                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.beginPath();
+                ctx.moveTo(w*0.5, 15);
+                ctx.lineTo(w-20, h*0.4);
+                ctx.lineTo(w-30, h-15);
+                ctx.lineTo(25, h-15);
+                ctx.lineTo(15, h*0.35);
+                ctx.closePath();
+                ctx.fill();
+                if (strokeWidth > 0) ctx.stroke();
+                drawLabel(ctx, s, w/2, h-10);
+            })();
+        }
+
+        function drawLabel(ctx, s, x, y) {
+            var text = s.label || '';
+            if (!text) return;
+            var fontColor   = s.fontColor   || '#000000';
+            var fontOpacity = parseFloat(s.fontOpacity) || 1;
+            var fontSize    = parseInt(s.fontSize) || 11;
+            var fontFamily  = s.fontFamily || 'Arial, Helvetica, sans-serif';
+            var fw = s.fontWeight || 'regular';
+            var style = (fw === 'bold' ? 'bold ' : (fw === 'italic' ? 'italic ' : ''));
+            ctx.font = style + fontSize + 'px ' + fontFamily;
+            ctx.fillStyle = hexToRgba(fontColor, fontOpacity);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(text, x, y);
+        }
+
+        function updateRangePreviews() {
+            visualPane.querySelectorAll('input[type="range"]').forEach(function(input) {
+                var vp = input.closest('.mb-3').querySelector('.value-preview');
+                if (vp) {
+                    var v = parseFloat(input.value);
+                    vp.textContent = isNaN(v) ? '' : v.toFixed(2);
+                }
+            });
+        }
+
+        function reinitColorpickers() {
+            try { $('.-js-colorpicker', visualPane).colorpicker('destroy'); } catch(e) {}
+            $('.-js-colorpicker', visualPane).colorpicker({format: 'hex'});
+            $('.-js-colorpicker', visualPane).on('changeColor', function() {
+                syncVisualToJson();
+                drawPreview();
+            });
+        }
+
+        visualInputs.forEach(function(el) {
+            el.addEventListener('input', function() {
+                syncVisualToJson();
+                updateRangePreviews();
+                drawPreview();
+            });
+            el.addEventListener('change', function() {
+                syncVisualToJson();
+                updateRangePreviews();
+                drawPreview();
+            });
+        });
+
+        document.getElementById('tab-visual').addEventListener('shown.bs.tab', function() {
+            syncJsonToVisual();
+            drawPreview();
+        });
+        document.getElementById('tab-json').addEventListener('shown.bs.tab', function() {
+            syncVisualToJson();
+        });
+
+        updateRangePreviews();
+        reinitColorpickers();
+
+        if (styleTextarea.value.trim()) {
+            syncJsonToVisual();
+        }
+        drawPreview();
+    });
+    </script>
 {% endblock %}

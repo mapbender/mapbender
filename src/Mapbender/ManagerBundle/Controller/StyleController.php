@@ -45,6 +45,7 @@ class StyleController extends ApplicationControllerBase
 
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
             'style' => $style,
+            '_visual' => $this->extractVisualProps($style),
         ]);
     }
 
@@ -68,6 +69,7 @@ class StyleController extends ApplicationControllerBase
 
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
             'style' => $style,
+            '_visual' => $this->extractVisualProps($style),
         ]);
     }
 
@@ -82,5 +84,30 @@ class StyleController extends ApplicationControllerBase
         }
 
         return $this->redirectToRoute('mapbender_manager_style_index');
+    }
+
+    private function extractVisualProps(Style $style): array
+    {
+        $defaults = [
+            'fillColor' => '#ff0000',
+            'fillOpacity' => 1,
+            'pointRadius' => 5,
+            'strokeColor' => '#ffffff',
+            'strokeOpacity' => 1,
+            'strokeWidth' => 1,
+            'strokeLinecap' => 'round',
+            'strokeDashstyle' => 'solid',
+            'label' => '',
+            'fontFamily' => 'Arial, Helvetica, sans-serif',
+            'fontSize' => 11,
+            'fontWeight' => 'regular',
+            'fontColor' => '#000000',
+            'fontOpacity' => 1,
+        ];
+        $json = $style->getStyle() ? json_decode($style->getStyle(), true) : [];
+        if (!is_array($json)) {
+            $json = [];
+        }
+        return array_merge($defaults, array_intersect_key($json, $defaults));
     }
 }
