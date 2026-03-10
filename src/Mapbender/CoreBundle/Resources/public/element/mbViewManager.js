@@ -445,6 +445,9 @@
                 this.mbMap.getModel().addSourceFromConfig(source);
             });
             this.mbMap.getModel().applyViewParams(settings.viewParams);
+            this.mbMap.element.trigger('mbsourcesrefreshed', {
+                mbMap: this.mbMap,
+            });
         },
         _flash: function($el, color) {
             $el.css({

@@ -20,7 +20,7 @@
             this.element.on('click', '.basesourcesetswitch', function(evt) {
                 self._toggleMapset(evt);
             });
-            this.mbMap.element.on('mbmapsourcechanged', function() {
+            this.mbMap.element.on('mbmapsourcechanged mbsourcesrefreshed', function() {
                 self.updateHighlights();
             });
             this.updateHighlights();
