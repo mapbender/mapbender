@@ -1,0 +1,57 @@
+{% extends "@MapbenderManager/Repository/source/view.html.twig" %}
+
+{% block metadata_content %}
+    <table>
+        <tr>
+            <th>{{ 'mb.ogcapifeatures.metadata.title' | trans }}:</th>
+            <td>{{ source.title }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'mb.ogcapifeatures.metadata.version' | trans }}:</th>
+            <td>{{ source.version }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'mb.ogcapifeatures.metadata.url' | trans }}:</th>
+            <td>{{ source.jsonUrl | linkify }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'mb.ogcapifeatures.metadata.description' | trans }}:</th>
+            <td>{{ source.description | linkify }}</td>
+        </tr>
+    </table>
+{% endblock metadata_content %}
+
+{% block details_content %}
+    <table>
+        <tr>
+            <th>{{ 'mb.ogcapifeatures.metadata.attribution' | trans }}:</th>
+            <td>{{ source.attribution|raw }}</td>
+        </tr>
+    </table>
+{% endblock %}
+{% block layers_content %}
+    {% for layer in source.layers %}
+        <div{%- if source.layers|length > 1 %} class="content-toggle-container closed"{%- endif -%}>
+            <div class="h4 clearfix{%- if source.layers|length > 1 %} content-toggle clickable{%- endif -%}">
+                {%- if source.layers|length > 1 -%}
+                    <i class="pull-right fa-solid fa-caret-right me-3"></i>
+                {%- endif -%}
+                {{ layer.title }}
+            </div>
+            <div{%- if source.layers|length > 1 %} class="content-toggle-target"{%- endif -%}>
+                {% set collectionUrl = source.jsonUrl ~ '/collections/' ~ layer.collectionId %}
+                <table>
+                    <tr>
+                        <th>{{ 'mb.ogcapifeatures.metadata.title' | trans }}:</th>
+                        <td>{{ layer.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'mb.ogcapifeatures.metadata.url' | trans }}:</th>
+                        <td>{{ collectionUrl|linkify }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <tr>
+    {% endfor %}
+{% endblock layers_content %}

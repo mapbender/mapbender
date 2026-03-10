@@ -1,0 +1,24 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: Link zu OGC API Features Service
+      feature_limit: Max.-Anzahl Features
+      layers: Collections
+      layer:
+        title: Titel
+        active: Aktiv
+        min_scale: Minimaler Maßstab
+        max_scale: Maximaler Maßstab
+        allow_selected: Auswahl erlauben
+        selected: Ausgewählt
+        info: Info
+        allow_info: Info erlauben
+        toggle: Aufgeklappt
+        allow_toggle: Aufklappen erlauben
+    metadata:
+      title: Titel
+      version: Version
+      description: Beschreibung
+      url: Url
+      attribution: Urheber
+      contact: Kontakt
