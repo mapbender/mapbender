@@ -45,6 +45,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $priority;
 
+    #[ORM\Column(name: 'style_id', type: 'integer', nullable: true)]
+    protected ?int $styleId = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -147,5 +150,16 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     public function __toString()
     {
         return (string)$this->getId();
+    }
+
+    public function getStyleId(): ?int
+    {
+        return $this->styleId;
+    }
+
+    public function setStyleId(?int $styleId): static
+    {
+        $this->styleId = $styleId;
+        return $this;
     }
 }

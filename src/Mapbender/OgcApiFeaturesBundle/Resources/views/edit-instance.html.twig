@@ -1,5 +1,15 @@
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        .collectionTable { table-layout: auto; width: 100%; }
+        .collectionTable th, .collectionTable td { white-space: nowrap; vertical-align: middle; }
+        .collectionTable .style-select { min-width: 170px; }
+        .table-responsive-layers { overflow-x: auto; }
+    </style>
+{% endblock %}
+
 {% block form_main1 %}
     {{ parent() }}
     {{ form_row(form.featureLimit) }}
@@ -39,10 +49,13 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
+            <th>Style</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         {% for layer in form.layers %}
+            {%- set _popover_id = 'style_popover_' ~ layer.vars.id -%}
             <tr class="text-center">
                 <td>
                     <i class="fa-solid fa-grip-vertical" style="cursor:pointer"></i>
@@ -57,6 +70,44 @@
                 <td>{{ form_widget(layer.selected) }}</td>
                 <td>{{ form_widget(layer.allowInfo) }}</td>
                 <td>{{ form_widget(layer.info) }}</td>
+                <td>
+                    <input type="checkbox" class="form-check-input style-indicator" disabled readonly
+                           {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
+                </td>
+                <td>
+                    <div class="static-popover-wrap">
+                        <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
+                              title="Style settings">
+                            <i class="fas fa-ellipsis"></i>
+                        </span>
+                        <div class="popover-inner-wrap">
+                            <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
+                                <div class="popover-arrow"></div>
+                                <div class="popover-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">Style</label></div>
+                                        <div class="col-sm-9">{{ form_widget(layer.styleId) }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">Preview</label></div>
+                                        <div class="col-sm-9">
+                                            <div class="d-flex gap-2 layer-preview">
+                                                <canvas width="40" height="40" data-geom="point" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                                <canvas width="40" height="40" data-geom="line" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                                <canvas width="40" height="40" data-geom="polygon" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end mt-2">
+                                        <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
+                                            <i class="fa-solid fa-check"></i> OK
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -66,19 +117,120 @@
 {% block js %}
     {{ parent() }}
     <script>
-        $('.collectionTable').each(function() {
-            $('tbody', this).sortable({
-                cursor: 'move',
-                axis: 'y',
-                items: 'tr',
-                distance: 6,
-                containment: 'parent',
-                stop: (event, ui) => {
-                    $('input[type="hidden"]', $('.collectionTable tbody tr')).each(function(idx, item) {
-                        $(item).val(idx);
-                    });
+        (function() {
+            var styleMap = {};
+
+            function hexToRgba(hex, opacity) {
+                hex = (hex || '#000000').replace('#', '');
+                if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+                var r = parseInt(hex.substring(0,2),16);
+                var g = parseInt(hex.substring(2,4),16);
+                var b = parseInt(hex.substring(4,6),16);
+                return 'rgba('+r+','+g+','+b+','+(parseFloat(opacity)||1)+')';
+            }
+
+            function drawCanvas(canvas, s) {
+                var ctx = canvas.getContext('2d');
+                var w = canvas.width, h = canvas.height;
+                ctx.clearRect(0,0,w,h);
+                if (!s) return;
+                var fc = s.fillColor || '#ff0000';
+                var fo = parseFloat(s.fillOpacity) || 1;
+                var sc = s.strokeColor || '#ffffff';
+                var so = parseFloat(s.strokeOpacity) || 1;
+                var sw = parseFloat(s.strokeWidth) || 1;
+                var pr = Math.min(parseFloat(s.pointRadius) || 5, w/2 - 2);
+                ctx.fillStyle = hexToRgba(fc, fo);
+                ctx.strokeStyle = hexToRgba(sc, so);
+                ctx.lineWidth = sw;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                var geom = canvas.getAttribute('data-geom');
+                if (geom === 'point') {
+                    ctx.beginPath(); ctx.arc(w/2,h/2,pr,0,2*Math.PI); ctx.fill(); if(sw>0) ctx.stroke();
+                } else if (geom === 'line') {
+                    ctx.beginPath(); ctx.moveTo(3,h-3); ctx.lineTo(w*0.4,4); ctx.lineTo(w*0.6,h-4); ctx.lineTo(w-3,3); ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.moveTo(w/2,3); ctx.lineTo(w-3,h*0.4); ctx.lineTo(w-4,h-3); ctx.lineTo(4,h-3); ctx.lineTo(3,h*0.35); ctx.closePath(); ctx.fill(); if(sw>0) ctx.stroke();
+                }
+            }
+
+            function updatePreview(popoverBody) {
+                var select = popoverBody.querySelector('select[id$="_styleId"]');
+                if (!select) return;
+                var id = select.value;
+                var raw = id ? styleMap[id] : null;
+                var s = null;
+                if (raw) {
+                    try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
+                }
+                popoverBody.querySelectorAll('.layer-preview canvas').forEach(function(c) {
+                    drawCanvas(c, s);
+                });
+            }
+
+            // Instant preview on style dropdown change
+            $(document).on('change', 'select[id$="_styleId"]', function() {
+                var popoverBody = this.closest('.popover-body');
+                if (popoverBody) updatePreview(popoverBody);
+            });
+
+            // Initialize previews after style data is loaded
+            $.getJSON('{{ path("mapbender_manager_style_json") }}', function(data) {
+                styleMap = data;
+                document.querySelectorAll('.popover-body').forEach(function(body) {
+                    updatePreview(body);
+                });
+            });
+
+            // Also handle popover toggling for collectionTable (like instanceTable)
+            $(".collectionTable").on("click", ".-fn-toggle-layer-detail", function(e) {
+                var target = $(this).attr("data-toggle-target");
+                var $target = $(target);
+                $target.parent().toggleClass("display");
+                $target.toggleClass("show");
+                // close other popovers
+                var otherPopovers = ".popover:not(" + target + ")";
+                $(otherPopovers).parent().removeClass("display");
+                $(otherPopovers).removeClass("show");
+                // update preview when popover opens
+                if ($target.hasClass('show')) {
+                    var body = $target.find('.popover-body')[0];
+                    if (body) updatePreview(body);
                 }
             });
-        });
+
+            // Confirm button closes popover and updates the styled checkbox
+            $(".collectionTable").on("click", ".-fn-confirm-style", function(e) {
+                e.preventDefault();
+                var target = $(this).attr("data-toggle-target");
+                var $target = $(target);
+                $target.parent().removeClass("display");
+                $target.removeClass("show");
+                // Update the readonly checkbox in the same row
+                var $row = $(this).closest('tr');
+                var select = $row.find('select[id$="_styleId"]')[0];
+                var checkbox = $row.find('.style-indicator')[0];
+                if (select && checkbox) {
+                    checkbox.checked = !!select.value;
+                }
+            });
+
+            // Sortable
+            $('.collectionTable').each(function() {
+                $('tbody', this).sortable({
+                    cursor: 'move',
+                    axis: 'y',
+                    items: 'tr',
+                    distance: 6,
+                    containment: 'parent',
+                    stop: function(event, ui) {
+                        $('input[type="hidden"]', $('.collectionTable tbody tr')).each(function(idx, item) {
+                            $(item).val(idx);
+                        });
+                    }
+                });
+            });
+        })();
     </script>
 {% endblock %}

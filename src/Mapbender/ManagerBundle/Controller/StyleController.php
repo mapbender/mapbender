@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Style;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,6 +25,17 @@ class StyleController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Style/index.html.twig', [
             'styles' => $styles,
         ]);
+    }
+
+    #[ManagerRoute('/json', name: 'mapbender_manager_style_json', methods: ['GET'])]
+    public function jsonList(): JsonResponse
+    {
+        $styles = $this->em->getRepository(Style::class)->findAll();
+        $map = [];
+        foreach ($styles as $style) {
+            $map[$style->getId()] = $style->getStyle();
+        }
+        return new JsonResponse($map);
     }
 
     #[ManagerRoute('/new', name: 'mapbender_manager_style_new', methods: ['GET', 'POST'])]

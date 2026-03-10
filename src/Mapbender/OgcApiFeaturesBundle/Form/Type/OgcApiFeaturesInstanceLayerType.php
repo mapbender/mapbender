@@ -2,8 +2,11 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -14,6 +17,10 @@ use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 
 class OgcApiFeaturesInstanceLayerType extends AbstractType
 {
+    public function __construct(private EntityManagerInterface $em)
+    {
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -23,6 +30,8 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $styleChoices = $this->getStyleChoices();
+
         $builder
             ->add('title', TextType::class, [
                 'required' => false,
@@ -67,6 +76,24 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ->add('priority', HiddenType::class, array(
                 'required' => true,
             ))
+            ->add('styleId', ChoiceType::class, [
+                'required' => false,
+                'label' => false,
+                'placeholder' => '-- none --',
+                'choices' => $styleChoices,
+                'attr' => ['class' => 'form-select form-select-sm style-select'],
+            ])
         ;
+    }
+
+    private function getStyleChoices(): array
+    {
+        $styles = $this->em->getRepository(Style::class)->findAll();
+        $choices = [];
+        foreach ($styles as $style) {
+            $label = $style->getName() ?: 'Style #' . $style->getId();
+            $choices[$label] = $style->getId();
+        }
+        return $choices;
     }
 }

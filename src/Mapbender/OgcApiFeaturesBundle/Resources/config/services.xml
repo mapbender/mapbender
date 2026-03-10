@@ -37,5 +37,10 @@
             <tag name="form.type" />
             <argument type="service" id="translator" />
         </service>
+        <service id="mapbender.source.ogc_api.instance_layer_type"
+                 class="Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesInstanceLayerType">
+            <tag name="form.type" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
     </services>
 </container>
