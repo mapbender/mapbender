@@ -2,11 +2,13 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Source\SourceLoader;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesSourceType;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesLayerSource;
@@ -16,6 +18,7 @@ class OgcApiFeaturesLoader extends SourceLoader
     public function __construct(
         protected HttpTransportInterface $httpTransport,
         protected TranslatorInterface    $translator,
+        protected EntityManagerInterface $em,
     )
     {
     }
@@ -69,6 +72,93 @@ class OgcApiFeaturesLoader extends SourceLoader
             $layer->setCollectionId($collection['id']);
             $layer->setBbox($bbox);
             $source->addLayer($layer);
+        }
+    }
+
+    public function loadStylesForSource(OgcApiFeaturesSource $source): void
+    {
+        $baseUrl = rtrim($source->getJsonUrl(), '/');
+        foreach ($source->getLayers() as $layer) {
+            $collectionId = $layer->getCollectionId();
+            $stylesUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/styles?f=json';
+            try {
+                $response = $this->httpTransport->getUrl($stylesUrl);
+                if (!$response->isOk()) {
+                    continue;
+                }
+                $stylesJson = json_decode($response->getContent(), true);
+                if (!is_array($stylesJson) || empty($stylesJson['styles'])) {
+                    continue;
+                }
+                foreach ($stylesJson['styles'] as $styleInfo) {
+                    $mbsLink = $this->findMbsLink($styleInfo);
+                    if (!$mbsLink) {
+                        continue;
+                    }
+                    $this->fetchAndSaveStyle($source, $collectionId, $styleInfo, $mbsLink);
+                }
+            } catch (\Throwable $e) {
+                // Skip collections where style endpoint is not available
+                continue;
+            }
+        }
+    }
+
+    private function findMbsLink(array $styleInfo): ?string
+    {
+        if (empty($styleInfo['links'])) {
+            // Fallback: try the style id with ?f=mbs
+            return null;
+        }
+        foreach ($styleInfo['links'] as $link) {
+            $type = $link['type'] ?? '';
+            $rel = $link['rel'] ?? '';
+            if ($type === 'application/vnd.mapbox.style+json'
+                || str_contains($type, 'mapbox')
+                || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
+                return $link['href'];
+            }
+        }
+        return null;
+    }
+
+    private function fetchAndSaveStyle(
+        OgcApiFeaturesSource $source,
+        string $collectionId,
+        array $styleInfo,
+        string $mbsUrl,
+    ): void {
+        try {
+            $response = $this->httpTransport->getUrl($mbsUrl);
+            if (!$response->isOk()) {
+                return;
+            }
+            $mbsContent = $response->getContent();
+            $decoded = json_decode($mbsContent, true);
+            if (!is_array($decoded)) {
+                return;
+            }
+
+            $sourceTitle = $source->getTitle() ?: (string) $source->getId();
+            // Find the layer title for the collection
+            $layerTitle = $collectionId;
+            foreach ($source->getLayers() as $layer) {
+                if ($layer->getCollectionId() === $collectionId && $layer->getTitle()) {
+                    $layerTitle = $layer->getTitle();
+                    break;
+                }
+            }
+            $styleName = $sourceTitle . ' - ' . $layerTitle;
+
+            $style = new Style();
+            $style->setName($styleName);
+            $style->setStyle($mbsContent);
+            $style->setSourceType('ogc_api');
+            $style->setSourceId($source->getId());
+
+            $this->em->persist($style);
+        } catch (\Throwable $e) {
+            // Skip if style cannot be fetched
         }
     }
 

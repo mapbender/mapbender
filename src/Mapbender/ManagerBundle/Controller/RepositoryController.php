@@ -19,6 +19,7 @@ use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
+use Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesLoader;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,6 +94,11 @@ class RepositoryController extends ApplicationControllerBase
 
                 $this->em->flush();
                 $this->em->commit();
+
+                if ($loader instanceof OgcApiFeaturesLoader) {
+                    $loader->loadStylesForSource($source);
+                    $this->em->flush();
+                }
 
                 $message = $this->translator->trans("mb.manager.source.added");
                 $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel(false)), $message);
@@ -250,6 +256,11 @@ class RepositoryController extends ApplicationControllerBase
 
                 $this->em->flush();
                 $this->em->commit();
+
+                if ($loader instanceof OgcApiFeaturesLoader) {
+                    $loader->loadStylesForSource($source);
+                    $this->em->flush();
+                }
 
                 $this->addFlash('success', "Your {$source->getType()} source has been updated");
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(

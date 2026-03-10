@@ -13,26 +13,94 @@
         </div>
     </div>
 
-    <ul class="list-group mt-3">
-        {% for style in styles %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ style.name ?? 'Style #' ~ style.id }} {% if style.sourceType %}({{ style.sourceType }}{% if style.sourceId %} #{{ style.sourceId }}{% endif %}){% endif %}</span>
-                <span class="d-flex flex-nowrap gap-1">
-                    {% if style.sourceType == 'manual' %}
-                        <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
-                    {% else %}
-                        <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="View"><i class="fas fa-eye"></i></a>
-                    {% endif %}
-                    <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
-                        <button type="submit" class="btn btn-light btn-sm" title="Copy"><i class="fas fa-copy"></i></button>
-                    </form>
-                    <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('Delete this style?');">
-                        <button type="submit" class="btn btn-light btn-sm" title="Delete"><i class="far fa-trash-can"></i></button>
-                    </form>
-                </span>
-            </li>
-        {% else %}
-            <li class="list-group-item text-muted">No styles configured yet.</li>
-        {% endfor %}
-    </ul>
+    <table class="table table-striped table-hover mt-3 align-middle">
+        <thead>
+            <tr>
+                <th style="width:50px">ID</th>
+                <th style="width:120px">Preview</th>
+                <th>Name</th>
+                <th style="width:80px">Source</th>
+                <th style="width:130px">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for style in styles %}
+                <tr>
+                    <td>{{ style.id }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <canvas class="style-preview" data-geom="point" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                            <canvas class="style-preview" data-geom="line" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                            <canvas class="style-preview" data-geom="polygon" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                        </div>
+                    </td>
+                    <td>{{ style.name ?? ('Style #' ~ style.id) }}</td>
+                    <td>{{ style.sourceId ?? '-' }}</td>
+                    <td>
+                        <div class="d-flex flex-nowrap gap-1">
+                            {% if style.sourceType == 'manual' %}
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
+                            {% else %}
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="View"><i class="fas fa-eye"></i></a>
+                            {% endif %}
+                            <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
+                                <button type="submit" class="btn btn-light btn-sm" title="Copy"><i class="fas fa-copy"></i></button>
+                            </form>
+                            <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('Delete this style?');">
+                                <button type="submit" class="btn btn-light btn-sm" title="Delete"><i class="far fa-trash-can"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="text-muted">No styles configured yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function hexToRgba(hex, opacity) {
+            hex = (hex || '#000000').replace('#', '');
+            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            var r = parseInt(hex.substring(0,2),16);
+            var g = parseInt(hex.substring(2,4),16);
+            var b = parseInt(hex.substring(4,6),16);
+            return 'rgba('+r+','+g+','+b+','+(parseFloat(opacity)||1)+')';
+        }
+        document.querySelectorAll('canvas.style-preview').forEach(function(c) {
+            var raw = c.getAttribute('data-style');
+            var s = {};
+            try { s = JSON.parse(raw) || {}; } catch(e) {}
+            var ctx = c.getContext('2d');
+            var w = c.width, h = c.height;
+            var fc = s.fillColor || '#ff0000';
+            var fo = parseFloat(s.fillOpacity) || 1;
+            var sc = s.strokeColor || '#ffffff';
+            var so = parseFloat(s.strokeOpacity) || 1;
+            var sw = parseFloat(s.strokeWidth) || 1;
+            var pr = parseFloat(s.pointRadius) || 5;
+            ctx.fillStyle = hexToRgba(fc, fo);
+            ctx.strokeStyle = hexToRgba(sc, so);
+            ctx.lineWidth = sw;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            var geom = c.getAttribute('data-geom');
+            if (geom === 'point') {
+                ctx.beginPath();
+                ctx.arc(w/2, h/2, Math.min(pr, w/2-2), 0, 2*Math.PI);
+                ctx.fill(); if(sw>0) ctx.stroke();
+            } else if (geom === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(4, h-4); ctx.lineTo(w*0.4, 6); ctx.lineTo(w*0.6, h-6); ctx.lineTo(w-4, 4);
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(w/2, 4); ctx.lineTo(w-4, h*0.4); ctx.lineTo(w-6, h-4); ctx.lineTo(6, h-4); ctx.lineTo(4, h*0.35);
+                ctx.closePath();
+                ctx.fill(); if(sw>0) ctx.stroke();
+            }
+        });
+    });
+    </script>
 {% endblock %}

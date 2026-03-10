@@ -26,6 +26,7 @@
                  class="Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesLoader" lazy="true">
             <argument type="service" id="mapbender.http_transport.service" />
             <argument type="service" id="translator" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
         <service id="mapbender.source.ogc_api.renderer"
                  class="Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesRenderer"
