@@ -22,11 +22,9 @@ class OgcApiSource extends Mapbender.Source {
             const layerOptions = {
                 source: vectorSource,
             };
-            const olStyle = this._createOlStyle(child.options.style);
-            if (olStyle) {
-                layerOptions.style = olStyle;
-            }
             const vectorLayer = new ol.layer.Vector(layerOptions);
+            // Apply style: use olms.stylefunction for Mapbox styles, custom for simple styles
+            this._applyStyle(vectorLayer, child.options.style, collectionId);
             this.nativeLayers.push(vectorLayer);
         });
         this.setOpacity(this.options.opacity);
@@ -53,17 +51,22 @@ class OgcApiSource extends Mapbender.Source {
         return map[dashStyle] || undefined;
     }
 
-    _createOlStyle(styleDef) {
-        if (!styleDef) return null;
+    _applyStyle(vectorLayer, styleDef, collectionId) {
+        if (!styleDef) {
+            console.warn('[OgcApiStyle] No styleDef for collection:', collectionId);
+            return;
+        }
         // Simple/manual style format
         if (styleDef.fillColor !== undefined || styleDef.strokeColor !== undefined) {
-            return this._createSimpleOlStyle(styleDef);
+            vectorLayer.setStyle(this._createSimpleOlStyle(styleDef));
+            return;
         }
-        // Mapbox style format
-        if (styleDef.version && styleDef.layers) {
-            return this._createMapboxOlStyle(styleDef);
+        // Mapbox style format — use ol-mapbox-style library
+        if (styleDef.version && styleDef.layers && typeof olms !== 'undefined' && olms.stylefunction) {
+            this._applyMapboxStyle(vectorLayer, styleDef, collectionId);
+            return;
         }
-        return null;
+        console.warn('[OgcApiStyle] No style path matched for "' + collectionId + '". olms available:', typeof olms !== 'undefined', '| styleDef keys:', Object.keys(styleDef));
     }
 
     _createSimpleOlStyle(s) {
@@ -121,70 +124,35 @@ class OgcApiSource extends Mapbender.Source {
         };
     }
 
-    _createMapboxOlStyle(mbStyle) {
-        // Extract paint properties from first relevant layer
-        const paintLayer = mbStyle.layers?.find(l =>
-            l.type === 'fill' || l.type === 'line' || l.type === 'circle'
-        );
-        if (!paintLayer) return null;
-
-        const paint = paintLayer.paint || {};
-        const type = paintLayer.type;
-
-        let fill, stroke, image;
-
-        if (type === 'fill') {
-            const fc = paint['fill-color'] || '#ff0000';
-            const fo = paint['fill-opacity'] ?? 1;
-            const oc = paint['fill-outline-color'];
-            fill = new ol.style.Fill({ color: this._parseMbColor(fc, fo) });
-            stroke = oc ? new ol.style.Stroke({ color: this._parseMbColor(oc, 1), width: 1 }) : undefined;
-        } else if (type === 'line') {
-            const lc = paint['line-color'] || '#000000';
-            const lo = paint['line-opacity'] ?? 1;
-            const lw = paint['line-width'] || 1;
-            stroke = new ol.style.Stroke({
-                color: this._parseMbColor(lc, lo),
-                width: typeof lw === 'number' ? lw : 1,
-            });
-        } else if (type === 'circle') {
-            const cr = paint['circle-radius'] || 5;
-            const cc = paint['circle-color'] || '#ff0000';
-            const co = paint['circle-opacity'] ?? 1;
-            const sc = paint['circle-stroke-color'];
-            const sw = paint['circle-stroke-width'] || 0;
-            image = new ol.style.Circle({
-                radius: typeof cr === 'number' ? cr : 5,
-                fill: new ol.style.Fill({ color: this._parseMbColor(cc, co) }),
-                stroke: sc ? new ol.style.Stroke({ color: this._parseMbColor(sc, 1), width: sw }) : undefined,
-            });
-        }
-
-        return new ol.style.Style({ fill, stroke, image });
-    }
-
-    _parseMbColor(color, opacity) {
-        if (typeof color === 'string') {
-            if (color.startsWith('#')) {
-                return this._hexToRgba(color, opacity);
+    _applyMapboxStyle(vectorLayer, mbStyle, collectionId) {
+        // Find the source name that uses our collectionId as source-layer
+        let sourceName = null;
+        for (const layer of (mbStyle.layers || [])) {
+            if (layer['source-layer'] === collectionId && layer.source) {
+                sourceName = layer.source;
+                break;
             }
-            // Try to parse rgba/rgb
-            const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-            if (rgbaMatch) {
-                return [
-                    parseInt(rgbaMatch[1]),
-                    parseInt(rgbaMatch[2]),
-                    parseInt(rgbaMatch[3]),
-                    rgbaMatch[4] !== undefined ? parseFloat(rgbaMatch[4]) * opacity : opacity,
-                ];
+        }
+        // Fallback: use first vector/geojson source
+        if (!sourceName) {
+            for (const [name, src] of Object.entries(mbStyle.sources || {})) {
+                if (src.type === 'vector' || src.type === 'geojson') {
+                    sourceName = name;
+                    break;
+                }
             }
-            return color; // CSS named color, let OL handle it
         }
-        if (Array.isArray(color)) {
-            // Mapbox expression - just use a default
-            return this._hexToRgba('#ff0000', opacity);
+        if (!sourceName) {
+            console.warn('[OgcApiStyle] No source found for collection:', collectionId, '| sources:', Object.keys(mbStyle.sources || {}));
+            return;
         }
-        return this._hexToRgba('#ff0000', opacity);
+        console.log('[OgcApiStyle] Applying Mapbox style: collection="' + collectionId + '" source="' + sourceName + '"');
+        vectorLayer.set('_collectionId', collectionId);
+        try {
+            olms.stylefunction(vectorLayer, mbStyle, sourceName);
+        } catch (e) {
+            console.error('[OgcApiStyle] olms.stylefunction failed for "' + collectionId + '":', e);
+        }
     }
 
     _loadCollection(collectionId, extent, resolution, projection, source) {
@@ -211,8 +179,24 @@ class OgcApiSource extends Mapbender.Source {
                     dataProjection: 'EPSG:4326',
                     featureProjection: projCode
                 });
+                // Set 'layer' property so olms.stylefunction can match source-layer
+                parsed.forEach(f => f.set('layer', collectionId, true));
                 source.clear(true);
                 source.addFeatures(parsed);
+                // Debug: test style result on first feature
+                if (parsed.length > 0) {
+                    const olLayer = this.nativeLayers.find(l => l.getSource() === source);
+                    const styleFn = olLayer?.getStyle();
+                    if (typeof styleFn === 'function') {
+                        const result = styleFn(parsed[0], 1000);
+                        const styles = Array.isArray(result) ? result : (result ? [result] : []);
+                        if (styles.length) {
+                            styles.forEach((s, i) => console.log('[OgcApiStyle] "' + collectionId + '" style[' + i + '] fill:', s.getFill?.()?.getColor?.(), '| stroke:', s.getStroke?.()?.getColor?.(), s.getStroke?.()?.getWidth?.()));
+                        } else {
+                            console.warn('[OgcApiStyle] Style function returned nothing for "' + collectionId + '" \u2014 feature will be invisible. layer prop:', parsed[0].get('layer'));
+                        }
+                    }
+                }
             })
             .catch((err) => {
                 console.error(`Failed to load collection "${collectionId}":`, err);

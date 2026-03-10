@@ -278,6 +278,8 @@
         </div>
     </form>
 
+    <script src="{{ asset('components/openlayers6-es5/dist/ol.js') }}"></script>
+    <script src="{{ asset('bundles/mapbenderogcapifeatures/vendor/olms.js') }}"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var styleTextarea = document.getElementById('style');
@@ -339,16 +341,75 @@
             return s;
         }
 
+        function extractMapboxPaint(json) {
+            if (!json || !json.version || !json.layers) return null;
+            if (typeof ol === 'undefined' || typeof olms === 'undefined' || !olms.stylefunction) return null;
+
+            var collectionId = {{ style.collectionId ? ("'" ~ style.collectionId ~ "'") : 'null' }};
+
+            // Find source name
+            var sourceName = null;
+            for (var i = 0; i < json.layers.length; i++) {
+                var l = json.layers[i];
+                if (collectionId && l['source-layer'] === collectionId && l.source) {
+                    sourceName = l.source;
+                    break;
+                }
+            }
+            if (!sourceName) {
+                var srcs = json.sources || {};
+                for (var n in srcs) {
+                    if (srcs[n].type === 'vector' || srcs[n].type === 'geojson') { sourceName = n; break; }
+                }
+            }
+            if (!sourceName) return null;
+
+            var dummyLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
+            try {
+                olms.stylefunction(dummyLayer, json, sourceName);
+            } catch(e) { return null; }
+            var styleFn = dummyLayer.getStyle();
+            if (typeof styleFn !== 'function') return null;
+
+            // Test with a polygon feature to capture both fill and line styles
+            var testFeature = new ol.Feature(new ol.geom.Polygon([[[0,0],[100,0],[100,100],[0,100],[0,0]]]));
+            if (collectionId) testFeature.set('layer', collectionId, true);
+            var result = styleFn(testFeature, 10);
+            var styles = Array.isArray(result) ? result : (result ? [result] : []);
+
+            var p = { fillStyle: 'rgba(0,0,0,0)', strokeStyle: 'rgba(0,0,0,0)', strokeWidth: 0 };
+            for (var j = 0; j < styles.length; j++) {
+                var fill = styles[j].getFill ? styles[j].getFill() : null;
+                var stroke = styles[j].getStroke ? styles[j].getStroke() : null;
+                if (fill && fill.getColor()) p.fillStyle = fill.getColor();
+                if (stroke && stroke.getColor()) {
+                    p.strokeStyle = stroke.getColor();
+                    p.strokeWidth = stroke.getWidth() || 2;
+                }
+            }
+            return p;
+        }
+
         function drawPreview() {
             var s = getVisualStyle();
-            var fillColor   = s.fillColor   || '#ff0000';
-            var fillOpacity = parseFloat(s.fillOpacity) || 1;
-            var strokeColor   = s.strokeColor   || '#ffffff';
-            var strokeOpacity = parseFloat(s.strokeOpacity) || 1;
-            var strokeWidth   = parseFloat(s.strokeWidth)   || 1;
-            var pointRadius   = parseFloat(s.pointRadius)   || 6;
-            var dashes = dashMap[s.strokeDashstyle] || [];
-            var linecap = s.strokeLinecap || 'round';
+            var json = getJsonFromTextarea();
+            var mb = extractMapboxPaint(json);
+            var fillStyle, strokeStyle, strokeWidth, pointRadius, dashes, linecap;
+            if (mb) {
+                fillStyle = mb.fillStyle;
+                strokeStyle = mb.strokeStyle;
+                strokeWidth = mb.strokeWidth;
+                pointRadius = 6;
+                dashes = [];
+                linecap = 'round';
+            } else {
+                fillStyle     = hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);
+                strokeStyle   = hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+                strokeWidth   = parseFloat(s.strokeWidth)   || 1;
+                pointRadius   = parseFloat(s.pointRadius)   || 6;
+                dashes = dashMap[s.strokeDashstyle] || [];
+                linecap = s.strokeLinecap || 'round';
+            }
 
             // ── Point ──
             (function() {
@@ -360,13 +421,13 @@
                 ctx.lineCap = linecap;
                 ctx.lineJoin = 'round';
                 ctx.lineWidth = strokeWidth;
-                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.fillStyle   = fillStyle;
+                ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
                 ctx.arc(w/2, h/2, Math.max(pointRadius, 3), 0, 2*Math.PI);
                 ctx.fill();
                 if (strokeWidth > 0) ctx.stroke();
-                drawLabel(ctx, s, w/2, h/2 + Math.max(pointRadius,3) + 4);
+                if (!mb) drawLabel(ctx, s, w/2, h/2 + Math.max(pointRadius,3) + 4);
             })();
 
             // ── Line ──
@@ -379,14 +440,14 @@
                 ctx.lineCap = linecap;
                 ctx.lineJoin = 'round';
                 ctx.lineWidth = strokeWidth;
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
                 ctx.moveTo(20, h-20);
                 ctx.lineTo(w*0.35, 25);
                 ctx.lineTo(w*0.65, h-25);
                 ctx.lineTo(w-20, 20);
                 ctx.stroke();
-                drawLabel(ctx, s, w/2, h/2 + 10);
+                if (!mb) drawLabel(ctx, s, w/2, h/2 + 10);
             })();
 
             // ── Polygon ──
@@ -399,8 +460,8 @@
                 ctx.lineCap = linecap;
                 ctx.lineJoin = 'round';
                 ctx.lineWidth = strokeWidth;
-                ctx.fillStyle   = hexToRgba(fillColor, fillOpacity);
-                ctx.strokeStyle = hexToRgba(strokeColor, strokeOpacity);
+                ctx.fillStyle   = fillStyle;
+                ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
                 ctx.moveTo(w*0.5, 15);
                 ctx.lineTo(w-20, h*0.4);
@@ -410,7 +471,7 @@
                 ctx.closePath();
                 ctx.fill();
                 if (strokeWidth > 0) ctx.stroke();
-                drawLabel(ctx, s, w/2, h-10);
+                if (!mb) drawLabel(ctx, s, w/2, h-10);
             })();
         }
 
