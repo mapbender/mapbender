@@ -129,19 +129,50 @@
                 return 'rgba('+r+','+g+','+b+','+(parseFloat(opacity)||1)+')';
             }
 
-            function drawCanvas(canvas, s) {
+            function extractMapboxPaint(s, collectionId) {
+                if (!s || !s.version || !s.layers) return null;
+                var fillLayer = null, lineLayer = null;
+                for (var i = 0; i < s.layers.length; i++) {
+                    var l = s.layers[i];
+                    if (collectionId && l['source-layer'] && l['source-layer'] !== collectionId) continue;
+                    if (!fillLayer && l.type === 'fill' && l.paint) fillLayer = l;
+                    if (!lineLayer && l.type === 'line' && l.paint) lineLayer = l;
+                }
+                if (!fillLayer && !lineLayer) return null;
+                var p = {};
+                if (fillLayer) {
+                    p.fc = fillLayer.paint['fill-color'] || '#000000';
+                    p.fo = fillLayer.paint['fill-opacity'] !== undefined ? fillLayer.paint['fill-opacity'] : 1;
+                } else { p.fc = 'transparent'; p.fo = 0; }
+                if (lineLayer) {
+                    p.sc = lineLayer.paint['line-color'] || '#000000';
+                    p.so = lineLayer.paint['line-opacity'] !== undefined ? lineLayer.paint['line-opacity'] : 1;
+                    var lw = lineLayer.paint['line-width'];
+                    p.sw = typeof lw === 'object' ? (lw.stops ? lw.stops[0][1] : 2) : (lw || 2);
+                } else { p.sc = 'transparent'; p.so = 0; p.sw = 0; }
+                return p;
+            }
+
+            function drawCanvas(canvas, s, collectionId) {
                 var ctx = canvas.getContext('2d');
                 var w = canvas.width, h = canvas.height;
                 ctx.clearRect(0,0,w,h);
                 if (!s) return;
-                var fc = s.fillColor || '#ff0000';
-                var fo = parseFloat(s.fillOpacity) || 1;
-                var sc = s.strokeColor || '#ffffff';
-                var so = parseFloat(s.strokeOpacity) || 1;
-                var sw = parseFloat(s.strokeWidth) || 1;
-                var pr = Math.min(parseFloat(s.pointRadius) || 5, w/2 - 2);
-                ctx.fillStyle = hexToRgba(fc, fo);
-                ctx.strokeStyle = hexToRgba(sc, so);
+                var mb = extractMapboxPaint(s, collectionId);
+                var fc, sc, sw, pr;
+                if (mb) {
+                    fc = hexToRgba(mb.fc, mb.fo);
+                    sc = hexToRgba(mb.sc, mb.so);
+                    sw = mb.sw;
+                    pr = 5;
+                } else {
+                    fc = hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);
+                    sc = hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+                    sw = parseFloat(s.strokeWidth) || 1;
+                    pr = Math.min(parseFloat(s.pointRadius) || 5, w/2 - 2);
+                }
+                ctx.fillStyle = fc;
+                ctx.strokeStyle = sc;
                 ctx.lineWidth = sw;
                 ctx.lineJoin = 'round';
                 ctx.lineCap = 'round';
@@ -159,13 +190,16 @@
                 var select = popoverBody.querySelector('select[id$="_styleId"]');
                 if (!select) return;
                 var id = select.value;
-                var raw = id ? styleMap[id] : null;
+                var entry = id ? styleMap[id] : null;
                 var s = null;
-                if (raw) {
+                var collectionId = null;
+                if (entry) {
+                    var raw = entry.style || entry;
+                    collectionId = entry.collectionId || null;
                     try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
                 }
                 popoverBody.querySelectorAll('.layer-preview canvas').forEach(function(c) {
-                    drawCanvas(c, s);
+                    drawCanvas(c, s, collectionId);
                 });
             }
 

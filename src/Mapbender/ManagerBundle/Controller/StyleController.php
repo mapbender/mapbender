@@ -33,7 +33,10 @@ class StyleController extends ApplicationControllerBase
         $styles = $this->em->getRepository(Style::class)->findAll();
         $map = [];
         foreach ($styles as $style) {
-            $map[$style->getId()] = $style->getStyle();
+            $map[$style->getId()] = [
+                'style' => $style->getStyle(),
+                'collectionId' => $style->getCollectionId(),
+            ];
         }
         return new JsonResponse($map);
     }
