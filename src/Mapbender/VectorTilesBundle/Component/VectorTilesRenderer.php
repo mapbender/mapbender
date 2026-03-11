@@ -64,6 +64,7 @@ class VectorTilesRenderer extends LayerRenderer
             [
                 'NODE_PATH' => $this->getNodeRoot(),
                 'MB_VT_PRINT_CONFIG' => json_encode($config),
+                'MB_PUPPETEER_NO_SANDBOX' => $_ENV['MB_PUPPETEER_NO_SANDBOX'] ?? 'false',
             ]
         );
         $process->run();
