@@ -79,6 +79,7 @@ class OgcApiFeaturesLoader extends SourceLoader
     {
         $baseUrl = rtrim($source->getJsonUrl(), '/');
         foreach ($source->getLayers() as $layer) {
+            /** @var OgcApiFeaturesLayerSource $layer */
             $collectionId = $layer->getCollectionId();
             $stylesUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/styles?f=json';
             try {
@@ -143,6 +144,7 @@ class OgcApiFeaturesLoader extends SourceLoader
             // Find the layer title for the collection
             $layerTitle = $collectionId;
             foreach ($source->getLayers() as $layer) {
+                /** @var OgcApiFeaturesLayerSource $layer */
                 if ($layer->getCollectionId() === $collectionId && $layer->getTitle()) {
                     $layerTitle = $layer->getTitle();
                     break;

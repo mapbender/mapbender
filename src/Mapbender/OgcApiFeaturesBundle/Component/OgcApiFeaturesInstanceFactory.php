@@ -36,6 +36,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $styleMap = $this->getStyleMapForSource($source->getId());
 
         foreach ($source->getLayers() as $layer) {
+            /** @var OgcApiFeaturesLayerSource $layer */
             $instanceLayer = new OgcApiFeaturesInstanceLayer();
             $instanceLayer->setTitle($layer->getTitle());
             $instanceLayer->setSourceInstance($instance);
