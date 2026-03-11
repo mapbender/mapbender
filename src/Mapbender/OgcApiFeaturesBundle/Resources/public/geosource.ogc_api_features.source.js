@@ -39,6 +39,8 @@ class OgcApiSource extends Mapbender.Source {
         const child = this.getRootLayer().children.find(c => c.options.collectionId === collectionId);
         const limit = child?.options?.featureLimit || this.options.featureLimit;
         const apiEndpoint = `${this.options.jsonUrl}/collections/${collectionId}/items?f=json&bbox=${bbox}&limit=${limit}`;
+        // Dispatch a load-start event so _initLayerEvents (@see mapbender.model.js) picks it up
+        source.dispatchEvent('imageloadstart');
         fetch(apiEndpoint)
             .then((resp) => {
                 if (!resp.ok) {
@@ -56,9 +58,11 @@ class OgcApiSource extends Mapbender.Source {
                 });
                 source.clear(true);
                 source.addFeatures(parsed);
+                source.dispatchEvent('imageloadend');
             })
             .catch((err) => {
                 console.error(`Failed to load collection "${collectionId}":`, err);
+                source.dispatchEvent('imageloaderror');
             });
     }
 
