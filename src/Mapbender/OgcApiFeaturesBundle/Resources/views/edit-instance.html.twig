@@ -2,12 +2,7 @@
 
 {% block css %}
     {{ parent() }}
-    <style>
-        .collectionTable { table-layout: auto; width: 100%; }
-        .collectionTable th, .collectionTable td { white-space: nowrap; vertical-align: middle; }
-        .collectionTable .style-select { min-width: 170px; }
-        .table-responsive-layers { overflow-x: auto; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('bundles/mapbenderogcapifeatures/css/edit-instance.css') }}">
 {% endblock %}
 
 {% block form_main1 %}
@@ -84,10 +79,13 @@
                             <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
                                 <div class="popover-arrow"></div>
                                 <div class="popover-body">
+                                    <button type="button" class="btn-close position-absolute -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
+                                            style="top:8px;right:8px;font-size:10px;" aria-label="Close"></button>
                                     <div class="row mb-3">
                                         <div class="col-sm-3"><label class="form-label fw-bold">Style</label></div>
-                                        <div class="col-sm-9">{{ form_widget(layer.styleId) }}</div>
+                                        <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>
                                     </div>
+                                    {{ form_widget(layer.nativeStyleId) }}
                                     <div class="row mb-2">
                                         <div class="col-sm-3"><label class="form-label fw-bold">Preview</label></div>
                                         <div class="col-sm-9">

@@ -7,6 +7,7 @@ class StyleInstanceEditor {
         this.styleMap = {};
 
         this._bindEvents();
+        this._markNativeStyles();
         this._loadStyles();
         this._initSortable();
     }
@@ -16,6 +17,7 @@ class StyleInstanceEditor {
         $(document).on('change', 'select[id$="_styleId"]', (e) => {
             const popoverBody = e.target.closest('.popover-body');
             if (popoverBody) this.updatePreview(popoverBody);
+            this._updateDropdownValueColor(e.target);
         });
 
         // Popover toggling
@@ -32,6 +34,16 @@ class StyleInstanceEditor {
                 const body = $target.find('.popover-body')[0];
                 if (body) this.updatePreview(body);
             }
+        });
+
+        // Close button (X) dismisses popover without side effects
+        this.$table.on('click', '.-fn-close-popover', (e) => {
+            e.preventDefault();
+            const $btn = $(e.currentTarget);
+            const target = $btn.attr('data-toggle-target');
+            const $target = $(target);
+            $target.parent().removeClass('display');
+            $target.removeClass('show');
         });
 
         // Confirm button closes popover and updates the styled checkbox
@@ -55,10 +67,39 @@ class StyleInstanceEditor {
         if (!this.styleUrl) return;
         $.getJSON(this.styleUrl, (data) => {
             this.styleMap = data;
+            this._markNativeStyles();
             document.querySelectorAll('.popover-body').forEach(body => {
                 this.updatePreview(body);
             });
         });
+    }
+
+    _markNativeStyles() {
+        document.querySelectorAll('select[id$="_styleId"]').forEach(select => {
+            const nativeId = select.dataset.nativeStyleId;
+            if (!nativeId) return;
+            const dropdown = select.closest('.dropdown');
+            if (!dropdown) return;
+            // Mark native option in the dropdown list
+            dropdown.querySelectorAll('.dropdownList .choice').forEach(li => {
+                if (li.dataset.value === nativeId) {
+                    if (!li.textContent.includes('(native style)')) {
+                        li.textContent += ' (native style)';
+                    }
+                    li.classList.add('native-style');
+                }
+            });
+            // Color the closed dropdown display
+            this._updateDropdownValueColor(select);
+        });
+    }
+
+    _updateDropdownValueColor(select) {
+        const nativeId = select.dataset.nativeStyleId;
+        const dropdown = select.closest('.dropdown');
+        if (!dropdown) return;
+        const isNative = nativeId && select.value === nativeId;
+        dropdown.classList.toggle('native-style-active', isNative);
     }
 
     _initSortable() {

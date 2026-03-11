@@ -46,6 +46,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
             $collectionId = $layer->getCollectionId();
             if (isset($styleMap[$collectionId])) {
                 $instanceLayer->setStyleId($styleMap[$collectionId]);
+                $instanceLayer->setNativeStyleId($styleMap[$collectionId]);
             }
             $instance->addLayer($instanceLayer);
         };

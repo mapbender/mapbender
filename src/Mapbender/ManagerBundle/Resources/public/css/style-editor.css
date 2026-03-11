@@ -1,0 +1,65 @@
+.style-editor-tabs .nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 0;
+}
+.style-editor-tabs .nav-tabs .nav-link {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 24px;
+    color: #6c757d;
+    border: 2px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    margin-bottom: -2px;
+    background: #f8f9fa;
+    transition: all 0.15s ease;
+}
+.style-editor-tabs .nav-tabs .nav-link:hover {
+    color: #495057;
+    background: #e9ecef;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+.style-editor-tabs .nav-tabs .nav-link.active {
+    color: #0d6efd;
+    background: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+.style-editor-tabs .nav-tabs .nav-link .tab-icon {
+    margin-right: 6px;
+}
+.style-editor-tabs .tab-content {
+    border: 2px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 20px;
+    background: #fff;
+}
+.style-editor-tabs fieldset {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px 20px 8px;
+    margin-bottom: 16px;
+    background: #fafbfc;
+}
+.style-editor-tabs fieldset legend {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    width: auto;
+    padding: 0 8px;
+    float: none;
+    margin-bottom: 8px;
+}
+#pane-json textarea {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+#pane-json textarea:focus {
+    background: #fff;
+}

@@ -1,0 +1,12 @@
+.collectionTable { table-layout: auto; width: 100%; }
+.collectionTable th, .collectionTable td { white-space: nowrap; vertical-align: middle; }
+.collectionTable .style-select { min-width: 170px; }
+.table-responsive-layers { overflow-x: auto; }
+.collectionTable .popover { min-width: 650px; max-width: calc(100vw - 40px); }
+.collectionTable .popover-body { position: relative; padding-top: 28px; }
+.collectionTable .popover-arrow { display: none; }
+.collectionTable .static-popover-wrap { position: relative; }
+.collectionTable .popover-inner-wrap { position: static; }
+.collectionTable .popover.show { position: absolute; right: 0; left: auto; z-index: 10; }
+.dropdown.native-style-active > .dropdownValue { font-weight: bold !important; }
+.dropdownList .choice.native-style { font-weight: bold !important; }
