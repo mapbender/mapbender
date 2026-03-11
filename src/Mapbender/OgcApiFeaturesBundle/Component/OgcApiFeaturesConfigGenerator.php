@@ -28,7 +28,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         /** @var OgcApiFeaturesSource $source */
         $source = $sourceInstance->getSource();
         $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
-        json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
+        $featureInfoPropertyMap = json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
         $featureInfoPropertyMapExists = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
         $config['options'] = [
             'id' => $sourceInstance->getId(),
@@ -47,7 +47,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                 ],
             ],
             'featureInfo' => [
-                'propertyMap' => $featureInfoPropertyMapExists ? json_decode($sourceInstance->getFeatureInfoPropertyMap(), true) : null,
+                'propertyMap' => $featureInfoPropertyMapExists ? $featureInfoPropertyMap : null,
             ],
         ];
         $config['state'] = [
