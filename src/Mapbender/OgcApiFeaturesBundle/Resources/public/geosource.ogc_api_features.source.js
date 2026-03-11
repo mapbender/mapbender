@@ -23,8 +23,10 @@ class OgcApiSource extends Mapbender.Source {
                 source: vectorSource,
             };
             const vectorLayer = new ol.layer.Vector(layerOptions);
-            // Apply style: use olms.stylefunction for Mapbox styles, custom for simple styles
-            this._applyStyle(vectorLayer, child.options.style, collectionId);
+            // Apply style from availableStyles lookup
+            const styleDef = this._getStyleDef(child);
+            this._applyStyle(vectorLayer, styleDef, collectionId);
+            vectorLayer.set('_activeStyle', child.options.style || null);
             this.nativeLayers.push(vectorLayer);
         });
         this.setOpacity(this.options.opacity);
@@ -207,12 +209,28 @@ class OgcApiSource extends Mapbender.Source {
         return this.getRootLayer().getSelected();
     }
 
+    _getStyleDef(child) {
+        const styleName = child.options.style;
+        const available = child.options.availableStyles;
+        if (!styleName || !available) return null;
+        const found = available.find(s => s.name === styleName);
+        return found ? found.style : null;
+    }
+
     updateEngine() {
         const children = this.getRootLayer().children;
         const rootVisible = this.getRootLayer().state.visibility;
         this.nativeLayers.forEach((layer, index) => {
-            const childVisible = children[index] ? children[index].state.visibility : false;
+            const child = children[index];
+            const childVisible = child ? child.state.visibility : false;
             Mapbender.mapEngine.setLayerVisibility(layer, rootVisible && childVisible);
+            if (child && child.options.style && child.options.style !== layer.get('_activeStyle')) {
+                const styleDef = this._getStyleDef(child);
+                if (styleDef) {
+                    this._applyStyle(layer, styleDef, child.options.collectionId);
+                    layer.set('_activeStyle', child.options.style);
+                }
+            }
         });
     }
 

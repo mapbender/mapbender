@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 
 class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
@@ -85,14 +86,10 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         ],
                     ],
                 ];
-                if ($layer->getStyleId()) {
-                    $styleEntity = $this->em->find(Style::class, $layer->getStyleId());
-                    if ($styleEntity && $styleEntity->getStyle()) {
-                        $decoded = json_decode($styleEntity->getStyle(), true);
-                        if (is_array($decoded)) {
-                            $childConfig['options']['style'] = $decoded;
-                        }
-                    }
+                $availableStyles = $this->buildAvailableStyles($layer);
+                if (!empty($availableStyles)) {
+                    $childConfig['options']['style'] = $availableStyles[0]['name'];
+                    $childConfig['options']['availableStyles'] = $availableStyles;
                 }
                 $config['children'][] = $childConfig;
             }
@@ -111,6 +108,32 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             }
         }
         return $featureInfoEnabled;
+    }
+
+    protected function buildAvailableStyles(OgcApiFeaturesInstanceLayer $layer): array
+    {
+        $styles = [];
+        $styleIds = [];
+        if ($layer->getStyleId()) {
+            $styleIds[] = $layer->getStyleId();
+        }
+        foreach ($layer->getSecondaryStyleIds() as $secId) {
+            $styleIds[] = (int) $secId;
+        }
+        foreach ($styleIds as $id) {
+            $styleEntity = $this->em->find(Style::class, $id);
+            if ($styleEntity && $styleEntity->getStyle()) {
+                $decoded = json_decode($styleEntity->getStyle(), true);
+                if (is_array($decoded)) {
+                    $styles[] = [
+                        'name' => (string) $styleEntity->getId(),
+                        'title' => $styleEntity->getName(),
+                        'style' => $decoded,
+                    ];
+                }
+            }
+        }
+        return $styles;
     }
 
     protected function getMetaDataUrl($instance, $layer = null): ?string
