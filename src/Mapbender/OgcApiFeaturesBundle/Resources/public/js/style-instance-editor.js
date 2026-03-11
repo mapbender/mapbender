@@ -7,7 +7,6 @@ class StyleInstanceEditor {
         this.styleMap = {};
 
         this._bindEvents();
-        this._markNativeStyles();
         this._loadStyles();
         this._initSortable();
     }
@@ -17,7 +16,7 @@ class StyleInstanceEditor {
         $(document).on('change', 'select[id$="_styleId"]', (e) => {
             const popoverBody = e.target.closest('.popover-body');
             if (popoverBody) this.updatePreview(popoverBody);
-            this._updateDropdownValueColor(e.target);
+            this._updateNativeStyleIndicator(e.target);
         });
 
         // Popover toggling
@@ -39,21 +38,14 @@ class StyleInstanceEditor {
         // Close button (X) dismisses popover without side effects
         this.$table.on('click', '.-fn-close-popover', (e) => {
             e.preventDefault();
-            const $btn = $(e.currentTarget);
-            const target = $btn.attr('data-toggle-target');
-            const $target = $(target);
-            $target.parent().removeClass('display');
-            $target.removeClass('show');
+            this._dismissPopover($(e.currentTarget));
         });
 
         // Confirm button closes popover and updates the styled checkbox
         this.$table.on('click', '.-fn-confirm-style', (e) => {
             e.preventDefault();
             const $btn = $(e.currentTarget);
-            const target = $btn.attr('data-toggle-target');
-            const $target = $(target);
-            $target.parent().removeClass('display');
-            $target.removeClass('show');
+            this._dismissPopover($btn);
             const $row = $btn.closest('tr');
             const select = $row.find('select[id$="_styleId"]')[0];
             const checkbox = $row.find('.style-indicator')[0];
@@ -74,6 +66,13 @@ class StyleInstanceEditor {
         });
     }
 
+    _dismissPopover($trigger) {
+        const target = $trigger.attr('data-toggle-target');
+        const $target = $(target);
+        $target.parent().removeClass('display');
+        $target.removeClass('show');
+    }
+
     _markNativeStyles() {
         document.querySelectorAll('select[id$="_styleId"]').forEach(select => {
             const nativeId = select.dataset.nativeStyleId;
@@ -89,12 +88,11 @@ class StyleInstanceEditor {
                     li.classList.add('native-style');
                 }
             });
-            // Color the closed dropdown display
-            this._updateDropdownValueColor(select);
+            this._updateNativeStyleIndicator(select);
         });
     }
 
-    _updateDropdownValueColor(select) {
+    _updateNativeStyleIndicator(select) {
         const nativeId = select.dataset.nativeStyleId;
         const dropdown = select.closest('.dropdown');
         if (!dropdown) return;

@@ -79,8 +79,8 @@
                             <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
                                 <div class="popover-arrow"></div>
                                 <div class="popover-body">
-                                    <button type="button" class="btn-close position-absolute -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
-                                            style="top:8px;right:8px;font-size:10px;" aria-label="Close"></button>
+                                    <button type="button" class="btn-close -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
+                                            aria-label="Close"></button>
                                     <div class="row mb-3">
                                         <div class="col-sm-3"><label class="form-label fw-bold">Style</label></div>
                                         <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>

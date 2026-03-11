@@ -4,6 +4,7 @@
 .table-responsive-layers { overflow-x: auto; }
 .collectionTable .popover { min-width: 650px; max-width: calc(100vw - 40px); }
 .collectionTable .popover-body { position: relative; padding-top: 28px; }
+.collectionTable .popover-body > .btn-close { position: absolute; top: 8px; right: 8px; font-size: 10px; }
 .collectionTable .popover-arrow { display: none; }
 .collectionTable .static-popover-wrap { position: relative; }
 .collectionTable .popover-inner-wrap { position: static; }
