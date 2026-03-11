@@ -74,7 +74,7 @@
                 distance: 6,
                 containment: 'parent',
                 stop: (event, ui) => {
-                    $('input[type="hidden"]', $('.collectionTable tbody tr')).each(function(idx, item) {
+                    $('input[id$="priority"]', $('.collectionTable tbody tr')).each(function(idx, item) {
                         $(item).val(idx);
                     });
                 }
