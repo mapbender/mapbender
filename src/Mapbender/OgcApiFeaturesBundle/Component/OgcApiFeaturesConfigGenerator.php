@@ -85,14 +85,12 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 
     protected function featureInfoEnabled($sourceInstance): bool
     {
-        $featureInfoEnabled = false;
         foreach ($sourceInstance->getLayers() as $layer) {
             if ($layer->getInfo() === true) {
-                $featureInfoEnabled = $layer->getInfo();
-                break;
+                return true;
             }
         }
-        return $featureInfoEnabled;
+        return false;
     }
 
     protected function getMetaDataUrl($instance, $layer = null): ?string
