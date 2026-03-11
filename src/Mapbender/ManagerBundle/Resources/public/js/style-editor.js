@@ -36,17 +36,14 @@ class StyleEditor {
     }
 
     _bindEvents() {
+        const onFlatChange = () => {
+            this.syncVisualToJson();
+            this.updateRangePreviews();
+            this.drawPreview();
+        };
         this.visualInputs.forEach(el => {
-            el.addEventListener('input', () => {
-                this.syncVisualToJson();
-                this.updateRangePreviews();
-                this.drawPreview();
-            });
-            el.addEventListener('change', () => {
-                this.syncVisualToJson();
-                this.updateRangePreviews();
-                this.drawPreview();
-            });
+            el.addEventListener('input', onFlatChange);
+            el.addEventListener('change', onFlatChange);
         });
 
         document.getElementById('tab-visual').addEventListener('shown.bs.tab', () => {
@@ -161,7 +158,9 @@ class StyleEditor {
                     <div class="layer-full-preview mb-3">
                         <canvas id="layer-full-preview-${idx}" class="layer-full-canvas" width="200" height="80"></canvas>
                     </div>
-                    ${this._buildLayerControls(layer, idx)}
+                    <div class="layer-paint-controls">
+                        ${this._buildPaintControls(layer.type || 'fill', layer.paint || {}, idx, layer.layout || {})}
+                    </div>
                     <div class="text-end mt-2">
                         <button type="button" class="btn btn-sm btn-outline-danger -fn-remove-layer" data-layer-index="${idx}">
                             <i class="fas fa-trash-can me-1"></i>Remove
@@ -175,33 +174,28 @@ class StyleEditor {
 
         const fullPreviewId = `layer-full-preview-${idx}`;
 
+        const onLayerChange = () => {
+            this._syncLayersToJson();
+            const updatedLayer = this._readLayerFromItem(item, this.getJsonFromTextarea());
+            this._drawLayerMiniPreview(canvasId, updatedLayer);
+            this._drawLayerFullPreview(fullPreviewId, updatedLayer);
+            this.drawPreview();
+        };
+
         // Draw per-layer previews
         this._drawLayerMiniPreview(canvasId, layer);
         this._drawLayerFullPreview(fullPreviewId, layer);
 
         // Bind events for this layer's controls
         item.querySelectorAll('[data-layer-prop]').forEach(el => {
-            const handler = () => {
-                this._syncLayersToJson();
-                const updatedLayer = this._readLayerFromItem(item, this.getJsonFromTextarea());
-                this._drawLayerMiniPreview(canvasId, updatedLayer);
-                this._drawLayerFullPreview(fullPreviewId, updatedLayer);
-                this.drawPreview();
-            };
-            el.addEventListener('input', handler);
-            el.addEventListener('change', handler);
+            el.addEventListener('input', onLayerChange);
+            el.addEventListener('change', onLayerChange);
         });
 
         // Bind colorpickers
         try {
             $(item).find('.-js-colorpicker').colorpicker({format: 'hex'});
-            $(item).find('.-js-colorpicker').on('changeColor', () => {
-                this._syncLayersToJson();
-                const updatedLayer = this._readLayerFromItem(item, this.getJsonFromTextarea());
-                this._drawLayerMiniPreview(canvasId, updatedLayer);
-                this._drawLayerFullPreview(fullPreviewId, updatedLayer);
-                this.drawPreview();
-            });
+            $(item).find('.-js-colorpicker').on('changeColor', onLayerChange);
         } catch(e) {}
 
         // Bind remove
@@ -210,18 +204,6 @@ class StyleEditor {
             this._syncLayersToJson();
             this.drawPreview();
         });
-    }
-
-    _buildLayerControls(layer, idx) {
-        const paint = layer.paint || {};
-        const layout = layer.layout || {};
-        const type = layer.type || 'fill';
-
-        return `
-            <div class="layer-paint-controls">
-                ${this._buildPaintControls(type, paint, idx, layout)}
-            </div>
-        `;
     }
 
     _buildPaintControls(type, paint, idx, layout) {
@@ -270,7 +252,7 @@ class StyleEditor {
         return '<p class="text-muted small">No editable paint properties for this layer type.</p>';
     }
 
-    _colorRow(prop, label, value, idx) {
+    _colorRow(prop, label, value) {
         return `
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -285,7 +267,7 @@ class StyleEditor {
         `;
     }
 
-    _rangeRow(prop, label, value, idx, min, max, step) {
+    _rangeRow(prop, label, value, _idx, min, max, step) {
         return `
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -297,7 +279,7 @@ class StyleEditor {
         `;
     }
 
-    _numberRow(prop, label, value, idx, min, max, step) {
+    _numberRow(prop, label, value, _idx, min, max, step) {
         return `
             <div class="row mb-2">
                 <div class="col-sm-4">
@@ -569,39 +551,43 @@ class StyleEditor {
             paintControls.querySelectorAll('[data-layer-prop]').forEach(el => {
                 const prop = el.dataset.layerProp;
                 const val = el.value;
-
-                if (type === 'fill') {
-                    if (prop === 'fill-color' && val) layer.paint['fill-color'] = val;
-                    if (prop === 'fill-opacity') layer.paint['fill-opacity'] = parseFloat(val);
-                    if (prop === 'fill-outline-color' && val) layer.paint['fill-outline-color'] = val;
-                }
-                if (type === 'line') {
-                    if (prop === 'line-color' && val) layer.paint['line-color'] = val;
-                    if (prop === 'line-width') layer.paint['line-width'] = parseFloat(val);
-                    if (prop === 'line-opacity') layer.paint['line-opacity'] = parseFloat(val);
-                }
-                if (type === 'circle') {
-                    if (prop === 'circle-radius') layer.paint['circle-radius'] = parseFloat(val);
-                    if (prop === 'circle-color' && val) layer.paint['circle-color'] = val;
-                    if (prop === 'circle-opacity') layer.paint['circle-opacity'] = parseFloat(val);
-                    if (prop === 'circle-stroke-color' && val) layer.paint['circle-stroke-color'] = val;
-                    if (prop === 'circle-stroke-width') layer.paint['circle-stroke-width'] = parseFloat(val);
-                }
-                if (type === 'symbol') {
-                    if (prop === 'text-field') {
-                        try { layer.layout['text-field'] = JSON.parse(val); }
-                        catch(e) { layer.layout['text-field'] = val; }
-                    }
-                    if (prop === 'text-size') layer.layout['text-size'] = parseFloat(val);
-                    if (prop === 'text-font') {
-                        layer.layout['text-font'] = val ? val.split(',').map(s => s.trim()) : [];
-                    }
-                    if (prop === 'text-color' && val) layer.paint['text-color'] = val;
-                    if (prop === 'text-opacity') layer.paint['text-opacity'] = parseFloat(val);
-                }
+                this._applyLayerPropValue(layer, type, prop, val);
             });
         }
         return layer;
+    }
+
+    /** Map a single form control value to the appropriate paint/layout key */
+    _applyLayerPropValue(layer, type, prop, val) {
+        const numericPaint = new Set([
+            'fill-opacity', 'line-width', 'line-opacity',
+            'circle-radius', 'circle-opacity', 'circle-stroke-width',
+            'text-opacity',
+        ]);
+        const colorPaint = new Set([
+            'fill-color', 'fill-outline-color', 'line-color',
+            'circle-color', 'circle-stroke-color', 'text-color',
+        ]);
+
+        if (type === 'symbol') {
+            // Symbol uses layout for text-field, text-size, text-font
+            if (prop === 'text-field') {
+                try { layer.layout['text-field'] = JSON.parse(val); }
+                catch(e) { layer.layout['text-field'] = val; }
+                return;
+            }
+            if (prop === 'text-size') { layer.layout['text-size'] = parseFloat(val); return; }
+            if (prop === 'text-font') {
+                layer.layout['text-font'] = val ? val.split(',').map(s => s.trim()) : [];
+                return;
+            }
+        }
+
+        if (colorPaint.has(prop)) {
+            if (val) layer.paint[prop] = val;
+        } else if (numericPaint.has(prop)) {
+            layer.paint[prop] = parseFloat(val);
+        }
     }
 
     _addNewLayer() {
@@ -671,18 +657,7 @@ class StyleEditor {
             return;
         }
         this.setJsonToTextarea(parsed);
-        if (this._isMapboxDocument(parsed)) {
-            this._showLayersEditor(parsed);
-        } else {
-            this._showFlatEditor();
-            this.syncJsonToVisual();
-        }
-        this.drawPreview();
-        if (this.sourceTypeInput) this.sourceTypeInput.value = 'mapbox-json';
-        this._isVirgin = false;
-        this._updateImportWarning();
-        successEl.classList.remove('d-none');
-        this._switchToJsonTab();
+        this._finalizeImport('mapbox-json', successEl);
     }
 
     _importSld(content, warningsEl, successEl) {
@@ -692,6 +667,10 @@ class StyleEditor {
         }
         if (!result.style) return;
         this.setJsonToTextarea(result.style);
+        this._finalizeImport('sld', successEl);
+    }
+
+    _finalizeImport(sourceType, successEl) {
         const parsed = this.getJsonFromTextarea();
         if (this._isMapboxDocument(parsed)) {
             this._showLayersEditor(parsed);
@@ -700,7 +679,7 @@ class StyleEditor {
             this.syncJsonToVisual();
         }
         this.drawPreview();
-        if (this.sourceTypeInput) this.sourceTypeInput.value = 'sld';
+        if (this.sourceTypeInput) this.sourceTypeInput.value = sourceType;
         this._isVirgin = false;
         this._updateImportWarning();
         successEl.classList.remove('d-none');
