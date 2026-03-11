@@ -16,7 +16,7 @@ use Mapbender\CoreBundle\Component\Source\DataSource;
 // empty initially, because otherwise Doctrine will try to identify all classes inheriting from Source including
 // MappedSuperclasses, which does not work.
 #[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource'])]
-#[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 15)]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 25)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_source')]
 abstract class Source
