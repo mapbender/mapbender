@@ -27,7 +27,7 @@ class StyleEditor {
         this.reinitColorpickers();
 
         const json = this.getJsonFromTextarea();
-        if (this._isMapboxDocument(json)) {
+        if (this._isMultiLayerStyle(json)) {
             this._showLayersEditor(json);
         } else if (this.styleTextarea.value.trim()) {
             this.syncJsonToVisual();
@@ -48,7 +48,7 @@ class StyleEditor {
 
         document.getElementById('tab-visual').addEventListener('shown.bs.tab', () => {
             const json = this.getJsonFromTextarea();
-            if (this._isMapboxDocument(json)) {
+            if (this._isMultiLayerStyle(json)) {
                 this._showLayersEditor(json);
             } else {
                 this._showFlatEditor();
@@ -59,7 +59,7 @@ class StyleEditor {
         document.getElementById('tab-json').addEventListener('shown.bs.tab', () => {
             // Sync current visual state to JSON
             const json = this.getJsonFromTextarea();
-            if (!this._isMapboxDocument(json)) {
+            if (!this._isMultiLayerStyle(json)) {
                 this.syncVisualToJson();
             }
         });
@@ -515,7 +515,7 @@ class StyleEditor {
 
     _syncLayersToJson() {
         const doc = this.getJsonFromTextarea();
-        if (!this._isMapboxDocument(doc)) return;
+        if (!this._isMultiLayerStyle(doc)) return;
 
         const items = this.layerAccordion.querySelectorAll('.accordion-item');
         const layers = [];
@@ -592,7 +592,7 @@ class StyleEditor {
 
     _addNewLayer() {
         const doc = this.getJsonFromTextarea();
-        if (!this._isMapboxDocument(doc)) return;
+        if (!this._isMultiLayerStyle(doc)) return;
 
         const newLayer = {
             type: 'fill',
@@ -672,7 +672,7 @@ class StyleEditor {
 
     _finalizeImport(sourceType, successEl) {
         const parsed = this.getJsonFromTextarea();
-        if (this._isMapboxDocument(parsed)) {
+        if (this._isMultiLayerStyle(parsed)) {
             this._showLayersEditor(parsed);
         } else {
             this._showFlatEditor();
@@ -701,13 +701,13 @@ class StyleEditor {
         this.styleTextarea.value = JSON.stringify(obj, null, 2);
     }
 
-    _isMapboxDocument(obj) {
-        return !!(obj?.version && Array.isArray(obj?.layers));
+    _isMultiLayerStyle(obj) {
+        return Mapbender.StyleUtils.isMultiLayerStyle(obj);
     }
 
     syncVisualToJson() {
         const obj = this.getJsonFromTextarea();
-        if (this._isMapboxDocument(obj)) return; // layers editor handles its own sync
+        if (this._isMultiLayerStyle(obj)) return; // layers editor handles its own sync
         this.visualInputs.forEach(el => {
             const key = el.getAttribute('data-prop');
             let val = el.value;
@@ -721,7 +721,7 @@ class StyleEditor {
 
     syncJsonToVisual() {
         const obj = this.getJsonFromTextarea();
-        if (this._isMapboxDocument(obj)) {
+        if (this._isMultiLayerStyle(obj)) {
             this._showLayersEditor(obj);
             return;
         }
@@ -759,7 +759,7 @@ class StyleEditor {
     drawPreview() {
         const json = this.getJsonFromTextarea();
         // For Mapbox documents, per-layer previews handle rendering
-        if (this._isMapboxDocument(json)) return;
+        if (this._isMultiLayerStyle(json)) return;
 
         const s = this.getVisualStyle();
         const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);

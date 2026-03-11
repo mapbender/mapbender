@@ -48,11 +48,15 @@
                     data-source="{{ style.sourceId|default('') }}">
                     <td>{{ style.id }}</td>
                     <td>
+                        {% if style.multiLayer %}
+                            <span class="text-muted small">{{ 'mb.ogcapifeatures.admin.style.multi_layer_preview' | trans({'%count%': style.layerCount}) }}</span>
+                        {% else %}
                         <div class="d-flex gap-1">
                             <canvas class="style-preview" data-geom="point" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                             <canvas class="style-preview" data-geom="line" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                             <canvas class="style-preview" data-geom="polygon" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                         </div>
+                        {% endif %}
                     </td>
                     <td>{{ style.name ?? ('mb.ogcapifeatures.admin.style.manager.fallback_name' | trans({'%id%': style.id})) }}</td>
                     <td>

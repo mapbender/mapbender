@@ -30,7 +30,7 @@ mb:
         changed_was: "Gewijzigd (was: %label%)"
         changed: Gewijzigd ten opzichte van opgeslagen waarde
         none: "-- geen --"
-        multi_layer_preview: "Meerlaags stijl (%count% lagen) — geen voorbeeld"
+        multi_layer_preview: "Meerlaags (%count%)"
         name_required: Stijlnaam is verplicht.
         saved: Stijl opgeslagen.
         updated: Stijl bijgewerkt.

@@ -87,4 +87,25 @@ class Style
         $this->collectionId = $collectionId;
         return $this;
     }
+
+    public function isMultiLayer(): bool
+    {
+        if (!$this->style) {
+            return false;
+        }
+        $data = \json_decode($this->style, true);
+        return \is_array($data) && isset($data['version']) && \is_array($data['layers'] ?? null);
+    }
+
+    public function getLayerCount(): int
+    {
+        if (!$this->style) {
+            return 0;
+        }
+        $data = \json_decode($this->style, true);
+        if (\is_array($data) && \is_array($data['layers'] ?? null)) {
+            return \count($data['layers']);
+        }
+        return 0;
+    }
 }

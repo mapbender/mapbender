@@ -30,7 +30,7 @@ mb:
         changed_was: "Zmieniono (było: %label%)"
         changed: Zmieniono względem zapisanej wartości
         none: "-- brak --"
-        multi_layer_preview: "Styl wielowarstwowy (%count% warstw) — brak podglądu"
+        multi_layer_preview: "Wielowarstwowy (%count%)"
         name_required: Nazwa stylu jest wymagana.
         saved: Styl zapisany.
         updated: Styl zaktualizowany.

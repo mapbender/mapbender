@@ -30,7 +30,7 @@ mb:
         changed_was: "Changed (was: %label%)"
         changed: Changed from saved value
         none: "-- none --"
-        multi_layer_preview: "Multi-layer style (%count% layers) — no preview"
+        multi_layer_preview: "Multi-layer (%count%)"
         name_required: Style name is required.
         saved: Style saved.
         updated: Style updated.

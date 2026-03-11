@@ -30,7 +30,7 @@ mb:
         changed_was: "Modificato (era: %label%)"
         changed: Modificato rispetto al valore salvato
         none: "-- nessuno --"
-        multi_layer_preview: "Stile multilivello (%count% livelli) — nessuna anteprima"
+        multi_layer_preview: "Multilivello (%count%)"
         name_required: Il nome dello stile è obbligatorio.
         saved: Stile salvato.
         updated: Stile aggiornato.

@@ -5,6 +5,10 @@
  * Exposes window.Mapbender.StyleUtils
  */
 class StyleUtils {
+    static isMultiLayerStyle(obj) {
+        return !!(obj?.version && Array.isArray(obj?.layers));
+    }
+
     static hexToRgba(hex, opacity) {
         hex = (hex || '#000000').replace('#', '');
         if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
@@ -15,7 +19,7 @@ class StyleUtils {
     }
 
     static extractMapboxPaint(styleJson, collectionId) {
-        if (!styleJson?.version || !styleJson?.layers) return null;
+        if (!StyleUtils.isMultiLayerStyle(styleJson)) return null;
         let fillLayer = null, lineLayer = null;
         for (const l of styleJson.layers) {
             if (collectionId && l['source-layer'] && l['source-layer'] !== collectionId) continue;

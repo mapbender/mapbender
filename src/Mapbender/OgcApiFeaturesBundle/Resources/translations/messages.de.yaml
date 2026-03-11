@@ -30,7 +30,7 @@ mb:
         changed_was: "Geändert (war: %label%)"
         changed: Vom gespeicherten Wert abweichend
         none: "-- kein --"
-        multi_layer_preview: "Mehrschicht-Style (%count% Ebenen) — keine Vorschau"
+        multi_layer_preview: "Mehrschichtig (%count%)"
         name_required: Style-Name ist erforderlich.
         saved: Style gespeichert.
         updated: Style aktualisiert.

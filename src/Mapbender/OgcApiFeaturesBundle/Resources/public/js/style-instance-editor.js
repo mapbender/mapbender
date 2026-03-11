@@ -433,7 +433,7 @@ class StyleInstanceEditor {
         }
         const previewWrap = popoverBody.querySelector('.layer-preview');
         if (!previewWrap) return;
-        const isMultiLayer = s && s.version && Array.isArray(s.layers);
+        const isMultiLayer = Mapbender.StyleUtils.isMultiLayerStyle(s);
         let msg = previewWrap.querySelector('.preview-message');
         if (isMultiLayer) {
             previewWrap.querySelectorAll('canvas').forEach(c => c.style.display = 'none');

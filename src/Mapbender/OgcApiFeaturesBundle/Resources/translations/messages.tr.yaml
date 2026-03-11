@@ -30,7 +30,7 @@ mb:
         changed_was: "Değiştirildi (önceki: %label%)"
         changed: Kayıtlı değerden farklı
         none: "-- yok --"
-        multi_layer_preview: "Çok katmanlı stil (%count% katman) — önizleme yok"
+        multi_layer_preview: "Çok katmanlı (%count%)"
         name_required: Stil adı gereklidir.
         saved: Stil kaydedildi.
         updated: Stil güncellendi.

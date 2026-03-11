@@ -30,7 +30,7 @@ mb:
         changed_was: "Изменено (было: %label%)"
         changed: Изменено относительно сохранённого значения
         none: "-- нет --"
-        multi_layer_preview: "Многослойный стиль (%count% слоёв) — предпросмотр недоступен"
+        multi_layer_preview: "Многослойный (%count%)"
         name_required: Название стиля обязательно.
         saved: Стиль сохранён.
         updated: Стиль обновлён.

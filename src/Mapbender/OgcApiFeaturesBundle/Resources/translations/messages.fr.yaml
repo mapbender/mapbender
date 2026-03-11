@@ -30,7 +30,7 @@ mb:
         changed_was: "Modifié (était : %label%)"
         changed: Modifié par rapport à la valeur enregistrée
         none: "-- aucun --"
-        multi_layer_preview: "Style multicouche (%count% couches) — pas d'aperçu"
+        multi_layer_preview: "Multicouche (%count%)"
         name_required: Le nom du style est requis.
         saved: Style enregistré.
         updated: Style mis à jour.

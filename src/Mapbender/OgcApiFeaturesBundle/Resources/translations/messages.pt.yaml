@@ -30,7 +30,7 @@ mb:
         changed_was: "Alterado (era: %label%)"
         changed: Alterado em relação ao valor guardado
         none: "-- nenhum --"
-        multi_layer_preview: "Estilo multicamada (%count% camadas) — sem pré-visualização"
+        multi_layer_preview: "Multicamada (%count%)"
         name_required: O nome do estilo é obrigatório.
         saved: Estilo salvo.
         updated: Estilo atualizado.
