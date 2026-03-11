@@ -36,6 +36,9 @@ class StyleController extends ApplicationControllerBase
             $map[$style->getId()] = [
                 'style' => $style->getStyle(),
                 'collectionId' => $style->getCollectionId(),
+                'name' => $style->getName(),
+                'sourceType' => $style->getSourceType(),
+                'sourceId' => $style->getSourceId(),
             ];
         }
         return new JsonResponse($map);

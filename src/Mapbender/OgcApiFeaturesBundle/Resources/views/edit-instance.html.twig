@@ -31,7 +31,7 @@
 {% block form_layers %}
     <hr>
     <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
-    <table class="table collectionTable" data-style-url="{{ path('mapbender_manager_style_json') }}">
+    <table class="table collectionTable" data-style-url="{{ path('mapbender_manager_style_json') }}" data-source-id="{{ instance.source.id|default('') }}">
         <thead>
         <tr>
             <th></th>
@@ -81,6 +81,29 @@
                                 <div class="popover-body">
                                     <button type="button" class="btn-close -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
                                             aria-label="Close"></button>
+                                    <div class="row mb-2 style-filter-row">
+                                        <div class="col-sm-3"><label class="form-label fw-bold text-muted small">Filter</label></div>
+                                        <div class="col-sm-9">
+                                            <div class="d-flex gap-1">
+                                                <input type="text" class="form-control form-control-sm style-filter-name" placeholder="Name…" style="flex:3">
+                                                <select class="form-select form-select-sm style-filter-origin" style="flex:3">
+                                                    <option value="">All origins</option>
+                                                    <option value="mapbox-json">Mapbox JSON</option>
+                                                    <option value="sld">SLD</option>
+                                                    <option value="manual">Manual</option>
+                                                    <option value="ogc_api">OGC API</option>
+                                                    <option value="digitizer">Digitizer</option>
+                                                </select>
+                                                <input type="text" class="form-control form-control-sm style-filter-source" placeholder="Src…" style="flex:2">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-style-filter" title="Apply filter">
+                                                    <i class="fas fa-filter"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-style-filter" title="Reset filters">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row mb-3">
                                         <div class="col-sm-3"><label class="form-label fw-bold">Style</label></div>
                                         <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>

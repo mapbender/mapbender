@@ -1,7 +1,10 @@
+/* ── Table & layout ── */
 .collectionTable { table-layout: auto; width: 100%; }
 .collectionTable th, .collectionTable td { white-space: nowrap; vertical-align: middle; }
 .collectionTable .style-select { min-width: 170px; }
 .table-responsive-layers { overflow-x: auto; }
+
+/* ── Popovers ── */
 .collectionTable .popover { min-width: 650px; max-width: calc(100vw - 40px); }
 .collectionTable .popover-body { position: relative; padding-top: 28px; }
 .collectionTable .popover-body > .btn-close { position: absolute; top: 8px; right: 8px; font-size: 10px; }
@@ -9,5 +12,12 @@
 .collectionTable .static-popover-wrap { position: relative; }
 .collectionTable .popover-inner-wrap { position: static; }
 .collectionTable .popover.show { position: absolute; right: 0; left: auto; z-index: 10; }
+
+/* ── Style indicators ── */
 .dropdown.native-style-active > .dropdownValue { font-weight: bold !important; }
 .dropdownList .choice.native-style { font-weight: bold !important; }
+.dropdown.value-changed > .dropdownValue { color: #0d6efd; font-style: italic; }
+
+/* ── Filtering ── */
+.dropdown.filter-active { outline: 2px solid #0d6efd; outline-offset: -1px; border-radius: 4px; }
+.dropdownList .choice.filter-kept { font-style: italic; color: #6c757d; }
