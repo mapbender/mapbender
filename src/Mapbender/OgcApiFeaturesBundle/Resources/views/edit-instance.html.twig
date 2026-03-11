@@ -66,6 +66,14 @@
 {% block js %}
     {{ parent() }}
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+                html: true,
+                placement: 'left',
+                trigger: 'click focus'
+            }));
+        });
         $('.collectionTable').each(function() {
             $('tbody', this).sortable({
                 cursor: 'move',
