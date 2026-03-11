@@ -36,7 +36,7 @@
 {% block form_layers %}
     <hr>
     <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
-    <table class="table collectionTable">
+    <table class="table collectionTable" data-style-url="{{ path('mapbender_manager_style_json') }}">
         <thead>
         <tr>
             <th></th>
@@ -116,90 +116,6 @@
 
 {% block js %}
     {{ parent() }}
-    <script src="{{ asset('bundles/mapbendermanager/js/style-drawing-utils.js') }}"></script>
-    <script>
-        (function() {
-            var styleMap = {};
-
-            function updatePreview(popoverBody) {
-                var select = popoverBody.querySelector('select[id$="_styleId"]');
-                if (!select) return;
-                var id = select.value;
-                var entry = id ? styleMap[id] : null;
-                var s = null;
-                var collectionId = null;
-                if (entry) {
-                    var raw = entry.style || entry;
-                    collectionId = entry.collectionId || null;
-                    try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
-                }
-                popoverBody.querySelectorAll('.layer-preview canvas').forEach(function(c) {
-                    Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId: collectionId});
-                });
-            }
-
-            // Instant preview on style dropdown change
-            $(document).on('change', 'select[id$="_styleId"]', function() {
-                var popoverBody = this.closest('.popover-body');
-                if (popoverBody) updatePreview(popoverBody);
-            });
-
-            // Initialize previews after style data is loaded
-            $.getJSON('{{ path("mapbender_manager_style_json") }}', function(data) {
-                styleMap = data;
-                document.querySelectorAll('.popover-body').forEach(function(body) {
-                    updatePreview(body);
-                });
-            });
-
-            // Also handle popover toggling for collectionTable (like instanceTable)
-            $(".collectionTable").on("click", ".-fn-toggle-layer-detail", function(e) {
-                var target = $(this).attr("data-toggle-target");
-                var $target = $(target);
-                $target.parent().toggleClass("display");
-                $target.toggleClass("show");
-                // close other popovers
-                var otherPopovers = ".popover:not(" + target + ")";
-                $(otherPopovers).parent().removeClass("display");
-                $(otherPopovers).removeClass("show");
-                // update preview when popover opens
-                if ($target.hasClass('show')) {
-                    var body = $target.find('.popover-body')[0];
-                    if (body) updatePreview(body);
-                }
-            });
-
-            // Confirm button closes popover and updates the styled checkbox
-            $(".collectionTable").on("click", ".-fn-confirm-style", function(e) {
-                e.preventDefault();
-                var target = $(this).attr("data-toggle-target");
-                var $target = $(target);
-                $target.parent().removeClass("display");
-                $target.removeClass("show");
-                // Update the readonly checkbox in the same row
-                var $row = $(this).closest('tr');
-                var select = $row.find('select[id$="_styleId"]')[0];
-                var checkbox = $row.find('.style-indicator')[0];
-                if (select && checkbox) {
-                    checkbox.checked = !!select.value;
-                }
-            });
-
-            // Sortable
-            $('.collectionTable').each(function() {
-                $('tbody', this).sortable({
-                    cursor: 'move',
-                    axis: 'y',
-                    items: 'tr',
-                    distance: 6,
-                    containment: 'parent',
-                    stop: function(event, ui) {
-                        $('input[type="hidden"]', $('.collectionTable tbody tr')).each(function(idx, item) {
-                            $(item).val(idx);
-                        });
-                    }
-                });
-            });
-        })();
-    </script>
+    <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
+    <script src="{{ asset('bundles/mapbenderogcapifeatures/js/style-instance-editor.js') }}"></script>
 {% endblock %}

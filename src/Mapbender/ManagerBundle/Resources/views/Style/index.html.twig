@@ -61,15 +61,5 @@
 
 {% block js %}
     {{ parent() }}
-    <script src="{{ asset('bundles/mapbendermanager/js/style-drawing-utils.js') }}"></script>
-    <script>
-    (function() {
-        document.querySelectorAll('canvas.style-preview').forEach(function(c) {
-            var raw = c.getAttribute('data-style');
-            var s = null;
-            try { s = JSON.parse(raw) || null; } catch(e) {}
-            Mapbender.StyleUtils.drawStyleCanvas(c, s);
-        });
-    })();
-    </script>
+    <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
 {% endblock %}
