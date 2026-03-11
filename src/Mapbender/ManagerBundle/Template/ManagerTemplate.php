@@ -34,6 +34,8 @@ class ManagerTemplate implements TemplateAssetDependencyInterface
                     'mb.core.entity.app.screenshotfile.*',
                     'mb.application.save.failure.general',
                     'mb.manager.confirm_form_discard',
+                    'mb.ogcapifeatures.admin.style.*',
+                    'mb.ogcapifeatures.admin.filter.*',
                 );
             default:
                 throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));

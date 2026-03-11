@@ -209,21 +209,21 @@ class StyleEditor {
     _buildPaintControls(type, paint, idx, layout) {
         layout = layout || {};
         if (type === 'fill') {
-            return this._colorRow('fill-color', 'Fill Color', paint['fill-color'] || '#000000', idx)
-                 + this._rangeRow('fill-opacity', 'Fill Opacity', paint['fill-opacity'] ?? 1, idx, 0, 1, 'any')
-                 + this._colorRow('fill-outline-color', 'Outline Color', paint['fill-outline-color'] || '', idx);
+            return this._colorRow('fill-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.fill_color'), paint['fill-color'] || '#000000', idx)
+                 + this._rangeRow('fill-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.fill_opacity'), paint['fill-opacity'] ?? 1, idx, 0, 1, 'any')
+                 + this._colorRow('fill-outline-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.outline_color'), paint['fill-outline-color'] || '', idx);
         }
         if (type === 'line') {
-            return this._colorRow('line-color', 'Color', paint['line-color'] || '#000000', idx)
-                 + this._numberRow('line-width', 'Width', this._scalarVal(paint['line-width'], 2), idx, 0, 50, 0.5)
-                 + this._rangeRow('line-opacity', 'Opacity', paint['line-opacity'] ?? 1, idx, 0, 1, 'any');
+            return this._colorRow('line-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_color'), paint['line-color'] || '#000000', idx)
+                 + this._numberRow('line-width', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_width'), this._scalarVal(paint['line-width'], 2), idx, 0, 50, 0.5)
+                 + this._rangeRow('line-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_opacity'), paint['line-opacity'] ?? 1, idx, 0, 1, 'any');
         }
         if (type === 'circle') {
-            return this._numberRow('circle-radius', 'Radius', paint['circle-radius'] || 5, idx, 0, 50, 1)
-                 + this._colorRow('circle-color', 'Color', paint['circle-color'] || '#000000', idx)
-                 + this._rangeRow('circle-opacity', 'Opacity', paint['circle-opacity'] ?? 1, idx, 0, 1, 'any')
-                 + this._colorRow('circle-stroke-color', 'Stroke Color', paint['circle-stroke-color'] || '', idx)
-                 + this._numberRow('circle-stroke-width', 'Stroke Width', paint['circle-stroke-width'] || 0, idx, 0, 10, 0.5);
+            return this._numberRow('circle-radius', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_radius'), paint['circle-radius'] || 5, idx, 0, 50, 1)
+                 + this._colorRow('circle-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_color'), paint['circle-color'] || '#000000', idx)
+                 + this._rangeRow('circle-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_opacity'), paint['circle-opacity'] ?? 1, idx, 0, 1, 'any')
+                 + this._colorRow('circle-stroke-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.stroke_color'), paint['circle-stroke-color'] || '', idx)
+                 + this._numberRow('circle-stroke-width', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.stroke_width'), paint['circle-stroke-width'] || 0, idx, 0, 10, 0.5);
         }
         if (type === 'symbol') {
             const tf = layout['text-field'];
@@ -231,25 +231,25 @@ class StyleEditor {
             return `
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <label class="form-label fw-bold">Text Field</label>
+                        <label class="form-label fw-bold">${Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_field')}</label>
                         <input data-layer-prop="text-field" type="text" class="form-control form-control-sm"
                                value="${this._escAttr(textVal)}">
                     </div>
                     <div class="col-sm-3">
-                        <label class="form-label fw-bold">Size</label>
+                        <label class="form-label fw-bold">${Mapbender.trans('mb.ogcapifeatures.admin.style.editor.size')}</label>
                         <input data-layer-prop="text-size" type="number" min="1" max="60" step="1"
                                class="form-control form-control-sm" value="${layout['text-size'] || 12}">
                     </div>
                     <div class="col-sm-3">
-                        <label class="form-label fw-bold">Font</label>
+                        <label class="form-label fw-bold">${Mapbender.trans('mb.ogcapifeatures.admin.style.editor.font')}</label>
                         <input data-layer-prop="text-font" type="text" class="form-control form-control-sm"
                                value="${this._escAttr((layout['text-font'] || []).join(', '))}">
                     </div>
                 </div>
-            ` + this._colorRow('text-color', 'Text Color', paint['text-color'] || '#000000', idx)
-              + this._rangeRow('text-opacity', 'Text Opacity', paint['text-opacity'] ?? 1, idx, 0, 1, 'any');
+            ` + this._colorRow('text-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_color'), paint['text-color'] || '#000000', idx)
+              + this._rangeRow('text-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_opacity'), paint['text-opacity'] ?? 1, idx, 0, 1, 'any');
         }
-        return '<p class="text-muted small">No editable paint properties for this layer type.</p>';
+        return '<p class="text-muted small">' + Mapbender.trans('mb.ogcapifeatures.admin.style.editor.no_editable_properties') + '</p>';
     }
 
     _colorRow(prop, label, value) {
@@ -443,7 +443,7 @@ class StyleEditor {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText('Polygon', w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_polygon'), w - 8, h - 6);
         } else if (type === 'line') {
             const color = p['line-color'] || '#000000';
             const opacity = p['line-opacity'] ?? 1;
@@ -462,7 +462,7 @@ class StyleEditor {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText('Line', w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_line'), w - 8, h - 6);
         } else if (type === 'circle') {
             const color = p['circle-color'] || '#000000';
             const opacity = p['circle-opacity'] ?? 1;
@@ -483,7 +483,7 @@ class StyleEditor {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText('Point', w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_point'), w - 8, h - 6);
         } else if (type === 'symbol') {
             const color = p['text-color'] || '#000000';
             const opacity = p['text-opacity'] ?? 1;
@@ -501,13 +501,13 @@ class StyleEditor {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText('Symbol', w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_symbol'), w - 8, h - 6);
         } else {
             ctx.fillStyle = '#adb5bd';
             ctx.font = '12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(`${type || 'unknown'} layer`, w / 2, h / 2);
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.unknown_layer', {type: type || 'unknown'}), w / 2, h / 2);
         }
     }
 
@@ -653,7 +653,7 @@ class StyleEditor {
         try {
             parsed = JSON.parse(content);
         } catch (err) {
-            this._showWarnings(warningsEl, ['Invalid JSON: ' + err.message]);
+            this._showWarnings(warningsEl, [Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message})]);
             return;
         }
         this.setJsonToTextarea(parsed);

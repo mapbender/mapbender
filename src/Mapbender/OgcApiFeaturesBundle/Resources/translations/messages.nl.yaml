@@ -1,0 +1,170 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL naar OGC API Features Service
+      feature_limit: Max. objecten
+      layers: Collecties
+      layer:
+        title: Titel
+        active: Actief
+        min_scale: Minimale schaal
+        max_scale: Maximale schaal
+        allow_selected: Selectie toestaan
+        selected: Geselecteerd
+        info: Info
+        allow_info: Info toestaan
+        toggle: Uitgeklapt
+        allow_toggle: Uitklappen toestaan
+      style:
+        title: Stijl
+        secondary_short: Sec.
+        secondary_tooltip: Secundaire stijlen gekoppeld aan deze laag
+        secondary_attached: Secundaire stijlen gekoppeld
+        settings: Stijlinstellingen
+        label: Stijl
+        preview_label: Voorbeeld
+        secondary_styles: Secundaire stijlen
+        select_label: Selectie
+        ok: OK
+        native_style: "(eigen stijl)"
+        changed_was: "Gewijzigd (was: %label%)"
+        changed: Gewijzigd ten opzichte van opgeslagen waarde
+        none: "-- geen --"
+        multi_layer_preview: "Meerlaags stijl (%count% lagen) — geen voorbeeld"
+        name_required: Stijlnaam is verplicht.
+        saved: Stijl opgeslagen.
+        updated: Stijl bijgewerkt.
+        copied: Stijl gekopieerd.
+        deleted: Stijl verwijderd.
+        copy_suffix: "(Kopie)"
+        manager:
+          title: Stijlen
+          new_style: Nieuwe stijl
+          th_id: ID
+          th_preview: Voorbeeld
+          th_name: Naam
+          th_origin: Herkomst
+          th_source: Bron
+          th_actions: Acties
+          filter_name: "Naam filteren…"
+          filter_all: Alle
+          filter_source: "Bron-ID…"
+          action_edit: Bewerken
+          action_view: Bekijken
+          action_copy: Kopiëren
+          action_delete: Verwijderen
+          confirm_delete: Deze stijl verwijderen?
+          no_styles: Nog geen stijlen geconfigureerd.
+          fallback_name: "Stijl #%id%"
+        editor:
+          title_view: "Stijl #%id% bekijken"
+          title_edit: "Stijl #%id% bewerken"
+          title_new: Nieuwe stijl
+          name_label: Naam
+          name_placeholder: "Stijlnaam invoeren..."
+          tab_visual: Visuele editor
+          tab_json: Mapbox JSON
+          tab_import: Importeren
+          import_overwrite_badge: Import overschrijft bestaande stijl
+          mapbox_layers: Mapbox-lagen
+          add_layer: Laag toevoegen
+          fill: Vulling
+          color: Kleur
+          opacity: Dekking
+          point_radius: Puntradius
+          stroke: Lijn
+          width: Breedte
+          line_cap: Lijneinde
+          cap_round: Rond
+          cap_square: Vierkant
+          cap_butt: Plat
+          dash_style: Streepstijl
+          dash_solid: Doorgetrokken
+          dash_dot: Punt
+          dash_dash: Streep
+          dash_long: Lange streep
+          dash_dashdot: Streep-punt
+          dash_longdashdot: Lange streep-punt
+          label_legend: Label
+          text: Tekst
+          font_family: Lettertypefamilie
+          font_size: Grootte
+          font_weight: Gewicht
+          weight_regular: Normaal
+          weight_bold: Vet
+          weight_italic: Cursief
+          font_color: Letterkleur
+          font_opacity: Letterdekking
+          preview_legend: Voorbeeld
+          geom_point: Punt
+          geom_line: Lijn
+          geom_polygon: Polygoon
+          mapbox_style_json: "Mapbox-stijl (JSON)"
+          import_caution: Let op
+          import_overwrite_text: "Deze stijl bevat al gegevens. Het importeren zal <strong>alle huidige instellingen vervangen</strong>. Dit kan niet ongedaan worden."
+          import_legend: Stijldefinitie importeren
+          import_desc: "Upload een SLD-, Symbology Encoding- of Mapbox Style JSON-bestand om de stijleditor automatisch te vullen."
+          import_file: Bestand
+          import_success: "Stijl succesvol geïmporteerd. Ga naar het tabblad <strong>Visuele editor</strong> of <strong>Mapbox JSON</strong> om te controleren."
+          format_details: Formaatdetails
+          format_full_support: Volledige ondersteuning
+          format_partial_support: Gedeeltelijke ondersteuning
+          format_mapbox_desc: ".json-bestanden worden direct zonder conversie geïmporteerd. Het volledige stijlobject wordt ongewijzigd in de editor geladen."
+          format_sld_desc: ".sld-, .xml- en .se-bestanden worden geconverteerd naar Mapbox Style JSON. De conversie dekt basiskartografische symbolisatoren:"
+          format_converted: Geconverteerd
+          format_not_converted: Niet geconverteerd
+          format_sld_polygon: "PolygonSymbolizer — vulkleur/-dekking, lijnkleur/-breedte/-dekking"
+          format_sld_line: "LineSymbolizer — lijnkleur, breedte, dekking, streeppatronen"
+          format_sld_point: "PointSymbolizer — cirkelmarkeringen met vulling en lijn"
+          format_sld_text: "TextSymbolizer — labels, halo's, plaatsing"
+          format_sld_raster: "RasterSymbolizer — rasterkanaal-/kleurkaarten"
+          format_sld_external: "Externe afbeeldingen — pictogramreferenties"
+          format_sld_rules: "Meerdere regels / filters — alleen eerste symbolisator per type"
+          format_sld_vendor: "Leveranciersuitbreidingen — se:VendorOption, enz."
+          save: Opslaan
+          back: Terug
+          cancel: Annuleren
+          fill_color: Vulkleur
+          fill_opacity: Vuldekking
+          outline_color: Omtrekkleur
+          line_color: Kleur
+          line_width: Breedte
+          line_opacity: Dekking
+          circle_radius: Radius
+          circle_color: Kleur
+          circle_opacity: Dekking
+          stroke_color: Lijnkleur
+          stroke_width: Lijnbreedte
+          text_color: Tekstkleur
+          text_opacity: Tekstdekking
+          invalid_json: "Ongeldige JSON: %error%"
+          text_field: Tekstveld
+          size: Grootte
+          font: Lettertype
+          geom_symbol: Symbool
+          no_editable_properties: Geen bewerkbare stijleigenschappen voor dit laagtype.
+          unknown_layer: "%type%-laag"
+      filter:
+        label: Filter
+        name_placeholder: "Naam…"
+        all_origins: Alle bronnen
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Handmatig
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Bron…"
+        apply: Filter toepassen
+        reset: Filters resetten
+        active: "Actief filter —"
+        name_label: "Naam:"
+        origin_label: "Bron:"
+        source_label: "Bron:"
+        any: "(willekeurig)"
+    metadata:
+      title: Titel
+      version: Versie
+      description: Beschrijving
+      url: Url
+      attribution: Naamsvermelding
+      contact: Contact

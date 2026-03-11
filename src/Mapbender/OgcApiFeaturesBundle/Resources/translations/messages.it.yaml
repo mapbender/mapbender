@@ -1,0 +1,170 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL del servizio OGC API Features
+      feature_limit: Max oggetti
+      layers: Collezioni
+      layer:
+        title: Titolo
+        active: Attivo
+        min_scale: Scala minima
+        max_scale: Scala massima
+        allow_selected: Consenti selezione
+        selected: Selezionato
+        info: Info
+        allow_info: Consenti info
+        toggle: Espanso
+        allow_toggle: Consenti espansione
+      style:
+        title: Stile
+        secondary_short: Sec.
+        secondary_tooltip: Stili secondari associati a questo livello
+        secondary_attached: Stili secondari associati
+        settings: Impostazioni stile
+        label: Stile
+        preview_label: Anteprima
+        secondary_styles: Stili secondari
+        select_label: Selezione
+        ok: OK
+        native_style: "(stile nativo)"
+        changed_was: "Modificato (era: %label%)"
+        changed: Modificato rispetto al valore salvato
+        none: "-- nessuno --"
+        multi_layer_preview: "Stile multilivello (%count% livelli) — nessuna anteprima"
+        name_required: Il nome dello stile è obbligatorio.
+        saved: Stile salvato.
+        updated: Stile aggiornato.
+        copied: Stile copiato.
+        deleted: Stile eliminato.
+        copy_suffix: "(Copia)"
+        manager:
+          title: Stili
+          new_style: Nuovo stile
+          th_id: ID
+          th_preview: Anteprima
+          th_name: Nome
+          th_origin: Origine
+          th_source: Sorgente
+          th_actions: Azioni
+          filter_name: "Filtra nome…"
+          filter_all: Tutti
+          filter_source: "ID sorgente…"
+          action_edit: Modifica
+          action_view: Visualizza
+          action_copy: Copia
+          action_delete: Elimina
+          confirm_delete: Eliminare questo stile?
+          no_styles: Nessuno stile configurato.
+          fallback_name: "Stile #%id%"
+        editor:
+          title_view: "Visualizza stile #%id%"
+          title_edit: "Modifica stile #%id%"
+          title_new: Nuovo stile
+          name_label: Nome
+          name_placeholder: "Inserisci nome dello stile..."
+          tab_visual: Editor visuale
+          tab_json: Mapbox JSON
+          tab_import: Importa
+          import_overwrite_badge: L'importazione sovrascriverà lo stile esistente
+          mapbox_layers: Livelli Mapbox
+          add_layer: Aggiungi livello
+          fill: Riempimento
+          color: Colore
+          opacity: Opacità
+          point_radius: Raggio del punto
+          stroke: Tratto
+          width: Larghezza
+          line_cap: Terminazione linea
+          cap_round: Arrotondato
+          cap_square: Quadrato
+          cap_butt: Piatto
+          dash_style: Stile tratteggio
+          dash_solid: Continuo
+          dash_dot: Punto
+          dash_dash: Trattino
+          dash_long: Trattino lungo
+          dash_dashdot: Trattino-punto
+          dash_longdashdot: Trattino lungo-punto
+          label_legend: Etichetta
+          text: Testo
+          font_family: Famiglia di caratteri
+          font_size: Dimensione
+          font_weight: Peso
+          weight_regular: Normale
+          weight_bold: Grassetto
+          weight_italic: Corsivo
+          font_color: Colore del carattere
+          font_opacity: Opacità del carattere
+          preview_legend: Anteprima
+          geom_point: Punto
+          geom_line: Linea
+          geom_polygon: Poligono
+          mapbox_style_json: "Stile Mapbox (JSON)"
+          import_caution: Attenzione
+          import_overwrite_text: "Questo stile contiene già dati. L'importazione <strong>sostituirà tutte le impostazioni attuali</strong>. Questa azione non può essere annullata."
+          import_legend: Importa definizione stile
+          import_desc: "Carica un file SLD, Symbology Encoding o Mapbox Style JSON per popolare automaticamente l'editor di stili."
+          import_file: File
+          import_success: "Stile importato con successo. Passa alla scheda <strong>Editor visuale</strong> o <strong>Mapbox JSON</strong> per verificare."
+          format_details: Dettagli formato
+          format_full_support: Supporto completo
+          format_partial_support: Supporto parziale
+          format_mapbox_desc: "I file .json vengono importati direttamente senza conversione. L'intero oggetto stile viene caricato così com'è nell'editor."
+          format_sld_desc: "I file .sld, .xml e .se vengono convertiti in Mapbox Style JSON. La conversione copre i simbolizzatori di base:"
+          format_converted: Convertito
+          format_not_converted: Non convertito
+          format_sld_polygon: "PolygonSymbolizer — colore/opacità di riempimento, colore/larghezza/opacità del tratto"
+          format_sld_line: "LineSymbolizer — colore, larghezza, opacità del tratto, motivi tratteggiati"
+          format_sld_point: "PointSymbolizer — marcatori circolari con riempimento e tratto"
+          format_sld_text: "TextSymbolizer — etichette, aloni, posizionamento"
+          format_sld_raster: "RasterSymbolizer — canali raster/mappe colori"
+          format_sld_external: "Grafiche esterne — riferimenti immagini icone"
+          format_sld_rules: "Regole / Filtri multipli — solo il primo simbolizzatore per tipo"
+          format_sld_vendor: "Estensioni vendor — se:VendorOption, ecc."
+          save: Salva
+          back: Indietro
+          cancel: Annulla
+          fill_color: Colore di riempimento
+          fill_opacity: Opacità di riempimento
+          outline_color: Colore contorno
+          line_color: Colore
+          line_width: Larghezza
+          line_opacity: Opacità
+          circle_radius: Raggio
+          circle_color: Colore
+          circle_opacity: Opacità
+          stroke_color: Colore del tratto
+          stroke_width: Larghezza del tratto
+          text_color: Colore del testo
+          text_opacity: Opacità del testo
+          invalid_json: "JSON non valido: %error%"
+          text_field: Campo di testo
+          size: Dimensione
+          font: Carattere
+          geom_symbol: Simbolo
+          no_editable_properties: Nessuna proprietà di stile modificabile per questo tipo di layer.
+          unknown_layer: "Layer %type%"
+      filter:
+        label: Filtro
+        name_placeholder: "Nome…"
+        all_origins: Tutte le origini
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manuale
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Fonte…"
+        apply: Applica filtro
+        reset: Reimposta filtri
+        active: "Filtro attivo —"
+        name_label: "Nome:"
+        origin_label: "Origine:"
+        source_label: "Fonte:"
+        any: "(qualsiasi)"
+    metadata:
+      title: Titolo
+      version: Versione
+      description: Descrizione
+      url: Url
+      attribution: Attribuzione
+      contact: Contatto

@@ -1,0 +1,170 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL сервиса OGC API Features
+      feature_limit: Макс. объектов
+      layers: Коллекции
+      layer:
+        title: Заголовок
+        active: Активный
+        min_scale: Минимальный масштаб
+        max_scale: Максимальный масштаб
+        allow_selected: Разрешить выбор
+        selected: Выбрано
+        info: Инфо
+        allow_info: Разрешить инфо
+        toggle: Развёрнуто
+        allow_toggle: Разрешить развёртывание
+      style:
+        title: Стиль
+        secondary_short: Доп.
+        secondary_tooltip: Вторичные стили, прикреплённые к этому слою
+        secondary_attached: Вторичные стили прикреплены
+        settings: Настройки стиля
+        label: Стиль
+        preview_label: Предпросмотр
+        secondary_styles: Вторичные стили
+        select_label: Выбор
+        ok: OK
+        native_style: "(исходный стиль)"
+        changed_was: "Изменено (было: %label%)"
+        changed: Изменено относительно сохранённого значения
+        none: "-- нет --"
+        multi_layer_preview: "Многослойный стиль (%count% слоёв) — предпросмотр недоступен"
+        name_required: Название стиля обязательно.
+        saved: Стиль сохранён.
+        updated: Стиль обновлён.
+        copied: Стиль скопирован.
+        deleted: Стиль удалён.
+        copy_suffix: "(Копия)"
+        manager:
+          title: Стили
+          new_style: Новый стиль
+          th_id: ID
+          th_preview: Предпросмотр
+          th_name: Имя
+          th_origin: Источник
+          th_source: Источник данных
+          th_actions: Действия
+          filter_name: "Фильтр имени…"
+          filter_all: Все
+          filter_source: "ID источника…"
+          action_edit: Редактировать
+          action_view: Просмотр
+          action_copy: Копировать
+          action_delete: Удалить
+          confirm_delete: Удалить этот стиль?
+          no_styles: Стили ещё не настроены.
+          fallback_name: "Стиль #%id%"
+        editor:
+          title_view: "Просмотр стиля #%id%"
+          title_edit: "Редактирование стиля #%id%"
+          title_new: Новый стиль
+          name_label: Имя
+          name_placeholder: "Введите название стиля..."
+          tab_visual: Визуальный редактор
+          tab_json: Mapbox JSON
+          tab_import: Импорт
+          import_overwrite_badge: Импорт перезапишет существующий стиль
+          mapbox_layers: Слои Mapbox
+          add_layer: Добавить слой
+          fill: Заливка
+          color: Цвет
+          opacity: Непрозрачность
+          point_radius: Радиус точки
+          stroke: Обводка
+          width: Ширина
+          line_cap: Окончание линии
+          cap_round: Круглое
+          cap_square: Квадратное
+          cap_butt: Плоское
+          dash_style: Стиль штриха
+          dash_solid: Сплошной
+          dash_dot: Точка
+          dash_dash: Штрих
+          dash_long: Длинный штрих
+          dash_dashdot: Штрих-точка
+          dash_longdashdot: Длинный штрих-точка
+          label_legend: Подпись
+          text: Текст
+          font_family: Семейство шрифтов
+          font_size: Размер
+          font_weight: Насыщенность
+          weight_regular: Обычный
+          weight_bold: Полужирный
+          weight_italic: Курсив
+          font_color: Цвет шрифта
+          font_opacity: Непрозрачность шрифта
+          preview_legend: Предпросмотр
+          geom_point: Точка
+          geom_line: Линия
+          geom_polygon: Полигон
+          mapbox_style_json: "Стиль Mapbox (JSON)"
+          import_caution: Внимание
+          import_overwrite_text: "Этот стиль уже содержит данные. Импорт <strong>заменит все текущие настройки</strong>. Это действие нельзя отменить."
+          import_legend: Импортировать описание стиля
+          import_desc: "Загрузите файл SLD, Symbology Encoding или Mapbox Style JSON для автоматического заполнения редактора стилей."
+          import_file: Файл
+          import_success: "Стиль успешно импортирован. Перейдите на вкладку <strong>Визуальный редактор</strong> или <strong>Mapbox JSON</strong> для проверки."
+          format_details: Подробности формата
+          format_full_support: Полная поддержка
+          format_partial_support: Частичная поддержка
+          format_mapbox_desc: "Файлы .json импортируются напрямую без конвертации. Весь объект стиля загружается в редактор без изменений."
+          format_sld_desc: "Файлы .sld, .xml и .se конвертируются в Mapbox Style JSON. Конвертация охватывает базовые символизаторы:"
+          format_converted: Конвертировано
+          format_not_converted: Не конвертировано
+          format_sld_polygon: "PolygonSymbolizer — цвет/непрозрачность заливки, цвет/ширина/непрозрачность обводки"
+          format_sld_line: "LineSymbolizer — цвет, ширина, непрозрачность обводки, штриховые массивы"
+          format_sld_point: "PointSymbolizer — круглые маркеры с заливкой и обводкой"
+          format_sld_text: "TextSymbolizer — подписи, ореолы, размещение"
+          format_sld_raster: "RasterSymbolizer — растровые каналы/цветовые карты"
+          format_sld_external: "Внешняя графика — ссылки на изображения значков"
+          format_sld_rules: "Множественные правила / фильтры — только первый символизатор на тип"
+          format_sld_vendor: "Расширения поставщика — se:VendorOption и т.д."
+          save: Сохранить
+          back: Назад
+          cancel: Отмена
+          fill_color: Цвет заливки
+          fill_opacity: Непрозрачность заливки
+          outline_color: Цвет контура
+          line_color: Цвет
+          line_width: Ширина
+          line_opacity: Непрозрачность
+          circle_radius: Радиус
+          circle_color: Цвет
+          circle_opacity: Непрозрачность
+          stroke_color: Цвет обводки
+          stroke_width: Ширина обводки
+          text_color: Цвет текста
+          text_opacity: Непрозрачность текста
+          invalid_json: "Некорректный JSON: %error%"
+          text_field: Текстовое поле
+          size: Размер
+          font: Шрифт
+          geom_symbol: Символ
+          no_editable_properties: Нет редактируемых свойств стиля для этого типа слоя.
+          unknown_layer: "Слой %type%"
+      filter:
+        label: Фильтр
+        name_placeholder: "Имя…"
+        all_origins: Все источники
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Ручной
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Ист…"
+        apply: Применить фильтр
+        reset: Сбросить фильтры
+        active: "Активный фильтр —"
+        name_label: "Имя:"
+        origin_label: "Источник:"
+        source_label: "Источник:"
+        any: "(любой)"
+    metadata:
+      title: Заголовок
+      version: Версия
+      description: Описание
+      url: Url
+      attribution: Авторство
+      contact: Контакт

@@ -1,20 +1,20 @@
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
 {% macro filter_controls(prefix) %}
-    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="Name…" style="flex:3">
+    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="{{ 'mb.ogcapifeatures.admin.filter.name_placeholder' | trans }}" style="flex:3">
     <select class="form-select form-select-sm {{ prefix }}-origin" style="flex:3">
-        <option value="">All origins</option>
-        <option value="mapbox-json">Mapbox JSON</option>
-        <option value="sld">SLD</option>
-        <option value="manual">Manual</option>
-        <option value="ogc_api">OGC API</option>
-        <option value="digitizer">Digitizer</option>
+        <option value="">{{ 'mb.ogcapifeatures.admin.filter.all_origins' | trans }}</option>
+        <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
+        <option value="sld">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</option>
+        <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
+        <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
+        <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
     </select>
-    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="Src…" style="flex:2">
-    <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-{{ prefix }}" title="Apply filter">
+    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="{{ 'mb.ogcapifeatures.admin.filter.source_placeholder' | trans }}" style="flex:2">
+    <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-{{ prefix }}" title="{{ 'mb.ogcapifeatures.admin.filter.apply' | trans }}">
         <i class="fas fa-filter"></i>
     </button>
-    <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-{{ prefix }}" title="Reset filters">
+    <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-{{ prefix }}" title="{{ 'mb.ogcapifeatures.admin.filter.reset' | trans }}">
         <i class="fas fa-times"></i>
     </button>
 {% endmacro %}
@@ -63,8 +63,8 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
-            <th>Style</th>
-            <th title="Secondary styles attached to this layer">Sec.</th>
+            <th>{{ 'mb.ogcapifeatures.admin.style.title' | trans }}</th>
+            <th title="{{ 'mb.ogcapifeatures.admin.style.secondary_tooltip' | trans }}">{{ 'mb.ogcapifeatures.admin.style.secondary_short' | trans }}</th>
             <th></th>
         </tr>
         </thead>
@@ -90,12 +90,12 @@
                            {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
                 </td>
                 <td>
-                    <span class="badge bg-secondary sec-style-count" title="Secondary styles attached" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                    <span class="badge bg-secondary sec-style-count" title="{{ 'mb.ogcapifeatures.admin.style.secondary_attached' | trans }}" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
                 </td>
                 <td>
                     <div class="static-popover-wrap">
                         <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
-                              title="Style settings">
+                              title="{{ 'mb.ogcapifeatures.admin.style.settings' | trans }}">
                             <i class="fas fa-ellipsis"></i>
                         </span>
                         <div class="popover-inner-wrap">
@@ -105,7 +105,7 @@
                                     <button type="button" class="btn-close -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
                                             aria-label="Close"></button>
                                     <div class="row mb-2 style-filter-row">
-                                        <div class="col-sm-3"><label class="form-label fw-bold text-muted small">Filter</label></div>
+                                        <div class="col-sm-3"><label class="form-label fw-bold text-muted small">{{ 'mb.ogcapifeatures.admin.filter.label' | trans }}</label></div>
                                         <div class="col-sm-9">
                                             <div class="d-flex gap-1">
                                                 {{ _self.filter_controls('style-filter') }}
@@ -113,12 +113,12 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-sm-3"><label class="form-label fw-bold">Style</label></div>
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.label' | trans }}</label></div>
                                         <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>
                                     </div>
                                     {{ form_widget(layer.nativeStyleId) }}
                                     <div class="row mb-2">
-                                        <div class="col-sm-3"><label class="form-label fw-bold">Preview</label></div>
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.preview_label' | trans }}</label></div>
                                         <div class="col-sm-9">
                                             <div class="d-flex gap-2 layer-preview">
                                                 <canvas width="40" height="40" data-geom="point" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
@@ -131,14 +131,14 @@
                                     <div class="secondary-styles-section">
                                         <div class="d-flex align-items-center mb-2">
                                             <button type="button" class="btn btn-sm btn-outline-secondary -fn-toggle-secondary-styles">
-                                                <i class="fas fa-layer-group"></i> Secondary styles
+                                                <i class="fas fa-layer-group"></i> {{ 'mb.ogcapifeatures.admin.style.secondary_styles' | trans }}
                                                 <span class="badge bg-secondary ms-1 secondary-count" style="display:none">0</span>
                                                 <i class="fas fa-chevron-down ms-1 toggle-arrow"></i>
                                             </button>
                                         </div>
                                         <div class="secondary-styles-panel" style="display:none">
                                             <div class="row mb-2 secondary-filter-row">
-                                                <div class="col-sm-3"><label class="form-label text-muted small">Filter</label></div>
+                                                <div class="col-sm-3"><label class="form-label text-muted small">{{ 'mb.ogcapifeatures.admin.filter.label' | trans }}</label></div>
                                                 <div class="col-sm-9">
                                                     <div class="d-flex gap-1">
                                                         {{ _self.filter_controls('sec-filter') }}
@@ -146,14 +146,14 @@
                                                 </div>
                                             </div>
                                             <div class="row mb-2">
-                                                <div class="col-sm-3"><label class="form-label fw-bold">Select</label></div>
+                                                <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.select_label' | trans }}</label></div>
                                                 <div class="col-sm-9">{{ form_widget(layer.secondaryStyleIds) }}</div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-end mt-2">
                                         <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
-                                            <i class="fas fa-check"></i> OK
+                                            <i class="fas fa-check"></i> {{ 'mb.ogcapifeatures.admin.style.ok' | trans }}
                                         </button>
                                     </div>
                                 </div>

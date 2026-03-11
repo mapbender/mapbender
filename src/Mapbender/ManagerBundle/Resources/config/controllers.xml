@@ -90,6 +90,7 @@
                  class="Mapbender\ManagerBundle\Controller\StyleController"
                  public="true">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="translator" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />

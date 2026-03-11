@@ -1,5 +1,5 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
-{%- set title = (readonly|default(false)) ? 'View Style #' ~ style.id : (style.id ? 'Edit Style #' ~ style.id : 'New Style') -%}
+{%- set title = (readonly|default(false)) ? 'mb.ogcapifeatures.admin.style.editor.title_view' | trans({'%id%': style.id}) : (style.id ? 'mb.ogcapifeatures.admin.style.editor.title_edit' | trans({'%id%': style.id}) : 'mb.ogcapifeatures.admin.style.editor.title_new' | trans) -%}
 
 {% block css %}
     {{ parent() }}
@@ -11,10 +11,10 @@
         {% if readonly|default(false) %}<fieldset disabled>{% endif %}
         <input type="hidden" id="sourceType" name="sourceType" value="{{ style.sourceType|default('manual') }}">
         <div class="mb-4">
-            <label for="name" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control{{ nameError|default(false) ? ' is-invalid' : '' }}" id="name" name="name" value="{{ style.name }}" required placeholder="Enter style name...">
+            <label for="name" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.name_label' | trans }} <span class="text-danger">*</span></label>
+            <input type="text" class="form-control{{ nameError|default(false) ? ' is-invalid' : '' }}" id="name" name="name" value="{{ style.name }}" required placeholder="{{ 'mb.ogcapifeatures.admin.style.editor.name_placeholder' | trans }}">
             {% if nameError|default(false) %}
-                <div class="invalid-feedback">Style name is required.</div>
+                <div class="invalid-feedback">{{ 'mb.ogcapifeatures.admin.style.name_required' | trans }}</div>
             {% endif %}
         </div>
 
@@ -22,18 +22,18 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" id="tab-visual" data-bs-toggle="tab" data-bs-target="#pane-visual" role="tab">
-                        <i class="fas fa-palette tab-icon"></i>Visual Editor
+                        <i class="fas fa-palette tab-icon"></i>{{ 'mb.ogcapifeatures.admin.style.editor.tab_visual' | trans }}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="tab-json" data-bs-toggle="tab" data-bs-target="#pane-json" role="tab">
-                        <i class="fas fa-code tab-icon"></i>Mapbox JSON
+                        <i class="fas fa-code tab-icon"></i>{{ 'mb.ogcapifeatures.admin.style.editor.tab_json' | trans }}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="tab-import" data-bs-toggle="tab" data-bs-target="#pane-import" role="tab">
-                        <i class="fas fa-file-import tab-icon"></i>Import
-                        <span id="import-tab-warning" class="d-none badge bg-danger ms-1" title="Importing will overwrite existing style">!</span>
+                        <i class="fas fa-file-import tab-icon"></i>{{ 'mb.ogcapifeatures.admin.style.editor.tab_import' | trans }}
+                        <span id="import-tab-warning" class="d-none badge bg-danger ms-1" title="{{ 'mb.ogcapifeatures.admin.style.editor.import_overwrite_badge' | trans }}">!</span>
                     </a>
                 </li>
             </ul>
@@ -45,10 +45,10 @@
                     <div id="layers-editor" class="d-none">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-muted fw-bold text-uppercase" style="font-size:12px;letter-spacing:0.5px;">
-                                <i class="fas fa-layer-group me-1"></i>Mapbox Layers
+                                <i class="fas fa-layer-group me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.mapbox_layers' | trans }}
                             </span>
                             <button type="button" class="btn btn-sm btn-outline-primary" id="btn-add-layer">
-                                <i class="fas fa-plus me-1"></i>Add Layer
+                                <i class="fas fa-plus me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.add_layer' | trans }}
                             </button>
                         </div>
                         <div id="layer-accordion" class="accordion"></div>
@@ -57,11 +57,11 @@
                     {# ── Flat Editor (shown for simple style objects) ── #}
                     <div id="flat-editor">
                     <fieldset>
-                        <legend><i class="fas fa-fill-drip me-1"></i>Fill</legend>
+                        <legend><i class="fas fa-fill-drip me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.fill' | trans }}</legend>
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Color</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.color' | trans }}</label>
                                     <div class="input-group -js-colorpicker">
                                         <input data-prop="fillColor" class="form-control" type="text" value="{{ _visual.fillColor ?? '#ff0000' }}">
                                         <span class="input-group-text input-group-addon"><i></i></span>
@@ -70,24 +70,24 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold w-100">Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="fillOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fillOpacity ?? 1 }}">
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Point Radius</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.point_radius' | trans }}</label>
                                     <input data-prop="pointRadius" type="number" min="0" max="30" step="1" class="form-control" value="{{ _visual.pointRadius ?? 5 }}">
                                 </div>
                             </div>
                         </div>
                     </fieldset>
                     <fieldset>
-                        <legend><i class="fas fa-pen me-1"></i>Stroke</legend>
+                        <legend><i class="fas fa-pen me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.stroke' | trans }}</legend>
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Color</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.color' | trans }}</label>
                                     <div class="input-group -js-colorpicker">
                                         <input data-prop="strokeColor" class="form-control" type="text" value="{{ _visual.strokeColor ?? '#ffffff' }}">
                                         <span class="input-group-text input-group-addon"><i></i></span>
@@ -96,13 +96,13 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold w-100">Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="strokeOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.strokeOpacity ?? 1 }}">
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Width</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.width' | trans }}</label>
                                     <input data-prop="strokeWidth" type="number" min="0" max="10" step="1" class="form-control" value="{{ _visual.strokeWidth ?? 1 }}">
                                 </div>
                             </div>
@@ -110,39 +110,39 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Line Cap</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.line_cap' | trans }}</label>
                                     <select data-prop="strokeLinecap" class="form-select">
-                                        <option value="round"{{ _visual.strokeLinecap == 'round' ? ' selected' : '' }}>Round</option>
-                                        <option value="square"{{ _visual.strokeLinecap == 'square' ? ' selected' : '' }}>Square</option>
-                                        <option value="butt"{{ _visual.strokeLinecap == 'butt' ? ' selected' : '' }}>Butt</option>
+                                        <option value="round"{{ _visual.strokeLinecap == 'round' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.cap_round' | trans }}</option>
+                                        <option value="square"{{ _visual.strokeLinecap == 'square' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.cap_square' | trans }}</option>
+                                        <option value="butt"{{ _visual.strokeLinecap == 'butt' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.cap_butt' | trans }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Dash Style</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.dash_style' | trans }}</label>
                                     <select data-prop="strokeDashstyle" class="form-select">
-                                        <option value="solid"{{ _visual.strokeDashstyle == 'solid' ? ' selected' : '' }}>Solid</option>
-                                        <option value="dot"{{ _visual.strokeDashstyle == 'dot' ? ' selected' : '' }}>Dot</option>
-                                        <option value="dash"{{ _visual.strokeDashstyle == 'dash' ? ' selected' : '' }}>Dash</option>
-                                        <option value="longdash"{{ _visual.strokeDashstyle == 'longdash' ? ' selected' : '' }}>Long Dash</option>
-                                        <option value="dashdot"{{ _visual.strokeDashstyle == 'dashdot' ? ' selected' : '' }}>Dash Dot</option>
-                                        <option value="longdashdot"{{ _visual.strokeDashstyle == 'longdashdot' ? ' selected' : '' }}>Long Dash Dot</option>
+                                        <option value="solid"{{ _visual.strokeDashstyle == 'solid' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_solid' | trans }}</option>
+                                        <option value="dot"{{ _visual.strokeDashstyle == 'dot' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_dot' | trans }}</option>
+                                        <option value="dash"{{ _visual.strokeDashstyle == 'dash' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_dash' | trans }}</option>
+                                        <option value="longdash"{{ _visual.strokeDashstyle == 'longdash' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_long' | trans }}</option>
+                                        <option value="dashdot"{{ _visual.strokeDashstyle == 'dashdot' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_dashdot' | trans }}</option>
+                                        <option value="longdashdot"{{ _visual.strokeDashstyle == 'longdashdot' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.dash_longdashdot' | trans }}</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </fieldset>
                     <fieldset>
-                        <legend><i class="fas fa-font me-1"></i>Label</legend>
+                        <legend><i class="fas fa-font me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.label_legend' | trans }}</legend>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Text</label>
+                            <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.text' | trans }}</label>
                             <input data-prop="label" type="text" class="form-control" value="{{ _visual.label ?? '' }}" placeholder="e.g. ${name}">
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Font Family</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.font_family' | trans }}</label>
                                     <select data-prop="fontFamily" class="form-select">
                                         {% set families = {
                                             'Arial, Helvetica, sans-serif': 'Arial',
@@ -165,17 +165,17 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Size</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.font_size' | trans }}</label>
                                     <input data-prop="fontSize" type="number" min="5" max="30" class="form-control" value="{{ _visual.fontSize ?? 11 }}">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Weight</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.font_weight' | trans }}</label>
                                     <select data-prop="fontWeight" class="form-select">
-                                        <option value="regular"{{ _visual.fontWeight == 'regular' ? ' selected' : '' }}>Regular</option>
-                                        <option value="bold"{{ _visual.fontWeight == 'bold' ? ' selected' : '' }}>Bold</option>
-                                        <option value="italic"{{ _visual.fontWeight == 'italic' ? ' selected' : '' }}>Italic</option>
+                                        <option value="regular"{{ _visual.fontWeight == 'regular' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.weight_regular' | trans }}</option>
+                                        <option value="bold"{{ _visual.fontWeight == 'bold' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.weight_bold' | trans }}</option>
+                                        <option value="italic"{{ _visual.fontWeight == 'italic' ? ' selected' : '' }}>{{ 'mb.ogcapifeatures.admin.style.editor.weight_italic' | trans }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Font Color</label>
+                                    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.font_color' | trans }}</label>
                                     <div class="input-group -js-colorpicker">
                                         <input data-prop="fontColor" class="form-control" type="text" value="{{ _visual.fontColor ?? '#000000' }}">
                                         <span class="input-group-text input-group-addon"><i></i></span>
@@ -192,7 +192,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold w-100">Font Opacity <span class="float-end badge bg-secondary value-preview"></span></label>
+                                    <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.font_opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="fontOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fontOpacity ?? 1 }}">
                                 </div>
                             </div>
@@ -201,18 +201,18 @@
 
                     {# ── Preview (flat editor only) ── #}
                     <fieldset>
-                        <legend><i class="fas fa-eye me-1"></i>Preview</legend>
+                        <legend><i class="fas fa-eye me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.preview_legend' | trans }}</legend>
                         <div class="row text-center">
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold d-block">Point</label>
+                                <label class="form-label fw-bold d-block">{{ 'mb.ogcapifeatures.admin.style.editor.geom_point' | trans }}</label>
                                 <canvas id="preview-point" data-geom="point" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold d-block">Line</label>
+                                <label class="form-label fw-bold d-block">{{ 'mb.ogcapifeatures.admin.style.editor.geom_line' | trans }}</label>
                                 <canvas id="preview-line" data-geom="line" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold d-block">Polygon</label>
+                                <label class="form-label fw-bold d-block">{{ 'mb.ogcapifeatures.admin.style.editor.geom_polygon' | trans }}</label>
                                 <canvas id="preview-polygon" data-geom="polygon" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                         </div>
@@ -223,7 +223,7 @@
                 {# ── Mapbox JSON Tab ── #}
                 <div class="tab-pane fade" id="pane-json" role="tabpanel">
                     <div class="mb-3">
-                        <label for="style" class="form-label fw-bold">Mapbox Style (JSON)</label>
+                        <label for="style" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.mapbox_style_json' | trans }}</label>
                         <textarea class="form-control" id="style" name="style" rows="24"
                                   data-collection-id="{{ style.collectionId|default('') }}"
                                   data-is-new="{{ isNew|default(false) ? '1' : '0' }}">{{ style.style }}</textarea>
@@ -234,49 +234,49 @@
                 <div class="tab-pane fade" id="pane-import" role="tabpanel">
                     <div id="import-overwrite-warning" class="alert alert-warning d-none mb-3">
                         <i class="fas fa-triangle-exclamation me-1"></i>
-                        <strong>Caution:</strong> This style already contains data. Importing a file will <strong>replace all current settings</strong>. This cannot be undone.
+                        <strong>{{ 'mb.ogcapifeatures.admin.style.editor.import_caution' | trans }}:</strong> {{ 'mb.ogcapifeatures.admin.style.editor.import_overwrite_text' | trans | raw }}
                     </div>
                     <fieldset>
-                        <legend><i class="fas fa-file-import me-1"></i>Import Style Definition</legend>
+                        <legend><i class="fas fa-file-import me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.import_legend' | trans }}</legend>
                         <p class="text-muted mb-3">
-                            Upload an SLD, Symbology Encoding, or Mapbox Style JSON file to automatically populate the style editor.
+                            {{ 'mb.ogcapifeatures.admin.style.editor.import_desc' | trans }}
                         </p>
                         <div class="mb-3">
-                            <label for="import-file" class="form-label fw-bold">File</label>
+                            <label for="import-file" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.import_file' | trans }}</label>
                             <input type="file" class="form-control" id="import-file" accept=".sld,.xml,.json,.se">
                         </div>
                         <div id="import-warnings" class="d-none mb-3"></div>
-                        <div id="import-success" class="d-none alert alert-success"><i class="fas fa-check-circle me-1"></i>Style imported successfully. Switch to the <strong>Visual Editor</strong> or <strong>Mapbox JSON</strong> tab to review.</div>
+                        <div id="import-success" class="d-none alert alert-success"><i class="fas fa-check-circle me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.import_success' | trans | raw }}</div>
                     </fieldset>
                     <fieldset>
-                        <legend><i class="fas fa-circle-info me-1"></i>Format Details</legend>
+                        <legend><i class="fas fa-circle-info me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.format_details' | trans }}</legend>
 
-                        <h6 class="mt-2"><i class="fas fa-file-code me-1"></i>Mapbox Style JSON <span class="badge bg-success">Full support</span></h6>
+                        <h6 class="mt-2"><i class="fas fa-file-code me-1"></i>Mapbox Style JSON <span class="badge bg-success">{{ 'mb.ogcapifeatures.admin.style.editor.format_full_support' | trans }}</span></h6>
                         <p class="text-muted ms-3 mb-3">
-                            <code>.json</code> files are imported directly without conversion. The entire style object is loaded as-is into the editor.
+                            {{ 'mb.ogcapifeatures.admin.style.editor.format_mapbox_desc' | trans }}
                         </p>
 
-                        <h6><i class="fas fa-file-code me-1"></i>SLD / Symbology Encoding <span class="badge bg-warning text-dark">Partial support</span></h6>
+                        <h6><i class="fas fa-file-code me-1"></i>SLD / Symbology Encoding <span class="badge bg-warning text-dark">{{ 'mb.ogcapifeatures.admin.style.editor.format_partial_support' | trans }}</span></h6>
                         <p class="text-muted ms-3 mb-2">
-                            <code>.sld</code>, <code>.xml</code>, and <code>.se</code> files are converted to Mapbox Style JSON. The conversion covers basic symbolizers:
+                            {{ 'mb.ogcapifeatures.admin.style.editor.format_sld_desc' | trans }}
                         </p>
                         <div class="row ms-2">
                             <div class="col-md-6">
-                                <h6 class="text-success"><i class="fas fa-check me-1"></i>Converted</h6>
+                                <h6 class="text-success"><i class="fas fa-check me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.format_converted' | trans }}</h6>
                                 <ul class="import-info-list import-info-supported">
-                                    <li><strong>PolygonSymbolizer</strong> — fill color/opacity, stroke color/width/opacity</li>
-                                    <li><strong>LineSymbolizer</strong> — stroke color, width, opacity, dash arrays</li>
-                                    <li><strong>PointSymbolizer</strong> — circle marks with fill and stroke</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_polygon' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_line' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_point' | trans }}</li>
                                 </ul>
                             </div>
                             <div class="col-md-6">
-                                <h6 class="text-danger"><i class="fas fa-xmark me-1"></i>Not converted</h6>
+                                <h6 class="text-danger"><i class="fas fa-xmark me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.format_not_converted' | trans }}</h6>
                                 <ul class="import-info-list import-info-unsupported">
-                                    <li><strong>TextSymbolizer</strong> — labels, halos, placement</li>
-                                    <li><strong>RasterSymbolizer</strong> — raster channel/color maps</li>
-                                    <li><strong>External Graphics</strong> — icon image references</li>
-                                    <li><strong>Multiple Rules / Filters</strong> — only first symbolizer per type</li>
-                                    <li><strong>Vendor extensions</strong> — se:VendorOption etc.</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_text' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_raster' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_external' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_rules' | trans }}</li>
+                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_vendor' | trans }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -288,9 +288,9 @@
         {% if readonly|default(false) %}</fieldset>{% endif %}
         <div class="mt-4 d-flex gap-2">
             {% if not readonly|default(false) %}
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.save' | trans }}</button>
             {% endif %}
-            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'Back' : 'Cancel' }}</a>
+            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'mb.ogcapifeatures.admin.style.editor.back' | trans : 'mb.ogcapifeatures.admin.style.editor.cancel' | trans }}</a>
         </div>
     </form>
 {% endblock %}

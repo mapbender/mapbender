@@ -15,6 +15,152 @@ mb:
         allow_info: Info erlauben
         toggle: Aufgeklappt
         allow_toggle: Aufklappen erlauben
+      style:
+        title: Style
+        secondary_short: Sek.
+        secondary_tooltip: Sekundäre Styles dieser Ebene
+        secondary_attached: Sekundäre Styles zugewiesen
+        settings: Style-Einstellungen
+        label: Style
+        preview_label: Vorschau
+        secondary_styles: Sekundäre Styles
+        select_label: Auswahl
+        ok: OK
+        native_style: "(nativer Style)"
+        changed_was: "Geändert (war: %label%)"
+        changed: Vom gespeicherten Wert abweichend
+        none: "-- kein --"
+        multi_layer_preview: "Mehrschicht-Style (%count% Ebenen) — keine Vorschau"
+        name_required: Style-Name ist erforderlich.
+        saved: Style gespeichert.
+        updated: Style aktualisiert.
+        copied: Style kopiert.
+        deleted: Style gelöscht.
+        copy_suffix: "(Kopie)"
+        manager:
+          title: Styles
+          new_style: Neuer Style
+          th_id: ID
+          th_preview: Vorschau
+          th_name: Name
+          th_origin: Herkunft
+          th_source: Quelle
+          th_actions: Aktionen
+          filter_name: "Name filtern…"
+          filter_all: Alle
+          filter_source: "Quell-ID…"
+          action_edit: Bearbeiten
+          action_view: Ansehen
+          action_copy: Kopieren
+          action_delete: Löschen
+          confirm_delete: Diesen Style löschen?
+          no_styles: Noch keine Styles konfiguriert.
+          fallback_name: "Style #%id%"
+        editor:
+          title_view: "Style #%id% ansehen"
+          title_edit: "Style #%id% bearbeiten"
+          title_new: Neuer Style
+          name_label: Name
+          name_placeholder: "Style-Name eingeben..."
+          tab_visual: Visueller Editor
+          tab_json: Mapbox JSON
+          tab_import: Import
+          import_overwrite_badge: Import überschreibt vorhandenen Style
+          mapbox_layers: Mapbox-Ebenen
+          add_layer: Ebene hinzufügen
+          fill: Füllung
+          color: Farbe
+          opacity: Deckkraft
+          point_radius: Punktradius
+          stroke: Kontur
+          width: Breite
+          line_cap: Linienende
+          cap_round: Rund
+          cap_square: Quadratisch
+          cap_butt: Stumpf
+          dash_style: Strichelung
+          dash_solid: Durchgezogen
+          dash_dot: Punkt
+          dash_dash: Strich
+          dash_long: Langer Strich
+          dash_dashdot: Strich-Punkt
+          dash_longdashdot: Langer Strich-Punkt
+          label_legend: Beschriftung
+          text: Text
+          font_family: Schriftart
+          font_size: Größe
+          font_weight: Stärke
+          weight_regular: Normal
+          weight_bold: Fett
+          weight_italic: Kursiv
+          font_color: Schriftfarbe
+          font_opacity: Schriftdeckkraft
+          preview_legend: Vorschau
+          geom_point: Punkt
+          geom_line: Linie
+          geom_polygon: Polygon
+          mapbox_style_json: "Mapbox-Style (JSON)"
+          import_caution: Achtung
+          import_overwrite_text: "Dieser Style enthält bereits Daten. Ein Import wird <strong>alle aktuellen Einstellungen ersetzen</strong>. Dies kann nicht rückgängig gemacht werden."
+          import_legend: Style-Definition importieren
+          import_desc: "Laden Sie eine SLD-, Symbology-Encoding- oder Mapbox-Style-JSON-Datei hoch, um den Style-Editor automatisch zu befüllen."
+          import_file: Datei
+          import_success: "Style erfolgreich importiert. Wechseln Sie zum <strong>Visuellen Editor</strong> oder <strong>Mapbox JSON</strong>-Tab zur Überprüfung."
+          format_details: Formatdetails
+          format_full_support: Volle Unterstützung
+          format_partial_support: Teilweise Unterstützung
+          format_mapbox_desc: ".json-Dateien werden ohne Konvertierung direkt importiert. Das gesamte Style-Objekt wird unverändert in den Editor geladen."
+          format_sld_desc: ".sld-, .xml- und .se-Dateien werden in Mapbox-Style-JSON konvertiert. Die Konvertierung deckt grundlegende Symbolisierer ab:"
+          format_converted: Konvertiert
+          format_not_converted: Nicht konvertiert
+          format_sld_polygon: "PolygonSymbolizer — Füllfarbe/-deckkraft, Konturfarbe/-breite/-deckkraft"
+          format_sld_line: "LineSymbolizer — Konturfarbe, Breite, Deckkraft, Strichmuster"
+          format_sld_point: "PointSymbolizer — Kreismarkierungen mit Füllung und Kontur"
+          format_sld_text: "TextSymbolizer — Beschriftungen, Halos, Platzierung"
+          format_sld_raster: "RasterSymbolizer — Rasterkanal-/Farbkarten"
+          format_sld_external: "Externe Grafiken — Symbol-Bildreferenzen"
+          format_sld_rules: "Mehrere Regeln / Filter — nur erster Symbolisierer pro Typ"
+          format_sld_vendor: "Herstellererweiterungen — se:VendorOption usw."
+          save: Speichern
+          back: Zurück
+          cancel: Abbrechen
+          fill_color: Füllfarbe
+          fill_opacity: Fülldeckkraft
+          outline_color: Umrissfarbe
+          line_color: Farbe
+          line_width: Breite
+          line_opacity: Deckkraft
+          circle_radius: Radius
+          circle_color: Farbe
+          circle_opacity: Deckkraft
+          stroke_color: Konturfarbe
+          stroke_width: Konturbreite
+          text_color: Textfarbe
+          text_opacity: Textdeckkraft
+          invalid_json: "Ungültiges JSON: %error%"
+          text_field: Textfeld
+          size: Größe
+          font: Schriftart
+          geom_symbol: Symbol
+          no_editable_properties: Keine editierbaren Darstellungseigenschaften für diesen Layertyp.
+          unknown_layer: "%type%-Layer"
+      filter:
+        label: Filter
+        name_placeholder: "Name…"
+        all_origins: Alle Ursprünge
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manuell
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Quelle…"
+        apply: Filter anwenden
+        reset: Filter zurücksetzen
+        active: "Aktiver Filter —"
+        name_label: "Name:"
+        origin_label: "Ursprung:"
+        source_label: "Quelle:"
+        any: "(beliebig)"
     metadata:
       title: Titel
       version: Version

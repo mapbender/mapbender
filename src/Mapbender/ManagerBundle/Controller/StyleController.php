@@ -8,12 +8,15 @@ use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ManagerRoute("/styles")]
 class StyleController extends ApplicationControllerBase
 {
-    public function __construct(EntityManagerInterface $em)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        protected TranslatorInterface $trans,
+    ) {
         parent::__construct($em);
     }
 
@@ -72,7 +75,7 @@ class StyleController extends ApplicationControllerBase
         if ($request->isMethod('POST')) {
             $name = trim($request->request->get('name', ''));
             if ($name === '') {
-                $this->addFlash('error', 'Style name is required.');
+                $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.name_required'));
                 $style->setStyle($request->request->get('style'));
                 return $this->render('@MapbenderManager/Style/edit.html.twig', [
                     'style' => $style,
@@ -90,7 +93,7 @@ class StyleController extends ApplicationControllerBase
             $this->em->persist($style);
             $this->em->flush();
 
-            $this->addFlash('success', 'Style saved.');
+            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.saved'));
             return $this->redirectToRoute('mapbender_manager_style_index');
         }
 
@@ -116,7 +119,7 @@ class StyleController extends ApplicationControllerBase
         if ($request->isMethod('POST')) {
             $name = trim($request->request->get('name', ''));
             if ($name === '') {
-                $this->addFlash('error', 'Style name is required.');
+                $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.name_required'));
                 $style->setStyle($request->request->get('style'));
                 return $this->render('@MapbenderManager/Style/edit.html.twig', [
                     'style' => $style,
@@ -133,7 +136,7 @@ class StyleController extends ApplicationControllerBase
 
             $this->em->flush();
 
-            $this->addFlash('success', 'Style updated.');
+            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.updated'));
             return $this->redirectToRoute('mapbender_manager_style_index');
         }
 
@@ -167,7 +170,7 @@ class StyleController extends ApplicationControllerBase
         }
 
         $copy = new Style();
-        $copy->setName($style->getName() . ' (Copy)');
+        $copy->setName($style->getName() . ' ' . $this->trans->trans('mb.ogcapifeatures.admin.style.copy_suffix'));
         $copy->setStyle($style->getStyle());
         $copy->setSourceType('manual');
         $copy->setSourceId(null);
@@ -175,7 +178,7 @@ class StyleController extends ApplicationControllerBase
         $this->em->persist($copy);
         $this->em->flush();
 
-        $this->addFlash('success', 'Style copied.');
+        $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.copied'));
         return $this->redirectToRoute('mapbender_manager_style_edit', ['id' => $copy->getId()]);
     }
 
@@ -186,7 +189,7 @@ class StyleController extends ApplicationControllerBase
         if ($style) {
             $this->em->remove($style);
             $this->em->flush();
-            $this->addFlash('success', 'Style deleted.');
+            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.deleted'));
         }
 
         return $this->redirectToRoute('mapbender_manager_style_index');

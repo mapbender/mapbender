@@ -15,6 +15,152 @@ mb:
         allow_info: Allow info
         toggle: Toggle
         allow_toggle: Allow toggle
+      style:
+        title: Style
+        secondary_short: Sec.
+        secondary_tooltip: Secondary styles attached to this layer
+        secondary_attached: Secondary styles attached
+        settings: Style settings
+        label: Style
+        preview_label: Preview
+        secondary_styles: Secondary styles
+        select_label: Select
+        ok: OK
+        native_style: "(native style)"
+        changed_was: "Changed (was: %label%)"
+        changed: Changed from saved value
+        none: "-- none --"
+        multi_layer_preview: "Multi-layer style (%count% layers) — no preview"
+        name_required: Style name is required.
+        saved: Style saved.
+        updated: Style updated.
+        copied: Style copied.
+        deleted: Style deleted.
+        copy_suffix: "(Copy)"
+        manager:
+          title: Styles
+          new_style: New Style
+          th_id: ID
+          th_preview: Preview
+          th_name: Name
+          th_origin: Origin
+          th_source: Source
+          th_actions: Actions
+          filter_name: "Filter name…"
+          filter_all: All
+          filter_source: "Source ID…"
+          action_edit: Edit
+          action_view: View
+          action_copy: Copy
+          action_delete: Delete
+          confirm_delete: Delete this style?
+          no_styles: No styles configured yet.
+          fallback_name: "Style #%id%"
+        editor:
+          title_view: "View Style #%id%"
+          title_edit: "Edit Style #%id%"
+          title_new: New Style
+          name_label: Name
+          name_placeholder: "Enter style name..."
+          tab_visual: Visual Editor
+          tab_json: Mapbox JSON
+          tab_import: Import
+          import_overwrite_badge: Importing will overwrite existing style
+          mapbox_layers: Mapbox Layers
+          add_layer: Add Layer
+          fill: Fill
+          color: Color
+          opacity: Opacity
+          point_radius: Point Radius
+          stroke: Stroke
+          width: Width
+          line_cap: Line Cap
+          cap_round: Round
+          cap_square: Square
+          cap_butt: Butt
+          dash_style: Dash Style
+          dash_solid: Solid
+          dash_dot: Dot
+          dash_dash: Dash
+          dash_long: Long Dash
+          dash_dashdot: Dash Dot
+          dash_longdashdot: Long Dash Dot
+          label_legend: Label
+          text: Text
+          font_family: Font Family
+          font_size: Size
+          font_weight: Weight
+          weight_regular: Regular
+          weight_bold: Bold
+          weight_italic: Italic
+          font_color: Font Color
+          font_opacity: Font Opacity
+          preview_legend: Preview
+          geom_point: Point
+          geom_line: Line
+          geom_polygon: Polygon
+          mapbox_style_json: "Mapbox Style (JSON)"
+          import_caution: Caution
+          import_overwrite_text: "This style already contains data. Importing a file will <strong>replace all current settings</strong>. This cannot be undone."
+          import_legend: Import Style Definition
+          import_desc: "Upload an SLD, Symbology Encoding, or Mapbox Style JSON file to automatically populate the style editor."
+          import_file: File
+          import_success: "Style imported successfully. Switch to the <strong>Visual Editor</strong> or <strong>Mapbox JSON</strong> tab to review."
+          format_details: Format Details
+          format_full_support: Full support
+          format_partial_support: Partial support
+          format_mapbox_desc: ".json files are imported directly without conversion. The entire style object is loaded as-is into the editor."
+          format_sld_desc: ".sld, .xml, and .se files are converted to Mapbox Style JSON. The conversion covers basic symbolizers:"
+          format_converted: Converted
+          format_not_converted: Not converted
+          format_sld_polygon: "PolygonSymbolizer — fill color/opacity, stroke color/width/opacity"
+          format_sld_line: "LineSymbolizer — stroke color, width, opacity, dash arrays"
+          format_sld_point: "PointSymbolizer — circle marks with fill and stroke"
+          format_sld_text: "TextSymbolizer — labels, halos, placement"
+          format_sld_raster: "RasterSymbolizer — raster channel/color maps"
+          format_sld_external: "External Graphics — icon image references"
+          format_sld_rules: "Multiple Rules / Filters — only first symbolizer per type"
+          format_sld_vendor: "Vendor extensions — se:VendorOption etc."
+          save: Save
+          back: Back
+          cancel: Cancel
+          fill_color: Fill Color
+          fill_opacity: Fill Opacity
+          outline_color: Outline Color
+          line_color: Color
+          line_width: Width
+          line_opacity: Opacity
+          circle_radius: Radius
+          circle_color: Color
+          circle_opacity: Opacity
+          stroke_color: Stroke Color
+          stroke_width: Stroke Width
+          text_color: Text Color
+          text_opacity: Text Opacity
+          invalid_json: "Invalid JSON: %error%"
+          text_field: Text Field
+          size: Size
+          font: Font
+          geom_symbol: Symbol
+          no_editable_properties: No editable paint properties for this layer type.
+          unknown_layer: "%type% layer"
+      filter:
+        label: Filter
+        name_placeholder: "Name…"
+        all_origins: All origins
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manual
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Src…"
+        apply: Apply filter
+        reset: Reset filters
+        active: "Active filter —"
+        name_label: "Name:"
+        origin_label: "Origin:"
+        source_label: "Source:"
+        any: "(any)"
     metadata:
       title: Title
       version: Version

@@ -1,0 +1,170 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: OGC API Features Servisi URL'si
+      feature_limit: Maks. nesne sayısı
+      layers: Koleksiyonlar
+      layer:
+        title: Başlık
+        active: Aktif
+        min_scale: Minimum ölçek
+        max_scale: Maksimum ölçek
+        allow_selected: Seçime izin ver
+        selected: Seçili
+        info: Bilgi
+        allow_info: Bilgiye izin ver
+        toggle: Açık
+        allow_toggle: Açmaya izin ver
+      style:
+        title: Stil
+        secondary_short: İkn.
+        secondary_tooltip: Bu katmana atanmış ikincil stiller
+        secondary_attached: İkincil stiller atanmış
+        settings: Stil ayarları
+        label: Stil
+        preview_label: Önizleme
+        secondary_styles: İkincil stiller
+        select_label: Seçim
+        ok: OK
+        native_style: "(yerel stil)"
+        changed_was: "Değiştirildi (önceki: %label%)"
+        changed: Kayıtlı değerden farklı
+        none: "-- yok --"
+        multi_layer_preview: "Çok katmanlı stil (%count% katman) — önizleme yok"
+        name_required: Stil adı gereklidir.
+        saved: Stil kaydedildi.
+        updated: Stil güncellendi.
+        copied: Stil kopyalandı.
+        deleted: Stil silindi.
+        copy_suffix: "(Kopya)"
+        manager:
+          title: Stiller
+          new_style: Yeni stil
+          th_id: ID
+          th_preview: Önizleme
+          th_name: Ad
+          th_origin: Kaynak türü
+          th_source: Kaynak
+          th_actions: İşlemler
+          filter_name: "Ad filtrele…"
+          filter_all: Tümü
+          filter_source: "Kaynak ID…"
+          action_edit: Düzenle
+          action_view: Görüntüle
+          action_copy: Kopyala
+          action_delete: Sil
+          confirm_delete: Bu stili silmek istiyor musunuz?
+          no_styles: Henüz stil yapılandırılmadı.
+          fallback_name: "Stil #%id%"
+        editor:
+          title_view: "Stil #%id% görüntüle"
+          title_edit: "Stil #%id% düzenle"
+          title_new: Yeni stil
+          name_label: Ad
+          name_placeholder: "Stil adını girin..."
+          tab_visual: Görsel düzenleyici
+          tab_json: Mapbox JSON
+          tab_import: İçe aktar
+          import_overwrite_badge: İçe aktarma mevcut stili üzerine yazacak
+          mapbox_layers: Mapbox katmanları
+          add_layer: Katman ekle
+          fill: Dolgu
+          color: Renk
+          opacity: Opaklık
+          point_radius: Nokta yarıçapı
+          stroke: Çizgi
+          width: Genişlik
+          line_cap: Hat sonu
+          cap_round: Yuvarlak
+          cap_square: Kare
+          cap_butt: Düz
+          dash_style: Çizgi stili
+          dash_solid: Düz
+          dash_dot: Nokta
+          dash_dash: Çizgi
+          dash_long: Uzun çizgi
+          dash_dashdot: Çizgi-nokta
+          dash_longdashdot: Uzun çizgi-nokta
+          label_legend: Etiket
+          text: Metin
+          font_family: Yazı tipi ailesi
+          font_size: Boyut
+          font_weight: Ağırlık
+          weight_regular: Normal
+          weight_bold: Kalın
+          weight_italic: İtalik
+          font_color: Yazı tipi rengi
+          font_opacity: Yazı tipi opaklığı
+          preview_legend: Önizleme
+          geom_point: Nokta
+          geom_line: Çizgi
+          geom_polygon: Çokgen
+          mapbox_style_json: "Mapbox stili (JSON)"
+          import_caution: Dikkat
+          import_overwrite_text: "Bu stil zaten veri içeriyor. İçe aktarma <strong>tüm mevcut ayarları değiştirecektir</strong>. Bu işlem geri alınamaz."
+          import_legend: Stil tanımı içe aktar
+          import_desc: "Stil düzenleyicisini otomatik olarak doldurmak için bir SLD, Symbology Encoding veya Mapbox Style JSON dosyası yükleyin."
+          import_file: Dosya
+          import_success: "Stil başarıyla içe aktarıldı. İncelemek için <strong>Görsel düzenleyici</strong> veya <strong>Mapbox JSON</strong> sekmesine geçin."
+          format_details: Format detayları
+          format_full_support: Tam destek
+          format_partial_support: Kısmi destek
+          format_mapbox_desc: ".json dosyaları dönüştürme yapılmadan doğrudan içe aktarılır. Tüm stil nesnesi olduğu gibi düzenleyiciye yüklenir."
+          format_sld_desc: ".sld, .xml ve .se dosyaları Mapbox Style JSON'a dönüştürülür. Dönüştürme temel sembolleştiricileri kapsar:"
+          format_converted: Dönüştürülen
+          format_not_converted: Dönüştürülmeyen
+          format_sld_polygon: "PolygonSymbolizer — dolgu rengi/opaklığı, çizgi rengi/genişliği/opaklığı"
+          format_sld_line: "LineSymbolizer — çizgi rengi, genişlik, opaklık, kesikli diziler"
+          format_sld_point: "PointSymbolizer — dolgu ve çizgili daire işaretleri"
+          format_sld_text: "TextSymbolizer — etiketler, haleler, yerleşim"
+          format_sld_raster: "RasterSymbolizer — raster kanal/renk haritaları"
+          format_sld_external: "Harici grafikler — simge görüntü referansları"
+          format_sld_rules: "Çoklu kurallar / filtreler — tür başına yalnızca ilk sembolleştirici"
+          format_sld_vendor: "Satıcı uzantıları — se:VendorOption vb."
+          save: Kaydet
+          back: Geri
+          cancel: İptal
+          fill_color: Dolgu rengi
+          fill_opacity: Dolgu opaklığı
+          outline_color: Dış hat rengi
+          line_color: Renk
+          line_width: Genişlik
+          line_opacity: Opaklık
+          circle_radius: Yarıçap
+          circle_color: Renk
+          circle_opacity: Opaklık
+          stroke_color: Çizgi rengi
+          stroke_width: Çizgi genişliği
+          text_color: Metin rengi
+          text_opacity: Metin opaklığı
+          invalid_json: "Geçersiz JSON: %error%"
+          text_field: Metin alanı
+          size: Boyut
+          font: Yazı tipi
+          geom_symbol: Sembol
+          no_editable_properties: Bu katman türü için düzenlenebilir stil özelliği yok.
+          unknown_layer: "%type% katmanı"
+      filter:
+        label: Filtre
+        name_placeholder: "Ad…"
+        all_origins: Tüm kaynaklar
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manuel
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Kaynak…"
+        apply: Filtre uygula
+        reset: Filtreleri sıfırla
+        active: "Aktif filtre —"
+        name_label: "Ad:"
+        origin_label: "Kaynak:"
+        source_label: "Kaynak:"
+        any: "(herhangi)"
+    metadata:
+      title: Başlık
+      version: Sürüm
+      description: Açıklama
+      url: Url
+      attribution: Atıf
+      contact: İletişim

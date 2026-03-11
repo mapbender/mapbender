@@ -1,0 +1,170 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL сервісу OGC API Features
+      feature_limit: Макс. об'єктів
+      layers: Колекції
+      layer:
+        title: Заголовок
+        active: Активний
+        min_scale: Мінімальний масштаб
+        max_scale: Максимальний масштаб
+        allow_selected: Дозволити вибір
+        selected: Вибрано
+        info: Інфо
+        allow_info: Дозволити інфо
+        toggle: Розгорнуто
+        allow_toggle: Дозволити розгортання
+      style:
+        title: Стиль
+        secondary_short: Дод.
+        secondary_tooltip: Вторинні стилі, прикріплені до цього шару
+        secondary_attached: Вторинні стилі прикріплено
+        settings: Налаштування стилю
+        label: Стиль
+        preview_label: Попередній перегляд
+        secondary_styles: Вторинні стилі
+        select_label: Вибір
+        ok: OK
+        native_style: "(рідний стиль)"
+        changed_was: "Змінено (було: %label%)"
+        changed: Змінено відносно збереженого значення
+        none: "-- немає --"
+        multi_layer_preview: "Багатошаровий стиль (%count% шарів) — попередній перегляд недоступний"
+        name_required: Назва стилю обов'язкова.
+        saved: Стиль збережено.
+        updated: Стиль оновлено.
+        copied: Стиль скопійовано.
+        deleted: Стиль видалено.
+        copy_suffix: "(Копія)"
+        manager:
+          title: Стилі
+          new_style: Новий стиль
+          th_id: ID
+          th_preview: Попередній перегляд
+          th_name: Назва
+          th_origin: Походження
+          th_source: Джерело
+          th_actions: Дії
+          filter_name: "Фільтр назви…"
+          filter_all: Усі
+          filter_source: "ID джерела…"
+          action_edit: Редагувати
+          action_view: Переглянути
+          action_copy: Копіювати
+          action_delete: Видалити
+          confirm_delete: Видалити цей стиль?
+          no_styles: Стилів ще не налаштовано.
+          fallback_name: "Стиль #%id%"
+        editor:
+          title_view: "Перегляд стилю #%id%"
+          title_edit: "Редагування стилю #%id%"
+          title_new: Новий стиль
+          name_label: Назва
+          name_placeholder: "Введіть назву стилю..."
+          tab_visual: Візуальний редактор
+          tab_json: Mapbox JSON
+          tab_import: Імпорт
+          import_overwrite_badge: Імпорт перезапише наявний стиль
+          mapbox_layers: Шари Mapbox
+          add_layer: Додати шар
+          fill: Заливка
+          color: Колір
+          opacity: Непрозорість
+          point_radius: Радіус точки
+          stroke: Обведення
+          width: Ширина
+          line_cap: Закінчення лінії
+          cap_round: Круглий
+          cap_square: Квадратний
+          cap_butt: Плоский
+          dash_style: Стиль штриха
+          dash_solid: Суцільний
+          dash_dot: Крапка
+          dash_dash: Штрих
+          dash_long: Довгий штрих
+          dash_dashdot: Штрих-крапка
+          dash_longdashdot: Довгий штрих-крапка
+          label_legend: Підпис
+          text: Текст
+          font_family: Сімейство шрифтів
+          font_size: Розмір
+          font_weight: Насиченість
+          weight_regular: Звичайний
+          weight_bold: Напівжирний
+          weight_italic: Курсив
+          font_color: Колір шрифту
+          font_opacity: Непрозорість шрифту
+          preview_legend: Попередній перегляд
+          geom_point: Точка
+          geom_line: Лінія
+          geom_polygon: Полігон
+          mapbox_style_json: "Стиль Mapbox (JSON)"
+          import_caution: Увага
+          import_overwrite_text: "Цей стиль вже містить дані. Імпорт <strong>замінить усі поточні налаштування</strong>. Цю дію не можна скасувати."
+          import_legend: Імпортувати визначення стилю
+          import_desc: "Завантажте файл SLD, Symbology Encoding або Mapbox Style JSON для автоматичного заповнення редактора стилів."
+          import_file: Файл
+          import_success: "Стиль успішно імпортовано. Перейдіть на вкладку <strong>Візуальний редактор</strong> або <strong>Mapbox JSON</strong> для перевірки."
+          format_details: Деталі формату
+          format_full_support: Повна підтримка
+          format_partial_support: Часткова підтримка
+          format_mapbox_desc: "Файли .json імпортуються безпосередньо без конвертації. Весь об'єкт стилю завантажується в редактор без змін."
+          format_sld_desc: "Файли .sld, .xml та .se конвертуються у Mapbox Style JSON. Конвертація охоплює базові символізатори:"
+          format_converted: Конвертовано
+          format_not_converted: Не конвертовано
+          format_sld_polygon: "PolygonSymbolizer — колір/непрозорість заливки, колір/ширина/непрозорість обведення"
+          format_sld_line: "LineSymbolizer — колір, ширина, непрозорість обведення, штрихові масиви"
+          format_sld_point: "PointSymbolizer — круглі маркери із заливкою та обведенням"
+          format_sld_text: "TextSymbolizer — підписи, ореоли, розміщення"
+          format_sld_raster: "RasterSymbolizer — растрові канали/кольорові карти"
+          format_sld_external: "Зовнішня графіка — посилання на зображення значків"
+          format_sld_rules: "Множинні правила / фільтри — лише перший символізатор на тип"
+          format_sld_vendor: "Розширення постачальника — se:VendorOption тощо"
+          save: Зберегти
+          back: Назад
+          cancel: Скасувати
+          fill_color: Колір заливки
+          fill_opacity: Непрозорість заливки
+          outline_color: Колір контуру
+          line_color: Колір
+          line_width: Ширина
+          line_opacity: Непрозорість
+          circle_radius: Радіус
+          circle_color: Колір
+          circle_opacity: Непрозорість
+          stroke_color: Колір обведення
+          stroke_width: Ширина обведення
+          text_color: Колір тексту
+          text_opacity: Непрозорість тексту
+          invalid_json: "Некоректний JSON: %error%"
+          text_field: Текстове поле
+          size: Розмір
+          font: Шрифт
+          geom_symbol: Символ
+          no_editable_properties: Немає редагованих властивостей стилю для цього типу шару.
+          unknown_layer: "Шар %type%"
+      filter:
+        label: Фільтр
+        name_placeholder: "Назва…"
+        all_origins: Усі джерела
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Ручний
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Дж…"
+        apply: Застосувати фільтр
+        reset: Скинути фільтри
+        active: "Активний фільтр —"
+        name_label: "Назва:"
+        origin_label: "Джерело:"
+        source_label: "Джерело:"
+        any: "(будь-яке)"
+    metadata:
+      title: Заголовок
+      version: Версія
+      description: Опис
+      url: Url
+      attribution: Авторство
+      contact: Контакт

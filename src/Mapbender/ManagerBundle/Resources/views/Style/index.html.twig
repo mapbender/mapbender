@@ -1,5 +1,5 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
-{%- set title = 'Styles' -%}
+{%- set title = 'mb.ogcapifeatures.admin.style.manager.title' | trans -%}
 
 {% block manager_content %}
     <div class="list-head">
@@ -7,7 +7,7 @@
             <div class="col-sm-5 col-xs-12 col-12">
                 <a class="btn btn-outline-primary content-box content-box-md" href="{{ path('mapbender_manager_style_new') }}">
                     <i class="fas fa-plus fa-lg"></i>
-                    <span>New Style</span>
+                    <span>{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}</span>
                 </a>
             </div>
         </div>
@@ -16,28 +16,28 @@
     <table id="style-list" class="table table-striped table-hover mt-3 align-middle">
         <thead>
             <tr>
-                <th style="width:50px">ID</th>
-                <th style="width:120px">Preview</th>
-                <th>Name</th>
-                <th style="width:100px">Origin</th>
-                <th style="width:80px">Source</th>
-                <th style="width:130px">Actions</th>
+                <th style="width:50px">{{ 'mb.ogcapifeatures.admin.style.manager.th_id' | trans }}</th>
+                <th style="width:120px">{{ 'mb.ogcapifeatures.admin.style.manager.th_preview' | trans }}</th>
+                <th>{{ 'mb.ogcapifeatures.admin.style.manager.th_name' | trans }}</th>
+                <th style="width:100px">{{ 'mb.ogcapifeatures.admin.style.manager.th_origin' | trans }}</th>
+                <th style="width:80px">{{ 'mb.ogcapifeatures.admin.style.manager.th_source' | trans }}</th>
+                <th style="width:130px">{{ 'mb.ogcapifeatures.admin.style.manager.th_actions' | trans }}</th>
             </tr>
             <tr class="table-light">
                 <td></td>
                 <td></td>
-                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="Filter name…"></td>
+                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_name' | trans }}"></td>
                 <td>
                     <select id="filter-origin" class="form-select form-select-sm">
-                        <option value="">All</option>
-                        <option value="mapbox-json">Mapbox JSON</option>
-                        <option value="sld">SLD</option>
-                        <option value="manual">Manual</option>
-                        <option value="ogc_api">OGC API</option>
-                        <option value="digitizer">Digitizer</option>
+                        <option value="">{{ 'mb.ogcapifeatures.admin.style.manager.filter_all' | trans }}</option>
+                        <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
+                        <option value="sld">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</option>
+                        <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
+                        <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
+                        <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
                     </select>
                 </td>
-                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="Source ID…"></td>
+                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_source' | trans }}"></td>
                 <td></td>
             </tr>
         </thead>
@@ -54,18 +54,18 @@
                             <canvas class="style-preview" data-geom="polygon" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                         </div>
                     </td>
-                    <td>{{ style.name ?? ('Style #' ~ style.id) }}</td>
+                    <td>{{ style.name ?? ('mb.ogcapifeatures.admin.style.manager.fallback_name' | trans({'%id%': style.id})) }}</td>
                     <td>
                         {% if style.sourceType == 'mapbox-json' %}
-                            <span class="badge bg-primary">Mapbox JSON</span>
+                            <span class="badge bg-primary">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</span>
                         {% elseif style.sourceType == 'sld' %}
-                            <span class="badge bg-warning text-dark">SLD</span>
+                            <span class="badge bg-warning text-dark">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</span>
                         {% elseif style.sourceType == 'manual' %}
-                            <span class="badge bg-secondary">Manual</span>
+                            <span class="badge bg-secondary">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</span>
                         {% elseif style.sourceType == 'ogc_api' %}
-                            <span class="badge bg-success">OGC API</span>
+                            <span class="badge bg-success">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</span>
                         {% elseif style.sourceType == 'digitizer' %}
-                            <span class="badge bg-dark">Digitizer</span>
+                            <span class="badge bg-dark">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</span>
                         {% elseif style.sourceType %}
                             <span class="badge bg-info">{{ style.sourceType }}</span>
                         {% else %}
@@ -76,21 +76,21 @@
                     <td>
                         <div class="d-flex flex-nowrap gap-1">
                             {% if style.sourceType in ['manual', 'mapbox-json', 'sld'] %}
-                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_edit' | trans }}"><i class="fas fa-pen"></i></a>
                             {% else %}
-                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="View"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>
                             {% endif %}
                             <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
-                                <button type="submit" class="btn btn-light btn-sm" title="Copy"><i class="fas fa-copy"></i></button>
+                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_copy' | trans }}"><i class="fas fa-copy"></i></button>
                             </form>
-                            <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('Delete this style?');">
-                                <button type="submit" class="btn btn-light btn-sm" title="Delete"><i class="far fa-trash-can"></i></button>
+                            <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'mb.ogcapifeatures.admin.style.manager.confirm_delete' | trans | e('js') }}');">
+                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
                             </form>
                         </div>
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="6" class="text-muted">No styles configured yet.</td></tr>
+                <tr><td colspan="6" class="text-muted">{{ 'mb.ogcapifeatures.admin.style.manager.no_styles' | trans }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

@@ -195,12 +195,12 @@ class StyleInstanceEditor {
     }
 
     _buildFilterTooltip(active) {
-        if (!active) return 'Apply filter';
+        if (!active) return Mapbender.trans('mb.ogcapifeatures.admin.filter.apply');
         const parts = [];
-        if (this._filterState.name) parts.push(`Name: "${this._filterState.name}"`);
-        if (this._filterState.origin) parts.push(`Origin: ${this._filterState.origin}`);
-        if (this._filterState.source !== this.sourceId) parts.push(`Source: "${this._filterState.source || '(any)'}"`);
-        return 'Active filter — ' + parts.join(', ');
+        if (this._filterState.name) parts.push(Mapbender.trans('mb.ogcapifeatures.admin.filter.name_label') + ' "' + this._filterState.name + '"');
+        if (this._filterState.origin) parts.push(Mapbender.trans('mb.ogcapifeatures.admin.filter.origin_label') + ' ' + this._filterState.origin);
+        if (this._filterState.source !== this.sourceId) parts.push(Mapbender.trans('mb.ogcapifeatures.admin.filter.source_label') + ' "' + (this._filterState.source || Mapbender.trans('mb.ogcapifeatures.admin.filter.any')) + '"');
+        return Mapbender.trans('mb.ogcapifeatures.admin.filter.active') + ' ' + parts.join(', ');
     }
 
     _matchesFilter(entry, filterState) {
@@ -326,8 +326,8 @@ class StyleInstanceEditor {
                 }
             }
             if (nativeId && opt.value === nativeId) {
-                if (!li.textContent.includes('(native style)')) {
-                    li.textContent += ' (native style)';
+                if (!li.textContent.includes(Mapbender.trans('mb.ogcapifeatures.admin.style.native_style'))) {
+                    li.textContent += ' ' + Mapbender.trans('mb.ogcapifeatures.admin.style.native_style');
                 }
                 li.classList.add('native-style');
             }
@@ -351,8 +351,8 @@ class StyleInstanceEditor {
             if (!dropdown) return;
             dropdown.querySelectorAll('.dropdownList .choice').forEach(li => {
                 if (li.dataset.value === nativeId) {
-                    if (!li.textContent.includes('(native style)')) {
-                        li.textContent += ' (native style)';
+                    if (!li.textContent.includes(Mapbender.trans('mb.ogcapifeatures.admin.style.native_style'))) {
+                        li.textContent += ' ' + Mapbender.trans('mb.ogcapifeatures.admin.style.native_style');
                     }
                     li.classList.add('native-style');
                 }
@@ -381,7 +381,7 @@ class StyleInstanceEditor {
         const parts = [];
         if (changed) {
             const savedLabel = this._getSavedLabel(select);
-            parts.push(savedLabel ? `Changed (was: ${savedLabel})` : 'Changed from saved value');
+            parts.push(savedLabel ? Mapbender.trans('mb.ogcapifeatures.admin.style.changed_was', {label: savedLabel}) : Mapbender.trans('mb.ogcapifeatures.admin.style.changed'));
         }
         if (this._isFilterActive) {
             parts.push(this._buildFilterTooltip(true));
@@ -394,7 +394,7 @@ class StyleInstanceEditor {
 
     _getSavedLabel(select) {
         const savedVal = this._savedValues.get(select);
-        if (!savedVal) return '-- none --';
+        if (!savedVal) return Mapbender.trans('mb.ogcapifeatures.admin.style.none');
         const opts = this._originalOptions.get(select) || [];
         const match = opts.find(o => o.value === savedVal);
         return match ? match.text : savedVal;
@@ -442,7 +442,7 @@ class StyleInstanceEditor {
                 msg.className = 'preview-message text-muted small';
                 previewWrap.appendChild(msg);
             }
-            msg.textContent = `Multi-layer style (${s.layers.length} layers) — no preview`;
+            msg.textContent = Mapbender.trans('mb.ogcapifeatures.admin.style.multi_layer_preview', {count: s.layers.length});
             msg.style.display = '';
         } else {
             previewWrap.querySelectorAll('canvas').forEach(c => c.style.display = '');
