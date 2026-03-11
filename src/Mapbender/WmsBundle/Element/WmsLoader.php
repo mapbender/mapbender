@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Component\Wms\Importer;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -158,6 +159,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $id = "wmsloader_" . uniqid();
         $source = $this->getSource($request);
         $source->setId($id);
+        /** @var WmsInstance $instance */
         $instance = $this->getSourceTypeDirectory()->getInstanceFactory($source)->createInstance($source, null);
         $instance->setId($id);
         $layerIndex = 0;
@@ -191,7 +193,9 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $origin->setOriginUrl($request->get("url"));
         $origin->setUsername($request->get("username"));
         $origin->setPassword($request->get("password"));
-        return $this->sourceImporter->loadSource($origin);
+        /** @var WmsSource $source */
+        $source = $this->sourceImporter->loadSource($origin);
+        return $source;
     }
 
     protected function splitLayers($layerConfiguration)
@@ -219,7 +223,9 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
             if ($instance && $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES)) {
-                $instanceConfigs[] = $this->getConfigGenerator($instance)->getConfiguration($element->getApplication(), $instance);
+                $configGenerator = $this->getConfigGenerator($instance);
+                $configGenerator->preload([$instance]);
+                $instanceConfigs[] = $configGenerator->getConfiguration($element->getApplication(), $instance);
             }
         }
         return $instanceConfigs;

@@ -1,5 +1,12 @@
 # Upgrading Guide
 
+## 4.2.5
+When using `MapbenderModel.getSourceById` or `Source.getLayerById`, be aware that both the source id and layer id now may contain
+a prefix, separated by an underscore. This change was introduced to fix issues with multiple instances of 
+the shared assignments causing id conflicts. When you need the actual database source id as before, use the
+additional method `MapbenderModel.getSourceBySourceId` or `Source.getLayerById(source, stripPrefixes=true)`.
+
+
 ## 4.2.0
 
 ### Update database

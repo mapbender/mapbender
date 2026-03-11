@@ -246,10 +246,22 @@ window.Mapbender.MapModelBase = (function() {
         /**
          * @param {Number|String} id
          * @return {Mapbender.Source|null}
-         * engine-agnostic
+         * lookup a source by their complete id, this includes the assignment id prefix for shared instances
          */
         getSourceById: function(id) {
-            return Mapbender.Util.findFirst(this.sourceTree, (value) => value.id === '' + id);
+            return Mapbender.Util.findFirst(this.sourceTree, (value) =>
+                value.id === '' + id
+            );
+        },
+        /**
+         * @param {Number|String} id
+         * @return {Mapbender.Source|null}
+         * lookup a source by their source id without the assignment id prefix for shared instances
+         */
+        getSourceBySourceId: function(id) {
+            return Mapbender.Util.findFirst(this.sourceTree, (value) =>
+                value.getSourceId() === '' + id
+            );
         },
         /**
          * @param {Number|String} id
@@ -475,10 +487,10 @@ window.Mapbender.MapModelBase = (function() {
                     layerId = sourceAndLayerId.layerId;
                 }
                 console.log("Activating", sourceId, layerId);
-                const source = self.getSourceById(sourceId);
+                const source = self.getSourceBySourceId(sourceId);
                 if (!source) return;
 
-                let layer = layerId ? source.getLayerById(layerId) : source.getRootLayer();
+                let layer = layerId ? source.getLayerById(layerId, true) : source.getRootLayer();
                 if (layer) {
                     layer.options.treeOptions.info = layer.options.treeOptions.allow.info;
                 }

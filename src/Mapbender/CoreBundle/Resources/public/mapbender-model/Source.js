@@ -139,6 +139,16 @@
             this.nativeLayers = [];
         }
 
+        /**
+         * Returns the source id. This is by default just the id given in the source definition,
+         * but can be overridden by subclasses if needed, e.g. for WMS shared instances. There,
+         * include the instance id also contains the assignment id.
+         * @return {string|null}
+         */
+        getSourceId() {
+            return this.id;
+        }
+
         getSettings() {
             return {
                 opacity: this.options.opacity
@@ -281,15 +291,25 @@
 
         /**
          * @param {string} id
+         * @param {boolean} stripPrefixes if true, ignore any prefixes in the layer id (e.g. for shared instances)
          * @return {SourceLayer}
          */
-        getLayerById(id) {
+        getLayerById(id, stripPrefixes = false) {
             let foundLayer = null;
             Mapbender.Util.SourceTree.iterateLayers(this, false, function (sourceLayer) {
-                if ((sourceLayer.options?.id ?? sourceLayer.id) === id) {
+                const currentLayerId = sourceLayer.options?.id ?? sourceLayer.id;
+                if (currentLayerId === id) {
                     foundLayer = sourceLayer;
-                    // abort iteration
                     return false;
+                }
+
+                if (stripPrefixes) {
+                    // if layer id matches pattern "<assignmentId>_<layerId>", extract sourceId part
+                    const match = currentLayerId.match(/^[0-9]+_([0-9]+)$/);
+                    if (match && match[1] === id) {
+                        foundLayer = sourceLayer;
+                        return false;
+                    }
                 }
             });
             return foundLayer;
