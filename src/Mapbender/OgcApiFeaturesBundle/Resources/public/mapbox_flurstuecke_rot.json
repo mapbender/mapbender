@@ -1,0 +1,64 @@
+{
+    "version": 8,
+    "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+    "name": "ave:Flurstueck",
+    "sources": {
+        "vector-source": {
+            "type": "vector",
+            "tiles": [
+                "URL to tiles - ave:Flurstueck"
+            ],
+            "minZoom": 0,
+            "maxZoom": 20
+        }
+    },
+    "layers": [
+        {
+            "type": "fill",
+            "paint": {
+                "fill-opacity": 0.6
+            },
+            "source": "vector-source",
+            "source-layer": "ave:Flurstueck",
+            "id": "ave:Flurstueck Kopie:(rule#0):0"
+        },
+        {
+            "type": "line",
+            "paint": {
+                "line-width": 2.357142857142857,
+                "line-opacity": 0.6,
+                "line-color": "#ef2323"
+            },
+            "layout": {
+                "line-join": "bevel"
+            },
+            "source": "vector-source",
+            "source-layer": "ave:Flurstueck",
+            "id": "ave:Flurstueck:(rule#0):1"
+        },
+        {
+            "type": "symbol",
+            "paint": {
+                "text-color": "#f53232"
+            },
+            "layout": {
+                "text-offset": [
+                    0.0,
+                    0.0
+                ],
+                "text-field": [
+                    "get",
+                    "flstnrzae"
+                ],
+                "text-size": 10.085714285714284,
+                "text-font": [
+                    "Ubuntu"
+                ]
+            },
+            "source": "vector-source",
+            "source-layer": "ave:Flurstueck",
+            "id": "ave:Flurstueck:(rule#1)labeling:0"
+        }
+    ],
+    "sprite": "spriteSheet"
+}

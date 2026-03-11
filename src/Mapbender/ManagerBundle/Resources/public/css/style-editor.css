@@ -63,3 +63,19 @@
 #pane-json textarea:focus {
     background: #fff;
 }
+#pane-import .import-info-list {
+    padding-left: 20px;
+    font-size: 13px;
+    line-height: 1.8;
+}
+#pane-import .import-info-list code {
+    font-size: 12px;
+    background: #e9ecef;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+#import-warnings .alert {
+    font-size: 13px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+}

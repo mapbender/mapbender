@@ -109,6 +109,29 @@ class StyleUtils {
         }
     }
     /**
+     * Detect which geometry types a style JSON supports.
+     * For Mapbox docs: looks at layer types (fill→polygon, line→line, circle→point).
+     * For flat styles: all three are assumed.
+     * Returns Set of 'point', 'line', 'polygon'.
+     */
+    static detectGeomTypes(styleJson) {
+        const types = new Set();
+        if (!styleJson) return types;
+        if (styleJson.version && Array.isArray(styleJson.layers)) {
+            for (const l of styleJson.layers) {
+                if (l.type === 'fill') types.add('polygon');
+                if (l.type === 'line') types.add('line');
+                if (l.type === 'circle') types.add('point');
+            }
+        } else {
+            types.add('point');
+            types.add('line');
+            types.add('polygon');
+        }
+        return types;
+    }
+
+    /**
      * Auto-initialize all canvas.style-preview elements on the page.
      * Each canvas reads its style JSON from data-style and geometry from data-geom.
      */

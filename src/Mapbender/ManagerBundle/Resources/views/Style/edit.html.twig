@@ -7,11 +7,15 @@
 {% endblock %}
 
 {% block manager_content %}
-    <form method="post" action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
+    <form method="post" novalidate action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
         {% if readonly|default(false) %}<fieldset disabled>{% endif %}
+        <input type="hidden" id="sourceType" name="sourceType" value="{{ style.sourceType|default('manual') }}">
         <div class="mb-4">
-            <label for="name" class="form-label fw-bold">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ style.name }}" required placeholder="Enter style name...">
+            <label for="name" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control{{ nameError|default(false) ? ' is-invalid' : '' }}" id="name" name="name" value="{{ style.name }}" required placeholder="Enter style name...">
+            {% if nameError|default(false) %}
+                <div class="invalid-feedback">Style name is required.</div>
+            {% endif %}
         </div>
 
         <div class="style-editor-tabs">
@@ -24,6 +28,11 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="tab-json" data-bs-toggle="tab" data-bs-target="#pane-json" role="tab">
                         <i class="fas fa-code tab-icon"></i>Mapbox JSON
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tab-import" data-bs-toggle="tab" data-bs-target="#pane-import" role="tab">
+                        <i class="fas fa-file-import tab-icon"></i>Import
                     </a>
                 </li>
             </ul>
@@ -179,15 +188,15 @@
                         <div class="row text-center">
                             <div class="col-sm-4">
                                 <label class="form-label fw-bold d-block">Point</label>
-                                <canvas id="preview-point" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                                <canvas id="preview-point" data-geom="point" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label fw-bold d-block">Line</label>
-                                <canvas id="preview-line" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                                <canvas id="preview-line" data-geom="line" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label fw-bold d-block">Polygon</label>
-                                <canvas id="preview-polygon" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
+                                <canvas id="preview-polygon" data-geom="polygon" width="160" height="120" style="border:1px solid #dee2e6; border-radius:4px; background:#f8f9fa;"></canvas>
                             </div>
                         </div>
                     </fieldset>
@@ -200,6 +209,55 @@
                         <textarea class="form-control" id="style" name="style" rows="24"
                                   data-collection-id="{{ style.collectionId|default('') }}">{{ style.style }}</textarea>
                     </div>
+                </div>
+
+                {# ── Import Tab ── #}
+                <div class="tab-pane fade" id="pane-import" role="tabpanel">
+                    <fieldset>
+                        <legend><i class="fas fa-file-import me-1"></i>Import Style Definition</legend>
+                        <p class="text-muted mb-3">
+                            Upload an SLD, Symbology Encoding, or Mapbox Style JSON file to automatically populate the style editor.
+                        </p>
+                        <div class="mb-3">
+                            <label for="import-file" class="form-label fw-bold">File</label>
+                            <input type="file" class="form-control" id="import-file" accept=".sld,.xml,.json,.se">
+                        </div>
+                        <div id="import-warnings" class="d-none mb-3"></div>
+                        <div id="import-success" class="d-none alert alert-success"><i class="fas fa-check-circle me-1"></i>Style imported successfully. Switch to the <strong>Visual Editor</strong> or <strong>Mapbox JSON</strong> tab to review.</div>
+                    </fieldset>
+                    <fieldset>
+                        <legend><i class="fas fa-circle-info me-1"></i>Format Details</legend>
+
+                        <h6 class="mt-2"><i class="fas fa-file-code me-1"></i>Mapbox Style JSON <span class="badge bg-success">Full support</span></h6>
+                        <p class="text-muted ms-3 mb-3">
+                            <code>.json</code> files are imported directly without conversion. The entire style object is loaded as-is into the editor.
+                        </p>
+
+                        <h6><i class="fas fa-file-code me-1"></i>SLD / Symbology Encoding <span class="badge bg-warning text-dark">Partial support</span></h6>
+                        <p class="text-muted ms-3 mb-2">
+                            <code>.sld</code>, <code>.xml</code>, and <code>.se</code> files are converted to Mapbox Style JSON. The conversion covers basic symbolizers:
+                        </p>
+                        <div class="row ms-2">
+                            <div class="col-md-6">
+                                <h6 class="text-success"><i class="fas fa-check me-1"></i>Converted</h6>
+                                <ul class="import-info-list import-info-supported">
+                                    <li><strong>PolygonSymbolizer</strong> — fill color/opacity, stroke color/width/opacity</li>
+                                    <li><strong>LineSymbolizer</strong> — stroke color, width, opacity, dash arrays</li>
+                                    <li><strong>PointSymbolizer</strong> — circle marks with fill and stroke</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-danger"><i class="fas fa-xmark me-1"></i>Not converted</h6>
+                                <ul class="import-info-list import-info-unsupported">
+                                    <li><strong>TextSymbolizer</strong> — labels, halos, placement</li>
+                                    <li><strong>RasterSymbolizer</strong> — raster channel/color maps</li>
+                                    <li><strong>External Graphics</strong> — icon image references</li>
+                                    <li><strong>Multiple Rules / Filters</strong> — only first symbolizer per type</li>
+                                    <li><strong>Vendor extensions</strong> — se:VendorOption etc.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
@@ -217,5 +275,6 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
+    <script src="{{ asset('bundles/mapbendermanager/js/sld-converter.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor.js') }}"></script>
 {% endblock %}

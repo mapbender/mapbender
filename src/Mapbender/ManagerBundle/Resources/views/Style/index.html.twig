@@ -19,6 +19,7 @@
                 <th style="width:50px">ID</th>
                 <th style="width:120px">Preview</th>
                 <th>Name</th>
+                <th style="width:100px">Format</th>
                 <th style="width:80px">Source</th>
                 <th style="width:130px">Actions</th>
             </tr>
@@ -35,10 +36,23 @@
                         </div>
                     </td>
                     <td>{{ style.name ?? ('Style #' ~ style.id) }}</td>
+                    <td>
+                        {% if style.sourceType == 'mapbox-json' %}
+                            <span class="badge bg-primary">Mapbox JSON</span>
+                        {% elseif style.sourceType == 'sld' %}
+                            <span class="badge bg-warning text-dark">SLD</span>
+                        {% elseif style.sourceType == 'manual' %}
+                            <span class="badge bg-secondary">Manual</span>
+                        {% elseif style.sourceType %}
+                            <span class="badge bg-info">{{ style.sourceType }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>{{ style.sourceId ?? '-' }}</td>
                     <td>
                         <div class="d-flex flex-nowrap gap-1">
-                            {% if style.sourceType == 'manual' %}
+                            {% if style.sourceType in ['manual', 'mapbox-json', 'sld'] %}
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="Edit"><i class="fas fa-pen"></i></a>
                             {% else %}
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="View"><i class="fas fa-eye"></i></a>
@@ -53,7 +67,7 @@
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="5" class="text-muted">No styles configured yet.</td></tr>
+                <tr><td colspan="6" class="text-muted">No styles configured yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>

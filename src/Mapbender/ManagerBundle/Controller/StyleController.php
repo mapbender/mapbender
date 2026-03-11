@@ -48,8 +48,22 @@ class StyleController extends ApplicationControllerBase
         $style->setSourceType('manual');
 
         if ($request->isMethod('POST')) {
-            $style->setName($request->request->get('name'));
+            $name = trim($request->request->get('name', ''));
+            if ($name === '') {
+                $this->addFlash('error', 'Style name is required.');
+                $style->setStyle($request->request->get('style'));
+                return $this->render('@MapbenderManager/Style/edit.html.twig', [
+                    'style' => $style,
+                    '_visual' => $this->extractVisualProps($style),
+                    'nameError' => true,
+                ]);
+            }
+            $style->setName($name);
             $style->setStyle($request->request->get('style'));
+            $sourceType = $request->request->get('sourceType');
+            if ($sourceType) {
+                $style->setSourceType($sourceType);
+            }
 
             $this->em->persist($style);
             $this->em->flush();
@@ -72,13 +86,27 @@ class StyleController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        if ($style->getSourceType() !== 'manual') {
+        if ($style->getSourceType() !== 'manual' && !in_array($style->getSourceType(), ['mapbox-json', 'sld'], true)) {
             return $this->redirectToRoute('mapbender_manager_style_view', ['id' => $id]);
         }
 
         if ($request->isMethod('POST')) {
-            $style->setName($request->request->get('name'));
+            $name = trim($request->request->get('name', ''));
+            if ($name === '') {
+                $this->addFlash('error', 'Style name is required.');
+                $style->setStyle($request->request->get('style'));
+                return $this->render('@MapbenderManager/Style/edit.html.twig', [
+                    'style' => $style,
+                    '_visual' => $this->extractVisualProps($style),
+                    'nameError' => true,
+                ]);
+            }
+            $style->setName($name);
             $style->setStyle($request->request->get('style'));
+            $sourceType = $request->request->get('sourceType');
+            if ($sourceType) {
+                $style->setSourceType($sourceType);
+            }
 
             $this->em->flush();
 
