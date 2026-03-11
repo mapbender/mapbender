@@ -315,9 +315,26 @@ class StyleInstanceEditor {
             collectionId = entry.collectionId || null;
             try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
         }
-        popoverBody.querySelectorAll('.layer-preview canvas').forEach(c => {
-            Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId});
-        });
+        const previewWrap = popoverBody.querySelector('.layer-preview');
+        if (!previewWrap) return;
+        const isMultiLayer = s && s.version && Array.isArray(s.layers);
+        let msg = previewWrap.querySelector('.preview-message');
+        if (isMultiLayer) {
+            previewWrap.querySelectorAll('canvas').forEach(c => c.style.display = 'none');
+            if (!msg) {
+                msg = document.createElement('span');
+                msg.className = 'preview-message text-muted small';
+                previewWrap.appendChild(msg);
+            }
+            msg.textContent = `Multi-layer style (${s.layers.length} layers) — no preview`;
+            msg.style.display = '';
+        } else {
+            previewWrap.querySelectorAll('canvas').forEach(c => c.style.display = '');
+            if (msg) msg.style.display = 'none';
+            previewWrap.querySelectorAll('canvas').forEach(c => {
+                Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId});
+            });
+        }
     }
 }
 $(function() { new StyleInstanceEditor(); });
