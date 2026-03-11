@@ -1,5 +1,24 @@
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
+{% macro filter_controls(prefix) %}
+    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="Name…" style="flex:3">
+    <select class="form-select form-select-sm {{ prefix }}-origin" style="flex:3">
+        <option value="">All origins</option>
+        <option value="mapbox-json">Mapbox JSON</option>
+        <option value="sld">SLD</option>
+        <option value="manual">Manual</option>
+        <option value="ogc_api">OGC API</option>
+        <option value="digitizer">Digitizer</option>
+    </select>
+    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="Src…" style="flex:2">
+    <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-{{ prefix }}" title="Apply filter">
+        <i class="fas fa-filter"></i>
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-{{ prefix }}" title="Reset filters">
+        <i class="fas fa-times"></i>
+    </button>
+{% endmacro %}
+
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/mapbenderogcapifeatures/css/edit-instance.css') }}">
@@ -45,6 +64,7 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
             <th>Style</th>
+            <th title="Secondary styles attached to this layer">Sec.</th>
             <th></th>
         </tr>
         </thead>
@@ -70,6 +90,9 @@
                            {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
                 </td>
                 <td>
+                    <span class="badge bg-secondary sec-style-count" title="Secondary styles attached" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                </td>
+                <td>
                     <div class="static-popover-wrap">
                         <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
                               title="Style settings">
@@ -85,22 +108,7 @@
                                         <div class="col-sm-3"><label class="form-label fw-bold text-muted small">Filter</label></div>
                                         <div class="col-sm-9">
                                             <div class="d-flex gap-1">
-                                                <input type="text" class="form-control form-control-sm style-filter-name" placeholder="Name…" style="flex:3">
-                                                <select class="form-select form-select-sm style-filter-origin" style="flex:3">
-                                                    <option value="">All origins</option>
-                                                    <option value="mapbox-json">Mapbox JSON</option>
-                                                    <option value="sld">SLD</option>
-                                                    <option value="manual">Manual</option>
-                                                    <option value="ogc_api">OGC API</option>
-                                                    <option value="digitizer">Digitizer</option>
-                                                </select>
-                                                <input type="text" class="form-control form-control-sm style-filter-source" placeholder="Src…" style="flex:2">
-                                                <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-style-filter" title="Apply filter">
-                                                    <i class="fas fa-filter"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-style-filter" title="Reset filters">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
+                                                {{ _self.filter_controls('style-filter') }}
                                             </div>
                                         </div>
                                     </div>
@@ -116,6 +124,30 @@
                                                 <canvas width="40" height="40" data-geom="point" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                                                 <canvas width="40" height="40" data-geom="line" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
                                                 <canvas width="40" height="40" data-geom="polygon" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="secondary-styles-section">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary -fn-toggle-secondary-styles">
+                                                <i class="fas fa-layer-group"></i> Secondary styles
+                                                <span class="badge bg-secondary ms-1 secondary-count" style="display:none">0</span>
+                                                <i class="fas fa-chevron-down ms-1 toggle-arrow"></i>
+                                            </button>
+                                        </div>
+                                        <div class="secondary-styles-panel" style="display:none">
+                                            <div class="row mb-2 secondary-filter-row">
+                                                <div class="col-sm-3"><label class="form-label text-muted small">Filter</label></div>
+                                                <div class="col-sm-9">
+                                                    <div class="d-flex gap-1">
+                                                        {{ _self.filter_controls('sec-filter') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-sm-3"><label class="form-label fw-bold">Select</label></div>
+                                                <div class="col-sm-9">{{ form_widget(layer.secondaryStyleIds) }}</div>
                                             </div>
                                         </div>
                                     </div>

@@ -51,6 +51,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(name: 'native_style_id', type: 'integer', nullable: true)]
     protected ?int $nativeStyleId = null;
 
+    #[ORM\Column(name: 'secondary_style_ids', type: 'simple_array', nullable: true)]
+    protected ?array $secondaryStyleIds = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -174,6 +177,17 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     public function setNativeStyleId(?int $nativeStyleId): static
     {
         $this->nativeStyleId = $nativeStyleId;
+        return $this;
+    }
+
+    public function getSecondaryStyleIds(): array
+    {
+        return $this->secondaryStyleIds ?? [];
+    }
+
+    public function setSecondaryStyleIds(?array $secondaryStyleIds): static
+    {
+        $this->secondaryStyleIds = $secondaryStyleIds ?: null;
         return $this;
     }
 }

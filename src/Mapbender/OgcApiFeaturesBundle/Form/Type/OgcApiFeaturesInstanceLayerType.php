@@ -86,6 +86,13 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ->add('nativeStyleId', HiddenType::class, [
                 'required' => false,
             ])
+            ->add('secondaryStyleIds', ChoiceType::class, [
+                'required' => false,
+                'multiple' => true,
+                'label' => false,
+                'choices' => $styleChoices,
+                'attr' => ['class' => 'form-select form-select-sm secondary-style-select', 'size' => 6],
+            ])
         ;
     }
 

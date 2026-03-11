@@ -12,6 +12,8 @@ class StyleInstanceEditor {
         this._filterState = { name: '', origin: '', source: this.sourceId };
         this._originalOptions = new Map();
         this._savedValues = new Map();
+        this._secOriginalOptions = new Map();
+        this._secFilterState = { name: '', origin: '', source: this.sourceId };
 
         this._bindEvents();
         this._loadStyles();
@@ -26,6 +28,7 @@ class StyleInstanceEditor {
             this._markNativeStyles();
             this._initFilters();
             this._applyFilters();
+            this._initSecFilters();
             document.querySelectorAll('.popover-body').forEach(body => {
                 this.updatePreview(body);
             });
@@ -33,13 +36,18 @@ class StyleInstanceEditor {
     }
 
     _snapshotOptions() {
-        document.querySelectorAll('select[id$="_styleId"]').forEach(select => {
+        this._collectSelectOptions('select[id$="_styleId"]', this._originalOptions);
+        this._originalOptions.forEach((_, select) => this._savedValues.set(select, select.value));
+        this._collectSelectOptions('.secondary-style-select', this._secOriginalOptions);
+    }
+
+    _collectSelectOptions(selector, targetMap) {
+        document.querySelectorAll(selector).forEach(select => {
             const opts = [];
             for (const opt of select.options) {
                 opts.push({ value: opt.value, text: opt.textContent });
             }
-            this._originalOptions.set(select, opts);
-            this._savedValues.set(select, select.value);
+            targetMap.set(select, opts);
         });
     }
 
@@ -82,6 +90,10 @@ class StyleInstanceEditor {
             if (select && checkbox) {
                 checkbox.checked = !!select.value;
             }
+            const secSelect = $row.find('.secondary-style-select')[0];
+            if (secSelect) {
+                this._updateSecondaryCount(secSelect);
+            }
         });
 
         this.$table.on('click', '.-fn-apply-style-filter', (e) => {
@@ -102,6 +114,43 @@ class StyleInstanceEditor {
             this._syncFilters();
             this._applyFilters();
             this._updateFilterButtons();
+        });
+
+        // Secondary styles: toggle panel
+        this.$table.on('click', '.-fn-toggle-secondary-styles', (e) => {
+            e.preventDefault();
+            const section = e.currentTarget.closest('.secondary-styles-section');
+            const panel = section.querySelector('.secondary-styles-panel');
+            const arrow = e.currentTarget.querySelector('.toggle-arrow');
+            const visible = panel.style.display !== 'none';
+            panel.style.display = visible ? 'none' : '';
+            arrow.classList.toggle('fa-chevron-down', visible);
+            arrow.classList.toggle('fa-chevron-up', !visible);
+        });
+
+        // Secondary styles: apply filter
+        this.$table.on('click', '.-fn-apply-sec-filter', (e) => {
+            e.preventDefault();
+            const row = e.currentTarget.closest('.secondary-filter-row');
+            if (!row) return;
+            this._secFilterState.name = row.querySelector('.sec-filter-name').value;
+            this._secFilterState.origin = row.querySelector('.sec-filter-origin').value;
+            this._secFilterState.source = row.querySelector('.sec-filter-source').value;
+            this._syncSecFilters();
+            this._applySecFilters();
+        });
+
+        // Secondary styles: reset filter
+        this.$table.on('click', '.-fn-reset-sec-filter', (e) => {
+            e.preventDefault();
+            this._secFilterState = { name: '', origin: '', source: this.sourceId };
+            this._syncSecFilters();
+            this._applySecFilters();
+        });
+
+        // Secondary styles: update badge on selection change
+        this.$table.on('change', '.secondary-style-select', (e) => {
+            this._updateSecondaryCount(e.target);
         });
     }
 
@@ -126,9 +175,7 @@ class StyleInstanceEditor {
     }
 
     _syncFilters() {
-        document.querySelectorAll('.style-filter-name').forEach(el => el.value = this._filterState.name);
-        document.querySelectorAll('.style-filter-origin').forEach(el => el.value = this._filterState.origin);
-        document.querySelectorAll('.style-filter-source').forEach(el => el.value = this._filterState.source);
+        this._syncFilterInputs('style-filter', this._filterState);
     }
 
     _updateFilterButtons() {
@@ -156,11 +203,12 @@ class StyleInstanceEditor {
         return 'Active filter — ' + parts.join(', ');
     }
 
-    _matchesFilter(entry) {
+    _matchesFilter(entry, filterState) {
         if (!entry) return false;
-        const nameFilter = this._filterState.name.toLowerCase();
-        const originFilter = this._filterState.origin;
-        const sourceFilter = this._filterState.source.toLowerCase();
+        filterState = filterState || this._filterState;
+        const nameFilter = filterState.name.toLowerCase();
+        const originFilter = filterState.origin;
+        const sourceFilter = filterState.source.toLowerCase();
         const name = (entry.name || '').toLowerCase();
         const origin = entry.sourceType || '';
         const source = String(entry.sourceId || '');
@@ -185,6 +233,74 @@ class StyleInstanceEditor {
             }
             if (currentVal) select.value = currentVal;
             this._rebuildDropdownList(select);
+        });
+    }
+
+    // ── Secondary Styles Filtering ──
+
+    _initSecFilters() {
+        document.querySelectorAll('.sec-filter-source').forEach(input => {
+            input.value = this._secFilterState.source;
+        });
+        this._applySecFilters();
+        this._initSecondaryBadges();
+    }
+
+    _syncSecFilters() {
+        this._syncFilterInputs('sec-filter', this._secFilterState);
+    }
+
+    _syncFilterInputs(prefix, filterState) {
+        document.querySelectorAll(`.${prefix}-name`).forEach(el => el.value = filterState.name);
+        document.querySelectorAll(`.${prefix}-origin`).forEach(el => el.value = filterState.origin);
+        document.querySelectorAll(`.${prefix}-source`).forEach(el => el.value = filterState.source);
+    }
+
+    _applySecFilters() {
+        this._secOriginalOptions.forEach((opts, select) => {
+            const selectedVals = new Set(Array.from(select.selectedOptions).map(o => o.value));
+            select.innerHTML = '';
+            for (const opt of opts) {
+                if (selectedVals.has(opt.value)) {
+                    const option = new Option(opt.text, opt.value);
+                    option.selected = true;
+                    select.appendChild(option);
+                    continue;
+                }
+                const entry = this.styleMap[opt.value];
+                if (!entry) continue;
+                if (this._matchesFilter(entry, this._secFilterState)) {
+                    select.appendChild(new Option(opt.text, opt.value));
+                }
+            }
+        });
+    }
+
+    _updateSecondaryCount(select) {
+        const count = select.selectedOptions.length;
+        // Update badge in the popover toggle button
+        const section = select.closest('.secondary-styles-section');
+        if (section) {
+            const badge = section.querySelector('.secondary-count');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? '' : 'none';
+            }
+        }
+        // Update badge in the table row
+        const row = select.closest('tr');
+        if (row) {
+            const rowBadge = row.querySelector('.sec-style-count');
+            if (rowBadge) {
+                rowBadge.textContent = count;
+                rowBadge.style.display = count > 0 ? '' : 'none';
+            }
+        }
+    }
+
+    _initSecondaryBadges() {
+        document.querySelectorAll('.secondary-style-select').forEach(select => {
+            this._updateSecondaryCount(select);
         });
     }
 
