@@ -116,6 +116,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         }
         $source = $candidates[0];
         // Match layers to persisted layers on the source
+        $pendingPoolEntries = [];
         if (!empty($data['layers'])) {
             foreach ($data['layers'] as $layerData) {
                 $layerClass = ImportHandler::extractClassName($layerData);
@@ -137,11 +138,15 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
                     }
                 }
                 if ($match) {
-                    $entityPool->add($match, $layerIdentData);
+                    $pendingPoolEntries[] = [$match, $layerIdentData];
                 } else {
                     return false;
                 }
             }
+        }
+        // All layers matched — now commit them to the entity pool
+        foreach ($pendingPoolEntries as [$entity, $identData]) {
+            $entityPool->add($entity, $identData);
         }
         $classMeta = $this->entityManager->getClassMetadata(OgcApiFeaturesSource::class);
         $entityPool->add($source, ImportHandler::extractArrayFields($data, $classMeta->getIdentifier()));
