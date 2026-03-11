@@ -47,6 +47,25 @@ class StyleController extends ApplicationControllerBase
         $style = new Style();
         $style->setSourceType('manual');
 
+        // OpenLayers default style as initial value
+        $defaultStyle = json_encode([
+            'fillColor' => '#0099ff',
+            'fillOpacity' => 0.4,
+            'strokeColor' => '#3399cc',
+            'strokeWidth' => 1.25,
+            'strokeOpacity' => 1,
+            'strokeDashstyle' => 'solid',
+            'strokeLinecap' => 'round',
+            'pointRadius' => 5,
+            'label' => '',
+            'fontFamily' => 'Arial, Helvetica, sans-serif',
+            'fontSize' => 11,
+            'fontWeight' => 'regular',
+            'fontColor' => '#333333',
+            'fontOpacity' => 1,
+        ], JSON_PRETTY_PRINT);
+        $style->setStyle($defaultStyle);
+
         if ($request->isMethod('POST')) {
             $name = trim($request->request->get('name', ''));
             if ($name === '') {
@@ -75,6 +94,7 @@ class StyleController extends ApplicationControllerBase
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
             'style' => $style,
             '_visual' => $this->extractVisualProps($style),
+            'isNew' => true,
         ]);
     }
 

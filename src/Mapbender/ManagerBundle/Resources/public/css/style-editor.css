@@ -79,3 +79,91 @@
     padding: 8px 12px;
     margin-bottom: 6px;
 }
+
+/* ── Layer Accordion ── */
+#layers-editor .layers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+#layers-editor .layers-header h6 {
+    margin: 0;
+    font-weight: 700;
+    color: #495057;
+}
+#layer-accordion .accordion-item {
+    border: 1px solid #dee2e6;
+    margin-bottom: 6px;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+#layer-accordion .accordion-button {
+    font-size: 13px;
+    padding: 8px 14px;
+    background: #f8f9fa;
+    font-weight: 600;
+}
+#layer-accordion .accordion-button:not(.collapsed) {
+    background: #e7f1ff;
+    color: #0d6efd;
+    box-shadow: none;
+}
+#layer-accordion .accordion-body {
+    padding: 14px 16px;
+    font-size: 13px;
+}
+#layer-accordion .layer-id-label {
+    font-weight: 400;
+    color: #6c757d;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+#layer-accordion .badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+#layer-accordion .layer-paint-controls {
+    border-top: 1px solid #e9ecef;
+    padding-top: 10px;
+    margin-top: 8px;
+}
+#layer-accordion .layer-range-preview {
+    font-size: 10px;
+    vertical-align: middle;
+}
+#layer-accordion .layer-mini-preview {
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    background: #fff;
+    flex-shrink: 0;
+}
+#layer-accordion .layer-rule-badge {
+    font-size: 10px;
+    font-weight: 600;
+    border: 1px solid #dee2e6;
+}
+#layer-accordion .layer-filter-desc {
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#layer-accordion .layer-full-preview {
+    text-align: center;
+}
+#layer-accordion .layer-full-canvas {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: #f8f9fa;
+    max-width: 100%;
+}
