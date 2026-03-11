@@ -60,7 +60,7 @@ class OgcApiFeaturesLoader extends SourceLoader
         $source->setTitle($json['title'] ?? 'Ogc Api Features Source');
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($version);
-        $source->setAttribution($json['attribution']);
+        $source->setAttribution($json['attribution'] ?? '');
 
         foreach ($json['collections'] as $collection) {
             $bbox = !(empty($collection['extent']['spatial']['bbox'][0])) ? $collection['extent']['spatial']['bbox'][0] : null;
