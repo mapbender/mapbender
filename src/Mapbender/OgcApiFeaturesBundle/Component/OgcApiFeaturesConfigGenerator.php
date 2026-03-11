@@ -58,6 +58,8 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             if ($layer->getActive()) {
                 $config['children'][] = [
                     'options' => [
+                        // add additional underscore to prevent confusion with rootlayer-ID:
+                        // identical rootlayer- and child-ID result in messed up layer tree structure
                         'id' => $layer->getId() . '_',
                         'priority' => $layer->getPriority(),
                         'title' => $layer->getTitle(),
