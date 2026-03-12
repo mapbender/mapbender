@@ -27,6 +27,9 @@ class StyleEditor {
         this.reinitColorpickers();
 
         const json = this.getJsonFromTextarea();
+        if (this.styleTextarea.value.trim() && Object.keys(json).length) {
+            this.setJsonToTextarea(json);
+        }
         if (this._isMultiLayerStyle(json)) {
             this._showLayersEditor(json);
         } else if (this.styleTextarea.value.trim()) {
@@ -57,10 +60,12 @@ class StyleEditor {
             this.drawPreview();
         });
         document.getElementById('tab-json').addEventListener('shown.bs.tab', () => {
-            // Sync current visual state to JSON
+            // Sync current visual state to JSON and ensure formatting
             const json = this.getJsonFromTextarea();
             if (!this._isMultiLayerStyle(json)) {
                 this.syncVisualToJson();
+            } else {
+                this.setJsonToTextarea(json);
             }
         });
 
@@ -87,6 +92,36 @@ class StyleEditor {
         const addBtn = document.getElementById('btn-add-layer');
         if (addBtn) {
             addBtn.addEventListener('click', () => this._addNewLayer());
+        }
+
+        // Validate JSON and re-format before form submission
+        const form = this.styleTextarea.closest('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                const raw = this.styleTextarea.value.trim();
+                if (!raw) return; // allow empty
+                try {
+                    const parsed = JSON.parse(raw);
+                    this.setJsonToTextarea(parsed);
+                } catch (err) {
+                    e.preventDefault();
+                    this.styleTextarea.classList.add('is-invalid');
+                    // Switch to JSON tab so the user sees the error
+                    const jsonTab = document.getElementById('tab-json');
+                    if (jsonTab) new bootstrap.Tab(jsonTab).show();
+                    let feedback = this.styleTextarea.parentElement.querySelector('.invalid-feedback');
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'invalid-feedback';
+                        this.styleTextarea.parentElement.appendChild(feedback);
+                    }
+                    feedback.textContent = Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message});
+                }
+            });
+            // Clear validation error on edit
+            this.styleTextarea.addEventListener('input', () => {
+                this.styleTextarea.classList.remove('is-invalid');
+            });
         }
     }
 
