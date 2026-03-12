@@ -116,6 +116,18 @@ class StyleEditor {
                         this.styleTextarea.parentElement.appendChild(feedback);
                     }
                     feedback.textContent = Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message});
+                    // Try to place cursor at the error position
+                    const posMatch = err.message.match(/position\s+(\d+)/i);
+                    if (posMatch) {
+                        const errorPos = parseInt(posMatch[1], 10);
+                        this.styleTextarea.focus();
+                        this.styleTextarea.setSelectionRange(errorPos, errorPos + 1);
+                        // Scroll textarea so the error position is visible
+                        const textBefore = this.styleTextarea.value.substring(0, errorPos);
+                        const lineNumber = textBefore.split('\n').length;
+                        const lineHeight = parseFloat(getComputedStyle(this.styleTextarea).lineHeight) || 18;
+                        this.styleTextarea.scrollTop = Math.max(0, (lineNumber - 3) * lineHeight);
+                    }
                 }
             });
             // Clear validation error on edit
