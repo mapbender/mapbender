@@ -297,12 +297,105 @@
             <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'mb.ogcapifeatures.admin.style.editor.back' | trans : 'mb.ogcapifeatures.admin.style.editor.cancel' | trans }}</a>
         </div>
     </form>
+
+    {# ── JS Templates (cloned by style-editor-layers.js / style-editor.js) ── #}
+    <template id="tpl-layer-item">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse">
+                    <canvas class="layer-mini-preview me-2" width="36" height="24"></canvas>
+                    <i class="me-2"></i>
+                    <span class="badge me-2 -js-type-badge"></span>
+                    <span class="layer-id-label"></span>
+                    <span class="badge bg-light text-dark ms-2 layer-rule-badge d-none"></span>
+                    <span class="layer-filter-desc ms-2 d-none" title="">
+                        <i class="fas fa-filter me-1"></i><span class="-js-filter-text"></span>
+                    </span>
+                </button>
+            </h2>
+            <div class="accordion-collapse collapse">
+                <div class="accordion-body">
+                    <div class="layer-full-preview mb-3">
+                        <canvas class="layer-full-canvas" width="200" height="80"></canvas>
+                    </div>
+                    <div class="layer-paint-controls"></div>
+                    <div class="text-end mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger -fn-remove-layer">
+                            <i class="fas fa-trash-can me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.remove_layer' | trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-color-row">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <label class="form-label fw-bold"></label>
+                <div class="input-group input-group-sm -js-colorpicker">
+                    <input class="form-control form-control-sm" type="text">
+                    <span class="input-group-text input-group-addon"><i></i></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-range-row">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <label class="form-label fw-bold w-100">
+                    <span class="-js-label-text"></span>
+                    <span class="float-end badge bg-secondary layer-range-preview"></span>
+                </label>
+                <input class="form-range" type="range">
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-number-row">
+        <div class="row mb-2">
+            <div class="col-sm-4">
+                <label class="form-label fw-bold"></label>
+                <input type="number" class="form-control form-control-sm">
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-symbol-controls">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.text_field' | trans }}</label>
+                <input data-layer-prop="text-field" type="text" class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-3">
+                <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.size' | trans }}</label>
+                <input data-layer-prop="text-size" type="number" min="1" max="60" step="1" class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-3">
+                <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.font' | trans }}</label>
+                <input data-layer-prop="text-font" type="text" class="form-control form-control-sm">
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-no-props">
+        <p class="text-muted small">{{ 'mb.ogcapifeatures.admin.style.editor.no_editable_properties' | trans }}</p>
+    </template>
+
+    <template id="tpl-warning-alert">
+        <div class="alert alert-warning mb-1">
+            <i class="fas fa-triangle-exclamation me-1"></i><span class="-js-warning-text"></span>
+        </div>
+    </template>
 {% endblock %}
 
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/sld-converter.js') }}"></script>
+    <script src="{{ asset('bundles/mapbendermanager/js/style-editor-preview.js') }}"></script>
+    <script src="{{ asset('bundles/mapbendermanager/js/style-editor-layers.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor.js') }}"></script>
     {% if readonly|default(false) %}
     <script>

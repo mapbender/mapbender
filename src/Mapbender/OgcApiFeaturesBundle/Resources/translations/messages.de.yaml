@@ -139,6 +139,7 @@ mb:
           text_opacity: Textdeckkraft
           invalid_json: "Ungültiges JSON: %error%"
           json_syntax_only_note: "Es wird nur die JSON-Syntax geprüft, nicht die inhaltliche Gültigkeit des Mapbox-Stils."
+          remove_layer: Ebene entfernen
           text_field: Textfeld
           size: Größe
           font: Schriftart

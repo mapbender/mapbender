@@ -2,6 +2,9 @@
     border-bottom: 2px solid #dee2e6;
     margin-bottom: 0;
 }
+.contentTitle {
+    cursor: pointer;
+}
 .style-editor-tabs .nav-tabs .nav-link {
     font-size: 14px;
     font-weight: 600;
@@ -13,6 +16,7 @@
     margin-bottom: -2px;
     background: #f8f9fa;
     transition: all 0.15s ease;
+    cursor: pointer;
 }
 .style-editor-tabs .nav-tabs .nav-link:hover {
     color: #495057;

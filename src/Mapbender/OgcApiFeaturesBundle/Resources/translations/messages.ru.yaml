@@ -139,6 +139,7 @@ mb:
           text_opacity: Непрозрачность текста
           invalid_json: "Некорректный JSON: %error%"
           json_syntax_only_note: "Проверяется только синтаксис JSON, а не семантическая корректность стиля Mapbox."
+          remove_layer: Удалить слой
           text_field: Текстовое поле
           size: Размер
           font: Шрифт

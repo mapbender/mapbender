@@ -139,6 +139,7 @@ mb:
           text_opacity: Opacità del testo
           invalid_json: "JSON non valido: %error%"
           json_syntax_only_note: "Viene verificata solo la sintassi JSON, non la correttezza semantica dello stile Mapbox."
+          remove_layer: Rimuovi livello
           text_field: Campo di testo
           size: Dimensione
           font: Carattere
