@@ -24,6 +24,9 @@ mb:
     source:
       singular: Source
       plural: Sources
+    style:
+      singular: Style
+      plural: Styles
     layerset:
       singular: 'Layer set'
       plural: 'Layer sets'

@@ -23,6 +23,9 @@ mb:
     source:
       singluar: Kaynak
       plural: Kaynaklar
+    style:
+      singular: Stil
+      plural: Stiller
     layerset:
       singular: Katman
       plural: Katmanlar

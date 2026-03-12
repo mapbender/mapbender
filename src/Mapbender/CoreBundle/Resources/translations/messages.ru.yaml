@@ -24,6 +24,9 @@ mb:
     source:
       singular: Источник
       plural: Источники
+    style:
+      singular: Стиль
+      plural: Стили
     layerset:
       singular: Слой
       plural: Слои

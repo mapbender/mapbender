@@ -23,6 +23,9 @@ mb:
     source:
       singular: Source
       plural: Sources
+    style:
+      singular: Style
+      plural: Styles
     layerset:
       singular: Ensemble de couches
       plural: Ensembles de couches

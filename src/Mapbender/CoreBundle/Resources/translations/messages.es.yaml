@@ -24,6 +24,9 @@ mb:
     source:
       singular: 'Fuente de datos'
       plural: 'Fuentes de datos'
+    style:
+      singular: Estilo
+      plural: Estilos
     layerset:
       singular: 'Conjunto de capas'
       plural: 'Conjuntos de capas'

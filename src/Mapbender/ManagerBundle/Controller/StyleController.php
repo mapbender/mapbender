@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,16 +24,23 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/', name: 'mapbender_manager_style_index', methods: ['GET'])]
     public function index(): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
         $styles = $this->em->getRepository(Style::class)->findAll();
 
         return $this->render('@MapbenderManager/Style/index.html.twig', [
             'styles' => $styles,
+            'grants' => [
+                'create' => $this->isGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES),
+                'edit' => $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_STYLES),
+                'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_STYLES),
+            ],
         ]);
     }
 
     #[ManagerRoute('/json', name: 'mapbender_manager_style_json', methods: ['GET'])]
     public function jsonList(): JsonResponse
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
         $styles = $this->em->getRepository(Style::class)->findAll();
         $map = [];
         foreach ($styles as $style) {
@@ -50,6 +58,7 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/new', name: 'mapbender_manager_style_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES);
         $style = new Style();
         $style->setSourceType('manual');
 
@@ -107,6 +116,7 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/{id}/edit', name: 'mapbender_manager_style_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_STYLES);
         $style = $this->em->getRepository(Style::class)->find($id);
         if (!$style) {
             throw $this->createNotFoundException();
@@ -149,6 +159,7 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/{id}/view', name: 'mapbender_manager_style_view', methods: ['GET'])]
     public function view(int $id): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
         $style = $this->em->getRepository(Style::class)->find($id);
         if (!$style) {
             throw $this->createNotFoundException();
@@ -164,6 +175,7 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/{id}/copy', name: 'mapbender_manager_style_copy', methods: ['POST'])]
     public function copy(int $id): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES);
         $style = $this->em->getRepository(Style::class)->find($id);
         if (!$style) {
             throw $this->createNotFoundException();
@@ -185,6 +197,7 @@ class StyleController extends ApplicationControllerBase
     #[ManagerRoute('/{id}/delete', name: 'mapbender_manager_style_delete', methods: ['POST'])]
     public function delete(int $id): Response
     {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_STYLES);
         $style = $this->em->getRepository(Style::class)->find($id);
         if ($style) {
             $this->em->remove($style);

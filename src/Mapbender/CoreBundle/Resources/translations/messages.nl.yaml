@@ -23,6 +23,9 @@ mb:
     source:
       singular: Bron
       plural: Bronnen
+    style:
+      singular: Stijl
+      plural: Stijlen
     layerset:
       singular: Lagenset
       plural: Lagensets

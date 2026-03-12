@@ -33,8 +33,14 @@ class ResourceDomainInstallation extends AbstractResourceDomain
     const ACTION_ACCESS_API = "access_api";
     const ACTION_UPLOAD_FILES = "upload_files";
 
+    const ACTION_VIEW_STYLES = "view_styles";
+    const ACTION_CREATE_STYLES = "create_styles";
+    const ACTION_EDIT_STYLES = "edit_styles";
+    const ACTION_DELETE_STYLES = "delete_styles";
+
     public const CATEGORY_APPLICATION = "applications";
     public const CATEGORY_SOURCES = "sources";
+    public const CATEGORY_STYLES = "styles";
     public const CATEGORY_PERMISSIONS = "permissions";
     public const CATEGORY_USERS = "users";
     public const CATEGORY_GROUPS = "groups";
@@ -100,6 +106,7 @@ class ResourceDomainInstallation extends AbstractResourceDomain
         return [
             self::CATEGORY_APPLICATION => "mb.terms.application.plural",
             self::CATEGORY_SOURCES => "mb.terms.source.plural",
+            self::CATEGORY_STYLES => "mb.terms.style.plural",
             self::CATEGORY_PERMISSIONS => "fom.user.userbundle.classes.permissions",
             self::CATEGORY_USERS => "fom.user.userbundle.classes.users",
             self::CATEGORY_GROUPS => "fom.user.userbundle.classes.groups",
@@ -149,6 +156,22 @@ class ResourceDomainInstallation extends AbstractResourceDomain
             self::ACTION_DELETE_SOURCES => [
                 'cssClass' => self::CSS_CLASS_DANGER,
                 'category' => self::CATEGORY_SOURCES,
+            ],
+            self::ACTION_VIEW_STYLES => [
+                'cssClass' => self::CSS_CLASS_SUCCESS,
+                'category' => self::CATEGORY_STYLES,
+            ],
+            self::ACTION_CREATE_STYLES => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_STYLES,
+            ],
+            self::ACTION_EDIT_STYLES => [
+                'cssClass' => self::CSS_CLASS_WARNING,
+                'category' => self::CATEGORY_STYLES,
+            ],
+            self::ACTION_DELETE_STYLES => [
+                'cssClass' => self::CSS_CLASS_DANGER,
+                'category' => self::CATEGORY_STYLES,
             ],
             self::ACTION_MANAGE_PERMISSION => [
                 'cssClass' => self::CSS_CLASS_DANGER,
