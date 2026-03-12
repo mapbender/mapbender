@@ -29,7 +29,7 @@ mb:
         native_style: "(nativer Style)"
         changed_was: "Geändert (war: %label%)"
         changed: Vom gespeicherten Wert abweichend
-        none: "-- kein --"
+        none: "-- kein Style --"
         multi_layer_preview: "Mehrschichtig (%count%)"
         name_required: Style-Name ist erforderlich.
         saved: Style gespeichert.
