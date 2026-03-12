@@ -183,6 +183,10 @@ mb:
         origin_label: "Origine :"
         source_label: "Source :"
         any: "(tous)"
+      tooltip:
+        heading: Info-bulle au survol
+        description: "Sélectionnez les propriétés affichées dans une info-bulle lors du survol des entités sur la carte."
+        no_properties: "Aucune propriété disponible. Essayez de recharger la source."
     metadata:
       title: Titre
       version: Version

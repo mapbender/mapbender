@@ -183,6 +183,10 @@ mb:
         origin_label: "Źródło:"
         source_label: "Źródło:"
         any: "(dowolne)"
+      tooltip:
+        heading: Podpowiedź przy najechaniu
+        description: "Wybierz, które właściwości są wyświetlane w podpowiedzi po najechaniu na obiekty na mapie."
+        no_properties: "Brak dostępnych właściwości. Spróbuj ponownie załadować źródło."
     metadata:
       title: Tytuł
       version: Wersja

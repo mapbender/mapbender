@@ -72,6 +72,8 @@ class StyleInstanceEditor {
             if ($target.hasClass('show')) {
                 const body = $target.find('.popover-body')[0];
                 if (body) this.updatePreview(body);
+                const row = $trigger.closest('tr')[0];
+                if (body && row) this._initTooltipCheckboxes(body, row);
             }
         });
 
@@ -451,6 +453,72 @@ class StyleInstanceEditor {
                 Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId});
             });
         }
+    }
+
+    // ── Tooltip Property Checkboxes ──
+
+    _initTooltipCheckboxes(popoverBody, row) {
+        const container = popoverBody.querySelector('.tooltip-checkbox-list');
+        if (!container || container.dataset.loaded === 'true') return;
+
+        // Read stored properties from data attribute
+        let propNames = [];
+        try {
+            propNames = JSON.parse(row.dataset.properties || '[]');
+        } catch(e) {}
+        if (!Array.isArray(propNames)) propNames = [];
+
+        // Find the hidden input for tooltipPropertyMap
+        const hiddenInput = popoverBody.querySelector('input[id$="_tooltipPropertyMap"]');
+        let selected = [];
+        if (hiddenInput && hiddenInput.value) {
+            try { selected = JSON.parse(hiddenInput.value); } catch(e) {}
+            if (!Array.isArray(selected)) selected = [];
+        }
+
+        this._renderCheckboxes(container, propNames, selected, hiddenInput);
+    }
+
+    _renderCheckboxes(container, propNames, selected, hiddenInput) {
+        container.dataset.loaded = 'true';
+        container.innerHTML = '';
+
+        if (propNames.length === 0) {
+            container.innerHTML = '<span class="text-muted small">' + (container.dataset.emptyText || 'No properties') + '</span>';
+            return;
+        }
+
+        propNames.forEach(prop => {
+            const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-check form-check-inline tooltip-prop-check';
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.className = 'form-check-input';
+            cb.id = id;
+            cb.value = prop;
+            cb.checked = selected.includes(prop);
+            cb.addEventListener('change', () => this._syncTooltipHidden(container, hiddenInput));
+
+            const label = document.createElement('label');
+            label.className = 'form-check-label small';
+            label.htmlFor = id;
+            label.textContent = prop;
+
+            wrapper.appendChild(cb);
+            wrapper.appendChild(label);
+            container.appendChild(wrapper);
+        });
+    }
+
+    _syncTooltipHidden(container, hiddenInput) {
+        if (!hiddenInput) return;
+        const checked = [];
+        container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+            checked.push(cb.value);
+        });
+        hiddenInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
     }
 }
 $(function() { new StyleInstanceEditor(); });

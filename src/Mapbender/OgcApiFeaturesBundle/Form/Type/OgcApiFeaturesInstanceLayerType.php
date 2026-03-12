@@ -5,6 +5,7 @@ namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -17,7 +18,9 @@ use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 
 class OgcApiFeaturesInstanceLayerType extends AbstractType
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(
+        private EntityManagerInterface $em,
+    )
     {
     }
 
@@ -93,7 +96,14 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
                 'choices' => $styleChoices,
                 'attr' => ['class' => 'form-select form-select-sm secondary-style-select', 'size' => 6],
             ])
+            ->add('tooltipPropertyMap', HiddenType::class, [
+                'required' => false,
+            ])
         ;
+        $builder->get('tooltipPropertyMap')->addModelTransformer(new CallbackTransformer(
+            fn (?array $array) => $array ? json_encode($array) : '',
+            fn (?string $json) => $json ? json_decode($json, true) : null,
+        ));
     }
 
     private function getStyleChoices(): array

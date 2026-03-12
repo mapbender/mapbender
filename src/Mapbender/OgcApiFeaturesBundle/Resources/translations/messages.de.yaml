@@ -183,6 +183,10 @@ mb:
         origin_label: "Ursprung:"
         source_label: "Quelle:"
         any: "(beliebig)"
+      tooltip:
+        heading: Hover-Tooltip
+        description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden."
+        no_properties: "Keine Eigenschaften verfügbar. Versuchen Sie, die Quelle neu zu laden."
     metadata:
       title: Titel
       version: Version

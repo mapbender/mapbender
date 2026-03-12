@@ -71,7 +71,7 @@
         <tbody>
         {% for layer in form.layers %}
             {%- set _popover_id = 'style_popover_' ~ layer.vars.id -%}
-            <tr class="text-center">
+            <tr class="text-center" data-collection-id="{{ layer.vars.data.sourceItem.collectionId }}" data-properties="{{ layer.vars.data.sourceItem.properties|default([])|json_encode }}">
                 <td>
                     <i class="fas fa-grip-vertical" style="cursor:pointer"></i>
                     {{ form_widget(layer.priority) }}
@@ -150,6 +150,13 @@
                                                 <div class="col-sm-9">{{ form_widget(layer.secondaryStyleIds) }}</div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="tooltip-config-section">
+                                        <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
+                                        <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
+                                        {{ form_widget(layer.tooltipPropertyMap) }}
+                                        <div class="tooltip-checkbox-list" data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
                                     </div>
                                     <div class="text-end mt-2">
                                         <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">

@@ -183,6 +183,10 @@ mb:
         origin_label: "Kaynak:"
         source_label: "Kaynak:"
         any: "(herhangi)"
+      tooltip:
+        heading: Üzerine gelme ipucu
+        description: "Haritadaki özellikler üzerine gelindiğinde ipucunda gösterilecek özellikleri seçin."
+        no_properties: "Özellik bulunamadı. Kaynağı yeniden yüklemeyi deneyin."
     metadata:
       title: Başlık
       version: Sürüm

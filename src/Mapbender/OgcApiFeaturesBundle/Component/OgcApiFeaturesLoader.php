@@ -63,7 +63,7 @@ class OgcApiFeaturesLoader extends SourceLoader
         $source->setTitle($json['title'] ?? 'Ogc Api Features Source');
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($version);
-        $source->setAttribution($json['attribution']);
+        $source->setAttribution($json['attribution'] ?? '');
 
         foreach ($json['collections'] as $collection) {
             $bbox = !(empty($collection['extent']['spatial']['bbox'][0])) ? $collection['extent']['spatial']['bbox'][0] : null;
@@ -71,7 +71,28 @@ class OgcApiFeaturesLoader extends SourceLoader
             $layer->setTitle($collection['title'] ?? '');
             $layer->setCollectionId($collection['id']);
             $layer->setBbox($bbox);
+            $layer->setProperties($this->discoverCollectionProperties($baseUrl, $collection['id']));
             $source->addLayer($layer);
+        }
+    }
+
+    private function discoverCollectionProperties(string $baseUrl, string $collectionId): ?array
+    {
+        $itemsUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/items?f=json&limit=1';
+        try {
+            $response = $this->httpTransport->getUrl($itemsUrl);
+            if (!$response->isOk()) {
+                return null;
+            }
+            $data = json_decode($response->getContent(), true);
+            $features = $data['features'] ?? [];
+            if (empty($features) || !isset($features[0]['properties'])) {
+                return null;
+            }
+            $keys = array_keys($features[0]['properties']);
+            return array_values(array_filter($keys, fn ($k) => $k !== 'geometry'));
+        } catch (\Throwable) {
+            return null;
         }
     }
 

@@ -54,6 +54,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(name: 'secondary_style_ids', type: 'simple_array', nullable: true)]
     protected ?array $secondaryStyleIds = null;
 
+    #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
+    protected ?array $tooltipPropertyMap = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -189,5 +192,15 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     {
         $this->secondaryStyleIds = $secondaryStyleIds ?: null;
         return $this;
+    }
+
+    public function getTooltipPropertyMap(): ?array
+    {
+        return $this->tooltipPropertyMap;
+    }
+
+    public function setTooltipPropertyMap(?array $tooltipPropertyMap): void
+    {
+        $this->tooltipPropertyMap = $tooltipPropertyMap;
     }
 }

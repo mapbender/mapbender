@@ -183,6 +183,10 @@ mb:
         origin_label: "Origen:"
         source_label: "Fuente:"
         any: "(cualquiera)"
+      tooltip:
+        heading: Tooltip al pasar el ratón
+        description: "Seleccione qué propiedades se muestran en un tooltip al pasar el ratón sobre las características del mapa."
+        no_properties: "No hay propiedades disponibles. Intente recargar la fuente."
     metadata:
       title: Título
       version: Versión

@@ -183,6 +183,10 @@ mb:
         origin_label: "Bron:"
         source_label: "Bron:"
         any: "(willekeurig)"
+      tooltip:
+        heading: Hover-tooltip
+        description: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart."
+        no_properties: "Geen eigenschappen beschikbaar. Probeer de bron opnieuw te laden."
     metadata:
       title: Titel
       version: Versie

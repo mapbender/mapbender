@@ -21,3 +21,8 @@
 /* ── Filtering ── */
 .dropdown.filter-active { outline: 2px solid #0d6efd; outline-offset: -1px; border-radius: 4px; }
 .dropdownList .choice.filter-kept { font-style: italic; color: #6c757d; }
+
+/* ── Tooltip property checkboxes ── */
+.tooltip-checkbox-list { max-height: 200px; overflow-y: auto; padding: 6px 0; }
+.tooltip-prop-check { margin-right: 10px; margin-bottom: 4px; }
+.tooltip-prop-check .form-check-label { user-select: none; }

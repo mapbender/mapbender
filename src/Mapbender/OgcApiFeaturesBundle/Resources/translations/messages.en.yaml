@@ -183,6 +183,10 @@ mb:
         origin_label: "Origin:"
         source_label: "Source:"
         any: "(any)"
+      tooltip:
+        heading: Hover Tooltip
+        description: "Select which properties are shown in a tooltip when hovering over features on the map."
+        no_properties: "No properties available. Try reloading the source."
     metadata:
       title: Title
       version: Version

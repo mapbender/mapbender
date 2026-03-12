@@ -183,6 +183,10 @@ mb:
         origin_label: "Origem:"
         source_label: "Fonte:"
         any: "(qualquer)"
+      tooltip:
+        heading: Dica de ferramenta ao passar
+        description: "Selecione quais propriedades são mostradas em uma dica de ferramenta ao passar sobre feições no mapa."
+        no_properties: "Nenhuma propriedade disponível. Tente recarregar a fonte."
     metadata:
       title: Título
       version: Versão

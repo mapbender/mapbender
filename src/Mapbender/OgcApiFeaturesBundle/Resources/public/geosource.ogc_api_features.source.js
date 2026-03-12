@@ -233,7 +233,10 @@ class OgcApiSource extends Mapbender.Source {
             }
         });
         if (!this._tooltipInitialized && Mapbender.Model?.olMap) {
-            this._initTooltip(Mapbender.Model.olMap);
+            const hasTooltip = children.some(c => c.options.tooltip?.propertyMap);
+            if (hasTooltip) {
+                this._initTooltip(Mapbender.Model.olMap);
+            }
         }
     }
 
@@ -269,23 +272,27 @@ class OgcApiSource extends Mapbender.Source {
 
     _handlePointerMove(olMap, pixel, coordinate) {
         let hit = null;
-        for (const layer of this.nativeLayers) {
+        let hitChild = null;
+        const children = this.getRootLayer().children;
+        for (let i = 0; i < this.nativeLayers.length; i++) {
+            const layer = this.nativeLayers[i];
             const features = olMap.getFeaturesAtPixel(pixel, {
                 layerFilter: (l) => l === layer,
                 hitTolerance: 5,
             });
             if (features.length) {
                 hit = features[0];
+                hitChild = children[i];
                 break;
             }
         }
-        if (!hit) {
+        if (!hit || !hitChild?.options?.tooltip?.propertyMap) {
             this._hideTooltip();
             olMap.getTargetElement().style.cursor = '';
             return;
         }
         olMap.getTargetElement().style.cursor = 'pointer';
-        const content = this._buildTooltipContent(hit);
+        const content = this._buildTooltipContent(hit, hitChild);
         if (!content) {
             this._hideTooltip();
             return;
@@ -296,9 +303,9 @@ class OgcApiSource extends Mapbender.Source {
         this._tooltipOverlay.setPosition(coordinate);
     }
 
-    _buildTooltipContent(feature) {
+    _buildTooltipContent(feature, child) {
         const properties = feature.getProperties();
-        const propertyMap = this._getPropertyMap('featureInfo');
+        const propertyMap = this._getChildTooltipMap(child);
         const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
         const fragment = document.createDocumentFragment();
         let count = 0;
@@ -327,6 +334,25 @@ class OgcApiSource extends Mapbender.Source {
         if (this._tooltipElement) {
             this._tooltipElement.style.display = 'none';
         }
+    }
+
+    _getChildTooltipMap(child) {
+        const mapArray = child.options.tooltip?.propertyMap;
+        if (!mapArray) return null;
+        const cid = child.options.collectionId;
+        if (!this._tooltipMaps) this._tooltipMaps = {};
+        if (!this._tooltipMaps[cid]) {
+            this._tooltipMaps[cid] = {};
+            for (const entry of mapArray) {
+                if (typeof entry === 'string') {
+                    this._tooltipMaps[cid][entry] = Mapbender.trans(entry);
+                } else {
+                    const [key, value] = Object.entries(entry)[0];
+                    this._tooltipMaps[cid][key] = Mapbender.trans(value);
+                }
+            }
+        }
+        return this._tooltipMaps[cid];
     }
 
     featureInfoEnabled() {

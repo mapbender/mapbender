@@ -94,6 +94,12 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                     $childConfig['options']['style'] = $availableStyles[0]['name'];
                     $childConfig['options']['availableStyles'] = $availableStyles;
                 }
+                $tooltipMap = $layer->getTooltipPropertyMap();
+                if ($tooltipMap) {
+                    $childConfig['options']['tooltip'] = [
+                        'propertyMap' => $tooltipMap,
+                    ];
+                }
                 $config['children'][] = $childConfig;
             }
         }
