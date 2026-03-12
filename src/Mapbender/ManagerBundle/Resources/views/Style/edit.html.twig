@@ -7,9 +7,11 @@
 {% endblock %}
 
 {% block manager_content %}
-    <form method="post" novalidate action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}">
-        {% if readonly|default(false) %}<fieldset disabled>{% endif %}
+    <form method="post" novalidate action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}"{{ readonly|default(false) ? ' class="style-readonly"' : '' }}>
         <input type="hidden" id="sourceType" name="sourceType" value="{{ style.sourceType|default('manual') }}">
+        {% if readonly|default(false) %}
+        <fieldset disabled>
+        {% endif %}
         <div class="mb-4">
             <label for="name" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.name_label' | trans }} <span class="text-danger">*</span></label>
             <input type="text" class="form-control{{ nameError|default(false) ? ' is-invalid' : '' }}" id="name" name="name" value="{{ style.name }}" required placeholder="{{ 'mb.ogcapifeatures.admin.style.editor.name_placeholder' | trans }}">
@@ -17,7 +19,9 @@
                 <div class="invalid-feedback">{{ 'mb.ogcapifeatures.admin.style.name_required' | trans }}</div>
             {% endif %}
         </div>
-
+        {% if readonly|default(false) %}
+        </fieldset>
+        {% endif %}
         <div class="style-editor-tabs">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -285,7 +289,6 @@
             </div>
         </div>
 
-        {% if readonly|default(false) %}</fieldset>{% endif %}
         <div class="mt-4 d-flex gap-2">
             {% if not readonly|default(false) %}
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.save' | trans }}</button>
@@ -300,4 +303,13 @@
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/sld-converter.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor.js') }}"></script>
+    {% if readonly|default(false) %}
+    <script>
+    $(function() {
+        document.querySelectorAll('.style-readonly input, .style-readonly textarea, .style-readonly select').forEach(function(el) {
+            el.disabled = true;
+        });
+    });
+    </script>
+    {% endif %}
 {% endblock %}
