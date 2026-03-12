@@ -94,7 +94,7 @@ class StyleEditor {
             addBtn.addEventListener('click', () => this._addNewLayer());
         }
 
-        // Validate JSON and re-format before form submission
+        // Validate JSON syntax and re-format before form submission
         const form = this.styleTextarea.closest('form');
         if (form) {
             form.addEventListener('submit', (e) => {
@@ -106,7 +106,6 @@ class StyleEditor {
                 } catch (err) {
                     e.preventDefault();
                     this.styleTextarea.classList.add('is-invalid');
-                    // Switch to JSON tab so the user sees the error
                     const jsonTab = document.getElementById('tab-json');
                     if (jsonTab) new bootstrap.Tab(jsonTab).show();
                     let feedback = this.styleTextarea.parentElement.querySelector('.invalid-feedback');
@@ -122,7 +121,6 @@ class StyleEditor {
                         const errorPos = parseInt(posMatch[1], 10);
                         this.styleTextarea.focus();
                         this.styleTextarea.setSelectionRange(errorPos, errorPos + 1);
-                        // Scroll textarea so the error position is visible
                         const textBefore = this.styleTextarea.value.substring(0, errorPos);
                         const lineNumber = textBefore.split('\n').length;
                         const lineHeight = parseFloat(getComputedStyle(this.styleTextarea).lineHeight) || 18;

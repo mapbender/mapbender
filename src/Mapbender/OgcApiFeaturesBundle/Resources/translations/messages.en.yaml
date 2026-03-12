@@ -138,6 +138,7 @@ mb:
           text_color: Text Color
           text_opacity: Text Opacity
           invalid_json: "Invalid JSON: %error%"
+          json_syntax_only_note: "Only JSON syntax is validated, not the semantic correctness of the Mapbox style."
           text_field: Text Field
           size: Size
           font: Font

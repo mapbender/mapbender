@@ -138,6 +138,7 @@ mb:
           text_color: Couleur du texte
           text_opacity: Opacité du texte
           invalid_json: "JSON invalide : %error%"
+          json_syntax_only_note: "Seule la syntaxe JSON est vérifiée, pas la validité sémantique du style Mapbox."
           text_field: Champ de texte
           size: Taille
           font: Police

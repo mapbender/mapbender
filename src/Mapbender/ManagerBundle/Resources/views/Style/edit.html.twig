@@ -231,6 +231,7 @@
                         <textarea class="form-control" id="style" name="style" rows="24"
                                   data-collection-id="{{ style.collectionId|default('') }}"
                                   data-is-new="{{ isNew|default(false) ? '1' : '0' }}">{{ style.style }}</textarea>
+                        <div class="form-text text-muted mt-1"><i class="fas fa-circle-info me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.json_syntax_only_note' | trans }}</div>
                     </div>
                 </div>
 

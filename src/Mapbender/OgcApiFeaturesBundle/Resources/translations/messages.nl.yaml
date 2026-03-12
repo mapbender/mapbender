@@ -138,6 +138,7 @@ mb:
           text_color: Tekstkleur
           text_opacity: Tekstdekking
           invalid_json: "Ongeldige JSON: %error%"
+          json_syntax_only_note: "Alleen de JSON-syntaxis wordt gecontroleerd, niet de inhoudelijke juistheid van de Mapbox-stijl."
           text_field: Tekstveld
           size: Grootte
           font: Lettertype

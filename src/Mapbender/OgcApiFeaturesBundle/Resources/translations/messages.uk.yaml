@@ -138,6 +138,7 @@ mb:
           text_color: Колір тексту
           text_opacity: Непрозорість тексту
           invalid_json: "Некоректний JSON: %error%"
+          json_syntax_only_note: "Перевіряється лише синтаксис JSON, а не семантична коректність стилю Mapbox."
           text_field: Текстове поле
           size: Розмір
           font: Шрифт

@@ -138,6 +138,7 @@ mb:
           text_color: Metin rengi
           text_opacity: Metin opaklığı
           invalid_json: "Geçersiz JSON: %error%"
+          json_syntax_only_note: "Sadece JSON sözdizimi doğrulanır, Mapbox stilinin anlamsal doğruluğu kontrol edilmez."
           text_field: Metin alanı
           size: Boyut
           font: Yazı tipi
