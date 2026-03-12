@@ -186,6 +186,25 @@ class StyleEditorLayers {
             container.appendChild(this._createSymbolControls(layout, paint));
             container.appendChild(this._createColorRow('text-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_color'), paint['text-color'] || '#000000'));
             container.appendChild(this._createRangeRow('text-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_opacity'), paint['text-opacity'] ?? 1, 0, 1, 'any'));
+        } else if (type === 'background') {
+            container.appendChild(this._createColorRow('background-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.background_color'), paint['background-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('background-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.background_opacity'), paint['background-opacity'] ?? 1, 0, 1, 'any'));
+        } else if (type === 'raster') {
+            container.appendChild(this._createRangeRow('raster-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_opacity'), paint['raster-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-brightness-min', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_brightness_min'), paint['raster-brightness-min'] ?? 0, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-brightness-max', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_brightness_max'), paint['raster-brightness-max'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-contrast', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_contrast'), paint['raster-contrast'] ?? 0, -1, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-saturation', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_saturation'), paint['raster-saturation'] ?? 0, -1, 1, 'any'));
+        } else if (type === 'fill-extrusion') {
+            container.appendChild(this._createColorRow('fill-extrusion-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_color'), paint['fill-extrusion-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('fill-extrusion-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_opacity'), paint['fill-extrusion-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createNumberRow('fill-extrusion-height', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_height'), this._scalarVal(paint['fill-extrusion-height'], 0), 0, 10000, 1));
+            container.appendChild(this._createNumberRow('fill-extrusion-base', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_base'), this._scalarVal(paint['fill-extrusion-base'], 0), 0, 10000, 1));
+        } else if (type === 'heatmap') {
+            container.appendChild(this._createNumberRow('heatmap-radius', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_radius'), this._scalarVal(paint['heatmap-radius'], 30), 1, 200, 1));
+            container.appendChild(this._createRangeRow('heatmap-intensity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_intensity'), this._scalarVal(paint['heatmap-intensity'], 1), 0, 10, 'any'));
+            container.appendChild(this._createRangeRow('heatmap-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_opacity'), paint['heatmap-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createNumberRow('heatmap-weight', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_weight'), this._scalarVal(paint['heatmap-weight'], 1), 0, 100, 0.1));
         } else {
             container.appendChild(document.getElementById('tpl-no-props').content.cloneNode(true));
         }
@@ -264,10 +283,15 @@ class StyleEditorLayers {
             'fill-opacity', 'line-width', 'line-opacity',
             'circle-radius', 'circle-opacity', 'circle-stroke-width',
             'text-opacity',
+            'background-opacity',
+            'raster-opacity', 'raster-brightness-min', 'raster-brightness-max', 'raster-contrast', 'raster-saturation',
+            'fill-extrusion-opacity', 'fill-extrusion-height', 'fill-extrusion-base',
+            'heatmap-radius', 'heatmap-intensity', 'heatmap-opacity', 'heatmap-weight',
         ]);
         const colorPaint = new Set([
             'fill-color', 'fill-outline-color', 'line-color',
             'circle-color', 'circle-stroke-color', 'text-color',
+            'background-color', 'fill-extrusion-color',
         ]);
 
         if (type === 'symbol') {
@@ -383,6 +407,32 @@ class StyleEditorLayers {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('T', w / 2, h / 2);
+        } else if (type === 'background') {
+            const color = p['background-color'] || '#000000';
+            const opacity = p['background-opacity'] ?? 1;
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity);
+            ctx.fillRect(2, 2, w - 4, h - 4);
+        } else if (type === 'raster') {
+            const opacity = p['raster-opacity'] ?? 1;
+            ctx.fillStyle = `rgba(100,180,100,${opacity})`;
+            ctx.fillRect(2, 2, w - 4, h - 4);
+            ctx.strokeStyle = '#6c6';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 3; i++) { ctx.strokeRect(4+i*9, 4, 8, h-8); }
+        } else if (type === 'fill-extrusion') {
+            const color = p['fill-extrusion-color'] || '#888888';
+            const opacity = p['fill-extrusion-opacity'] ?? 1;
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity);
+            ctx.fillRect(6, 6, w/2-4, h-12);
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity * 0.7);
+            ctx.beginPath(); ctx.moveTo(6+w/2-4, 6); ctx.lineTo(w-4, 2); ctx.lineTo(w-4, h-8); ctx.lineTo(6+w/2-4, h-6); ctx.closePath(); ctx.fill();
+        } else if (type === 'heatmap') {
+            const gradient = ctx.createRadialGradient(w/2, h/2, 2, w/2, h/2, Math.min(w,h)/2);
+            gradient.addColorStop(0, 'rgba(255,0,0,0.8)');
+            gradient.addColorStop(0.5, 'rgba(255,255,0,0.4)');
+            gradient.addColorStop(1, 'rgba(0,0,255,0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, w, h);
         } else {
             ctx.fillStyle = '#e9ecef';
             ctx.fillRect(2, 2, w - 4, h - 4);
@@ -485,6 +535,68 @@ class StyleEditorLayers {
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
             ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_symbol'), w - 8, h - 6);
+        } else if (type === 'background') {
+            const color = p['background-color'] || '#000000';
+            const opacity = p['background-opacity'] ?? 1;
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity);
+            ctx.fillRect(w * 0.1, h * 0.1, w * 0.8, h * 0.8);
+            ctx.fillStyle = '#6c757d';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_background'), w - 8, h - 6);
+        } else if (type === 'raster') {
+            const opacity = p['raster-opacity'] ?? 1;
+            // Grid pattern to symbolize raster tiles
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const shade = ((row + col) % 2 === 0) ? 160 : 200;
+                    ctx.fillStyle = `rgba(${shade},${shade+20},${shade},${opacity})`;
+                    ctx.fillRect(w*0.1 + col*(w*0.16), h*0.1 + row*(h*0.26), w*0.15, h*0.24);
+                }
+            }
+            ctx.fillStyle = '#6c757d';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_raster'), w - 8, h - 6);
+        } else if (type === 'fill-extrusion') {
+            const color = p['fill-extrusion-color'] || '#888888';
+            const opacity = p['fill-extrusion-opacity'] ?? 1;
+            // Front face
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity);
+            ctx.fillRect(w*0.15, h*0.3, w*0.4, h*0.55);
+            // Top face
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity * 0.8);
+            ctx.beginPath();
+            ctx.moveTo(w*0.15, h*0.3); ctx.lineTo(w*0.35, h*0.1);
+            ctx.lineTo(w*0.75, h*0.1); ctx.lineTo(w*0.55, h*0.3);
+            ctx.closePath(); ctx.fill();
+            // Side face
+            ctx.fillStyle = StyleUtils.hexToRgba(color, opacity * 0.6);
+            ctx.beginPath();
+            ctx.moveTo(w*0.55, h*0.3); ctx.lineTo(w*0.75, h*0.1);
+            ctx.lineTo(w*0.75, h*0.65); ctx.lineTo(w*0.55, h*0.85);
+            ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#6c757d';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_extrusion'), w - 8, h - 6);
+        } else if (type === 'heatmap') {
+            const opacity = p['heatmap-opacity'] ?? 1;
+            const r = Math.min(this._scalarVal(p['heatmap-radius'], 30), 35);
+            // Draw a few overlapping radial gradients
+            const pts = [[w*0.35, h*0.4], [w*0.55, h*0.35], [w*0.45, h*0.6]];
+            for (const [px, py] of pts) {
+                const gradient = ctx.createRadialGradient(px, py, 0, px, py, r);
+                gradient.addColorStop(0, `rgba(255,0,0,${0.6*opacity})`);
+                gradient.addColorStop(0.4, `rgba(255,200,0,${0.3*opacity})`);
+                gradient.addColorStop(1, 'rgba(0,0,255,0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, w, h);
+            }
+            ctx.fillStyle = '#6c757d';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_heatmap'), w - 8, h - 6);
         } else {
             ctx.fillStyle = '#adb5bd';
             ctx.font = '12px sans-serif';

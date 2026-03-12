@@ -140,12 +140,32 @@ mb:
           invalid_json: "JSON inválido: %error%"
           json_syntax_only_note: "Apenas a sintaxe JSON é validada, não a correção semântica do estilo Mapbox."
           remove_layer: Remover camada
+          readonly_notice: "Este estilo provém de uma fonte OGC API e só pode ser visualizado. Alterações não são possíveis."
           text_field: Campo de texto
           size: Tamanho
           font: Fonte
           geom_symbol: Símbolo
           no_editable_properties: Sem propriedades de estilo editáveis para este tipo de camada.
           unknown_layer: "Camada %type%"
+          background_color: Cor de fundo
+          background_opacity: Opacidade do fundo
+          raster_opacity: Opacidade raster
+          raster_brightness_min: Brilho Mín
+          raster_brightness_max: Brilho Máx
+          raster_contrast: Contraste
+          raster_saturation: Saturação
+          extrusion_color: Cor de extrusão
+          extrusion_opacity: Opacidade de extrusão
+          extrusion_height: Altura
+          extrusion_base: Altura base
+          heatmap_radius: Raio
+          heatmap_intensity: Intensidade
+          heatmap_opacity: Opacidade
+          heatmap_weight: Peso
+          geom_background: Fundo
+          geom_raster: Raster
+          geom_extrusion: Extrusão 3D
+          geom_heatmap: Mapa de calor
       filter:
         label: Filtro
         name_placeholder: "Nome…"

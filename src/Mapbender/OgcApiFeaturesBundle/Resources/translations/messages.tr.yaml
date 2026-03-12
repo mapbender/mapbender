@@ -140,12 +140,32 @@ mb:
           invalid_json: "Geçersiz JSON: %error%"
           json_syntax_only_note: "Sadece JSON sözdizimi doğrulanır, Mapbox stilinin anlamsal doğruluğu kontrol edilmez."
           remove_layer: Katmanı kaldır
+          readonly_notice: "Bu stil bir OGC API kaynağından gelmektedir ve yalnızca görüntülenebilir. Değişiklik yapılamaz."
           text_field: Metin alanı
           size: Boyut
           font: Yazı tipi
           geom_symbol: Sembol
           no_editable_properties: Bu katman türü için düzenlenebilir stil özelliği yok.
           unknown_layer: "%type% katmanı"
+          background_color: Arka Plan Rengi
+          background_opacity: Arka Plan Opaklığı
+          raster_opacity: Raster Opaklığı
+          raster_brightness_min: Parlaklık Min
+          raster_brightness_max: Parlaklık Maks
+          raster_contrast: Kontrast
+          raster_saturation: Doygunluk
+          extrusion_color: Ekstrüzyon Rengi
+          extrusion_opacity: Ekstrüzyon Opaklığı
+          extrusion_height: Yükseklik
+          extrusion_base: Taban Yüksekliği
+          heatmap_radius: Yarıçap
+          heatmap_intensity: Yoğunluk
+          heatmap_opacity: Opaklık
+          heatmap_weight: Ağırlık
+          geom_background: Arka Plan
+          geom_raster: Raster
+          geom_extrusion: 3D Ekstrüzyon
+          geom_heatmap: Isı Haritası
       filter:
         label: Filtre
         name_placeholder: "Ad…"

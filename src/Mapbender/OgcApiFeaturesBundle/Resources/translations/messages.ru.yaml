@@ -140,12 +140,32 @@ mb:
           invalid_json: "Некорректный JSON: %error%"
           json_syntax_only_note: "Проверяется только синтаксис JSON, а не семантическая корректность стиля Mapbox."
           remove_layer: Удалить слой
+          readonly_notice: "Этот стиль получен из источника OGC API и доступен только для просмотра. Изменения невозможны."
           text_field: Текстовое поле
           size: Размер
           font: Шрифт
           geom_symbol: Символ
           no_editable_properties: Нет редактируемых свойств стиля для этого типа слоя.
           unknown_layer: "Слой %type%"
+          background_color: Цвет фона
+          background_opacity: Прозрачность фона
+          raster_opacity: Прозрачность растра
+          raster_brightness_min: Яркость Мин
+          raster_brightness_max: Яркость Макс
+          raster_contrast: Контраст
+          raster_saturation: Насыщенность
+          extrusion_color: Цвет экструзии
+          extrusion_opacity: Прозрачность экструзии
+          extrusion_height: Высота
+          extrusion_base: Базовая высота
+          heatmap_radius: Радиус
+          heatmap_intensity: Интенсивность
+          heatmap_opacity: Прозрачность
+          heatmap_weight: Вес
+          geom_background: Фон
+          geom_raster: Растр
+          geom_extrusion: 3D-экструзия
+          geom_heatmap: Тепловая карта
       filter:
         label: Фильтр
         name_placeholder: "Имя…"

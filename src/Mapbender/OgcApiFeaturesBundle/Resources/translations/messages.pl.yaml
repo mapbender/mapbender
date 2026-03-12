@@ -140,12 +140,32 @@ mb:
           invalid_json: "Nieprawidłowy JSON: %error%"
           json_syntax_only_note: "Sprawdzana jest tylko składnia JSON, a nie poprawność semantyczna stylu Mapbox."
           remove_layer: Usuń warstwę
+          readonly_notice: "Ten styl pochodzi ze źródła OGC API i może być tylko przeglądany. Zmiany nie są możliwe."
           text_field: Pole tekstowe
           size: Rozmiar
           font: Czcionka
           geom_symbol: Symbol
           no_editable_properties: Brak edytowalnych właściwości stylu dla tego typu warstwy.
           unknown_layer: "Warstwa %type%"
+          background_color: Kolor tła
+          background_opacity: Przezroczystość tła
+          raster_opacity: Przezroczystość rastra
+          raster_brightness_min: Jasność Min
+          raster_brightness_max: Jasność Maks
+          raster_contrast: Kontrast
+          raster_saturation: Nasycenie
+          extrusion_color: Kolor ekstruzji
+          extrusion_opacity: Przezroczystość ekstruzji
+          extrusion_height: Wysokość
+          extrusion_base: Wysokość bazowa
+          heatmap_radius: Promień
+          heatmap_intensity: Intensywność
+          heatmap_opacity: Przezroczystość
+          heatmap_weight: Waga
+          geom_background: Tło
+          geom_raster: Raster
+          geom_extrusion: Ekstruzja 3D
+          geom_heatmap: Mapa ciepła
       filter:
         label: Filtr
         name_placeholder: "Nazwa…"

@@ -140,12 +140,32 @@ mb:
           invalid_json: "Некоректний JSON: %error%"
           json_syntax_only_note: "Перевіряється лише синтаксис JSON, а не семантична коректність стилю Mapbox."
           remove_layer: Видалити шар
+          readonly_notice: "Цей стиль походить з джерела OGC API і доступний лише для перегляду. Зміни неможливі."
           text_field: Текстове поле
           size: Розмір
           font: Шрифт
           geom_symbol: Символ
           no_editable_properties: Немає редагованих властивостей стилю для цього типу шару.
           unknown_layer: "Шар %type%"
+          background_color: Колір фону
+          background_opacity: Прозорість фону
+          raster_opacity: Прозорість растра
+          raster_brightness_min: Яскравість Мін
+          raster_brightness_max: Яскравість Макс
+          raster_contrast: Контраст
+          raster_saturation: Насиченість
+          extrusion_color: Колір екструзії
+          extrusion_opacity: Прозорість екструзії
+          extrusion_height: Висота
+          extrusion_base: Базова висота
+          heatmap_radius: Радіус
+          heatmap_intensity: Інтенсивність
+          heatmap_opacity: Прозорість
+          heatmap_weight: Вага
+          geom_background: Фон
+          geom_raster: Растр
+          geom_extrusion: 3D-екструзія
+          geom_heatmap: Теплова карта
       filter:
         label: Фільтр
         name_placeholder: "Назва…"
