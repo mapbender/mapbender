@@ -38,10 +38,9 @@ class Style
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): void
     {
         $this->name = $name;
-        return $this;
     }
 
     public function getStyle(): ?string
@@ -49,10 +48,9 @@ class Style
         return $this->style;
     }
 
-    public function setStyle(?string $style): self
+    public function setStyle(?string $style): void
     {
         $this->style = $style;
-        return $this;
     }
 
     public function getSourceType(): ?string
@@ -60,10 +58,9 @@ class Style
         return $this->sourceType;
     }
 
-    public function setSourceType(?string $sourceType): self
+    public function setSourceType(?string $sourceType): void
     {
         $this->sourceType = $sourceType;
-        return $this;
     }
 
     public function getSourceId(): ?int
@@ -71,10 +68,9 @@ class Style
         return $this->sourceId;
     }
 
-    public function setSourceId(?int $sourceId): self
+    public function setSourceId(?int $sourceId): void
     {
         $this->sourceId = $sourceId;
-        return $this;
     }
 
     public function getCollectionId(): ?string
@@ -82,10 +78,9 @@ class Style
         return $this->collectionId;
     }
 
-    public function setCollectionId(?string $collectionId): self
+    public function setCollectionId(?string $collectionId): void
     {
         $this->collectionId = $collectionId;
-        return $this;
     }
 
     public function isMultiLayer(): bool
@@ -93,8 +88,8 @@ class Style
         if (!$this->style) {
             return false;
         }
-        $data = \json_decode($this->style, true);
-        return \is_array($data) && isset($data['version']) && \is_array($data['layers'] ?? null);
+        $data = json_decode($this->style, true);
+        return is_array($data) && isset($data['version']) && is_array($data['layers'] ?? null);
     }
 
     public function getLayerCount(): int
@@ -102,9 +97,9 @@ class Style
         if (!$this->style) {
             return 0;
         }
-        $data = \json_decode($this->style, true);
-        if (\is_array($data) && \is_array($data['layers'] ?? null)) {
-            return \count($data['layers']);
+        $data = json_decode($this->style, true);
+        if (is_array($data) && is_array($data['layers'] ?? null)) {
+            return count($data['layers']);
         }
         return 0;
     }

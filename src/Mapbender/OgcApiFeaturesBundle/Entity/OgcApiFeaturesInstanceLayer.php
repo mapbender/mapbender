@@ -199,8 +199,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->tooltipPropertyMap;
     }
 
-    public function setTooltipPropertyMap(?array $tooltipPropertyMap): void
+    public function setTooltipPropertyMap(?array $tooltipPropertyMap): static
     {
         $this->tooltipPropertyMap = $tooltipPropertyMap;
+        return $this;
     }
 }

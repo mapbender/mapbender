@@ -76,9 +76,9 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
                 'required' => false,
                 'label' => false,
             ])
-            ->add('priority', HiddenType::class, array(
+            ->add('priority', HiddenType::class, [
                 'required' => true,
-            ))
+            ])
             ->add('styleId', ChoiceType::class, [
                 'required' => false,
                 'label' => false,

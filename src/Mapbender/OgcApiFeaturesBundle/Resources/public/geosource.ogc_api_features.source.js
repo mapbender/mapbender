@@ -439,6 +439,10 @@ class OgcApiSource extends Mapbender.Source {
         }
         return this.propertyMaps[subtype];
     }
+
+    setLayerOrder(newLayerIdOrder) {
+        // do nothing, there are no sublayers for ogc api features sources
+    }
 }
 
 window.Mapbender = Mapbender || {};

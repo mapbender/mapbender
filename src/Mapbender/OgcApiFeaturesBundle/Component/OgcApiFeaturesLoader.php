@@ -17,7 +17,7 @@ class OgcApiFeaturesLoader extends SourceLoader
 {
     public function __construct(
         protected HttpTransportInterface $httpTransport,
-        protected TranslatorInterface    $translator,
+        protected TranslatorInterface $translator,
         protected EntityManagerInterface $em,
     )
     {
