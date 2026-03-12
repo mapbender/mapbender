@@ -9,11 +9,14 @@ use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ManagerRoute("/styles")]
 class StyleController extends ApplicationControllerBase
 {
+    private const VALID_SOURCE_TYPES = ['manual', 'mapbox-json', 'sld', 'ogc_api', 'digitizer'];
+
     public function __construct(
         EntityManagerInterface $em,
         protected TranslatorInterface $trans,
@@ -95,7 +98,7 @@ class StyleController extends ApplicationControllerBase
             $style->setName($name);
             $style->setStyle($request->request->get('style'));
             $sourceType = $request->request->get('sourceType');
-            if ($sourceType) {
+            if ($sourceType && in_array($sourceType, self::VALID_SOURCE_TYPES, true)) {
                 $style->setSourceType($sourceType);
             }
 
@@ -140,7 +143,7 @@ class StyleController extends ApplicationControllerBase
             $style->setName($name);
             $style->setStyle($request->request->get('style'));
             $sourceType = $request->request->get('sourceType');
-            if ($sourceType) {
+            if ($sourceType && in_array($sourceType, self::VALID_SOURCE_TYPES, true)) {
                 $style->setSourceType($sourceType);
             }
 
@@ -173,9 +176,12 @@ class StyleController extends ApplicationControllerBase
     }
 
     #[ManagerRoute('/{id}/copy', name: 'mapbender_manager_style_copy', methods: ['POST'])]
-    public function copy(int $id): Response
+    public function copy(Request $request, int $id): Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES);
+        if (!$this->isCsrfTokenValid('style_copy', $request->request->get('_token'))) {
+            throw new InvalidCsrfTokenException();
+        }
         $style = $this->em->getRepository(Style::class)->find($id);
         if (!$style) {
             throw $this->createNotFoundException();
@@ -195,9 +201,12 @@ class StyleController extends ApplicationControllerBase
     }
 
     #[ManagerRoute('/{id}/delete', name: 'mapbender_manager_style_delete', methods: ['POST'])]
-    public function delete(int $id): Response
+    public function delete(Request $request, int $id): Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_STYLES);
+        if (!$this->isCsrfTokenValid('style_delete', $request->request->get('_token'))) {
+            throw new InvalidCsrfTokenException();
+        }
         $style = $this->em->getRepository(Style::class)->find($id);
         if ($style) {
             $this->em->remove($style);
@@ -211,10 +220,10 @@ class StyleController extends ApplicationControllerBase
     private function extractVisualProps(Style $style): array
     {
         $defaults = [
-            'fillColor' => '#ff0000',
-            'fillOpacity' => 1,
+            'fillColor' => '#0099ff',
+            'fillOpacity' => 0.4,
             'pointRadius' => 5,
-            'strokeColor' => '#ffffff',
+            'strokeColor' => '#3399cc',
             'strokeOpacity' => 1,
             'strokeWidth' => 1,
             'strokeLinecap' => 'round',

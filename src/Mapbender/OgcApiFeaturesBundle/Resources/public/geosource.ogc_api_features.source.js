@@ -148,7 +148,6 @@ class OgcApiSource extends Mapbender.Source {
             console.warn('[OgcApiStyle] No source found for collection:', collectionId, '| sources:', Object.keys(mbStyle.sources || {}));
             return;
         }
-        console.log('[OgcApiStyle] Applying Mapbox style: collection="' + collectionId + '" source="' + sourceName + '"');
         vectorLayer.set('_collectionId', collectionId);
         try {
             olms.stylefunction(vectorLayer, mbStyle, sourceName);
@@ -185,20 +184,6 @@ class OgcApiSource extends Mapbender.Source {
                 parsed.forEach(f => f.set('layer', collectionId, true));
                 source.clear(true);
                 source.addFeatures(parsed);
-                // Debug: test style result on first feature
-                if (parsed.length > 0) {
-                    const olLayer = this.nativeLayers.find(l => l.getSource() === source);
-                    const styleFn = olLayer?.getStyle();
-                    if (typeof styleFn === 'function') {
-                        const result = styleFn(parsed[0], 1000);
-                        const styles = Array.isArray(result) ? result : (result ? [result] : []);
-                        if (styles.length) {
-                            styles.forEach((s, i) => console.log('[OgcApiStyle] "' + collectionId + '" style[' + i + '] fill:', s.getFill?.()?.getColor?.(), '| stroke:', s.getStroke?.()?.getColor?.(), s.getStroke?.()?.getWidth?.()));
-                        } else {
-                            console.warn('[OgcApiStyle] Style function returned nothing for "' + collectionId + '" \u2014 feature will be invisible. layer prop:', parsed[0].get('layer'));
-                        }
-                    }
-                }
             })
             .catch((err) => {
                 console.error(`Failed to load collection "${collectionId}":`, err);

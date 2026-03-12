@@ -85,9 +85,11 @@
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>
                             {% endif %}
                             <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('style_copy') }}">
                                 <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_copy' | trans }}"><i class="fas fa-copy"></i></button>
                             </form>
                             <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'mb.ogcapifeatures.admin.style.manager.confirm_delete' | trans | e('js') }}');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('style_delete') }}">
                                 <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
                             </form>
                         </div>

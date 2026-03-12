@@ -175,7 +175,7 @@ class SldConverter {
         return null;
     }
 
-    static _parseFill(sym, warnings) {
+    static _parseFill(sym) {
         const fillEl = SldConverter._findChild(sym, 'Fill');
         if (!fillEl) return { color: '#000000', opacity: 1 };
         const color = SldConverter._parseCssParam(fillEl, 'fill') || '#000000';
@@ -183,7 +183,7 @@ class SldConverter {
         return { color, opacity };
     }
 
-    static _parseStroke(sym, warnings) {
+    static _parseStroke(sym) {
         const strokeEl = SldConverter._findChild(sym, 'Stroke');
         if (!strokeEl) return { color: 'none', width: 0, opacity: 1, dasharray: null };
         const color = SldConverter._parseCssParam(strokeEl, 'stroke') || '#000000';

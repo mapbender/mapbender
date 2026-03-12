@@ -129,8 +129,16 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         foreach ($layer->getSecondaryStyleIds() as $secId) {
             $styleIds[] = (int) $secId;
         }
+        if (empty($styleIds)) {
+            return $styles;
+        }
+        $styleEntities = $this->em->getRepository(Style::class)->findBy(['id' => $styleIds]);
+        $entityMap = [];
+        foreach ($styleEntities as $entity) {
+            $entityMap[$entity->getId()] = $entity;
+        }
         foreach ($styleIds as $id) {
-            $styleEntity = $this->em->find(Style::class, $id);
+            $styleEntity = $entityMap[$id] ?? null;
             if ($styleEntity && $styleEntity->getStyle()) {
                 $decoded = json_decode($styleEntity->getStyle(), true);
                 if (is_array($decoded)) {

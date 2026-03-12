@@ -134,7 +134,6 @@ class OgcApiFeaturesLoader extends SourceLoader
         }
         foreach ($styleInfo['links'] as $link) {
             $type = $link['type'] ?? '';
-            $rel = $link['rel'] ?? '';
             if ($type === 'application/vnd.mapbox.style+json'
                 || str_contains($type, 'mapbox')
                 || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
