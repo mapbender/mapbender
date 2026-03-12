@@ -1,0 +1,35 @@
+.ogc-api-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 13px;
+    line-height: 1.4;
+    max-width: 320px;
+    pointer-events: none;
+    z-index: 10000;
+    white-space: nowrap;
+}
+.ogc-api-tooltip-row {
+    display: flex;
+    gap: 8px;
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+}
+.ogc-api-tooltip-row:last-child {
+    border-bottom: none;
+}
+.ogc-api-tooltip-key {
+    font-weight: 600;
+    color: #555;
+    flex-shrink: 0;
+}
+.ogc-api-tooltip-key::after {
+    content: ':';
+}
+.ogc-api-tooltip-val {
+    color: #222;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

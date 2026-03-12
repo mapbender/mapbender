@@ -232,6 +232,101 @@ class OgcApiSource extends Mapbender.Source {
                 }
             }
         });
+        if (!this._tooltipInitialized && Mapbender.Model?.olMap) {
+            this._initTooltip(Mapbender.Model.olMap);
+        }
+    }
+
+    _initTooltip(olMap) {
+        this._tooltipInitialized = true;
+        const container = document.createElement('div');
+        container.className = 'ogc-api-tooltip';
+        container.style.display = 'none';
+        document.body.appendChild(container);
+        this._tooltipElement = container;
+        this._tooltipOverlay = new ol.Overlay({
+            element: container,
+            offset: [12, 0],
+            positioning: 'center-left',
+            stopEvent: false,
+        });
+        olMap.addOverlay(this._tooltipOverlay);
+        this._tooltipDebounce = null;
+        olMap.on('pointermove', (evt) => {
+            if (evt.dragging) {
+                this._hideTooltip();
+                return;
+            }
+            clearTimeout(this._tooltipDebounce);
+            this._tooltipDebounce = setTimeout(() => {
+                this._handlePointerMove(olMap, evt.pixel, evt.coordinate);
+            }, 60);
+        });
+        olMap.getViewport().addEventListener('mouseout', () => {
+            this._hideTooltip();
+        });
+    }
+
+    _handlePointerMove(olMap, pixel, coordinate) {
+        let hit = null;
+        for (const layer of this.nativeLayers) {
+            const features = olMap.getFeaturesAtPixel(pixel, {
+                layerFilter: (l) => l === layer,
+                hitTolerance: 5,
+            });
+            if (features.length) {
+                hit = features[0];
+                break;
+            }
+        }
+        if (!hit) {
+            this._hideTooltip();
+            olMap.getTargetElement().style.cursor = '';
+            return;
+        }
+        olMap.getTargetElement().style.cursor = 'pointer';
+        const content = this._buildTooltipContent(hit);
+        if (!content) {
+            this._hideTooltip();
+            return;
+        }
+        this._tooltipElement.innerHTML = '';
+        this._tooltipElement.appendChild(content);
+        this._tooltipElement.style.display = '';
+        this._tooltipOverlay.setPosition(coordinate);
+    }
+
+    _buildTooltipContent(feature) {
+        const properties = feature.getProperties();
+        const propertyMap = this._getPropertyMap('featureInfo');
+        const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
+        const fragment = document.createDocumentFragment();
+        let count = 0;
+        for (const [key, value] of Object.entries(properties)) {
+            if (skipKeys.has(key)) continue;
+            if (value == null || value === '') continue;
+            if (typeof value === 'object') continue;
+            if (propertyMap && !propertyMap[key]) continue;
+            const row = document.createElement('div');
+            row.className = 'ogc-api-tooltip-row';
+            const label = document.createElement('span');
+            label.className = 'ogc-api-tooltip-key';
+            label.textContent = propertyMap?.[key] || key;
+            const val = document.createElement('span');
+            val.className = 'ogc-api-tooltip-val';
+            val.textContent = value;
+            row.appendChild(label);
+            row.appendChild(val);
+            fragment.appendChild(row);
+            count++;
+        }
+        return count > 0 ? fragment : null;
+    }
+
+    _hideTooltip() {
+        if (this._tooltipElement) {
+            this._tooltipElement.style.display = 'none';
+        }
     }
 
     featureInfoEnabled() {

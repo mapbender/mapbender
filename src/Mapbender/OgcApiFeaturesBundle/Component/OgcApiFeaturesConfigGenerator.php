@@ -27,6 +27,9 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.source.js',
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.sourcelayer.js',
             ],
+            'css' => [
+                '@MapbenderOgcApiFeaturesBundle/Resources/public/css/ogc-api-tooltip.css',
+            ],
             default => [],
         };
     }
