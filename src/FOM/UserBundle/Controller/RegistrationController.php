@@ -5,6 +5,7 @@ namespace FOM\UserBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
+use FOM\UserBundle\Security\TokenGenerator;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,8 +67,7 @@ class RegistrationController extends AbstractEmailProcessController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
-            $user->setRegistrationToken(bin2hex(random_bytes(20)));
+            $user->setRegistrationToken(TokenGenerator::generateSecureToken());
             $user->setRegistrationTime(new \DateTime());
 
             $groupRepository = $this->getEntityManager()->getRepository(Group::class);
@@ -148,8 +148,7 @@ class RegistrationController extends AbstractEmailProcessController
             ));
         }
 
-        // Security: use cryptographically secure random token instead of weak hash(sha1,rand())
-        $user->setRegistrationToken(bin2hex(random_bytes(20)));
+        $user->setRegistrationToken(TokenGenerator::generateSecureToken());
         $user->setRegistrationTime(new \DateTime());
 
         $this->sendRegistrationMail($user);

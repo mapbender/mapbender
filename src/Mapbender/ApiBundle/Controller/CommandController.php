@@ -7,6 +7,7 @@ use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,8 +19,10 @@ use OpenApi\Attributes as OA;
 
 class CommandController extends AbstractController
 {
-    public function __construct(protected ApplicationResolver $applicationResolver)
-    {
+    public function __construct(
+        protected ApplicationResolver $applicationResolver,
+        #[Autowire('%kernel.debug%')] private bool $debug = false,
+    ) {
     }
 
     #[Route('/api/wms/show', name: 'api_wms_show', methods: ['GET'])]
@@ -465,10 +468,9 @@ class CommandController extends AbstractController
                 );
             }
         } catch (\Exception $e) {
-            // Security: return generic message to avoid leaking internal exception details to the client
             return new JsonResponse([
                 'success' => false,
-                'error' => 'Internal server error',
+                'error' => $this->debug ? $e->getMessage() : 'Internal server error',
             ], 500);
         }
     }
