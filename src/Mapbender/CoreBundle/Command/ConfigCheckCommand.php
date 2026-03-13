@@ -189,12 +189,16 @@ class ConfigCheckCommand extends Command
     {
         $output->title('Check FastCGI');
         if ($this->isLinux()) {
-            // Security: use Symfony Process with argument array instead of shell_exec() to prevent command injection
             $process = new Process(['a2query', '-m']);
             $process->run();
             $outputCmd = $process->isSuccessful() ? $process->getOutput() : null;
-            if ($outputCmd !== null && str_contains($outputCmd, 'fcgi')) {
-                $output->writeln($outputCmd);
+            if ($outputCmd !== null) {
+                $fcgiLines = array_filter(explode("\n", $outputCmd), fn($line) => str_contains($line, 'fcgi'));
+                if (!empty($fcgiLines)) {
+                    $output->writeln(implode("\n", $fcgiLines));
+                } else {
+                    $output->writeln('FastCGI not Found');
+                }
             } else {
                 $output->writeln('FastCGI not Found');
             }
@@ -209,7 +213,6 @@ class ConfigCheckCommand extends Command
     {
         $output->title('Check Apache mod_rewrite');
         if ($this->isLinux()) {
-            // Security: use Symfony Process with argument array instead of shell_exec() to prevent command injection
             $process = new Process(['a2query', '-m', 'rewrite']);
             $process->run();
             $outputCmd = $process->isSuccessful() ? $process->getOutput() : null;
