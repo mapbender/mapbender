@@ -123,6 +123,21 @@ class UploadController extends AbstractController
         // Extract the ZIP file
         $zip = new \ZipArchive();
         if ($zip->open($zipFilePath) === true) {
+            $realUploadDir = realpath($this->uploadDir);
+            // Security: validate each ZIP entry path to prevent ZIP-Slip path traversal attacks
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $entryName = $zip->getNameIndex($i);
+                $targetPath = realpath(dirname($realUploadDir . DIRECTORY_SEPARATOR . $entryName))
+                    ?: $realUploadDir;
+                if (!str_starts_with($targetPath, $realUploadDir)) {
+                    $zip->close();
+                    unlink($zipFilePath);
+                    return new JsonResponse([
+                        'success' => false,
+                        'error' => 'ZIP contains invalid path: ' . $entryName,
+                    ], JsonResponse::HTTP_BAD_REQUEST);
+                }
+            }
             $zip->extractTo($this->uploadDir);
             $zip->close();
 

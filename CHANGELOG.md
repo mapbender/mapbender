@@ -1,5 +1,15 @@
 ## next feature release
 Security:
+* [Password/Registration] Replace weak `hash('sha1', rand())` token generation with `bin2hex(random_bytes(20))` in `PasswordController`, `RegistrationController` and `UserSubscriber` ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [FailedLoginListener] Replace `$_SERVER['REMOTE_ADDR']`/`$_SERVER['HTTP_USER_AGENT']` superglobals with Symfony request abstraction (`getClientIp()`, `$request->headers->get()`) to respect proxy headers correctly ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [Routing] Fix SQL injection in `PgRoutingDBInterface`: quote EWKT geometry strings, weighting/cost column identifiers and table names via `quote()`/`quoteIdentifier()`; cast SRID and node IDs to `int` ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [API/Upload] Validate each ZIP entry path against the upload directory to prevent ZIP-Slip path traversal in `UploadController` ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [Manager] Restrict `return` redirect parameter to relative paths to prevent open redirect attacks in `SourceInstanceController` ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [Print] Restrict external image URLs to `http`/`https` schemes in `CanvasLegend` to prevent SSRF via `file://` and other schemes ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [Core] Add `LIBXML_NONET` flag to all `DOMDocument::loadXML()` calls in `XmlValidatorService` and `HttpSourceLoader` to prevent XXE attacks ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [OwsProxy] Set `CURLOPT_SSL_VERIFYHOST=2` alongside `CURLOPT_SSL_VERIFYPEER` in `CurlClientCommon` to prevent SSL hostname spoofing ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [API] Return generic error message instead of raw exception message in `CommandController` to prevent internal information disclosure ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
+* [Core] Replace `shell_exec()` with `Symfony\Component\Process\Process` in `ConfigCheckCommand` to prevent command injection ([#PR1830](https://github.com/mapbender/mapbender/pull/1830))
 * Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
 
 Features:

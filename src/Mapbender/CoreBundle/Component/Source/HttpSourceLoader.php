@@ -141,7 +141,8 @@ abstract class HttpSourceLoader extends SourceLoader
     {
         $doc = new \DOMDocument();
         try {
-            $xmlSuccess = $doc->loadXML($content);
+            // Security: LIBXML_NONET disables network access during XML parsing to prevent XXE attacks
+            $xmlSuccess = $doc->loadXML($content, LIBXML_NONET);
         } catch (\ErrorException $e) {
             $message = \preg_replace('#^.*?::loadXml\(\):\s+#i', '', $e->getMessage());
             throw new MalformedXmlException($content, $message, $e->getCode(), $e);

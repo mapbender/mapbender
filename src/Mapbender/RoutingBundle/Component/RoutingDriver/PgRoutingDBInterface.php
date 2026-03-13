@@ -82,7 +82,9 @@ class PgRoutingDBInterface {
                       AND i.indrelid = a.attrelid
                       AND a.attnum = i.indkey[i.indkey_subscript]
                 WHERE
-                  a.attrelid = '$tableName'::regclass
+                  a.attrelid = " .
+                    // Security: quote table name to prevent SQL injection via regclass cast
+                    $db->quote($tableName) . "::regclass
                 ORDER BY
                   i.indkey_subscript";
 
@@ -162,9 +164,11 @@ class PgRoutingDBInterface {
         $tempTableNodes = $db->quoteIdentifier($this->temptablenodes);
         $tempTableRouting = $db->quoteIdentifier($this->temptableerouting);
 
-        $routingSrid = $this->getSrid($this->routingTable,false);
+        // Security: cast SRID to int and quote EWKT/column name to prevent SQL injection
+        $routingSrid = (int) $this->getSrid($this->routingTable,false);
 
-        $geom_string = "ST_PointFromText('" . $ewkt . "', 4326)";
+        $geom_string = "ST_PointFromText(" . $db->quote($ewkt) . ", 4326)";
+        $quotedWeightingColumn = $db->quoteIdentifier($weightingColumn);
 
         $queryUpdateRoutingTable =
             "WITH pid AS (SELECT max(id) AS new_pid FROM $tempTableNodes),
@@ -189,7 +193,7 @@ class PgRoutingDBInterface {
                 geom_update AS (SELECT ST_Transform(ST_Multi(ST_MakeLine(
                     (SELECT the_geom FROM $tempTableNodes WHERE id = (SELECT source FROM source_update)),
                     (SELECT the_geom FROM $tempTableNodes WHERE id = (SELECT target FROM target_update)))), $routingSrid) as update_geom_value),
-                insert_query AS (INSERT INTO $tempTableRouting (gid, geom, $weightingColumn, source, target) VALUES
+                insert_query AS (INSERT INTO $tempTableRouting (gid, geom, $quotedWeightingColumn, source, target) VALUES
                     ((SELECT new_pid FROM pid),
                     (SELECT geom_value from geom_query),
                     (SELECT ST_Length(geom_value) FROM geom_query),
@@ -199,7 +203,7 @@ class PgRoutingDBInterface {
                     source = (SELECT source FROM source_update),
                     target = (SELECT target FROM target_update),
                     geom = (SELECT update_geom_value FROM geom_update),
-                    $weightingColumn = (SELECT ST_Length(update_geom_value) FROM geom_update)
+                    $quotedWeightingColumn = (SELECT ST_Length(update_geom_value) FROM geom_update)
                     WHERE gid = (SELECT gid FROM point_data) RETURNING *)
                 SELECT * FROM pid";
 
@@ -213,9 +217,10 @@ class PgRoutingDBInterface {
         $tempTableNodes = $db->quoteIdentifier($this->temptablenodes);
         $tempTableRouting = $db->quoteIdentifier($this->temptableerouting);
 
-        $routingSrid = $this->getSrid($this->routingTable,false);
+        // Security: cast SRID to int and quote EWKT to prevent SQL injection
+        $routingSrid = (int) $this->getSrid($this->routingTable,false);
 
-        $geom_string = "ST_PointFromText('" . $ewkt . "', 4326)";
+        $geom_string = "ST_PointFromText(" . $db->quote($ewkt) . ", 4326)";
 
         // inserts poi as new node into vertices table
         $queryUpdateNodeTable =
@@ -256,9 +261,12 @@ class PgRoutingDBInterface {
         $routingTableGeomField = $db->quoteIdentifier($this->getGeomField($this->temptableerouting));
         $idKey = $db->quoteIdentifier("gid");
 
-        $routingSrid = $this->getSrid($this->routingTable,false);
+        // Security: cast SRID to int, quote cost column identifier, and cast all node IDs to int to prevent SQL injection
+        $routingSrid = (int) $this->getSrid($this->routingTable,false);
+        $quotedRouteCostRow = $db->quoteIdentifier($routeCostRow);
 
         /* convert array to String-Array */
+        $nodeIdList = array_map('intval', $nodeIdList);
         $nodeIdListString = implode(",", $nodeIdList);
 
         $query = "
@@ -278,7 +286,7 @@ class PgRoutingDBInterface {
 					route.edge as edge
                 FROM
                     pgr_dijkstraVia (
-                        'SELECT $idKey AS id, $this->street_name, source, target, $routeCostRow AS cost FROM $this->temptableerouting',
+                        'SELECT $idKey AS id, $this->street_name, source, target, $quotedRouteCostRow AS cost FROM $this->temptableerouting',
                         ARRAY[$nodeIdListString],
                         $directedGraph,
                         $hasReverseCost
@@ -337,7 +345,9 @@ class PgRoutingDBInterface {
     public function getResultGeom(array $geom)
     {
         $db = $this->connection;
-        $wktGeomString = "'".implode("','", array_filter($geom, function($g) { return !!$g; }))."'";
+        $filteredGeom = array_filter($geom, function($g) { return !!$g; });
+        // Security: quote each WKT geometry string individually to prevent SQL injection
+        $wktGeomString = implode(",", array_map([$db, 'quote'], $filteredGeom));
         // get Multiline as GeoJSON
         $query = "SELECT ST_AsGeoJSON(ST_Union( ARRAY[$wktGeomString])) As geom";
         return $db->executeQuery($query)->fetchOne();
@@ -354,7 +364,7 @@ class PgRoutingDBInterface {
     {
         $db = $this->connection;
 
-        $routingSrid = $this->getSrid($this->routingTable,false);
+        $routingSrid = (int) $this->getSrid($this->routingTable,false);
 
         $query = "
               SELECT ST_X(ST_Transform(the_geom,$routingSrid)) as x, ST_Y(ST_Transform(the_geom,$routingSrid)) as y
