@@ -27,10 +27,9 @@ class OgcApiFeaturesLayerSource extends SourceItem
     #[ORM\Column(name: 'properties', type: 'json', nullable: true)]
     private ?array $properties = null;
 
-    public function setTitle(string $title = null): static
+    public function setTitle(string $title = null): void
     {
         $this->title = $title;
-        return $this;
     }
 
     public function getTitle(): string
@@ -68,10 +67,9 @@ class OgcApiFeaturesLayerSource extends SourceItem
         $this->properties = $properties;
     }
 
-    public function setSource(OgcApiFeaturesSource|Source $source): self
+    public function setSource(OgcApiFeaturesSource|Source $source): void
     {
         $this->source = $source;
-        return $this;
     }
 
     public function getSource(): ?OgcApiFeaturesSource

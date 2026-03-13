@@ -62,10 +62,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->source;
     }
 
-    public function setLayers($layers): static
+    public function setLayers($layers): void
     {
         $this->layers = $layers;
-        return $this;
     }
 
     public function getLayers()
@@ -73,16 +72,14 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->layers;
     }
 
-    public function addLayer(OgcApiFeaturesInstanceLayer $layer): static
+    public function addLayer(OgcApiFeaturesInstanceLayer $layer): void
     {
         $this->layers->add($layer);
-        return $this;
     }
 
-    public function setOpacity(int $opacity): self
+    public function setOpacity(int $opacity): void
     {
         $this->opacity = $opacity;
-        return $this;
     }
 
     public function getOpacity(): int
@@ -90,10 +87,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->opacity ?? 100;
     }
 
-    public function setMinScale(?float $value): static
+    public function setMinScale(?float $value): void
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
-        return $this;
     }
 
     public function getMinScale(): ?float
@@ -101,10 +97,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->minScale;
     }
 
-    public function setMaxScale(?float $value): static
+    public function setMaxScale(?float $value): void
     {
         $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
-        return $this;
     }
 
     public function getMaxScale(): ?float
@@ -112,10 +107,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->maxScale;
     }
 
-    public function setFeatureLimit(int $featureLimit): self
+    public function setFeatureLimit(int $featureLimit): void
     {
         $this->featureLimit = $featureLimit;
-        return $this;
     }
 
     public function getFeatureLimit(): int
@@ -123,10 +117,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->featureLimit ?? 100;
     }
 
-    public function setAllowSelected(?bool $allowSelected): static
+    public function setAllowSelected(?bool $allowSelected): void
     {
         $this->allowSelected = (bool)$allowSelected;
-        return $this;
     }
 
     public function getAllowSelected(): ?bool
@@ -134,10 +127,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->allowSelected;
     }
 
-    public function setSelected(?bool $selected): static
+    public function setSelected(?bool $selected): void
     {
         $this->selected = (bool)$selected;
-        return $this;
     }
 
     public function getSelected(): ?bool
@@ -145,10 +137,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->selected;
     }
 
-    public function setAllowToggle(?bool $allowToggle): static
+    public function setAllowToggle(?bool $allowToggle): void
     {
         $this->allowToggle = (bool) $allowToggle;
-        return $this;
     }
 
     public function getAllowToggle(): ?bool
@@ -156,10 +147,9 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->allowToggle;
     }
 
-    public function setToggle(?bool $toggle): static
+    public function setToggle(?bool $toggle): void
     {
         $this->toggle = (bool) $toggle;
-        return $this;
     }
 
     public function getToggle(): ?bool
