@@ -178,6 +178,99 @@ class OgcApiSource extends Mapbender.Source {
         }
         return this.propertyMaps[subtype];
     }
+
+    setLayerOrder(layerIdOrder) {
+        var listsSorted = [];
+        var _pickChildId = function(ids, layer) {
+            if (!ids.length) {
+                return null;
+            } else {
+                var ix = ids.indexOf(layer.options.id);
+                if (ix !== -1) {
+                    return ids[ix];
+                }
+            }
+            if (layer.children && layer.children.length) {
+                for (var ci = 0; ci < layer.children.length; ++ci) {
+                    var ch = _pickChildId(ids, layer.children[ci]);
+                    if (ch !== null) {
+                        return ch;
+                    }
+                }
+            }
+            return null;
+        };
+        var _siblingSort = function(a, b) {
+            var childA = _pickChildId(layerIdOrder, a);
+            var childB = _pickChildId(layerIdOrder, b);
+            var ixA = layerIdOrder.includes(childA) ? layerIdOrder.indexOf(childA) : Number.MAX_SAFE_INTEGER;
+            var ixB = layerIdOrder.includes(childB) ? layerIdOrder.indexOf(childB) : Number.MIN_SAFE_INTEGER;
+            return parseInt(ixA, 10) - parseInt(ixB, 10);
+        };
+        var parentIdOrder = [];
+        for (var idIx = 0; idIx < layerIdOrder.length; ++idIx) {
+            var layerId = layerIdOrder[idIx];
+            var layerObj = this.getLayerById(layerId);
+            if (!layerObj) continue;
+            if (listsSorted.indexOf(layerObj.siblings) === -1) {
+                layerObj.siblings.sort(_siblingSort);
+                listsSorted.push(layerObj.siblings);
+            }
+            if (layerObj.parent) {
+                var parentId = layerObj.parent.options.id;
+                if (parentId && parentIdOrder.indexOf(parentId) === -1) {
+                    parentIdOrder.push(parentId);
+                }
+            }
+        }
+        if (parentIdOrder.length) {
+            this.setLayerOrder(this, parentIdOrder);
+        }
+        // Rebuild nativeLayers array to match the new children order
+        var children = this.getRootLayer().children;
+        var reorderedNativeLayers = [];
+        children.forEach((child) => {
+            var collectionId = child.options.collectionId;
+            var vectorSource = this._vectorSources[collectionId];
+            if (vectorSource) {
+                var nativeLayer = this.nativeLayers.find((nl) => nl.getSource() === vectorSource);
+                if (nativeLayer) {
+                    reorderedNativeLayers.push(nativeLayer);
+                }
+            }
+        });
+        // Only update if we matched all layers
+        if (reorderedNativeLayers.length === this.nativeLayers.length) {
+            this.nativeLayers = reorderedNativeLayers;
+            // Reorder the actual OL layers on the map to match the new nativeLayers order.
+            // We need to find the map and update layer positions relative to other sources.
+            var olMap = Mapbender.mapModel?.olMap || Mapbender.Model?.olMap;
+            if (olMap) {
+                var mapLayers = olMap.getLayers();
+                // Determine the position range of this source's native layers in the map's layer collection
+                var positions = [];
+                this.nativeLayers.forEach(function(nl) {
+                    var pos = mapLayers.getArray().indexOf(nl);
+                    if (pos !== -1) {
+                        positions.push(pos);
+                    }
+                });
+                if (positions.length === this.nativeLayers.length) {
+                    // Sort positions ascending so we know which map slots belong to this source
+                    positions.sort(function(a, b) { return a - b; });
+                    // Place reordered native layers into the same map positions
+                    for (var i = 0; i < positions.length; i++) {
+                        var currentPos = mapLayers.getArray().indexOf(this.nativeLayers[i]);
+                        var targetPos = positions[i];
+                        if (currentPos !== targetPos) {
+                            mapLayers.removeAt(currentPos);
+                            mapLayers.insertAt(targetPos, this.nativeLayers[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 window.Mapbender = Mapbender || {};
