@@ -188,6 +188,9 @@ mb:
         collection: Collectie
         layers: Lagen
         no_styles: Geen stijlen geladen voor deze bron.
+        properties: Eigenschappen
+        property_key: Sleutel
+        property_title: Titel
       tooltip:
         heading: Hover-tooltip
         description: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart."

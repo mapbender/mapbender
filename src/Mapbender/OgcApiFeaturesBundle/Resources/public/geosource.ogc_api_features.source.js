@@ -291,6 +291,7 @@ class OgcApiSource extends Mapbender.Source {
     _buildTooltipContent(feature, child) {
         const properties = feature.getProperties();
         const propertyMap = this._getChildTooltipMap(child);
+        const propertyTitles = child.options.propertyTitles || {};
         const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
         const fragment = document.createDocumentFragment();
         let count = 0;
@@ -303,7 +304,9 @@ class OgcApiSource extends Mapbender.Source {
             row.className = 'ogc-api-tooltip-row';
             const label = document.createElement('span');
             label.className = 'ogc-api-tooltip-key';
-            label.textContent = propertyMap?.[key] || key;
+            const mapLabel = propertyMap?.[key];
+            // Prefer propertyTitles when the propertyMap just echoes the raw key
+            label.textContent = (mapLabel && mapLabel !== key ? mapLabel : null) || propertyTitles[key] || key;
             const val = document.createElement('span');
             val.className = 'ogc-api-tooltip-val';
             val.textContent = value;
@@ -387,6 +390,10 @@ class OgcApiSource extends Mapbender.Source {
     createFeatureInfoForFeature(feature) {
         const properties = feature.getProperties();
         let label = properties.featureTitle;
+        // Find propertyTitles for this feature's collection
+        const collectionId = feature.get('layer');
+        const child = this.getRootLayer().children.find(c => c.options.collectionId === collectionId);
+        const propertyTitles = child?.options?.propertyTitles || {};
         const geometryDiv = document.createElement('div');
         geometryDiv.className = 'geometryElement';
         geometryDiv.id = this.options.id + '/' + feature.ol_uid;
@@ -411,7 +418,7 @@ class OgcApiSource extends Mapbender.Source {
             }
             const row = document.createElement('tr');
             const headerCell = document.createElement('th');
-            headerCell.textContent = propertyMap?.[key] || key;
+            headerCell.textContent = propertyMap?.[key] || propertyTitles[key] || key;
             const dataCell = document.createElement('td');
             dataCell.textContent = value;
             row.appendChild(headerCell);

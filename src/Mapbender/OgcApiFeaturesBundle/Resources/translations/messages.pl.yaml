@@ -188,6 +188,9 @@ mb:
         collection: Kolekcja
         layers: Warstwy
         no_styles: Brak stylów załadowanych dla tego źródła.
+        properties: Właściwości
+        property_key: Klucz
+        property_title: Tytuł
       tooltip:
         heading: Podpowiedź przy najechaniu
         description: "Wybierz, które właściwości są wyświetlane w podpowiedzi po najechaniu na obiekty na mapie."

@@ -188,6 +188,9 @@ mb:
         collection: Collection
         layers: Layers
         no_styles: No styles loaded for this source.
+        properties: Properties
+        property_key: Key
+        property_title: Title
       tooltip:
         heading: Hover Tooltip
         description: "Select which properties are shown in a tooltip when hovering over features on the map."

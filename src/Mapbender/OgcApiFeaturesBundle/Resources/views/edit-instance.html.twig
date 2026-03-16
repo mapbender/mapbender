@@ -71,7 +71,7 @@
         <tbody>
         {% for layer in form.layers %}
             {%- set _popover_id = 'style_popover_' ~ layer.vars.id -%}
-            <tr class="text-center" data-collection-id="{{ layer.vars.data.sourceItem.collectionId }}" data-properties="{{ layer.vars.data.sourceItem.properties|default([])|json_encode }}">
+            <tr class="text-center" data-collection-id="{{ layer.vars.data.sourceItem.collectionId }}" data-properties="{{ layer.vars.data.sourceItem.propertyKeys|default([])|json_encode }}" data-property-titles="{{ layer.vars.data.sourceItem.propertyTitles|default({})|json_encode }}">
                 <td>
                     <i class="fas fa-grip-vertical" style="cursor:pointer"></i>
                     {{ form_widget(layer.priority) }}

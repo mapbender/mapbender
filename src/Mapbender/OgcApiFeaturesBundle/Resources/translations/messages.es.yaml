@@ -188,6 +188,9 @@ mb:
         collection: Colección
         layers: Capas
         no_styles: No hay estilos cargados para esta fuente.
+        properties: Propiedades
+        property_key: Clave
+        property_title: Título
       tooltip:
         heading: Tooltip al pasar el ratón
         description: "Seleccione qué propiedades se muestran en un tooltip al pasar el ratón sobre las características del mapa."

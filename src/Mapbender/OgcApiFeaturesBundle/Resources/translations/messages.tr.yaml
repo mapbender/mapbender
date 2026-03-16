@@ -188,6 +188,9 @@ mb:
         collection: Koleksiyon
         layers: Katmanlar
         no_styles: Bu kaynak için yüklenmiş stil yok.
+        properties: Özellikler
+        property_key: Anahtar
+        property_title: Başlık
       tooltip:
         heading: Üzerine gelme ipucu
         description: "Haritadaki özellikler üzerine gelindiğinde ipucunda gösterilecek özellikleri seçin."

@@ -100,6 +100,10 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         'propertyMap' => $tooltipMap,
                     ];
                 }
+                $propertyTitles = $layer->getSourceItem()->getPropertyTitles();
+                if ($propertyTitles) {
+                    $childConfig['options']['propertyTitles'] = $propertyTitles;
+                }
                 $config['children'][] = $childConfig;
             }
         }

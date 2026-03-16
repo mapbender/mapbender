@@ -188,6 +188,9 @@ mb:
         collection: Collezione
         layers: Livelli
         no_styles: Nessuno stile caricato per questa sorgente.
+        properties: Proprietà
+        property_key: Chiave
+        property_title: Titolo
       tooltip:
         heading: Tooltip al passaggio
         description: "Seleziona quali proprietà vengono mostrate in un tooltip quando si passa sopra le feature sulla mappa."

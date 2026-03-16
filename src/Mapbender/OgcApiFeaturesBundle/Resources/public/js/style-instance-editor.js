@@ -468,6 +468,11 @@ class StyleInstanceEditor {
         } catch(e) {}
         if (!Array.isArray(propNames)) propNames = [];
 
+        let propertyTitles = {};
+        try {
+            propertyTitles = JSON.parse(row.dataset.propertyTitles || '{}');
+        } catch(e) {}
+
         // Find the hidden input for tooltipPropertyMap
         const hiddenInput = popoverBody.querySelector('input[id$="_tooltipPropertyMap"]');
         let selected = [];
@@ -476,10 +481,10 @@ class StyleInstanceEditor {
             if (!Array.isArray(selected)) selected = [];
         }
 
-        this._renderCheckboxes(container, propNames, selected, hiddenInput);
+        this._renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles);
     }
 
-    _renderCheckboxes(container, propNames, selected, hiddenInput) {
+    _renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles) {
         container.dataset.loaded = 'true';
         container.innerHTML = '';
 
@@ -491,7 +496,7 @@ class StyleInstanceEditor {
         propNames.forEach(prop => {
             const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
             const wrapper = document.createElement('div');
-            wrapper.className = 'form-check form-check-inline tooltip-prop-check';
+            wrapper.className = 'form-check tooltip-prop-check';
 
             const cb = document.createElement('input');
             cb.type = 'checkbox';
@@ -504,7 +509,16 @@ class StyleInstanceEditor {
             const label = document.createElement('label');
             label.className = 'form-check-label small';
             label.htmlFor = id;
-            label.textContent = prop;
+            const title = propertyTitles?.[prop];
+            if (title) {
+                label.textContent = title + ' ';
+                const keySpan = document.createElement('span');
+                keySpan.className = 'prop-key';
+                keySpan.textContent = '(' + prop + ')';
+                label.appendChild(keySpan);
+            } else {
+                label.textContent = prop;
+            }
 
             wrapper.appendChild(cb);
             wrapper.appendChild(label);

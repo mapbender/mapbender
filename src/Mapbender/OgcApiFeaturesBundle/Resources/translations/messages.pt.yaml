@@ -188,6 +188,9 @@ mb:
         collection: Coleção
         layers: Camadas
         no_styles: Nenhum estilo carregado para esta fonte.
+        properties: Propriedades
+        property_key: Chave
+        property_title: Título
       tooltip:
         heading: Dica de ferramenta ao passar
         description: "Selecione quais propriedades são mostradas em uma dica de ferramenta ao passar sobre feições no mapa."

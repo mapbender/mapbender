@@ -188,6 +188,9 @@ mb:
         collection: Коллекция
         layers: Слои
         no_styles: Стили для этого источника не загружены.
+        properties: Свойства
+        property_key: Ключ
+        property_title: Название
       tooltip:
         heading: Подсказка при наведении
         description: "Выберите, какие свойства отображаются в подсказке при наведении на объекты на карте."

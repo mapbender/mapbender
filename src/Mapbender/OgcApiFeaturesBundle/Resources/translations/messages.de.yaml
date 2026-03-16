@@ -188,6 +188,9 @@ mb:
         collection: Collection
         layers: Layer
         no_styles: Keine Styles für diese Quelle geladen.
+        properties: Eigenschaften
+        property_key: Schlüssel
+        property_title: Titel
       tooltip:
         heading: Hover-Tooltip
         description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden."

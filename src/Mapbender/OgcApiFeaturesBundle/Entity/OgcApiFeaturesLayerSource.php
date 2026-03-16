@@ -67,6 +67,38 @@ class OgcApiFeaturesLayerSource extends SourceItem
         $this->properties = $properties;
     }
 
+    /**
+     * Returns a key→title map from the properties array.
+     * Supports both old format (flat string array) and new format (array of {key, title} objects).
+     */
+    public function getPropertyTitles(): array
+    {
+        $titles = [];
+        foreach ($this->properties ?? [] as $entry) {
+            if (is_array($entry) && isset($entry['key']) && isset($entry['title'])) {
+                $titles[$entry['key']] = $entry['title'];
+            }
+        }
+        return $titles;
+    }
+
+    /**
+     * Returns a flat list of property key names.
+     * Supports both old format (flat string array) and new format (array of {key, title} objects).
+     */
+    public function getPropertyKeys(): array
+    {
+        $keys = [];
+        foreach ($this->properties ?? [] as $entry) {
+            if (is_string($entry)) {
+                $keys[] = $entry;
+            } elseif (is_array($entry) && isset($entry['key'])) {
+                $keys[] = $entry['key'];
+            }
+        }
+        return $keys;
+    }
+
     public function setSource(OgcApiFeaturesSource|Source $source): void
     {
         $this->source = $source;

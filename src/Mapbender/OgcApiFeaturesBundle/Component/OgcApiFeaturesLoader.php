@@ -90,9 +90,46 @@ class OgcApiFeaturesLoader extends SourceLoader
                 return null;
             }
             $keys = array_keys($features[0]['properties']);
-            return array_values(array_filter($keys, fn ($k) => $k !== 'geometry'));
+            $keys = array_values(array_filter($keys, fn ($k) => $k !== 'geometry'));
         } catch (\Throwable) {
             return null;
+        }
+
+        // Fetch human-readable titles from queryables endpoint
+        $titles = $this->discoverPropertyTitles($baseUrl, $collectionId);
+
+        $result = [];
+        foreach ($keys as $key) {
+            $entry = ['key' => $key];
+            if (isset($titles[$key])) {
+                $entry['title'] = $titles[$key];
+            }
+            $result[] = $entry;
+        }
+        return $result;
+    }
+
+    private function discoverPropertyTitles(string $baseUrl, string $collectionId): array
+    {
+        $queryablesUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/queryables?f=json';
+        try {
+            $response = $this->httpTransport->getUrl($queryablesUrl);
+            if (!$response->isOk()) {
+                return [];
+            }
+            $data = json_decode($response->getContent(), true);
+            if (!is_array($data) || empty($data['properties'])) {
+                return [];
+            }
+            $titles = [];
+            foreach ($data['properties'] as $key => $info) {
+                if (!empty($info['title'])) {
+                    $titles[$key] = $info['title'];
+                }
+            }
+            return $titles;
+        } catch (\Throwable) {
+            return [];
         }
     }
 

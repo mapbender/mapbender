@@ -188,6 +188,9 @@ mb:
         collection: Collection
         layers: Couches
         no_styles: Aucun style chargé pour cette source.
+        properties: Propriétés
+        property_key: Clé
+        property_title: Titre
       tooltip:
         heading: Info-bulle au survol
         description: "Sélectionnez les propriétés affichées dans une info-bulle lors du survol des entités sur la carte."

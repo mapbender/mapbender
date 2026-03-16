@@ -23,6 +23,7 @@
 .dropdownList .choice.filter-kept { font-style: italic; color: #6c757d; }
 
 /* ── Tooltip property checkboxes ── */
-.tooltip-checkbox-list { max-height: 200px; overflow-y: auto; padding: 6px 0; }
-.tooltip-prop-check { margin-right: 10px; margin-bottom: 4px; }
+.tooltip-checkbox-list { max-height: 250px; overflow-y: auto; padding: 6px 0; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px; }
+.tooltip-prop-check { margin-bottom: 2px; }
 .tooltip-prop-check .form-check-label { user-select: none; }
+.tooltip-prop-check .prop-key { color: #6c757d; font-size: 0.85em; }
