@@ -184,6 +184,9 @@ mb:
         origin_label: "Kaynak:"
         source_label: "Kaynak:"
         any: "(herhangi)"
+        name_tooltip: "Stilleri ada göre filtrele"
+        origin_tooltip: "Stilleri köken türüne göre filtrele (ör. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Stilleri ait oldukları kaynak kimliğine göre filtrele"
       source_tab:
         collection: Koleksiyon
         layers: Katmanlar

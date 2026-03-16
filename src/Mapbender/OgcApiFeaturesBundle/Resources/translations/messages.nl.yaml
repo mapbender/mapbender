@@ -184,6 +184,9 @@ mb:
         origin_label: "Bron:"
         source_label: "Bron:"
         any: "(willekeurig)"
+        name_tooltip: "Stijlen filteren op naam"
+        origin_tooltip: "Stijlen filteren op brontype (bijv. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Stijlen filteren op bron-ID"
       source_tab:
         collection: Collectie
         layers: Lagen

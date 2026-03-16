@@ -184,6 +184,9 @@ mb:
         origin_label: "Origin:"
         source_label: "Source:"
         any: "(any)"
+        name_tooltip: "Filter styles by name"
+        origin_tooltip: "Filter styles by their origin type (e.g. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Filter styles by the source ID they belong to"
       source_tab:
         collection: Collection
         layers: Layers

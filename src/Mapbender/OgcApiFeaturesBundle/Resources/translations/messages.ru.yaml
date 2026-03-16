@@ -184,6 +184,9 @@ mb:
         origin_label: "Источник:"
         source_label: "Источник:"
         any: "(любой)"
+        name_tooltip: "Фильтровать стили по названию"
+        origin_tooltip: "Фильтровать стили по типу происхождения (напр. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Фильтровать стили по ID источника"
       source_tab:
         collection: Коллекция
         layers: Слои

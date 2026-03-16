@@ -184,6 +184,9 @@ mb:
         origin_label: "Origem:"
         source_label: "Fonte:"
         any: "(qualquer)"
+        name_tooltip: "Filtrar estilos por nome"
+        origin_tooltip: "Filtrar estilos por tipo de origem (ex. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Filtrar estilos por ID da fonte a que pertencem"
       source_tab:
         collection: Coleção
         layers: Camadas

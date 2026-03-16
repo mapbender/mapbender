@@ -26,9 +26,9 @@
             <tr class="table-light">
                 <td></td>
                 <td></td>
-                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_name' | trans }}"></td>
+                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_name' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.name_tooltip' | trans }}"></td>
                 <td>
-                    <select id="filter-origin" class="form-select form-select-sm">
+                    <select id="filter-origin" class="form-select form-select-sm" title="{{ 'mb.ogcapifeatures.admin.filter.origin_tooltip' | trans }}">
                         <option value="">{{ 'mb.ogcapifeatures.admin.style.manager.filter_all' | trans }}</option>
                         <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
                         <option value="sld">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</option>
@@ -37,7 +37,7 @@
                         <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
                     </select>
                 </td>
-                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_source' | trans }}"></td>
+                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_source' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}"></td>
                 <td></td>
             </tr>
         </thead>

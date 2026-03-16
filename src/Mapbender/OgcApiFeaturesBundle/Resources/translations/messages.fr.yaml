@@ -184,6 +184,9 @@ mb:
         origin_label: "Origine :"
         source_label: "Source :"
         any: "(tous)"
+        name_tooltip: "Filtrer les styles par nom"
+        origin_tooltip: "Filtrer les styles par type d'origine (ex. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Filtrer les styles par l'ID de la source à laquelle ils appartiennent"
       source_tab:
         collection: Collection
         layers: Couches

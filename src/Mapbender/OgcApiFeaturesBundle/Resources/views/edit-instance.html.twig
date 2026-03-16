@@ -1,8 +1,8 @@
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
 {% macro filter_controls(prefix) %}
-    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="{{ 'mb.ogcapifeatures.admin.filter.name_placeholder' | trans }}" style="flex:3">
-    <select class="form-select form-select-sm {{ prefix }}-origin" style="flex:3">
+    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="{{ 'mb.ogcapifeatures.admin.filter.name_placeholder' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.name_tooltip' | trans }}" style="flex:3">
+    <select class="form-select form-select-sm {{ prefix }}-origin" title="{{ 'mb.ogcapifeatures.admin.filter.origin_tooltip' | trans }}" style="flex:3">
         <option value="">{{ 'mb.ogcapifeatures.admin.filter.all_origins' | trans }}</option>
         <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
         <option value="sld">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</option>
@@ -10,7 +10,7 @@
         <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
         <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
     </select>
-    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="{{ 'mb.ogcapifeatures.admin.filter.source_placeholder' | trans }}" style="flex:2">
+    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="{{ 'mb.ogcapifeatures.admin.filter.source_placeholder' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}" style="flex:2">
     <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-{{ prefix }}" title="{{ 'mb.ogcapifeatures.admin.filter.apply' | trans }}">
         <i class="fas fa-filter"></i>
     </button>

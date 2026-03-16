@@ -184,6 +184,9 @@ mb:
         origin_label: "Джерело:"
         source_label: "Джерело:"
         any: "(будь-яке)"
+        name_tooltip: "Фільтрувати стилі за назвою"
+        origin_tooltip: "Фільтрувати стилі за типом походження (напр. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Фільтрувати стилі за ID джерела"
       source_tab:
         collection: Колекція
         layers: Шари
