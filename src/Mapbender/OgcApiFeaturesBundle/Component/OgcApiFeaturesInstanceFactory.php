@@ -87,36 +87,39 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $source = $this->getSourceFromConfig($data, $id);
         $instance = new OgcApiFeaturesInstance();
         $instance->setSource($source);
-        $instance->setTitle($data['title']);
-        $instance->setOpacity($data['opacity']);
-        $instance->setAllowSelected($data['allowSelected']);
-        $instance->setSelected($data['selected']);
-        $instance->setAllowToggle($data['allowToggle']);
-        $instance->setToggle($data['toggle']);
-        $instance->setMinScale($data['minScale']);
-        $instance->setMaxScale($data['maxScale']);
-        $instance->setFeatureLimit($data['featureLimit']);
+        $instance->setTitle($data['title'] ?? $source->getTitle());
+        $instance->setOpacity($data['opacity'] ?? 100);
+        $instance->setAllowSelected($data['allowSelected'] ?? true);
+        $instance->setSelected($data['selected'] ?? true);
+        $instance->setAllowToggle($data['allowToggle'] ?? true);
+        $instance->setToggle($data['toggle'] ?? true);
+        $instance->setMinScale($data['minScale'] ?? null);
+        $instance->setMaxScale($data['maxScale'] ?? null);
+        $instance->setFeatureLimit($data['featureLimit'] ?? null);
         $featureInfoPropertyMap = json_encode($data['featureInfoPropertyMap']);
         $instance->setFeatureInfoPropertyMap($featureInfoPropertyMap);
 
         foreach ($data['layers'] as $layer) {
+            if (empty($layer['collectionId'])) {
+                continue;
+            }
             $layerSource = new OgcApiFeaturesLayerSource();
             $layerSource->setSource($source);
-            $layerSource->setTitle($layer['title']);
+            $layerSource->setTitle($layer['title'] ?? '');
             $layerSource->setCollectionId($layer['collectionId']);
             $instanceLayer = new OgcApiFeaturesInstanceLayer();
             $instanceLayer->setId($layer['collectionId']);
-            $instanceLayer->setTitle($layer['title']);
+            $instanceLayer->setTitle($layer['title'] ?? '');
             $instanceLayer->setSourceInstance($instance);
             $instanceLayer->setSourceItem($layerSource);
-            $instanceLayer->setActive($layer['active']);
-            $instanceLayer->setMinScale($layer['minScale']);
-            $instanceLayer->setMaxScale($layer['maxScale']);
-            $instanceLayer->setSelected($layer['selected']);
-            $instanceLayer->setAllowSelected($layer['allowSelected']);
-            $instanceLayer->setInfo($layer['info']);
-            $instanceLayer->setAllowInfo($layer['allowInfo']);
-            $instanceLayer->setFeatureLimit($data['featureLimit']);
+            $instanceLayer->setActive($layer['active'] ?? true);
+            $instanceLayer->setMinScale($layer['minScale'] ?? null);
+            $instanceLayer->setMaxScale($layer['maxScale'] ?? null);
+            $instanceLayer->setSelected($layer['selected'] ?? true);
+            $instanceLayer->setAllowSelected($layer['allowSelected'] ?? true);
+            $instanceLayer->setInfo($layer['info'] ?? false);
+            $instanceLayer->setAllowInfo($layer['allowInfo'] ?? true);
+            $instanceLayer->setFeatureLimit($data['featureLimit'] ?? null);
             $instanceLayer->setPriority(null);
             $instance->addLayer($instanceLayer);
         };
@@ -145,6 +148,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         }
         $source = $candidates[0];
         // Match layers to persisted layers on the source
+        $pendingPoolEntries = [];
         if (!empty($data['layers'])) {
             foreach ($data['layers'] as $layerData) {
                 $layerClass = ImportHandler::extractClassName($layerData);
@@ -166,11 +170,15 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
                     }
                 }
                 if ($match) {
-                    $entityPool->add($match, $layerIdentData);
+                    $pendingPoolEntries[] = [$match, $layerIdentData];
                 } else {
                     return false;
                 }
             }
+        }
+        // All layers matched — now commit them to the entity pool
+        foreach ($pendingPoolEntries as [$entity, $identData]) {
+            $entityPool->add($entity, $identData);
         }
         $classMeta = $this->entityManager->getClassMetadata(OgcApiFeaturesSource::class);
         $entityPool->add($source, ImportHandler::extractArrayFields($data, $classMeta->getIdentifier()));

@@ -178,4 +178,28 @@
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
     <script src="{{ asset('bundles/mapbenderogcapifeatures/js/style-instance-editor.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+                html: true,
+                placement: 'left',
+                trigger: 'click focus'
+            }));
+        });
+        $('.collectionTable').each(function() {
+            $('tbody', this).sortable({
+                cursor: 'move',
+                axis: 'y',
+                items: 'tr',
+                distance: 6,
+                containment: 'parent',
+                stop: (event, ui) => {
+                    $('input[id$="priority"]', $('.collectionTable tbody tr')).each(function(idx, item) {
+                        $(item).val(idx);
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

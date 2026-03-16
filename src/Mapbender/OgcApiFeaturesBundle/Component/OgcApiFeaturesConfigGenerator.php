@@ -40,7 +40,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         /** @var OgcApiFeaturesSource $source */
         $source = $sourceInstance->getSource();
         $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
-        json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
+        $featureInfoPropertyMap = json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
         $featureInfoPropertyMapExists = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
         $config['options'] = [
             'id' => $sourceInstance->getId(),
@@ -59,7 +59,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                 ],
             ],
             'featureInfo' => [
-                'propertyMap' => $featureInfoPropertyMapExists ? json_decode($sourceInstance->getFeatureInfoPropertyMap(), true) : null,
+                'propertyMap' => $featureInfoPropertyMapExists ? $featureInfoPropertyMap : null,
             ],
         ];
         $config['state'] = [
@@ -70,12 +70,14 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             if ($layer->getActive()) {
                 $childConfig = [
                     'options' => [
+                        // add additional underscore to prevent confusion with rootlayer-ID:
+                        // identical rootlayer- and child-ID result in messed up layer tree structure
                         'id' => $layer->getId() . '_',
                         'priority' => $layer->getPriority(),
                         'title' => $layer->getTitle(),
                         'collectionId' => $layer->getSourceItem()->getCollectionId(),
-                        'minScale' => (!empty($layer->getMinScale()) ? $layer->getMinScale() : $sourceInstance->getMinScale()),
-                        'maxScale' => (!empty($layer->getMaxScale()) ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
+                        'minScale' => ($layer->getMinScale() !== null ? $layer->getMinScale() : $sourceInstance->getMinScale()),
+                        'maxScale' => ($layer->getMinScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
                         'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
                         'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
                         'bbox' => $layer->getSourceItem()->getBbox(),
