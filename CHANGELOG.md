@@ -12,6 +12,13 @@ Features:
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 * [OgcApiFeatures] Add new source OgcApiFeatures
+* [Styles] Add centralized Mapbox style manager with visual editor (flat + multi-layer), JSON editor with live validation, and SLD import
+* [Styles] Style list with copy, view (read-only), and delete actions; deletion blocked when style is referenced by an OGC API source
+* [Styles] ACL support for styles: permissions can be managed per style via the Mapbender permission system
+* [OgcApiFeatures] Assign Mapbox styles (primary + secondary) to OGC API feature layers; styles applied via ol-mapbox-style
+* [OgcApiFeatures] Feature hover tooltips with configurable property mapping; property titles resolved from queryables
+* [OgcApiFeatures] Styles tab in source metadata view
+
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
