@@ -36,6 +36,7 @@ mb:
         updated: Стиль обновлён.
         copied: Стиль скопирован.
         deleted: Стиль удалён.
+        cannot_delete_source_style: "Этот стиль принадлежит источнику OGC API и не может быть удалён, пока источник существует."
         copy_suffix: "(Копия)"
         manager:
           title: Стили

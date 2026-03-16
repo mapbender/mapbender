@@ -36,6 +36,7 @@ mb:
         updated: Stil güncellendi.
         copied: Stil kopyalandı.
         deleted: Stil silindi.
+        cannot_delete_source_style: "Bu stil bir OGC API kaynağına aittir ve kaynak mevcut olduğu sürece silinemez."
         copy_suffix: "(Kopya)"
         manager:
           title: Stiller

@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Style;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -209,6 +210,13 @@ class StyleController extends ApplicationControllerBase
         }
         $style = $this->em->getRepository(Style::class)->find($id);
         if ($style) {
+            if ($style->getSourceType() === 'ogc_api' && $style->getSourceId()) {
+                $source = $this->em->getRepository(Source::class)->find($style->getSourceId());
+                if ($source) {
+                    $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.cannot_delete_source_style'));
+                    return $this->redirectToRoute('mapbender_manager_style_index');
+                }
+            }
             $this->em->remove($style);
             $this->em->flush();
             $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.deleted'));

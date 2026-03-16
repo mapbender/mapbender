@@ -88,10 +88,12 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('style_copy') }}">
                                 <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_copy' | trans }}"><i class="fas fa-copy"></i></button>
                             </form>
+                            {% if style.sourceType != 'ogc_api' or not style.sourceId %}
                             <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'mb.ogcapifeatures.admin.style.manager.confirm_delete' | trans | e('js') }}');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('style_delete') }}">
                                 <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
                             </form>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

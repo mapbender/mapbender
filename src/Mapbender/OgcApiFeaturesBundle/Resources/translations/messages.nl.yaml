@@ -36,6 +36,7 @@ mb:
         updated: Stijl bijgewerkt.
         copied: Stijl gekopieerd.
         deleted: Stijl verwijderd.
+        cannot_delete_source_style: "Deze stijl behoort tot een OGC API-bron en kan niet worden verwijderd zolang de bron bestaat."
         copy_suffix: "(Kopie)"
         manager:
           title: Stijlen
