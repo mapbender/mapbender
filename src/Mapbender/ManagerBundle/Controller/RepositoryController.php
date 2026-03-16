@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
@@ -214,6 +215,15 @@ class RepositoryController extends ApplicationControllerBase
         foreach ($affectedApplications as $affectedApplication) {
             $this->em->persist($affectedApplication);
             $affectedApplication->setUpdated($dtNow);
+        }
+
+        // Delete associated styles before removing the source
+        $styles = $this->em->getRepository(Style::class)->findBy([
+            'sourceId' => $source->getId(),
+            'sourceType' => 'ogc_api',
+        ]);
+        foreach ($styles as $style) {
+            $this->em->remove($style);
         }
 
         $this->em->remove($source);
