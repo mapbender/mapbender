@@ -172,12 +172,22 @@ class OgcApiFeaturesLoader extends SourceLoader
             }
             $styleName = $sourceTitle . ' - ' . $layerTitle;
 
-            $style = new Style();
+            // Look up existing style for this source + collection to avoid duplicates on reload
+            $style = $this->em->getRepository(Style::class)->findOneBy([
+                'sourceType' => 'ogc_api',
+                'sourceId' => $source->getId(),
+                'collectionId' => $collectionId,
+            ]);
+
+            if (!$style) {
+                $style = new Style();
+                $style->setSourceType('ogc_api');
+                $style->setSourceId($source->getId());
+                $style->setCollectionId($collectionId);
+            }
+
             $style->setName($styleName);
             $style->setStyle($mbsContent);
-            $style->setSourceType('ogc_api');
-            $style->setSourceId($source->getId());
-            $style->setCollectionId($collectionId);
 
             $this->em->persist($style);
         } catch (\Throwable $e) {
