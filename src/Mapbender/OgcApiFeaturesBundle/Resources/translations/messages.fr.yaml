@@ -184,6 +184,10 @@ mb:
         origin_label: "Origine :"
         source_label: "Source :"
         any: "(tous)"
+      source_tab:
+        collection: Collection
+        layers: Couches
+        no_styles: Aucun style chargé pour cette source.
       tooltip:
         heading: Info-bulle au survol
         description: "Sélectionnez les propriétés affichées dans une info-bulle lors du survol des entités sur la carte."

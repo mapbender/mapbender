@@ -184,6 +184,10 @@ mb:
         origin_label: "Origem:"
         source_label: "Fonte:"
         any: "(qualquer)"
+      source_tab:
+        collection: Coleção
+        layers: Camadas
+        no_styles: Nenhum estilo carregado para esta fonte.
       tooltip:
         heading: Dica de ferramenta ao passar
         description: "Selecione quais propriedades são mostradas em uma dica de ferramenta ao passar sobre feições no mapa."

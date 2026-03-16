@@ -184,6 +184,10 @@ mb:
         origin_label: "Ursprung:"
         source_label: "Quelle:"
         any: "(beliebig)"
+      source_tab:
+        collection: Collection
+        layers: Layer
+        no_styles: Keine Styles für diese Quelle geladen.
       tooltip:
         heading: Hover-Tooltip
         description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden."

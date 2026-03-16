@@ -156,14 +156,21 @@ class RepositoryController extends ApplicationControllerBase
             'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES),
         ));
         $dataSource = $this->typeDirectory->getSource($source->getType());
-        return $this->render($dataSource->getMetadataBackendTemplate(), array(
+        $viewData = array(
             'source' => $source,
             'applications' => $related,
             'title' => $dataSource->getLabel(true) . ' ' . $source->getTitle(),
             'grants' => $grants,
             // in backend, show all urls
             'secureUrls' => false,
-        ));
+        );
+        if ($source->getType() === 'ogc_api_features') {
+            $viewData['styles'] = $this->em->getRepository(Style::class)->findBy([
+                'sourceType' => 'ogc_api',
+                'sourceId' => $source->getId(),
+            ]);
+        }
+        return $this->render($dataSource->getMetadataBackendTemplate(), $viewData);
     }
 
     /**

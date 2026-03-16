@@ -184,6 +184,10 @@ mb:
         origin_label: "Origin:"
         source_label: "Source:"
         any: "(any)"
+      source_tab:
+        collection: Collection
+        layers: Layers
+        no_styles: No styles loaded for this source.
       tooltip:
         heading: Hover Tooltip
         description: "Select which properties are shown in a tooltip when hovering over features on the map."

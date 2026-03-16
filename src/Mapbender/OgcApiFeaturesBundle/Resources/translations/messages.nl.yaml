@@ -184,6 +184,10 @@ mb:
         origin_label: "Bron:"
         source_label: "Bron:"
         any: "(willekeurig)"
+      source_tab:
+        collection: Collectie
+        layers: Lagen
+        no_styles: Geen stijlen geladen voor deze bron.
       tooltip:
         heading: Hover-tooltip
         description: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart."

@@ -184,6 +184,10 @@ mb:
         origin_label: "Origine:"
         source_label: "Fonte:"
         any: "(qualsiasi)"
+      source_tab:
+        collection: Collezione
+        layers: Livelli
+        no_styles: Nessuno stile caricato per questa sorgente.
       tooltip:
         heading: Tooltip al passaggio
         description: "Seleziona quali proprietà vengono mostrate in un tooltip quando si passa sopra le feature sulla mappa."

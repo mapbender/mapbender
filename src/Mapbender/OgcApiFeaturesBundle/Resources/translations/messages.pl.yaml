@@ -184,6 +184,10 @@ mb:
         origin_label: "Źródło:"
         source_label: "Źródło:"
         any: "(dowolne)"
+      source_tab:
+        collection: Kolekcja
+        layers: Warstwy
+        no_styles: Brak stylów załadowanych dla tego źródła.
       tooltip:
         heading: Podpowiedź przy najechaniu
         description: "Wybierz, które właściwości są wyświetlane w podpowiedzi po najechaniu na obiekty na mapie."

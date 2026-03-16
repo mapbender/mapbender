@@ -184,6 +184,10 @@ mb:
         origin_label: "Kaynak:"
         source_label: "Kaynak:"
         any: "(herhangi)"
+      source_tab:
+        collection: Koleksiyon
+        layers: Katmanlar
+        no_styles: Bu kaynak için yüklenmiş stil yok.
       tooltip:
         heading: Üzerine gelme ipucu
         description: "Haritadaki özellikler üzerine gelindiğinde ipucunda gösterilecek özellikleri seçin."
