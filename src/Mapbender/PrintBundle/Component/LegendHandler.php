@@ -21,8 +21,6 @@ use Mapbender\PrintBundle\Component\Transport\ImageTransport;
  *
  * Rewire 'mapbender.print.legend_handler.service' to displace this implementation with your own.
  *
- * @todo: calculate fit to region for individual blocks and whole groups
- * @todo: add option to keep groups together if they fit
  * @todo: add configuration knob for column width (now: hardcoded to 100mm, because of also hard-coded A4 spill page size)
  * @todo: allow out-of-order rendering of legends or legend groups, if it reduces total space
  * @todo: (optionally) suppress legend repetitions, based on ~equal url; careful with assigned title...

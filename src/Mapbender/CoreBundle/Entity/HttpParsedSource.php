@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints;
 
 
@@ -72,5 +73,13 @@ abstract class HttpParsedSource extends Source
     public function getDisplayUrl(): ?string
     {
         return $this->getOriginUrl();
+    }
+
+    /**
+     * Should resolve to an non-tunneled internal URL for the given request, or null if no internal URL is available.
+     */
+    public function getInternalUrl(Request $request): ?string
+    {
+        return null;
     }
 }

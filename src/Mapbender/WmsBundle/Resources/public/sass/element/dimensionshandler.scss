@@ -25,7 +25,6 @@
 
 .toolBar .mb-element-dimensionshandler {
   width: 140px;
-  /** @todo: reevaluate global padding for all .toolBarItem (only desirable for .mb-button) */
   padding: 0 5px; // maintain some horizontal padding (slider handle can overlap left / right edges)
 
   .dimensionset {

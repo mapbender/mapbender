@@ -17,6 +17,11 @@ class SQLSearchEngine
     {
     }
 
+    public function getAutocompleteLimit(): int
+    {
+        return 10;
+    }
+
     /**
      * SQL Autocomplete method
      *
@@ -27,9 +32,6 @@ class SQLSearchEngine
      * @param String $srs Current map SRS
      * @param array $extent Current map extent
      * @return array              Autocomplete suggestions
-     * @todo Make case invariant configurable
-     * @todo Limit results
-     *
      */
     public function autocomplete(array $config, string $key, string $value, array $properties, string $srs, array $extent): array
     {
@@ -61,6 +63,7 @@ class SQLSearchEngine
         }
 
         $qb->orderBy('t.' . $connection->quoteIdentifier($key), 'ASC');
+        $qb->setMaxResults($this->getAutocompleteLimit());
 
         $stmt = $qb->executeQuery()->fetchAllAssociative();
         $dataOut = array();

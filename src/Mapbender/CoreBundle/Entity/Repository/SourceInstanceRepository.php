@@ -42,15 +42,11 @@ class SourceInstanceRepository extends EntityRepository
      */
     public function findBoundInstances(?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
-        $instances = $this->findBy($criteria ?: array(), $orderBy, $limit, $offset);
-        if (!is_array($criteria) || !array_key_exists('layerset', $criteria)) {
-            // @todo: instead of filtering after the select, figure out an ORM-friendly way to make findBy generate
-            //     the correct (platform-specific) "IS NOT NULL" variant when touching the database
-            $instances = \array_filter($instances, function($instance) {
-                /** @var SourceInstance $instance */
-                return !!$instance->getLayerset();
-            });
+        $criteriaSafe = $criteria ?: array();
+        if (!isset($criteriaSafe['layerset'])) {
+            $criteriaSafe['layerset'] = null;
         }
-        return $instances;
+
+        return $this->findBy($criteriaSafe, $orderBy, $limit, $offset);
     }
 }

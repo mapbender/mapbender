@@ -189,7 +189,6 @@ class UserController extends UserControllerBase
     {
         if (($profile = $user->getProfile()) && !$user->getId()) {
             // flush user without profile to generate user pk first, then restore profile
-            // @todo: invert bad relation direction user => profile (currently the profile owns the user)
             $user->setProfile(null);
             $em->persist($user);
             $em->flush();

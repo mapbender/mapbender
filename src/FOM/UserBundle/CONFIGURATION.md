@@ -58,11 +58,9 @@ when assigning privileges.
 pseudo-group of all logged-in users when assigning privileges (NOTE that this is independent
 of the `show_groups`)
 
-`fom.permission.assignment.show_anonymous` (boolean; default false), if true, offers the
+`fom.permission.assignment.show_anonymous` (boolean; default true), if true, offers the
 pseudo-group of effectively everyone, including guest visitors with no account,
-when assigning privileges (NOTE that this is independent of the `show_groups`).
-This is a legacy option. Assigning privileges to effectively everyone should never sensibly
-be required.
+when assigning privileges (i.e. public access) (NOTE that this is independent of the `show_groups`).
 
 ## Preexisting assignments
 Note that all of the above options only control who is offered for new assingments of privileges. Existing,
