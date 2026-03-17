@@ -170,6 +170,7 @@ mb:
       valid: 'Quelle valide'
       notvalid: 'Die Datenquelle ist nicht valide'
       no_source: 'Keine Datenquelle'
+      filter_all_types: 'Alle Datenquellentypen'
       update: 'Datenquelle aktualisieren'
       status:
         ok: 'Datenquelle OK'

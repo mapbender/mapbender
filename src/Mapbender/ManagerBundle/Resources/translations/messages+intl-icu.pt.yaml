@@ -170,6 +170,7 @@ mb:
       valid: 'Fonte de dados válida'
       notvalid: 'Fonte de dados inválida'
       no_source: 'Fonte de dados não existe'
+      filter_all_types: 'Todos os tipos'
       update: 'Atualizar fonte de dados'
       status:
         ok: 'Esta fonte de dados está válida'

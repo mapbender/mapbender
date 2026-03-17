@@ -115,6 +115,7 @@ mb:
       valid: geldig
       notvalid: ongeldig
       no_source: 'Geen bron beschikbaar'
+      filter_all_types: 'Alle brontypen'
       update: bijwerken
       status:
         ok: 'Bron OK'

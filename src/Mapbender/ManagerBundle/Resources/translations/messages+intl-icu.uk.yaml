@@ -155,6 +155,7 @@ mb:
       valid: 'Джерело дійсне'
       notvalid: 'Джерело недійсне'
       no_source: 'Немає доступного джерела'
+      filter_all_types: 'Всі типи джерел'
       update: 'Оновити джерело'
       status:
         ok: Джерело OK

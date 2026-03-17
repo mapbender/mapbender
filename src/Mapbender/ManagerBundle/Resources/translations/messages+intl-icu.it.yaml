@@ -170,6 +170,7 @@ mb:
       valid: 'La risorsa è valida'
       notvalid: 'La risorsa non è valida'
       no_source: 'Nessuna risorsa disponibile'
+      filter_all_types: 'Tutti i tipi'
       update: 'Aggiorna la risorsa'
       status:
         ok: 'Risorsa OK'

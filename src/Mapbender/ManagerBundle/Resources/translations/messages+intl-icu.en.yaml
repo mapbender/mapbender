@@ -172,6 +172,7 @@ mb:
       valid: 'Source valid'
       notvalid: 'Source not valid.'
       no_source: 'No source available'
+      filter_all_types: 'All source types'
       update: 'Update source'
       status:
         ok: 'Source OK'

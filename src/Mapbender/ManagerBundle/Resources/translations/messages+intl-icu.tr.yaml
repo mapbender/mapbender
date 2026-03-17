@@ -106,15 +106,27 @@ mb:
       valid: 'Geçerli kaynak'
       notvalid: 'Kaynak geçerli değil'
       no_source: 'Kaynak yok'
-      filter_all_types: 'Tümü'
+      filter_all_types: 'Tüm kaynak türleri'
       update: 'Kaynağı güncelle'
       status:
         ok: 'Geçerli Kaynak'
         toupdate: 'Kaynak artık mevcut değil'
         unreachable: 'Kaynağa erişilemiyor'
       added: 'Yeni bir %type% kaynağı oluşturuldu'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Bu kaynak hiçbir uygulamada kullanılmıyor}
+            one   {Bu kaynak bir uygulamada kullanılıyor}
+            other {Bu kaynak # uygulamada kullanılıyor}
+        }
       instance:
         created: 'Yeni bir örnek oluşturuldu, lütfen düzenleyin.'
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Bu örnek hiçbir uygulamada kullanılmıyor}
+              one   {Bu örnek bir uygulamada kullanılıyor}
+              other {Bu örnek # uygulamada kullanılıyor}
+          }
       instancelayer:
         legend_help: ' Bu katman için efsaneyi etkinleştir. Dikkat: Sadece efsane sunan katmanlarda etkili olur.'
     managerbundle:
