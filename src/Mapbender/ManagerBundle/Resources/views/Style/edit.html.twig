@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block manager_content %}
+    <div class="content-box content-box-lg">
     <form method="post" novalidate action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}"{{ readonly|default(false) ? ' class="style-readonly"' : '' }}>
         <input type="hidden" id="sourceType" name="sourceType" value="{{ style.sourceType|default('manual') }}">
         {% if readonly|default(false) %}
@@ -301,6 +302,7 @@
             <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'mb.ogcapifeatures.admin.style.editor.back' | trans : 'mb.ogcapifeatures.admin.style.editor.cancel' | trans }}</a>
         </div>
     </form>
+    </div>
 
     {# ── JS Templates (cloned by style-editor-layers.js / style-editor.js) ── #}
     <template id="tpl-layer-item">

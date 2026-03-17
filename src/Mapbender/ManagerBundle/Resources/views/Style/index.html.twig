@@ -5,15 +5,18 @@
     <div class="list-head">
         <div class="row">
             <div class="col-sm-5 col-xs-12 col-12">
-                <a class="btn btn-outline-primary content-box content-box-md" href="{{ path('mapbender_manager_style_new') }}">
-                    <i class="fas fa-plus fa-lg"></i>
-                    <span>{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}</span>
-                </a>
+                <div class="content-box content-box-md">
+                    <a href="{{ path('mapbender_manager_style_new') }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}">
+                        <i class="fas fa-lg fa-plus"></i>
+                        <span>{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <table id="style-list" class="table table-striped table-hover mt-3 align-middle">
+    <div class="content-box content-box-lg">
+    <table id="style-list" class="table table-striped table-hover align-middle">
         <thead>
             <tr>
                 <th style="width:50px">{{ 'mb.ogcapifeatures.admin.style.manager.th_id' | trans }}</th>
@@ -102,6 +105,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 {% endblock %}
 
 {% block js %}
