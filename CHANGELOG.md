@@ -2,6 +2,7 @@
 Security:
 * [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
 * [WMS] Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* [Search] Add validation for input fields, new parameter `mapbender.search.default_regex` ([#PR1824](https://github.com/mapbender/mapbender/pull/1824), [#PR1834](https://github.com/mapbender/mapbender/pull/1834))
 * [Password/Registration] Use stronger hashing algorithms ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
 * [API/Upload] Prevent potential ZIP-Slip path traversal ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
 * [Print] Prevent potential SSRF attacks in Print Service ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))

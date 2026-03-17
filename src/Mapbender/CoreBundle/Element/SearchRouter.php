@@ -36,7 +36,9 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                                 protected CsrfTokenManagerInterface $csrfTokenManager,
                                 protected ContainerInterface        $container,
                                 protected ?LoggerInterface          $logger = null,
-                                protected TranslatorInterface       $translator,)
+                                protected TranslatorInterface       $translator,
+                                protected string                    $defaultPattern,
+    )
     {
     }
 
@@ -100,7 +102,6 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
-            "pattern" => "^[\p{L}0-9_\-\s]*$",
         );
     }
 
@@ -239,10 +240,8 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     protected function validateInputData($inputData, $categoryConf)
     {
-        $config = $this->getDefaultRouteConfiguration();
-        $pattern = $config['pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
-            $pattern = $formField['pattern'] ?? $pattern;
+            $pattern = $formField['pattern'] ?? $this->defaultPattern;
             if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
                 $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
                 throw new BadRequestHttpException($message);
