@@ -77,7 +77,7 @@ class VectorTilesRenderer extends LayerRenderer
                 imagesx($layerImage), imagesy($layerImage));
             imagedestroy($layerImage);
         } else {
-            $this->logger->warning("[VectorTilesRenderer] Error rendering vector tile layer: {$process->getErrorOutput()}");
+            $this->logger->error("[VectorTilesRenderer] Error rendering vector tile layer: {$process->getErrorOutput()}");
         }
     }
 
