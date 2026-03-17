@@ -37,7 +37,9 @@ class FailedLoginListener implements EventSubscriberInterface
         if (!$passport) return;
 
         $userName = $passport->getUser()?->getUserIdentifier();
-        $ipAddress = $_SERVER["REMOTE_ADDR"];
+        $request = $event->getRequest();
+        // Security: use Symfony request abstraction instead of $_SERVER superglobal to respect X-Forwarded-For and proxy settings
+        $ipAddress = $request->getClientIp() ?? '';
         $repository = $em->getRepository(UserLogEntry::class);
         $userInfo = [
             'userName' => $userName,
@@ -48,7 +50,7 @@ class FailedLoginListener implements EventSubscriberInterface
         // Log failed login attempt
         $entry = new UserLogEntry(array_merge($userInfo, [
             'context' => [
-                'userAgent' => $_SERVER["HTTP_USER_AGENT"],
+                'userAgent' => $request->headers->get('User-Agent', ''),
             ],
         ]));
         $em->persist($entry);

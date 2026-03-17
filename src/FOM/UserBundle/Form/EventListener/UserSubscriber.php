@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Security\TokenGenerator;
 use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -56,7 +57,7 @@ class UserSubscriber implements EventSubscriberInterface
             if ($activated) {
                 $user->setRegistrationToken(null);
             } elseif (!$user->getRegistrationToken()) {
-                $user->setRegistrationToken(hash("sha1",rand()));
+                $user->setRegistrationToken(TokenGenerator::generateSecureToken());
             }
         }
     }

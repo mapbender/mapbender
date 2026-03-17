@@ -2,6 +2,7 @@
 namespace FOM\UserBundle\Controller;
 
 use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Security\TokenGenerator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -201,7 +202,7 @@ class PasswordController extends AbstractEmailProcessController
      */
     protected function setResetToken($user)
     {
-        $user->setResetToken(hash("sha1", rand()));
+        $user->setResetToken(TokenGenerator::generateSecureToken());
         $user->setResetTime(new \DateTime());
     }
 

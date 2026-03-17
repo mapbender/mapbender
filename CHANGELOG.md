@@ -2,6 +2,13 @@
 Security:
 * [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
 * [WMS] Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* [Password/Registration] Use stronger hashing algorithms ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [API/Upload] Prevent potential ZIP-Slip path traversal ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [Print] Prevent potential SSRF attacks in Print Service ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [XML] Prevent potential XXE attacks ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [OwsProxy] Prevent potential SSL hostname spoofing ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [API] Prevent internal information disclosure via error messages ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [ConfigCheckCommand] Prevent potential command injection ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
 
 Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
