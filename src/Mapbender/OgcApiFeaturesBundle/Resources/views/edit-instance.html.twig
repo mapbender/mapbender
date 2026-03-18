@@ -31,9 +31,9 @@
         <tr>
             <th></th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.title' | trans }}</th>
+            <th>{{ 'mb.ogcapifeatures.admin.feature_limit' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.min_scale' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.max_scale' | trans }}</th>
-            <th>{{ 'mb.ogcapifeatures.admin.feature_limit' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.active' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
@@ -49,9 +49,9 @@
                     {{ form_widget(layer.priority) }}
                 </td>
                 <td>{{ form_widget(layer.title) }}</td>
+                <td>{{ form_widget(layer.featureLimit) }}</td>
                 <td>{{ form_widget(layer.minScale) }}</td>
                 <td>{{ form_widget(layer.maxScale) }}</td>
-                <td>{{ form_widget(layer.featureLimit) }}</td>
                 <td>{{ form_widget(layer.active) }}</td>
                 <td>{{ form_widget(layer.allowSelected) }}</td>
                 <td>{{ form_widget(layer.selected) }}</td>
