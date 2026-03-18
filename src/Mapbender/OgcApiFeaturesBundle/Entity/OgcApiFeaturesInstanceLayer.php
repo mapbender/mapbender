@@ -73,7 +73,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this;
     }
 
-    public function getFeatureLimit(): int
+    public function getFeatureLimit(): ?int
     {
         return $this->featureLimit;
     }
