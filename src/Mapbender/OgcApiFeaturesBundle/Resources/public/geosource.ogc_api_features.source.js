@@ -63,12 +63,12 @@ class OgcApiSource extends Mapbender.Source {
             vectorLayer.setStyle(this._createSimpleOlStyle(styleDef));
             return;
         }
-        // Mapbox style format — use ol-mapbox-style library
-        if (styleDef.version && styleDef.layers && typeof olms !== 'undefined' && olms.stylefunction) {
+        // Mapbox style format — use ol-mapbox-style library (now bundled in ol.mapboxStyle)
+        if (styleDef.version && styleDef.layers && typeof ol !== 'undefined' && ol.mapboxStyle && ol.mapboxStyle.stylefunction) {
             this._applyMapboxStyle(vectorLayer, styleDef, collectionId);
             return;
         }
-        console.warn('[OgcApiStyle] No style path matched for "' + collectionId + '". olms available:', typeof olms !== 'undefined', '| styleDef keys:', Object.keys(styleDef));
+        console.warn('[OgcApiStyle] No style path matched for "' + collectionId + '". ol.mapboxStyle available:', typeof ol !== 'undefined' && !!ol.mapboxStyle, '| styleDef keys:', Object.keys(styleDef));
     }
 
     _createSimpleOlStyle(s) {
@@ -150,9 +150,9 @@ class OgcApiSource extends Mapbender.Source {
         }
         vectorLayer.set('_collectionId', collectionId);
         try {
-            olms.stylefunction(vectorLayer, mbStyle, sourceName);
+            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, sourceName);
         } catch (e) {
-            console.error('[OgcApiStyle] olms.stylefunction failed for "' + collectionId + '":', e);
+            console.error('[OgcApiStyle] ol.mapboxStyle.stylefunction failed for "' + collectionId + '":', e);
         }
     }
 

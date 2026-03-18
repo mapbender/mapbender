@@ -23,7 +23,6 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         return match ($type) {
             'js' => [
                 '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
-                '@MapbenderOgcApiFeaturesBundle/Resources/public/vendor/olms.js',
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.source.js',
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.sourcelayer.js',
             ],
