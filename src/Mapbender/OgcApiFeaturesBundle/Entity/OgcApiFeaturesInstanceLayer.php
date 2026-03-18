@@ -25,7 +25,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     protected ?float $maxScale;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    protected ?int $featureLimit = 100;
+    protected ?int $featureLimit;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $active = true;
@@ -82,9 +82,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         $this->featureLimit = $featureLimit;
     }
 
-    public function getFeatureLimit(): int
+    public function getFeatureLimit(): ?int
     {
-        return $this->featureLimit ?? 100;
+        return $this->featureLimit;
     }
 
     public function setActive(bool $active): void

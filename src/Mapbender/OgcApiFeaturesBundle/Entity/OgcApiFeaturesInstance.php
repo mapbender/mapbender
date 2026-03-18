@@ -30,7 +30,7 @@ class OgcApiFeaturesInstance extends SourceInstance
     protected ?float $maxScale;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    protected ?int $featureLimit = 100;
+    protected ?int $featureLimit = 1000;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $allowSelected = true;
@@ -114,7 +114,7 @@ class OgcApiFeaturesInstance extends SourceInstance
 
     public function getFeatureLimit(): int
     {
-        return $this->featureLimit ?? 100;
+        return $this->featureLimit ?? 1000;
     }
 
     public function setAllowSelected(?bool $allowSelected): void
