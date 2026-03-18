@@ -115,8 +115,8 @@ class SQLSearchEngine
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
             $multiSearch = ArrayUtil::getDefault($fieldConfig, 'multi_value', false);
             if ($multiSearch) {
-                $separator = ArrayUtil::getDefault($fieldConfig, 'multi_value_separator', ',');
-                $qb->andWhere($this->getMultiMatchExpression($connection, $key, $value, $matchMode, $qb, $separator));
+                $separatorPattern = $this->getSeparatorPattern($fieldConfig);
+                $qb->andWhere($this->getMultiMatchExpression($connection, $key, $value, $matchMode, $qb, $separatorPattern));
             } else {
                 $qb->andWhere($this->getMatchExpression($connection, $key, $value, $matchMode, $qb));
             }
@@ -201,11 +201,14 @@ class SQLSearchEngine
         string       $value,
         string       $mode,
         QueryBuilder $qb,
-        string       $separator = ','
+        string       $separatorPattern = '/,/'
     ): mixed
     {
-        // Split the value by separator
-        $values = array_map('trim', explode($separator, $value));
+        // Split the value by separator pattern
+        $values = array_map('trim', preg_split($separatorPattern, $value));
+
+        // Remove empty entries (e.g. from trailing separators)
+        $values = array_values(array_filter($values, fn($v) => $v !== ''));
 
         // Only one value → default matching
         if (count($values) <= 1) {
@@ -249,6 +252,13 @@ class SQLSearchEngine
         }
 
         return "{$referenceExpression} IN (" . implode(', ', $placeholders) . ")";
+    }
+
+    public static function getSeparatorPattern(array $fieldConfig): string
+    {
+        $separators = ArrayUtil::getDefault($fieldConfig, 'multi_value_separators', [',']);
+        $quoted = array_map(fn($s) => preg_quote($s, '/'), $separators);
+        return '/' . implode('|', $quoted) . '/';
     }
 
     protected function prepareValue(mixed $value, string $mode): mixed

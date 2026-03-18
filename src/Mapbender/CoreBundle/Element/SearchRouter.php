@@ -246,8 +246,9 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             $pattern = $formField['pattern'] ?? $pattern;
             $multiValue = $formField['multi_value'] ?? false;
             if ($multiValue) {
-                $separator = $formField['multi_value_separator'] ?? ',';
-                $values = array_map('trim', explode($separator, $inputData[$key]));
+                $separatorPattern = SQLSearchEngine::getSeparatorPattern($formField);
+                $values = array_map('trim', preg_split($separatorPattern, $inputData[$key]));
+                $values = array_filter($values, fn($v) => $v !== '');
                 foreach ($values as $singleValue) {
                     if (!preg_match('/' . $pattern . '/u', $singleValue)) {
                         $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
