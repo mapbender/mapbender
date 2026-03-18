@@ -35,7 +35,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                                 protected FormFactoryInterface      $formFactory,
                                 protected CsrfTokenManagerInterface $csrfTokenManager,
                                 protected ContainerInterface        $container,
-                                protected ?LoggerInterface          $logger = null,
+                                protected ?LoggerInterface          $logger,
                                 protected TranslatorInterface       $translator,
                                 protected string                    $defaultPattern,
     )
@@ -242,7 +242,13 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
         foreach ($categoryConf['form'] as $key => $formField) {
             $pattern = $formField['pattern'] ?? $this->defaultPattern;
-            if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
+            // Escape the chosen delimiter in the pattern to avoid breaking the regex.
+            $escapedPattern = str_replace('#', '\#', $pattern);
+            $regex = '#' . $escapedPattern . '#u';
+            // Suppress potential warnings from invalid regexes and handle errors explicitly.
+            $result = @preg_match($regex, $inputData[$key]);
+            if ($result !== 1) {
+                // Either no match (0) or regex error (false): treat as invalid input.
                 $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
                 throw new BadRequestHttpException($message);
             }
