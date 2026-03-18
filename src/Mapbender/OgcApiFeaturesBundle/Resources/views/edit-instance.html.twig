@@ -28,9 +28,11 @@
     <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
     <table class="table collectionTable">
         <thead>
-        <tr>
+        <tr class="text-center">
             <th></th>
-            <th>{{ 'mb.ogcapifeatures.admin.layer.title' | trans }}</th>
+            <th class="text-start">
+                {{ 'mb.ogcapifeatures.admin.layer.title' | trans }}
+            </th>
             <th>{{ 'mb.ogcapifeatures.admin.feature_limit' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.min_scale' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.max_scale' | trans }}</th>
@@ -48,15 +50,33 @@
                     <i class="fa-solid fa-grip-vertical" style="cursor:pointer"></i>
                     {{ form_widget(layer.priority) }}
                 </td>
-                <td>{{ form_widget(layer.title) }}</td>
-                <td>{{ form_widget(layer.featureLimit) }}</td>
-                <td>{{ form_widget(layer.minScale) }}</td>
-                <td>{{ form_widget(layer.maxScale) }}</td>
-                <td>{{ form_widget(layer.active) }}</td>
-                <td>{{ form_widget(layer.allowSelected) }}</td>
-                <td>{{ form_widget(layer.selected) }}</td>
-                <td>{{ form_widget(layer.allowInfo) }}</td>
-                <td>{{ form_widget(layer.info) }}</td>
+                <td class="titleColumn">
+                    {{ form_widget(layer.title) }}
+                </td>
+                <td class="featureLimit">
+                    {{ form_widget(layer.featureLimit) }}
+                </td>
+                <td class="minMaxScale">
+                    {{ form_widget(layer.minScale) }}
+                </td>
+                <td class="minMaxScale">
+                    {{ form_widget(layer.maxScale) }}
+                </td>
+                <td class="checkboxColumn">
+                    {{ form_widget(layer.active) }}
+                </td>
+                <td class="checkboxColumn">
+                    {{ form_widget(layer.allowSelected) }}
+                </td>
+                <td class="checkboxColumn">
+                    {{ form_widget(layer.selected) }}
+                </td>
+                <td class="checkboxColumn">
+                    {{ form_widget(layer.allowInfo) }}
+                </td>
+                <td class="checkboxColumn">
+                    {{ form_widget(layer.info) }}
+                </td>
             </tr>
         {% endfor %}
         </tbody>

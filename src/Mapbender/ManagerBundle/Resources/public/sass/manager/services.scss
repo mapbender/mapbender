@@ -114,3 +114,17 @@
     padding: .5rem .2rem;
   }
 }
+
+.collectionTable {
+    td.featureLimit,
+    td.minMaxScale,
+    td.checkboxColumn {
+        max-width: 10%;
+    }
+    td.titleColumn {
+        min-width: 30%;
+    }
+    td.checkboxColumn div.form-check {
+        display: inline-block;
+    }
+}
