@@ -17,6 +17,7 @@ Features:
 
 Bugfixes:
 * [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
+* [ViewManager] Fix layer tree behaving wrong after applying a saved state ([#PR1835](https://github.com/mapbender/mapbender/pull/1835))
 * When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
 * [Layertree] Improve performance of layertree-actions in layertrees with many WMS
 * Support adding the same shared instance more than once in an application ([#PR1821](https://github.com/mapbender/mapbender/pull/1821))
