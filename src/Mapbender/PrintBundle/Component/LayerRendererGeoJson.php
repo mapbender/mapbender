@@ -91,9 +91,6 @@ class LayerRendererGeoJson extends LayerRenderer
             case 'multilinestring':
                 $this->drawMultiLineString($canvas, $feature);
                 break;
-            default:
-                // @todo: warn? error?
-                break;
         }
     }
 

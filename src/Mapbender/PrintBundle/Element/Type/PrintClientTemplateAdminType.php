@@ -11,7 +11,6 @@ class PrintClientTemplateAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // @todo: add missing field labels
         $builder
             ->add('template', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,

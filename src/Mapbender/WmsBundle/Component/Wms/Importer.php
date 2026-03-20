@@ -60,9 +60,7 @@ class Importer extends HttpSourceLoader
     {
         $document = $this->xmlToDom($content);
         switch ($document->documentElement->tagName) {
-            // @todo: DI, handlers, prechecks
             default:
-                // @todo: use a different exception to indicate lack of support
                 throw new XmlParseException('mb.wms.repository.parser.not_supported_document');
             case 'WMS_Capabilities':
             case 'WMT_MS_Capabilities':
@@ -266,7 +264,6 @@ class Importer extends HttpSourceLoader
             $newDimension = null;
             foreach ($dimensionsOld as $oldDimension) {
                 if ($sourceDimension->getName() === $oldDimension->getName()) {
-                    // @todo: reset extent on unit change, clamp extent to updated values
                     /* replace attribute values */
                     $oldDimension->setUnits($sourceDimension->getUnits());
                     $oldDimension->setUnitSymbol($sourceDimension->getUnitSymbol());

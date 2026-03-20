@@ -20,7 +20,13 @@ use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
  */
 class ElementInventoryService extends ElementConfigFilter implements HttpHandlerProvider
 {
-    /** @var string[] */
+    /**
+     * Compatibility shim: maps formerly valid Element class names to their current replacements.
+     * This ensures that existing application configurations (e.g. YAML-based or stored in the database)
+     * referencing old class names continue to work after classes have been moved or merged.
+     *
+     * @var string[]
+     */
     protected $movedElementClasses = array(
         'Mapbender\DataSourceBundle\Element\DataManagerElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\DataStoreElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
@@ -174,10 +180,13 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     }
 
     /**
-     * Marks $classNameTo as the acting replacement for $classNameFrom.
+     * Marks $classNameTo as the acting replacement (shim) for $classNameFrom.
+     * After this call, any Element referencing $classNameFrom will be handled
+     * by $classNameTo instead. This is used to maintain backwards compatibility
+     * when Element classes are moved, renamed or merged.
      *
-     * @param string $classNameFrom
-     * @param string $classNameTo
+     * @param string $classNameFrom the old/deprecated class name
+     * @param string $classNameTo   the current class name that should handle the element
      */
     public function replaceElement($classNameFrom, $classNameTo)
     {

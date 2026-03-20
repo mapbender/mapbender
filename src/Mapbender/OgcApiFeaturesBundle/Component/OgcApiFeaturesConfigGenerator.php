@@ -1,0 +1,107 @@
+<?php
+
+namespace Mapbender\OgcApiFeaturesBundle\Component;
+
+use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
+
+class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
+{
+    public function getAssets(Application $application, string $type): array
+    {
+        return match ($type) {
+            'js' => [
+                '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.source.js',
+                '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.sourcelayer.js',
+            ],
+            default => [],
+        };
+    }
+
+    public function getConfiguration(Application $application, SourceInstance $sourceInstance, ?string $idPrefix = null): array
+    {
+        /** @var OgcApiFeaturesInstance $sourceInstance */
+        /** @var OgcApiFeaturesSource $source */
+        $source = $sourceInstance->getSource();
+        $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
+        $featureInfoPropertyMap = json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
+        $featureInfoPropertyMapExists = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
+        $config['options'] = [
+            'id' => $sourceInstance->getId(),
+            'jsonUrl' => $source->getJsonUrl(),
+            'title' => $sourceInstance->getTitle() ?: $source->getTitle(),
+            'opacity' => ($sourceInstance->getOpacity() ?? 100) / 100.0,
+            'minScale' => $sourceInstance->getMinScale(),
+            'maxScale' => $sourceInstance->getMaxScale(),
+            'metadataUrl' => $this->getMetaDataUrl($sourceInstance),
+            'treeOptions' => [
+                'selected' => $sourceInstance->getSelected(),
+                'toggle' => $sourceInstance->getToggle(),
+                'allow' => [
+                    'selected' => $sourceInstance->getAllowSelected(),
+                    'toggle' => $sourceInstance->getAllowToggle(),
+                ],
+            ],
+            'featureInfo' => [
+                'propertyMap' => $featureInfoPropertyMapExists ? $featureInfoPropertyMap : null,
+            ],
+        ];
+        $config['state'] = [
+            'info' => $this->featureInfoEnabled($sourceInstance),
+        ];
+
+        foreach (array_reverse($sourceInstance->getLayers()->toArray()) as $layer) {
+            if ($layer->getActive()) {
+                $config['children'][] = [
+                    'options' => [
+                        // add additional underscore to prevent confusion with rootlayer-ID:
+                        // identical rootlayer- and child-ID result in messed up layer tree structure
+                        'id' => $layer->getId() . '_',
+                        'priority' => $layer->getPriority(),
+                        'title' => $layer->getTitle(),
+                        'collectionId' => $layer->getSourceItem()->getCollectionId(),
+                        'minScale' => ($layer->getMinScale() !== null ? $layer->getMinScale() : $sourceInstance->getMinScale()),
+                        'maxScale' => ($layer->getMinScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
+                        'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
+                        'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
+                        'bbox' => $layer->getSourceItem()->getBbox(),
+                        'treeOptions' => [
+                            'selected' => $layer->getSelected(),
+                            'info' => $layer->getInfo(),
+                            'allow' => [
+                                'selected' => $layer->getAllowSelected(),
+                                'info' => $layer->getAllowInfo(),
+                            ],
+                        ],
+                    ],
+                ];
+            }
+        }
+
+        return $config;
+    }
+
+    protected function featureInfoEnabled($sourceInstance): bool
+    {
+        foreach ($sourceInstance->getLayers() as $layer) {
+            if ($layer->getInfo() === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function getMetaDataUrl($instance, $layer = null): ?string
+    {
+        $layerset = $instance->getLayerset();
+        if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
+            return null;
+        }
+        $layerId = $layer !== null ? $layer->getId() : 0;
+        return '/application/metadata/' . $instance->getId() . '/' . $layerId . '/';
+    }
+}

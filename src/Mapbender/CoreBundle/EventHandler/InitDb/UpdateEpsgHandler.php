@@ -12,9 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Wires Epsg database update into mapbender:database:init CLI.
- *
- * TBD: may be more efficient to use an ObjectRepository processing the definition file
- * directly (read only, no database table).
  */
 class UpdateEpsgHandler extends AbstractInitDbHandler
 {

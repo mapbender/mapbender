@@ -11,10 +11,12 @@ use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\WmsDataSource;
+use Symfony\Component\HttpFoundation\Request;
 
 
 /**
@@ -852,6 +854,16 @@ class WmsSource extends HttpParsedSource
             $dimensions[] = DimensionInst::fromDimension($dimension);
         }
         return $dimensions;
+    }
+
+    public function getInternalUrl(Request $request): ?string
+    {
+        $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
+        return match (strtolower($requestType)) {
+            'getmap' => $this->getGetMap()->getHttpGet(),
+            'getfeatureinfo' => $this->getGetFeatureInfo()->getHttpGet(),
+            default => null,
+        };
     }
 
     public function mutateUrls(OneWayTransformer $transformer)

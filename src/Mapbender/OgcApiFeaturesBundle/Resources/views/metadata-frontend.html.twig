@@ -1,0 +1,62 @@
+<div class="tabContainerAlt">
+    <ul class="tabs">
+        <li tabindex="0" role="tab" id="tab-general" class="tab active">{{ 'mb.wms.metadata.section.common.title' | trans }}</li>
+        <li tabindex="0" role="tab" id="tab-usage" class="tab">{{ 'mb.wms.metadata.section.useconditions.title' | trans }}</li>
+        <li tabindex="0" role="tab" id="tab-contact" class="tab">{{ 'mb.wms.metadata.section.contact.title' | trans }}</li>
+        <li tabindex="0" role="tab" id="tab-layers" class="tab">{{ 'mb.wms.metadata.section.items.title' | trans }}</li>
+    </ul>
+    <div id="container-general" class="container active ps-4">
+        <table class="table table-borderless table-condensed">
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.title' | trans }}:</th>
+                <td>{{ source.title }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.version' | trans }}:</th>
+                <td>{{ source.version }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.url' | trans }}:</th>
+                <td>{{ source.jsonUrl | linkify }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.description' | trans }}:</th>
+                <td>{{ source.description | linkify }}</td>
+            </tr>
+        </table>
+    </div>
+    <div id="container-usage" class="container ps-4">
+        <table class="table table-borderless table-condensed">
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.attribution' | trans }}:</th>
+                <td>{{ source.attribution | raw }}</td>
+            </tr>
+        </table>
+    </div>
+    <div id="container-contact" class="container ps-4">
+        <table class="table table-borderless table-condensed">
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.contact' | trans }}:</th>
+                <td>{{ source.attribution | raw }}</td>
+            </tr>
+        </table>
+    </div>
+    <div id="container-layers" class="container ps-4">
+        {% set collectionUrl = source.jsonUrl %}
+        {% set sourceTitle = source.title %}
+        {% if startLayerInstance is defined and startLayerInstance is not null %}
+            {% set collectionUrl = collectionUrl ~ '/collections/' ~ startLayerInstance.sourceItem.collectionId %}
+            {% set sourceTitle = startLayerInstance.sourceItem.title %}
+        {% endif %}
+        <table>
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.title' | trans }}:</th>
+                <td>{{ sourceTitle }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'mb.ogcapifeatures.metadata.url' | trans }}:</th>
+                <td>{{ collectionUrl|linkify }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
