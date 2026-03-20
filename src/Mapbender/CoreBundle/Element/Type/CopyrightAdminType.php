@@ -5,6 +5,9 @@ use Mapbender\CoreBundle\Validator\Constraints\HtmlTwigConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\TypeValidator;
 
 class CopyrightAdminType extends AbstractType
 {
@@ -14,27 +17,32 @@ class CopyrightAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // @todo: add missing field labels
         $builder
             ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
             ))
-            // @todo: this should be a positive integer
             ->add('popupWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.manager.popup_width',
                 'attr' => array(
                     'placeholder' => '300px',
                 ),
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ]
             ))
-            // @todo: this should be a positive integer
             ->add('popupHeight', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
                 'required' => false,
                 'label' => 'mb.manager.popup_height',
                 'attr' => array(
                     'placeholder' => 'mb.manager.automatic',
                 ),
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ],
             ))
             ->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
                 'required' => true,

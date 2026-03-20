@@ -13,8 +13,7 @@ use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Filters / prepares elements for frontend. Works exclusively with Entity\Element
- * (Component\Element = legacy; incompatible with Symfony 4)
+ * Filters / prepares elements for frontend
  * Default implementation for service mapbender.element_filter
  *
  * @todo; add (guarded vs Symfony debug class loader) class exists checks here
@@ -139,7 +138,6 @@ class ElementFilter extends ElementConfigFilter
         // Add config defaults
         /** @var string|MinimalInterface $handlingClass */
         $element->setConfiguration($element->getConfiguration() + $handlingClass::getDefaultConfiguration());
-        // Replace class @todo: safe? necessary? Will shred db contents if existing Element is edited
         $element->setClass($handlingClass);
     }
 

@@ -54,9 +54,7 @@ class Loader extends HttpSourceLoader
     {
         $doc = $this->xmlToDom($content);
         switch ($doc->documentElement->tagName) {
-            // @todo: DI, handlers, prechecks
             default:
-                // @todo: use a different exception to indicate lack of support
                 throw new XmlParseException('mb.wms.repository.parser.not_supported_document');
             case 'TileMapService':
                 $parser = new TmsCapabilitiesParser100($this->httpTransport);

@@ -106,7 +106,6 @@ class ConfigCheckCommand extends Command
     /**
      * @param SymfonyStyle $output
      * @return bool
-     * @todo  APACHE mod_rewrite;
      */
     protected function checkSystemRequirements(SymfonyStyle $output): bool
     {

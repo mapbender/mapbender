@@ -19,10 +19,6 @@ use Psr\Log\NullLogger;
  * Converts array-style application definitions to Application entities.
  *
  * Service instance registered as mapbender.application.yaml_entity_repository
- * @todo: implement object repository interface
- * @todo: split factory from repository
- *
- * @author Christian Wygoda
  */
 class ApplicationYAMLMapper
 {
@@ -68,12 +64,11 @@ class ApplicationYAMLMapper
         if (!array_key_exists($slug, $this->definitions)) {
             return null;
         }
-        $application = $this->createApplication($this->definitions[$slug], $slug);
-        return $application;
+        return $this->createApplication($this->definitions[$slug], $slug);
     }
 
     /**
-     * @param mixed[] $definition
+     * @param array $definition
      * @param string $slug
      * @return Application
      */

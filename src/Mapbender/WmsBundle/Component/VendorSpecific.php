@@ -45,19 +45,4 @@ class VendorSpecific extends CustomParameter
     {
         return $this->name;
     }
-
-    /**
-     * @deprecated, only used (indirectly) by WmcParser110
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        return array(
-            'default' => $this->getDefault(),
-            'name' => $this->getName(),
-            '__name' => $this->getParameterName(),
-            'hidden' => $this->getHidden(),
-            'vstype' => $this->getVstype(),
-        );
-    }
 }

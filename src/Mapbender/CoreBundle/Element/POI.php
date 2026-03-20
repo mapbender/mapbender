@@ -45,7 +45,6 @@ class POI extends AbstractElementService
     {
         return array(
             'useMailto' => true,
-            /** @todo: use translatable texts */
             'body'      => 'mb.core.poi.admin.placeholder',
             'gps'       => null,
             'element_icon' => self::getDefaultIcon(),
@@ -95,7 +94,6 @@ class POI extends AbstractElementService
     {
         $view = new TemplateView('@MapbenderCore/Element/poi.html.twig');
         $view->attributes['class'] = 'mb-element-poi';
-        /** @todo: respect configured title! */
         $view->attributes['data-title'] = 'mb.core.poi.sharepoi';   // Used as popup title
         $config = $element->getConfiguration() ?: array();
         $view->variables['body'] = ArrayUtil::getDefault($config, 'body', $this->getDefaultConfiguration()['body']);

@@ -51,12 +51,20 @@ class AboutDialog extends ButtonLike
      */
     public static function getDefaultConfiguration()
     {
-        $defaults = array_replace(parent::getDefaultConfiguration(), array(
+        return array_replace(parent::getDefaultConfiguration(), [
             "tooltip" => "mb.core.aboutdialog.admin.tooltip",
-        ));
-        $defaults['element_icon'] = self::getDefaultIcon();
-        unset($defaults['icon']);
-        return $defaults;
+            "icon" => self::getDefaultIcon(),
+            "element_icon" => self::getDefaultIcon(),
+        ]);
+    }
+
+    public function getClientConfiguration(Element $element): array
+    {
+        $configuration = parent::getClientConfiguration($element);
+        if (empty($configuration['icon'])) {
+            $configuration['icon'] = self::getDefaultIcon();
+        }
+        return $configuration;
     }
 
     /**
@@ -64,7 +72,7 @@ class AboutDialog extends ButtonLike
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\AboutDialogAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
     }
 
     /**
@@ -85,7 +93,7 @@ class AboutDialog extends ButtonLike
         $template = $this->templateEngine->getLoader()->getSourceContext($templateName);
         $templateContent = $template->getCode();
         // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
-        if (false !== strpos($templateContent, '{')) {
+        if (str_contains($templateContent, '{')) {
             $view->cacheable = false;
         }
         $view->variables['content'] = $this->templateEngine->render($template->getName());

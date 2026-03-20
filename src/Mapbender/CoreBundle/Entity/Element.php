@@ -290,7 +290,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      *
      * @param string $configPropertyName default 'target'
      * @return Element|null
-     * @todo: systemically prevent self-targetting and circular references
+     * @todo: systemically prevent self-targeting and circular references
      */
     public function getTargetElement($configPropertyName = 'target')
     {

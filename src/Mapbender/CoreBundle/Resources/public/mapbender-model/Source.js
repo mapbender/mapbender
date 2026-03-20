@@ -178,36 +178,21 @@
          * @return {SourceSettingsDiff|null}
          */
         diffSettings(from, to) {
-            // before v4, only the selectedIds were saved as an array.
-            // since v4, an object with id and name is saved are saved encapsulated as an array of objects to
-            // check for selectedIds for backwards compatibility
-            // @todo for v5: Remove check
-            const diff = to.hasOwnProperty('selectedIds') ?
-                {
-                    activate: to.selectedIds.filter(function (id) {
-                        return (from.selectedLayers || []).findIndex(fromLayer =>
-                            fromLayer.id === id
-                        ) === -1;
-                    }),
-                    deactivate: (from.selectedLayers || []).filter(function (layer) {
-                        return -1 === to.selectedIds.indexOf(layer.id);
-                    })
-                } :
-                {
-                    activate: (to.selectedLayers || []).filter(function (layer) {
-                        return (from.selectedLayers || []).findIndex(fromLayer =>
-                            fromLayer.id === layer.id ||
-                            fromLayer.name === layer.name
-                        ) === -1;
-                    }),
+            const diff = {
+                activate: (to.selectedLayers || []).filter(function (layer) {
+                    return (from.selectedLayers || []).findIndex(fromLayer =>
+                        fromLayer.id === layer.id ||
+                        fromLayer.name === layer.name
+                    ) === -1;
+                }),
 
-                    deactivate: (from.selectedLayers || []).filter(function (layer) {
-                        return (to.selectedLayers || []).findIndex(toLayer =>
-                            toLayer.id === layer.id ||
-                            toLayer.name === layer.name
-                        ) === -1;
-                    })
-                };
+                deactivate: (from.selectedLayers || []).filter(function (layer) {
+                    return (to.selectedLayers || []).findIndex(toLayer =>
+                        toLayer.id === layer.id ||
+                        toLayer.name === layer.name
+                    ) === -1;
+                })
+            };
             diff.changeStyle = (to.selectedLayers || []).filter((layer) => !!layer.style);
 
             if (to.opacity !== from.opacity) {

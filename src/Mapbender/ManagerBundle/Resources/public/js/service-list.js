@@ -7,7 +7,6 @@ $(function() {
             method: 'GET'
         }).then(function(response) {
             var stringMap = {
-                // @todo: bring your own translation string
                 title: "mb.manager.components.popup.delete_element.title",
                 confirm: "mb.actions.delete",
                 cancel: "mb.actions.cancel"

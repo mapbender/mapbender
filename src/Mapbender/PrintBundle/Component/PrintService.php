@@ -384,15 +384,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function handleMainPageLegends($pdf, $template, $jobData, $legendBlocks)
     {
-        // @todo: multiple viable main page legend regions?
-        $regionNames = array(
-            'legend',
-        );
-        foreach ($regionNames as $legendRegionName) {
-            if ($template->hasRegion($legendRegionName)) {
-                $region = $template->getRegion($legendRegionName);
-                $this->legendHandler->addLegends($pdf, $region, $legendBlocks, false, $template, $jobData);
-            }
+        if ($template->hasRegion('legend')) {
+            $region = $template->getRegion('legend');
+            $this->legendHandler->addLegends($pdf, $region, $legendBlocks, false, $template, $jobData);
         }
     }
 
@@ -478,13 +472,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 }
                 break;
             default:
-                if (isset($jobData['extra'][$fieldName])) {
-                    return $jobData['extra'][$fieldName];
-                } else {
-                    // @todo: log warning?
-                    return null;
-                }
+                return $jobData['extra'][$fieldName] ?? null;
         }
+        return null;
     }
 
     /**
@@ -796,7 +786,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * Process multiframe print job
-     * 
+     *
      * @param array $jobData Array of frame data
      * @return string PDF binary content
      * @throws \Exception
@@ -808,11 +798,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // Create all map images and store filesystem paths
         foreach ($jobData as $index => $data) {
             $templateData = $this->getTemplateData($data);
-            
+
             // CRITICAL: Call setup() to initialize template dimensions before creating map image
             // Each template (A4 quer, A4 hoch, etc.) has different dimensions that must be set
             $this->setup($templateData, $data);
-            
+
             $mapImageNames[] = $this->createMapImage($templateData, $data);
         }
 
@@ -821,7 +811,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         foreach ($jobData as $index => $data) {
             $templateData = $this->getTemplateData($data);
             $this->setup($templateData, $data);
-            
+
             $pdf = $this->buildMultiFramePdf($mapImageNames[$index], $templateData, $data, $pdf);
         }
 
@@ -832,7 +822,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * Build PDF for a single frame in multiframe print
-     * 
+     *
      * @param string $mapImageName Path to map image file
      * @param Template|array $template Template data
      * @param array $jobData Job data for this frame
@@ -853,7 +843,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 $orientation = 'L';
             }
             $pdf->addPage($orientation, $format);
-            
+
             // CRITICAL: Set the source file for this template before importing
             // Each template (A4 quer, A4 hoch, etc.) has its own PDF file
             $pdfPath = $this->templateParser->getTemplateFilePath($jobData['template'], 'pdf');
@@ -866,7 +856,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $this->addMapImage($pdf, $mapImageName, $template);
         unlink($mapImageName);
-        
+
         $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
 
         $this->collectedLegends[] = $this->legendHandler->collectLegends($jobData);
@@ -877,7 +867,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Process after main map for multiframe print
      * Handles legends and finalization without duplicating textfields/regions
-     * 
+     *
      * @param PDF_Extensions|\FPDF $pdf PDF object
      * @param Template|array $template Template data
      * @param array $jobData Job data
@@ -894,14 +884,14 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     /**
      * Merge collected legends from all frames
      * Deduplicates legend blocks by title across all frames
-     * 
+     *
      * @return array Merged legend block groups
      */
     protected function mergeCollectedLegends(): array
     {
         // Collect all unique legend blocks by title
         $uniqueBlocks = [];
-        
+
         foreach ($this->collectedLegends as $collectedLegend) {
             foreach ($collectedLegend as $legendBlockGroup) {
                 foreach ($legendBlockGroup->iterateBlocks() as $block) {
