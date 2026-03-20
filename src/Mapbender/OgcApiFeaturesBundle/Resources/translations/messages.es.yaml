@@ -2,7 +2,7 @@ mb:
   ogcapifeatures:
     admin:
       json_url: URL del servicio OGC API Features
-      feature_limit: Máx. de objetos
+      feature_limit: Número máx. de objetos
       layers: Colecciones
       layer:
         title: Título
@@ -88,7 +88,7 @@ mb:
           dash_longdashdot: Guión largo-punto
           label_legend: Etiqueta
           text: Texto
-          font_family: Familia tipográfica
+          font_family: Fuente tipográfica
           font_size: Tamaño
           font_weight: Peso
           weight_regular: Normal
@@ -151,8 +151,8 @@ mb:
           background_color: Color de fondo
           background_opacity: Opacidad del fondo
           raster_opacity: Opacidad ráster
-          raster_brightness_min: Brillo Mín
-          raster_brightness_max: Brillo Máx
+          raster_brightness_min: Brillo mín.
+          raster_brightness_max: Brillo máx.
           raster_contrast: Contraste
           raster_saturation: Saturación
           extrusion_color: Color de extrusión
