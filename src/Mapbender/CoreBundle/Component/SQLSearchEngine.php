@@ -116,7 +116,13 @@ class SQLSearchEngine
             }
             $fieldConfig = $this->getFormFieldConfig($config, $key);
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
-            $qb->andWhere($this->getMatchExpression($connection, $key, $value, $matchMode, $qb));
+            $multiSearch = ArrayUtil::getDefault($fieldConfig, 'multi_value', false);
+            if ($multiSearch) {
+                $separatorPattern = $this->getSeparatorPattern($fieldConfig);
+                $qb->andWhere($this->getMultiMatchExpression($connection, $key, $value, $matchMode, $qb, $separatorPattern));
+            } else {
+                $qb->andWhere($this->getMatchExpression($connection, $key, $value, $matchMode, $qb));
+            }
         }
         if ($srs && $extent) {
             $qb->andWhere($this->getBoundsExpression($qb, $geomColumn, $extent, $srs, $config));
@@ -190,6 +196,72 @@ class SQLSearchEngine
             'not' => $qb->expr()->neq($referenceExpression, $matchExpression),
             default => $qb->expr()->eq($referenceExpression, $matchExpression),
         };
+    }
+
+    protected function getMultiMatchExpression(
+        Connection   $connection,
+        string       $key,
+        string       $value,
+        string       $mode,
+        QueryBuilder $qb,
+        string       $separatorPattern = '/,/'
+    ): mixed
+    {
+        // Split the value by separator pattern
+        $values = array_map('trim', preg_split($separatorPattern, $value));
+
+        // Remove empty entries (e.g. from trailing separators)
+        $values = array_values(array_filter($values, fn($v) => $v !== ''));
+
+        // Only one value → default matching
+        if (count($values) <= 1) {
+            $singleValue = count($values) === 1 ? reset($values) : $value;
+            return $this->getMatchExpression($connection, $key, $singleValue, $mode, $qb);
+        }
+
+        // exact/iexact modes → IN-operator
+        if (in_array($mode, ['exact', 'iexact'], true)) {
+            return $this->getInExpression($connection, $key, $values, $mode, $qb);
+        }
+
+        // like/ilike modes → combine conditions with OR
+        $orConditions = array();
+        foreach ($values as $singleValue) {
+            $orConditions[] = $this->getMatchExpression($connection, $key, $singleValue, $mode, $qb);
+        }
+
+        return $qb->expr()->or(...$orConditions);
+    }
+
+    protected function getInExpression(
+        Connection   $connection,
+        string       $key,
+        array        $values,
+        string       $mode,
+        QueryBuilder $qb
+    ): string
+    {
+        $caseInsensitive = ($mode === 'iexact');
+        $referenceExpression = "t." . $connection->quoteIdentifier($key);
+
+        if ($caseInsensitive) {
+            $referenceExpression = "LOWER({$referenceExpression})";
+        }
+
+        $placeholders = array();
+        foreach ($values as $v) {
+            $placeholder = $qb->createNamedParameter($v);
+            $placeholders[] = $caseInsensitive ? "LOWER({$placeholder})" : $placeholder;
+        }
+
+        return "{$referenceExpression} IN (" . implode(', ', $placeholders) . ")";
+    }
+
+    public static function getSeparatorPattern(array $fieldConfig): string
+    {
+        $separators = ArrayUtil::getDefault($fieldConfig, 'multi_value_separators', [',']);
+        $quoted = array_map(fn($s) => preg_quote($s, '/'), $separators);
+        return '/' . implode('|', $quoted) . '/';
     }
 
     protected function prepareValue(mixed $value, string $mode): mixed
