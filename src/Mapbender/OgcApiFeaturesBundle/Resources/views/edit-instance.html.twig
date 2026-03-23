@@ -124,6 +124,16 @@
                                 <div class="popover-body">
                                     <button type="button" class="btn-close -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
                                             aria-label="Close"></button>
+                                    {%- set _layer_data = layer.vars.data -%}
+                                    {%- set _display_id = _layer_data.sourceInstance.source.id ~ '-' ~ _layer_data.sourceItem.id ~ '/' ~ _layer_data.sourceInstance.id ~ '-' ~ _layer_data.id -%}
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.source.instancelayer.id' | trans }}</label></div>
+                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _display_id }}" title="{{ 'mb.manager.source.instancelayer.id.help' | trans }}"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.source.instancelayer.name' | trans }}</label></div>
+                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _layer_data.sourceItem.title }}"></div>
+                                    </div>
                                     <div class="row mb-2 style-filter-row">
                                         <div class="col-sm-3"><label class="form-label fw-bold text-muted small">{{ 'mb.ogcapifeatures.admin.filter.label' | trans }}</label></div>
                                         <div class="col-sm-9">
