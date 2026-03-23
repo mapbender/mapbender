@@ -4,8 +4,8 @@ namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Style;
+use Mapbender\OgcApiFeaturesBundle\Form\Transformer\JsonArrayTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -100,10 +100,7 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
                 'required' => false,
             ])
         ;
-        $builder->get('tooltipPropertyMap')->addModelTransformer(new CallbackTransformer(
-            fn (?array $array) => $array ? json_encode($array) : '',
-            fn (?string $json) => $json ? json_decode($json, true) : null,
-        ));
+        $builder->get('tooltipPropertyMap')->addModelTransformer(new JsonArrayTransformer());
     }
 
     private function getStyleChoices(): array
