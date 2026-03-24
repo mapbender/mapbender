@@ -55,7 +55,6 @@ class OgcApiSource extends Mapbender.Source {
 
     _applyStyle(vectorLayer, styleDef, collectionId) {
         if (!styleDef) {
-            console.warn('[OgcApiStyle] No styleDef for collection:', collectionId);
             return;
         }
         // Simple/manual style format
@@ -68,7 +67,6 @@ class OgcApiSource extends Mapbender.Source {
             this._applyMapboxStyle(vectorLayer, styleDef, collectionId);
             return;
         }
-        console.warn('[OgcApiStyle] No style path matched for "' + collectionId + '". ol.mapboxStyle available:', typeof ol !== 'undefined' && !!ol.mapboxStyle, '| styleDef keys:', Object.keys(styleDef));
     }
 
     _createSimpleOlStyle(s) {
@@ -145,7 +143,6 @@ class OgcApiSource extends Mapbender.Source {
             }
         }
         if (!sourceName) {
-            console.warn('[OgcApiStyle] No source found for collection:', collectionId, '| sources:', Object.keys(mbStyle.sources || {}));
             return;
         }
         vectorLayer.set('_collectionId', collectionId);
@@ -182,8 +179,12 @@ class OgcApiSource extends Mapbender.Source {
                     dataProjection: 'EPSG:4326',
                     featureProjection: projCode
                 });
-                // Set 'layer' property so olms.stylefunction can match source-layer
-                parsed.forEach(f => f.set('layer', collectionId, true));
+                // Set 'layer' property for internal use (tooltips, identification)
+                // Set 'mvt:layer' property so ol-mapbox-style's stylefunction can match source-layer
+                parsed.forEach(f => {
+                    f.set('layer', collectionId, true);
+                    f.set('mvt:layer', collectionId, true);
+                });
                 source.clear(true);
                 source.addFeatures(parsed);
                 source.dispatchEvent('imageloadend');
