@@ -35,16 +35,20 @@
                 </div>
                 {%- if items -%}
                     <div class="col-sm-7 col-xs-12 col-12">
-                        <div class="text-end">
+                        <div>
                             <div class="content-box content-box-md">
-                                <div class="filter-group d-flex align-items-center justify-content-end gap-2">
-                                    <select id="filter-source-type" class="form-select d-inline-block w-auto" title="{{ 'mb.manager.admin.element.type' | trans }}">
-                                        <option value="">{{ 'mb.manager.source.filter_all_types' | trans }}</option>
-                                        <option value="WMS">OGC WMS</option>
-                                        <option value="WMTS,TMS">OGC WMTS / TMS</option>
-                                        <option value="vector_tiles">Vector Tiles</option>
-                                        <option value="ogc_api_features">OGC API Features</option>
-                                    </select>
+                                <div class="filter-group d-flex align-items-center gap-2">
+                                    <div class="dropdown d-inline-block" id="filter-source-type-wrapper">
+                                        <select id="filter-source-type" class="hiddenDropdown" title="{{ 'mb.manager.admin.element.type' | trans }}">
+                                            <option value="">{{ 'mb.manager.source.filter_all_types' | trans }}</option>
+                                            <option value="WMS">OGC WMS</option>
+                                            <option value="WMTS,TMS">OGC WMTS / TMS</option>
+                                            <option value="vector_tiles">Vector Tiles</option>
+                                            <option value="ogc_api_features">OGC API Features</option>
+                                        </select>
+                                        <div class="dropdownValue iconDown"></div>
+                                        <ul class="dropdownList"></ul>
+                                    </div>
                                     <div class="input-group w-auto">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                                         <input id="list-filter" data-filter-target="{{list_id}}" type="text" class="form-control listFilterInput" placeholder="{{ 'mb.actions.filter' | trans }}...">
