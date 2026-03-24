@@ -449,6 +449,7 @@
             this.mbMap.getModel().initializeSourceLayers(sources);
 
             if (layertreeElement.length > 0) {
+                layertreeElement.data('mapbenderMbLayertree')._sortableInitialized = false;
                 layertreeElement.data('mapbenderMbLayertree')._createTree();
             }
             wmsloaderSources.forEach(source => {
