@@ -52,6 +52,21 @@ class OgcApiFeaturesInstance extends SourceInstance
         $this->layers = new ArrayCollection();
     }
 
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->setId(null);
+            $clonedLayers = new ArrayCollection();
+            foreach ($this->layers as $layer) {
+                $clonedLayer = clone $layer;
+                $clonedLayer->setId(null);
+                $clonedLayer->setSourceInstance($this);
+                $clonedLayers->add($clonedLayer);
+            }
+            $this->layers = $clonedLayers;
+        }
+    }
+
     public function setSource($source): void
     {
         $this->source = $source;
