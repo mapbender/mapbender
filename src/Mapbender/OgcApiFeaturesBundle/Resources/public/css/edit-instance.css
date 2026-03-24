@@ -1,6 +1,10 @@
 /* ── Table & layout ── */
-.collectionTable { table-layout: auto; width: 100%; }
-.collectionTable th, .collectionTable td { white-space: nowrap; vertical-align: middle; }
+.collectionTable { width: 100%; }
+.collectionTable th, .collectionTable td { vertical-align: middle; }
+.collectionTable td.featureLimit,
+.collectionTable td.minMaxScale { text-align: center; }
+.collectionTable td.featureLimit .form-control,
+.collectionTable td.minMaxScale .form-control { width: 70px; display: inline-block; text-align: center; }
 .collectionTable .style-select { min-width: 170px; }
 .table-responsive-layers { overflow-x: auto; }
 

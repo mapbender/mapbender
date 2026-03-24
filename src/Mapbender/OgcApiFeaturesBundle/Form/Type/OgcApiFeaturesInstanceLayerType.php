@@ -47,11 +47,13 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ])
             ->add('minScale', NumberType::class, [
                 'required' => false,
+                'html5' => true,
                 'label' => 'mb.ogcapifeatures.admin.layer.min_scale',
                 'attr' => ['class' => 'form-control-sm'],
             ])
             ->add('maxScale', NumberType::class, [
                 'required' => false,
+                'html5' => true,
                 'label' => 'mb.ogcapifeatures.admin.layer.max_scale',
                 'attr' => ['class' => 'form-control-sm'],
             ])
