@@ -18,7 +18,7 @@ Features:
 * [OgcApiFeatures] Assign Mapbox styles (primary + secondary) to OGC API feature layers; styles applied via ol-mapbox-style
 * [OgcApiFeatures] Feature hover tooltips with configurable property mapping; property titles resolved from queryables
 * [OgcApiFeatures] Styles tab in source metadata view
-
+* [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
