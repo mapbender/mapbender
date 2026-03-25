@@ -228,6 +228,23 @@ class OgcApiSource extends Mapbender.Source {
                 this._initTooltip(Mapbender.Model.olMap);
             }
         }
+        if (!this._resolutionListenerInitialized && Mapbender.Model?.olMap) {
+            this._initResolutionListener(Mapbender.Model.olMap);
+        }
+    }
+
+    _initResolutionListener(olMap) {
+        this._resolutionListenerInitialized = true;
+        this._lastResolution = olMap.getView().getResolution();
+        olMap.on('moveend', () => {
+            const newResolution = olMap.getView().getResolution();
+            if (newResolution !== this._lastResolution) {
+                this._lastResolution = newResolution;
+                Object.values(this._vectorSources).forEach(source => {
+                    source.refresh();
+                });
+            }
+        });
     }
 
     _initTooltip(olMap) {
