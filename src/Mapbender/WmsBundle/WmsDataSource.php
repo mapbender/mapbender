@@ -72,6 +72,11 @@ class WmsDataSource extends DataSource
         return '@MapbenderWms/Repository/view.html.twig';
     }
 
+    public function getAccentColor(): string
+    {
+        return 'primary';
+    }
+
     public function areServiceUrlsInternal(SourceInstance $instance): bool
     {
         return $this->configGenerator->useTunnel($instance);

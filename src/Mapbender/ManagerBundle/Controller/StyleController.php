@@ -7,6 +7,9 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Style;
+use Mapbender\ManagerBundle\Form\Type\StyleType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +19,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[ManagerRoute("/styles")]
 class StyleController extends ApplicationControllerBase
 {
-    private const VALID_SOURCE_TYPES = ['manual', 'mapbox-json', 'sld', 'ogc_api', 'digitizer'];
-
     public function __construct(
         EntityManagerInterface $em,
         protected TranslatorInterface $trans,
@@ -65,44 +66,14 @@ class StyleController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES);
         $style = new Style();
         $style->setSourceType('manual');
+        $style->setStyle(json_encode($this->getDefaultStyleProperties(), JSON_PRETTY_PRINT));
 
-        // OpenLayers default style as initial value
-        $defaultStyle = json_encode([
-            'fillColor' => '#0099ff',
-            'fillOpacity' => 0.4,
-            'strokeColor' => '#3399cc',
-            'strokeWidth' => 1.25,
-            'strokeOpacity' => 1,
-            'strokeDashstyle' => 'solid',
-            'strokeLinecap' => 'round',
-            'pointRadius' => 5,
-            'label' => '',
-            'fontFamily' => 'Arial, Helvetica, sans-serif',
-            'fontSize' => 11,
-            'fontWeight' => 'regular',
-            'fontColor' => '#333333',
-            'fontOpacity' => 1,
-        ], JSON_PRETTY_PRINT);
-        $style->setStyle($defaultStyle);
+        $form = $this->createForm(StyleType::class, $style);
+        $form->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $name = trim($request->request->get('name', ''));
-            if ($name === '') {
-                $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.name_required'));
-                $style->setStyle($request->request->get('style'));
-                return $this->render('@MapbenderManager/Style/edit.html.twig', [
-                    'style' => $style,
-                    '_visual' => $this->extractVisualProps($style),
-                    'nameError' => true,
-                ]);
-            }
-            $style->setName($name);
-            $style->setStyle($request->request->get('style'));
-            $sourceType = $request->request->get('sourceType');
-            if ($sourceType && in_array($sourceType, self::VALID_SOURCE_TYPES, true)) {
-                $style->setSourceType($sourceType);
-            }
+        $styleJsonValid = !$form->isSubmitted() || $this->validateStyleJson($form, $style);
 
+        if ($form->isSubmitted() && $form->isValid() && $styleJsonValid) {
             $this->em->persist($style);
             $this->em->flush();
 
@@ -111,6 +82,7 @@ class StyleController extends ApplicationControllerBase
         }
 
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
+            'form' => $form->createView(),
             'style' => $style,
             '_visual' => $this->extractVisualProps($style),
             'isNew' => true,
@@ -126,28 +98,16 @@ class StyleController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        if ($style->getSourceType() !== 'manual' && !in_array($style->getSourceType(), ['mapbox-json', 'sld'], true)) {
+        if (!in_array($style->getSourceType(), ['manual', 'mapbox-json', 'sld'], true)) {
             return $this->redirectToRoute('mapbender_manager_style_view', ['id' => $id]);
         }
 
-        if ($request->isMethod('POST')) {
-            $name = trim($request->request->get('name', ''));
-            if ($name === '') {
-                $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.name_required'));
-                $style->setStyle($request->request->get('style'));
-                return $this->render('@MapbenderManager/Style/edit.html.twig', [
-                    'style' => $style,
-                    '_visual' => $this->extractVisualProps($style),
-                    'nameError' => true,
-                ]);
-            }
-            $style->setName($name);
-            $style->setStyle($request->request->get('style'));
-            $sourceType = $request->request->get('sourceType');
-            if ($sourceType && in_array($sourceType, self::VALID_SOURCE_TYPES, true)) {
-                $style->setSourceType($sourceType);
-            }
+        $form = $this->createForm(StyleType::class, $style);
+        $form->handleRequest($request);
 
+        $styleJsonValid = !$form->isSubmitted() || $this->validateStyleJson($form, $style);
+
+        if ($form->isSubmitted() && $form->isValid() && $styleJsonValid) {
             $this->em->flush();
 
             $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.updated'));
@@ -155,6 +115,7 @@ class StyleController extends ApplicationControllerBase
         }
 
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
+            'form' => $form->createView(),
             'style' => $style,
             '_visual' => $this->extractVisualProps($style),
         ]);
@@ -169,7 +130,10 @@ class StyleController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
+        $form = $this->createForm(StyleType::class, $style);
+
         return $this->render('@MapbenderManager/Style/edit.html.twig', [
+            'form' => $form->createView(),
             'style' => $style,
             '_visual' => $this->extractVisualProps($style),
             'readonly' => true,
@@ -210,7 +174,7 @@ class StyleController extends ApplicationControllerBase
         }
         $style = $this->em->getRepository(Style::class)->find($id);
         if ($style) {
-            if ($style->getSourceType() === 'ogc_api' && $style->getSourceId()) {
+            if ($style->getSourceId()) {
                 $source = $this->em->getRepository(Source::class)->find($style->getSourceId());
                 if ($source) {
                     $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.cannot_delete_source_style'));
@@ -227,26 +191,54 @@ class StyleController extends ApplicationControllerBase
 
     private function extractVisualProps(Style $style): array
     {
-        $defaults = [
+        $defaults = $this->getDefaultStyleProperties();
+        $json = $style->getStyle() ? json_decode($style->getStyle(), true) : [];
+        if (!is_array($json)) {
+            $json = [];
+        }
+        return array_merge($defaults, array_intersect_key($json, $defaults));
+    }
+
+    protected function getDefaultStyleProperties(): array
+    {
+        return [
             'fillColor' => '#0099ff',
             'fillOpacity' => 0.4,
             'pointRadius' => 5,
             'strokeColor' => '#3399cc',
             'strokeOpacity' => 1,
-            'strokeWidth' => 1,
+            'strokeWidth' => 1.25,
             'strokeLinecap' => 'round',
             'strokeDashstyle' => 'solid',
             'label' => '',
             'fontFamily' => 'Arial, Helvetica, sans-serif',
             'fontSize' => 11,
             'fontWeight' => 'regular',
-            'fontColor' => '#000000',
+            'fontColor' => '#333333',
             'fontOpacity' => 1,
         ];
-        $json = $style->getStyle() ? json_decode($style->getStyle(), true) : [];
-        if (!is_array($json)) {
-            $json = [];
+    }
+
+    private function validateStyleJson(FormInterface $form, Style $style): bool
+    {
+        $raw = (string) $style->getStyle();
+        if ('' === trim($raw)) {
+            $form->get('style')->addError(new FormError($this->trans->trans(
+                'mb.ogcapifeatures.admin.style.editor.invalid_json',
+                ['error' => 'empty input']
+            )));
+            return false;
         }
-        return array_merge($defaults, array_intersect_key($json, $defaults));
+
+        try {
+            json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+            return true;
+        } catch (\JsonException $e) {
+            $form->get('style')->addError(new FormError($this->trans->trans(
+                'mb.ogcapifeatures.admin.style.editor.invalid_json',
+                ['error' => $e->getMessage()]
+            )));
+            return false;
+        }
     }
 }

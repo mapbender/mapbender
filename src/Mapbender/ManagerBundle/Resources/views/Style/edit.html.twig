@@ -8,8 +8,8 @@
 
 {% block manager_content %}
     <div class="content-box content-box-lg">
-    <form method="post" novalidate action="{{ style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new') }}"{{ readonly|default(false) ? ' class="style-readonly"' : '' }}>
-        <input type="hidden" id="sourceType" name="sourceType" value="{{ style.sourceType|default('manual') }}">
+    {{ form_start(form, {action: style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new'), attr: readonly|default(false) ? {class: 'style-readonly', novalidate: 'novalidate'} : {novalidate: 'novalidate'}}) }}
+        {{ form_widget(form.sourceType, {id: 'sourceType'}) }}
         {% if readonly|default(false) %}
         <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
             <i class="fas fa-lock me-2"></i>
@@ -18,11 +18,7 @@
         <fieldset disabled>
         {% endif %}
         <div class="mb-4">
-            <label for="name" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.name_label' | trans }} <span class="text-danger">*</span></label>
-            <input type="text" class="form-control{{ nameError|default(false) ? ' is-invalid' : '' }}" id="name" name="name" value="{{ style.name }}" required placeholder="{{ 'mb.ogcapifeatures.admin.style.editor.name_placeholder' | trans }}">
-            {% if nameError|default(false) %}
-                <div class="invalid-feedback">{{ 'mb.ogcapifeatures.admin.style.name_required' | trans }}</div>
-            {% endif %}
+            {{ form_row(form.name) }}
         </div>
         {% if readonly|default(false) %}
         </fieldset>
@@ -39,12 +35,14 @@
                         <i class="fas fa-code tab-icon"></i>{{ 'mb.ogcapifeatures.admin.style.editor.tab_json' | trans }}
                     </a>
                 </li>
+                {% if not readonly|default(false) %}
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="tab-import" data-bs-toggle="tab" data-bs-target="#pane-import" role="tab">
                         <i class="fas fa-file-import tab-icon"></i>{{ 'mb.ogcapifeatures.admin.style.editor.tab_import' | trans }}
                         <span id="import-tab-warning" class="d-none badge bg-danger ms-1" title="{{ 'mb.ogcapifeatures.admin.style.editor.import_overwrite_badge' | trans }}">!</span>
                     </a>
                 </li>
+                {% endif %}
             </ul>
             <div class="tab-content">
                 {# ── Visual Editor Tab ── #}
@@ -56,9 +54,15 @@
                             <span class="text-muted fw-bold text-uppercase" style="font-size:12px;letter-spacing:0.5px;">
                                 <i class="fas fa-layer-group me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.mapbox_layers' | trans }}
                             </span>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-add-layer">
+                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-plus me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.add_layer' | trans }}
                             </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item -js-add-layer" data-layer-type="fill" href="#"><i class="fas fa-square me-2"></i>Fill</a></li>
+                                <li><a class="dropdown-item -js-add-layer" data-layer-type="line" href="#"><i class="fas fa-minus me-2"></i>Line</a></li>
+                                <li><a class="dropdown-item -js-add-layer" data-layer-type="circle" href="#"><i class="fas fa-circle me-2"></i>Circle</a></li>
+                                <li><a class="dropdown-item -js-add-layer" data-layer-type="symbol" href="#"><i class="fas fa-font me-2"></i>Symbol</a></li>
+                            </ul>
                         </div>
                         <div id="layer-accordion" class="accordion"></div>
                     </div>
@@ -78,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="mb-3">
+                                <div class="mb-3 -js-range-group">
                                     <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="fillOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fillOpacity ?? 1 }}">
                                 </div>
@@ -104,7 +108,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="mb-3">
+                                <div class="mb-3 -js-range-group">
                                     <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="strokeOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.strokeOpacity ?? 1 }}">
                                 </div>
@@ -200,7 +204,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="mb-3">
+                                <div class="mb-3 -js-range-group">
                                     <label class="form-label fw-bold w-100">{{ 'mb.ogcapifeatures.admin.style.editor.font_opacity' | trans }} <span class="float-end badge bg-secondary value-preview"></span></label>
                                     <input data-prop="fontOpacity" class="form-range" type="range" min="0" max="1" step="any" value="{{ _visual.fontOpacity ?? 1 }}">
                                 </div>
@@ -232,10 +236,8 @@
                 {# ── Mapbox JSON Tab ── #}
                 <div class="tab-pane fade" id="pane-json" role="tabpanel">
                     <div class="mb-3">
-                        <label for="style" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.mapbox_style_json' | trans }}</label>
-                        <textarea class="form-control" id="style" name="style" rows="24"
-                                  data-collection-id="{{ style.collectionId|default('') }}"
-                                  data-is-new="{{ isNew|default(false) ? '1' : '0' }}">{{ style.style }}</textarea>
+                        <label for="{{ form.style.vars.id }}" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.mapbox_style_json' | trans }}</label>
+                        {{ form_widget(form.style, {id: 'style', attr: {rows: 24, 'data-collection-id': style.collectionId|default(''), 'data-is-new': isNew|default(false) ? '1' : '0'}}) }}
                         <div class="form-text text-muted mt-1"><i class="fas fa-circle-info me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.json_syntax_only_note' | trans }}</div>
                     </div>
                 </div>
@@ -299,9 +301,9 @@
             {% if not readonly|default(false) %}
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.save' | trans }}</button>
             {% endif %}
-            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-secondary">{{ readonly|default(false) ? 'mb.ogcapifeatures.admin.style.editor.back' | trans : 'mb.ogcapifeatures.admin.style.editor.cancel' | trans }}</a>
+            <a href="{{ path('mapbender_manager_style_index') }}" class="btn btn-light">{{ readonly|default(false) ? 'mb.ogcapifeatures.admin.style.editor.back' | trans : 'mb.ogcapifeatures.admin.style.editor.cancel' | trans }}</a>
         </div>
-    </form>
+    {{ form_end(form) }}
     </div>
 
     {# ── JS Templates (cloned by style-editor-layers.js / style-editor.js) ── #}
@@ -399,7 +401,7 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
-    <script src="{{ asset('bundles/mapbendermanager/js/sld-converter.js') }}"></script>
+    <script src="{{ asset('bundles/mapbendermanager/js/geostyler-bridge.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor-preview.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor-layers.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor.js') }}"></script>

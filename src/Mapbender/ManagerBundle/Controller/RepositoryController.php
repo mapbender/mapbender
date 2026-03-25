@@ -20,7 +20,7 @@ use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
-use Mapbender\OgcApiFeaturesBundle\Component\OgcApiFeaturesLoader;
+use Mapbender\CoreBundle\Component\Source\StyleableSourceLoaderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -96,7 +96,7 @@ class RepositoryController extends ApplicationControllerBase
                 $this->em->flush();
                 $this->em->commit();
 
-                if ($loader instanceof OgcApiFeaturesLoader) {
+                if ($loader instanceof StyleableSourceLoaderInterface) {
                     $loader->loadStylesForSource($source);
                     $this->em->flush();
                 }
@@ -164,9 +164,9 @@ class RepositoryController extends ApplicationControllerBase
             // in backend, show all urls
             'secureUrls' => false,
         );
-        if ($source->getType() === 'ogc_api_features') {
+        $loader = $dataSource->getLoader();
+        if ($loader instanceof StyleableSourceLoaderInterface) {
             $viewData['styles'] = $this->em->getRepository(Style::class)->findBy([
-                'sourceType' => 'ogc_api',
                 'sourceId' => $source->getId(),
             ]);
         }
@@ -227,7 +227,6 @@ class RepositoryController extends ApplicationControllerBase
         // Delete associated styles before removing the source
         $styles = $this->em->getRepository(Style::class)->findBy([
             'sourceId' => $source->getId(),
-            'sourceType' => 'ogc_api',
         ]);
         foreach ($styles as $style) {
             $this->em->remove($style);
@@ -274,7 +273,7 @@ class RepositoryController extends ApplicationControllerBase
                 $this->em->flush();
                 $this->em->commit();
 
-                if ($loader instanceof OgcApiFeaturesLoader) {
+                if ($loader instanceof StyleableSourceLoaderInterface) {
                     $loader->loadStylesForSource($source);
                     $this->em->flush();
                 }

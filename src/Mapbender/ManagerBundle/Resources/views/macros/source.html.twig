@@ -4,20 +4,7 @@
       <tr>
           <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
           <td>
-              {%- set type_name = source.type -%}
-              {%- if type_name == 'WMS' -%}
-                  <span class="badge bg-primary">OGC WMS{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
-              {%- elseif type_name == 'WMTS' -%}
-                  <span class="badge bg-info text-white">OGC WMTS{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
-              {%- elseif type_name == 'TMS' -%}
-                  <span class="badge bg-warning text-white">TMS{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
-              {%- elseif type_name == 'vector_tiles' -%}
-                  <span class="badge bg-dark">Vector Tiles</span>
-              {%- elseif type_name == 'ogc_api_features' -%}
-                  <span class="badge bg-success">OGC API Features v1</span>
-              {%- else -%}
-                  <span class="badge bg-secondary">{{ source.type | source_label }}{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
-              {%- endif -%}
+              <span class="badge bg-{{ source.type | source_accent_color }}">{{ source.type | source_label }}{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
           </td>
       </tr>
       {% if source.displayUrl %}

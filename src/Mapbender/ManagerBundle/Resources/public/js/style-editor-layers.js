@@ -126,17 +126,27 @@ class StyleEditorLayers {
         });
     }
 
-    addNewLayer() {
+    addNewLayer(type) {
         const doc = this.editor.getJsonFromTextarea();
         if (!Mapbender.StyleUtils.isMultiLayerStyle(doc)) return;
 
+        type = type || 'fill';
+        const defaults = {
+            fill: { 'fill-color': '#ff0000', 'fill-opacity': 0.8 },
+            line: { 'line-color': '#3399cc', 'line-width': 2, 'line-opacity': 1 },
+            circle: { 'circle-radius': 5, 'circle-color': '#ff0000', 'circle-opacity': 0.8, 'circle-stroke-color': '#000000', 'circle-stroke-width': 1 },
+            symbol: {}
+        };
         const newLayer = {
-            type: 'fill',
+            type: type,
             id: `new-layer-${this._layerCounter}`,
-            paint: { 'fill-color': '#ff0000', 'fill-opacity': 0.8 },
+            paint: defaults[type] || {},
             source: doc.layers[0]?.source || 'vector-source',
             'source-layer': doc.layers[0]?.['source-layer'] || ''
         };
+        if (type === 'symbol') {
+            newLayer.layout = { 'text-field': '', 'text-size': 14 };
+        }
         doc.layers.push(newLayer);
         this.editor.setJsonToTextarea(doc);
         this.appendLayerItem(newLayer);
@@ -215,7 +225,17 @@ class StyleEditorLayers {
         frag.querySelector('label').textContent = label;
         const input = frag.querySelector('input');
         input.setAttribute('data-layer-prop', prop);
-        input.value = value;
+        if (typeof value === 'object' && value !== null) {
+            // Complex values (stops, expressions) – extract first color or show empty
+            if (value.stops && value.stops[0]) {
+                input.value = value.stops[0][1] || '';
+            } else {
+                input.value = '';
+            }
+            this._addComplexBadge(frag, value);
+        } else {
+            input.value = value;
+        }
         return frag;
     }
 
@@ -263,8 +283,8 @@ class StyleEditorLayers {
 
         const layer = {
             ...origLayer,
-            paint: {},
-            layout: origLayer.layout || {}
+            paint: {...(origLayer.paint || {})},
+            layout: {...(origLayer.layout || {})}
         };
 
         const paintControls = item.querySelector('.layer-paint-controls');
@@ -272,13 +292,13 @@ class StyleEditorLayers {
             paintControls.querySelectorAll('[data-layer-prop]').forEach(el => {
                 const prop = el.dataset.layerProp;
                 const val = el.value;
-                this._applyLayerPropValue(layer, type, prop, val);
+                this._applyLayerPropValue(layer, type, prop, val, origLayer);
             });
         }
         return layer;
     }
 
-    _applyLayerPropValue(layer, type, prop, val) {
+    _applyLayerPropValue(layer, type, prop, val, origLayer) {
         const numericPaint = new Set([
             'fill-opacity', 'line-width', 'line-opacity',
             'circle-radius', 'circle-opacity', 'circle-stroke-width',
@@ -294,13 +314,36 @@ class StyleEditorLayers {
             'background-color', 'fill-extrusion-color',
         ]);
 
+        const originalValue = this._getOriginalPropValue(origLayer, prop, type);
+        if (this._isComplexValue(originalValue)) {
+            const originalDisplay = this._extractDisplayValue(originalValue);
+            if (String(val) === String(originalDisplay)) {
+                // Keep original expression/stops object if user did not change the control value.
+                return;
+            }
+        }
+
         if (type === 'symbol') {
             if (prop === 'text-field') {
+                if (val === '') {
+                    delete layer.layout['text-field'];
+                    return;
+                }
                 try { layer.layout['text-field'] = JSON.parse(val); }
                 catch(e) { layer.layout['text-field'] = val; }
                 return;
             }
-            if (prop === 'text-size') { layer.layout['text-size'] = parseFloat(val); return; }
+            if (prop === 'text-size') {
+                if (val === '') {
+                    delete layer.layout['text-size'];
+                    return;
+                }
+                const parsed = parseFloat(val);
+                if (!Number.isNaN(parsed)) {
+                    layer.layout['text-size'] = parsed;
+                }
+                return;
+            }
             if (prop === 'text-font') {
                 layer.layout['text-font'] = val ? val.split(',').map(s => s.trim()) : [];
                 return;
@@ -308,10 +351,56 @@ class StyleEditorLayers {
         }
 
         if (colorPaint.has(prop)) {
-            if (val) layer.paint[prop] = val;
+            if (val) {
+                layer.paint[prop] = val;
+            } else {
+                delete layer.paint[prop];
+            }
         } else if (numericPaint.has(prop)) {
-            layer.paint[prop] = parseFloat(val);
+            if (val === '') {
+                delete layer.paint[prop];
+                return;
+            }
+            const parsed = parseFloat(val);
+            if (!Number.isNaN(parsed)) {
+                layer.paint[prop] = parsed;
+            }
         }
+    }
+
+    _getOriginalPropValue(origLayer, prop, type) {
+        if (type === 'symbol' && (prop === 'text-field' || prop === 'text-size' || prop === 'text-font')) {
+            return origLayer?.layout?.[prop];
+        }
+        return origLayer?.paint?.[prop];
+    }
+
+    _isComplexValue(val) {
+        return typeof val === 'object' && val !== null;
+    }
+
+    _addComplexBadge(frag, value) {
+        const label = value.stops ? 'zoom-dependent' : 'expression';
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-warning text-dark ms-1';
+        badge.style.fontSize = '0.7em';
+        badge.title = Mapbender.trans('mb.ogcapifeatures.admin.style.editor.complex_value_hint') || 'Editing replaces the original ' + label + ' value';
+        badge.textContent = label;
+        const labelEl = frag.querySelector('label');
+        if (labelEl) labelEl.appendChild(badge);
+    }
+
+    _extractDisplayValue(val) {
+        if (!this._isComplexValue(val)) {
+            return val ?? '';
+        }
+        if (Array.isArray(val)) {
+            return JSON.stringify(val);
+        }
+        if (val.stops && val.stops[0]) {
+            return val.stops[0][1] ?? '';
+        }
+        return '';
     }
 
     _scalarVal(val, fallback) {

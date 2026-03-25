@@ -7,13 +7,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Source\SourceLoader;
+use Mapbender\CoreBundle\Component\Source\StyleableSourceLoaderInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesSourceType;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesLayerSource;
 
-class OgcApiFeaturesLoader extends SourceLoader
+class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoaderInterface
 {
     public function __construct(
         protected HttpTransportInterface $httpTransport,
@@ -78,6 +79,13 @@ class OgcApiFeaturesLoader extends SourceLoader
 
     private function discoverCollectionProperties(string $baseUrl, string $collectionId): ?array
     {
+        // Try queryables endpoint first (preferred: gives keys + titles)
+        $queryables = $this->discoverFromQueryables($baseUrl, $collectionId);
+        if ($queryables !== null) {
+            return $queryables;
+        }
+
+        // Fallback: fetch a single item to discover property keys
         $itemsUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/items?f=json&limit=1';
         try {
             $response = $this->httpTransport->getUrl($itemsUrl);
@@ -95,46 +103,42 @@ class OgcApiFeaturesLoader extends SourceLoader
             return null;
         }
 
-        // Fetch human-readable titles from queryables endpoint
-        $titles = $this->discoverPropertyTitles($baseUrl, $collectionId);
-
         $result = [];
         foreach ($keys as $key) {
-            $entry = ['key' => $key];
-            if (isset($titles[$key])) {
-                $entry['title'] = $titles[$key];
-            }
-            $result[] = $entry;
+            $result[] = ['key' => $key];
         }
         return $result;
     }
 
-    private function discoverPropertyTitles(string $baseUrl, string $collectionId): array
+    private function discoverFromQueryables(string $baseUrl, string $collectionId): ?array
     {
         $queryablesUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/queryables?f=json';
         try {
             $response = $this->httpTransport->getUrl($queryablesUrl);
             if (!$response->isOk()) {
-                return [];
+                return null;
             }
             $data = json_decode($response->getContent(), true);
             if (!is_array($data) || empty($data['properties'])) {
-                return [];
+                return null;
             }
-            $titles = [];
+            $result = [];
             foreach ($data['properties'] as $key => $info) {
+                $entry = ['key' => $key];
                 if (!empty($info['title'])) {
-                    $titles[$key] = $info['title'];
+                    $entry['title'] = $info['title'];
                 }
+                $result[] = $entry;
             }
-            return $titles;
+            return $result;
         } catch (\Throwable) {
-            return [];
+            return null;
         }
     }
 
-    public function loadStylesForSource(OgcApiFeaturesSource $source): void
+    public function loadStylesForSource(Source $source): void
     {
+        /** @var OgcApiFeaturesSource $source */
         $baseUrl = rtrim($source->getJsonUrl(), '/');
         foreach ($source->getLayers() as $layer) {
             /** @var OgcApiFeaturesLayerSource $layer */
@@ -150,7 +154,7 @@ class OgcApiFeaturesLoader extends SourceLoader
                     continue;
                 }
                 foreach ($stylesJson['styles'] as $styleInfo) {
-                    $mbsLink = $this->findMbsLink($styleInfo);
+                    $mbsLink = $this->findMbsLink($styleInfo, $baseUrl, $collectionId);
                     if (!$mbsLink) {
                         continue;
                     }
@@ -163,21 +167,44 @@ class OgcApiFeaturesLoader extends SourceLoader
         }
     }
 
-    private function findMbsLink(array $styleInfo): ?string
+    private function findMbsLink(array $styleInfo, string $baseUrl, string $collectionId): ?string
     {
-        if (empty($styleInfo['links'])) {
-            // Fallback: try the style id with ?f=mbs
-            return null;
-        }
-        foreach ($styleInfo['links'] as $link) {
-            $type = $link['type'] ?? '';
-            if ($type === 'application/vnd.mapbox.style+json'
-                || str_contains($type, 'mapbox')
-                || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
-                return $link['href'];
+        if (!empty($styleInfo['links'])) {
+            foreach ($styleInfo['links'] as $link) {
+                $type = $link['type'] ?? '';
+                if ($type === 'application/vnd.mapbox.style+json'
+                    || str_contains($type, 'mapbox')
+                    || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
+                    return $link['href'];
+                }
+            }
+
+            // Fallback from any available style endpoint link: force f=mbs.
+            foreach ($styleInfo['links'] as $link) {
+                if (!empty($link['href'])) {
+                    return $this->withMapboxFormat($link['href']);
+                }
             }
         }
+
+        // Fallback: build URL from style id according to OGC API Styles conventions.
+        $styleId = $styleInfo['id'] ?? null;
+        if ($styleId) {
+            return $baseUrl
+                . '/collections/' . urlencode($collectionId)
+                . '/styles/' . urlencode((string) $styleId)
+                . '?f=mbs';
+        }
+
         return null;
+    }
+
+    private function withMapboxFormat(string $url): string
+    {
+        if (preg_match('/([?&])f=[^&]*/', $url)) {
+            return preg_replace('/([?&])f=[^&]*/', '${1}f=mbs', $url, 1) ?: $url;
+        }
+        return $url . (str_contains($url, '?') ? '&' : '?') . 'f=mbs';
     }
 
     private function fetchAndSaveStyle(
@@ -207,13 +234,15 @@ class OgcApiFeaturesLoader extends SourceLoader
                     break;
                 }
             }
-            $styleName = $sourceTitle . ' - ' . $layerTitle;
+            $remoteStyleName = $styleInfo['title'] ?? $styleInfo['id'] ?? 'style';
+            $styleName = $sourceTitle . ' - ' . $layerTitle . ' - ' . $remoteStyleName;
 
-            // Look up existing style for this source + collection to avoid duplicates on reload
+            // Look up existing style for this source + collection + style name to avoid duplicates on reload
             $style = $this->em->getRepository(Style::class)->findOneBy([
                 'sourceType' => 'ogc_api',
                 'sourceId' => $source->getId(),
                 'collectionId' => $collectionId,
+                'name' => $styleName,
             ]);
 
             if (!$style) {

@@ -3,7 +3,7 @@
  * Coordinates the visual/JSON/import tabs, flat editor sync, and form validation.
  *
  * Requires: StyleUtils (style-utils.js), StyleEditorLayers (style-editor-layers.js),
- *           StyleEditorPreview (style-editor-preview.js), SldConverter (sld-converter.js)
+ *           StyleEditorPreview (style-editor-preview.js), GeoStylerBridge (geostyler-bridge.js)
  */
 class StyleEditor {
     constructor() {
@@ -98,10 +98,12 @@ class StyleEditor {
             });
         }
 
-        const addBtn = document.getElementById('btn-add-layer');
-        if (addBtn) {
-            addBtn.addEventListener('click', () => this._layers.addNewLayer());
-        }
+        document.querySelectorAll('.-js-add-layer').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                this._layers.addNewLayer(el.getAttribute('data-layer-type'));
+            });
+        });
 
         this._bindFormValidation();
     }
@@ -112,7 +114,10 @@ class StyleEditor {
 
         form.addEventListener('submit', (e) => {
             const raw = this.styleTextarea.value.trim();
-            if (!raw) return;
+            if (!raw) {
+                e.preventDefault();
+                return;
+            }
             try {
                 const parsed = JSON.parse(raw);
                 this.setJsonToTextarea(parsed);
@@ -222,7 +227,7 @@ class StyleEditor {
 
     updateRangePreviews() {
         this.visualPane.querySelectorAll('input[type="range"]').forEach(input => {
-            const vp = input.closest('.mb-3').querySelector('.value-preview');
+            const vp = input.closest('.-js-range-group').querySelector('.value-preview');
             if (vp) {
                 const v = parseFloat(input.value);
                 vp.textContent = isNaN(v) ? '' : v.toFixed(2);
@@ -284,14 +289,14 @@ class StyleEditor {
         this._finalizeImport('mapbox-json', successEl);
     }
 
-    _importSld(content, warningsEl, successEl) {
-        const result = Mapbender.SldConverter.convert(content);
-        if (result.warnings.length) {
-            this._showWarnings(warningsEl, result.warnings);
+    async _importSld(content, warningsEl, successEl) {
+        try {
+            const mapboxStyle = await GeoStylerBridge.sldToMapbox(content);
+            this.setJsonToTextarea(mapboxStyle);
+            this._finalizeImport('sld', successEl);
+        } catch (err) {
+            this._showWarnings(warningsEl, [err.message]);
         }
-        if (!result.style) return;
-        this.setJsonToTextarea(result.style);
-        this._finalizeImport('sld', successEl);
     }
 
     _finalizeImport(sourceType, successEl) {

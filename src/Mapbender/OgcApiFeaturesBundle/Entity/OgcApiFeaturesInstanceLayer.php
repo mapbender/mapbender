@@ -57,9 +57,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
     protected ?array $tooltipPropertyMap = null;
 
-    public function setMinScale(?float $value): void
+    public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
+        return $this;
     }
 
     public function getMinScale(): ?float
@@ -67,9 +68,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->minScale;
     }
 
-    public function setMaxScale(?float $value): void
+    public function setMaxScale(?float $value): static
     {
         $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
+        return $this;
     }
 
     public function getMaxScale(): ?float
@@ -77,9 +79,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->maxScale;
     }
 
-    public function setFeatureLimit(int $featureLimit): void
+    public function setFeatureLimit(int $featureLimit): static
     {
         $this->featureLimit = $featureLimit;
+        return $this;
     }
 
     public function getFeatureLimit(): ?int
@@ -87,9 +90,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->featureLimit;
     }
 
-    public function setActive(bool $active): void
+    public function setActive(bool $active): static
     {
         $this->active = (bool)$active;
+        return $this;
     }
 
     public function getActive(): bool
@@ -97,9 +101,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->active;
     }
 
-    public function setAllowSelected(?bool $allowSelected): void
+    public function setAllowSelected(?bool $allowSelected): static
     {
         $this->allowSelected = (bool)$allowSelected;
+        return $this;
     }
 
     public function getAllowSelected(): ?bool
@@ -107,9 +112,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->allowSelected;
     }
 
-    public function setSelected(?bool $selected): void
+    public function setSelected(?bool $selected): static
     {
         $this->selected = (bool)$selected;
+        return $this;
     }
 
     public function getSelected(): ?bool
@@ -117,9 +123,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->selected;
     }
 
-    public function setAllowInfo(?bool $allowInfo): void
+    public function setAllowInfo(?bool $allowInfo): static
     {
         $this->allowInfo = (bool) $allowInfo;
+        return $this;
     }
 
     public function getAllowInfo(): ?bool
@@ -127,9 +134,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->allowInfo;
     }
 
-    public function setInfo(?bool $info): void
+    public function setInfo(?bool $info): static
     {
         $this->info = (bool) $info;
+        return $this;
     }
 
     public function getInfo(): ?bool
@@ -137,9 +145,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->info;
     }
 
-    public function setPriority($priority): void
+    public function setPriority($priority): static
     {
         $this->priority = $priority !== null ? intval($priority) : $priority;
+        return $this;
     }
 
     public function getPriority()
@@ -157,9 +166,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->styleId;
     }
 
-    public function setStyleId(?int $styleId): void
+    public function setStyleId(?int $styleId): static
     {
         $this->styleId = $styleId;
+        return $this;
     }
 
     public function getNativeStyleId(): ?int
@@ -167,9 +177,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->nativeStyleId;
     }
 
-    public function setNativeStyleId(?int $nativeStyleId): void
+    public function setNativeStyleId(?int $nativeStyleId): static
     {
         $this->nativeStyleId = $nativeStyleId;
+        return $this;
     }
 
     public function getSecondaryStyleIds(): array
@@ -177,9 +188,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->secondaryStyleIds ?? [];
     }
 
-    public function setSecondaryStyleIds(?array $secondaryStyleIds): void
+    public function setSecondaryStyleIds(?array $secondaryStyleIds): static
     {
         $this->secondaryStyleIds = $secondaryStyleIds ?: null;
+        return $this;
     }
 
     public function getTooltipPropertyMap(): ?array
@@ -187,8 +199,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->tooltipPropertyMap;
     }
 
-    public function setTooltipPropertyMap(?array $tooltipPropertyMap): void
+    public function setTooltipPropertyMap(?array $tooltipPropertyMap): static
     {
         $this->tooltipPropertyMap = $tooltipPropertyMap;
+        return $this;
     }
 }

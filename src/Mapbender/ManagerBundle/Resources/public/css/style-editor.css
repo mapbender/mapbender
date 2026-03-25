@@ -24,7 +24,7 @@
     border-color: #dee2e6 #dee2e6 transparent;
 }
 .style-editor-tabs .nav-tabs .nav-link.active {
-    color: #0d6efd;
+    color: var(--primary);
     background: #fff;
     border-color: #dee2e6 #dee2e6 #fff;
 }
@@ -110,7 +110,7 @@
 }
 #layer-accordion .accordion-button:not(.collapsed) {
     background: #e7f1ff;
-    color: #0d6efd;
+    color: var(--primary);
     box-shadow: none;
 }
 #layer-accordion .accordion-body {

@@ -71,6 +71,11 @@ class OgcApiFeaturesDataSource extends DataSource
         return '@MapbenderOgcApiFeatures/metadata-backend.html.twig';
     }
 
+    public function getAccentColor(): string
+    {
+        return 'success';
+    }
+
     public function getEntityTypeDiscriminator(): string
     {
         return self::TYPE;
