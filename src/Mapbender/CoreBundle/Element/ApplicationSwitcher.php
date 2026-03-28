@@ -100,6 +100,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
             try {
                 $application = $this->applicationResolver->getApplicationEntity($slug);
                 $appConfig['title'] = (!empty($appConfig['title'])) ? $appConfig['title'] : $application->getTitle();
+                $appConfig['description'] = (!empty($appConfig['description'])) ? $appConfig['description'] : $application->getDescription();
                 if (empty($appConfig['url'])) {
                     $appConfig['url'] = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
                 }
@@ -129,6 +130,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
             foreach ($conf['applications'] as $slug) {
                 $appConfig[$slug] = [
                     'title' => null,
+                    'description' => null,
                     'url' => null,
                     'imgUrl' => null,
                     'group' => null,

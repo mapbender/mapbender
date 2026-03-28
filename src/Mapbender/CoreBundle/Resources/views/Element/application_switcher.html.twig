@@ -3,7 +3,7 @@
         <select class="hiddenDropdown -fn-application-selector">
             {% for apps in config.applications %}
                 {% for slug, app in apps %}
-                    <option value="{{ slug }}" data-app-url="{{ app.url }}">
+                    <option value="{{ slug }}" data-app-url="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
                         {{ app.title }}
                     </option>
                 {% endfor %}
@@ -21,7 +21,7 @@
         <ul class="list">
             {% for slug, app in apps %}
                 <li class="list-item">
-                    <a href="{{ app.url }}">
+                    <a href="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
                         <div class="list-content">
                             {% if app.imgUrl is defined and app.imgUrl != false %}
                             <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
