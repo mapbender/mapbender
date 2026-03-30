@@ -449,11 +449,15 @@
             this.mbMap.getModel().initializeSourceLayers(sources);
 
             if (layertreeElement.length > 0) {
+                layertreeElement.data('mapbenderMbLayertree')._sortableInitialized = false;
                 layertreeElement.data('mapbenderMbLayertree')._createTree();
             }
             wmsloaderSources.forEach(source => {
                 this.mbMap.getModel().addSourceFromConfig(source);
             });
+            if (wmsloaderSources.length > 0) {
+                layertreeElement.data('mapbenderMbLayertree')._sortableInitialized = false;
+            }
             this.mbMap.getModel().applyViewParams(settings.viewParams);
             this.mbMap.element.trigger('mbsourcesrefreshed', {
                 mbMap: this.mbMap,

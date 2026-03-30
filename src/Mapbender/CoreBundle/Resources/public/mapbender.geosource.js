@@ -139,7 +139,8 @@ Mapbender.Geo.SourceHandler = {
             }
             if (layerObj.parent) {
                 var parentId = layerObj.parent.options.id;
-                if (parentId && parentIdOrder.indexOf(parentId) === -1) {
+                var hasChildren = layerObj.children;
+                if (parentId && !hasChildren && parentIdOrder.indexOf(parentId) === -1) {
                     parentIdOrder.push(parentId);
                 }
             }

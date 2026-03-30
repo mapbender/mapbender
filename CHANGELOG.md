@@ -21,6 +21,7 @@ Bugfixes:
 * When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
 * [Layertree] Improve performance of layertree-actions in layertrees with many WMS
 * Support adding the same shared instance more than once in an application ([#PR1821](https://github.com/mapbender/mapbender/pull/1821))
+* Fix broken layer sorting after WMS or new view was loaded ([#PR1837](https://github.com/mapbender/mapbender/pull/1837))
 
 Other:
 * [ViewManager] Load Views on demand with Ajax
