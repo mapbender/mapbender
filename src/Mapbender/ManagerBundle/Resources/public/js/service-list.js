@@ -27,7 +27,7 @@ $(function() {
 
             if (selectedType) {
                 var types = selectedType.split(',');
-                var itemType = $item.find('[data-source-type]').attr('data-source-type');
+                var itemType = ($item.find('[data-source-type]').attr('data-source-type') || '').toLowerCase();
                 if (types.indexOf(itemType) === -1) {
                     visible = false;
                 }

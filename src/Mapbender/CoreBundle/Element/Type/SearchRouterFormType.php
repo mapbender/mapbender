@@ -26,14 +26,28 @@ class SearchRouterFormType extends AbstractType
     /**
      * @inheritdoc
      */
+    /** Maps legacy Symfony 2 short form type aliases to FQCNs for backward compatibility */
+    private static array $typeAliasMap = [
+        'checkbox'   => \Symfony\Component\Form\Extension\Core\Type\CheckboxType::class,
+        'choice'     => \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class,
+        'collection' => \Symfony\Component\Form\Extension\Core\Type\CollectionType::class,
+        'file'       => \Symfony\Component\Form\Extension\Core\Type\FileType::class,
+        'hidden'     => \Symfony\Component\Form\Extension\Core\Type\HiddenType::class,
+        'integer'    => \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
+        'number'     => \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
+        'text'       => \Symfony\Component\Form\Extension\Core\Type\TextType::class,
+        'textarea'   => \Symfony\Component\Form\Extension\Core\Type\TextareaType::class,
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['fields']['form'] as $name => $conf) {
             $type = $conf['type'];
-            if (!class_exists($type)) {
+            $resolvedType = self::$typeAliasMap[$type] ?? $type;
+            if (!class_exists($resolvedType)) {
                 throw new \RuntimeException("Invalid form type " . $type . " in search configuration");
             }
-            $builder->add($this->escapeName($name), $type, $conf['options'] ?? []);
+            $builder->add($this->escapeName($name), $resolvedType, $conf['options'] ?? []);
         }
     }
 }

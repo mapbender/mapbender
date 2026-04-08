@@ -70,7 +70,7 @@ class OgcApiSource extends Mapbender.Source {
     }
 
     _createSimpleOlStyle(s) {
-        const fillColor = this._hexToRgba(s.fillColor || '#ff0000', s.fillOpacity ?? 1);
+        const fillColor = this._hexToRgba(s.fillColor || '#3399CC', s.fillOpacity ?? 1);
         const strokeColor = this._hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity ?? 1);
         const strokeWidth = parseFloat(s.strokeWidth) || 1;
         const pointRadius = parseFloat(s.pointRadius) || 5;

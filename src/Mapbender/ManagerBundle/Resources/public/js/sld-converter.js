@@ -199,7 +199,7 @@ class SldConverter {
     }
 
     static _parsePointSymbolizer(sym, warnings) {
-        const result = { radius: 5, fillColor: '#ff0000', fillOpacity: 1, strokeColor: '#000000', strokeWidth: 1 };
+        const result = { radius: 5, fillColor: '#3399CC', fillOpacity: 1, strokeColor: '#000000', strokeWidth: 1 };
         const graphic = SldConverter._findChild(sym, 'Graphic');
         if (!graphic) return result;
 

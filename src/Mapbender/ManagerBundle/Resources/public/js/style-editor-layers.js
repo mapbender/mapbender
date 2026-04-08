@@ -132,9 +132,9 @@ class StyleEditorLayers {
 
         type = type || 'fill';
         const defaults = {
-            fill: { 'fill-color': '#ff0000', 'fill-opacity': 0.8 },
+            fill: { 'fill-color': '#3399CC', 'fill-opacity': 0.8 },
             line: { 'line-color': '#3399cc', 'line-width': 2, 'line-opacity': 1 },
-            circle: { 'circle-radius': 5, 'circle-color': '#ff0000', 'circle-opacity': 0.8, 'circle-stroke-color': '#000000', 'circle-stroke-width': 1 },
+            circle: { 'circle-radius': 5, 'circle-color': '#3399CC', 'circle-opacity': 0.8, 'circle-stroke-color': '#000000', 'circle-stroke-width': 1 },
             symbol: {}
         };
         const newLayer = {

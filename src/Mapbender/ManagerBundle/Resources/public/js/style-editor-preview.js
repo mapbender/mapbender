@@ -26,7 +26,7 @@ class StyleEditorPreview {
 
     drawAll(visualStyle) {
         const s = visualStyle;
-        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#ff0000', parseFloat(s.fillOpacity) || 1);
+        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', parseFloat(s.fillOpacity) || 1);
         const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
         const strokeWidth = parseFloat(s.strokeWidth) || 1;
         const pointRadius = parseFloat(s.pointRadius) || 6;
