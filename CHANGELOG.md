@@ -25,6 +25,14 @@ Other:
 Security:
 * [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
 * [WMS] Do not expose hidden vendor-specific parameters ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
+* [Search] Add validation for input fields, new parameter `mapbender.search.default_regex` ([#PR1824](https://github.com/mapbender/mapbender/pull/1824), [#PR1834](https://github.com/mapbender/mapbender/pull/1834))
+* [Password/Registration] Use stronger hashing algorithms ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [API/Upload] Prevent potential ZIP-Slip path traversal ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [Print] Prevent potential SSRF attacks in Print Service ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [XML] Prevent potential XXE attacks ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [OwsProxy] Prevent potential SSL hostname spoofing ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [API] Prevent internal information disclosure via error messages ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
+* [ConfigCheckCommand] Prevent potential command injection ([#PR1833](https://github.com/mapbender/mapbender/pull/1833))
 
 Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
@@ -32,9 +40,11 @@ Features:
 
 Bugfixes:
 * [SearchRouter] Fix potential CSRF token errors when multiple search elements were present ([#PR1813](https://github.com/mapbender/mapbender/pull/1813))
+* [ViewManager] Fix layer tree behaving wrong after applying a saved state ([#PR1835](https://github.com/mapbender/mapbender/pull/1835))
 * When duplicating applications, element permissions were not duplicated ([#PR1816](https://github.com/mapbender/mapbender/pull/1816))
 * [Layertree] Improve performance of layertree-actions in layertrees with many WMS
 * Support adding the same shared instance more than once in an application ([#PR1821](https://github.com/mapbender/mapbender/pull/1821))
+* Fix broken layer sorting after WMS or new view was loaded ([#PR1837](https://github.com/mapbender/mapbender/pull/1837))
 
 Other:
 * [ViewManager] Load Views on demand with Ajax

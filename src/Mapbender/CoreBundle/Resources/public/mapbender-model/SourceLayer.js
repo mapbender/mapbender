@@ -212,7 +212,7 @@
          */
         getSupportedMenuOptions() {
             const supported = ['layerremove'];
-            if (this.options.metadataUrl) {
+            if (this.options.metadataUrl && !((this.options.id + '').startsWith('wmsloader'))) {
                 supported.push('metadata');
             }
             // opacity + dimension are only available on root layer

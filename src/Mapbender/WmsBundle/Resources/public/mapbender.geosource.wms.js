@@ -92,6 +92,20 @@ window.Mapbender = Mapbender || {};
             return this.nativeLayers;
         }
 
+        getSourceId() {
+            if (this.cachedSourceId) {
+                return this.cachedSourceId;
+            }
+            let sourceId = this.id;
+            // if source id matches pattern "<assignmentId>_<sourceId>", extract sourceId part
+            const match = sourceId.match(/^[0-9]+_([0-9]+)$/);
+            if (match) {
+                sourceId = match[1];
+            }
+            this.cachedSourceId = sourceId;
+            return sourceId;
+        }
+
         /**
          * @return {SourceSettings}
          */

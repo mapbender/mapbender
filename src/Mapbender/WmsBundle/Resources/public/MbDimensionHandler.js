@@ -38,7 +38,7 @@
         _setupGroup(targetDimensions) {
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
-                var source = this.model.getSourceById(targetDimension.sourceId);
+                var source = this.model.getSourceBySourceId(targetDimension.sourceId);
                 var sourceDimensionConfig = source && this._getSourceDimensionConfig(source, targetDimension.dimensionName);
                 if (sourceDimensionConfig) {
                     return Mapbender.Dimension(sourceDimensionConfig);
@@ -66,7 +66,7 @@
                 },
                 stop: function (event, ui) {
                     for (var i = 0; i < targetDimensions.length; ++i) {
-                        var source = self.model.getSourceById(targetDimensions[i].sourceId);
+                        var source = self.model.getSourceBySourceId(targetDimensions[i].sourceId);
                         if (source) {
                             var params = {};
                             params[dimension.getOptions().__name] = dimension.valueFromStep(ui.value);
@@ -91,7 +91,7 @@
         _preconfigureSources(targetDimensions, extent) {
             for (var i = 0; i < targetDimensions.length; ++i) {
                 var targetDimension = targetDimensions[i];
-                var source = this.model.getSourceById(targetDimension.sourceId);
+                var source = this.model.getSourceBySourceId(targetDimension.sourceId);
                 this._preconfigureSource(source, targetDimension.dimensionName, extent);
             }
         }

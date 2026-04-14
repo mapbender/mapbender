@@ -30,5 +30,8 @@ parameters:
     mapbender.icons.disable_default_fa: false
     mapbender.icons.custom: ~
 
+    # default regex for validating search router input fields
+    mapbender.search.default_regex: '.*'
+
     mapbender.show_proxied_service_urls: false
 

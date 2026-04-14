@@ -16,7 +16,7 @@
             this.$element.on('click', '.basesourcesetswitch', function(evt) {
                 self._toggleMapset(evt);
             });
-            this.mbMap.element.on('mbmapsourcechanged', function() {
+            this.mbMap.element.on('mbmapsourcechanged mbsourcesrefreshed', function() {
                 self.updateHighlights();
             });
             this.updateHighlights();
@@ -51,7 +51,7 @@
                 });
                 var sources = [];
                 for (var j = 0; j < sourceIds.length; ++j) {
-                    var source = this.mbMap.model.getSourceById(sourceIds[j]);
+                    var source = this.mbMap.model.getSourceBySourceId(sourceIds[j]);
                     if (source) {
                         if (source.getSelected() && -1 === allActiveSources.indexOf(source)) {
                             allActiveSources.push(source);

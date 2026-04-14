@@ -383,6 +383,7 @@
             this.mbMap.map.olMap.getAllLayers().forEach(layer => {
                 this.mbMap.map.olMap.removeLayer(layer);
             });
+            Mapbender.layersets = [];
             let wmsloaderSources = [];
             let sources = [];
 
@@ -396,7 +397,16 @@
                     let layersetSource = l.children.filter(child => child.id === source.id)[0];
                     return typeof(layersetSource) !== 'undefined' && source.id === layersetSource.id;
                 })[0];
-                source.layerset = new Mapbender.Layerset(layerset.title_, layerset.id, layerset.selected);
+                let existingLayerset = Mapbender.layersets.filter(ls => ls.id === layerset.id);
+                if (existingLayerset.length > 0) {
+                    existingLayerset[0].children.push(source);
+                    source.layerset = existingLayerset[0];
+                } else {
+                    let newLayerset = new Mapbender.Layerset(layerset.title_, layerset.id, layerset.selected);
+                    newLayerset.children.push(source);
+                    source.layerset = newLayerset;
+                    Mapbender.layersets.push(newLayerset);
+                }
                 this.mbMap.getModel().sourceTree.push(source);
                 sources.push(source);
             });
@@ -404,11 +414,15 @@
             this.mbMap.getModel().initializeSourceLayers(sources);
 
             if (layertreeElement.length > 0) {
+                layertreeElement.data('MbLayertree')._sortableInitialized = false;
                 layertreeElement.data('MbLayertree')._createTree();
             }
             wmsloaderSources.forEach(source => {
                 this.mbMap.getModel().addSourceFromConfig(source);
             });
+            if (wmsloaderSources.length > 0) {
+                layertreeElement.data('MbLayertree')._sortableInitialized = false;
+            }
             this.mbMap.getModel().applyViewParams(settings.viewParams);
         }
 

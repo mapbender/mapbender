@@ -35,8 +35,10 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                                 protected FormFactoryInterface      $formFactory,
                                 protected CsrfTokenManagerInterface $csrfTokenManager,
                                 protected ContainerInterface        $container,
-                                protected ?LoggerInterface          $logger = null,
-                                protected TranslatorInterface       $translator,)
+                                protected ?LoggerInterface          $logger,
+                                protected TranslatorInterface       $translator,
+                                protected string                    $defaultPattern,
+    )
     {
     }
 
@@ -101,7 +103,6 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 ),
                 "styleMap" => $this->getDefaultStyleMapOptions(),
             ),
-            "pattern" => "^[\p{L}0-9_\-\s]*$",
         );
     }
 
@@ -240,27 +241,38 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
 
     protected function validateInputData($inputData, $categoryConf)
     {
-        $config = $this->getDefaultRouteConfiguration();
-        $pattern = $config['pattern'];
         foreach ($categoryConf['form'] as $key => $formField) {
-            $pattern = $formField['pattern'] ?? $pattern;
+            $pattern = $formField['pattern'] ?? $this->defaultPattern;
+            // Escape the chosen delimiter in the pattern to avoid breaking the regex.
+            $escapedPattern = str_replace('#', '\#', $pattern);
+            $regex = '#' . $escapedPattern . '#u';
+
             $multiValue = $formField['multi_value'] ?? false;
             if ($multiValue) {
                 $separatorPattern = SQLSearchEngine::getSeparatorPattern($formField);
                 $values = array_map('trim', preg_split($separatorPattern, $inputData[$key]));
                 $values = array_filter($values, fn($v) => $v !== '');
                 foreach ($values as $singleValue) {
-                    if (!preg_match('/' . $pattern . '/u', $singleValue)) {
-                        $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
-                        throw new BadRequestHttpException($message);
-                    }
+                    $this->validateRegex($singleValue, $regex);
                 }
             } else {
-                if (!preg_match('/' . $pattern . '/u', $inputData[$key])) {
-                    $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
-                    throw new BadRequestHttpException($message);
-                }
+                $this->validateRegex($inputData[$key], $regex);
             }
+        }
+    }
+
+    /**
+     * @throws BadRequestHttpException if the value does not match the regex or if the regex is invalid
+     * @return void
+     */
+    protected function validateRegex(string $value, string $regex): void
+    {
+        // Suppress potential warnings from invalid regexes and handle errors explicitly.
+        $result = @preg_match($regex, $value);
+        if ($result !== 1) {
+            // Either no match (0) or regex error (false): treat as invalid input.
+            $message = $this->translator->trans('mb.core.searchrouter.invalid_input_data');
+            throw new BadRequestHttpException($message);
         }
     }
 

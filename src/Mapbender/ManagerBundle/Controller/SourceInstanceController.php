@@ -147,13 +147,9 @@ class SourceInstanceController extends ApplicationControllerBase
                 $this->addFlash('success', $this->trans->trans('mb.layerset.remove.success'));
             }
 
-            if ($returnUrl = $request->query->get('return')) {
-                return $this->redirect($returnUrl);
-            } else {
-                return $this->redirectToRoute('mapbender_manager_repository_index', array(
-                    '_fragment' => 'tabSharedInstances',
-                ));
-            }
+            return $this->redirectToRoute('mapbender_manager_repository_index', array(
+                '_fragment' => 'tabSharedInstances',
+            ));
         } else {
             $viewData = $this->getApplicationRelationViewData($instance) + array(
                     'form' => $dummyForm->createView(),
