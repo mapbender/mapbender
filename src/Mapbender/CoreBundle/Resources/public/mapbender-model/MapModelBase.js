@@ -487,7 +487,8 @@ window.Mapbender.MapModelBase = (function() {
                     layerId = sourceAndLayerId.layerId;
                 }
                 console.log("Activating", sourceId, layerId);
-                const source = self.getSourceBySourceId(sourceId);
+                // supports resolving sources both with and without layerset prefix
+                const source = self.getSourceById(sourceId) ?? self.getSourceBySourceId(sourceId);
                 if (!source) return;
 
                 let layer = layerId ? source.getLayerById(layerId, true) : source.getRootLayer();
