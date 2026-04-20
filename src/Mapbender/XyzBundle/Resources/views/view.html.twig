@@ -1,0 +1,22 @@
+{# @var source \Mapbender\XyzBundle\Entity\XyzSource #}
+{% extends "@MapbenderManager/Repository/source/view.html.twig" %}
+
+{% block layers_content %}
+    <p>{{ 'mb.xyz.admin.layer_hint' | trans }}</p>
+{% endblock %}
+
+
+{% block details_content %}
+    <table>
+        <tr>
+            <th>{{ 'mb.xyz.admin.url_template' | trans }}:</th>
+            <td>{{ source.urlTemplate }}</td>
+        </tr>
+        {% if source.attribution %}
+        <tr>
+            <th>{{ 'mb.xyz.admin.attribution' | trans }}:</th>
+            <td>{{ source.attribution }}</td>
+        </tr>
+        {% endif %}
+    </table>
+{% endblock %}

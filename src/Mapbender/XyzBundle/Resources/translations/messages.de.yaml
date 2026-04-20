@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Titel
+      url_template: Dienst-URL
+      url_template.help: 'Entweder als vollständige Vorlage mit Platzhaltern (z.B. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) oder als Basis-URL (z.B. <code>https://tile.openstreetmap.org/</code>) – dann wird <code>/{z}/{x}/{y}.png</code> automatisch angehängt.'
+      attribution: Namensnennung
+      min_zoom: 'Minimale Zoomstufe'
+      max_zoom: 'Maximale Zoomstufe'
+      min_scale: 'Minimaler Maßstab (Nenner)'
+      max_scale: 'Maximaler Maßstab (Nenner)'
+      selected: 'Bei Anwendungsstart aktivieren'
+      no_limit: 'Keine Einschränkung'
+      layer_hint: 'XYZ-Tiles-Quellen haben keine separate Ebenenhierarchie.'

@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Título
+      url_template: 'URL del servicio'
+      url_template.help: 'Como plantilla completa con marcadores (p.ej. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) o como URL base (p.ej. <code>https://tile.openstreetmap.org/</code>) — en ese caso se añade automáticamente <code>/{z}/{x}/{y}.png</code>.'
+      attribution: Atribución
+      min_zoom: 'Nivel de zoom mínimo'
+      max_zoom: 'Nivel de zoom máximo'
+      min_scale: 'Escala mínima (denominador)'
+      max_scale: 'Escala máxima (denominador)'
+      selected: 'Activar al iniciar la aplicación'
+      no_limit: 'Sin límite'
+      layer_hint: 'Las fuentes de teselas XYZ no tienen una jerarquía de capas separada.'

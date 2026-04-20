@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Titolo
+      url_template: 'URL del Servizio'
+      url_template.help: 'Come modello completo con segnaposto (es. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) oppure come URL base (es. <code>https://tile.openstreetmap.org/</code>) — in tal caso viene aggiunto automaticamente <code>/{z}/{x}/{y}.png</code>.'
+      attribution: Attribuzione
+      min_zoom: 'Livello di zoom minimo'
+      max_zoom: 'Livello di zoom massimo'
+      min_scale: 'Scala minima (denominatore)'
+      max_scale: 'Scala massima (denominatore)'
+      selected: 'Attivare all''avvio dell''applicazione'
+      no_limit: 'Nessun limite'
+      layer_hint: 'Le sorgenti di tile XYZ non hanno una gerarchia di livelli separata.'

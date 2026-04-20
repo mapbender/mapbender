@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Başlık
+      url_template: 'Servis URL'
+      url_template.help: 'Yer tutucularla tam şablon olarak (örn. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) ya da temel URL olarak (örn. <code>https://tile.openstreetmap.org/</code>) girilebilir — bu durumda <code>/{z}/{x}/{y}.png</code> otomatik olarak eklenir.'
+      attribution: Atıf
+      min_zoom: 'Minimum yakınlaştırma seviyesi'
+      max_zoom: 'Maksimum yakınlaştırma seviyesi'
+      min_scale: 'Minimum ölçek (payda)'
+      max_scale: 'Maksimum ölçek (payda)'
+      selected: 'Uygulama başlangıcında etkinleştir'
+      no_limit: 'Sınırsız'
+      layer_hint: 'XYZ karo kaynakları ayrı bir katman hiyerarşisine sahip değildir.'

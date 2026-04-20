@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Title
+      url_template: 'Service URL'
+      url_template.help: 'Either as a full template with placeholders (e.g. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) or as a base URL (e.g. <code>https://tile.openstreetmap.org/</code>) — in that case <code>/{z}/{x}/{y}.png</code> is appended automatically.'
+      attribution: Attribution
+      min_zoom: 'Minimum zoom level'
+      max_zoom: 'Maximum zoom level'
+      min_scale: 'Minimum scale (denominator)'
+      max_scale: 'Maximum scale (denominator)'
+      selected: 'Activate on application startup'
+      no_limit: 'No limit'
+      layer_hint: 'XYZ tile sources have no separate layer hierarchy.'

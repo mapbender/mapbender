@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="mapbender.source.xyz" class="Mapbender\XyzBundle\XyzDataSource">
+            <tag name="mapbender.datasource" />
+            <argument type="service" id="mapbender.source.xyz.config_generator" />
+            <argument type="service" id="mapbender.source.xyz.instance_factory" />
+            <argument type="service" id="mapbender.source.xyz.loader" />
+            <argument type="service" id="mapbender.source.xyz.renderer" />
+        </service>
+
+        <service id="mapbender.source.xyz.config_generator"
+                 class="Mapbender\XyzBundle\Component\XyzConfigGenerator">
+        </service>
+
+        <service id="mapbender.source.xyz.instance_factory"
+                 class="Mapbender\XyzBundle\Component\XyzInstanceFactory"
+                 lazy="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
+
+        <service id="mapbender.source.xyz.loader"
+                 class="Mapbender\XyzBundle\Component\XyzLoader"
+                 lazy="true">
+        </service>
+
+        <service id="mapbender.source.xyz.renderer"
+                 class="Mapbender\XyzBundle\Component\XyzLayerRenderer"
+                 lazy="true">
+            <argument type="service" id="mapbender.imageexport.image_transport.service" />
+            <argument type="service" id="logger" />
+        </service>
+    </services>
+</container>

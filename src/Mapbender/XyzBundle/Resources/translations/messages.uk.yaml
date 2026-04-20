@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Назва
+      url_template: 'URL-адреса сервісу'
+      url_template.help: 'Як повний шаблон із заповнювачами (напр. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) або як базова URL (напр. <code>https://tile.openstreetmap.org/</code>) — у такому разі <code>/{z}/{x}/{y}.png</code> додається автоматично.'
+      attribution: Атрибуція
+      min_zoom: 'Мінімальний рівень масштабування'
+      max_zoom: 'Максимальний рівень масштабування'
+      min_scale: 'Мінімальний масштаб (знаменник)'
+      max_scale: 'Максимальний масштаб (знаменник)'
+      selected: 'Активувати при запуску додатку'
+      no_limit: 'Без обмежень'
+      layer_hint: 'Джерела XYZ-тайлів не мають окремої ієрархії шарів.'

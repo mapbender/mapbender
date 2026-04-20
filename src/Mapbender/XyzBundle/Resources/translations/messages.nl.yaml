@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Titel
+      url_template: 'Service URL'
+      url_template.help: 'Als volledig sjabloon met plaatshouders (bijv. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) of als basis-URL (bijv. <code>https://tile.openstreetmap.org/</code>) — dan wordt <code>/{z}/{x}/{y}.png</code> automatisch toegevoegd.'
+      attribution: Naamsvermelding
+      min_zoom: 'Minimaal zoomniveau'
+      max_zoom: 'Maximaal zoomniveau'
+      min_scale: 'Minimale schaal (noemer)'
+      max_scale: 'Maximale schaal (noemer)'
+      selected: 'Activeren bij opstarten van applicatie'
+      no_limit: 'Geen beperking'
+      layer_hint: 'XYZ-tegelbronnen hebben geen afzonderlijke laagstructuur.'

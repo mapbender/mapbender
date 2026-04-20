@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Tytuł
+      url_template: 'URL serwisu'
+      url_template.help: 'Jako pełny szablon z symbolami zastępczymi (np. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) lub jako bazowy URL (np. <code>https://tile.openstreetmap.org/</code>) — w tym przypadku <code>/{z}/{x}/{y}.png</code> zostanie dodane automatycznie.'
+      attribution: Atrybucja
+      min_zoom: 'Minimalny poziom powiększenia'
+      max_zoom: 'Maksymalny poziom powiększenia'
+      min_scale: 'Minimalna skala (mianownik)'
+      max_scale: 'Maksymalna skala (mianownik)'
+      selected: 'Aktywuj przy uruchomieniu aplikacji'
+      no_limit: 'Brak ograniczenia'
+      layer_hint: 'Źródła kafelków XYZ nie posiadają oddzielnej hierarchii warstw.'

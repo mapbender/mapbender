@@ -1,0 +1,14 @@
+mb:
+  xyz:
+    admin:
+      title: Titre
+      url_template: 'URL du service'
+      url_template.help: "Soit comme modèle complet avec des espaces réservés (ex. <code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>), soit comme URL de base (ex. <code>https://tile.openstreetmap.org/</code>) — dans ce cas <code>/{z}/{x}/{y}.png</code> est ajouté automatiquement."
+      attribution: Attribution
+      min_zoom: 'Niveau de zoom minimum'
+      max_zoom: 'Niveau de zoom maximum'
+      min_scale: 'Échelle minimale (dénominateur)'
+      max_scale: 'Échelle maximale (dénominateur)'
+      selected: 'Activer au démarrage de l''application'
+      no_limit: 'Pas de limite'
+      layer_hint: 'Les sources de tuiles XYZ n''ont pas de hiérarchie de couches séparée.'
