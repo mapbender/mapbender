@@ -104,7 +104,7 @@ mb:
           import_caution: Uwaga
           import_overwrite_text: "Ten styl już zawiera dane. Import <strong>zastąpi wszystkie bieżące ustawienia</strong>. Tej operacji nie można cofnąć."
           import_legend: Importuj definicję stylu
-          import_desc: "Prześlij plik SLD, Symbology Encoding lub Mapbox Style JSON, aby automatycznie wypełnić edytor styli."
+          import_desc: "Prześlij plik Mapbox Style JSON, aby automatycznie wypełnić edytor styli."
           import_file: Plik
           import_success: "Styl zaimportowany pomyślnie. Przejdź do zakładki <strong>Edytor wizualny</strong> lub <strong>Mapbox JSON</strong>, aby sprawdzić."
           format_details: Szczegóły formatu

@@ -34,7 +34,6 @@
                     <select id="filter-origin" class="form-select form-select-sm" title="{{ 'mb.ogcapifeatures.admin.filter.origin_tooltip' | trans }}">
                         <option value="">{{ 'mb.ogcapifeatures.admin.style.manager.filter_all' | trans }}</option>
                         <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
-                        <option value="sld">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</option>
                         <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
                         <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
                         <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
@@ -65,8 +64,6 @@
                     <td>
                         {% if style.sourceType == 'mapbox-json' %}
                             <span class="badge bg-primary">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</span>
-                        {% elseif style.sourceType == 'sld' %}
-                            <span class="badge bg-warning text-dark">{{ 'mb.ogcapifeatures.admin.filter.origin_sld' | trans }}</span>
                         {% elseif style.sourceType == 'manual' %}
                             <span class="badge bg-secondary">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</span>
                         {% elseif style.sourceType == 'ogc_api' %}
@@ -82,7 +79,7 @@
                     <td>{{ style.sourceId ?? '-' }}</td>
                     <td>
                         <div class="d-flex flex-nowrap gap-1">
-                            {% if style.sourceType in ['manual', 'mapbox-json', 'sld'] %}
+                            {% if style.sourceType in ['manual', 'mapbox-json'] %}
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_edit' | trans }}"><i class="fas fa-pencil"></i></a>
                             {% else %}
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>

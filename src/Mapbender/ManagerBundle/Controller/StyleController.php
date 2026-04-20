@@ -98,7 +98,7 @@ class StyleController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        if (!in_array($style->getSourceType(), ['manual', 'mapbox-json', 'sld'], true)) {
+        if (!in_array($style->getSourceType(), ['manual', 'mapbox-json'], true)) {
             return $this->redirectToRoute('mapbender_manager_style_view', ['id' => $id]);
         }
 

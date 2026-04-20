@@ -104,7 +104,7 @@ mb:
           import_caution: Dikkat
           import_overwrite_text: "Bu stil zaten veri içeriyor. İçe aktarma <strong>tüm mevcut ayarları değiştirecektir</strong>. Bu işlem geri alınamaz."
           import_legend: Stil tanımı içe aktar
-          import_desc: "Stil düzenleyicisini otomatik olarak doldurmak için bir SLD, Symbology Encoding veya Mapbox Style JSON dosyası yükleyin."
+          import_desc: "Stil düzenleyicisini otomatik olarak doldurmak için bir Mapbox Style JSON dosyası yükleyin."
           import_file: Dosya
           import_success: "Stil başarıyla içe aktarıldı. İncelemek için <strong>Görsel düzenleyici</strong> veya <strong>Mapbox JSON</strong> sekmesine geçin."
           format_details: Format detayları

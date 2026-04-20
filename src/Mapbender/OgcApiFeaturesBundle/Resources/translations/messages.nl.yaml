@@ -104,7 +104,7 @@ mb:
           import_caution: Let op
           import_overwrite_text: "Deze stijl bevat al gegevens. Het importeren zal <strong>alle huidige instellingen vervangen</strong>. Dit kan niet ongedaan worden."
           import_legend: Stijldefinitie importeren
-          import_desc: "Upload een SLD-, Symbology Encoding- of Mapbox Style JSON-bestand om de stijleditor automatisch te vullen."
+          import_desc: "Upload een Mapbox Style JSON-bestand om de stijleditor automatisch te vullen."
           import_file: Bestand
           import_success: "Stijl succesvol geïmporteerd. Ga naar het tabblad <strong>Visuele editor</strong> of <strong>Mapbox JSON</strong> om te controleren."
           format_details: Formaatdetails

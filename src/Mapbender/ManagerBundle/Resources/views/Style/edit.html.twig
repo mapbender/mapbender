@@ -255,7 +255,7 @@
                         </p>
                         <div class="mb-3">
                             <label for="import-file" class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.editor.import_file' | trans }}</label>
-                            <input type="file" class="form-control" id="import-file" accept=".sld,.xml,.json,.se">
+                            <input type="file" class="form-control" id="import-file" accept=".json">
                         </div>
                         <div id="import-warnings" class="d-none mb-3"></div>
                         <div id="import-success" class="d-none alert alert-success"><i class="fas fa-check-circle me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.import_success' | trans | raw }}</div>
@@ -268,30 +268,7 @@
                             {{ 'mb.ogcapifeatures.admin.style.editor.format_mapbox_desc' | trans }}
                         </p>
 
-                        <h6><i class="fas fa-file-code me-1"></i>SLD / Symbology Encoding <span class="badge bg-warning text-dark">{{ 'mb.ogcapifeatures.admin.style.editor.format_partial_support' | trans }}</span></h6>
-                        <p class="text-muted ms-3 mb-2">
-                            {{ 'mb.ogcapifeatures.admin.style.editor.format_sld_desc' | trans }}
-                        </p>
-                        <div class="row ms-2">
-                            <div class="col-md-6">
-                                <h6 class="text-success"><i class="fas fa-check me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.format_converted' | trans }}</h6>
-                                <ul class="import-info-list import-info-supported">
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_polygon' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_line' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_point' | trans }}</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-danger"><i class="fas fa-xmark me-1"></i>{{ 'mb.ogcapifeatures.admin.style.editor.format_not_converted' | trans }}</h6>
-                                <ul class="import-info-list import-info-unsupported">
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_text' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_raster' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_external' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_rules' | trans }}</li>
-                                    <li>{{ 'mb.ogcapifeatures.admin.style.editor.format_sld_vendor' | trans }}</li>
-                                </ul>
-                            </div>
-                        </div>
+
                     </fieldset>
                 </div>
             </div>
@@ -401,7 +378,6 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
-    <script src="{{ asset('bundles/mapbendermanager/js/geostyler-bridge.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor-preview.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor-layers.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-editor.js') }}"></script>

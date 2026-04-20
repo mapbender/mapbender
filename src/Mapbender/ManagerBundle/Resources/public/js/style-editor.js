@@ -3,7 +3,7 @@
  * Coordinates the visual/JSON/import tabs, flat editor sync, and form validation.
  *
  * Requires: StyleUtils (style-utils.js), StyleEditorLayers (style-editor-layers.js),
- *           StyleEditorPreview (style-editor-preview.js), GeoStylerBridge (geostyler-bridge.js)
+ *           StyleEditorPreview (style-editor-preview.js)
  */
 class StyleEditor {
     constructor() {
@@ -267,36 +267,15 @@ class StyleEditor {
         const reader = new FileReader();
         reader.onload = (evt) => {
             const content = evt.target.result;
-            const isJson = file.name.endsWith('.json') || content.trimStart().startsWith('{');
-            if (isJson) {
-                this._importMapboxJson(content, warningsEl, successEl);
-            } else {
-                this._importSld(content, warningsEl, successEl);
+            try {
+                const parsed = JSON.parse(content);
+                this.setJsonToTextarea(parsed);
+                this._finalizeImport('mapbox-json', successEl);
+            } catch (err) {
+                this._showWarnings(warningsEl, [Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message})]);
             }
         };
         reader.readAsText(file);
-    }
-
-    _importMapboxJson(content, warningsEl, successEl) {
-        let parsed;
-        try {
-            parsed = JSON.parse(content);
-        } catch (err) {
-            this._showWarnings(warningsEl, [Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message})]);
-            return;
-        }
-        this.setJsonToTextarea(parsed);
-        this._finalizeImport('mapbox-json', successEl);
-    }
-
-    async _importSld(content, warningsEl, successEl) {
-        try {
-            const mapboxStyle = await GeoStylerBridge.sldToMapbox(content);
-            this.setJsonToTextarea(mapboxStyle);
-            this._finalizeImport('sld', successEl);
-        } catch (err) {
-            this._showWarnings(warningsEl, [err.message]);
-        }
     }
 
     _finalizeImport(sourceType, successEl) {
