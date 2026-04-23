@@ -235,21 +235,6 @@ mb:
           import_desc: "Завантажте файл Mapbox Style JSON для автоматичного заповнення редактора стилів."
           import_file: Файл
           import_success: "Стиль успішно імпортовано. Перейдіть на вкладку <strong>Візуальний редактор</strong> або <strong>Mapbox JSON</strong> для перевірки."
-          format_details: Деталі формату
-          format_full_support: Повна підтримка
-          format_partial_support: Часткова підтримка
-          format_mapbox_desc: "Файли .json імпортуються безпосередньо без конвертації. Весь об'єкт стилю завантажується в редактор без змін."
-          format_sld_desc: "Файли .sld, .xml та .se конвертуються у Mapbox Style JSON. Конвертація охоплює базові символізатори:"
-          format_converted: Конвертовано
-          format_not_converted: Не конвертовано
-          format_sld_polygon: "PolygonSymbolizer — колір/непрозорість заливки, колір/ширина/непрозорість обведення"
-          format_sld_line: "LineSymbolizer — колір, ширина, непрозорість обведення, штрихові масиви"
-          format_sld_point: "PointSymbolizer — круглі маркери із заливкою та обведенням"
-          format_sld_text: "TextSymbolizer — підписи, ореоли, розміщення"
-          format_sld_raster: "RasterSymbolizer — растрові канали/кольорові карти"
-          format_sld_external: "Зовнішня графіка — посилання на зображення значків"
-          format_sld_rules: "Множинні правила / фільтри — лише перший символізатор на тип"
-          format_sld_vendor: "Розширення постачальника — se:VendorOption тощо"
           save: Зберегти
           back: Назад
           cancel: Скасувати

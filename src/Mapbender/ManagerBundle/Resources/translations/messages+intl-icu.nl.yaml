@@ -195,21 +195,6 @@ mb:
           import_desc: "Upload een Mapbox Style JSON-bestand om de stijleditor automatisch te vullen."
           import_file: Bestand
           import_success: "Stijl succesvol geïmporteerd. Ga naar het tabblad <strong>Visuele editor</strong> of <strong>Mapbox JSON</strong> om te controleren."
-          format_details: Formaatdetails
-          format_full_support: Volledige ondersteuning
-          format_partial_support: Gedeeltelijke ondersteuning
-          format_mapbox_desc: ".json-bestanden worden direct zonder conversie geïmporteerd. Het volledige stijlobject wordt ongewijzigd in de editor geladen."
-          format_sld_desc: ".sld-, .xml- en .se-bestanden worden geconverteerd naar Mapbox Style JSON. De conversie dekt basiskartografische symbolisatoren:"
-          format_converted: Geconverteerd
-          format_not_converted: Niet geconverteerd
-          format_sld_polygon: "PolygonSymbolizer — vulkleur/-dekking, lijnkleur/-breedte/-dekking"
-          format_sld_line: "LineSymbolizer — lijnkleur, breedte, dekking, streeppatronen"
-          format_sld_point: "PointSymbolizer — cirkelmarkeringen met vulling en lijn"
-          format_sld_text: "TextSymbolizer — labels, halo's, plaatsing"
-          format_sld_raster: "RasterSymbolizer — rasterkanaal-/kleurkaarten"
-          format_sld_external: "Externe afbeeldingen — pictogramreferenties"
-          format_sld_rules: "Meerdere regels / filters — alleen eerste symbolisator per type"
-          format_sld_vendor: "Leveranciersuitbreidingen — se:VendorOption, enz."
           save: Opslaan
           back: Terug
           cancel: Annuleren

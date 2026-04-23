@@ -190,21 +190,6 @@ mb:
           import_desc: "Stil düzenleyicisini otomatik olarak doldurmak için bir Mapbox Style JSON dosyası yükleyin."
           import_file: Dosya
           import_success: "Stil başarıyla içe aktarıldı. İncelemek için <strong>Görsel düzenleyici</strong> veya <strong>Mapbox JSON</strong> sekmesine geçin."
-          format_details: Format detayları
-          format_full_support: Tam destek
-          format_partial_support: Kısmi destek
-          format_mapbox_desc: ".json dosyaları dönüştürme yapılmadan doğrudan içe aktarılır. Tüm stil nesnesi olduğu gibi düzenleyiciye yüklenir."
-          format_sld_desc: ".sld, .xml ve .se dosyaları Mapbox Style JSON'a dönüştürülür. Dönüştürme temel sembolleştiricileri kapsar:"
-          format_converted: Dönüştürülen
-          format_not_converted: Dönüştürülmeyen
-          format_sld_polygon: "PolygonSymbolizer — dolgu rengi/opaklığı, çizgi rengi/genişliği/opaklığı"
-          format_sld_line: "LineSymbolizer — çizgi rengi, genişlik, opaklık, kesikli diziler"
-          format_sld_point: "PointSymbolizer — dolgu ve çizgili daire işaretleri"
-          format_sld_text: "TextSymbolizer — etiketler, haleler, yerleşim"
-          format_sld_raster: "RasterSymbolizer — raster kanal/renk haritaları"
-          format_sld_external: "Harici grafikler — simge görüntü referansları"
-          format_sld_rules: "Çoklu kurallar / filtreler — tür başına yalnızca ilk sembolleştirici"
-          format_sld_vendor: "Satıcı uzantıları — se:VendorOption vb."
           save: Kaydet
           back: Geri
           cancel: İptal

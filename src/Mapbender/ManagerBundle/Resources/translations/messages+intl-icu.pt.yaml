@@ -248,21 +248,6 @@ mb:
           import_desc: "Carregue um ficheiro Mapbox Style JSON para preencher automaticamente o editor de estilos."
           import_file: Ficheiro
           import_success: "Estilo importado com sucesso. Mude para o separador <strong>Editor visual</strong> ou <strong>Mapbox JSON</strong> para verificar."
-          format_details: Detalhes do formato
-          format_full_support: Suporte completo
-          format_partial_support: Suporte parcial
-          format_mapbox_desc: "Os ficheiros .json são importados diretamente sem conversão. O objeto de estilo completo é carregado tal como está no editor."
-          format_sld_desc: "Os ficheiros .sld, .xml e .se são convertidos para Mapbox Style JSON. A conversão cobre simbolizadores básicos:"
-          format_converted: Convertido
-          format_not_converted: Não convertido
-          format_sld_polygon: "PolygonSymbolizer — cor/opacidade de preenchimento, cor/largura/opacidade do traço"
-          format_sld_line: "LineSymbolizer — cor, largura, opacidade do traço, padrões de tracejado"
-          format_sld_point: "PointSymbolizer — marcadores circulares com preenchimento e traço"
-          format_sld_text: "TextSymbolizer — rótulos, halos, posicionamento"
-          format_sld_raster: "RasterSymbolizer — canais raster/mapas de cores"
-          format_sld_external: "Gráficos externos — referências de imagens de ícones"
-          format_sld_rules: "Múltiplas regras / filtros — apenas o primeiro simbolizador por tipo"
-          format_sld_vendor: "Extensões de fornecedor — se:VendorOption, etc."
           save: Guardar
           back: Voltar
           cancel: Cancelar
